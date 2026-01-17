@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -31,33 +32,36 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width ?? double.infinity,
-      height: height ?? 56.h,
-      decoration: BoxDecoration(
-        gradient: isEnabled ? GradientManager.primaryButton : null,
-        color: isEnabled ? null : ColorManager.gray300,
-        borderRadius: BorderRadiusManager.xl,
-        boxShadow: isEnabled ? ShadowManager.shadowSm : null,
-      ),
-      child: Material(
-        color: ColorManager.transparent,
-        child: InkWell(
-          onTap: isEnabled && !isLoading ? onPressed : null,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
+      child: Container(
+        width: width ?? double.infinity,
+        height: height ?? 56.h,
+        decoration: BoxDecoration(
+          gradient: isEnabled ? GradientManager.primaryButton : null,
+          color: isEnabled ? null : ColorManager.gray300,
           borderRadius: BorderRadiusManager.xl,
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        ColorManager.white,
+          boxShadow: isEnabled ? ShadowManager.shadowSm : null,
+        ),
+        child: Material(
+          color: ColorManager.transparent,
+          child: InkWell(
+            onTap: isEnabled && !isLoading ? onPressed : null,
+            borderRadius: BorderRadiusManager.xl,
+            child: Center(
+              child: isLoading
+                  ? SizedBox(
+                      width: 24.w,
+                      height: 24.h,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          ColorManager.white,
+                        ),
                       ),
-                    ),
-                  )
-                : _buildContent(),
+                    )
+                  : _buildContent(),
+            ),
           ),
         ),
       ),
@@ -68,8 +72,11 @@ class PrimaryButton extends StatelessWidget {
     if (icon == null) {
       return Text(
         text,
-        style: TextStyleManager.button.copyWith(
+        style: TextStyle(
           color: isEnabled ? ColorManager.white : ColorManager.gray500,
+          fontFamily: FontFamily.geist,
+          fontWeight: FontWeight.w600,
+          fontSize: 16.sp
         ),
       );
     }
@@ -77,10 +84,7 @@ class PrimaryButton extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (iconPosition == IconPosition.left) ...[
-          icon!,
-          SizedBox(width: 8.w),
-        ],
+        if (iconPosition == IconPosition.left) ...[icon!, SizedBox(width: 8.w)],
         Text(
           text,
           style: TextStyleManager.button.copyWith(
@@ -176,10 +180,7 @@ class SecondaryButton extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (iconPosition == IconPosition.left) ...[
-          icon!,
-          SizedBox(width: 8.w),
-        ],
+        if (iconPosition == IconPosition.left) ...[icon!, SizedBox(width: 8.w)],
         Text(
           text,
           style: TextStyleManager.button.copyWith(

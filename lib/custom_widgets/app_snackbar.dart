@@ -8,26 +8,47 @@ class AppSnackbar {
   AppSnackbar._();
 
   /// Show success snackbar (teal color, appears from top)
-  static void showSuccess(BuildContext context, {required String title, String? message}) {
+  static void showSuccess(
+    BuildContext context, {
+    required String title,
+    String? message,
+  }) {
     _show(context, title: title, message: message, type: _SnackbarType.success);
   }
 
   /// Show error snackbar (red color, appears from top)
-  static void showError(BuildContext context, {required String title, String? message}) {
+  static void showError(
+    BuildContext context, {
+    required String title,
+    String? message,
+  }) {
     _show(context, title: title, message: message, type: _SnackbarType.error);
   }
 
   /// Show warning snackbar (orange color, appears from top)
-  static void showWarning(BuildContext context, {required String title, String? message}) {
+  static void showWarning(
+    BuildContext context, {
+    required String title,
+    String? message,
+  }) {
     _show(context, title: title, message: message, type: _SnackbarType.warning);
   }
 
   /// Show info snackbar (blue color, appears from top)
-  static void showInfo(BuildContext context, {required String title, String? message}) {
+  static void showInfo(
+    BuildContext context, {
+    required String title,
+    String? message,
+  }) {
     _show(context, title: title, message: message, type: _SnackbarType.info);
   }
 
-  static void _show(BuildContext context, {required String title, String? message, required _SnackbarType type}) {
+  static void _show(
+    BuildContext context, {
+    required String title,
+    String? message,
+    required _SnackbarType type,
+  }) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -35,15 +56,13 @@ class AppSnackbar {
         backgroundColor: type.backgroundColor,
         behavior: SnackBarBehavior.floating,
         elevation: 8,
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height - 200.h,
-          left: 16.w,
-          right: 16.w,
-        ),
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         duration: const Duration(seconds: 4),
-        dismissDirection: DismissDirection.up,
+        dismissDirection: DismissDirection.horizontal,
       ),
     );
   }
@@ -54,25 +73,37 @@ enum _SnackbarType { success, error, warning, info }
 extension on _SnackbarType {
   Color get backgroundColor {
     switch (this) {
-      case _SnackbarType.success: return const Color(0xFF70B2B2);
-      case _SnackbarType.error: return const Color(0xFFEF4444);
-      case _SnackbarType.warning: return const Color(0xFFF59E0B);
-      case _SnackbarType.info: return const Color(0xFF3B82F6);
+      case _SnackbarType.success:
+        return const Color(0xFF70B2B2);
+      case _SnackbarType.error:
+        return const Color(0xFFEF4444);
+      case _SnackbarType.warning:
+        return const Color(0xFFF59E0B);
+      case _SnackbarType.info:
+        return const Color(0xFF3B82F6);
     }
   }
 
   IconData get icon {
     switch (this) {
-      case _SnackbarType.success: return Icons.check_circle_rounded;
-      case _SnackbarType.error: return Icons.error_rounded;
-      case _SnackbarType.warning: return Icons.warning_rounded;
-      case _SnackbarType.info: return Icons.info_rounded;
+      case _SnackbarType.success:
+        return Icons.check_circle_rounded;
+      case _SnackbarType.error:
+        return Icons.error_rounded;
+      case _SnackbarType.warning:
+        return Icons.warning_rounded;
+      case _SnackbarType.info:
+        return Icons.info_rounded;
     }
   }
 }
 
 class _SnackbarContent extends StatelessWidget {
-  const _SnackbarContent({required this.title, this.message, required this.type});
+  const _SnackbarContent({
+    required this.title,
+    this.message,
+    required this.type,
+  });
 
   final String title;
   final String? message;

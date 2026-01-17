@@ -30,12 +30,12 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final thirdPartyInjection = _$ThirdPartyInjection();
+    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
+    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.singleton<_i361.Dio>(() => thirdPartyInjection.dio);
     gh.singleton<_i973.InternetConnectionChecker>(
       () => thirdPartyInjection.internetConnectionChecker,
     );
-    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
-    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(
         connectionChecker: gh<_i973.InternetConnectionChecker>(),

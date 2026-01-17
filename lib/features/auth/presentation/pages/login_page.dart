@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,7 +52,9 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   String? _validateEmail(String? value) {
     if (!_showValidationErrors) return null;
     if (value == null || value.isEmpty) return 'Please enter your email';
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Please enter a valid email';
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
     return null;
   }
 
@@ -72,7 +75,11 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             context.goNamed(AppRoutesNames.root);
           }
           if (state.loginError != null) {
-            AppSnackbar.showError(context, title: 'Login Failed', message: state.loginError);
+            AppSnackbar.showError(
+              context,
+              title: 'Login Failed',
+              message: state.loginError,
+            );
           }
         },
         builder: (context, state) {
@@ -98,7 +105,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         SizedBox(height: 24.h),
                         _buildDivider(),
                         SizedBox(height: 24.h),
-                        SocialLoginButtons(onGooglePressed: () {}, onFacebookPressed: () {}),
+                        SocialLoginButtons(
+                          onGooglePressed: () {},
+                          onFacebookPressed: () {},
+                        ),
                         SizedBox(height: 32.h),
                         _buildSignUpLink(),
                         SizedBox(height: 32.h),
@@ -118,8 +128,8 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   Widget _buildEmailField(AuthState state) {
     return AuthTextField(
-      label: 'Email Address',
-      hint: 'Enter your email',
+      label: 'Email',
+      hint: 'doctor@example.com',
       controller: _emailController,
       prefixIcon: Icons.email_outlined,
       keyboardType: TextInputType.emailAddress,
@@ -134,14 +144,22 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   Widget _buildPasswordField(AuthState state) {
     return AuthTextField(
       label: 'Password',
-      hint: 'Enter your password',
+      hint: '********',
       controller: _passwordController,
       prefixIcon: Icons.lock_outline,
       obscureText: !state.isLoginPasswordVisible,
       validator: _validatePassword,
       suffixIcon: IconButton(
-        icon: Icon(state.isLoginPasswordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: ColorManager.textTertiary, size: 20.w),
-        onPressed: () => context.read<AuthBloc>().add(const AuthEvent.loginPasswordVisibilityToggled()),
+        icon: Icon(
+          state.isLoginPasswordVisible
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
+          color: ColorManager.textTertiary,
+          size: 20.w,
+        ),
+        onPressed: () => context.read<AuthBloc>().add(
+          const AuthEvent.loginPasswordVisibilityToggled(),
+        ),
       ),
       onChanged: (value) {
         context.read<AuthBloc>().add(AuthEvent.loginPasswordChanged(value));
@@ -155,23 +173,29 @@ class _LoginPageContentState extends State<_LoginPageContent> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () => context.pushNamed(AppRoutesNames.forgotPassword),
-        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-        child: Text('Forgot Password?', style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.primary, fontWeight: FontWeight.w500)),
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(
+            color: ColorManager.primary,
+            fontWeight: FontWeight.w500,
+            fontFamily: FontFamily.geist,
+            fontSize: 12.sp,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildSignInButton(AuthState state) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56.h,
-      child: ElevatedButton(
-        onPressed: state.isLoginLoading ? null : _handleSignIn,
-        style: ElevatedButton.styleFrom(backgroundColor: ColorManager.primary, foregroundColor: ColorManager.white, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r))),
-        child: state.isLoginLoading
-            ? SizedBox(width: 24.w, height: 24.h, child: const CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(ColorManager.white)))
-            : Text('Sign In', style: TextStyleManager.button.copyWith(color: ColorManager.white, fontSize: 16.sp)),
-      ),
+    return PrimaryButton(
+      text: 'Sign In',
+      onPressed: state.isLoginLoading ? null : _handleSignIn,
+      isLoading: state.isLoginLoading,
     );
   }
 
@@ -181,7 +205,14 @@ class _LoginPageContentState extends State<_LoginPageContent> {
         Expanded(child: Divider(color: ColorManager.gray200, thickness: 1)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text('Or continue with', style: TextStyleManager.bodySmall.copyWith(color: ColorManager.textTertiary)),
+          child: Text(
+            'Or continue with',
+            style: TextStyle(
+              color: ColorManager.textTertiary,
+              fontSize: 12.sp,
+              fontFamily: FontFamily.geist
+            ),
+          ),
         ),
         Expanded(child: Divider(color: ColorManager.gray200, thickness: 1)),
       ],
@@ -192,17 +223,45 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Don't have an account? ", style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.textSecondary)),
+        Text(
+          "Don't have an account? ",
+          style: TextStyle(
+            color: ColorManager.textSecondary,
+             fontSize: 14.sp,
+              fontFamily: FontFamily.geist
+          ),
+        ),
         TextButton(
           onPressed: () => context.pushNamed(AppRoutesNames.register),
-          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-          child: Text('Sign Up', style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.primary, fontWeight: FontWeight.w600)),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            'Sign Up',
+            style: TextStyle(
+              color: ColorManager.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
+              fontFamily: FontFamily.geist
+            ),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildFooter() {
-    return Center(child: Text('\u00A9 2024 DentalCare Pro. All rights reserved.', style: TextStyleManager.bodySmall.copyWith(color: ColorManager.textTertiary)));
+    return Center(
+      child: Text(
+        '\u00A9 2026 SmylOS Pro. All rights reserved.',
+        style: TextStyle(
+          color: ColorManager.textTertiary,
+          fontSize: 12.sp,
+          fontFamily: FontFamily.geist
+        ),
+      ),
+    );
   }
 }

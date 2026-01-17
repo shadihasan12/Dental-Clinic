@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -97,9 +99,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   child: Text(
                     'Skip',
-                    style: TextStyleManager.bodyLarge.copyWith(
+                    style: TextStyle(
                       color: ColorManager.textSecondary,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: FontFamily.geist,
+                      fontSize: 14.sp
                     ),
                   ),
                 ),
@@ -131,44 +135,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
 
             // Next Button
-            Padding(
-              padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
-              child: SizedBox(
-                width: double.infinity,
-                height: 54.h,
-                child: ElevatedButton(
-                  onPressed: _nextPage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManager.primary,
-                    foregroundColor: ColorManager.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _currentPage == _items.length - 1 ? 'Get Started' : 'Next',
-                        style: TextStyleManager.button.copyWith(
-                          color: ColorManager.white,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      if (_currentPage < _items.length - 1) ...[
-                        SizedBox(width: 8.w),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16.w,
-                          color: ColorManager.white,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ),
+           PrimaryButton(
+            text: 'Next',
+            onPressed: _nextPage,
+            height: 60.h,
+           )
           ],
         ),
       ),
@@ -273,10 +244,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 // Title
                 Text(
                   item.title,
-                  style: TextStyleManager.headlineSmall.copyWith(
+                  style: TextStyle(
                     color: ColorManager.textPrimary,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
+                    fontFamily: FontFamily.geist,
+                    fontSize: 20.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -288,9 +261,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   child: Text(
                     item.description,
-                    style: TextStyleManager.bodyMedium.copyWith(
+                    style: TextStyle(
                       color: ColorManager.textSecondary,
                       height: 1.4,
+                      fontFamily: FontFamily.geist,
+                      fontSize: 16.sp,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -311,7 +286,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (item.useToothIcon == true) {
       return Text(
         '🦷',
-        style: TextStyle(fontSize: iconSize * 0.9),
+        style: TextStyle(fontSize: iconSize * 0.9, fontFamily: FontFamily.geist,),
       );
     } else if (item.useChartIcon == true) {
       return Row(

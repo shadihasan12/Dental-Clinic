@@ -11,6 +11,8 @@ class AppRoutesNames {
   static const String login = 'login';
   static const String register = 'register';
   static const String forgotPassword = 'forgotPassword';
+  static const String choosePlan = 'choosePlan';
+  static const String chooseClinicName = 'chooseClinicName';
 
   // Dashboard
   static const String dashboard = 'dashboard';

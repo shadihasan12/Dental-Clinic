@@ -1,7 +1,7 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 
 /// Gradient header for auth pages with logo and app name
@@ -17,7 +17,10 @@ class AuthHeader extends StatelessWidget {
       height: height ?? 320.h,
       decoration: BoxDecoration(
         gradient: GradientManager.primaryHeader,
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32.r), bottomRight: Radius.circular(32.r)),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32.r),
+          bottomRight: Radius.circular(32.r),
+        ),
       ),
       child: Stack(
         clipBehavior: Clip.none,
@@ -34,9 +37,24 @@ class AuthHeader extends StatelessWidget {
                 children: [
                   _buildLogoContainer(),
                   SizedBox(height: 20.h),
-                  Text('DentalCare Pro', style: TextStyleManager.headlineLarge.copyWith(color: ColorManager.white, fontWeight: FontWeight.bold)),
+                  Text(
+                    'SmylOS Pro',
+                    style: TextStyle(
+                      color: ColorManager.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22.sp,
+                      fontFamily: FontFamily.geist,
+                    ),
+                  ),
                   SizedBox(height: 8.h),
-                  Text('Professional Clinic Management', style: TextStyleManager.bodyLarge.copyWith(color: ColorManager.white.withValues(alpha: 0.9))),
+                  Text(
+                    'Professional Clinic Management',
+                    style: TextStyle(
+                      color: ColorManager.white.withValues(alpha: 0.9),
+                      fontSize: 16.sp,
+                      fontFamily: FontFamily.geist,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -50,7 +68,10 @@ class AuthHeader extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: ColorManager.white.withValues(alpha: opacity)),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: ColorManager.white.withValues(alpha: opacity),
+      ),
     );
   }
 
@@ -61,9 +82,17 @@ class AuthHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorManager.white,
         borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [BoxShadow(color: ColorManager.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10))],
+        boxShadow: [
+          BoxShadow(
+            color: ColorManager.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: Center(child: Text('\u{1F9B7}', style: TextStyle(fontSize: 40.sp))),
+      child: Center(
+        child: Text('\u{1F9B7}', style: TextStyle(fontSize: 40.sp)),
+      ),
     );
   }
 }

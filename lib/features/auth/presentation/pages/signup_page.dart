@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,6 +45,22 @@ class _SignupContentState extends State<_SignupContent> {
   bool _showValidationErrors = false;
   bool _showOptionalFields = false;
 
+  String? _selectedSpecialization;
+
+  final List<String> doctorSpecializations = [
+    'General Dentistry',
+    'Endodontics',
+    'Orthodontics',
+    'Cosmetic Dentistry',
+    'Oral Surgery',
+  ];
+
+  @override
+  initState() {
+    super.initState();
+    _selectedSpecialization = doctorSpecializations.first;
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -54,11 +72,11 @@ class _SignupContentState extends State<_SignupContent> {
     super.dispose();
   }
 
-  void _handleSignUp() {
+  void _handleNext() {
     setState(() => _showValidationErrors = true);
 
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthBloc>().add(const AuthEvent.signupSubmitted());
+      context.pushNamed(AppRoutesNames.choosePlan);
     }
   }
 
@@ -167,8 +185,8 @@ class _SignupContentState extends State<_SignupContent> {
                           validator: _validateName,
                           onChanged: (value) {
                             context.read<AuthBloc>().add(
-                                  AuthEvent.signupNameChanged(value),
-                                );
+                              AuthEvent.signupNameChanged(value),
+                            );
                             _validateForm();
                           },
                         ),
@@ -185,12 +203,26 @@ class _SignupContentState extends State<_SignupContent> {
                           validator: _validateEmail,
                           onChanged: (value) {
                             context.read<AuthBloc>().add(
-                                  AuthEvent.signupEmailChanged(value),
-                                );
+                              AuthEvent.signupEmailChanged(value),
+                            );
                             _validateForm();
                           },
                         ),
 
+                        SizedBox(height: 16.h),
+                        // Specialization Field
+                        AuthDropdownField(
+                          label: 'Specialization',
+                          hint: 'Select your specialization',
+                          value: _selectedSpecialization,
+                          items: doctorSpecializations,
+                          prefixIcon: Icons.local_hospital_outlined,
+                          onChanged: (value) {
+                            context.read<AuthBloc>().add(
+                              AuthEvent.signupSpecializationChanged(value!),
+                            );
+                          },
+                        ),
                         SizedBox(height: 16.h),
 
                         // Password Field
@@ -211,14 +243,14 @@ class _SignupContentState extends State<_SignupContent> {
                             ),
                             onPressed: () {
                               context.read<AuthBloc>().add(
-                                    const AuthEvent.signupPasswordVisibilityToggled(),
-                                  );
+                                const AuthEvent.signupPasswordVisibilityToggled(),
+                              );
                             },
                           ),
                           onChanged: (value) {
                             context.read<AuthBloc>().add(
-                                  AuthEvent.signupPasswordChanged(value),
-                                );
+                              AuthEvent.signupPasswordChanged(value),
+                            );
                             _validateForm();
                           },
                         ),
@@ -243,81 +275,27 @@ class _SignupContentState extends State<_SignupContent> {
                             ),
                             onPressed: () {
                               context.read<AuthBloc>().add(
-                                    const AuthEvent.signupConfirmPasswordVisibilityToggled(),
-                                  );
+                                const AuthEvent.signupConfirmPasswordVisibilityToggled(),
+                              );
                             },
                           ),
                           onChanged: (value) {
                             context.read<AuthBloc>().add(
-                                  AuthEvent.signupConfirmPasswordChanged(value),
-                                );
+                              AuthEvent.signupConfirmPasswordChanged(value),
+                            );
                             _validateForm();
                           },
                         ),
 
                         SizedBox(height: 16.h),
 
-                        // Optional Fields Toggle
-                        _buildOptionalFieldsToggle(),
-
-                        // Optional Fields
-                        if (_showOptionalFields) ...[
-                          SizedBox(height: 16.h),
-
-                          AuthTextField(
-                            label: 'License Number',
-                            hint: 'DDS-12345',
-                            controller: _licenseController,
-                            prefixIcon: Icons.badge_outlined,
-                            onChanged: (value) {
-                              context.read<AuthBloc>().add(
-                                    AuthEvent.signupLicenseNumberChanged(value),
-                                  );
-                            },
-                          ),
-
-                          SizedBox(height: 16.h),
-
-                          AuthTextField(
-                            label: 'Specialization',
-                            hint: 'e.g., Orthodontics, General Dentistry',
-                            controller: _specializationController,
-                            prefixIcon: Icons.local_hospital_outlined,
-                            onChanged: (value) {
-                              context.read<AuthBloc>().add(
-                                    AuthEvent.signupSpecializationChanged(value),
-                                  );
-                            },
-                          ),
-                        ],
-
                         SizedBox(height: 32.h),
 
                         // Sign Up Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56.h,
-                          child: ElevatedButton(
-                            onPressed: state.isSignupLoading ? null : _handleSignUp,
-                            style: ButtonStyles.primaryLarge,
-                            child: state.isSignupLoading
-                                ? SizedBox(
-                                    width: 24.w,
-                                    height: 24.h,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        ColorManager.white,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    'Create Account',
-                                    style: TextStyleManager.button.copyWith(
-                                      color: ColorManager.white,
-                                    ),
-                                  ),
-                          ),
+                        PrimaryButton(
+                          text: 'Next',
+                          onPressed: state.isSignupLoading ? null : _handleNext,
+                          isLoading: state.isSignupLoading,
                         ),
 
                         SizedBox(height: 24.h),
@@ -342,63 +320,31 @@ class _SignupContentState extends State<_SignupContent> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.info.withValues(alpha: 0.08),
+        color: ColorManager.infoLight.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: ColorManager.info.withValues(alpha: 0.2),
+          color: ColorManager.infoLight.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline,
-            color: ColorManager.info,
+            color: ColorManager.infoExtraLight,
             size: 20.w,
           ),
           SizedBox(width: 12.w),
           Expanded(
             child: Text(
               'Create your account, then set up or join a clinic from your dashboard.',
-              style: TextStyleManager.bodySmall.copyWith(
-                color: ColorManager.info,
+              style: TextStyle(
+                color: ColorManager.infoExtraLight,
+                fontSize: 14.sp,
+                fontFamily: FontFamily.geist,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildOptionalFieldsToggle() {
-    return GestureDetector(
-      onTap: () {
-        setState(() => _showOptionalFields = !_showOptionalFields);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-        decoration: BoxDecoration(
-          color: ColorManager.gray50,
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _showOptionalFields ? Icons.expand_less : Icons.expand_more,
-              color: ColorManager.textSecondary,
-              size: 20.w,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              _showOptionalFields
-                  ? 'Hide professional details'
-                  : 'Add professional details (optional)',
-              style: TextStyleManager.bodySmall.copyWith(
-                color: ColorManager.textSecondary,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -409,7 +355,9 @@ class _SignupContentState extends State<_SignupContent> {
       children: [
         Text(
           'Already have an account? ',
-          style: TextStyleManager.bodyMedium.copyWith(
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: FontFamily.geist,
             color: ColorManager.textSecondary,
           ),
         ),
@@ -422,7 +370,9 @@ class _SignupContentState extends State<_SignupContent> {
           ),
           child: Text(
             'Log In',
-            style: TextStyleManager.bodyMedium.copyWith(
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: FontFamily.geist,
               color: ColorManager.primary,
               fontWeight: FontWeight.w600,
             ),

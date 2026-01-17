@@ -1,7 +1,7 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
 /// Row with Google and Facebook login buttons
 class SocialLoginButtons extends StatelessWidget {
@@ -18,9 +18,23 @@ class SocialLoginButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: SocialButton(icon: 'G', label: 'Google', isGoogle: true, onPressed: onGooglePressed)),
+        Expanded(
+          child: SocialButton(
+            icon: 'G',
+            label: 'Google',
+            isGoogle: true,
+            onPressed: onGooglePressed,
+          ),
+        ),
         SizedBox(width: 16.w),
-        Expanded(child: SocialButton(icon: 'f', label: 'Facebook', isGoogle: false, onPressed: onFacebookPressed)),
+        Expanded(
+          child: SocialButton(
+            icon: 'f',
+            label: 'Facebook',
+            isGoogle: false,
+            onPressed: onFacebookPressed,
+          ),
+        ),
       ],
     );
   }
@@ -48,14 +62,24 @@ class SocialButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 14.h),
         side: BorderSide(color: ColorManager.gray200),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildIcon(),
           SizedBox(width: 8.w),
-          Text(label, style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.textPrimary, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: TextStyle(
+              color: ColorManager.textPrimary,
+              fontWeight: FontWeight.w400,
+              fontFamily: FontFamily.geist,
+              fontSize: 12.sp
+            ),
+          ),
         ],
       ),
     );
@@ -63,13 +87,32 @@ class SocialButton extends StatelessWidget {
 
   Widget _buildIcon() {
     if (isGoogle) {
-      return Text('G', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold, color: Colors.red));
+      return Text(
+        'G',
+        style: TextStyle(
+          fontSize: 20.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      );
     }
     return Container(
       width: 24.w,
       height: 24.w,
-      decoration: const BoxDecoration(color: Color(0xFF1877F2), shape: BoxShape.circle),
-      child: Center(child: Text('f', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: ColorManager.white))),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1877F2),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          'f',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: ColorManager.white,
+          ),
+        ),
+      ),
     );
   }
 }

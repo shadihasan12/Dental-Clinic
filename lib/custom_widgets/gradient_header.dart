@@ -1,8 +1,8 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
 /// Gradient header widget with decorative circles
 /// Used for authentication pages and hero sections
@@ -60,17 +60,21 @@ class GradientHeader extends StatelessWidget {
                     if (title != null)
                       Text(
                         title!,
-                        style: TextStyleManager.headlineLarge.copyWith(
+                        style: TextStyle(
                           color: ColorManager.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 22.sp,
+                          fontFamily: FontFamily.geist,
                         ),
                       ),
                     if (subtitle != null) ...[
                       SizedBox(height: 4.h),
                       Text(
                         subtitle!,
-                        style: TextStyleManager.bodyMedium.copyWith(
+                        style: TextStyle(
                           color: ColorManager.white.withValues(alpha: 0.9),
+                          fontSize: 16.sp,
+                          fontFamily: FontFamily.geist,
                         ),
                       ),
                     ],

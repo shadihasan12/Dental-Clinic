@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -70,6 +72,28 @@ class RoutesManager {
               child: const ForgotPasswordPage(),
               key: state.pageKey,
               name: state.name,
+            );
+          },
+        ),
+
+        GoRoute(
+          path: '/choose-plan',
+          name: AppRoutesNames.choosePlan,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const ChoosePlanPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+
+        GoRoute(
+          path: '/choose-clinic-name',
+          name: AppRoutesNames.chooseClinicName,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const ChooseClinicNamePage(),
             );
           },
         ),

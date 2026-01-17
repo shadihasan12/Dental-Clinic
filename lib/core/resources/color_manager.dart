@@ -81,6 +81,7 @@ class ColorManager {
   // Info - Blue
   static const Color info = Color(0xFF2563EB);
   static const Color infoLight = Color(0xFF3B82F6);
+  static const Color infoExtraLight = Color.fromARGB(255, 79, 134, 207);
   static const Color infoBackground = Color(0xFFDBEAFE);
   static const Color infoBorder = Color(0xFFBFDBFE);
 

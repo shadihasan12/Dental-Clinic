@@ -1,70 +1,68 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 
-/// Styled text field for auth pages with label, validation, and optional suffix
-class AuthTextField extends StatelessWidget {
-  const AuthTextField({
+class AuthDropdownField extends StatelessWidget {
+  const AuthDropdownField({
     super.key,
     required this.label,
     required this.hint,
-    required this.controller,
+    required this.value,
+    required this.items,
     this.prefixIcon,
-    this.suffixIcon,
-    this.obscureText = false,
-    this.keyboardType,
-    this.validator,
     this.onChanged,
+    this.validator,
   });
 
   final String label;
   final String hint;
-  final TextEditingController controller;
+  final String? value;
+  final List<String> items;
   final IconData? prefixIcon;
-  final Widget? suffixIcon;
-  final bool obscureText;
-  final TextInputType? keyboardType;
+  final ValueChanged<String?>? onChanged;
   final String? Function(String?)? validator;
-  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// Label
         Text(
           label,
           style: TextStyle(
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
             fontFamily: FontFamily.geist,
-            fontSize: 12.sp
+            fontSize: 12.sp,
           ),
         ),
         SizedBox(height: 8.h),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          validator: validator,
+
+        /// Dropdown
+        DropdownButtonFormField<String>(
+          value: value,
           onChanged: onChanged,
-          style: TextStyle(
-            color: ColorManager.textPrimary,
-            fontFamily: FontFamily.geist,
-            fontSize: 14.sp
+          validator: validator,
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: ColorManager.textTertiary,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
               color: ColorManager.textTertiary,
               fontFamily: FontFamily.geist,
-              fontSize: 12.sp
+              fontSize: 12.sp,
             ),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
+                ? Icon(
+                    prefixIcon,
+                    color: ColorManager.textTertiary,
+                    size: 20.w,
+                  )
                 : null,
-            suffixIcon: suffixIcon,
             filled: true,
             fillColor: ColorManager.gray50,
             border: _buildBorder(BorderSide.none),
@@ -83,6 +81,21 @@ class AuthTextField extends StatelessWidget {
               vertical: 16.h,
             ),
           ),
+          items: items
+              .map(
+                (item) => DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      fontFamily: FontFamily.geist,
+                      fontSize: 14.sp,
+                      color: ColorManager.textPrimary,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ],
     );
