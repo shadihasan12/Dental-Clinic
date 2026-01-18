@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -42,11 +43,10 @@ class GradientHeader extends StatelessWidget {
           // Back button at top
           if (showBackButton)
             Positioned(
-              top: MediaQuery.of(context).padding.top + 8.h,
+              top: MediaQuery.of(context).padding.top + 12.h,
               left: 20.w,
               child: _buildBackButton(),
             ),
-
           // Title and subtitle at bottom
           Positioned(
             left: 20.w,

@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +7,6 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-
-// TODO: Import your actual Plan model
-// import 'package:dental_clinic_app/features/plans/data/models/plan_model.dart';
 
 class ChoosePlanPage extends StatefulWidget {
   const ChoosePlanPage({super.key});
@@ -21,50 +19,70 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
   int? _selectedPlanId;
   bool _isYearly = false;
 
-  // TODO: Replace with actual data from API/BLoC
   final List<Map<String, dynamic>> _plans = [
     {
       "id": 1,
       "name": "Starter",
       "description":
-          "Designed for new and growing clinics, the Starter Plan provides all the essential tools to digitize your practice.",
+          "Designed for new and growing clinics, with one doctor and one assistant",
       "price_monthly": "7.50",
       "price_yearly": "75.00",
       "max_users": 1,
       "max_patients": 500,
       "max_storage_mb": 512,
       "supports_trial": 1,
-      "trial_period_days": 7,
+      "trial_period_days": 30,
       "is_active": true,
       "features": [
-        "Up to 500 patients",
-        "12 team members",
-        "512 MB storage",
-        "Appointment system",
-        "Digital records",
+        "Unlimited patients",
+        "1 doctor and 1 assistant",
+        "2 GB storage",
+        "All features included",
+        "24/7 support",
       ],
     },
     {
       "id": 2,
-      "name": "Professional",
+      "name": "Growing",
       "description":
-          "Built for established clinics and growing teams ready to scale with unlimited capacity.",
+          "Built for established clinics and growing teams with unlimited capacity.",
       "price_monthly": "15.90",
       "price_yearly": "159.00",
       "max_users": 4,
       "max_patients": 10000,
       "max_storage_mb": 10240,
       "supports_trial": 1,
-      "trial_period_days": 14,
+      "trial_period_days": 30,
       "is_active": true,
       "is_popular": true,
       "features": [
         "Unlimited patients",
-        "Unlimited users",
-        "10 GB storage",
-        "Advanced analytics",
-        "API access",
+        "Up to 4 doctors",
+        "4 GB storage",
+        "All features included",
         "Priority support",
+      ],
+    },
+    {
+      "id": 3,
+      "name": "Professional",
+      "description": "For large clinics or centers with multiple branches",
+      "price_monthly": "22.90",
+      "price_yearly": "228.00",
+      "max_users": 99999,
+      "max_patients": 99999,
+      "max_storage_mb": 99999,
+      "supports_trial": 0,
+      "trial_period_days": 30,
+      "is_active": true,
+      "is_popular": false,
+      "features": [
+        "Unlimited patients",
+        "Unlimited doctors & assistants",
+        "10 GB storage per account",
+        "Advanced analytics",
+        "Priority support",
+        "Admin role included",
       ],
     },
   ];
@@ -141,12 +159,15 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                 child: Center(
                   child: Text(
                     'Monthly',
-                    style: TextStyleManager.bodyMedium.copyWith(
+                    style: TextStyle(
                       color: !_isYearly
                           ? ColorManager.textPrimary
                           : ColorManager.textSecondary,
-                      fontWeight:
-                          !_isYearly ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight: !_isYearly
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      fontFamily: FontFamily.geist,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -177,12 +198,15 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                     children: [
                       Text(
                         'Yearly',
-                        style: TextStyleManager.bodyMedium.copyWith(
+                        style: TextStyle(
                           color: _isYearly
                               ? ColorManager.textPrimary
                               : ColorManager.textSecondary,
-                          fontWeight:
-                              _isYearly ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: _isYearly
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          fontFamily: FontFamily.geist,
+                          fontSize: 14.sp,
                         ),
                       ),
                       SizedBox(width: 6.w),
@@ -197,10 +221,11 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         ),
                         child: Text(
                           'Save 17%',
-                          style: TextStyleManager.labelSmall.copyWith(
+                          style: TextStyle(
                             color: ColorManager.white,
                             fontWeight: FontWeight.w600,
                             fontSize: 10.sp,
+                            fontFamily: FontFamily.geist,
                           ),
                         ),
                       ),
@@ -254,10 +279,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      ColorManager.primary,
-                      ColorManager.primaryDark,
-                    ],
+                    colors: [ColorManager.primary, ColorManager.primaryDark],
                   ),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(14.r),
@@ -267,10 +289,12 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                 child: Center(
                   child: Text(
                     '⭐ MOST POPULAR',
-                    style: TextStyleManager.labelSmall.copyWith(
+                    style: TextStyle(
                       color: ColorManager.white,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
+                      fontFamily: FontFamily.geist,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ),
@@ -290,16 +314,20 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           children: [
                             Text(
                               plan['name'],
-                              style: TextStyleManager.headlineSmall.copyWith(
+                              style: TextStyle(
                                 color: ColorManager.textPrimary,
                                 fontWeight: FontWeight.w700,
+                                fontFamily: FontFamily.geist,
+                                fontSize: 18.sp,
                               ),
                             ),
                             SizedBox(height: 4.h),
                             Text(
                               plan['description'],
-                              style: TextStyleManager.bodySmall.copyWith(
+                              style: TextStyle(
                                 color: ColorManager.textSecondary,
+                                fontFamily: FontFamily.geist,
+                                fontSize: 13.sp,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -342,9 +370,11 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                     children: [
                       Text(
                         '\$$price',
-                        style: TextStyleManager.headlineLarge.copyWith(
+                        style: TextStyle(
                           color: ColorManager.primary,
                           fontWeight: FontWeight.w800,
+                          fontFamily: FontFamily.geist,
+                          fontSize: 22.sp,
                         ),
                       ),
                       SizedBox(width: 4.w),
@@ -352,8 +382,10 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         padding: EdgeInsets.only(bottom: 4.h),
                         child: Text(
                           period,
-                          style: TextStyleManager.bodyMedium.copyWith(
+                          style: TextStyle(
                             color: ColorManager.textSecondary,
+                            fontFamily: FontFamily.geist,
+                            fontSize: 14.sp,
                           ),
                         ),
                       ),
@@ -374,9 +406,11 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                       ),
                       child: Text(
                         '$trialDays-day free trial',
-                        style: TextStyleManager.labelSmall.copyWith(
+                        style: TextStyle(
                           color: ColorManager.primary,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: FontFamily.geist,
+                          fontSize: 10.sp,
                         ),
                       ),
                     ),
@@ -399,7 +433,9 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             width: 20.w,
                             height: 20.w,
                             decoration: BoxDecoration(
-                              color: ColorManager.success.withValues(alpha: 0.1),
+                              color: ColorManager.success.withValues(
+                                alpha: 0.1,
+                              ),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -412,8 +448,10 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           Expanded(
                             child: Text(
                               feature,
-                              style: TextStyleManager.bodySmall.copyWith(
+                              style: TextStyle(
                                 color: ColorManager.textPrimary,
+                                fontFamily: FontFamily.geist,
+                                fontSize: 12.sp,
                               ),
                             ),
                           ),
@@ -453,10 +491,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   // Pass the selected plan
                   context.pushNamed(
                     AppRoutesNames.chooseClinicName,
-                    extra: {
-                      'planId': _selectedPlanId,
-                      'isYearly': _isYearly,
-                    },
+                    extra: {'planId': _selectedPlanId, 'isYearly': _isYearly},
                   );
                 }
               : null,

@@ -1,6 +1,10 @@
+import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
+import 'package:dental_clinic_app/features/patients/presentation/pages/case_detail_page.dart';
+import 'package:dental_clinic_app/features/patients/presentation/pages/new_case_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/features/onboarding/presentation/pages/onboarding_page.dart';
@@ -26,6 +30,7 @@ class RoutesManager {
     _appRouter = GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
+      // TODO: Change to /onboarding
       initialLocation: '/onboarding',
       routes: [
         // Onboarding
@@ -93,7 +98,10 @@ class RoutesManager {
           name: AppRoutesNames.chooseClinicName,
           pageBuilder: (context, state) {
             return CupertinoPage(
-              child: const ChooseClinicNamePage(),
+              child: BlocProvider(
+                create: (context) => AuthBloc(),
+                child: const ChooseClinicNamePage(),
+              ),
             );
           },
         ),
@@ -135,7 +143,36 @@ class RoutesManager {
             );
           },
         ),
-
+        // Case routes
+        GoRoute(
+          path: '/patients/:patientId/cases/new',
+          name: AppRoutesNames.newCase,
+          pageBuilder: (context, state) {
+            final patientId = state.pathParameters['patientId'] ?? '';
+            final extra = state.extra as Map<String, dynamic>?;
+            final patientName = extra?['patientName'] ?? 'Unknown';
+            return CupertinoPage(
+              child: CreateCasePage(
+                patientId: patientId,
+                patientName: patientName,
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/cases/:caseId',
+          name: AppRoutesNames.caseDetails,
+          pageBuilder: (context, state) {
+            final caseId = state.pathParameters['caseId'] ?? '';
+            return CupertinoPage(
+              child: CaseDetailsPage(caseId: caseId),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
         // Appointment Routes
         GoRoute(
           path: '/appointments/book',

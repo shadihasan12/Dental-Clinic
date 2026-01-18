@@ -27,6 +27,10 @@ class AppRoutesNames {
   static const String patientDetails = 'patientDetails';
   static const String addPatient = 'addPatient';
 
+  // Case Routes
+  static const String caseDetails = 'caseDetails';
+  static const String newCase = 'newCase';
+
   // Doctors/Dentists Routes
   static const String doctors = 'doctors';
   static const String doctorDetails = 'doctorDetails';
