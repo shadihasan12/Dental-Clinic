@@ -17,7 +17,7 @@ class _PatientsListPageState extends State<PatientsListPage> {
   final _searchController = TextEditingController();
   String _selectedFilter = 'All';
 
-  final List<String> _filters = ['All', 'Active', 'New', 'Overdue'];
+  final List<String> _filters = ['All', 'New'];
 
   // Sample data - in production would come from bloc/provider
   final List<Patient> _patients = const [

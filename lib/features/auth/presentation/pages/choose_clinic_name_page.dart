@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +15,7 @@ class ChooseClinicNamePage extends StatefulWidget {
   final int? planId;
   final bool isYearly;
 
-  const ChooseClinicNamePage({
-    super.key,
-    this.planId,
-    this.isYearly = false,
-  });
+  const ChooseClinicNamePage({super.key, this.planId, this.isYearly = false});
 
   @override
   State<ChooseClinicNamePage> createState() => _ChooseClinicNamePageState();
@@ -55,11 +53,6 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
-      // TODO: Implement actual clinic creation logic with BLoC
-      // This would typically:
-      // 1. Create the clinic with the selected plan
-      // 2. Navigate to the dashboard or onboarding flow
-
       await Future.delayed(const Duration(seconds: 2)); // Simulated delay
 
       if (mounted) {
@@ -71,186 +64,135 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
           message: 'Your clinic has been created!',
         );
 
-        context.read<AuthBloc>().add(const AuthEvent.signupSubmitted());
+        context.read<AuthBloc>().add(
+          AuthEvent.signupNameChanged(_clinicNameController.text),
+        );
 
-
-        // Navigate to dashboard or next step
-        // context.go('/dashboard');
+        // Navigate to root page
+        context.goNamed(AppRoutesNames.root);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(),
-      child: Scaffold(
-        backgroundColor: ColorManager.white,
-        body: Column(
-          children: [
-            // Gradient Header
-            GradientHeader(
-              title: 'Name Your Clinic',
-              subtitle: 'Choose a name that represents your practice',
-              height: 200.h,
-              showBackButton: true,
-              onBackPressed: () => context.pop(),
-            ),
-      
-            // Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: PaddingManager.horizontalPadding,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 32.h),
-      
-                      // Clinic illustration
-                      Center(
-                        child: Container(
-                          width: 120.w,
-                          height: 120.h,
-                          decoration: BoxDecoration(
-                            color: ColorManager.primary10,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.local_hospital_outlined,
-                            size: 56.w,
-                            color: ColorManager.primary,
-                          ),
+    return Scaffold(
+      backgroundColor: ColorManager.white,
+      body: Column(
+        children: [
+          // Gradient Header
+          GradientHeader(
+            title: 'Name Your Clinic',
+            subtitle: 'Choose a name that represents your practice',
+            height: 200.h,
+            showBackButton: true,
+            onBackPressed: () => context.pop(),
+          ),
+
+          // Content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: PaddingManager.horizontalPadding,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 32.h),
+
+                    // Clinic illustration
+                    Center(
+                      child: Container(
+                        width: 120.w,
+                        height: 120.h,
+                        decoration: BoxDecoration(
+                          color: ColorManager.primary10,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.local_hospital_outlined,
+                          size: 56.w,
+                          color: ColorManager.primary,
                         ),
                       ),
-      
-                      SizedBox(height: 32.h),
-      
-                      // Info text
-                      Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: ColorManager.info.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(
-                            color: ColorManager.info.withValues(alpha: 0.3),
-                          ),
+                    ),
+
+                    SizedBox(height: 32.h),
+
+                    // Info text
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: ColorManager.infoLight.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: ColorManager.infoLight.withValues(alpha: 0.3),
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              size: 20.w,
-                              color: ColorManager.info,
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Text(
-                                'This name will be displayed to your patients and team members. You can change it later in settings.',
-                                style: TextStyleManager.bodySmall.copyWith(
-                                  color: ColorManager.info,
-                                ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 20.w,
+                            color: ColorManager.infoExtraLight,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              'This name will be displayed for you and your team members inside the app. You can change it later in settings.',
+                              style: TextStyle(
+                                color: ColorManager.infoExtraLight,
+                                fontFamily: FontFamily.geist,
+                                fontSize: 14.sp,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-      
-                      SizedBox(height: 24.h),
-      
-                      // Clinic Name Field
-                      AuthTextField(
-                        label: 'Clinic Name',
-                        hint: 'e.g., Bright Smile Dental Clinic',
-                        controller: _clinicNameController,
-                        prefixIcon: Icons.business_outlined,
-                        keyboardType: TextInputType.text,
-                        validator: _validateClinicName,
-                        onChanged: (value) {
+                    ),
+
+                    SizedBox(height: 24.h),
+
+                    // Clinic Name Field
+                    AuthTextField(
+                      label: 'Clinic Name',
+                      hint: 'e.g., Bright Smile Dental Clinic',
+                      controller: _clinicNameController,
+                      prefixIcon: Icons.business_outlined,
+                      keyboardType: TextInputType.text,
+                      validator: _validateClinicName,
+                      onChanged: (value) {
+                        setState(() {
                           if (_showValidationErrors) {
                             _formKey.currentState?.validate();
                           }
-                        },
-                      ),
-      
-                      SizedBox(height: 16.h),
-      
-                      // Character counter
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '${_clinicNameController.text.length}/100',
-                          style: TextStyleManager.bodySmall.copyWith(
-                            color: ColorManager.textSecondary,
-                          ),
+                        });
+                      },
+                    ),
+
+                    SizedBox(height: 16.h),
+
+                    // Character counter
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${_clinicNameController.text.length}/100',
+                        style: TextStyleManager.bodySmall.copyWith(
+                          color: ColorManager.textSecondary,
                         ),
                       ),
-      
-                      SizedBox(height: 32.h),
-      
-                      // Examples section
-                      Text(
-                        'Examples',
-                        style: TextStyleManager.titleMedium.copyWith(
-                          color: ColorManager.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-      
-                      SizedBox(height: 12.h),
-      
-                      _buildExampleChip('Smile Care Dental'),
-                      _buildExampleChip('Downtown Family Dentistry'),
-                      _buildExampleChip('Premier Dental Studio'),
-                    ],
-                  ),
+                    ),
+
+                    SizedBox(height: 32.h),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-        bottomNavigationBar: _buildBottomButton(),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildExampleChip(String name) {
-    return GestureDetector(
-      onTap: () {
-        _clinicNameController.text = name;
-        setState(() {});
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 8.h),
-        padding: EdgeInsets.symmetric(
-          horizontal: 14.w,
-          vertical: 10.h,
-        ),
-        decoration: BoxDecoration(
-          color: ColorManager.gray100,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: ColorManager.gray300),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.lightbulb_outline,
-              size: 16.w,
-              color: ColorManager.textSecondary,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              name,
-              style: TextStyleManager.bodySmall.copyWith(
-                color: ColorManager.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: _buildBottomButton(),
     );
   }
 

@@ -1,24 +1,22 @@
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:go_router/go_router.dart';
 
 /// Dashboard header with gradient background and user welcome message
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({
     super.key,
-    this.userName = 'Dr. Smith',
-    this.portalType = 'Doctor Portal',
-    this.clinicName,
-    this.isClinicAccount = false,
+    required this.userName,
+    required this.clinicName,
     this.onSearchTap,
     this.onNotificationTap,
   });
 
   final String userName;
-  final String portalType;
-  final String? clinicName;
-  final bool isClinicAccount;
+  final String clinicName;
   final VoidCallback? onSearchTap;
   final VoidCallback? onNotificationTap;
 
@@ -38,17 +36,27 @@ class DashboardHeader extends StatelessWidget {
         children: [
           // Decorative circles
           Positioned(
-            top: -32.h, right: -32.w,
+            top: -32.h,
+            right: -32.w,
             child: Container(
-              width: 160.w, height: 160.w,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: ColorManager.white.withValues(alpha: 0.1)),
+              width: 160.w,
+              height: 160.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.white.withValues(alpha: 0.1),
+              ),
             ),
           ),
           Positioned(
-            top: 80.h, left: -24.w,
+            top: 80.h,
+            left: -24.w,
             child: Container(
-              width: 120.w, height: 120.w,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: ColorManager.white.withValues(alpha: 0.05)),
+              width: 120.w,
+              height: 120.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.white.withValues(alpha: 0.05),
+              ),
             ),
           ),
           // Content
@@ -61,7 +69,7 @@ class DashboardHeader extends StatelessWidget {
                 children: [
                   _buildTopRow(),
                   SizedBox(height: 16.h),
-                  _buildPortalBadge(),
+                  _buildClinicBadge(context),
                 ],
               ),
             ),
@@ -79,9 +87,24 @@ class DashboardHeader extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Welcome back,', style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.white.withValues(alpha: 0.8))),
+            Text(
+              'Welcome back,',
+              style: TextStyle(
+                fontFamily: FontFamily.geist,
+                fontSize: 14.sp,
+                color: ColorManager.white.withValues(alpha: 0.8),
+              ),
+            ),
             SizedBox(height: 4.h),
-            Text(userName, style: TextStyleManager.headlineMedium.copyWith(color: ColorManager.white, fontWeight: FontWeight.bold)),
+            Text(
+              userName,
+              style: TextStyle(
+                fontFamily: FontFamily.geist,
+                fontSize: 20.sp,
+                color: ColorManager.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         Row(
@@ -95,20 +118,40 @@ class DashboardHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildPortalBadge() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: ColorManager.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 8.w, height: 8.w, decoration: const BoxDecoration(color: Color(0xFF4ADE80), shape: BoxShape.circle)),
-          SizedBox(width: 8.w),
-          Text(portalType, style: TextStyleManager.bodySmall.copyWith(color: ColorManager.white.withValues(alpha: 0.9), fontWeight: FontWeight.w500)),
-        ],
+  Widget _buildClinicBadge(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.pushNamed(AppRoutesNames.myClinics);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: ColorManager.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 8.w,
+              height: 8.w,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4ADE80),
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            Text(
+              clinicName,
+              style: TextStyle(
+                fontFamily: FontFamily.geist,
+                fontSize: 12.sp,
+                color: ColorManager.white.withValues(alpha: 0.9),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -124,8 +167,12 @@ class _HeaderIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40.w, height: 40.w,
-        decoration: BoxDecoration(color: ColorManager.white.withValues(alpha: 0.2), shape: BoxShape.circle),
+        width: 40.w,
+        height: 40.w,
+        decoration: BoxDecoration(
+          color: ColorManager.white.withValues(alpha: 0.2),
+          shape: BoxShape.circle,
+        ),
         child: Icon(icon, color: ColorManager.white, size: 20.w),
       ),
     );
@@ -142,8 +189,16 @@ class _NotificationButton extends StatelessWidget {
       children: [
         _HeaderIconButton(icon: Icons.notifications_outlined, onTap: onTap),
         Positioned(
-          right: 10.w, top: 10.h,
-          child: Container(width: 8.w, height: 8.w, decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle)),
+          right: 10.w,
+          top: 10.h,
+          child: Container(
+            width: 8.w,
+            height: 8.w,
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+          ),
         ),
       ],
     );

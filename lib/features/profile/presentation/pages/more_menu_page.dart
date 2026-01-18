@@ -1,3 +1,6 @@
+import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
+import 'package:dental_clinic_app/features/subscription/presentation/widgets/subscription_status_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +13,18 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 
 class MoreMenuPage extends StatelessWidget {
-  const MoreMenuPage({super.key});
+  MoreMenuPage({super.key});
+
+  UserSubscriptionEntity subscription = UserSubscriptionEntity(
+    id: 'sub_123',
+    userId: 'user_123',
+    planTier: PlanTier.trial,
+    status: SubscriptionStatus.trial,
+    billingCycle: BillingCycle.monthly,
+    startDate: DateTime.now(),
+    currentPeriodEnd: DateTime.now().add(const Duration(days: 7)),
+    trialEndDate: DateTime.now().add(const Duration(days: 7)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +42,25 @@ class MoreMenuPage extends StatelessWidget {
                   // User Stats
                   _buildUserStats(),
                   SizedBox(height: 24.h),
+
+                  // Subscription status card
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: SubscriptionStatusCard(
+                      subscription: subscription,
+                      onUpgrade: () {
+                        context.pushNamed(AppRoutesNames.pricing);
+                      },
+                      onManage: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Manage subscription coming soon'),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
 
                   // Account Settings
                   _buildSectionTitle('Account Settings'),
@@ -146,10 +179,7 @@ class MoreMenuPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: ColorManager.white,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: ColorManager.white,
-                width: 3,
-              ),
+              border: Border.all(color: ColorManager.white, width: 3),
             ),
             child: ClipOval(
               child: Icon(
@@ -224,11 +254,7 @@ class MoreMenuPage extends StatelessWidget {
   }
 
   Widget _buildStatDivider() {
-    return Container(
-      width: 1.w,
-      height: 40.h,
-      color: ColorManager.divider,
-    );
+    return Container(width: 1.w, height: 40.h, color: ColorManager.divider);
   }
 
   Widget _buildSectionTitle(String title) {
@@ -251,11 +277,7 @@ class MoreMenuPage extends StatelessWidget {
             children: [
               _buildMenuItem(item),
               if (index < items.length - 1)
-                Divider(
-                  height: 1.h,
-                  indent: 56.w,
-                  color: ColorManager.divider,
-                ),
+                Divider(height: 1.h, indent: 56.w, color: ColorManager.divider),
             ],
           );
         }).toList(),
