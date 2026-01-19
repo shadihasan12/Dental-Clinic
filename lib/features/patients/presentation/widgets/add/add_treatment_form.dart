@@ -307,7 +307,7 @@ class _AddTreatmentFormState extends State<AddTreatmentForm> {
 
   Widget _buildExtraInfoContent() {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(0.w),
       decoration: BoxDecoration(
         color: ColorManager.gray50,
         borderRadius: BorderRadiusManager.lg,

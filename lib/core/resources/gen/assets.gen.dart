@@ -12,6 +12,38 @@
 class Assets {
   const Assets._();
 
+  /// File path: assets/icons/case/teeth/canine.svg
+  static const String iconsCaseTeethCanine =
+      'assets/icons/case/teeth/canine.svg';
+
+  /// File path: assets/icons/case/teeth/central_inc.svg
+  static const String iconsCaseTeethCentralInc =
+      'assets/icons/case/teeth/central_inc.svg';
+
+  /// File path: assets/icons/case/teeth/first_molar.svg
+  static const String iconsCaseTeethFirstMolar =
+      'assets/icons/case/teeth/first_molar.svg';
+
+  /// File path: assets/icons/case/teeth/first_pre_molar.svg
+  static const String iconsCaseTeethFirstPreMolar =
+      'assets/icons/case/teeth/first_pre_molar.svg';
+
+  /// File path: assets/icons/case/teeth/lateral_inc.svg
+  static const String iconsCaseTeethLateralInc =
+      'assets/icons/case/teeth/lateral_inc.svg';
+
+  /// File path: assets/icons/case/teeth/second_molar.svg
+  static const String iconsCaseTeethSecondMolar =
+      'assets/icons/case/teeth/second_molar.svg';
+
+  /// File path: assets/icons/case/teeth/second_pre_molar.svg
+  static const String iconsCaseTeethSecondPreMolar =
+      'assets/icons/case/teeth/second_pre_molar.svg';
+
+  /// File path: assets/icons/case/teeth/wisdom.svg
+  static const String iconsCaseTeethWisdom =
+      'assets/icons/case/teeth/wisdom.svg';
+
   /// File path: assets/icons/root/appointment.svg
   static const String iconsRootAppointment =
       'assets/icons/root/appointment.svg';
@@ -30,6 +62,14 @@ class Assets {
 
   /// List of all assets
   static List<String> get values => [
+    iconsCaseTeethCanine,
+    iconsCaseTeethCentralInc,
+    iconsCaseTeethFirstMolar,
+    iconsCaseTeethFirstPreMolar,
+    iconsCaseTeethLateralInc,
+    iconsCaseTeethSecondMolar,
+    iconsCaseTeethSecondPreMolar,
+    iconsCaseTeethWisdom,
     iconsRootAppointment,
     iconsRootHome,
     iconsRootMenu,

@@ -1,7 +1,9 @@
+import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:flutter_svg/svg.dart';
 
 /// Interactive tooth chart for selecting teeth
 /// Uses standard dental numbering (1-32 for adults)
@@ -19,12 +21,46 @@ class ToothChart extends StatelessWidget {
 
   // Upper jaw: 1-16 (right to left from patient's perspective)
   // Lower jaw: 17-32 (left to right from patient's perspective)
-  static const upperTeeth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-  static const lowerTeeth = [32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17];
+  static const upperTeeth = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+  ];
+  static const lowerTeeth = [
+    32,
+    31,
+    30,
+    29,
+    28,
+    27,
+    26,
+    25,
+    24,
+    23,
+    22,
+    21,
+    20,
+    19,
+    18,
+    17,
+  ];
 
   void _toggleTooth(int toothNumber) {
     if (!enabled || onSelectionChanged == null) return;
-    
+
     final newSelection = List<int>.from(selectedTeeth);
     if (newSelection.contains(toothNumber)) {
       newSelection.remove(toothNumber);
@@ -37,7 +73,7 @@ class ToothChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(0.w),
       decoration: BoxDecoration(
         color: ColorManager.gray50,
         borderRadius: BorderRadius.circular(12.r),
@@ -56,7 +92,7 @@ class ToothChart extends StatelessWidget {
             ),
           ),
           SizedBox(height: 12.h),
-          
+
           // Upper jaw label
           Text(
             'Upper Jaw',
@@ -67,29 +103,29 @@ class ToothChart extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          
+
           // Upper teeth row
-          _buildTeethRow(upperTeeth),
-          
-          SizedBox(height: 8.h),
-          
-          // Divider representing gum line
-          Container(
-            height: 2.h,
-            margin: EdgeInsets.symmetric(horizontal: 8.w),
-            decoration: BoxDecoration(
-              color: ColorManager.gray300,
-              borderRadius: BorderRadius.circular(1.r),
-            ),
-          ),
-          
-          SizedBox(height: 8.h),
-          
-          // Lower teeth row
-          _buildTeethRow(lowerTeeth),
-          
+          // _buildTeethRow(upperTeeth),
+
+          // SizedBox(height: 8.h),
+          _buildTeeth(),
+
+          // // Divider representing gum line
+          // Container(
+          //   height: 2.h,
+          //   margin: EdgeInsets.symmetric(horizontal: 8.w),
+          //   decoration: BoxDecoration(
+          //     color: ColorManager.gray300,
+          //     borderRadius: BorderRadius.circular(1.r),
+          //   ),
+          // ),
+
+          // SizedBox(height: 8.h),
+
+          // // Lower teeth row
+          // _buildTeethRow(lowerTeeth),
           SizedBox(height: 4.h),
-          
+
           // Lower jaw label
           Text(
             'Lower Jaw',
@@ -99,13 +135,171 @@ class ToothChart extends StatelessWidget {
               color: ColorManager.textSecondary,
             ),
           ),
-          
+
           if (selectedTeeth.isNotEmpty) ...[
             SizedBox(height: 12.h),
             _buildSelectedTeethInfo(),
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildTeeth() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 500.h,
+          width: double.infinity,
+          child: SizedBox.shrink(),
+        ),
+        Positioned(
+          left: 1,
+          bottom: 1,
+          height: 50.h,
+          width: 50.w,
+          child: SvgPicture.asset(Assets.iconsCaseTeethWisdom),
+        ),
+        Positioned(
+          left: 10,
+          bottom: 37,
+          height: 50.h,
+          width: 50.w,
+          child: SvgPicture.asset(Assets.iconsCaseTeethSecondMolar),
+        ),
+        Positioned(
+          left: 20,
+          bottom: 75,
+          width: 50.w,
+          height: 50.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethFirstMolar),
+        ),
+        Positioned(
+          left: 35,
+          bottom: 113,
+          width: 40.w,
+          height: 40.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethSecondPreMolar),
+        ),
+        Positioned(
+          left: 50,
+          bottom: 138,
+          width: 40.w,
+          height: 40.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethFirstPreMolar),
+        ),
+        Positioned(
+          left: 68,
+          bottom: 165,
+          width: 35.w,
+          height: 35.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethCanine),
+        ),
+        Positioned(
+          left: 88,
+          bottom: 185,
+          width: 35.w,
+          height: 35.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethLateralInc),
+        ),
+        Positioned(
+          left: 115,
+          bottom: 190,
+          width: 40.w,
+          height: 40.h,
+          child: SvgPicture.asset(Assets.iconsCaseTeethCentralInc),
+        ),
+
+        // RIGHT
+        Positioned(
+          right: 1,
+          bottom: 1,
+          height: 50.h,
+          width: 50.w,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethWisdom),
+          ),
+        ),
+        Positioned(
+          right: 10,
+          bottom: 37,
+          height: 50.h,
+          width: 50.w,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethSecondMolar),
+          ),
+        ),
+        Positioned(
+          right: 20,
+          bottom: 75,
+          width: 50.w,
+          height: 50.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethFirstMolar),
+          ),
+        ),
+        Positioned(
+          right: 35,
+          bottom: 113,
+          width: 40.w,
+          height: 40.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethSecondPreMolar),
+          ),
+        ),
+        Positioned(
+          right: 50,
+          bottom: 138,
+          width: 40.w,
+          height: 40.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethFirstPreMolar),
+          ),
+        ),
+        Positioned(
+          right: 68,
+          bottom: 165,
+          width: 35.w,
+          height: 35.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethCanine),
+          ),
+        ),
+        Positioned(
+          right: 88,
+          bottom: 185,
+          width: 35.w,
+          height: 35.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethLateralInc),
+          ),
+        ),
+        Positioned(
+          right: 115,
+          bottom: 190,
+          width: 40.w,
+          height: 40.h,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+            child: SvgPicture.asset(Assets.iconsCaseTeethCentralInc),
+          ),
+        ),
+      ],
     );
   }
 
@@ -118,7 +312,7 @@ class ToothChart extends StatelessWidget {
 
   Widget _buildTooth(int toothNumber) {
     final isSelected = selectedTeeth.contains(toothNumber);
-    
+
     return GestureDetector(
       onTap: () => _toggleTooth(toothNumber),
       child: Container(
@@ -140,7 +334,9 @@ class ToothChart extends StatelessWidget {
               fontSize: 8.sp,
               fontFamily: FontFamily.geist,
               fontWeight: FontWeight.w500,
-              color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+              color: isSelected
+                  ? ColorManager.white
+                  : ColorManager.textSecondary,
             ),
           ),
         ),
@@ -150,7 +346,7 @@ class ToothChart extends StatelessWidget {
 
   Widget _buildSelectedTeethInfo() {
     final sortedTeeth = List<int>.from(selectedTeeth)..sort();
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -160,11 +356,7 @@ class ToothChart extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.check_circle,
-            size: 16.w,
-            color: ColorManager.primary,
-          ),
+          Icon(Icons.check_circle, size: 16.w, color: ColorManager.primary),
           SizedBox(width: 8.w),
           Flexible(
             child: Text(

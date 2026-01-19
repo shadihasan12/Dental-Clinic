@@ -65,6 +65,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/icons/root/
+    - assets/icons/case/teeth/
     - assets/images/
     - .env
 
