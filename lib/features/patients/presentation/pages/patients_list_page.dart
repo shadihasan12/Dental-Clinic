@@ -68,7 +68,7 @@ class _PatientsListPageState extends State<PatientsListPage> {
                       final patient = _patients[index];
                       return PatientCard(
                         patient: patient,
-                        onTap: () => context.pushNamed(AppRoutesNames.patientDetails, pathParameters: {'id': patient.id}),
+                        onTap: () => context.pushNamed(AppRoutesNames.patientDetails, extra: patient.id),
                       );
                     },
                   ),

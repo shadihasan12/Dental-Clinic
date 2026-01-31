@@ -1,9 +1,10 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 
 /// Step 1: Patient personal, contact, and medical information form
-class PatientInfoForm extends StatelessWidget {
+class PatientInfoForm extends StatefulWidget {
   const PatientInfoForm({
     super.key,
     required this.firstNameController,
@@ -32,6 +33,13 @@ class PatientInfoForm extends StatelessWidget {
   final VoidCallback onDateOfBirthTap;
 
   @override
+  State<PatientInfoForm> createState() => _PatientInfoFormState();
+}
+
+class _PatientInfoFormState extends State<PatientInfoForm> {
+  bool _hasAllergies = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -51,35 +59,27 @@ class PatientInfoForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: AppFormField(
-                  label: 'First Name *',
-                  controller: firstNameController,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: AppFormField(
-                  label: 'Last Name *',
-                  controller: lastNameController,
-                ),
-              ),
-            ],
+          AppFormField(
+            label: 'First Name *',
+            controller: widget.firstNameController,
+          ),
+          SizedBox(height: 16.h),
+          AppFormField(
+            label: 'Last Name *',
+            controller: widget.lastNameController,
           ),
           SizedBox(height: 16.h),
           AppDateField(
             label: 'Date of Birth',
-            value: dateOfBirth,
-            onTap: onDateOfBirthTap,
+            value: widget.dateOfBirth,
+            onTap: widget.onDateOfBirthTap,
           ),
           SizedBox(height: 16.h),
           AppDropdownField(
             label: 'Gender',
-            value: selectedGender,
+            value: widget.selectedGender,
             items: const ['Male', 'Female', 'Other'],
-            onChanged: onGenderChanged,
+            onChanged: widget.onGenderChanged,
             hint: 'Select gender',
           ),
         ],
@@ -94,21 +94,21 @@ class PatientInfoForm extends StatelessWidget {
         children: [
           AppFormField(
             label: 'Phone Number *',
-            controller: phoneController,
-            hintText: '(555) 123-4567',
+            controller: widget.phoneController,
+            hintText: '0988026431',
             keyboardType: TextInputType.phone,
           ),
           SizedBox(height: 16.h),
           AppFormField(
             label: 'Email',
-            controller: emailController,
+            controller: widget.emailController,
             hintText: 'patient@email.com',
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 16.h),
           AppFormField(
-            label: 'Street Address',
-            controller: addressController,
+            label: 'Address',
+            controller: widget.addressController,
             hintText: '123 Main Street',
           ),
         ],
@@ -123,16 +123,53 @@ class PatientInfoForm extends StatelessWidget {
         children: [
           AppFormField(
             label: 'Medical History',
-            controller: medicalHistoryController,
+            controller: widget.medicalHistoryController,
             hintText: 'Previous dental procedures, conditions, etc.',
             maxLines: 3,
           ),
           SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Allergies',
-            controller: allergiesController,
-            hintText: 'List any known allergies',
-            maxLines: 2,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Has Allergies',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                    fontFamily: FontFamily.geist,
+                  ),
+                ),
+              ),
+              Switch(
+                value: _hasAllergies,
+                onChanged: (value) {
+                  setState(() {
+                    _hasAllergies = value;
+                    if (!value) {
+                      widget.allergiesController.clear();
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: _hasAllergies
+                ? Column(
+                    children: [
+                      SizedBox(height: 16.h),
+                      AppFormField(
+                        label: 'Allergies',
+                        controller: widget.allergiesController,
+                        hintText: 'List any known allergies',
+                        maxLines: 2,
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),

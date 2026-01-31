@@ -1,14 +1,14 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/widgets.dart';
 
 import '../widgets/details/widgets.dart';
 
@@ -24,6 +24,10 @@ class PatientDetailsPage extends StatefulWidget {
 class _PatientDetailsPageState extends State<PatientDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
+  // Current case to display (either in-progress or selected from history)
+  DentalCase? _displayedCase;
+  bool _isViewingHistoryCase = false;
 
   // Mock data
   final _patient = const _MockPatient(
@@ -42,92 +46,156 @@ class _PatientDetailsPageState extends State<PatientDetailsPage>
     emergencyContact: 'John Johnson - (555) 987-6543',
   );
 
-  final List<_MockCase> _cases = [
-    _MockCase(
-      id: '1',
-      title: 'Root Canal Treatment',
-      startDate: '2024-11-01',
-      endDate: '2024-12-15',
-      status: 'Done',
-      totalCost: 1500,
-      paidAmount: 1500,
-      pendingAmount: 0,
-      // visits: [
-      //   VisitData(
-      //     date: '2024-11-01',
-      //     treatmentTypes: ['X-Ray', 'Consultation'],
-      //     teethTreated: [14],
-      //     summary: 'Initial consultation. X-ray shows infection in tooth 14.',
-      //     attachments: ['xray-14-nov01.jpg'],
-      //   ),
-      //   VisitData(
-      //     date: '2024-11-08',
-      //     treatmentTypes: ['Root Canal'],
-      //     teethTreated: [14],
-      //     summary: 'First session of root canal. Removed infected pulp.',
-      //     attachments: [],
-      //   ),
-      // ],
-    ),
-    _MockCase(
-      id: '2',
-      title: 'Orthodontic Consultation',
-      startDate: '2024-10-15',
-      endDate: null,
-      status: 'In Progress',
-      totalCost: 3500,
-      paidAmount: 1000,
-      pendingAmount: 2500,
-      // visits: [
-      //   VisitData(
-      //     date: '2024-10-15',
-      //     treatmentTypes: ['Consultation', 'X-Ray'],
-      //     teethTreated: [],
-      //     summary: 'Full mouth evaluation for braces.',
-      //     attachments: ['panoramic-xray-oct15.jpg'],
-      //   ),
-      // ],
-    ),
-  ];
+  // In-progress case (nullable)
+  DentalCase? _currentCase;
 
-  final List<_MockPayment> _payments = [
-    _MockPayment(
-      date: '2024-12-15',
-      amount: 500,
-      method: 'Credit Card',
-      isPaid: true,
-      description: 'Root Canal - Final Payment',
-    ),
-    _MockPayment(
-      date: '2024-11-20',
-      amount: 1000,
-      method: 'Insurance',
-      isPaid: true,
-      description: 'Orthodontic - Deposit',
-    ),
-    _MockPayment(
-      date: '2024-12-20',
-      amount: 2500,
-      method: 'Pending',
-      isPaid: false,
-      description: 'Orthodontic - Remaining Balance',
-    ),
-  ];
-
-  double get _totalPaid =>
-      _payments.where((p) => p.isPaid).fold(0.0, (sum, p) => sum + p.amount);
-
-  double get _totalPending =>
-      _payments.where((p) => !p.isPaid).fold(0.0, (sum, p) => sum + p.amount);
+  // Completed cases for history
+  late List<DentalCase> _completedCases;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _loadMockData();
+  }
+
+  void _onTabChanged() {
+    // When switching away from Case tab, reset to current case
+    if (_tabController.index != 1 && _isViewingHistoryCase) {
+      setState(() {
+        _displayedCase = _currentCase;
+        _isViewingHistoryCase = false;
+      });
+    }
+  }
+
+  void _loadMockData() {
+    // Set to null to test empty state, or uncomment to have a case
+    _currentCase = null;
+
+    // Uncomment below to test with an existing case
+    _currentCase = DentalCase(
+      id: '1',
+      patientId: _patient.id,
+      patientName: _patient.name,
+      title: 'Root Canal Treatment',
+      startDate: DateTime(2024, 11, 1),
+      status: 'In Progress',
+      totalCost: 1500,
+      paidAmount: 1000,
+      treatmentItems: [
+        TreatmentItem(
+          id: '3',
+          description: 'Root canal completion and temporary crown',
+          treatmentTypes: [TreatmentType.rootCanal, TreatmentType.crown],
+          selectedTeeth: [14],
+          attachments: [],
+          createdAt: DateTime(2024, 11, 15),
+          isDone: false,
+        ),
+      ],
+    );
+
+    // Completed cases
+    _completedCases = [
+      DentalCase(
+        id: '2',
+        patientId: _patient.id,
+        patientName: _patient.name,
+        title: 'Teeth Cleaning',
+        startDate: DateTime(2024, 8, 15),
+        endDate: DateTime(2024, 8, 15),
+        status: 'Completed',
+        totalCost: 200,
+        paidAmount: 200,
+        treatmentItems: [
+          TreatmentItem(
+            id: '10',
+            description: 'Full teeth cleaning and polishing',
+            treatmentTypes: [TreatmentType.cleaning],
+            selectedTeeth: [],
+            attachments: [],
+            createdAt: DateTime(2024, 8, 15),
+            completedAt: DateTime(2024, 8, 15),
+            isDone: true,
+          ),
+        ],
+      ),
+      DentalCase(
+        id: '3',
+        patientId: _patient.id,
+        patientName: _patient.name,
+        title: 'Cavity Filling',
+        startDate: DateTime(2024, 6, 10),
+        endDate: DateTime(2024, 6, 20),
+        status: 'Completed',
+        totalCost: 350,
+        paidAmount: 350,
+        treatmentItems: [
+          TreatmentItem(
+            id: '20',
+            description: 'Initial examination',
+            treatmentTypes: [TreatmentType.consultation],
+            selectedTeeth: [18, 19],
+            attachments: [],
+            createdAt: DateTime(2024, 6, 10),
+            completedAt: DateTime(2024, 6, 10),
+            isDone: true,
+          ),
+          TreatmentItem(
+            id: '21',
+            description: 'Filling procedure',
+            treatmentTypes: [TreatmentType.filling],
+            selectedTeeth: [18, 19],
+            attachments: [],
+            createdAt: DateTime(2024, 6, 20),
+            completedAt: DateTime(2024, 6, 20),
+            isDone: true,
+          ),
+        ],
+      ),
+    ];
+
+    _displayedCase = _currentCase;
+  }
+
+  void _onHistoryCaseTap(DentalCase selectedCase) {
+    setState(() {
+      _displayedCase = selectedCase;
+      _isViewingHistoryCase = true;
+    });
+
+    // Switch to Case tab
+    _tabController.animateTo(1);
+  }
+
+  void _createNewCase() {
+    // Create an empty case for the patient
+    final newCase = DentalCase(
+      id: '', // Will be generated by backend
+      patientId: _patient.id,
+      patientName: _patient.name,
+      title: '',
+      startDate: DateTime.now(),
+      status: 'In Progress',
+      totalCost: 0,
+      paidAmount: 0,
+      treatmentItems: [],
+    );
+
+    context.pushNamed(
+      AppRoutesNames.addTreatment,
+      extra: {
+        'dentalCase': newCase,
+        'isInitial': true,
+      },
+    );
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -138,273 +206,242 @@ class _PatientDetailsPageState extends State<PatientDetailsPage>
       backgroundColor: ColorManager.scaffoldBackground,
       body: Column(
         children: [
+          // Header with TabBar
           PatientHeader(
             name: _patient.name,
             age: _patient.age,
             gender: _patient.gender,
-            totalPaid: _totalPaid,
-            totalPending: _totalPending,
+            phone: _patient.phone,
             onBackPressed: () => context.pop(),
             onEditPressed: () {
               // TODO: Navigate to edit patient
             },
+            tabController: _tabController,
           ),
+
+          // Tab content
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: PaddingManager.all16,
-                child: Column(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Tab 1: Patient Info
+                _buildInfoTab(),
+
+                // Tab 2: Case
+                _buildCaseTab(),
+
+                // Tab 3: History
+                CaseHistoryTab(
+                  completedCases: _completedCases,
+                  onCaseTap: _onHistoryCaseTap,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoTab() {
+    return SingleChildScrollView(
+      padding: PaddingManager.all16,
+      child: PatientInfoTab(
+        phone: _patient.phone,
+        email: _patient.email,
+        address: _patient.address,
+        medicalHistory: _patient.medicalHistory,
+        dateOfBirth: _patient.dateOfBirth,
+        initiallyExpanded: true,
+      ),
+    );
+  }
+
+  Widget _buildCaseTab() {
+    // If viewing history case, show it
+    if (_isViewingHistoryCase && _displayedCase != null) {
+      return CaseOverviewWidget(
+        dentalCase: _displayedCase!,
+        isReadOnly: true,
+        onPaymentRecorded: () {
+          setState(() {});
+        },
+      );
+    }
+
+    // If no current case, show empty state
+    if (_currentCase == null) {
+      return _buildNoCaseState();
+    }
+
+    // Show current case
+    return CaseOverviewWidget(
+      dentalCase: _currentCase!,
+      isReadOnly: false,
+      onPaymentRecorded: () {
+        setState(() {});
+      },
+      onMarkAsFinished: () {
+        _showMarkAsFinishedDialog();
+      },
+    );
+  }
+
+  Widget _buildNoCaseState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon
+            Container(
+              width: 80.w,
+              height: 80.w,
+              decoration: BoxDecoration(
+                color: ColorManager.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.medical_services_outlined,
+                size: 40.w,
+                color: ColorManager.primary,
+              ),
+            ),
+
+            SizedBox(height: 24.h),
+
+            // Title
+            Text(
+              'No Ongoing Case',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontFamily: FontFamily.geist,
+                fontWeight: FontWeight.w600,
+                color: ColorManager.textPrimary,
+              ),
+            ),
+
+            SizedBox(height: 8.h),
+
+            // Description
+            Text(
+              'This patient doesn\'t have any active treatment case at the moment.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontFamily.geist,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+
+            SizedBox(height: 32.h),
+
+            // Create button
+            GestureDetector(
+              onTap: _createNewCase,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary,
+                  borderRadius: BorderRadiusManager.lg,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    ContactInfoCard(
-                      phone: _patient.phone,
-                      email: _patient.email,
-                      address: _patient.address,
+                    Icon(
+                      Icons.add_circle_outline,
+                      size: 20.w,
+                      color: ColorManager.white,
                     ),
-                    SizedBox(height: 16.h),
-                    _buildTabSection(),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Create New',
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontFamily.geist,
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTabSection() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: ColorManager.white,
-            borderRadius: BorderRadiusManager.lg,
-            boxShadow: [
-              BoxShadow(
-                color: ColorManager.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: TabBar(
-            controller: _tabController,
-            indicator: BoxDecoration(
-              color: ColorManager.primary,
-              borderRadius: BorderRadiusManager.lg,
-            ),
-            labelColor: ColorManager.white,
-            unselectedLabelColor: ColorManager.textSecondary,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: ColorManager.transparent,
-            labelStyle: TextStyleManager.labelLarge,
-            onTap: (index) => setState(() => {}),
-            tabs: const [
-              Tab(text: 'Overview'),
-              Tab(text: 'Cases'),
-              // Tab(text: 'Payments'),
-            ],
+  void _showMarkAsFinishedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Mark as Finished',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontFamily: FontFamily.geist,
+            fontWeight: FontWeight.w600,
+            color: ColorManager.textPrimary,
           ),
         ),
-        SizedBox(height: 16.h),
-        _buildTabContent(),
-      ],
-    );
-  }
-
-  Widget _buildTabContent() {
-    switch (_tabController.index) {
-      case 0:
-        return _buildOverviewTab();
-      case 1:
-        return _buildCasesTab();
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  Widget _buildOverviewTab() {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Medical History',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w500,
-              color: ColorManager.textPrimary,
-            ),
+        content: Text(
+          'Are you sure you want to mark this case as finished?',
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: FontFamily.geist,
+            fontWeight: FontWeight.w400,
+            color: ColorManager.textSecondary,
           ),
-          SizedBox(height: 8.h),
-          Text(
-            _patient.medicalHistory,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w400,
-              color: ColorManager.textSecondary,
-            ),
-          ),
-          SizedBox(height: 20.h),
-          _buildInfoRow('Date of Birth', _patient.dateOfBirth),
-          _buildInfoRow('Insurance Provider', _patient.insuranceProvider),
-          _buildInfoRow('Insurance Number', _patient.insuranceNumber),
-          _buildInfoRow('Emergency Contact', _patient.emergencyContact),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyleManager.bodyMedium.copyWith(
-              color: ColorManager.textSecondary,
-            ),
-          ),
-          SizedBox(width: 16.w),
-          Flexible(
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
             child: Text(
-              value,
-              style: TextStyleManager.bodyMedium.copyWith(
-                color: ColorManager.textPrimary,
-              ),
-              textAlign: TextAlign.end,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCasesTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '${_cases.length} total cases',
-              style: TextStyle(
-                color: ColorManager.textSecondary,
-                fontSize: 14.sp,
-                fontFamily: FontFamily.geist,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            _buildAddButton(
-              'New Case',
-              onTap: () {
-                context.pushNamed(
-                  AppRoutesNames.newCase,
-                  pathParameters: {'patientId': _patient.id},
-                  extra: {'patientName': _patient.name},
-                );
-              },
-            ),
-          ],
-        ),
-        SizedBox(height: 12.h),
-        Column(
-          children: _cases
-              .map(
-                (c) => Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  child: CaseCard(
-                    title: c.title,
-                    startDate: c.startDate,
-                    endDate: c.endDate,
-                    status: c.status,
-                    totalCost: c.totalCost,
-                    paidAmount: c.paidAmount,
-                    pendingAmount: c.pendingAmount,
-                    id: '',
-                    onViewMore: () => context.pushNamed(
-                      AppRoutesNames.caseDetails,
-                      pathParameters: {'caseId': c.id},
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPaymentsTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '${_payments.length} transactions',
-              style: TextStyleManager.bodyMedium.copyWith(
-                color: ColorManager.textSecondary,
-              ),
-            ),
-            _buildAddButton('Record Payment', onTap: () {}),
-          ],
-        ),
-        SizedBox(height: 12.h),
-        Column(
-          children: List.generate(
-            _payments.length,
-            (index) => PaymentCard(
-              description: _payments[index].description,
-              method: _payments[index].method,
-              date: _payments[index].date,
-              amount: _payments[index].amount,
-              isPaid: _payments[index].isPaid,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddButton(String text, {required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: ColorManager.primary,
-          borderRadius: BorderRadiusManager.full,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.add, size: 18.w, color: ColorManager.white),
-            SizedBox(width: 4.w),
-            Text(
-              text,
+              'Cancel',
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontFamily.geist,
                 fontWeight: FontWeight.w500,
-                color: ColorManager.white,
+                color: ColorManager.textPrimary,
               ),
             ),
-          ],
-        ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                // Move current case to completed
+                if (_currentCase != null) {
+                  final completedCase = _currentCase!.copyWith(
+                    status: 'Completed',
+                    endDate: DateTime.now(),
+                  );
+                  _completedCases.insert(0, completedCase);
+                  _currentCase = null;
+                  _displayedCase = null;
+                }
+              });
+            },
+            child: Text(
+              'Confirm',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontFamily.geist,
+                fontWeight: FontWeight.w500,
+                color: ColorManager.primary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Simplified mock classes
+// Mock class
 class _MockPatient {
   final String id, name, gender, phone, email, address, dateOfBirth;
   final String medicalHistory,
@@ -426,38 +463,5 @@ class _MockPatient {
     required this.insuranceProvider,
     required this.insuranceNumber,
     required this.emergencyContact,
-  });
-}
-
-class _MockCase {
-  final String id, title, startDate, status;
-  final String? endDate;
-  final double totalCost, paidAmount, pendingAmount;
-  // final List<VisitData> visits;
-
-  const _MockCase({
-    required this.id,
-    required this.title,
-    required this.startDate,
-    this.endDate,
-    required this.status,
-    required this.totalCost,
-    required this.paidAmount,
-    required this.pendingAmount,
-    // required this.visits,
-  });
-}
-
-class _MockPayment {
-  final String date, method, description;
-  final double amount;
-  final bool isPaid;
-
-  const _MockPayment({
-    required this.date,
-    required this.amount,
-    required this.method,
-    required this.isPaid,
-    required this.description,
   });
 }

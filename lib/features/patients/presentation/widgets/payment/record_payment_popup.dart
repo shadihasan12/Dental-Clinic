@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 enum PaymentMethod {
@@ -80,10 +81,10 @@ class RecordPaymentPopup extends StatefulWidget {
 
 class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   final _amountController = TextEditingController();
+  final _labFeesController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
-  PaymentMethod _selectedMethod = PaymentMethod.cash;
+
   DateTime _selectedDate = DateTime.now();
 
   double get _remainingAmount => widget.totalCost - widget.paidAmount;
@@ -91,34 +92,9 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   @override
   void dispose() {
     _amountController.dispose();
+    _labFeesController.dispose();
     _noteController.dispose();
     super.dispose();
-  }
-
-  void _handleSave() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final payment = PaymentRecord(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        amount: double.parse(_amountController.text),
-        method: _selectedMethod,
-        note: _noteController.text.isEmpty ? null : _noteController.text,
-        date: _selectedDate,
-      );
-      widget.onSave(payment);
-      Navigator.pop(context, payment);
-    }
-  }
-
-  void _selectDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
-    }
   }
 
   void _setFullAmount() {
@@ -189,7 +165,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                 ),
                               ),
                               Text(
-                                widget.caseTitle,
+                                'Patient Name',
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontFamily: FontFamily.geist,
@@ -201,7 +177,10 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                         ),
                         IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.close, color: ColorManager.textSecondary),
+                          icon: Icon(
+                            Icons.close,
+                            color: ColorManager.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -217,18 +196,26 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                       ),
                       child: Column(
                         children: [
-                          _buildSummaryRow('Patient', widget.patientName),
                           SizedBox(height: 8.h),
-                          _buildSummaryRow('Total Cost', '\$${widget.totalCost.toStringAsFixed(2)}'),
+                          _buildSummaryRow(
+                            'Total Cost',
+                            '\$${widget.totalCost.toStringAsFixed(2)}',
+                          ),
                           SizedBox(height: 8.h),
-                          _buildSummaryRow('Already Paid', '\$${widget.paidAmount.toStringAsFixed(2)}', valueColor: ColorManager.success),
+                          _buildSummaryRow(
+                            'Already Paid',
+                            '\$${widget.paidAmount.toStringAsFixed(2)}',
+                            valueColor: ColorManager.success,
+                          ),
                           SizedBox(height: 8.h),
                           Divider(color: ColorManager.gray200),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
                             'Remaining',
                             '\$${_remainingAmount.toStringAsFixed(2)}',
-                            valueColor: _remainingAmount > 0 ? ColorManager.warning : ColorManager.success,
+                            valueColor: _remainingAmount > 0
+                                ? ColorManager.warning
+                                : ColorManager.success,
                             isBold: true,
                           ),
                         ],
@@ -238,153 +225,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     SizedBox(height: 20.h),
 
                     // Amount field
-                    _buildLabel('Amount *'),
-                    SizedBox(height: 6.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _amountController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: '0.00',
-                              prefixText: '\$ ',
-                              hintStyle: TextStyle(
-                                color: ColorManager.textTertiary,
-                                fontFamily: FontFamily.geist,
-                              ),
-                              filled: true,
-                              fillColor: ColorManager.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadiusManager.lg,
-                                borderSide: BorderSide(color: ColorManager.gray200),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadiusManager.lg,
-                                borderSide: BorderSide(color: ColorManager.gray200),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadiusManager.lg,
-                                borderSide: BorderSide(color: ColorManager.primary),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter an amount';
-                              }
-                              final amount = double.tryParse(value);
-                              if (amount == null || amount <= 0) {
-                                return 'Please enter a valid amount';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        GestureDetector(
-                          onTap: _setFullAmount,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-                            decoration: BoxDecoration(
-                              color: ColorManager.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadiusManager.lg,
-                              border: Border.all(color: ColorManager.primary),
-                            ),
-                            child: Text(
-                              'Full',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontFamily: FontFamily.geist,
-                                fontWeight: FontWeight.w500,
-                                color: ColorManager.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Payment method
-                    _buildLabel('Payment Method'),
-                    SizedBox(height: 8.h),
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: PaymentMethod.values.map((method) {
-                        final isSelected = _selectedMethod == method;
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedMethod = method),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                            decoration: BoxDecoration(
-                              color: isSelected ? ColorManager.primary : ColorManager.white,
-                              borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(
-                                color: isSelected ? ColorManager.primary : ColorManager.gray300,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  method.icon,
-                                  size: 16.w,
-                                  color: isSelected ? ColorManager.white : ColorManager.textSecondary,
-                                ),
-                                SizedBox(width: 6.w),
-                                Text(
-                                  method.label,
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontFamily: FontFamily.geist,
-                                    fontWeight: FontWeight.w500,
-                                    color: isSelected ? ColorManager.white : ColorManager.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Date
-                    _buildLabel('Date'),
-                    SizedBox(height: 6.h),
-                    GestureDetector(
-                      onTap: _selectDate,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
-                        decoration: BoxDecoration(
-                          color: ColorManager.white,
-                          borderRadius: BorderRadiusManager.lg,
-                          border: Border.all(color: ColorManager.gray200),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_today, size: 20.w, color: ColorManager.textSecondary),
-                            SizedBox(width: 8.w),
-                            Text(
-                              DateFormat('MMM d, yyyy').format(_selectedDate),
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontFamily: FontFamily.geist,
-                                color: ColorManager.textPrimary,
-                              ),
-                            ),
-                            const Spacer(),
-                            Icon(Icons.arrow_drop_down, color: ColorManager.textSecondary),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _buildAmountField(),
 
                     SizedBox(height: 16.h),
 
@@ -421,11 +262,9 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
 
                     // Save button
                     PrimaryButton(
-                      text: 'Record Payment',
-                      onPressed: _handleSave,
+                      text: 'Save',
+                      onPressed: () => context.pop(),
                     ),
-
-                    SizedBox(height: 16.h),
                   ],
                 ),
               ),
@@ -435,6 +274,85 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
       ),
     );
   }
+
+  Column _buildAmountField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel('Amount *'),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _amountController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                ],
+                decoration: InputDecoration(
+                  hintText: '0.00',
+                  prefixText: '\$ ',
+                  hintStyle: TextStyle(
+                    color: ColorManager.textTertiary,
+                    fontFamily: FontFamily.geist,
+                  ),
+                  filled: true,
+                  fillColor: ColorManager.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadiusManager.lg,
+                    borderSide: BorderSide(color: ColorManager.gray200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadiusManager.lg,
+                    borderSide: BorderSide(color: ColorManager.gray200),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadiusManager.lg,
+                    borderSide: BorderSide(color: ColorManager.primary),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an amount';
+                  }
+                  final amount = double.tryParse(value);
+                  if (amount == null || amount <= 0) {
+                    return 'Please enter a valid amount';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            SizedBox(width: 8.w),
+            GestureDetector(
+              onTap: _setFullAmount,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadiusManager.lg,
+                  border: Border.all(color: ColorManager.primary),
+                ),
+                child: Text(
+                  'Full',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: FontFamily.geist,
+                    fontWeight: FontWeight.w500,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
 
   Widget _buildLabel(String text) {
     return Text(
@@ -448,7 +366,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, {Color? valueColor, bool isBold = false}) {
+  Widget _buildSummaryRow(
+    String label,
+    String value, {
+    Color? valueColor,
+    bool isBold = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

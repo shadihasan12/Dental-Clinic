@@ -1,7 +1,7 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
 /// Header widget for add patient page with progress indicator
 class AddPatientHeader extends StatelessWidget {
@@ -99,16 +99,21 @@ class AddPatientHeader extends StatelessWidget {
               children: [
                 Text(
                   'Add New Patient',
-                  style: TextStyleManager.headlineSmall.copyWith(
+                  style: TextStyle(
                     color: ColorManager.white,
+                    fontSize: 16.sp,
+                    fontFamily: FontFamily.geist,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   'Step $currentStep of $totalSteps: $_stepTitle',
-                  style: TextStyleManager.bodySmall.copyWith(
+                  style: TextStyle(
                     color: ColorManager.white.withValues(alpha: 0.8),
+                    fontSize: 14.sp,
+                    fontFamily: FontFamily.geist,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
