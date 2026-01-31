@@ -1,8 +1,8 @@
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
-import 'package:dental_clinic_app/features/patients/presentation/pages/case_detail_page.dart';
-import 'package:dental_clinic_app/features/patients/presentation/pages/new_case_page.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,7 @@ import 'package:dental_clinic_app/features/auth/presentation/pages/signup_page.d
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patient_details_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_patient_page.dart';
-import 'package:dental_clinic_app/features/appointments/presentation/pages/add_schedule_page.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/staff_management_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/invite_staff_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/pending_approvals_page.dart';
@@ -132,54 +132,42 @@ class RoutesManager {
           },
         ),
         GoRoute(
-          path: '/patients/:id',
+          path: '/patients-details',
           name: AppRoutesNames.patientDetails,
           pageBuilder: (context, state) {
-            final patientId = state.pathParameters['id'] ?? '';
+            final patientId = state.extra;
             return CupertinoPage(
-              child: PatientDetailsPage(patientId: patientId),
+              child: PatientDetailsPage(patientId: patientId as String),
               key: state.pageKey,
               name: state.name,
             );
           },
         ),
-        // Case routes
         GoRoute(
-          path: '/patients/:patientId/cases/new',
-          name: AppRoutesNames.newCase,
+          path: '/add-treatment',
+          name: AppRoutesNames.addTreatment,
           pageBuilder: (context, state) {
-            final patientId = state.pathParameters['patientId'] ?? '';
-            final extra = state.extra as Map<String, dynamic>?;
-            final patientName = extra?['patientName'] ?? 'Unknown';
+            final extra = state.extra as Map<String, dynamic>;
+            final dentalCase = extra['dentalCase'] as DentalCase;
+            final isInitial = extra['isInitial'] as bool? ?? false;
             return CupertinoPage(
-              child: CreateCasePage(
-                patientId: patientId,
-                patientName: patientName,
+              child: AddTreatmentPage(
+                dentalCase: dentalCase,
+                isInitial: isInitial,
               ),
               key: state.pageKey,
               name: state.name,
             );
           },
         ),
-        GoRoute(
-          path: '/cases/:caseId',
-          name: AppRoutesNames.caseDetails,
-          pageBuilder: (context, state) {
-            final caseId = state.pathParameters['caseId'] ?? '';
-            return CupertinoPage(
-              child: CaseDetailsPage(caseId: caseId),
-              key: state.pageKey,
-              name: state.name,
-            );
-          },
-        ),
+
         // Appointment Routes
         GoRoute(
-          path: '/appointments/book',
-          name: AppRoutesNames.bookAppointment,
+          path: '/new-appointment',
+          name: AppRoutesNames.newAppointment,
           pageBuilder: (context, state) {
             return CupertinoPage(
-              child: const AddSchedulePage(),
+              child: const NewAppointmentPage(),
               key: state.pageKey,
               name: state.name,
             );

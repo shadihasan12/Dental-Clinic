@@ -10,16 +10,12 @@ class TreatmentItemCard extends StatelessWidget {
   final TreatmentItem item;
   final int index;
   final VoidCallback? onTap;
-  final ValueChanged<bool>? onToggleDone;
-  final bool showCheckbox;
 
   const TreatmentItemCard({
     super.key,
     required this.item,
     required this.index,
     this.onTap,
-    this.onToggleDone,
-    this.showCheckbox = true,
   });
 
   @override
@@ -28,26 +24,14 @@ class TreatmentItemCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(bottom: 8.h),
-        padding: EdgeInsets.all(12.w),
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: item.isDone 
-              ? ColorManager.success.withValues(alpha: 0.05)
-              : ColorManager.white,
+          color: ColorManager.white,
           borderRadius: BorderRadiusManager.lg,
-          border: Border.all(
-            color: item.isDone ? ColorManager.success : ColorManager.gray200,
-          ),
+          border: Border.all(color: ColorManager.gray200),
         ),
         child: Row(
           children: [
-            // Checkbox or number indicator
-            if (showCheckbox)
-              _buildCheckbox()
-            else
-              _buildNumberIndicator(),
-            
-            SizedBox(width: 12.w),
-            
             // Content
             Expanded(
               child: Column(
@@ -64,26 +48,23 @@ class TreatmentItemCard extends StatelessWidget {
                             fontFamily: FontFamily.geist,
                             fontWeight: FontWeight.w600,
                             color: ColorManager.textPrimary,
-                            decoration: item.isDone 
-                                ? TextDecoration.lineThrough 
-                                : null,
                           ),
                         ),
                       ),
-                      if (item.isDone && item.completedAt != null)
+                      if (item.completedAt != null) // Or created_at
                         Text(
                           DateFormat('MMM d').format(item.completedAt!),
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontFamily: FontFamily.geist,
-                            color: ColorManager.success,
+                            color: ColorManager.textSecondary,
                           ),
                         ),
                     ],
                   ),
-                  
+
                   SizedBox(height: 4.h),
-                  
+
                   // Description
                   Text(
                     item.description,
@@ -95,28 +76,35 @@ class TreatmentItemCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   // Treatment types
                   if (item.treatmentTypes.isNotEmpty) ...[
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 10.h),
                     Wrap(
                       spacing: 4.w,
                       runSpacing: 4.h,
-                      children: item.treatmentTypes.map((type) => _buildTag(type.label)).toList(),
+                      children: item.treatmentTypes
+                          .map((type) => _buildTag(type.label))
+                          .toList(),
                     ),
+                    SizedBox(height: 10.h),
                   ],
-                  
+
                   // Selected teeth
                   if (item.selectedTeeth.isNotEmpty) ...[
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Icon(Icons.document_scanner_outlined, size: 14.w, color: ColorManager.textTertiary),
+                        Icon(
+                          Icons.call_to_action_sharp, // TODO : Replace with the correct icon
+                          size: 14.w,
+                          color: ColorManager.textTertiary,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           'Teeth: ${item.selectedTeeth.join(", ")}',
                           style: TextStyle(
-                            fontSize: 10.sp,
+                            fontSize: 12.sp,
                             fontFamily: FontFamily.geist,
                             color: ColorManager.textTertiary,
                           ),
@@ -124,13 +112,17 @@ class TreatmentItemCard extends StatelessWidget {
                       ],
                     ),
                   ],
-                  
+
                   // Attachments indicator
                   if (item.attachments.isNotEmpty) ...[
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Icon(Icons.attach_file, size: 14.w, color: ColorManager.textTertiary),
+                        Icon(
+                          Icons.attach_file,
+                          size: 14.w,
+                          color: ColorManager.textTertiary,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           '${item.attachments.length} attachment(s)',
@@ -146,7 +138,7 @@ class TreatmentItemCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Arrow indicator
             Icon(
               Icons.chevron_right,
@@ -159,52 +151,9 @@ class TreatmentItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckbox() {
-    return GestureDetector(
-      onTap: () => onToggleDone?.call(!item.isDone),
-      child: Container(
-        width: 24.w,
-        height: 24.w,
-        decoration: BoxDecoration(
-          color: item.isDone ? ColorManager.success : ColorManager.white,
-          borderRadius: BorderRadius.circular(6.r),
-          border: Border.all(
-            color: item.isDone ? ColorManager.success : ColorManager.gray300,
-            width: 2,
-          ),
-        ),
-        child: item.isDone
-            ? Icon(Icons.check, size: 16.w, color: ColorManager.white)
-            : null,
-      ),
-    );
-  }
-
-  Widget _buildNumberIndicator() {
-    return Container(
-      width: 28.w,
-      height: 28.w,
-      decoration: BoxDecoration(
-        color: item.isDone ? ColorManager.success : ColorManager.primary,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          '${index + 1}',
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
-            fontWeight: FontWeight.w600,
-            color: ColorManager.white,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildTag(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: ColorManager.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4.r),
@@ -212,7 +161,7 @@ class TreatmentItemCard extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 10.sp,
+          fontSize: 12.sp,
           fontFamily: FontFamily.geist,
           fontWeight: FontWeight.w500,
           color: ColorManager.primary,

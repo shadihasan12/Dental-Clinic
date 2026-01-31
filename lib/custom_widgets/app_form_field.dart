@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -17,6 +18,7 @@ class AppFormField extends StatelessWidget {
     this.prefixIcon,
     this.validator,
     this.onChanged,
+    this.enabled = true,
   });
 
   final String label;
@@ -29,6 +31,7 @@ class AppFormField extends StatelessWidget {
   final Widget? prefixIcon;
   final String? Function(String?)? validator;
   final ValueChanged<String>? onChanged;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,9 @@ class AppFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyleManager.titleSmall.copyWith(
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontFamily: FontFamily.geist,
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -54,9 +59,12 @@ class AppFormField extends StatelessWidget {
             maxLines: maxLines,
             obscureText: obscureText,
             onChanged: onChanged,
+            enabled: enabled,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyleManager.bodyMedium.copyWith(
+              hintStyle: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontFamily.geist,
                 color: ColorManager.textTertiary,
               ),
               prefixIcon: prefixIcon,
@@ -96,7 +104,9 @@ class AppDateField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyleManager.titleSmall.copyWith(
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontFamily: FontFamily.geist,
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -115,10 +125,12 @@ class AppDateField extends StatelessWidget {
               children: [
                 Text(
                   value != null ? _formatDate(value!) : placeholder,
-                  style: TextStyleManager.bodyMedium.copyWith(
+                  style: TextStyle(
                     color: value != null
                         ? ColorManager.textPrimary
                         : ColorManager.textTertiary,
+                    fontSize: 14.sp,
+                    fontFamily: FontFamily.geist,
                   ),
                 ),
                 Icon(
@@ -163,7 +175,9 @@ class AppDropdownField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyleManager.titleSmall.copyWith(
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontFamily: FontFamily.geist,
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -180,7 +194,9 @@ class AppDropdownField extends StatelessWidget {
               value: value,
               hint: Text(
                 hint,
-                style: TextStyleManager.bodyMedium.copyWith(
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontFamily.geist,
                   color: ColorManager.textTertiary,
                 ),
               ),
@@ -194,7 +210,9 @@ class AppDropdownField extends StatelessWidget {
                   value: item,
                   child: Text(
                     item,
-                    style: TextStyleManager.bodyMedium.copyWith(
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontFamily: FontFamily.geist,
                       color: ColorManager.textPrimary,
                     ),
                   ),

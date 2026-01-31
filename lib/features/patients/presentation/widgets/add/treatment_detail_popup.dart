@@ -17,7 +17,11 @@ class TreatmentDetailPopup extends StatelessWidget {
     required this.index,
   });
 
-  static Future<void> show(BuildContext context, TreatmentItem item, int index) {
+  static Future<void> show(
+    BuildContext context,
+    TreatmentItem item,
+    int index,
+  ) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -29,7 +33,9 @@ class TreatmentDetailPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
       decoration: BoxDecoration(
         color: ColorManager.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -47,7 +53,7 @@ class TreatmentDetailPopup extends StatelessWidget {
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
-          
+
           // Content
           Flexible(
             child: SingleChildScrollView(
@@ -57,39 +63,36 @@ class TreatmentDetailPopup extends StatelessWidget {
                 children: [
                   // Header
                   _buildHeader(context),
-                  
+
                   SizedBox(height: 20.h),
-                  
-                  // Status badge
-                  _buildStatusBadge(),
-                  
-                  SizedBox(height: 16.h),
-                  
+
                   // Description
-                  _buildSection('Description', item.description),
-                  
+                  if (item.description.isNotEmpty) ...[
+                    _buildSection('Description', item.description),
+                  ],
+
                   // Treatment types
                   if (item.treatmentTypes.isNotEmpty) ...[
                     SizedBox(height: 16.h),
                     _buildTreatmentTypes(),
                   ],
-                  
+
                   // Teeth
                   if (item.selectedTeeth.isNotEmpty) ...[
                     SizedBox(height: 16.h),
                     _buildTeethSection(),
                   ],
-                  
+
                   // Attachments
                   if (item.attachments.isNotEmpty) ...[
                     SizedBox(height: 16.h),
                     _buildAttachments(),
                   ],
-                  
+
                   // Dates
                   SizedBox(height: 16.h),
                   _buildDates(),
-                  
+
                   SizedBox(height: 20.h),
                 ],
               ),
@@ -107,7 +110,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           width: 48.w,
           height: 48.w,
           decoration: BoxDecoration(
-            color: item.isDone 
+            color: item.isDone
                 ? ColorManager.success.withValues(alpha: 0.1)
                 : ColorManager.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
@@ -119,7 +122,9 @@ class TreatmentDetailPopup extends StatelessWidget {
                 fontSize: 20.sp,
                 fontFamily: FontFamily.geist,
                 fontWeight: FontWeight.w700,
-                color: item.isDone ? ColorManager.success : ColorManager.primary,
+                color: item.isDone
+                    ? ColorManager.success
+                    : ColorManager.primary,
               ),
             ),
           ),
@@ -154,38 +159,6 @@ class TreatmentDetailPopup extends StatelessWidget {
           icon: Icon(Icons.close, color: ColorManager.textSecondary),
         ),
       ],
-    );
-  }
-
-  Widget _buildStatusBadge() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: item.isDone 
-            ? ColorManager.success.withValues(alpha: 0.1)
-            : ColorManager.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            item.isDone ? Icons.check_circle : Icons.schedule,
-            size: 16.w,
-            color: item.isDone ? ColorManager.success : ColorManager.warning,
-          ),
-          SizedBox(width: 6.w),
-          Text(
-            item.isDone ? 'Completed' : 'Pending',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w600,
-              color: item.isDone ? ColorManager.success : ColorManager.warning,
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -239,21 +212,14 @@ class TreatmentDetailPopup extends StatelessWidget {
                 color: ColorManager.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20.r),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(type.icon, size: 16.w, color: ColorManager.primary),
-                  SizedBox(width: 6.w),
-                  Text(
-                    type.label,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
-                      fontWeight: FontWeight.w500,
-                      color: ColorManager.primary,
-                    ),
-                  ),
-                ],
+              child: Text(
+                type.label,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: FontFamily.geist,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.primary,
+                ),
               ),
             );
           }).toList(),
@@ -279,6 +245,7 @@ class TreatmentDetailPopup extends StatelessWidget {
         ToothChart(
           selectedTeeth: item.selectedTeeth,
           enabled: false,
+          aspectRatio: 1.1,
         ),
       ],
     );
@@ -312,7 +279,11 @@ class TreatmentDetailPopup extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.insert_drive_file, size: 16.w, color: ColorManager.textSecondary),
+                  Icon(
+                    Icons.insert_drive_file,
+                    size: 16.w,
+                    color: ColorManager.textSecondary,
+                  ),
                   SizedBox(width: 6.w),
                   Text(
                     attachment,

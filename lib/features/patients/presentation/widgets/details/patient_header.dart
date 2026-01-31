@@ -2,30 +2,27 @@ import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 
 class PatientHeader extends StatelessWidget {
   final String name;
   final int age;
   final String gender;
-  final double totalPaid;
-  final double totalPending;
+  final String phone;
   final VoidCallback onBackPressed;
   final VoidCallback? onEditPressed;
+  final TabController tabController;
 
   const PatientHeader({
     super.key,
     required this.name,
     required this.age,
     required this.gender,
-    required this.totalPaid,
-    required this.totalPending,
+    required this.phone,
     required this.onBackPressed,
+    required this.tabController,
     this.onEditPressed,
   });
-
-  String get _initials => name.split(' ').map((n) => n[0]).take(2).join();
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +41,7 @@ class PatientHeader extends StatelessWidget {
           children: [
             _buildAppBar(),
             _buildPatientInfo(),
+            _buildTabBar(),
           ],
         ),
       ),
@@ -72,11 +70,9 @@ class PatientHeader extends StatelessWidget {
 
   Widget _buildPatientInfo() {
     return Padding(
-      padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.h),
+      padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 16.h),
       child: Column(
         children: [
-          _buildAvatar(),
-          SizedBox(height: 12.h),
           Text(
             name,
             style: TextStyle(
@@ -96,78 +92,34 @@ class PatientHeader extends StatelessWidget {
               color: ColorManager.white.withValues(alpha: 0.8),
             ),
           ),
-          SizedBox(height: 16.h),
-          _buildStats(),
         ],
       ),
     );
   }
 
-  Widget _buildAvatar() {
-    return Container(
-      width: 72.w,
-      height: 72.h,
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        shape: BoxShape.circle,
-        border: Border.all(color: ColorManager.white, width: 3),
+  Widget _buildTabBar() {
+    return TabBar(
+      controller: tabController,
+      labelColor: ColorManager.white,
+      unselectedLabelColor: ColorManager.white.withValues(alpha: 0.6),
+      indicatorColor: ColorManager.white,
+      indicatorWeight: 3,
+      indicatorSize: TabBarIndicatorSize.tab,
+      labelStyle: TextStyle(
+        fontSize: 14.sp,
+        fontFamily: FontFamily.geist,
+        fontWeight: FontWeight.w600,
       ),
-      child: Center(
-        child: Text(
-          _initials,
-          style: TextStyle(
-            color: ColorManager.primary,
-            fontSize: 24.sp,
-            fontFamily: FontFamily.geist,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 14.sp,
+        fontFamily: FontFamily.geist,
+        fontWeight: FontWeight.w400,
       ),
-    );
-  }
-
-  Widget _buildStats() {
-    return Row(
-      children: [
-        _buildStatCard('Total Paid', '\$${totalPaid.toStringAsFixed(0)}'),
-        SizedBox(width: 12.w),
-        _buildStatCard('Pending', '\$${totalPending.toStringAsFixed(0)}'),
+      tabs: const [
+        Tab(text: 'Info'),
+        Tab(text: 'Case'),
+        Tab(text: 'History'),
       ],
-    );
-  }
-
-  Widget _buildStatCard(String label, String value) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: ColorManager.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadiusManager.lg,
-        ),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: FontFamily.geist,
-                fontWeight: FontWeight.w400,
-                color: ColorManager.white.withValues(alpha: 0.8),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontFamily: FontFamily.geist,
-                fontWeight: FontWeight.w600,
-                color: ColorManager.white,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

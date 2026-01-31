@@ -20,7 +20,7 @@ class AppRoutesNames {
   // Appointments Routes
   static const String appointments = 'appointments';
   static const String appointmentDetails = 'appointmentDetails';
-  static const String bookAppointment = 'bookAppointment';
+  static const String newAppointment = 'newAppointment';
 
   // Patients Routes
   static const String patients = 'patients';
@@ -38,6 +38,7 @@ class AppRoutesNames {
   // Treatments Routes
   static const String treatments = 'treatments';
   static const String treatmentDetails = 'treatmentDetails';
+  static const String addTreatment = 'addTreatment';
 
   // Statistics
   static const String statistics = 'statistics';

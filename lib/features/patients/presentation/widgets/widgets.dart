@@ -7,5 +7,4 @@ export 'patient_card.dart';
 export 'patient_filter_chips.dart';
 export 'patient_info_form.dart';
 export 'patients_list_header.dart';
-export 'teeth_diagram.dart';
 export 'visit_info_form.dart';

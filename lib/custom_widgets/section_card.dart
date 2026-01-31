@@ -1,7 +1,7 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
 /// Reusable section card with title and content
 class SectionCard extends StatelessWidget {
@@ -35,11 +35,14 @@ class SectionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (title.isNotEmpty)
           Text(
             title,
-            style: TextStyleManager.titleMedium.copyWith(
+            style: TextStyle(
               color: ColorManager.textPrimary,
               fontWeight: FontWeight.w600,
+              fontSize: 16.sp,
+              fontFamily: FontFamily.geist,
             ),
           ),
           SizedBox(height: 20.h),

@@ -1,14 +1,11 @@
+import 'package:dental_clinic_app/features/dashboard/presentation/widgets/dashboard_header.dart';
+import 'package:dental_clinic_app/features/dashboard/presentation/widgets/quick_actions.dart';
+import 'package:dental_clinic_app/features/dashboard/presentation/widgets/stats_grid.dart';
+import 'package:dental_clinic_app/features/dashboard/presentation/widgets/todays_schedule.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
-import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
-import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
-import 'package:dental_clinic_app/features/subscription/presentation/widgets/subscription_status_card.dart';
-import '../widgets/widgets.dart';
 
 /// Main dashboard page showing overview of clinic metrics and schedule
 /// Adapts based on user's context:
@@ -53,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 onAddPatient: () =>
                     context.pushNamed(AppRoutesNames.addPatient),
                 onScheduleVisit: () =>
-                    context.pushNamed(AppRoutesNames.bookAppointment),
+                    context.pushNamed(AppRoutesNames.newAppointment),
                 onNewCase: () {},
                 onRecordPayment: () {},
               ),
@@ -71,30 +68,4 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
-
-  // Widget _buildClinicManagementSection() {
-  //   return ClinicManagementSection(
-  //     clinicName: _ownedClinicName,
-  //     staffCount: _staffCount,
-  //     pendingApprovalsCount: _pendingApprovalsCount,
-  //     onManageStaff: () {
-  //       context.pushNamed(
-  //         AppRoutesNames.staffManagement,
-  //         pathParameters: {'clinicId': _ownedClinicId},
-  //       );
-  //     },
-  //     onPendingApprovals: () {
-  //       context.pushNamed(
-  //         AppRoutesNames.pendingApprovals,
-  //         pathParameters: {'clinicId': _ownedClinicId},
-  //       );
-  //     },
-  //     onInviteStaff: () {
-  //       context.pushNamed(
-  //         AppRoutesNames.inviteStaff,
-  //         extra: {'clinicId': _ownedClinicId, 'clinicName': _ownedClinicName},
-  //       );
-  //     },
-  //   );
-  // }
 }

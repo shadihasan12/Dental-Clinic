@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,7 +58,7 @@ class _AppointmentsContent extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.pushNamed(AppRoutesNames.bookAppointment),
+        onPressed: () => context.pushNamed(AppRoutesNames.newAppointment),
         backgroundColor: ColorManager.primary,
         child: const Icon(Icons.add, color: ColorManager.white),
       ),
@@ -141,7 +142,6 @@ class _AppointmentsContent extends StatelessWidget {
           return Expanded(
             child: GestureDetector(
               onTap: () {
-                // ✅ BLoC event instead of setState
                 context.read<AppointmentBloc>().add(
                       AppointmentEvent.changeViewMode(mode),
                     );
@@ -182,7 +182,6 @@ class _AppointmentsContent extends StatelessWidget {
     );
   }
 
-  /// Date selector widget - ✅ Uses BLoC event instead of setState
   Widget _buildDateSelector(BuildContext context, AppointmentState state) {
     final now = DateTime.now();
     final days = List.generate(7, (index) {
@@ -201,7 +200,6 @@ class _AppointmentsContent extends StatelessWidget {
 
         return GestureDetector(
           onTap: () {
-            // ✅ BLoC event instead of setState
             context.read<AppointmentBloc>().add(
                   AppointmentEvent.selectDate(date),
                 );
@@ -284,15 +282,20 @@ class _AppointmentsContent extends StatelessWidget {
             children: [
               Text(
                 appointment.formattedTime,
-                style: TextStyleManager.titleMedium.copyWith(
-                  color: ColorManager.primary,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: FontFamily.geist,
                   fontWeight: FontWeight.w600,
+                  color: ColorManager.primary,
                 ),
               ),
               SizedBox(height: 4.h),
               Text(
                 '${appointment.durationMinutes} min',
-                style: TextStyleManager.bodySmall.copyWith(
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: FontFamily.geist,
+                  fontWeight: FontWeight.w500,
                   color: ColorManager.textSecondary,
                 ),
               ),
@@ -319,40 +322,25 @@ class _AppointmentsContent extends StatelessWidget {
                     Expanded(
                       child: Text(
                         appointment.patientName,
-                        style: TextStyleManager.titleMedium.copyWith(
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: FontFamily.geist,
+                          fontWeight: FontWeight.w500,
                           color: ColorManager.textPrimary,
                         ),
                       ),
-                    ),
-                    StatusBadge(
-                      label: _getStatusLabel(appointment.status),
-                      type: _getStatusType(appointment.status),
                     ),
                   ],
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   appointment.treatmentType,
-                  style: TextStyleManager.bodyMedium.copyWith(
+                  style: TextStyle(
                     color: ColorManager.textSecondary,
+                    fontSize: 14.sp,
+                    fontFamily: FontFamily.geist,
+                    fontWeight: FontWeight.w500,
                   ),
-                ),
-                SizedBox(height: 4.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.person_outline,
-                      size: 14.w,
-                      color: ColorManager.textTertiary,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      appointment.doctorName,
-                      style: TextStyleManager.bodySmall.copyWith(
-                        color: ColorManager.textTertiary,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
