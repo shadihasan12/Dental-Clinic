@@ -5,13 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/constants/validation_constants.dart';
-import 'package:dental_clinic_app/core/resources/button_styles.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
+import 'package:dental_clinic_app/injection.dart';
 
 /// Unified signup page for all dental professionals
 /// Users can later create or join clinics from the dashboard
@@ -21,7 +20,7 @@ class SignupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(),
+      create: (context) => AuthBloc(getIt()),
       child: const _SignupContent(),
     );
   }
@@ -43,9 +42,9 @@ class _SignupContentState extends State<_SignupContent> {
   final _licenseController = TextEditingController();
   final _specializationController = TextEditingController();
   bool _showValidationErrors = false;
-  bool _showOptionalFields = false;
 
   String? _selectedSpecialization;
+  String? _selectedLocation;
 
   final List<String> doctorSpecializations = [
     'General Dentistry',
@@ -55,10 +54,53 @@ class _SignupContentState extends State<_SignupContent> {
     'Oral Surgery',
   ];
 
+  final List<String> locations = [
+    'United States',
+    'Canada',
+    'United Kingdom',
+    'Australia',
+    'Germany',
+    'France',
+    'Spain',
+    'Italy',
+    'Netherlands',
+    'Sweden',
+    'Norway',
+    'Denmark',
+    'Finland',
+    'Switzerland',
+    'Belgium',
+    'Austria',
+    'Ireland',
+    'New Zealand',
+    'Singapore',
+    'Japan',
+    'South Korea',
+    'United Arab Emirates',
+    'Saudi Arabia',
+    'Egypt',
+    'South Africa',
+    'India',
+    'Pakistan',
+    'Bangladesh',
+    'Philippines',
+    'Malaysia',
+    'Indonesia',
+    'Thailand',
+    'Vietnam',
+    'Brazil',
+    'Mexico',
+    'Argentina',
+    'Chile',
+    'Colombia',
+    'Peru',
+  ];
+
   @override
   initState() {
     super.initState();
     _selectedSpecialization = doctorSpecializations.first;
+    _selectedLocation = locations.first;
   }
 
   @override
@@ -218,8 +260,25 @@ class _SignupContentState extends State<_SignupContent> {
                           items: doctorSpecializations,
                           prefixIcon: Icons.local_hospital_outlined,
                           onChanged: (value) {
+                            setState(() => _selectedSpecialization = value);
                             context.read<AuthBloc>().add(
                               AuthEvent.signupSpecializationChanged(value!),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 16.h),
+
+                        // Location Field
+                        AuthDropdownField(
+                          label: 'Location',
+                          hint: 'Select your country',
+                          value: _selectedLocation,
+                          items: locations,
+                          prefixIcon: Icons.location_on_outlined,
+                          onChanged: (value) {
+                            setState(() => _selectedLocation = value);
+                            context.read<AuthBloc>().add(
+                              AuthEvent.signupLocationChanged(value!),
                             );
                           },
                         ),

@@ -21,6 +21,10 @@ import 'core/api/interceptors/error_interceptor.dart' as _i809;
 import 'core/api/interceptors/logging_interceptor.dart' as _i416;
 import 'core/di/third_party_injection.dart' as _i1007;
 import 'core/network/network_info.dart' as _i75;
+import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
+    as _i689;
+import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
+import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -30,12 +34,12 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final thirdPartyInjection = _$ThirdPartyInjection();
-    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
-    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.singleton<_i361.Dio>(() => thirdPartyInjection.dio);
     gh.singleton<_i973.InternetConnectionChecker>(
       () => thirdPartyInjection.internetConnectionChecker,
     );
+    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
+    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
@@ -46,6 +50,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i361.Dio>(),
         gh<_i809.ErrorInterceptor>(),
         gh<_i416.LoggingInterceptor>(),
+      ),
+    );
+    gh.factory<_i689.AuthRemoteDataSource>(
+      () => _i689.AuthRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i1015.AuthRepository>(
+      () => _i111.AuthRepositoryImpl(
+        gh<_i689.AuthRemoteDataSource>(),
+        gh<_i75.NetworkInfo>(),
       ),
     );
     return this;

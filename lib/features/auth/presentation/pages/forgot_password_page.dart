@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dental_clinic_app/injection.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({super.key});
@@ -14,7 +15,7 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(),
+      create: (context) => AuthBloc(getIt()),
       child: const _ForgotPasswordPageContent(),
     );
   }

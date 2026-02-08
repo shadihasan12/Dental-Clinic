@@ -22,6 +22,27 @@ class AuthState with _$AuthState {
     // Optional professional fields
     @Default('') String signupLicenseNumber,
     @Default('') String signupSpecialization,
+    @Default('') String signupLocation,
+
+    // API fetched data
+    @Default([]) List<SpecialtyEntity> specialties,
+    @Default([]) List<LocationEntity> searchedLocations,
+    @Default([]) List<PlanEntity> plans,
+
+    // API loading states
+    @Default(false) bool isLoadingSpecialties,
+    @Default(false) bool isLoadingPlans,
+    @Default(false) bool isSearchingLocations,
+
+    // Selected entities for registration
+    @Default(null) SpecialtyEntity? selectedSpecialty,
+    @Default(null) LocationEntity? selectedLocation,
+    @Default(null) PlanEntity? selectedPlan,
+
+    // Clinic information for registration
+    @Default('') String clinicName,
+    @Default('') String clinicAddress,
+    @Default('') String mobileNumber,
 
     // Forgot password fields
     @Default('') String forgotPasswordEmail,

@@ -1,15 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(const AuthState()) {
+  final AuthRepository _authRepository;
+
+  AuthBloc(this._authRepository) : super(const AuthState()) {
     // Login events
     on<_LoginEmailChanged>(_onLoginEmailChanged);
     on<_LoginPasswordChanged>(_onLoginPasswordChanged);
@@ -29,6 +36,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Optional professional fields
     on<_SignupLicenseNumberChanged>(_onSignupLicenseNumberChanged);
     on<_SignupSpecializationChanged>(_onSignupSpecializationChanged);
+    on<_SignupLocationChanged>(_onSignupLocationChanged);
+
+    // API data fetching events
+    on<_SpecialtiesRequested>(_onSpecialtiesRequested);
+    on<_PlansRequested>(_onPlansRequested);
+    on<_LocationSearchRequested>(_onLocationSearchRequested);
+
+    // Selection events
+    on<_SignupSpecialtyEntitySelected>(_onSignupSpecialtyEntitySelected);
+    on<_SignupLocationEntitySelected>(_onSignupLocationEntitySelected);
+    on<_SignupPlanEntitySelected>(_onSignupPlanEntitySelected);
+
+    // Clinic info events
+    on<_SignupClinicNameChanged>(_onSignupClinicNameChanged);
+    on<_SignupClinicAddressChanged>(_onSignupClinicAddressChanged);
+    on<_SignupMobileNumberChanged>(_onSignupMobileNumberChanged);
 
     // Forgot password events
     on<_ForgotPasswordEmailChanged>(_onForgotPasswordEmailChanged);
@@ -167,8 +190,147 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
+  void _onSignupLocationChanged(_SignupLocationChanged event, Emitter<AuthState> emit) {
+    emit(state.copyWith(
+      signupLocation: event.location,
+      signupError: null,
+    ));
+  }
+
+  // API data fetching handlers
+  Future<void> _onSpecialtiesRequested(
+    _SpecialtiesRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingSpecialties: true, signupError: null));
+
+    final result = await _authRepository.getSpecialties();
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isLoadingSpecialties: false,
+        signupError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (specialties) => emit(state.copyWith(
+        isLoadingSpecialties: false,
+        specialties: specialties,
+      )),
+    );
+  }
+
+  Future<void> _onPlansRequested(
+    _PlansRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingPlans: true, signupError: null));
+
+    final result = await _authRepository.getPlans();
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isLoadingPlans: false,
+        signupError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (plans) => emit(state.copyWith(
+        isLoadingPlans: false,
+        plans: plans,
+      )),
+    );
+  }
+
+  Future<void> _onLocationSearchRequested(
+    _LocationSearchRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    // Don't search if query is too short
+    if (event.query.trim().length < 2) {
+      emit(state.copyWith(searchedLocations: []));
+      return;
+    }
+
+    emit(state.copyWith(isSearchingLocations: true, signupError: null));
+
+    final result = await _authRepository.searchLocations(
+      query: event.query,
+      countryCode: event.countryCode,
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isSearchingLocations: false,
+        signupError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (locations) => emit(state.copyWith(
+        isSearchingLocations: false,
+        searchedLocations: locations,
+      )),
+    );
+  }
+
+  // Selection handlers
+  void _onSignupSpecialtyEntitySelected(
+    _SignupSpecialtyEntitySelected event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedSpecialty: event.specialty,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupLocationEntitySelected(
+    _SignupLocationEntitySelected event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedLocation: event.location,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupPlanEntitySelected(
+    _SignupPlanEntitySelected event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedPlan: event.plan,
+      signupError: null,
+    ));
+  }
+
+  // Clinic info handlers
+  void _onSignupClinicNameChanged(
+    _SignupClinicNameChanged event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      clinicName: event.name,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupClinicAddressChanged(
+    _SignupClinicAddressChanged event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      clinicAddress: event.address,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupMobileNumberChanged(
+    _SignupMobileNumberChanged event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      mobileNumber: event.mobile,
+      signupError: null,
+    ));
+  }
+
   Future<void> _onSignupSubmitted(_SignupSubmitted event, Emitter<AuthState> emit) async {
-    // Validate form fields
+    // Validate basic form fields
     if (!state.isSignupNameValid) {
       emit(state.copyWith(signupError: 'Name must be at least 2 characters'));
       return;
@@ -186,37 +348,68 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
+    // Validate required selections for API
+    if (state.selectedSpecialty == null) {
+      emit(state.copyWith(signupError: 'Please select a specialty'));
+      return;
+    }
+    if (state.mobileNumber.trim().isEmpty) {
+      emit(state.copyWith(signupError: 'Please enter your mobile number'));
+      return;
+    }
+    if (state.selectedLocation == null) {
+      emit(state.copyWith(signupError: 'Please select a location'));
+      return;
+    }
+    if (state.selectedPlan == null) {
+      emit(state.copyWith(signupError: 'Please select a subscription plan'));
+      return;
+    }
+    if (state.clinicName.trim().isEmpty) {
+      emit(state.copyWith(signupError: 'Please enter clinic name'));
+      return;
+    }
+
     emit(state.copyWith(isSignupLoading: true, signupError: null));
 
-    try {
-      // TODO: Implement actual signup API call
-      await Future.delayed(const Duration(seconds: 2));
+    // Create register request params
+    final params = RegisterRequestParams(
+      userName: state.signupName,
+      userEmail: state.signupEmail,
+      mobileNumber: state.mobileNumber,
+      password: state.signupPassword,
+      passwordConfirmation: state.signupConfirmPassword,
+      specialtyId: state.selectedSpecialty!.id,
+      clinicName: state.clinicName,
+      locationId: state.selectedLocation!.id,
+      detailedAddress: state.clinicAddress.trim().isEmpty
+          ? state.selectedLocation!.name
+          : state.clinicAddress,
+      planVersionId: state.selectedPlan!.versionId,
+    );
 
-      // Create user - all users are dental professionals
-      // They can later create/join clinics from the dashboard
-      final mockUser = UserEntity(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        email: state.signupEmail,
-        name: state.signupName,
-        licenseNumber: state.signupLicenseNumber.isNotEmpty ? state.signupLicenseNumber : null,
-        specialization: state.signupSpecialization.isNotEmpty ? state.signupSpecialization : null,
-      );
+    // Call register API
+    final result = await _authRepository.register(params: params);
 
-      emit(state.copyWith(
+    result.fold(
+      (failure) => emit(state.copyWith(
         isSignupLoading: false,
-        status: AuthStatus.authenticated,
-        currentUser: mockUser,
-        // User starts with no clinic memberships
-        // They can create a clinic or join one from the dashboard
-        memberships: [],
-        activeClinicId: null,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isSignupLoading: false,
-        signupError: 'Signup failed. Please try again.',
-      ));
-    }
+        signupError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) {
+        // Convert response to user entity and clinic membership
+        final user = response.toUserEntity();
+        final membership = response.toClinicMembership();
+
+        emit(state.copyWith(
+          isSignupLoading: false,
+          status: AuthStatus.authenticated,
+          currentUser: user,
+          memberships: [membership],
+          activeClinicId: membership.clinicId,
+        ));
+      },
+    );
   }
 
   // Forgot password handlers
@@ -305,10 +498,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       signupConfirmPassword: '',
       signupLicenseNumber: '',
       signupSpecialization: '',
+      signupLocation: '',
       isSignupPasswordVisible: false,
       isSignupConfirmPasswordVisible: false,
       isSignupLoading: false,
       signupError: null,
+      // Reset API-related fields
+      specialties: [],
+      searchedLocations: [],
+      plans: [],
+      isLoadingSpecialties: false,
+      isLoadingPlans: false,
+      isSearchingLocations: false,
+      selectedSpecialty: null,
+      selectedLocation: null,
+      selectedPlan: null,
+      clinicName: '',
+      clinicAddress: '',
+      mobileNumber: '',
     ));
   }
 }

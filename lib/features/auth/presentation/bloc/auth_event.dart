@@ -21,6 +21,25 @@ class AuthEvent with _$AuthEvent {
   // Optional professional fields
   const factory AuthEvent.signupLicenseNumberChanged(String licenseNumber) = _SignupLicenseNumberChanged;
   const factory AuthEvent.signupSpecializationChanged(String specialization) = _SignupSpecializationChanged;
+  const factory AuthEvent.signupLocationChanged(String location) = _SignupLocationChanged;
+
+  // API data fetching events
+  const factory AuthEvent.specialtiesRequested() = _SpecialtiesRequested;
+  const factory AuthEvent.plansRequested() = _PlansRequested;
+  const factory AuthEvent.locationSearchRequested({
+    required String query,
+    required String countryCode,
+  }) = _LocationSearchRequested;
+
+  // Selection events (with entities)
+  const factory AuthEvent.signupSpecialtyEntitySelected(SpecialtyEntity specialty) = _SignupSpecialtyEntitySelected;
+  const factory AuthEvent.signupLocationEntitySelected(LocationEntity location) = _SignupLocationEntitySelected;
+  const factory AuthEvent.signupPlanEntitySelected(PlanEntity plan) = _SignupPlanEntitySelected;
+
+  // Clinic information events
+  const factory AuthEvent.signupClinicNameChanged(String name) = _SignupClinicNameChanged;
+  const factory AuthEvent.signupClinicAddressChanged(String address) = _SignupClinicAddressChanged;
+  const factory AuthEvent.signupMobileNumberChanged(String mobile) = _SignupMobileNumberChanged;
 
   // Forgot password events
   const factory AuthEvent.forgotPasswordEmailChanged(String email) = _ForgotPasswordEmailChanged;

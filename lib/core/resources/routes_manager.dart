@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/login_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/forgot_password_page.dart';
@@ -99,7 +100,7 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: BlocProvider(
-                create: (context) => AuthBloc(),
+                create: (context) => AuthBloc(getIt()),
                 child: const ChooseClinicNamePage(),
               ),
             );

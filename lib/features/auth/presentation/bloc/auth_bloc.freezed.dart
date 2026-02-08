@@ -35,6 +35,19 @@ mixin _$AuthEvent {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -58,6 +71,17 @@ mixin _$AuthEvent {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -81,6 +105,16 @@ mixin _$AuthEvent {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -112,6 +146,24 @@ mixin _$AuthEvent {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -143,6 +195,21 @@ mixin _$AuthEvent {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -173,6 +240,20 @@ mixin _$AuthEvent {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -293,6 +374,19 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -320,6 +414,17 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -347,6 +452,16 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -385,6 +500,24 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -420,6 +553,21 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -454,6 +602,20 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -574,6 +736,19 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -601,6 +776,17 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -628,6 +814,16 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -666,6 +862,24 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -701,6 +915,21 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -735,6 +964,20 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -825,6 +1068,19 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -852,6 +1108,17 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -879,6 +1146,16 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -917,6 +1194,24 @@ class _$LoginPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -952,6 +1247,21 @@ class _$LoginPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -986,6 +1296,20 @@ class _$LoginPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1066,6 +1390,19 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1093,6 +1430,17 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1120,6 +1468,16 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1158,6 +1516,24 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1193,6 +1569,21 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1227,6 +1618,20 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1336,6 +1741,19 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1363,6 +1781,17 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1390,6 +1819,16 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1428,6 +1867,24 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1463,6 +1920,21 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1497,6 +1969,20 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1614,6 +2100,19 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1641,6 +2140,17 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1668,6 +2178,16 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1706,6 +2226,24 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1741,6 +2279,21 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1775,6 +2328,20 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1895,6 +2462,19 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1922,6 +2502,17 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1949,6 +2540,16 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1987,6 +2588,24 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2022,6 +2641,21 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2056,6 +2690,20 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2178,6 +2826,19 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2205,6 +2866,17 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2232,6 +2904,16 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2270,6 +2952,24 @@ class _$SignupConfirmPasswordChangedImpl
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2305,6 +3005,21 @@ class _$SignupConfirmPasswordChangedImpl
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2339,6 +3054,20 @@ class _$SignupConfirmPasswordChangedImpl
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2431,6 +3160,19 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2458,6 +3200,17 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2485,6 +3238,16 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2523,6 +3286,24 @@ class _$SignupPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2558,6 +3339,21 @@ class _$SignupPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2592,6 +3388,20 @@ class _$SignupPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2678,6 +3488,19 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2705,6 +3528,17 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2732,6 +3566,16 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2770,6 +3614,24 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2805,6 +3667,21 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2839,6 +3716,20 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2919,6 +3810,19 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2946,6 +3850,17 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2973,6 +3888,16 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3011,6 +3936,24 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3046,6 +3989,21 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3080,6 +4038,20 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3159,6 +4131,19 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3186,6 +4171,17 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3213,6 +4209,16 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3251,6 +4257,24 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3286,6 +4310,21 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3320,6 +4359,20 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3430,6 +4483,19 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3457,6 +4523,17 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3484,6 +4561,16 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3522,6 +4609,24 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3557,6 +4662,21 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3591,6 +4711,20 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3711,6 +4845,19 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3738,6 +4885,17 @@ class _$SignupSpecializationChangedImpl
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3765,6 +4923,16 @@ class _$SignupSpecializationChangedImpl
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3803,6 +4971,24 @@ class _$SignupSpecializationChangedImpl
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3838,6 +5024,21 @@ class _$SignupSpecializationChangedImpl
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3872,6 +5073,20 @@ class _$SignupSpecializationChangedImpl
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3898,6 +5113,3594 @@ abstract class _SignupSpecializationChanged implements AuthEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SignupSpecializationChangedImplCopyWith<_$SignupSpecializationChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupLocationChangedImplCopyWith<$Res> {
+  factory _$$SignupLocationChangedImplCopyWith(
+    _$SignupLocationChangedImpl value,
+    $Res Function(_$SignupLocationChangedImpl) then,
+  ) = __$$SignupLocationChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String location});
+}
+
+/// @nodoc
+class __$$SignupLocationChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupLocationChangedImpl>
+    implements _$$SignupLocationChangedImplCopyWith<$Res> {
+  __$$SignupLocationChangedImplCopyWithImpl(
+    _$SignupLocationChangedImpl _value,
+    $Res Function(_$SignupLocationChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? location = null}) {
+    return _then(
+      _$SignupLocationChangedImpl(
+        null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupLocationChangedImpl implements _SignupLocationChanged {
+  const _$SignupLocationChangedImpl(this.location);
+
+  @override
+  final String location;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupLocationChanged(location: $location)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupLocationChangedImpl &&
+            (identical(other.location, location) ||
+                other.location == location));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, location);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupLocationChangedImplCopyWith<_$SignupLocationChangedImpl>
+  get copyWith =>
+      __$$SignupLocationChangedImplCopyWithImpl<_$SignupLocationChangedImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupLocationChanged(location);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupLocationChanged?.call(location);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLocationChanged != null) {
+      return signupLocationChanged(location);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupLocationChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupLocationChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLocationChanged != null) {
+      return signupLocationChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupLocationChanged implements AuthEvent {
+  const factory _SignupLocationChanged(final String location) =
+      _$SignupLocationChangedImpl;
+
+  String get location;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupLocationChangedImplCopyWith<_$SignupLocationChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SpecialtiesRequestedImplCopyWith<$Res> {
+  factory _$$SpecialtiesRequestedImplCopyWith(
+    _$SpecialtiesRequestedImpl value,
+    $Res Function(_$SpecialtiesRequestedImpl) then,
+  ) = __$$SpecialtiesRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$SpecialtiesRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SpecialtiesRequestedImpl>
+    implements _$$SpecialtiesRequestedImplCopyWith<$Res> {
+  __$$SpecialtiesRequestedImplCopyWithImpl(
+    _$SpecialtiesRequestedImpl _value,
+    $Res Function(_$SpecialtiesRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
+  const _$SpecialtiesRequestedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.specialtiesRequested()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SpecialtiesRequestedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return specialtiesRequested();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return specialtiesRequested?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (specialtiesRequested != null) {
+      return specialtiesRequested();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return specialtiesRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return specialtiesRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (specialtiesRequested != null) {
+      return specialtiesRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SpecialtiesRequested implements AuthEvent {
+  const factory _SpecialtiesRequested() = _$SpecialtiesRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$PlansRequestedImplCopyWith<$Res> {
+  factory _$$PlansRequestedImplCopyWith(
+    _$PlansRequestedImpl value,
+    $Res Function(_$PlansRequestedImpl) then,
+  ) = __$$PlansRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$PlansRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$PlansRequestedImpl>
+    implements _$$PlansRequestedImplCopyWith<$Res> {
+  __$$PlansRequestedImplCopyWithImpl(
+    _$PlansRequestedImpl _value,
+    $Res Function(_$PlansRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$PlansRequestedImpl implements _PlansRequested {
+  const _$PlansRequestedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.plansRequested()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$PlansRequestedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return plansRequested();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return plansRequested?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (plansRequested != null) {
+      return plansRequested();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return plansRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return plansRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (plansRequested != null) {
+      return plansRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _PlansRequested implements AuthEvent {
+  const factory _PlansRequested() = _$PlansRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$LocationSearchRequestedImplCopyWith<$Res> {
+  factory _$$LocationSearchRequestedImplCopyWith(
+    _$LocationSearchRequestedImpl value,
+    $Res Function(_$LocationSearchRequestedImpl) then,
+  ) = __$$LocationSearchRequestedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String query, String countryCode});
+}
+
+/// @nodoc
+class __$$LocationSearchRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$LocationSearchRequestedImpl>
+    implements _$$LocationSearchRequestedImplCopyWith<$Res> {
+  __$$LocationSearchRequestedImplCopyWithImpl(
+    _$LocationSearchRequestedImpl _value,
+    $Res Function(_$LocationSearchRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? query = null, Object? countryCode = null}) {
+    return _then(
+      _$LocationSearchRequestedImpl(
+        query: null == query
+            ? _value.query
+            : query // ignore: cast_nullable_to_non_nullable
+                  as String,
+        countryCode: null == countryCode
+            ? _value.countryCode
+            : countryCode // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
+  const _$LocationSearchRequestedImpl({
+    required this.query,
+    required this.countryCode,
+  });
+
+  @override
+  final String query;
+  @override
+  final String countryCode;
+
+  @override
+  String toString() {
+    return 'AuthEvent.locationSearchRequested(query: $query, countryCode: $countryCode)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LocationSearchRequestedImpl &&
+            (identical(other.query, query) || other.query == query) &&
+            (identical(other.countryCode, countryCode) ||
+                other.countryCode == countryCode));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, query, countryCode);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LocationSearchRequestedImplCopyWith<_$LocationSearchRequestedImpl>
+  get copyWith =>
+      __$$LocationSearchRequestedImplCopyWithImpl<
+        _$LocationSearchRequestedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return locationSearchRequested(query, countryCode);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return locationSearchRequested?.call(query, countryCode);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (locationSearchRequested != null) {
+      return locationSearchRequested(query, countryCode);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return locationSearchRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return locationSearchRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (locationSearchRequested != null) {
+      return locationSearchRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LocationSearchRequested implements AuthEvent {
+  const factory _LocationSearchRequested({
+    required final String query,
+    required final String countryCode,
+  }) = _$LocationSearchRequestedImpl;
+
+  String get query;
+  String get countryCode;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LocationSearchRequestedImplCopyWith<_$LocationSearchRequestedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupSpecialtyEntitySelectedImplCopyWith<$Res> {
+  factory _$$SignupSpecialtyEntitySelectedImplCopyWith(
+    _$SignupSpecialtyEntitySelectedImpl value,
+    $Res Function(_$SignupSpecialtyEntitySelectedImpl) then,
+  ) = __$$SignupSpecialtyEntitySelectedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({SpecialtyEntity specialty});
+
+  $SpecialtyEntityCopyWith<$Res> get specialty;
+}
+
+/// @nodoc
+class __$$SignupSpecialtyEntitySelectedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupSpecialtyEntitySelectedImpl>
+    implements _$$SignupSpecialtyEntitySelectedImplCopyWith<$Res> {
+  __$$SignupSpecialtyEntitySelectedImplCopyWithImpl(
+    _$SignupSpecialtyEntitySelectedImpl _value,
+    $Res Function(_$SignupSpecialtyEntitySelectedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? specialty = null}) {
+    return _then(
+      _$SignupSpecialtyEntitySelectedImpl(
+        null == specialty
+            ? _value.specialty
+            : specialty // ignore: cast_nullable_to_non_nullable
+                  as SpecialtyEntity,
+      ),
+    );
+  }
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SpecialtyEntityCopyWith<$Res> get specialty {
+    return $SpecialtyEntityCopyWith<$Res>(_value.specialty, (value) {
+      return _then(_value.copyWith(specialty: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$SignupSpecialtyEntitySelectedImpl
+    implements _SignupSpecialtyEntitySelected {
+  const _$SignupSpecialtyEntitySelectedImpl(this.specialty);
+
+  @override
+  final SpecialtyEntity specialty;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupSpecialtyEntitySelected(specialty: $specialty)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupSpecialtyEntitySelectedImpl &&
+            (identical(other.specialty, specialty) ||
+                other.specialty == specialty));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, specialty);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupSpecialtyEntitySelectedImplCopyWith<
+    _$SignupSpecialtyEntitySelectedImpl
+  >
+  get copyWith =>
+      __$$SignupSpecialtyEntitySelectedImplCopyWithImpl<
+        _$SignupSpecialtyEntitySelectedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupSpecialtyEntitySelected(specialty);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupSpecialtyEntitySelected?.call(specialty);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupSpecialtyEntitySelected != null) {
+      return signupSpecialtyEntitySelected(specialty);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupSpecialtyEntitySelected(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupSpecialtyEntitySelected?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupSpecialtyEntitySelected != null) {
+      return signupSpecialtyEntitySelected(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupSpecialtyEntitySelected implements AuthEvent {
+  const factory _SignupSpecialtyEntitySelected(
+    final SpecialtyEntity specialty,
+  ) = _$SignupSpecialtyEntitySelectedImpl;
+
+  SpecialtyEntity get specialty;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupSpecialtyEntitySelectedImplCopyWith<
+    _$SignupSpecialtyEntitySelectedImpl
+  >
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupLocationEntitySelectedImplCopyWith<$Res> {
+  factory _$$SignupLocationEntitySelectedImplCopyWith(
+    _$SignupLocationEntitySelectedImpl value,
+    $Res Function(_$SignupLocationEntitySelectedImpl) then,
+  ) = __$$SignupLocationEntitySelectedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({LocationEntity location});
+
+  $LocationEntityCopyWith<$Res> get location;
+}
+
+/// @nodoc
+class __$$SignupLocationEntitySelectedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupLocationEntitySelectedImpl>
+    implements _$$SignupLocationEntitySelectedImplCopyWith<$Res> {
+  __$$SignupLocationEntitySelectedImplCopyWithImpl(
+    _$SignupLocationEntitySelectedImpl _value,
+    $Res Function(_$SignupLocationEntitySelectedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? location = null}) {
+    return _then(
+      _$SignupLocationEntitySelectedImpl(
+        null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as LocationEntity,
+      ),
+    );
+  }
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LocationEntityCopyWith<$Res> get location {
+    return $LocationEntityCopyWith<$Res>(_value.location, (value) {
+      return _then(_value.copyWith(location: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$SignupLocationEntitySelectedImpl
+    implements _SignupLocationEntitySelected {
+  const _$SignupLocationEntitySelectedImpl(this.location);
+
+  @override
+  final LocationEntity location;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupLocationEntitySelected(location: $location)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupLocationEntitySelectedImpl &&
+            (identical(other.location, location) ||
+                other.location == location));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, location);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupLocationEntitySelectedImplCopyWith<
+    _$SignupLocationEntitySelectedImpl
+  >
+  get copyWith =>
+      __$$SignupLocationEntitySelectedImplCopyWithImpl<
+        _$SignupLocationEntitySelectedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupLocationEntitySelected(location);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupLocationEntitySelected?.call(location);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLocationEntitySelected != null) {
+      return signupLocationEntitySelected(location);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupLocationEntitySelected(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupLocationEntitySelected?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLocationEntitySelected != null) {
+      return signupLocationEntitySelected(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupLocationEntitySelected implements AuthEvent {
+  const factory _SignupLocationEntitySelected(final LocationEntity location) =
+      _$SignupLocationEntitySelectedImpl;
+
+  LocationEntity get location;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupLocationEntitySelectedImplCopyWith<
+    _$SignupLocationEntitySelectedImpl
+  >
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupPlanEntitySelectedImplCopyWith<$Res> {
+  factory _$$SignupPlanEntitySelectedImplCopyWith(
+    _$SignupPlanEntitySelectedImpl value,
+    $Res Function(_$SignupPlanEntitySelectedImpl) then,
+  ) = __$$SignupPlanEntitySelectedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({PlanEntity plan});
+
+  $PlanEntityCopyWith<$Res> get plan;
+}
+
+/// @nodoc
+class __$$SignupPlanEntitySelectedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupPlanEntitySelectedImpl>
+    implements _$$SignupPlanEntitySelectedImplCopyWith<$Res> {
+  __$$SignupPlanEntitySelectedImplCopyWithImpl(
+    _$SignupPlanEntitySelectedImpl _value,
+    $Res Function(_$SignupPlanEntitySelectedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? plan = null}) {
+    return _then(
+      _$SignupPlanEntitySelectedImpl(
+        null == plan
+            ? _value.plan
+            : plan // ignore: cast_nullable_to_non_nullable
+                  as PlanEntity,
+      ),
+    );
+  }
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PlanEntityCopyWith<$Res> get plan {
+    return $PlanEntityCopyWith<$Res>(_value.plan, (value) {
+      return _then(_value.copyWith(plan: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
+  const _$SignupPlanEntitySelectedImpl(this.plan);
+
+  @override
+  final PlanEntity plan;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupPlanEntitySelected(plan: $plan)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupPlanEntitySelectedImpl &&
+            (identical(other.plan, plan) || other.plan == plan));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, plan);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupPlanEntitySelectedImplCopyWith<_$SignupPlanEntitySelectedImpl>
+  get copyWith =>
+      __$$SignupPlanEntitySelectedImplCopyWithImpl<
+        _$SignupPlanEntitySelectedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupPlanEntitySelected(plan);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupPlanEntitySelected?.call(plan);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupPlanEntitySelected != null) {
+      return signupPlanEntitySelected(plan);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupPlanEntitySelected(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupPlanEntitySelected?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupPlanEntitySelected != null) {
+      return signupPlanEntitySelected(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupPlanEntitySelected implements AuthEvent {
+  const factory _SignupPlanEntitySelected(final PlanEntity plan) =
+      _$SignupPlanEntitySelectedImpl;
+
+  PlanEntity get plan;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupPlanEntitySelectedImplCopyWith<_$SignupPlanEntitySelectedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupClinicNameChangedImplCopyWith<$Res> {
+  factory _$$SignupClinicNameChangedImplCopyWith(
+    _$SignupClinicNameChangedImpl value,
+    $Res Function(_$SignupClinicNameChangedImpl) then,
+  ) = __$$SignupClinicNameChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String name});
+}
+
+/// @nodoc
+class __$$SignupClinicNameChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupClinicNameChangedImpl>
+    implements _$$SignupClinicNameChangedImplCopyWith<$Res> {
+  __$$SignupClinicNameChangedImplCopyWithImpl(
+    _$SignupClinicNameChangedImpl _value,
+    $Res Function(_$SignupClinicNameChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? name = null}) {
+    return _then(
+      _$SignupClinicNameChangedImpl(
+        null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
+  const _$SignupClinicNameChangedImpl(this.name);
+
+  @override
+  final String name;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupClinicNameChanged(name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupClinicNameChangedImpl &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, name);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupClinicNameChangedImplCopyWith<_$SignupClinicNameChangedImpl>
+  get copyWith =>
+      __$$SignupClinicNameChangedImplCopyWithImpl<
+        _$SignupClinicNameChangedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupClinicNameChanged(name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupClinicNameChanged?.call(name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupClinicNameChanged != null) {
+      return signupClinicNameChanged(name);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupClinicNameChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupClinicNameChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupClinicNameChanged != null) {
+      return signupClinicNameChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupClinicNameChanged implements AuthEvent {
+  const factory _SignupClinicNameChanged(final String name) =
+      _$SignupClinicNameChangedImpl;
+
+  String get name;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupClinicNameChangedImplCopyWith<_$SignupClinicNameChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupClinicAddressChangedImplCopyWith<$Res> {
+  factory _$$SignupClinicAddressChangedImplCopyWith(
+    _$SignupClinicAddressChangedImpl value,
+    $Res Function(_$SignupClinicAddressChangedImpl) then,
+  ) = __$$SignupClinicAddressChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String address});
+}
+
+/// @nodoc
+class __$$SignupClinicAddressChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupClinicAddressChangedImpl>
+    implements _$$SignupClinicAddressChangedImplCopyWith<$Res> {
+  __$$SignupClinicAddressChangedImplCopyWithImpl(
+    _$SignupClinicAddressChangedImpl _value,
+    $Res Function(_$SignupClinicAddressChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? address = null}) {
+    return _then(
+      _$SignupClinicAddressChangedImpl(
+        null == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
+  const _$SignupClinicAddressChangedImpl(this.address);
+
+  @override
+  final String address;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupClinicAddressChanged(address: $address)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupClinicAddressChangedImpl &&
+            (identical(other.address, address) || other.address == address));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, address);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupClinicAddressChangedImplCopyWith<_$SignupClinicAddressChangedImpl>
+  get copyWith =>
+      __$$SignupClinicAddressChangedImplCopyWithImpl<
+        _$SignupClinicAddressChangedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupClinicAddressChanged(address);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupClinicAddressChanged?.call(address);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupClinicAddressChanged != null) {
+      return signupClinicAddressChanged(address);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupClinicAddressChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupClinicAddressChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupClinicAddressChanged != null) {
+      return signupClinicAddressChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupClinicAddressChanged implements AuthEvent {
+  const factory _SignupClinicAddressChanged(final String address) =
+      _$SignupClinicAddressChangedImpl;
+
+  String get address;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupClinicAddressChangedImplCopyWith<_$SignupClinicAddressChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupMobileNumberChangedImplCopyWith<$Res> {
+  factory _$$SignupMobileNumberChangedImplCopyWith(
+    _$SignupMobileNumberChangedImpl value,
+    $Res Function(_$SignupMobileNumberChangedImpl) then,
+  ) = __$$SignupMobileNumberChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String mobile});
+}
+
+/// @nodoc
+class __$$SignupMobileNumberChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupMobileNumberChangedImpl>
+    implements _$$SignupMobileNumberChangedImplCopyWith<$Res> {
+  __$$SignupMobileNumberChangedImplCopyWithImpl(
+    _$SignupMobileNumberChangedImpl _value,
+    $Res Function(_$SignupMobileNumberChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? mobile = null}) {
+    return _then(
+      _$SignupMobileNumberChangedImpl(
+        null == mobile
+            ? _value.mobile
+            : mobile // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
+  const _$SignupMobileNumberChangedImpl(this.mobile);
+
+  @override
+  final String mobile;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signupMobileNumberChanged(mobile: $mobile)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupMobileNumberChangedImpl &&
+            (identical(other.mobile, mobile) || other.mobile == mobile));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, mobile);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupMobileNumberChangedImplCopyWith<_$SignupMobileNumberChangedImpl>
+  get copyWith =>
+      __$$SignupMobileNumberChangedImplCopyWithImpl<
+        _$SignupMobileNumberChangedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupMobileNumberChanged(mobile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupMobileNumberChanged?.call(mobile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupMobileNumberChanged != null) {
+      return signupMobileNumberChanged(mobile);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupMobileNumberChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupMobileNumberChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupMobileNumberChanged != null) {
+      return signupMobileNumberChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupMobileNumberChanged implements AuthEvent {
+  const factory _SignupMobileNumberChanged(final String mobile) =
+      _$SignupMobileNumberChangedImpl;
+
+  String get mobile;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupMobileNumberChangedImplCopyWith<_$SignupMobileNumberChangedImpl>
   get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -3990,6 +8793,19 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4017,6 +8833,17 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4044,6 +8871,16 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4082,6 +8919,24 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4117,6 +8972,21 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4151,6 +9021,20 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4240,6 +9124,19 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4267,6 +9164,17 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4294,6 +9202,16 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4332,6 +9250,24 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4367,6 +9303,21 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4401,6 +9352,20 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4481,6 +9446,19 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4508,6 +9486,17 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4535,6 +9524,16 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4573,6 +9572,24 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4608,6 +9625,21 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4642,6 +9674,20 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4752,6 +9798,19 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4779,6 +9838,17 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4806,6 +9876,16 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4844,6 +9924,24 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4879,6 +9977,21 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4913,6 +10026,20 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5001,6 +10128,19 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -5028,6 +10168,17 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -5055,6 +10206,16 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -5093,6 +10254,24 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -5128,6 +10307,21 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5162,6 +10356,20 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5241,6 +10449,19 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     required TResult Function(String licenseNumber) signupLicenseNumberChanged,
     required TResult Function(String specialization)
     signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -5268,6 +10489,17 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     TResult? Function()? signupFormReset,
     TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -5295,6 +10527,16 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     TResult Function()? signupFormReset,
     TResult Function(String licenseNumber)? signupLicenseNumberChanged,
     TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -5333,6 +10575,24 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupLicenseNumberChanged,
     required TResult Function(_SignupSpecializationChanged value)
     signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -5368,6 +10628,21 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupLicenseNumberChanged,
     TResult? Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5402,6 +10677,20 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupLicenseNumberChanged,
     TResult Function(_SignupSpecializationChanged value)?
     signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5441,7 +10730,25 @@ mixin _$AuthState {
   String? get signupError =>
       throw _privateConstructorUsedError; // Optional professional fields
   String get signupLicenseNumber => throw _privateConstructorUsedError;
-  String get signupSpecialization =>
+  String get signupSpecialization => throw _privateConstructorUsedError;
+  String get signupLocation =>
+      throw _privateConstructorUsedError; // API fetched data
+  List<SpecialtyEntity> get specialties => throw _privateConstructorUsedError;
+  List<LocationEntity> get searchedLocations =>
+      throw _privateConstructorUsedError;
+  List<PlanEntity> get plans =>
+      throw _privateConstructorUsedError; // API loading states
+  bool get isLoadingSpecialties => throw _privateConstructorUsedError;
+  bool get isLoadingPlans => throw _privateConstructorUsedError;
+  bool get isSearchingLocations =>
+      throw _privateConstructorUsedError; // Selected entities for registration
+  SpecialtyEntity? get selectedSpecialty => throw _privateConstructorUsedError;
+  LocationEntity? get selectedLocation => throw _privateConstructorUsedError;
+  PlanEntity? get selectedPlan =>
+      throw _privateConstructorUsedError; // Clinic information for registration
+  String get clinicName => throw _privateConstructorUsedError;
+  String get clinicAddress => throw _privateConstructorUsedError;
+  String get mobileNumber =>
       throw _privateConstructorUsedError; // Forgot password fields
   String get forgotPasswordEmail => throw _privateConstructorUsedError;
   bool get isForgotPasswordLoading => throw _privateConstructorUsedError;
@@ -5485,6 +10792,19 @@ abstract class $AuthStateCopyWith<$Res> {
     String? signupError,
     String signupLicenseNumber,
     String signupSpecialization,
+    String signupLocation,
+    List<SpecialtyEntity> specialties,
+    List<LocationEntity> searchedLocations,
+    List<PlanEntity> plans,
+    bool isLoadingSpecialties,
+    bool isLoadingPlans,
+    bool isSearchingLocations,
+    SpecialtyEntity? selectedSpecialty,
+    LocationEntity? selectedLocation,
+    PlanEntity? selectedPlan,
+    String clinicName,
+    String clinicAddress,
+    String mobileNumber,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
     bool isForgotPasswordSuccess,
@@ -5496,6 +10816,9 @@ abstract class $AuthStateCopyWith<$Res> {
     AuthStatus status,
   });
 
+  $SpecialtyEntityCopyWith<$Res>? get selectedSpecialty;
+  $LocationEntityCopyWith<$Res>? get selectedLocation;
+  $PlanEntityCopyWith<$Res>? get selectedPlan;
   $UserEntityCopyWith<$Res>? get currentUser;
 }
 
@@ -5529,6 +10852,19 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? signupError = freezed,
     Object? signupLicenseNumber = null,
     Object? signupSpecialization = null,
+    Object? signupLocation = null,
+    Object? specialties = null,
+    Object? searchedLocations = null,
+    Object? plans = null,
+    Object? isLoadingSpecialties = null,
+    Object? isLoadingPlans = null,
+    Object? isSearchingLocations = null,
+    Object? selectedSpecialty = freezed,
+    Object? selectedLocation = freezed,
+    Object? selectedPlan = freezed,
+    Object? clinicName = null,
+    Object? clinicAddress = null,
+    Object? mobileNumber = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
     Object? isForgotPasswordSuccess = null,
@@ -5602,6 +10938,58 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.signupSpecialization
                 : signupSpecialization // ignore: cast_nullable_to_non_nullable
                       as String,
+            signupLocation: null == signupLocation
+                ? _value.signupLocation
+                : signupLocation // ignore: cast_nullable_to_non_nullable
+                      as String,
+            specialties: null == specialties
+                ? _value.specialties
+                : specialties // ignore: cast_nullable_to_non_nullable
+                      as List<SpecialtyEntity>,
+            searchedLocations: null == searchedLocations
+                ? _value.searchedLocations
+                : searchedLocations // ignore: cast_nullable_to_non_nullable
+                      as List<LocationEntity>,
+            plans: null == plans
+                ? _value.plans
+                : plans // ignore: cast_nullable_to_non_nullable
+                      as List<PlanEntity>,
+            isLoadingSpecialties: null == isLoadingSpecialties
+                ? _value.isLoadingSpecialties
+                : isLoadingSpecialties // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isLoadingPlans: null == isLoadingPlans
+                ? _value.isLoadingPlans
+                : isLoadingPlans // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isSearchingLocations: null == isSearchingLocations
+                ? _value.isSearchingLocations
+                : isSearchingLocations // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            selectedSpecialty: freezed == selectedSpecialty
+                ? _value.selectedSpecialty
+                : selectedSpecialty // ignore: cast_nullable_to_non_nullable
+                      as SpecialtyEntity?,
+            selectedLocation: freezed == selectedLocation
+                ? _value.selectedLocation
+                : selectedLocation // ignore: cast_nullable_to_non_nullable
+                      as LocationEntity?,
+            selectedPlan: freezed == selectedPlan
+                ? _value.selectedPlan
+                : selectedPlan // ignore: cast_nullable_to_non_nullable
+                      as PlanEntity?,
+            clinicName: null == clinicName
+                ? _value.clinicName
+                : clinicName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            clinicAddress: null == clinicAddress
+                ? _value.clinicAddress
+                : clinicAddress // ignore: cast_nullable_to_non_nullable
+                      as String,
+            mobileNumber: null == mobileNumber
+                ? _value.mobileNumber
+                : mobileNumber // ignore: cast_nullable_to_non_nullable
+                      as String,
             forgotPasswordEmail: null == forgotPasswordEmail
                 ? _value.forgotPasswordEmail
                 : forgotPasswordEmail // ignore: cast_nullable_to_non_nullable
@@ -5647,6 +11035,48 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $SpecialtyEntityCopyWith<$Res>? get selectedSpecialty {
+    if (_value.selectedSpecialty == null) {
+      return null;
+    }
+
+    return $SpecialtyEntityCopyWith<$Res>(_value.selectedSpecialty!, (value) {
+      return _then(_value.copyWith(selectedSpecialty: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LocationEntityCopyWith<$Res>? get selectedLocation {
+    if (_value.selectedLocation == null) {
+      return null;
+    }
+
+    return $LocationEntityCopyWith<$Res>(_value.selectedLocation!, (value) {
+      return _then(_value.copyWith(selectedLocation: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PlanEntityCopyWith<$Res>? get selectedPlan {
+    if (_value.selectedPlan == null) {
+      return null;
+    }
+
+    return $PlanEntityCopyWith<$Res>(_value.selectedPlan!, (value) {
+      return _then(_value.copyWith(selectedPlan: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $UserEntityCopyWith<$Res>? get currentUser {
     if (_value.currentUser == null) {
       return null;
@@ -5683,6 +11113,19 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     String? signupError,
     String signupLicenseNumber,
     String signupSpecialization,
+    String signupLocation,
+    List<SpecialtyEntity> specialties,
+    List<LocationEntity> searchedLocations,
+    List<PlanEntity> plans,
+    bool isLoadingSpecialties,
+    bool isLoadingPlans,
+    bool isSearchingLocations,
+    SpecialtyEntity? selectedSpecialty,
+    LocationEntity? selectedLocation,
+    PlanEntity? selectedPlan,
+    String clinicName,
+    String clinicAddress,
+    String mobileNumber,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
     bool isForgotPasswordSuccess,
@@ -5694,6 +11137,12 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     AuthStatus status,
   });
 
+  @override
+  $SpecialtyEntityCopyWith<$Res>? get selectedSpecialty;
+  @override
+  $LocationEntityCopyWith<$Res>? get selectedLocation;
+  @override
+  $PlanEntityCopyWith<$Res>? get selectedPlan;
   @override
   $UserEntityCopyWith<$Res>? get currentUser;
 }
@@ -5727,6 +11176,19 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? signupError = freezed,
     Object? signupLicenseNumber = null,
     Object? signupSpecialization = null,
+    Object? signupLocation = null,
+    Object? specialties = null,
+    Object? searchedLocations = null,
+    Object? plans = null,
+    Object? isLoadingSpecialties = null,
+    Object? isLoadingPlans = null,
+    Object? isSearchingLocations = null,
+    Object? selectedSpecialty = freezed,
+    Object? selectedLocation = freezed,
+    Object? selectedPlan = freezed,
+    Object? clinicName = null,
+    Object? clinicAddress = null,
+    Object? mobileNumber = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
     Object? isForgotPasswordSuccess = null,
@@ -5799,6 +11261,58 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.signupSpecialization
             : signupSpecialization // ignore: cast_nullable_to_non_nullable
                   as String,
+        signupLocation: null == signupLocation
+            ? _value.signupLocation
+            : signupLocation // ignore: cast_nullable_to_non_nullable
+                  as String,
+        specialties: null == specialties
+            ? _value._specialties
+            : specialties // ignore: cast_nullable_to_non_nullable
+                  as List<SpecialtyEntity>,
+        searchedLocations: null == searchedLocations
+            ? _value._searchedLocations
+            : searchedLocations // ignore: cast_nullable_to_non_nullable
+                  as List<LocationEntity>,
+        plans: null == plans
+            ? _value._plans
+            : plans // ignore: cast_nullable_to_non_nullable
+                  as List<PlanEntity>,
+        isLoadingSpecialties: null == isLoadingSpecialties
+            ? _value.isLoadingSpecialties
+            : isLoadingSpecialties // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isLoadingPlans: null == isLoadingPlans
+            ? _value.isLoadingPlans
+            : isLoadingPlans // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isSearchingLocations: null == isSearchingLocations
+            ? _value.isSearchingLocations
+            : isSearchingLocations // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        selectedSpecialty: freezed == selectedSpecialty
+            ? _value.selectedSpecialty
+            : selectedSpecialty // ignore: cast_nullable_to_non_nullable
+                  as SpecialtyEntity?,
+        selectedLocation: freezed == selectedLocation
+            ? _value.selectedLocation
+            : selectedLocation // ignore: cast_nullable_to_non_nullable
+                  as LocationEntity?,
+        selectedPlan: freezed == selectedPlan
+            ? _value.selectedPlan
+            : selectedPlan // ignore: cast_nullable_to_non_nullable
+                  as PlanEntity?,
+        clinicName: null == clinicName
+            ? _value.clinicName
+            : clinicName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        clinicAddress: null == clinicAddress
+            ? _value.clinicAddress
+            : clinicAddress // ignore: cast_nullable_to_non_nullable
+                  as String,
+        mobileNumber: null == mobileNumber
+            ? _value.mobileNumber
+            : mobileNumber // ignore: cast_nullable_to_non_nullable
+                  as String,
         forgotPasswordEmail: null == forgotPasswordEmail
             ? _value.forgotPasswordEmail
             : forgotPasswordEmail // ignore: cast_nullable_to_non_nullable
@@ -5859,6 +11373,19 @@ class _$AuthStateImpl implements _AuthState {
     this.signupError = null,
     this.signupLicenseNumber = '',
     this.signupSpecialization = '',
+    this.signupLocation = '',
+    final List<SpecialtyEntity> specialties = const [],
+    final List<LocationEntity> searchedLocations = const [],
+    final List<PlanEntity> plans = const [],
+    this.isLoadingSpecialties = false,
+    this.isLoadingPlans = false,
+    this.isSearchingLocations = false,
+    this.selectedSpecialty = null,
+    this.selectedLocation = null,
+    this.selectedPlan = null,
+    this.clinicName = '',
+    this.clinicAddress = '',
+    this.mobileNumber = '',
     this.forgotPasswordEmail = '',
     this.isForgotPasswordLoading = false,
     this.isForgotPasswordSuccess = false,
@@ -5868,7 +11395,10 @@ class _$AuthStateImpl implements _AuthState {
     final List<InvitationEntity> pendingInvitations = const [],
     this.activeClinicId = null,
     this.status = AuthStatus.unauthenticated,
-  }) : _memberships = memberships,
+  }) : _specialties = specialties,
+       _searchedLocations = searchedLocations,
+       _plans = plans,
+       _memberships = memberships,
        _pendingInvitations = pendingInvitations;
 
   // Login fields
@@ -5919,6 +11449,69 @@ class _$AuthStateImpl implements _AuthState {
   @override
   @JsonKey()
   final String signupSpecialization;
+  @override
+  @JsonKey()
+  final String signupLocation;
+  // API fetched data
+  final List<SpecialtyEntity> _specialties;
+  // API fetched data
+  @override
+  @JsonKey()
+  List<SpecialtyEntity> get specialties {
+    if (_specialties is EqualUnmodifiableListView) return _specialties;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_specialties);
+  }
+
+  final List<LocationEntity> _searchedLocations;
+  @override
+  @JsonKey()
+  List<LocationEntity> get searchedLocations {
+    if (_searchedLocations is EqualUnmodifiableListView)
+      return _searchedLocations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_searchedLocations);
+  }
+
+  final List<PlanEntity> _plans;
+  @override
+  @JsonKey()
+  List<PlanEntity> get plans {
+    if (_plans is EqualUnmodifiableListView) return _plans;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_plans);
+  }
+
+  // API loading states
+  @override
+  @JsonKey()
+  final bool isLoadingSpecialties;
+  @override
+  @JsonKey()
+  final bool isLoadingPlans;
+  @override
+  @JsonKey()
+  final bool isSearchingLocations;
+  // Selected entities for registration
+  @override
+  @JsonKey()
+  final SpecialtyEntity? selectedSpecialty;
+  @override
+  @JsonKey()
+  final LocationEntity? selectedLocation;
+  @override
+  @JsonKey()
+  final PlanEntity? selectedPlan;
+  // Clinic information for registration
+  @override
+  @JsonKey()
+  final String clinicName;
+  @override
+  @JsonKey()
+  final String clinicAddress;
+  @override
+  @JsonKey()
+  final String mobileNumber;
   // Forgot password fields
   @override
   @JsonKey()
@@ -5965,7 +11558,7 @@ class _$AuthStateImpl implements _AuthState {
 
   @override
   String toString() {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupName: $signupName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupName: $signupName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
   }
 
   @override
@@ -6010,6 +11603,35 @@ class _$AuthStateImpl implements _AuthState {
                 other.signupLicenseNumber == signupLicenseNumber) &&
             (identical(other.signupSpecialization, signupSpecialization) ||
                 other.signupSpecialization == signupSpecialization) &&
+            (identical(other.signupLocation, signupLocation) ||
+                other.signupLocation == signupLocation) &&
+            const DeepCollectionEquality().equals(
+              other._specialties,
+              _specialties,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._searchedLocations,
+              _searchedLocations,
+            ) &&
+            const DeepCollectionEquality().equals(other._plans, _plans) &&
+            (identical(other.isLoadingSpecialties, isLoadingSpecialties) ||
+                other.isLoadingSpecialties == isLoadingSpecialties) &&
+            (identical(other.isLoadingPlans, isLoadingPlans) ||
+                other.isLoadingPlans == isLoadingPlans) &&
+            (identical(other.isSearchingLocations, isSearchingLocations) ||
+                other.isSearchingLocations == isSearchingLocations) &&
+            (identical(other.selectedSpecialty, selectedSpecialty) ||
+                other.selectedSpecialty == selectedSpecialty) &&
+            (identical(other.selectedLocation, selectedLocation) ||
+                other.selectedLocation == selectedLocation) &&
+            (identical(other.selectedPlan, selectedPlan) ||
+                other.selectedPlan == selectedPlan) &&
+            (identical(other.clinicName, clinicName) ||
+                other.clinicName == clinicName) &&
+            (identical(other.clinicAddress, clinicAddress) ||
+                other.clinicAddress == clinicAddress) &&
+            (identical(other.mobileNumber, mobileNumber) ||
+                other.mobileNumber == mobileNumber) &&
             (identical(other.forgotPasswordEmail, forgotPasswordEmail) ||
                 other.forgotPasswordEmail == forgotPasswordEmail) &&
             (identical(
@@ -6057,6 +11679,19 @@ class _$AuthStateImpl implements _AuthState {
     signupError,
     signupLicenseNumber,
     signupSpecialization,
+    signupLocation,
+    const DeepCollectionEquality().hash(_specialties),
+    const DeepCollectionEquality().hash(_searchedLocations),
+    const DeepCollectionEquality().hash(_plans),
+    isLoadingSpecialties,
+    isLoadingPlans,
+    isSearchingLocations,
+    selectedSpecialty,
+    selectedLocation,
+    selectedPlan,
+    clinicName,
+    clinicAddress,
+    mobileNumber,
     forgotPasswordEmail,
     isForgotPasswordLoading,
     isForgotPasswordSuccess,
@@ -6094,6 +11729,19 @@ abstract class _AuthState implements AuthState {
     final String? signupError,
     final String signupLicenseNumber,
     final String signupSpecialization,
+    final String signupLocation,
+    final List<SpecialtyEntity> specialties,
+    final List<LocationEntity> searchedLocations,
+    final List<PlanEntity> plans,
+    final bool isLoadingSpecialties,
+    final bool isLoadingPlans,
+    final bool isSearchingLocations,
+    final SpecialtyEntity? selectedSpecialty,
+    final LocationEntity? selectedLocation,
+    final PlanEntity? selectedPlan,
+    final String clinicName,
+    final String clinicAddress,
+    final String mobileNumber,
     final String forgotPasswordEmail,
     final bool isForgotPasswordLoading,
     final bool isForgotPasswordSuccess,
@@ -6135,7 +11783,33 @@ abstract class _AuthState implements AuthState {
   @override
   String get signupLicenseNumber;
   @override
-  String get signupSpecialization; // Forgot password fields
+  String get signupSpecialization;
+  @override
+  String get signupLocation; // API fetched data
+  @override
+  List<SpecialtyEntity> get specialties;
+  @override
+  List<LocationEntity> get searchedLocations;
+  @override
+  List<PlanEntity> get plans; // API loading states
+  @override
+  bool get isLoadingSpecialties;
+  @override
+  bool get isLoadingPlans;
+  @override
+  bool get isSearchingLocations; // Selected entities for registration
+  @override
+  SpecialtyEntity? get selectedSpecialty;
+  @override
+  LocationEntity? get selectedLocation;
+  @override
+  PlanEntity? get selectedPlan; // Clinic information for registration
+  @override
+  String get clinicName;
+  @override
+  String get clinicAddress;
+  @override
+  String get mobileNumber; // Forgot password fields
   @override
   String get forgotPasswordEmail;
   @override
