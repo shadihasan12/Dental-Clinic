@@ -19,10 +19,20 @@ class SignupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(getIt()),
-      child: const _SignupContent(),
-    );
+    // Check if AuthBloc was provided via route (from OTP verification)
+    // If not provided, create a new one for direct access
+    final providedBloc = context.read<AuthBloc?>();
+
+    if (providedBloc != null) {
+      // Use the provided bloc (from OTP verification)
+      return const _SignupContent();
+    } else {
+      // Create new bloc for direct access
+      return BlocProvider(
+        create: (context) => AuthBloc(getIt(), getIt()),
+        child: const _SignupContent(),
+      );
+    }
   }
 }
 
@@ -37,80 +47,44 @@ class _SignupContentState extends State<_SignupContent> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _mobileController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _licenseController = TextEditingController();
-  final _specializationController = TextEditingController();
   bool _showValidationErrors = false;
 
-  String? _selectedSpecialization;
-  String? _selectedLocation;
-
-  final List<String> doctorSpecializations = [
-    'General Dentistry',
-    'Endodontics',
-    'Orthodontics',
-    'Cosmetic Dentistry',
-    'Oral Surgery',
-  ];
-
-  final List<String> locations = [
-    'United States',
-    'Canada',
-    'United Kingdom',
-    'Australia',
-    'Germany',
-    'France',
-    'Spain',
-    'Italy',
-    'Netherlands',
-    'Sweden',
-    'Norway',
-    'Denmark',
-    'Finland',
-    'Switzerland',
-    'Belgium',
-    'Austria',
-    'Ireland',
-    'New Zealand',
-    'Singapore',
-    'Japan',
-    'South Korea',
-    'United Arab Emirates',
-    'Saudi Arabia',
-    'Egypt',
-    'South Africa',
-    'India',
-    'Pakistan',
-    'Bangladesh',
-    'Philippines',
-    'Malaysia',
-    'Indonesia',
-    'Thailand',
-    'Vietnam',
-    'Brazil',
-    'Mexico',
-    'Argentina',
-    'Chile',
-    'Colombia',
-    'Peru',
-  ];
+  String? _selectedSpecialtyName;
 
   @override
   initState() {
     super.initState();
-    _selectedSpecialization = doctorSpecializations.first;
-    _selectedLocation = locations.first;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<AuthBloc>();
+      final state = bloc.state;
+
+      // If email is already set (from OTP verification), populate the field
+      if (state.signupEmail.isNotEmpty) {
+        _emailController.text = state.signupEmail;
+      }
+
+      // Fetch all required data only if not already loaded
+      // This allows users to complete signup without internet after initial load
+      if (state.specialties.isEmpty && !state.isLoadingSpecialties) {
+        bloc.add(const AuthEvent.specialtiesRequested());
+      }
+      if (state.plans.isEmpty && !state.isLoadingPlans) {
+        bloc.add(const AuthEvent.plansRequested());
+      }
+    });
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _mobileController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _licenseController.dispose();
-    _specializationController.dispose();
     super.dispose();
   }
 
@@ -118,7 +92,22 @@ class _SignupContentState extends State<_SignupContent> {
     setState(() => _showValidationErrors = true);
 
     if (_formKey.currentState?.validate() ?? false) {
-      context.pushNamed(AppRoutesNames.choosePlan);
+      // Validate specialty is selected
+      if (_selectedSpecialtyName == null) {
+        AppSnackbar.showError(
+          context,
+          title: 'Validation Error',
+          message: 'Please select a specialization',
+        );
+        return;
+      }
+
+      // Pass the AuthBloc instance to the next route
+      final authBloc = context.read<AuthBloc>();
+      context.pushNamed(
+        AppRoutesNames.choosePlan,
+        extra: authBloc,
+      );
     }
   }
 
@@ -166,6 +155,17 @@ class _SignupContentState extends State<_SignupContent> {
     return null;
   }
 
+  String? _validateMobileNumber(String? value) {
+    if (!_showValidationErrors) return null;
+    if (value == null || value.isEmpty) {
+      return 'Mobile number is required';
+    }
+    if (value.length < 8) {
+      return 'Mobile number is too short';
+    }
+    return null;
+  }
+
   void _validateForm() {
     if (_showValidationErrors) {
       _formKey.currentState?.validate();
@@ -190,6 +190,108 @@ class _SignupContentState extends State<_SignupContent> {
           }
         },
         builder: (context, state) {
+          // Show loading screen while data is being loaded
+          if (state.isLoadingSpecialties || state.isLoadingPlans) {
+            return Column(
+              children: [
+                GradientHeader(
+                  title: 'Create Account',
+                  subtitle: 'Join our dental community',
+                  height: 180.h,
+                  showBackButton: true,
+                  onBackPressed: () => context.pop(),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: ColorManager.primary,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontFamily: FontFamily.geist,
+                            color: ColorManager.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          // Show error screen with retry button if loading failed
+          final hasLoadingError = (state.specialties.isEmpty && !state.isLoadingSpecialties) ||
+              (state.plans.isEmpty && !state.isLoadingPlans);
+
+          if (hasLoadingError) {
+            return Column(
+              children: [
+                GradientHeader(
+                  title: 'Create Account',
+                  subtitle: 'Join our dental community',
+                  height: 180.h,
+                  showBackButton: true,
+                  onBackPressed: () => context.pop(),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64.w,
+                            color: ColorManager.error,
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'Failed to load required data',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: FontFamily.geist,
+                              color: ColorManager.textPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Please check your connection and try again',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontFamily: FontFamily.geist,
+                              color: ColorManager.textSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 32.h),
+                          PrimaryButton(
+                            text: 'Retry',
+                            onPressed: () {
+                              final bloc = context.read<AuthBloc>();
+                              bloc.add(const AuthEvent.specialtiesRequested());
+                              bloc.add(const AuthEvent.plansRequested());
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          // Show signup form when specializations are loaded
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -235,7 +337,7 @@ class _SignupContentState extends State<_SignupContent> {
 
                         SizedBox(height: 16.h),
 
-                        // Email Field
+                        // Email Field (read-only if verified via OTP)
                         AuthTextField(
                           label: 'Email *',
                           hint: 'doctor@example.com',
@@ -243,6 +345,10 @@ class _SignupContentState extends State<_SignupContent> {
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
                           validator: _validateEmail,
+                          enabled: state.sessionId == null || state.sessionId!.isEmpty,
+                          suffixIcon: state.sessionId != null && state.sessionId!.isNotEmpty
+                              ? Icon(Icons.verified, color: ColorManager.success)
+                              : null,
                           onChanged: (value) {
                             context.read<AuthBloc>().add(
                               AuthEvent.signupEmailChanged(value),
@@ -252,36 +358,45 @@ class _SignupContentState extends State<_SignupContent> {
                         ),
 
                         SizedBox(height: 16.h),
-                        // Specialization Field
-                        AuthDropdownField(
-                          label: 'Specialization',
-                          hint: 'Select your specialization',
-                          value: _selectedSpecialization,
-                          items: doctorSpecializations,
-                          prefixIcon: Icons.local_hospital_outlined,
+
+                        // Mobile Number Field
+                        AuthTextField(
+                          label: 'Mobile Number *',
+                          hint: '091234567',
+                          controller: _mobileController,
+                          prefixIcon: Icons.phone_outlined,
+                          keyboardType: TextInputType.phone,
+                          validator: _validateMobileNumber,
                           onChanged: (value) {
-                            setState(() => _selectedSpecialization = value);
                             context.read<AuthBloc>().add(
-                              AuthEvent.signupSpecializationChanged(value!),
+                              AuthEvent.signupMobileNumberChanged(value),
                             );
+                            _validateForm();
                           },
                         ),
+
                         SizedBox(height: 16.h),
 
-                        // Location Field
+                        // Specialization Field (using API data)
                         AuthDropdownField(
-                          label: 'Location',
-                          hint: 'Select your country',
-                          value: _selectedLocation,
-                          items: locations,
-                          prefixIcon: Icons.location_on_outlined,
+                          label: 'Specialization *',
+                          hint: 'Select your specialization',
+                          value: _selectedSpecialtyName,
+                          items: state.specialties
+                              .map((s) => s.name)
+                              .toList(),
+                          prefixIcon: Icons.local_hospital_outlined,
                           onChanged: (value) {
-                            setState(() => _selectedLocation = value);
+                            // Find the specialty entity with matching name
+                            final selectedSpecialty = state.specialties
+                                .firstWhere((s) => s.name == value);
+                            setState(() => _selectedSpecialtyName = value);
                             context.read<AuthBloc>().add(
-                              AuthEvent.signupLocationChanged(value!),
+                              AuthEvent.signupSpecialtyEntitySelected(selectedSpecialty),
                             );
                           },
                         ),
+
                         SizedBox(height: 16.h),
 
                         // Password Field

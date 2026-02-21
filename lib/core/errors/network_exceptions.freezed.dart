@@ -29,6 +29,7 @@ mixin _$NetworkExceptions {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -52,6 +53,7 @@ mixin _$NetworkExceptions {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -75,6 +77,7 @@ mixin _$NetworkExceptions {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -99,6 +102,7 @@ mixin _$NetworkExceptions {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -122,6 +126,7 @@ mixin _$NetworkExceptions {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -145,6 +150,7 @@ mixin _$NetworkExceptions {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -234,6 +240,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -261,6 +268,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -288,6 +296,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -319,6 +328,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -346,6 +356,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -373,6 +384,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -449,6 +461,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -476,6 +489,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -503,6 +517,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -534,6 +549,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -561,6 +577,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -588,6 +605,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -691,6 +709,7 @@ class _$BadRequestImpl implements BadRequest {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -718,6 +737,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -745,6 +765,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -776,6 +797,7 @@ class _$BadRequestImpl implements BadRequest {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -803,6 +825,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -830,6 +853,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -944,6 +968,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -971,6 +996,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -998,6 +1024,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -1029,6 +1056,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -1056,6 +1084,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -1083,6 +1112,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -1168,6 +1198,7 @@ class _$ForbiddenImpl implements Forbidden {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -1195,6 +1226,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -1222,6 +1254,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -1253,6 +1286,7 @@ class _$ForbiddenImpl implements Forbidden {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -1280,6 +1314,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -1307,6 +1342,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -1410,6 +1446,7 @@ class _$NotFoundImpl implements NotFound {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -1437,6 +1474,7 @@ class _$NotFoundImpl implements NotFound {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -1464,6 +1502,7 @@ class _$NotFoundImpl implements NotFound {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -1495,6 +1534,7 @@ class _$NotFoundImpl implements NotFound {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -1522,6 +1562,7 @@ class _$NotFoundImpl implements NotFound {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -1549,6 +1590,7 @@ class _$NotFoundImpl implements NotFound {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -1633,6 +1675,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -1660,6 +1703,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -1687,6 +1731,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -1718,6 +1763,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -1745,6 +1791,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -1772,6 +1819,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -1848,6 +1896,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -1875,6 +1924,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -1902,6 +1952,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -1933,6 +1984,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -1960,6 +2012,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -1987,6 +2040,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -2063,6 +2117,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -2090,6 +2145,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -2117,6 +2173,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -2148,6 +2205,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -2175,6 +2233,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -2202,6 +2261,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -2278,6 +2338,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -2305,6 +2366,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -2332,6 +2394,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -2363,6 +2426,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -2390,6 +2454,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -2417,6 +2482,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -2438,6 +2504,265 @@ class _$SendTimeoutImpl implements SendTimeout {
 
 abstract class SendTimeout implements NetworkExceptions {
   const factory SendTimeout() = _$SendTimeoutImpl;
+}
+
+/// @nodoc
+abstract class _$$TooManyRequestsImplCopyWith<$Res> {
+  factory _$$TooManyRequestsImplCopyWith(
+    _$TooManyRequestsImpl value,
+    $Res Function(_$TooManyRequestsImpl) then,
+  ) = __$$TooManyRequestsImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$TooManyRequestsImplCopyWithImpl<$Res>
+    extends _$NetworkExceptionsCopyWithImpl<$Res, _$TooManyRequestsImpl>
+    implements _$$TooManyRequestsImplCopyWith<$Res> {
+  __$$TooManyRequestsImplCopyWithImpl(
+    _$TooManyRequestsImpl _value,
+    $Res Function(_$TooManyRequestsImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of NetworkExceptions
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? message = null}) {
+    return _then(
+      _$TooManyRequestsImpl(
+        null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$TooManyRequestsImpl implements TooManyRequests {
+  const _$TooManyRequestsImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'NetworkExceptions.tooManyRequests(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TooManyRequestsImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of NetworkExceptions
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TooManyRequestsImplCopyWith<_$TooManyRequestsImpl> get copyWith =>
+      __$$TooManyRequestsImplCopyWithImpl<_$TooManyRequestsImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() requestCancelled,
+    required TResult Function() canceledByUser,
+    required TResult Function(String reason) badRequest,
+    required TResult Function(String reason) unauthorizedRequest,
+    required TResult Function() forbidden,
+    required TResult Function(String reason) notFound,
+    required TResult Function() methodNotAllowed,
+    required TResult Function() notAcceptable,
+    required TResult Function() requestTimeout,
+    required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
+    required TResult Function(String reason) unprocessableEntity,
+    required TResult Function() conflict,
+    required TResult Function() internalServerError,
+    required TResult Function() notImplemented,
+    required TResult Function() serviceUnavailable,
+    required TResult Function() noInternetConnection,
+    required TResult Function() formatException,
+    required TResult Function() unableToProcess,
+    required TResult Function(String error) defaultError,
+    required TResult Function() unexpectedError,
+  }) {
+    return tooManyRequests(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? requestCancelled,
+    TResult? Function()? canceledByUser,
+    TResult? Function(String reason)? badRequest,
+    TResult? Function(String reason)? unauthorizedRequest,
+    TResult? Function()? forbidden,
+    TResult? Function(String reason)? notFound,
+    TResult? Function()? methodNotAllowed,
+    TResult? Function()? notAcceptable,
+    TResult? Function()? requestTimeout,
+    TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
+    TResult? Function(String reason)? unprocessableEntity,
+    TResult? Function()? conflict,
+    TResult? Function()? internalServerError,
+    TResult? Function()? notImplemented,
+    TResult? Function()? serviceUnavailable,
+    TResult? Function()? noInternetConnection,
+    TResult? Function()? formatException,
+    TResult? Function()? unableToProcess,
+    TResult? Function(String error)? defaultError,
+    TResult? Function()? unexpectedError,
+  }) {
+    return tooManyRequests?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? requestCancelled,
+    TResult Function()? canceledByUser,
+    TResult Function(String reason)? badRequest,
+    TResult Function(String reason)? unauthorizedRequest,
+    TResult Function()? forbidden,
+    TResult Function(String reason)? notFound,
+    TResult Function()? methodNotAllowed,
+    TResult Function()? notAcceptable,
+    TResult Function()? requestTimeout,
+    TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
+    TResult Function(String reason)? unprocessableEntity,
+    TResult Function()? conflict,
+    TResult Function()? internalServerError,
+    TResult Function()? notImplemented,
+    TResult Function()? serviceUnavailable,
+    TResult Function()? noInternetConnection,
+    TResult Function()? formatException,
+    TResult Function()? unableToProcess,
+    TResult Function(String error)? defaultError,
+    TResult Function()? unexpectedError,
+    required TResult orElse(),
+  }) {
+    if (tooManyRequests != null) {
+      return tooManyRequests(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(RequestCancelled value) requestCancelled,
+    required TResult Function(CanceledByUser value) canceledByUser,
+    required TResult Function(BadRequest value) badRequest,
+    required TResult Function(UnauthorizedRequest value) unauthorizedRequest,
+    required TResult Function(Forbidden value) forbidden,
+    required TResult Function(NotFound value) notFound,
+    required TResult Function(MethodNotAllowed value) methodNotAllowed,
+    required TResult Function(NotAcceptable value) notAcceptable,
+    required TResult Function(RequestTimeout value) requestTimeout,
+    required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
+    required TResult Function(UnprocessableEntity value) unprocessableEntity,
+    required TResult Function(Conflict value) conflict,
+    required TResult Function(InternalServerError value) internalServerError,
+    required TResult Function(NotImplemented value) notImplemented,
+    required TResult Function(ServiceUnavailable value) serviceUnavailable,
+    required TResult Function(NoInternetConnection value) noInternetConnection,
+    required TResult Function(FormatException value) formatException,
+    required TResult Function(UnableToProcess value) unableToProcess,
+    required TResult Function(DefaultError value) defaultError,
+    required TResult Function(UnexpectedError value) unexpectedError,
+  }) {
+    return tooManyRequests(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(RequestCancelled value)? requestCancelled,
+    TResult? Function(CanceledByUser value)? canceledByUser,
+    TResult? Function(BadRequest value)? badRequest,
+    TResult? Function(UnauthorizedRequest value)? unauthorizedRequest,
+    TResult? Function(Forbidden value)? forbidden,
+    TResult? Function(NotFound value)? notFound,
+    TResult? Function(MethodNotAllowed value)? methodNotAllowed,
+    TResult? Function(NotAcceptable value)? notAcceptable,
+    TResult? Function(RequestTimeout value)? requestTimeout,
+    TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
+    TResult? Function(UnprocessableEntity value)? unprocessableEntity,
+    TResult? Function(Conflict value)? conflict,
+    TResult? Function(InternalServerError value)? internalServerError,
+    TResult? Function(NotImplemented value)? notImplemented,
+    TResult? Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult? Function(NoInternetConnection value)? noInternetConnection,
+    TResult? Function(FormatException value)? formatException,
+    TResult? Function(UnableToProcess value)? unableToProcess,
+    TResult? Function(DefaultError value)? defaultError,
+    TResult? Function(UnexpectedError value)? unexpectedError,
+  }) {
+    return tooManyRequests?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(RequestCancelled value)? requestCancelled,
+    TResult Function(CanceledByUser value)? canceledByUser,
+    TResult Function(BadRequest value)? badRequest,
+    TResult Function(UnauthorizedRequest value)? unauthorizedRequest,
+    TResult Function(Forbidden value)? forbidden,
+    TResult Function(NotFound value)? notFound,
+    TResult Function(MethodNotAllowed value)? methodNotAllowed,
+    TResult Function(NotAcceptable value)? notAcceptable,
+    TResult Function(RequestTimeout value)? requestTimeout,
+    TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
+    TResult Function(UnprocessableEntity value)? unprocessableEntity,
+    TResult Function(Conflict value)? conflict,
+    TResult Function(InternalServerError value)? internalServerError,
+    TResult Function(NotImplemented value)? notImplemented,
+    TResult Function(ServiceUnavailable value)? serviceUnavailable,
+    TResult Function(NoInternetConnection value)? noInternetConnection,
+    TResult Function(FormatException value)? formatException,
+    TResult Function(UnableToProcess value)? unableToProcess,
+    TResult Function(DefaultError value)? defaultError,
+    TResult Function(UnexpectedError value)? unexpectedError,
+    required TResult orElse(),
+  }) {
+    if (tooManyRequests != null) {
+      return tooManyRequests(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class TooManyRequests implements NetworkExceptions {
+  const factory TooManyRequests(final String message) = _$TooManyRequestsImpl;
+
+  String get message;
+
+  /// Create a copy of NetworkExceptions
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TooManyRequestsImplCopyWith<_$TooManyRequestsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2523,6 +2848,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -2550,6 +2876,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -2577,6 +2904,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -2608,6 +2936,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -2635,6 +2964,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -2662,6 +2992,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -2747,6 +3078,7 @@ class _$ConflictImpl implements Conflict {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -2774,6 +3106,7 @@ class _$ConflictImpl implements Conflict {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -2801,6 +3134,7 @@ class _$ConflictImpl implements Conflict {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -2832,6 +3166,7 @@ class _$ConflictImpl implements Conflict {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -2859,6 +3194,7 @@ class _$ConflictImpl implements Conflict {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -2886,6 +3222,7 @@ class _$ConflictImpl implements Conflict {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -2963,6 +3300,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -2990,6 +3328,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -3017,6 +3356,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -3048,6 +3388,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -3075,6 +3416,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -3102,6 +3444,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -3178,6 +3521,7 @@ class _$NotImplementedImpl implements NotImplemented {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -3205,6 +3549,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -3232,6 +3577,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -3263,6 +3609,7 @@ class _$NotImplementedImpl implements NotImplemented {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -3290,6 +3637,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -3317,6 +3665,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -3393,6 +3742,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -3420,6 +3770,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -3447,6 +3798,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -3478,6 +3830,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -3505,6 +3858,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -3532,6 +3886,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -3609,6 +3964,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -3636,6 +3992,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -3663,6 +4020,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -3694,6 +4052,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -3721,6 +4080,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -3748,6 +4108,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -3824,6 +4185,7 @@ class _$FormatExceptionImpl implements FormatException {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -3851,6 +4213,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -3878,6 +4241,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -3909,6 +4273,7 @@ class _$FormatExceptionImpl implements FormatException {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -3936,6 +4301,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -3963,6 +4329,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -4039,6 +4406,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -4066,6 +4434,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -4093,6 +4462,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -4124,6 +4494,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -4151,6 +4522,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -4178,6 +4550,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -4281,6 +4654,7 @@ class _$DefaultErrorImpl implements DefaultError {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -4308,6 +4682,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -4335,6 +4710,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -4366,6 +4742,7 @@ class _$DefaultErrorImpl implements DefaultError {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -4393,6 +4770,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -4420,6 +4798,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,
@@ -4504,6 +4883,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     required TResult Function() notAcceptable,
     required TResult Function() requestTimeout,
     required TResult Function() sendTimeout,
+    required TResult Function(String message) tooManyRequests,
     required TResult Function(String reason) unprocessableEntity,
     required TResult Function() conflict,
     required TResult Function() internalServerError,
@@ -4531,6 +4911,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult? Function()? notAcceptable,
     TResult? Function()? requestTimeout,
     TResult? Function()? sendTimeout,
+    TResult? Function(String message)? tooManyRequests,
     TResult? Function(String reason)? unprocessableEntity,
     TResult? Function()? conflict,
     TResult? Function()? internalServerError,
@@ -4558,6 +4939,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult Function()? notAcceptable,
     TResult Function()? requestTimeout,
     TResult Function()? sendTimeout,
+    TResult Function(String message)? tooManyRequests,
     TResult Function(String reason)? unprocessableEntity,
     TResult Function()? conflict,
     TResult Function()? internalServerError,
@@ -4589,6 +4971,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     required TResult Function(NotAcceptable value) notAcceptable,
     required TResult Function(RequestTimeout value) requestTimeout,
     required TResult Function(SendTimeout value) sendTimeout,
+    required TResult Function(TooManyRequests value) tooManyRequests,
     required TResult Function(UnprocessableEntity value) unprocessableEntity,
     required TResult Function(Conflict value) conflict,
     required TResult Function(InternalServerError value) internalServerError,
@@ -4616,6 +4999,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult? Function(NotAcceptable value)? notAcceptable,
     TResult? Function(RequestTimeout value)? requestTimeout,
     TResult? Function(SendTimeout value)? sendTimeout,
+    TResult? Function(TooManyRequests value)? tooManyRequests,
     TResult? Function(UnprocessableEntity value)? unprocessableEntity,
     TResult? Function(Conflict value)? conflict,
     TResult? Function(InternalServerError value)? internalServerError,
@@ -4643,6 +5027,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult Function(NotAcceptable value)? notAcceptable,
     TResult Function(RequestTimeout value)? requestTimeout,
     TResult Function(SendTimeout value)? sendTimeout,
+    TResult Function(TooManyRequests value)? tooManyRequests,
     TResult Function(UnprocessableEntity value)? unprocessableEntity,
     TResult Function(Conflict value)? conflict,
     TResult Function(InternalServerError value)? internalServerError,

@@ -14,4 +14,10 @@ class AuthEndpoints {
 
   /// POST /auth/register - Register new user with clinic
   static const String register = '/auth/register';
+
+  /// POST /auth/register/request-otp - Request OTP for registration (also used for resend)
+  static const String requestOtpForRegister = '/auth/register/request-otp';
+
+  /// POST /auth/verify-otp - Verify OTP and get session token
+  static const String verifyOtp = '/auth/verify-otp';
 }

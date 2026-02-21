@@ -43,6 +43,7 @@ class ErrorHelper {
       notAcceptable: () => ServerFailure(message),
       requestTimeout: () => NetworkFailure(message),
       sendTimeout: () => NetworkFailure(message),
+      tooManyRequests: (msg) => NetworkFailure(msg),
       unprocessableEntity: (reason) => ValidationFailure(reason),
       conflict: () => ServerFailure(message),
       internalServerError: () => ServerFailure(message),

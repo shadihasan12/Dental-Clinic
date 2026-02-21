@@ -1,10 +1,12 @@
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/features/auth/data/models/specialty_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/location_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/plan_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/register_response_model.dart';
+import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 
 /// Abstract interface for auth remote data source
 abstract class AuthRemoteDataSource {
@@ -17,6 +19,15 @@ abstract class AuthRemoteDataSource {
   /// Fetch list of subscription plans
   Future<List<PlanModel>> getPlans();
 
+  /// Request OTP for registration
+  Future<OtpResponse> requestOtpForRegister(Map<String, dynamic> body);
+
+  /// Verify OTP and get session token
+  Future<VerifyOtpResponse> verifyOtp(Map<String, dynamic> body);
+
+  /// Resend OTP
+  Future<OtpResponse> resendOtp(Map<String, dynamic> body);
+
   /// Register new user with clinic
   Future<RegisterResponseModel> register(Map<String, dynamic> body);
 }
@@ -25,8 +36,9 @@ abstract class AuthRemoteDataSource {
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final ApiConsumer _apiConsumer;
+  final TokenStorage _tokenStorage;
 
-  AuthRemoteDataSourceImpl(this._apiConsumer);
+  AuthRemoteDataSourceImpl(this._apiConsumer, this._tokenStorage);
 
   @override
   Future<List<SpecialtyModel>> getSpecialties() async {
@@ -77,14 +89,63 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<OtpResponse> requestOtpForRegister(Map<String, dynamic> body) async {
+    final response = await _apiConsumer.post(
+      AuthEndpoints.requestOtpForRegister,
+      body: body,
+    );
+
+    // Return OTP response with seconds remaining
+    return OtpResponse.fromJson(response);
+  }
+
+  @override
+  Future<VerifyOtpResponse> verifyOtp(Map<String, dynamic> body) async {
+    final response = await _apiConsumer.post(
+      AuthEndpoints.verifyOtp,
+      body: body,
+    );
+
+    // Return verify OTP response with session token
+    return VerifyOtpResponse.fromJson(response);
+  }
+
+  @override
+  Future<OtpResponse> resendOtp(Map<String, dynamic> body) async {
+    // Resend uses the same endpoint as request OTP
+    final response = await _apiConsumer.post(
+      AuthEndpoints.requestOtpForRegister,
+      body: body,
+    );
+
+    // Return OTP response with seconds remaining
+    return OtpResponse.fromJson(response);
+  }
+
+  @override
   Future<RegisterResponseModel> register(Map<String, dynamic> body) async {
     final response = await _apiConsumer.post(
       AuthEndpoints.register,
       body: body,
     );
 
+    // Extract and save token from response root level
+    final token = response['token'] as String?;
+    if (token != null && token.isNotEmpty) {
+      await _tokenStorage.saveToken(token);
+    }
+
     // Extract data object from response
-    final data = response['data'] as Map<String, dynamic>;
+    final data = response['data'] as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Registration failed: Invalid response data');
+    }
+
+    // Save user ID for later use
+    final userId = data['id'] as String?;
+    if (userId != null && userId.isNotEmpty) {
+      await _tokenStorage.saveUserId(userId);
+    }
 
     // Map JSON to RegisterResponseModel
     return RegisterResponseModel.fromJson(data);

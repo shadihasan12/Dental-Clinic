@@ -78,6 +78,60 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForRegister({
+    required RequestOtpParams params,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.requestOtpForRegister(params.toJson());
+        return Right(response);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, VerifyOtpResponse>> verifyOtp({
+    required VerifyOtpParams params,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.verifyOtp(params.toJson());
+        return Right(response);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, OtpResponse>> resendOtp({
+    required RequestOtpParams params,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.resendOtp(params.toJson());
+        return Right(response);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
   Future<Either<NetworkExceptions, RegisterResponseEntity>> register({
     required RegisterRequestParams params,
   }) async {

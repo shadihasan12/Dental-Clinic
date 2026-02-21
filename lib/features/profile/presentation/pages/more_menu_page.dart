@@ -15,7 +15,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 class MoreMenuPage extends StatelessWidget {
   MoreMenuPage({super.key});
 
-  UserSubscriptionEntity subscription = UserSubscriptionEntity(
+  final UserSubscriptionEntity subscription = UserSubscriptionEntity(
     id: 'sub_123',
     userId: 'user_123',
     planTier: PlanTier.trial,

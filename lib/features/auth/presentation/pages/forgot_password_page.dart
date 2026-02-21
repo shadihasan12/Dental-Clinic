@@ -15,7 +15,7 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(getIt()),
+      create: (context) => AuthBloc(getIt(), getIt()),
       child: const _ForgotPasswordPageContent(),
     );
   }

@@ -44,6 +44,15 @@ class AuthState with _$AuthState {
     @Default('') String clinicAddress,
     @Default('') String mobileNumber,
 
+    // OTP verification fields
+    @Default('') String otpCode,
+    @Default(false) bool isOtpLoading,
+    @Default(false) bool isOtpVerifying,
+    @Default(null) String? otpError,
+    @Default(null) String? sessionId,
+    @Default(0) int otpSecondsRemaining,
+    @Default(false) bool canResendOtp,
+
     // Forgot password fields
     @Default('') String forgotPasswordEmail,
     @Default(false) bool isForgotPasswordLoading,

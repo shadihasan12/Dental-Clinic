@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -17,7 +16,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(getIt()),
+      create: (context) => AuthBloc(getIt(), getIt()),
       child: const _LoginPageContent(),
     );
   }
@@ -233,7 +232,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
           ),
         ),
         TextButton(
-          onPressed: () => context.pushNamed(AppRoutesNames.register),
+          onPressed: () => context.pushNamed(AppRoutesNames.emailEntry),
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,

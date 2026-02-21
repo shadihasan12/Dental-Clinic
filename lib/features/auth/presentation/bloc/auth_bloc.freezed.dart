@@ -48,6 +48,10 @@ mixin _$AuthEvent {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -82,6 +86,10 @@ mixin _$AuthEvent {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -115,6 +123,10 @@ mixin _$AuthEvent {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -164,6 +176,10 @@ mixin _$AuthEvent {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -210,6 +226,10 @@ mixin _$AuthEvent {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -254,6 +274,10 @@ mixin _$AuthEvent {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -387,6 +411,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -425,6 +453,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -462,6 +494,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -518,6 +554,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -568,6 +608,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -616,6 +660,10 @@ class _$LoginEmailChangedImpl implements _LoginEmailChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -749,6 +797,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -787,6 +839,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -824,6 +880,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -880,6 +940,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -930,6 +994,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -978,6 +1046,10 @@ class _$LoginPasswordChangedImpl implements _LoginPasswordChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1081,6 +1153,10 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1119,6 +1195,10 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1156,6 +1236,10 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1212,6 +1296,10 @@ class _$LoginPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1262,6 +1350,10 @@ class _$LoginPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1310,6 +1402,10 @@ class _$LoginPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1403,6 +1499,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1441,6 +1541,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1478,6 +1582,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1534,6 +1642,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1584,6 +1696,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1632,6 +1748,10 @@ class _$LoginSubmittedImpl implements _LoginSubmitted {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1754,6 +1874,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -1792,6 +1916,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -1829,6 +1957,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -1885,6 +2017,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -1935,6 +2071,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -1983,6 +2123,10 @@ class _$SignupNameChangedImpl implements _SignupNameChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2113,6 +2257,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2151,6 +2299,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2188,6 +2340,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2244,6 +2400,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2294,6 +2454,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2342,6 +2506,10 @@ class _$SignupEmailChangedImpl implements _SignupEmailChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2475,6 +2643,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2513,6 +2685,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2550,6 +2726,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2606,6 +2786,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -2656,6 +2840,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2704,6 +2892,10 @@ class _$SignupPasswordChangedImpl implements _SignupPasswordChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -2839,6 +3031,10 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -2877,6 +3073,10 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -2914,6 +3114,10 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -2970,6 +3174,10 @@ class _$SignupConfirmPasswordChangedImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3020,6 +3228,10 @@ class _$SignupConfirmPasswordChangedImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3068,6 +3280,10 @@ class _$SignupConfirmPasswordChangedImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3173,6 +3389,10 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3211,6 +3431,10 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3248,6 +3472,10 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3304,6 +3532,10 @@ class _$SignupPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3354,6 +3586,10 @@ class _$SignupPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3402,6 +3638,10 @@ class _$SignupPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3501,6 +3741,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3539,6 +3783,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3576,6 +3824,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3632,6 +3884,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -3682,6 +3938,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3730,6 +3990,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -3823,6 +4087,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -3861,6 +4129,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -3898,6 +4170,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -3954,6 +4230,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4004,6 +4284,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4052,6 +4336,10 @@ class _$SignupSubmittedImpl implements _SignupSubmitted {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4144,6 +4432,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4182,6 +4474,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4219,6 +4515,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4275,6 +4575,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4325,6 +4629,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4373,6 +4681,10 @@ class _$SignupFormResetImpl implements _SignupFormReset {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4496,6 +4808,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4534,6 +4850,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4571,6 +4891,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4627,6 +4951,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -4677,6 +5005,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4725,6 +5057,10 @@ class _$SignupLicenseNumberChangedImpl implements _SignupLicenseNumberChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -4858,6 +5194,10 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -4896,6 +5236,10 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -4933,6 +5277,10 @@ class _$SignupSpecializationChangedImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -4989,6 +5337,10 @@ class _$SignupSpecializationChangedImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -5039,6 +5391,10 @@ class _$SignupSpecializationChangedImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5087,6 +5443,10 @@ class _$SignupSpecializationChangedImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5220,6 +5580,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -5258,6 +5622,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -5295,6 +5663,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -5351,6 +5723,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -5401,6 +5777,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5449,6 +5829,10 @@ class _$SignupLocationChangedImpl implements _SignupLocationChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5551,6 +5935,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -5589,6 +5977,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -5626,6 +6018,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -5682,6 +6078,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -5732,6 +6132,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5780,6 +6184,10 @@ class _$SpecialtiesRequestedImpl implements _SpecialtiesRequested {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -5872,6 +6280,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -5910,6 +6322,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -5947,6 +6363,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -6003,6 +6423,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -6053,6 +6477,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6101,6 +6529,10 @@ class _$PlansRequestedImpl implements _PlansRequested {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6234,6 +6666,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -6272,6 +6708,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -6309,6 +6749,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -6365,6 +6809,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -6415,6 +6863,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6463,6 +6915,10 @@ class _$LocationSearchRequestedImpl implements _LocationSearchRequested {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6613,6 +7069,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -6651,6 +7111,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -6688,6 +7152,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -6744,6 +7212,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -6794,6 +7266,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6842,6 +7318,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -6992,6 +7472,10 @@ class _$SignupLocationEntitySelectedImpl
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -7030,6 +7514,10 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -7067,6 +7555,10 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -7123,6 +7615,10 @@ class _$SignupLocationEntitySelectedImpl
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -7173,6 +7669,10 @@ class _$SignupLocationEntitySelectedImpl
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -7221,6 +7721,10 @@ class _$SignupLocationEntitySelectedImpl
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -7366,6 +7870,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -7404,6 +7912,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -7441,6 +7953,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -7497,6 +8013,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -7547,6 +8067,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -7595,6 +8119,10 @@ class _$SignupPlanEntitySelectedImpl implements _SignupPlanEntitySelected {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -7726,6 +8254,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -7764,6 +8296,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -7801,6 +8337,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -7857,6 +8397,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -7907,6 +8451,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -7955,6 +8503,10 @@ class _$SignupClinicNameChangedImpl implements _SignupClinicNameChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -8086,6 +8638,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -8124,6 +8680,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -8161,6 +8721,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -8217,6 +8781,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -8267,6 +8835,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -8315,6 +8887,10 @@ class _$SignupClinicAddressChangedImpl implements _SignupClinicAddressChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -8446,6 +9022,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -8484,6 +9064,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -8521,6 +9105,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -8577,6 +9165,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -8627,6 +9219,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -8675,6 +9271,10 @@ class _$SignupMobileNumberChangedImpl implements _SignupMobileNumberChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -8702,6 +9302,1424 @@ abstract class _SignupMobileNumberChanged implements AuthEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SignupMobileNumberChangedImplCopyWith<_$SignupMobileNumberChangedImpl>
   get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$OtpRequestedImplCopyWith<$Res> {
+  factory _$$OtpRequestedImplCopyWith(
+    _$OtpRequestedImpl value,
+    $Res Function(_$OtpRequestedImpl) then,
+  ) = __$$OtpRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$OtpRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$OtpRequestedImpl>
+    implements _$$OtpRequestedImplCopyWith<$Res> {
+  __$$OtpRequestedImplCopyWithImpl(
+    _$OtpRequestedImpl _value,
+    $Res Function(_$OtpRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$OtpRequestedImpl implements _OtpRequested {
+  const _$OtpRequestedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.otpRequested()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$OtpRequestedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return otpRequested();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return otpRequested?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpRequested != null) {
+      return otpRequested();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return otpRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return otpRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpRequested != null) {
+      return otpRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OtpRequested implements AuthEvent {
+  const factory _OtpRequested() = _$OtpRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$OtpCodeChangedImplCopyWith<$Res> {
+  factory _$$OtpCodeChangedImplCopyWith(
+    _$OtpCodeChangedImpl value,
+    $Res Function(_$OtpCodeChangedImpl) then,
+  ) = __$$OtpCodeChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String code});
+}
+
+/// @nodoc
+class __$$OtpCodeChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$OtpCodeChangedImpl>
+    implements _$$OtpCodeChangedImplCopyWith<$Res> {
+  __$$OtpCodeChangedImplCopyWithImpl(
+    _$OtpCodeChangedImpl _value,
+    $Res Function(_$OtpCodeChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? code = null}) {
+    return _then(
+      _$OtpCodeChangedImpl(
+        null == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$OtpCodeChangedImpl implements _OtpCodeChanged {
+  const _$OtpCodeChangedImpl(this.code);
+
+  @override
+  final String code;
+
+  @override
+  String toString() {
+    return 'AuthEvent.otpCodeChanged(code: $code)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OtpCodeChangedImpl &&
+            (identical(other.code, code) || other.code == code));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, code);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OtpCodeChangedImplCopyWith<_$OtpCodeChangedImpl> get copyWith =>
+      __$$OtpCodeChangedImplCopyWithImpl<_$OtpCodeChangedImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return otpCodeChanged(code);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return otpCodeChanged?.call(code);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpCodeChanged != null) {
+      return otpCodeChanged(code);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return otpCodeChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return otpCodeChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpCodeChanged != null) {
+      return otpCodeChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OtpCodeChanged implements AuthEvent {
+  const factory _OtpCodeChanged(final String code) = _$OtpCodeChangedImpl;
+
+  String get code;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$OtpCodeChangedImplCopyWith<_$OtpCodeChangedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$OtpVerifiedImplCopyWith<$Res> {
+  factory _$$OtpVerifiedImplCopyWith(
+    _$OtpVerifiedImpl value,
+    $Res Function(_$OtpVerifiedImpl) then,
+  ) = __$$OtpVerifiedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$OtpVerifiedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$OtpVerifiedImpl>
+    implements _$$OtpVerifiedImplCopyWith<$Res> {
+  __$$OtpVerifiedImplCopyWithImpl(
+    _$OtpVerifiedImpl _value,
+    $Res Function(_$OtpVerifiedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$OtpVerifiedImpl implements _OtpVerified {
+  const _$OtpVerifiedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.otpVerified()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$OtpVerifiedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return otpVerified();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return otpVerified?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpVerified != null) {
+      return otpVerified();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return otpVerified(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return otpVerified?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpVerified != null) {
+      return otpVerified(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OtpVerified implements AuthEvent {
+  const factory _OtpVerified() = _$OtpVerifiedImpl;
+}
+
+/// @nodoc
+abstract class _$$OtpResendRequestedImplCopyWith<$Res> {
+  factory _$$OtpResendRequestedImplCopyWith(
+    _$OtpResendRequestedImpl value,
+    $Res Function(_$OtpResendRequestedImpl) then,
+  ) = __$$OtpResendRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$OtpResendRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$OtpResendRequestedImpl>
+    implements _$$OtpResendRequestedImplCopyWith<$Res> {
+  __$$OtpResendRequestedImplCopyWithImpl(
+    _$OtpResendRequestedImpl _value,
+    $Res Function(_$OtpResendRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$OtpResendRequestedImpl implements _OtpResendRequested {
+  const _$OtpResendRequestedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.otpResendRequested()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$OtpResendRequestedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return otpResendRequested();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return otpResendRequested?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String name)? signupNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpResendRequested != null) {
+      return otpResendRequested();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return otpResendRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return otpResendRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (otpResendRequested != null) {
+      return otpResendRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OtpResendRequested implements AuthEvent {
+  const factory _OtpResendRequested() = _$OtpResendRequestedImpl;
 }
 
 /// @nodoc
@@ -8806,6 +10824,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -8844,6 +10866,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -8881,6 +10907,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -8937,6 +10967,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -8987,6 +11021,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9035,6 +11073,10 @@ class _$ForgotPasswordEmailChangedImpl implements _ForgotPasswordEmailChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9137,6 +11179,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -9175,6 +11221,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -9212,6 +11262,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -9268,6 +11322,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -9318,6 +11376,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9366,6 +11428,10 @@ class _$ForgotPasswordSubmittedImpl implements _ForgotPasswordSubmitted {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9459,6 +11525,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -9497,6 +11567,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -9534,6 +11608,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -9590,6 +11668,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -9640,6 +11722,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9688,6 +11774,10 @@ class _$ForgotPasswordResetImpl implements _ForgotPasswordReset {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -9811,6 +11901,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -9849,6 +11943,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -9886,6 +11984,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -9942,6 +12044,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -9992,6 +12098,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10040,6 +12150,10 @@ class _$ActiveClinicChangedImpl implements _ActiveClinicChanged {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10141,6 +12255,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -10179,6 +12297,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -10216,6 +12338,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -10272,6 +12398,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -10322,6 +12452,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10370,6 +12504,10 @@ class _$AuthCheckRequestedImpl implements _AuthCheckRequested {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10462,6 +12600,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     required TResult Function(String name) signupClinicNameChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
     required TResult Function(String email) forgotPasswordEmailChanged,
     required TResult Function() forgotPasswordSubmitted,
     required TResult Function() forgotPasswordReset,
@@ -10500,6 +12642,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     TResult? Function(String name)? signupClinicNameChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
     TResult? Function(String email)? forgotPasswordEmailChanged,
     TResult? Function()? forgotPasswordSubmitted,
     TResult? Function()? forgotPasswordReset,
@@ -10537,6 +12683,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     TResult Function(String name)? signupClinicNameChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
     TResult Function(String email)? forgotPasswordEmailChanged,
     TResult Function()? forgotPasswordSubmitted,
     TResult Function()? forgotPasswordReset,
@@ -10593,6 +12743,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
     signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
     required TResult Function(_ForgotPasswordEmailChanged value)
     forgotPasswordEmailChanged,
     required TResult Function(_ForgotPasswordSubmitted value)
@@ -10643,6 +12797,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
     TResult? Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10691,6 +12849,10 @@ class _$LogoutRequestedImpl implements _LogoutRequested {
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
     signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
     TResult Function(_ForgotPasswordEmailChanged value)?
     forgotPasswordEmailChanged,
     TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
@@ -10749,6 +12911,14 @@ mixin _$AuthState {
   String get clinicName => throw _privateConstructorUsedError;
   String get clinicAddress => throw _privateConstructorUsedError;
   String get mobileNumber =>
+      throw _privateConstructorUsedError; // OTP verification fields
+  String get otpCode => throw _privateConstructorUsedError;
+  bool get isOtpLoading => throw _privateConstructorUsedError;
+  bool get isOtpVerifying => throw _privateConstructorUsedError;
+  String? get otpError => throw _privateConstructorUsedError;
+  String? get sessionId => throw _privateConstructorUsedError;
+  int get otpSecondsRemaining => throw _privateConstructorUsedError;
+  bool get canResendOtp =>
       throw _privateConstructorUsedError; // Forgot password fields
   String get forgotPasswordEmail => throw _privateConstructorUsedError;
   bool get isForgotPasswordLoading => throw _privateConstructorUsedError;
@@ -10805,6 +12975,13 @@ abstract class $AuthStateCopyWith<$Res> {
     String clinicName,
     String clinicAddress,
     String mobileNumber,
+    String otpCode,
+    bool isOtpLoading,
+    bool isOtpVerifying,
+    String? otpError,
+    String? sessionId,
+    int otpSecondsRemaining,
+    bool canResendOtp,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
     bool isForgotPasswordSuccess,
@@ -10865,6 +13042,13 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? clinicName = null,
     Object? clinicAddress = null,
     Object? mobileNumber = null,
+    Object? otpCode = null,
+    Object? isOtpLoading = null,
+    Object? isOtpVerifying = null,
+    Object? otpError = freezed,
+    Object? sessionId = freezed,
+    Object? otpSecondsRemaining = null,
+    Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
     Object? isForgotPasswordSuccess = null,
@@ -10990,6 +13174,34 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.mobileNumber
                 : mobileNumber // ignore: cast_nullable_to_non_nullable
                       as String,
+            otpCode: null == otpCode
+                ? _value.otpCode
+                : otpCode // ignore: cast_nullable_to_non_nullable
+                      as String,
+            isOtpLoading: null == isOtpLoading
+                ? _value.isOtpLoading
+                : isOtpLoading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isOtpVerifying: null == isOtpVerifying
+                ? _value.isOtpVerifying
+                : isOtpVerifying // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            otpError: freezed == otpError
+                ? _value.otpError
+                : otpError // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sessionId: freezed == sessionId
+                ? _value.sessionId
+                : sessionId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            otpSecondsRemaining: null == otpSecondsRemaining
+                ? _value.otpSecondsRemaining
+                : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
+                      as int,
+            canResendOtp: null == canResendOtp
+                ? _value.canResendOtp
+                : canResendOtp // ignore: cast_nullable_to_non_nullable
+                      as bool,
             forgotPasswordEmail: null == forgotPasswordEmail
                 ? _value.forgotPasswordEmail
                 : forgotPasswordEmail // ignore: cast_nullable_to_non_nullable
@@ -11126,6 +13338,13 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     String clinicName,
     String clinicAddress,
     String mobileNumber,
+    String otpCode,
+    bool isOtpLoading,
+    bool isOtpVerifying,
+    String? otpError,
+    String? sessionId,
+    int otpSecondsRemaining,
+    bool canResendOtp,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
     bool isForgotPasswordSuccess,
@@ -11189,6 +13408,13 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? clinicName = null,
     Object? clinicAddress = null,
     Object? mobileNumber = null,
+    Object? otpCode = null,
+    Object? isOtpLoading = null,
+    Object? isOtpVerifying = null,
+    Object? otpError = freezed,
+    Object? sessionId = freezed,
+    Object? otpSecondsRemaining = null,
+    Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
     Object? isForgotPasswordSuccess = null,
@@ -11313,6 +13539,34 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.mobileNumber
             : mobileNumber // ignore: cast_nullable_to_non_nullable
                   as String,
+        otpCode: null == otpCode
+            ? _value.otpCode
+            : otpCode // ignore: cast_nullable_to_non_nullable
+                  as String,
+        isOtpLoading: null == isOtpLoading
+            ? _value.isOtpLoading
+            : isOtpLoading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isOtpVerifying: null == isOtpVerifying
+            ? _value.isOtpVerifying
+            : isOtpVerifying // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        otpError: freezed == otpError
+            ? _value.otpError
+            : otpError // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sessionId: freezed == sessionId
+            ? _value.sessionId
+            : sessionId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        otpSecondsRemaining: null == otpSecondsRemaining
+            ? _value.otpSecondsRemaining
+            : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
+                  as int,
+        canResendOtp: null == canResendOtp
+            ? _value.canResendOtp
+            : canResendOtp // ignore: cast_nullable_to_non_nullable
+                  as bool,
         forgotPasswordEmail: null == forgotPasswordEmail
             ? _value.forgotPasswordEmail
             : forgotPasswordEmail // ignore: cast_nullable_to_non_nullable
@@ -11386,6 +13640,13 @@ class _$AuthStateImpl implements _AuthState {
     this.clinicName = '',
     this.clinicAddress = '',
     this.mobileNumber = '',
+    this.otpCode = '',
+    this.isOtpLoading = false,
+    this.isOtpVerifying = false,
+    this.otpError = null,
+    this.sessionId = null,
+    this.otpSecondsRemaining = 0,
+    this.canResendOtp = false,
     this.forgotPasswordEmail = '',
     this.isForgotPasswordLoading = false,
     this.isForgotPasswordSuccess = false,
@@ -11512,6 +13773,28 @@ class _$AuthStateImpl implements _AuthState {
   @override
   @JsonKey()
   final String mobileNumber;
+  // OTP verification fields
+  @override
+  @JsonKey()
+  final String otpCode;
+  @override
+  @JsonKey()
+  final bool isOtpLoading;
+  @override
+  @JsonKey()
+  final bool isOtpVerifying;
+  @override
+  @JsonKey()
+  final String? otpError;
+  @override
+  @JsonKey()
+  final String? sessionId;
+  @override
+  @JsonKey()
+  final int otpSecondsRemaining;
+  @override
+  @JsonKey()
+  final bool canResendOtp;
   // Forgot password fields
   @override
   @JsonKey()
@@ -11558,7 +13841,7 @@ class _$AuthStateImpl implements _AuthState {
 
   @override
   String toString() {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupName: $signupName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupName: $signupName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
   }
 
   @override
@@ -11632,6 +13915,19 @@ class _$AuthStateImpl implements _AuthState {
                 other.clinicAddress == clinicAddress) &&
             (identical(other.mobileNumber, mobileNumber) ||
                 other.mobileNumber == mobileNumber) &&
+            (identical(other.otpCode, otpCode) || other.otpCode == otpCode) &&
+            (identical(other.isOtpLoading, isOtpLoading) ||
+                other.isOtpLoading == isOtpLoading) &&
+            (identical(other.isOtpVerifying, isOtpVerifying) ||
+                other.isOtpVerifying == isOtpVerifying) &&
+            (identical(other.otpError, otpError) ||
+                other.otpError == otpError) &&
+            (identical(other.sessionId, sessionId) ||
+                other.sessionId == sessionId) &&
+            (identical(other.otpSecondsRemaining, otpSecondsRemaining) ||
+                other.otpSecondsRemaining == otpSecondsRemaining) &&
+            (identical(other.canResendOtp, canResendOtp) ||
+                other.canResendOtp == canResendOtp) &&
             (identical(other.forgotPasswordEmail, forgotPasswordEmail) ||
                 other.forgotPasswordEmail == forgotPasswordEmail) &&
             (identical(
@@ -11692,6 +13988,13 @@ class _$AuthStateImpl implements _AuthState {
     clinicName,
     clinicAddress,
     mobileNumber,
+    otpCode,
+    isOtpLoading,
+    isOtpVerifying,
+    otpError,
+    sessionId,
+    otpSecondsRemaining,
+    canResendOtp,
     forgotPasswordEmail,
     isForgotPasswordLoading,
     isForgotPasswordSuccess,
@@ -11742,6 +14045,13 @@ abstract class _AuthState implements AuthState {
     final String clinicName,
     final String clinicAddress,
     final String mobileNumber,
+    final String otpCode,
+    final bool isOtpLoading,
+    final bool isOtpVerifying,
+    final String? otpError,
+    final String? sessionId,
+    final int otpSecondsRemaining,
+    final bool canResendOtp,
     final String forgotPasswordEmail,
     final bool isForgotPasswordLoading,
     final bool isForgotPasswordSuccess,
@@ -11809,7 +14119,21 @@ abstract class _AuthState implements AuthState {
   @override
   String get clinicAddress;
   @override
-  String get mobileNumber; // Forgot password fields
+  String get mobileNumber; // OTP verification fields
+  @override
+  String get otpCode;
+  @override
+  bool get isOtpLoading;
+  @override
+  bool get isOtpVerifying;
+  @override
+  String? get otpError;
+  @override
+  String? get sessionId;
+  @override
+  int get otpSecondsRemaining;
+  @override
+  bool get canResendOtp; // Forgot password fields
   @override
   String get forgotPasswordEmail;
   @override

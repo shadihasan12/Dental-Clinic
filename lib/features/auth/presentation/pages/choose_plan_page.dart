@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 
 class ChoosePlanPage extends StatefulWidget {
   const ChoosePlanPage({super.key});
@@ -16,76 +18,20 @@ class ChoosePlanPage extends StatefulWidget {
 }
 
 class _ChoosePlanPageState extends State<ChoosePlanPage> {
-  int? _selectedPlanId;
+  String? _selectedPlanId;
   bool _isYearly = false;
 
-  final List<Map<String, dynamic>> _plans = [
-    {
-      "id": 1,
-      "name": "Starter",
-      "description":
-          "Designed for new and growing clinics, with one doctor and one assistant",
-      "price_monthly": "7.50",
-      "price_yearly": "75.00",
-      "max_users": 1,
-      "max_patients": 500,
-      "max_storage_mb": 512,
-      "supports_trial": 1,
-      "trial_period_days": 30,
-      "is_active": true,
-      "features": [
-        "Unlimited patients",
-        "1 doctor and 1 assistant",
-        "2 GB storage",
-        "All features included",
-        "24/7 support",
-      ],
-    },
-    {
-      "id": 2,
-      "name": "Growing",
-      "description":
-          "Built for established clinics and growing teams with unlimited capacity.",
-      "price_monthly": "15.90",
-      "price_yearly": "159.00",
-      "max_users": 4,
-      "max_patients": 10000,
-      "max_storage_mb": 10240,
-      "supports_trial": 1,
-      "trial_period_days": 30,
-      "is_active": true,
-      "is_popular": true,
-      "features": [
-        "Unlimited patients",
-        "Up to 4 doctors",
-        "4 GB storage",
-        "All features included",
-        "Priority support",
-      ],
-    },
-    {
-      "id": 3,
-      "name": "Professional",
-      "description": "For large clinics or centers with multiple branches",
-      "price_monthly": "22.90",
-      "price_yearly": "228.00",
-      "max_users": 99999,
-      "max_patients": 99999,
-      "max_storage_mb": 99999,
-      "supports_trial": 0,
-      "trial_period_days": 30,
-      "is_active": true,
-      "is_popular": false,
-      "features": [
-        "Unlimited patients",
-        "Unlimited doctors & assistants",
-        "10 GB storage per account",
-        "Advanced analytics",
-        "Priority support",
-        "Admin role included",
-      ],
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Fetch plans from API only if not already loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<AuthBloc>().state;
+      if (state.plans.isEmpty && !state.isLoadingPlans) {
+        context.read<AuthBloc>().add(const AuthEvent.plansRequested());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,23 +50,59 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
 
           // Content
           Expanded(
-            child: SingleChildScrollView(
-              padding: PaddingManager.horizontalPadding,
-              child: Column(
-                children: [
-                  SizedBox(height: 24.h),
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state.isLoadingPlans) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                  // Billing Toggle
-                  _buildBillingToggle(),
+                if (state.plans.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No plans available',
+                          style: TextStyle(
+                            color: ColorManager.textSecondary,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        TextButton(
+                          onPressed: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEvent.plansRequested(),
+                                );
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                  SizedBox(height: 24.h),
+                return SingleChildScrollView(
+                  padding: PaddingManager.horizontalPadding,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 24.h),
 
-                  // Plans List
-                  ..._plans.map((plan) => _buildPlanCard(plan)),
+                      // Billing Toggle
+                      _buildBillingToggle(),
 
-                  SizedBox(height: 100.h), // Space for bottom button
-                ],
-              ),
+                      SizedBox(height: 24.h),
+
+                      // Plans List from API
+                      ...state.plans.map((plan) => _buildPlanCard(plan)),
+
+                      SizedBox(height: 100.h), // Space for bottom button
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -240,16 +222,62 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     );
   }
 
-  Widget _buildPlanCard(Map<String, dynamic> plan) {
-    final isSelected = _selectedPlanId == plan['id'];
-    final isPopular = plan['is_popular'] == true;
-    final price = _isYearly ? plan['price_yearly'] : plan['price_monthly'];
+  // Helper method to get features for a plan
+  List<String> _getPlanFeatures(PlanEntity plan) {
+    // Map features based on plan name or type
+    // This could also come from the backend in the future
+    switch (plan.name.toLowerCase()) {
+      case 'starter':
+        return [
+          'Unlimited patients',
+          '1 doctor and 1 assistant',
+          '2 GB storage',
+          'All features included',
+          '24/7 support',
+        ];
+      case 'growing':
+        return [
+          'Unlimited patients',
+          'Up to 4 doctors',
+          '4 GB storage',
+          'All features included',
+          'Priority support',
+        ];
+      case 'professional':
+        return [
+          'Unlimited patients',
+          'Unlimited doctors & assistants',
+          '10 GB storage per account',
+          'Advanced analytics',
+          'Priority support',
+          'Admin role included',
+        ];
+      default:
+        return [
+          'All features included',
+          'Full patient management',
+          'Appointment scheduling',
+          'Treatment tracking',
+        ];
+    }
+  }
+
+  Widget _buildPlanCard(PlanEntity plan) {
+    final isSelected = _selectedPlanId == plan.id;
+    // Mark "Growing" plan as popular
+    final isPopular = plan.name.toLowerCase() == 'growing';
+
+    // Get the price based on billing cycle (default to USD)
+    final priceEntity = _isYearly
+        ? plan.getYearlyPrice('USD')
+        : plan.getMonthlyPrice('USD');
+    final price = priceEntity.display;
     final period = _isYearly ? '/year' : '/month';
-    final trialDays = plan['trial_period_days'];
-    final features = plan['features'] as List<String>;
+    final trialDays = plan.trialPeriodDays;
+    final features = _getPlanFeatures(plan);
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedPlanId = plan['id']),
+      onTap: () => setState(() => _selectedPlanId = plan.id),
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
@@ -313,7 +341,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              plan['name'],
+                              plan.name,
                               style: TextStyle(
                                 color: ColorManager.textPrimary,
                                 fontWeight: FontWeight.w700,
@@ -323,7 +351,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              plan['description'],
+                              plan.description,
                               style: TextStyle(
                                 color: ColorManager.textSecondary,
                                 fontFamily: FontFamily.geist,
@@ -393,7 +421,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   ),
 
                   // Trial badge
-                  if (plan['supports_trial'] == 1) ...[
+                  if (plan.supportsTrial) ...[
                     SizedBox(height: 12.h),
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -469,34 +497,49 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
   }
 
   Widget _buildBottomButton() {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -4),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: ColorManager.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: SafeArea(
-        child: PrimaryButton(
-          text: 'Next',
-          isEnabled: _selectedPlanId != null,
-          onPressed: _selectedPlanId != null
-              ? () {
-                  // Navigate to Choose Clinic Name page
-                  // Pass the selected plan
-                  context.pushNamed(
-                    AppRoutesNames.chooseClinicName,
-                    extra: {'planId': _selectedPlanId, 'isYearly': _isYearly},
-                  );
-                }
-              : null,
-        ),
-      ),
+          child: SafeArea(
+            child: PrimaryButton(
+              text: 'Next',
+              isEnabled: _selectedPlanId != null,
+              onPressed: _selectedPlanId != null
+                  ? () {
+                      // Find the selected plan entity
+                      final selectedPlan = state.plans.firstWhere(
+                        (plan) => plan.id == _selectedPlanId,
+                      );
+
+                      // Store selected plan in BLoC state
+                      final authBloc = context.read<AuthBloc>();
+                      authBloc.add(
+                        AuthEvent.signupPlanEntitySelected(selectedPlan),
+                      );
+
+                      // Navigate to Choose Clinic Name page
+                      // Pass the AuthBloc instance to the next route
+                      context.pushNamed(
+                        AppRoutesNames.chooseClinicName,
+                        extra: authBloc,
+                      );
+                    }
+                  : null,
+            ),
+          ),
+        );
+      },
     );
   }
 }

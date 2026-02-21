@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -25,6 +26,8 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
   const factory NetworkExceptions.sendTimeout() = SendTimeout;
 
+  const factory NetworkExceptions.tooManyRequests(String message) = TooManyRequests;
+
   const factory NetworkExceptions.unprocessableEntity(String reason) =
       UnprocessableEntity;
 
@@ -49,31 +52,59 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   static NetworkExceptions handleResponse(Response? response) {
     int statusCode = response?.statusCode ?? 0;
 
+    // Try to extract error message from response body
+    String? errorMessage;
+    try {
+      if (response?.data != null) {
+        final dynamic data = response!.data;
+        Map<String, dynamic>? jsonData;
+
+        if (data is Map<String, dynamic>) {
+          jsonData = data;
+        } else if (data is String) {
+          // Try to parse JSON string
+          try {
+            jsonData = jsonDecode(data) as Map<String, dynamic>;
+          } catch (_) {
+            // Keep jsonData as null if parsing fails
+          }
+        }
+
+        // Extract message from parsed data
+        if (jsonData != null) {
+          errorMessage = jsonData['message'] as String?;
+        }
+      }
+    } catch (_) {
+      // Keep errorMessage as null
+    }
+
     switch (statusCode) {
       case 400:
-        return const NetworkExceptions.badRequest('Bad request');
+        return NetworkExceptions.badRequest(errorMessage ?? 'Bad request');
       case 401:
-        return const NetworkExceptions.unauthorizedRequest('Unauthorized');
+        return NetworkExceptions.unauthorizedRequest(errorMessage ?? 'Unauthorized');
       case 403:
         return const NetworkExceptions.forbidden();
       case 404:
-        return const NetworkExceptions.notFound('Not found');
+        return NetworkExceptions.notFound(errorMessage ?? 'Not found');
       case 405:
         return const NetworkExceptions.methodNotAllowed();
-      case 409:
-        return const NetworkExceptions.conflict();
       case 408:
         return const NetworkExceptions.requestTimeout();
+      case 409:
+        return const NetworkExceptions.conflict();
       case 422:
-        return const NetworkExceptions.unprocessableEntity('Invalid data');
+        return NetworkExceptions.unprocessableEntity(errorMessage ?? 'Invalid data');
+      case 429:
+        return NetworkExceptions.tooManyRequests(errorMessage ?? 'Too many requests');
       case 500:
         return const NetworkExceptions.internalServerError();
       case 503:
         return const NetworkExceptions.serviceUnavailable();
       default:
-        int responseCode = statusCode;
         return NetworkExceptions.defaultError(
-          'Received invalid status code: $responseCode',
+          errorMessage ?? 'Received invalid status code: $statusCode',
         );
     }
   }
@@ -174,6 +205,9 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       },
       conflict: () {
         errorMessage = 'Error due to a conflict';
+      },
+      tooManyRequests: (String message) {
+        errorMessage = message;
       },
       sendTimeout: () {
         errorMessage = 'Send timeout in connection with API server';

@@ -1,13 +1,16 @@
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/email_entry_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/login_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/forgot_password_page.dart';
@@ -27,12 +30,15 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Routes manager for the application using GoRouter
 class RoutesManager {
-  RoutesManager() {
+  RoutesManager(TokenStorage tokenStorage) {
+    // Check if user is already authenticated
+    final isAuthenticated = tokenStorage.hasToken();
+
     _appRouter = GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      // TODO: Change to /onboarding
-      initialLocation: '/onboarding',
+      // Navigate to home if authenticated, otherwise show onboarding
+      initialLocation: isAuthenticated ? '/' : '/onboarding',
       routes: [
         // Onboarding
         GoRoute(
@@ -63,8 +69,29 @@ class RoutesManager {
           path: '/register',
           name: AppRoutesNames.register,
           pageBuilder: (context, state) {
+            // Get the AuthBloc from extra parameter if passed during navigation
+            final authBloc = state.extra as AuthBloc?;
             return CupertinoPage(
-              child: const SignupPage(),
+              child: authBloc != null
+                  ? BlocProvider<AuthBloc>.value(
+                      value: authBloc,
+                      child: const SignupPage(),
+                    )
+                  : const SignupPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/email-entry',
+          name: AppRoutesNames.emailEntry,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: BlocProvider(
+                create: (context) => AuthBloc(getIt(), getIt()),
+                child: const EmailEntryPage(),
+              ),
               key: state.pageKey,
               name: state.name,
             );
@@ -86,8 +113,13 @@ class RoutesManager {
           path: '/choose-plan',
           name: AppRoutesNames.choosePlan,
           pageBuilder: (context, state) {
+            // Get the AuthBloc from extra parameter passed during navigation
+            final authBloc = state.extra as AuthBloc;
             return CupertinoPage(
-              child: const ChoosePlanPage(),
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
+                child: const ChoosePlanPage(),
+              ),
               key: state.pageKey,
               name: state.name,
             );
@@ -98,11 +130,32 @@ class RoutesManager {
           path: '/choose-clinic-name',
           name: AppRoutesNames.chooseClinicName,
           pageBuilder: (context, state) {
+            // Get the AuthBloc from extra parameter passed during navigation
+            final authBloc = state.extra as AuthBloc;
             return CupertinoPage(
-              child: BlocProvider(
-                create: (context) => AuthBloc(getIt()),
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
                 child: const ChooseClinicNamePage(),
               ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+
+        GoRoute(
+          path: '/email-verification',
+          name: AppRoutesNames.emailVerification,
+          pageBuilder: (context, state) {
+            // Get the AuthBloc from extra parameter passed during navigation
+            final authBloc = state.extra as AuthBloc;
+            return CupertinoPage(
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
+                child: const EmailVerificationPage(),
+              ),
+              key: state.pageKey,
+              name: state.name,
             );
           },
         ),

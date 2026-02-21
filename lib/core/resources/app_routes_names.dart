@@ -10,9 +10,11 @@ class AppRoutesNames {
   // Authentication Routes
   static const String login = 'login';
   static const String register = 'register';
+  static const String emailEntry = 'emailEntry';
   static const String forgotPassword = 'forgotPassword';
   static const String choosePlan = 'choosePlan';
   static const String chooseClinicName = 'chooseClinicName';
+  static const String emailVerification = 'emailVerification';
 
   // Dashboard
   static const String dashboard = 'dashboard';

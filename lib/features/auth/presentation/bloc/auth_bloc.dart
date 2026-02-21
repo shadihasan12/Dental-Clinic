@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
@@ -15,8 +16,9 @@ part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  final TokenStorage _tokenStorage;
 
-  AuthBloc(this._authRepository) : super(const AuthState()) {
+  AuthBloc(this._authRepository, this._tokenStorage) : super(const AuthState()) {
     // Login events
     on<_LoginEmailChanged>(_onLoginEmailChanged);
     on<_LoginPasswordChanged>(_onLoginPasswordChanged);
@@ -52,6 +54,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_SignupClinicNameChanged>(_onSignupClinicNameChanged);
     on<_SignupClinicAddressChanged>(_onSignupClinicAddressChanged);
     on<_SignupMobileNumberChanged>(_onSignupMobileNumberChanged);
+
+    // OTP events
+    on<_OtpRequested>(_onOtpRequested);
+    on<_OtpCodeChanged>(_onOtpCodeChanged);
+    on<_OtpVerified>(_onOtpVerified);
+    on<_OtpResendRequested>(_onOtpResendRequested);
 
     // Forgot password events
     on<_ForgotPasswordEmailChanged>(_onForgotPasswordEmailChanged);
@@ -329,6 +337,82 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
+  // OTP handlers
+  Future<void> _onOtpRequested(_OtpRequested event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(isOtpLoading: true, otpError: null));
+
+    final params = RequestOtpParams(email: state.signupEmail);
+    final result = await _authRepository.requestOtpForRegister(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+      )),
+    );
+  }
+
+  void _onOtpCodeChanged(_OtpCodeChanged event, Emitter<AuthState> emit) {
+    emit(state.copyWith(
+      otpCode: event.code,
+      otpError: null,
+    ));
+  }
+
+  Future<void> _onOtpVerified(_OtpVerified event, Emitter<AuthState> emit) async {
+    if (state.otpCode.length != 6) {
+      emit(state.copyWith(otpError: 'Please enter a valid 6-digit code'));
+      return;
+    }
+
+    emit(state.copyWith(isOtpVerifying: true, otpError: null));
+
+    final params = VerifyOtpParams(
+      email: state.signupEmail,
+      otp: state.otpCode,
+    );
+    final result = await _authRepository.verifyOtp(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpVerifying: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) {
+        // Store session ID and proceed to registration
+        emit(state.copyWith(
+          isOtpVerifying: false,
+          sessionId: response.sessionId,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onOtpResendRequested(_OtpResendRequested event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(isOtpLoading: true, otpError: null));
+
+    final params = RequestOtpParams(email: state.signupEmail);
+    final result = await _authRepository.resendOtp(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+        otpCode: '', // Clear OTP code on resend
+      )),
+    );
+  }
+
   Future<void> _onSignupSubmitted(_SignupSubmitted event, Emitter<AuthState> emit) async {
     // Validate basic form fields
     if (!state.isSignupNameValid) {
@@ -372,10 +456,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(state.copyWith(isSignupLoading: true, signupError: null));
 
+    // Validate session ID from OTP verification
+    if (state.sessionId == null || state.sessionId!.isEmpty) {
+      emit(state.copyWith(signupError: 'Please verify your email first'));
+      return;
+    }
+
     // Create register request params
     final params = RegisterRequestParams(
       userName: state.signupName,
-      userEmail: state.signupEmail,
       mobileNumber: state.mobileNumber,
       password: state.signupPassword,
       passwordConfirmation: state.signupConfirmPassword,
@@ -386,6 +475,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ? state.selectedLocation!.name
           : state.clinicAddress,
       planVersionId: state.selectedPlan!.versionId,
+      sessionId: state.sessionId!,
     );
 
     // Call register API
@@ -483,9 +573,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogoutRequested(_LogoutRequested event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
 
-    // TODO: Clear local storage, tokens, etc.
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Clear authentication data from local storage
+    await _tokenStorage.clearAuthData();
 
+    // Reset to initial state (unauthenticated)
     emit(const AuthState());
   }
 

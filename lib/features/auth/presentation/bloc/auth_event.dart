@@ -41,6 +41,12 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.signupClinicAddressChanged(String address) = _SignupClinicAddressChanged;
   const factory AuthEvent.signupMobileNumberChanged(String mobile) = _SignupMobileNumberChanged;
 
+  // OTP events
+  const factory AuthEvent.otpRequested() = _OtpRequested;
+  const factory AuthEvent.otpCodeChanged(String code) = _OtpCodeChanged;
+  const factory AuthEvent.otpVerified() = _OtpVerified;
+  const factory AuthEvent.otpResendRequested() = _OtpResendRequested;
+
   // Forgot password events
   const factory AuthEvent.forgotPasswordEmailChanged(String email) = _ForgotPasswordEmailChanged;
   const factory AuthEvent.forgotPasswordSubmitted() = _ForgotPasswordSubmitted;

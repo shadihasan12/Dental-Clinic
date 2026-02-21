@@ -5,10 +5,65 @@ import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
 
+/// Parameters for requesting OTP
+class RequestOtpParams {
+  final String email;
+
+  RequestOtpParams({required this.email});
+
+  Map<String, dynamic> toJson() => {'email': email};
+}
+
+/// Response from OTP request
+class OtpResponse {
+  final bool sent;
+  final int secondsRemaining;
+
+  OtpResponse({
+    required this.sent,
+    required this.secondsRemaining,
+  });
+
+  factory OtpResponse.fromJson(Map<String, dynamic> json) {
+    return OtpResponse(
+      sent: json['sent'] ?? true,
+      secondsRemaining: json['meta']?['seconds_remaining'] ?? 0,
+    );
+  }
+}
+
+/// Parameters for verifying OTP
+class VerifyOtpParams {
+  final String email;
+  final String otp;
+
+  VerifyOtpParams({
+    required this.email,
+    required this.otp,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'email': email,
+        'otp': otp,
+      };
+}
+
+/// Response from OTP verification
+class VerifyOtpResponse {
+  final String sessionId;
+
+  VerifyOtpResponse({required this.sessionId});
+
+  factory VerifyOtpResponse.fromJson(Map<String, dynamic> json) {
+    return VerifyOtpResponse(
+      sessionId: json['meta']?['session'] ?? '',
+    );
+  }
+}
+
 /// Parameters for registration request
 class RegisterRequestParams {
   final String userName;
-  final String userEmail;
   final String mobileNumber;
   final String password;
   final String passwordConfirmation;
@@ -17,10 +72,10 @@ class RegisterRequestParams {
   final String locationId;
   final String detailedAddress;
   final String planVersionId;
+  final String sessionId;
 
   RegisterRequestParams({
     required this.userName,
-    required this.userEmail,
     required this.mobileNumber,
     required this.password,
     required this.passwordConfirmation,
@@ -29,6 +84,7 @@ class RegisterRequestParams {
     required this.locationId,
     required this.detailedAddress,
     required this.planVersionId,
+    required this.sessionId,
   });
 
   /// Convert to JSON request body
@@ -36,7 +92,6 @@ class RegisterRequestParams {
     return {
       'user': {
         'name': userName,
-        'email': userEmail,
         'mobile_number': mobileNumber,
         'password': password,
         'password_confirmation': passwordConfirmation,
@@ -48,6 +103,7 @@ class RegisterRequestParams {
         'detailed_address': detailedAddress,
       },
       'plan_version_id': planVersionId,
+      'session_id': sessionId,
     };
   }
 }
@@ -65,6 +121,21 @@ abstract class AuthRepository {
 
   /// Fetch list of available subscription plans
   Future<Either<NetworkExceptions, List<PlanEntity>>> getPlans();
+
+  /// Request OTP for registration
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForRegister({
+    required RequestOtpParams params,
+  });
+
+  /// Verify OTP and get session token
+  Future<Either<NetworkExceptions, VerifyOtpResponse>> verifyOtp({
+    required VerifyOtpParams params,
+  });
+
+  /// Resend OTP (same as request OTP but for resend flow)
+  Future<Either<NetworkExceptions, OtpResponse>> resendOtp({
+    required RequestOtpParams params,
+  });
 
   /// Register a new user with clinic creation
   Future<Either<NetworkExceptions, RegisterResponseEntity>> register({

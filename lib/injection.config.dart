@@ -14,6 +14,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import 'core/api/api_consumer.dart' as _i962;
 import 'core/api/dio_consumer.dart' as _i737;
@@ -21,6 +22,7 @@ import 'core/api/interceptors/error_interceptor.dart' as _i809;
 import 'core/api/interceptors/logging_interceptor.dart' as _i416;
 import 'core/di/third_party_injection.dart' as _i1007;
 import 'core/network/network_info.dart' as _i75;
+import 'core/storage/token_storage.dart' as _i23;
 import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
     as _i689;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
@@ -40,6 +42,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
     gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
+    gh.factory<_i23.TokenStorage>(
+      () => _i23.TokenStorage(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
@@ -53,7 +58,10 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i689.AuthRemoteDataSource>(
-      () => _i689.AuthRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+      () => _i689.AuthRemoteDataSourceImpl(
+        gh<_i962.ApiConsumer>(),
+        gh<_i23.TokenStorage>(),
+      ),
     );
     gh.factory<_i1015.AuthRepository>(
       () => _i111.AuthRepositoryImpl(

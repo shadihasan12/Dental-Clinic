@@ -9,6 +9,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/routes_manager.dart';
 import 'package:dental_clinic_app/core/resources/theme_manager.dart';
 import 'package:dental_clinic_app/core/constants/app_constants.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/injection.dart';
 
 Future<void> main() async {
@@ -56,7 +57,7 @@ class DentalClinicApp extends StatefulWidget {
 }
 
 class _DentalClinicAppState extends State<DentalClinicApp> {
-  final RoutesManager routesManager = RoutesManager();
+  final RoutesManager routesManager = RoutesManager(getIt<TokenStorage>());
 
   @override
   Widget build(BuildContext context) {

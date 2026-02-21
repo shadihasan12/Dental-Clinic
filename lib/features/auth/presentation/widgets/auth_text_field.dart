@@ -16,6 +16,7 @@ class AuthTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.onChanged,
+    this.enabled = true,
   });
 
   final String label;
@@ -27,6 +28,7 @@ class AuthTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final ValueChanged<String>? onChanged;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,7 @@ class AuthTextField extends StatelessWidget {
           obscureText: obscureText,
           validator: validator,
           onChanged: onChanged,
+          enabled: enabled,
           style: TextStyle(
             color: ColorManager.textPrimary,
             fontFamily: FontFamily.geist,
