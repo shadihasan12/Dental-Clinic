@@ -1,9 +1,10 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:intl/intl.dart';
 
@@ -68,30 +69,30 @@ class TreatmentDetailPopup extends StatelessWidget {
 
                   // Description
                   if (item.description.isNotEmpty) ...[
-                    _buildSection('Description', item.description),
+                    _buildSection(context, AppLocalizations.of(context)!.description, item.description),
                   ],
 
                   // Treatment types
                   if (item.treatmentTypes.isNotEmpty) ...[
                     SizedBox(height: 16.h),
-                    _buildTreatmentTypes(),
+                    _buildTreatmentTypes(context),
                   ],
 
                   // Teeth
                   if (item.selectedTeeth.isNotEmpty) ...[
                     SizedBox(height: 16.h),
-                    _buildTeethSection(),
+                    _buildTeethSection(context),
                   ],
 
                   // Attachments
                   if (item.attachments.isNotEmpty) ...[
                     SizedBox(height: 16.h),
-                    _buildAttachments(),
+                    _buildAttachments(context),
                   ],
 
                   // Dates
                   SizedBox(height: 16.h),
-                  _buildDates(),
+                  _buildDates(context),
 
                   SizedBox(height: 20.h),
                 ],
@@ -120,7 +121,7 @@ class TreatmentDetailPopup extends StatelessWidget {
               '${index + 1}',
               style: TextStyle(
                 fontSize: 20.sp,
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w700,
                 color: item.isDone
                     ? ColorManager.success
@@ -135,19 +136,19 @@ class TreatmentDetailPopup extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Treatment #${index + 1}',
+                '${AppLocalizations.of(context)!.treatment} ${index + 1}',
                 style: TextStyle(
                   fontSize: 18.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
                   color: ColorManager.textPrimary,
                 ),
               ),
               Text(
-                'Created ${DateFormat('MMM d, yyyy').format(item.createdAt)}',
+                '${AppLocalizations.of(context)!.created} ${DateFormat('MMM d, yyyy').format(item.createdAt)}',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.textSecondary,
                 ),
               ),
@@ -162,7 +163,7 @@ class TreatmentDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, String content) {
+  Widget _buildSection(BuildContext context, String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -170,7 +171,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
             color: ColorManager.textSecondary,
           ),
@@ -180,7 +181,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           content,
           style: TextStyle(
             fontSize: 14.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textPrimary,
           ),
         ),
@@ -188,15 +189,15 @@ class TreatmentDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildTreatmentTypes() {
+  Widget _buildTreatmentTypes(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Treatment Types',
+          AppLocalizations.of(context)!.treatmentTypes,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
             color: ColorManager.textSecondary,
           ),
@@ -216,7 +217,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                 type.label,
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w500,
                   color: ColorManager.primary,
                 ),
@@ -228,15 +229,15 @@ class TreatmentDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildTeethSection() {
+  Widget _buildTeethSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Treated Teeth',
+          AppLocalizations.of(context)!.treatedTeeth,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
             color: ColorManager.textSecondary,
           ),
@@ -251,15 +252,15 @@ class TreatmentDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildAttachments() {
+  Widget _buildAttachments(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Attachments',
+          AppLocalizations.of(context)!.attachments,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
             color: ColorManager.textSecondary,
           ),
@@ -289,7 +290,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                     attachment,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       color: ColorManager.textSecondary,
                     ),
                   ),
@@ -302,7 +303,7 @@ class TreatmentDetailPopup extends StatelessWidget {
     );
   }
 
-  Widget _buildDates() {
+  Widget _buildDates(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -311,17 +312,17 @@ class TreatmentDetailPopup extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildDateRow('Created', item.createdAt),
+          _buildDateRow(context, AppLocalizations.of(context)!.created, item.createdAt),
           if (item.completedAt != null) ...[
             SizedBox(height: 8.h),
-            _buildDateRow('Completed', item.completedAt!),
+            _buildDateRow(context, AppLocalizations.of(context)!.completed, item.completedAt!),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildDateRow(String label, DateTime date) {
+  Widget _buildDateRow(BuildContext context, String label, DateTime date) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -329,7 +330,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textSecondary,
           ),
         ),
@@ -337,7 +338,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           DateFormat('MMM d, yyyy • h:mm a').format(date),
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
             color: ColorManager.textPrimary,
           ),

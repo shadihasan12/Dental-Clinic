@@ -1,8 +1,10 @@
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
-import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info_page.dart' show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +33,7 @@ class RoutesManager {
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       // TODO: Change to /onboarding
-      initialLocation: '/onboarding',
+      initialLocation: '/',
       routes: [
         // Onboarding
         GoRoute(
@@ -135,9 +137,11 @@ class RoutesManager {
           path: '/patients-details',
           name: AppRoutesNames.patientDetails,
           pageBuilder: (context, state) {
-            final patientId = state.extra;
+            final extra = state.extra as Map<String, dynamic>;
+            final patientId = extra["patientId"] as String;
+            final tabIndex = extra["tabIndex"] ?? 0;
             return CupertinoPage(
-              child: PatientDetailsPage(patientId: patientId as String),
+              child: PatientDetailsPage(patientId: patientId, tabIndex: tabIndex,),
               key: state.pageKey,
               name: state.name,
             );
@@ -148,11 +152,11 @@ class RoutesManager {
           name: AppRoutesNames.addTreatment,
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>;
-            final dentalCase = extra['dentalCase'] as DentalCase;
+            final caseId = extra['caseId'] as int;
             final isInitial = extra['isInitial'] as bool? ?? false;
             return CupertinoPage(
               child: AddTreatmentPage(
-                dentalCase: dentalCase,
+                caseId: caseId,
                 isInitial: isInitial,
               ),
               key: state.pageKey,
@@ -246,6 +250,39 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const PricingPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/statistics',
+          name: AppRoutesNames.statistics,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const StatisticsPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/edit-profile',
+          name: AppRoutesNames.editProfile,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const EditProfilePage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/clinic-info',
+          name: AppRoutesNames.clinicInfo,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const ClinicInfoPage(),
               key: state.pageKey,
               name: state.name,
             );

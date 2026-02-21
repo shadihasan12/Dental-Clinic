@@ -36,6 +36,7 @@ class ColorManager {
   // ============================================
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
+  static const Color textDark = Color(0xFF2D2D2D);
 
   // Gray Scale (Tailwind-inspired)
   static const Color gray50 = Color(0xFFF9FAFB);

@@ -1,12 +1,12 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
-import 'package:dental_clinic_app/features/clinic/presentation/widgets/action_button.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 
-/// Treatment/Visit information form
 class VisitInfoForm extends StatefulWidget {
   const VisitInfoForm({
     super.key,
@@ -48,158 +48,182 @@ class VisitInfoForm extends StatefulWidget {
 class _VisitInfoFormState extends State<VisitInfoForm> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // General info section
-        _buildGeneralInfoSection().paddingAll(16.w),
+        // — Visit date: subtle, tappable row — defaults to today
+        _buildDateRow(context, l10n),
 
-        // Cost section (only for initial case)
-        if (widget.isInitial) _buildCostSection().paddingAll(16.w),
+        _divider(),
 
-        // Treatment types section
-        _buildTreatmentTypesSection().paddingAll(16.w),
+        // — Treatment types: quick tap chips
+        _sectionLabel(context, l10n.treatmentType),
+        SizedBox(height: 10.h),
+        _TreatmentChips(
+          treatments: widget.availableTreatmentTypes,
+          selected: widget.selectedTreatmentTypes,
+          onToggle: widget.onTreatmentToggle,
+        ),
 
-        // Attachments section
-        _buildAttachmentsSection().paddingAll(16.w),
+        _divider(),
+
+        // — Tooth selection
+        _sectionLabel(context, l10n.teeth),
+        SizedBox(height: 10.h),
+        ToothChart(
+          selectedTeeth: widget.selectedTeeth,
+          onSelectionChanged: widget.onTeethChanged,
+        ),
+
+        _divider(),
+
+        // — Notes
+        _sectionLabel(context, l10n.notes),
+        SizedBox(height: 10.h),
+        AppFormField(
+          controller: widget.visitSummaryController,
+          maxLines: 3,
+          hintText: l10n.addNotesAboutTreatment, label: '',
+        ),
+
+        // — Cost (only for initial)
+        if (widget.isInitial) ...[
+          _divider(),
+          SizedBox(height: 10.h),
+          AppFormField(
+            controller: widget.totalCostController ?? TextEditingController(),
+            enabled: widget.totalCostController != null,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            hintText: l10n.totalCostHint,
+            prefixIcon: Icon(
+              Icons.attach_money,
+              color: Colors.grey.shade400,
+              size: 20,
+            ), label: l10n.totalCost,
+          ),
+          SizedBox(height: 12.h),
+          AppFormField(
+            controller: widget.labFeesController ?? TextEditingController(),
+            enabled: widget.labFeesController != null,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            hintText: l10n.labFeesHint,
+            prefixIcon: Icon(
+              Icons.science_outlined,
+              color: Colors.grey.shade400,
+              size: 20,
+            ), label: l10n.labFees,
+          ),
+        ],
+
+        _divider(),
+
+        // — Attachments
+        _buildAttachments(context, l10n),
+
+        SizedBox(height: 80.h),
       ],
     );
   }
 
-  Widget _buildGeneralInfoSection() {
-    return SectionCard(
-      title: 'General Information',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppDateField(
-            label: 'Visit Date',
-            value: widget.visitDate,
-            onTap: widget.onVisitDateTap,
-          ),
-          SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Treatment Notes',
-            controller: widget.visitSummaryController,
-            enabled: true,
-            maxLines: 4,
-            hintText: 'Describe the treatment performed...',
-          ),
-        ],
-      ),
-    );
-  }
+  // — Visit date as a simple inline row
+  Widget _buildDateRow(BuildContext context, AppLocalizations l10n) {
+    final formatted = DateFormat('MMM d, yyyy').format(widget.visitDate);
+    final isToday = DateUtils.isSameDay(widget.visitDate, DateTime.now());
 
-  Widget _buildCostSection() {
-    return SectionCard(
-      title: 'Cost Details',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppFormField(
-            label: 'Total Cost',
-            controller: widget.totalCostController ?? TextEditingController(),
-            enabled: widget.totalCostController != null,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            prefixIcon: Icon(
-              Icons.attach_money,
-              color: ColorManager.textSecondary,
-              size: 20,
+    return GestureDetector(
+      onTap: widget.onVisitDateTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 4.h),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today_outlined,
+                size: 16.w, color: Colors.grey.shade500),
+            SizedBox(width: 8.w),
+            Text(
+              isToday ? '${l10n.today}, $formatted' : formatted,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.black,
+              ),
             ),
-            hintText: 'Enter total treatment cost',
-          ),
-          SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Lab Fees',
-            controller: widget.labFeesController ?? TextEditingController(),
-            enabled: widget.labFeesController != null,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            prefixIcon: Icon(
-              Icons.science_outlined,
-              color: ColorManager.textSecondary,
-              size: 20,
+            const Spacer(),
+            Text(
+              l10n.change,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.primary,
+              ),
             ),
-            hintText: 'Enter lab fees (if any)',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTreatmentTypesSection() {
-    return SectionCard(
-      title: 'Treatment Details',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Treatment Types',
-            style: TextStyle(
-              color: ColorManager.textSecondary,
-              fontSize: 12.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          _TreatmentChips(
-            treatments: widget.availableTreatmentTypes,
-            selected: widget.selectedTreatmentTypes,
-            onToggle: widget.onTreatmentToggle,
-          ),
-          SizedBox(height: 20.h),
-          Text(
-            'Select Treated Teeth',
-            style: TextStyle(
-              color: ColorManager.textSecondary,
-              fontSize: 12.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          ToothChart(
-            selectedTeeth: widget.selectedTeeth,
-            onSelectionChanged: widget.onTeethChanged,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAttachmentsSection() {
-    return SectionCard(
-      title: 'Attachments',
-      child: Column(
-        children: [
-          ActionButton(
-            onPressed: widget.onUploadTap,
-            text: 'Upload X-rays or Documents',
-            fillColor: ColorManager.white,
-            filled: false,
-            textColor: ColorManager.textSecondary,
-          ),
-          if (widget.attachments.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            ...widget.attachments.asMap().entries.map((entry) {
-              return _AttachmentItem(
-                name: entry.value,
-                onRemove: () => widget.onAttachmentRemove(entry.key),
-              );
-            }),
           ],
-        ],
+        ),
       ),
+    );
+  }
+
+  // — Attachments as a simple add button + list
+  Widget _buildAttachments(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: widget.onUploadTap,
+          child: Row(
+            children: [
+              Icon(Icons.add_circle_outline,
+                  size: 20.w, color: ColorManager.primary),
+              SizedBox(width: 8.w),
+              Text(
+                l10n.addXraysOrPhotos,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (widget.attachments.isNotEmpty) ...[
+          SizedBox(height: 12.h),
+          ...widget.attachments.asMap().entries.map((entry) {
+            return _AttachmentItem(
+              name: entry.value,
+              onRemove: () => widget.onAttachmentRemove(entry.key),
+            );
+          }),
+        ],
+      ],
+    );
+  }
+
+  Widget _sectionLabel(BuildContext context, String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w600,
+        color: ColorManager.gray400,
+        fontFamily: FontHelper.fontFamily(context),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 18.h),
+      child: Divider(color: ColorManager.gray200),
     );
   }
 }
 
-extension on Widget {
-  Widget paddingAll(double w) {
-    return Padding(padding: EdgeInsets.all(w), child: this);
-  }
-}
+// ─── Treatment Chips ─────────────────────────────────────────────────────────
 
-/// Treatment type selection chips
 class _TreatmentChips extends StatelessWidget {
   const _TreatmentChips({
     required this.treatments,
@@ -220,26 +244,27 @@ class _TreatmentChips extends StatelessWidget {
         final isSelected = selected.contains(treatment);
         return GestureDetector(
           onTap: () => onToggle(treatment),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF70B2B2) : ColorManager.white,
+              color: isSelected
+                  ? ColorManager.primary
+                  : ColorManager.gray100,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF70B2B2)
+                    ? ColorManager.primary
                     : ColorManager.gray300,
               ),
             ),
             child: Text(
               treatment,
               style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: FontFamily.geist,
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: isSelected
-                    ? ColorManager.white
-                    : ColorManager.textSecondary,
+                color: isSelected ? ColorManager.white : ColorManager.black,
               ),
             ),
           ),
@@ -249,6 +274,8 @@ class _TreatmentChips extends StatelessWidget {
   }
 }
 
+// ─── Attachment Item ─────────────────────────────────────────────────────────
+
 class _AttachmentItem extends StatelessWidget {
   const _AttachmentItem({required this.name, required this.onRemove});
 
@@ -257,40 +284,26 @@ class _AttachmentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 8.h),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: ColorManager.gray100,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
         children: [
-          Icon(
-            Icons.attach_file,
-            size: 18.w,
-            color: ColorManager.textSecondary,
-          ),
+          Icon(Icons.attach_file, size: 16.w, color: ColorManager.gray400),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
               name,
               style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: FontFamily.geist,
-                fontWeight: FontWeight.w500,
-                color: ColorManager.textSecondary,
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.black,
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           GestureDetector(
             onTap: onRemove,
-            child: Icon(
-              Icons.close,
-              size: 18.w,
-              color: ColorManager.textSecondary,
-            ),
+            child: Icon(Icons.close, size: 16.w, color: Colors.grey.shade400),
           ),
         ],
       ),

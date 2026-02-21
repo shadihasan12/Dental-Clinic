@@ -48,6 +48,7 @@ class AppRoutesNames {
   static const String editProfile = 'editProfile';
   static const String settings = 'settings';
   static const String moreMenu = 'moreMenu';
+  static const String clinicInfo = 'clinicInfo';
 
   // Clinic Management Routes
   static const String staffManagement = 'staffManagement';

@@ -89,7 +89,7 @@ class AddPatientHeader extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back, color: ColorManager.white, size: 24.w),
+            icon: Icon(Icons.arrow_back_ios_new, color: ColorManager.white, size: 24.w),
             onPressed: onBackPressed,
           ),
           SizedBox(width: 4.w),

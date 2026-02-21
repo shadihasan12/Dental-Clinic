@@ -182,7 +182,7 @@ class _PricingContent extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.arrow_back,
+                        Icons.arrow_back_ios_new,
                         color: ColorManager.white,
                         size: 20.w,
                       ),

@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -32,6 +33,7 @@ class CaseHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -86,7 +88,7 @@ class CaseHistoryCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        '${dentalCase.treatmentItems.length} visits',
+                        '${dentalCase.treatmentItems.length} ${l10n.visits}',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontFamily.geist,

@@ -1,17 +1,16 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 
-/// Step 1: Patient personal, contact, and medical information form
 class PatientInfoForm extends StatefulWidget {
   const PatientInfoForm({
     super.key,
     required this.firstNameController,
     required this.lastNameController,
     required this.phoneController,
-    required this.emailController,
-    required this.addressController,
     required this.medicalHistoryController,
     required this.allergiesController,
     required this.selectedGender,
@@ -23,8 +22,6 @@ class PatientInfoForm extends StatefulWidget {
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
   final TextEditingController phoneController;
-  final TextEditingController emailController;
-  final TextEditingController addressController;
   final TextEditingController medicalHistoryController;
   final TextEditingController allergiesController;
   final String? selectedGender;
@@ -41,137 +38,113 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPersonalInfoSection(),
-        SizedBox(height: 16.h),
-        _buildContactSection(),
-        SizedBox(height: 16.h),
-        _buildMedicalHistorySection(),
+        // — Personal Information —
+        _sectionLabel(context, l10n.personalInformation),
+        SizedBox(height: 12.h),
+        AppFormField(
+          label: '${l10n.firstName} *',
+          controller: widget.firstNameController,
+        ),
+        SizedBox(height: 14.h),
+        AppFormField(
+          label: '${l10n.lastName} *',
+          controller: widget.lastNameController,
+        ),
+        SizedBox(height: 14.h),
+        AppDateField(
+          label: l10n.dateOfBirth,
+          value: widget.dateOfBirth,
+          onTap: widget.onDateOfBirthTap,
+        ),
+        SizedBox(height: 14.h),
+        AppDropdownField(
+          label: l10n.gender,
+          value: widget.selectedGender,
+          items: [l10n.male, l10n.female, l10n.other],
+          onChanged: widget.onGenderChanged,
+          hint: l10n.selectGender,
+        ),
+        SizedBox(height: 14.h),
+        AppFormField(
+          label: '${l10n.phone} *',
+          controller: widget.phoneController,
+          hintText: '0988026431',
+          keyboardType: TextInputType.phone,
+        ),
+
+        // — Divider —
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.h),
+          child: Divider(color: ColorManager.grey),
+        ),
+
+        // — Medical History —
+        _sectionLabel(context, l10n.medicalInformation),
+        SizedBox(height: 12.h),
+        AppFormField(
+          label: l10n.medicalHistory,
+          controller: widget.medicalHistoryController,
+          hintText: l10n.previousDentalProcedures,
+          maxLines: 3,
+        ),
+        SizedBox(height: 14.h),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.hasAllergies,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.black,
+                  fontFamily: FontHelper.fontFamily(context),
+                ),
+              ),
+            ),
+            Switch(
+              value: _hasAllergies,
+              activeColor: ColorManager.white,
+              onChanged: (value) {
+                setState(() {
+                  _hasAllergies = value;
+                  if (!value) widget.allergiesController.clear();
+                });
+              },
+            ),
+          ],
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: _hasAllergies
+              ? Padding(
+                  padding: EdgeInsets.only(top: 8.h),
+                  child: AppFormField(
+                    label: l10n.allergies,
+                    controller: widget.allergiesController,
+                    hintText: l10n.listAnyAllergies,
+                    maxLines: 2,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
         SizedBox(height: 80.h),
       ],
     );
   }
 
-  Widget _buildPersonalInfoSection() {
-    return SectionCard(
-      title: 'Personal Information',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppFormField(
-            label: 'First Name *',
-            controller: widget.firstNameController,
-          ),
-          SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Last Name *',
-            controller: widget.lastNameController,
-          ),
-          SizedBox(height: 16.h),
-          AppDateField(
-            label: 'Date of Birth',
-            value: widget.dateOfBirth,
-            onTap: widget.onDateOfBirthTap,
-          ),
-          SizedBox(height: 16.h),
-          AppDropdownField(
-            label: 'Gender',
-            value: widget.selectedGender,
-            items: const ['Male', 'Female', 'Other'],
-            onChanged: widget.onGenderChanged,
-            hint: 'Select gender',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactSection() {
-    return SectionCard(
-      title: 'Contact Information',
-      child: Column(
-        children: [
-          AppFormField(
-            label: 'Phone Number *',
-            controller: widget.phoneController,
-            hintText: '0988026431',
-            keyboardType: TextInputType.phone,
-          ),
-          SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Email',
-            controller: widget.emailController,
-            hintText: 'patient@email.com',
-            keyboardType: TextInputType.emailAddress,
-          ),
-          SizedBox(height: 16.h),
-          AppFormField(
-            label: 'Address',
-            controller: widget.addressController,
-            hintText: '123 Main Street',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMedicalHistorySection() {
-    return SectionCard(
-      title: 'Medical History',
-      child: Column(
-        children: [
-          AppFormField(
-            label: 'Medical History',
-            controller: widget.medicalHistoryController,
-            hintText: 'Previous dental procedures, conditions, etc.',
-            maxLines: 3,
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Has Allergies',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                    fontFamily: FontFamily.geist,
-                  ),
-                ),
-              ),
-              Switch(
-                value: _hasAllergies,
-                onChanged: (value) {
-                  setState(() {
-                    _hasAllergies = value;
-                    if (!value) {
-                      widget.allergiesController.clear();
-                    }
-                  });
-                },
-              ),
-            ],
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: _hasAllergies
-                ? Column(
-                    children: [
-                      SizedBox(height: 16.h),
-                      AppFormField(
-                        label: 'Allergies',
-                        controller: widget.allergiesController,
-                        hintText: 'List any known allergies',
-                        maxLines: 2,
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
+  Widget _sectionLabel(BuildContext context, String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w600,
+        color: ColorManager.gray400,
+        fontFamily: FontHelper.fontFamily(context),
       ),
     );
   }

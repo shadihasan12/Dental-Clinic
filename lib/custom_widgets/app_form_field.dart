@@ -1,8 +1,7 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
 /// Reusable form field with label, used across multiple pages
 class AppFormField extends StatelessWidget {
@@ -38,11 +37,12 @@ class AppFormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if(label.isNotEmpty)
         Text(
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -64,7 +64,7 @@ class AppFormField extends StatelessWidget {
               hintText: hintText,
               hintStyle: TextStyle(
                 fontSize: 14.sp,
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 color: ColorManager.textTertiary,
               ),
               prefixIcon: prefixIcon,
@@ -89,7 +89,7 @@ class AppDateField extends StatelessWidget {
     required this.label,
     this.value,
     required this.onTap,
-    this.placeholder = 'dd/mm/yyyy',
+    this.placeholder = '01/08/1992',
   });
 
   final String label;
@@ -106,7 +106,7 @@ class AppDateField extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -130,7 +130,7 @@ class AppDateField extends StatelessWidget {
                         ? ColorManager.textPrimary
                         : ColorManager.textTertiary,
                     fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                   ),
                 ),
                 Icon(
@@ -177,7 +177,7 @@ class AppDropdownField extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
           ),
@@ -196,7 +196,7 @@ class AppDropdownField extends StatelessWidget {
                 hint,
                 style: TextStyle(
                   fontSize: 14.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.textTertiary,
                 ),
               ),
@@ -212,7 +212,7 @@ class AppDropdownField extends StatelessWidget {
                     item,
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       color: ColorManager.textPrimary,
                     ),
                   ),

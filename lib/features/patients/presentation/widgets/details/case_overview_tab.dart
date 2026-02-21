@@ -1,15 +1,13 @@
-import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/resources.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_detail_popup.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_item_card.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/payment_history_popup.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/record_payment_popup.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:intl/intl.dart';
 
@@ -69,31 +67,16 @@ class CaseOverviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Scrollable content
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Case title (for history view)
-                if (isReadOnly) ...[
-                  Text(
-                    dentalCase.title,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontFamily: FontFamily.geist,
-                      fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                ],
+                // Unified case card
+                _buildCaseCard(context),
 
-                // Case info card
-                _buildCaseInfoCard(context),
-
-                SizedBox(height: 16.h),
+                SizedBox(height: 12.h),
 
                 // Action buttons (only for in-progress)
                 if (!isReadOnly) ...[
@@ -104,7 +87,6 @@ class CaseOverviewWidget extends StatelessWidget {
                 // Treatments section
                 _buildTreatmentsSection(context),
 
-                // Extra space for bottom button
                 if (!isReadOnly) SizedBox(height: 80.h),
               ],
             ),
@@ -114,17 +96,276 @@ class CaseOverviewWidget extends StatelessWidget {
     );
   }
 
+  // ── Unified case card ────────────────────────────────
+
+  Widget _buildCaseCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isInProgress = dentalCase.status.toLowerCase() == 'in progress';
+    return CustomCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Title + status badge ──
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  dentalCase.title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.textPrimary,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: isInProgress
+                      ? ColorManager.warning.withValues(alpha: 0.1)
+                      : ColorManager.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6.r),
+                ),
+                child: Text(
+                  isInProgress ? l10n.inProgress : l10n.completed,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: isInProgress
+                        ? ColorManager.warning
+                        : ColorManager.success,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 8.h),
+
+          // ── Case detail rows ──
+          _buildInfoRow(
+            icon: Icons.calendar_today_outlined,
+            label: l10n.startedLabel,
+            value: DateFormat('MMM d, yyyy').format(dentalCase.startDate),
+          ),
+          _buildInfoRow(
+            icon: Icons.event_note_outlined,
+            label: l10n.totalVisitsLabel,
+            value: '${dentalCase.treatmentItems.length}',
+          ),
+          // Mark as finished row (only in-progress, non-read-only)
+          if (!isReadOnly && isInProgress)
+            _buildActionRow(
+              icon: Icons.check_circle_outline,
+              label: l10n.markAsFinished,
+              onTap: onMarkAsFinished,
+              showDivider: false,
+            )
+          else
+            // End date for completed cases
+            if (dentalCase.endDate != null)
+              _buildInfoRow(
+                icon: Icons.event_available_outlined,
+                label: l10n.completed,
+                value: DateFormat('MMM d, yyyy').format(dentalCase.endDate!),
+                showDivider: false,
+              ),
+
+          SizedBox(height: 4.h),
+          Divider(color: ColorManager.borderLight),
+          SizedBox(height: 8.h),
+
+          // ── Payment section ──
+          Row(
+            children: [
+              _buildStatItem(
+                context,
+                l10n.totalLabel,
+                '\$${dentalCase.totalCost.toStringAsFixed(0)}',
+                ColorManager.textPrimary,
+              ),
+              _buildStatItem(
+                context,
+                l10n.paidLabel,
+                '\$${dentalCase.paidAmount.toStringAsFixed(0)}',
+                ColorManager.success,
+              ),
+              _buildStatItem(
+                context,
+                l10n.pendingLabel,
+                '\$${dentalCase.pendingAmount.toStringAsFixed(0)}',
+                ColorManager.warning,
+              ),
+            ],
+          ),
+
+          SizedBox(height: 10.h),
+
+          // View payment history
+          GestureDetector(
+            onTap: () => _showPaymentHistoryPopup(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.receipt_long_outlined,
+                  size: 14.w,
+                  color: ColorManager.primary,
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  l10n.viewPaymentHistory,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w500,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Row helpers ──────────────────────────────────────
+
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    bool showDivider = true,
+  }) {
+    return Container(
+      decoration: showDivider
+          ? BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+              ),
+            )
+          : null,
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Row(
+        children: [
+          Icon(icon, size: 18.w, color: ColorManager.textTertiary),
+          SizedBox(width: 12.w),
+          Builder(builder: (context) {
+            return Text(
+              label,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w400,
+                color: ColorManager.textTertiary,
+              ),
+            );
+          }),
+          const Spacer(),
+          Builder(builder: (context) {
+            return Text(
+              value,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w400,
+                color: ColorManager.textPrimary,
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionRow({
+    required IconData icon,
+    required String label,
+    VoidCallback? onTap,
+    bool showDivider = true,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: showDivider
+            ? BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+                ),
+              )
+            : null,
+        padding: EdgeInsets.symmetric(vertical: 10.h),
+        child: Row(
+          children: [
+            Icon(icon, size: 18.w, color: ColorManager.success),
+            SizedBox(width: 12.w),
+            Builder(builder: (context) {
+              return Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.success,
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(
+    BuildContext context,
+    String label,
+    String value,
+    Color valueColor,
+  ) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w700,
+              color: valueColor,
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              color: ColorManager.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Action buttons ───────────────────────────────────
+
   Widget _buildActionButtons(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: GestureDetector(
             onTap: () => context.pushNamed(
               AppRoutesNames.addTreatment,
-              extra: {'dentalCase': dentalCase, 'isInitial': false},
+              extra: {'caseId': 123, 'isInitial': false},
             ),
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
+              padding: EdgeInsets.symmetric(vertical: 13.h),
               decoration: BoxDecoration(
                 color: ColorManager.white,
                 borderRadius: BorderRadiusManager.lg,
@@ -133,17 +374,13 @@ class CaseOverviewWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add_circle,
-                    size: 18.w,
-                    color: ColorManager.primary,
-                  ),
+                  Icon(Icons.add_circle_outline, size: 18.w, color: ColorManager.primary),
                   SizedBox(width: 6.w),
                   Text(
-                    'Add Treatment',
+                    l10n.addTreatmentButton,
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
                       color: ColorManager.primary,
                     ),
@@ -158,8 +395,8 @@ class CaseOverviewWidget extends StatelessWidget {
           child: GestureDetector(
             onTap: () => _showRecordPaymentPopup(context),
             child: Container(
-             padding: EdgeInsets.symmetric(vertical: 12.h),
-              decoration: BoxDecoration(
+              padding: EdgeInsets.symmetric(vertical: 13.h),
+               decoration: BoxDecoration(
                 color: ColorManager.white,
                 borderRadius: BorderRadiusManager.lg,
                 border: Border.all(color: ColorManager.primary),
@@ -167,17 +404,13 @@ class CaseOverviewWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.payments_outlined,
-                    size: 18.w,
-                    color: ColorManager.primary,
-                  ),
+                  Icon(Icons.payments_outlined, size: 18.w, color: ColorManager.primary),
                   SizedBox(width: 6.w),
                   Text(
-                    'Add Payment',
+                    l10n.addPaymentButton,
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
                       color: ColorManager.primary,
                     ),
@@ -191,218 +424,15 @@ class CaseOverviewWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCaseInfoCard(BuildContext context) {
-    return CustomCard(
-      child: Column(
-        children: [
-          // Stats row
-          Row(
-            children: [
-              _buildStatItem(
-                'Total',
-                '\$${dentalCase.totalCost.toStringAsFixed(0)}',
-                ColorManager.textPrimary,
-              ),
-              _buildStatItem(
-                'Paid',
-                '\$${dentalCase.paidAmount.toStringAsFixed(0)}',
-                ColorManager.success,
-              ),
-              _buildStatItem(
-                'Pending',
-                '\$${dentalCase.pendingAmount.toStringAsFixed(0)}',
-                ColorManager.warning,
-              ),
-            ],
-          ),
-
-          SizedBox(height: 8.h),
-
-          // View payments link
-          GestureDetector(
-            onTap: () => _showPaymentHistoryPopup(context),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.receipt_long_outlined,
-                  size: 14.w,
-                  color: ColorManager.primary,
-                ),
-                SizedBox(width: 4.w),
-                Text(
-                  'View Payment History',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: FontFamily.geist,
-                    fontWeight: FontWeight.w500,
-                    color: ColorManager.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 12.h),
-          Divider(color: ColorManager.gray200),
-          SizedBox(height: 12.h),
-
-          // Date rows
-          _buildInfoRow(
-            'Started',
-            DateFormat('MMM d, yyyy').format(dentalCase.startDate),
-          ),
-          // Status row
-          _buildStatusRow(),
-          // Total visits row
-          _buildInfoRow('Total Visits', '${dentalCase.treatmentItems.length}'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value, Color valueColor) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w700,
-              color: valueColor,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontFamily: FontFamily.geist,
-              color: ColorManager.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusRow() {
-    final isInProgress = dentalCase.status.toLowerCase() == 'in progress';
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Status',
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontFamily.geist,
-              color: ColorManager.textSecondary,
-            ),
-          ),
-          GestureDetector(
-            onTap: (!isReadOnly && isInProgress) ? onMarkAsFinished : null,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: isInProgress
-                    ? ColorManager.warning.withValues(alpha: 0.1)
-                    : ColorManager.success.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    dentalCase.status,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
-                      fontWeight: FontWeight.w600,
-                      color: isInProgress
-                          ? ColorManager.warning
-                          : ColorManager.success,
-                    ),
-                  ),
-                  if (!isReadOnly && isInProgress) ...[
-                    SizedBox(width: 4.w),
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 14.w,
-                      color: ColorManager.warning,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(
-    String label,
-    String value, {
-    VoidCallback? onAction,
-    String? actionText,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontFamily.geist,
-              color: ColorManager.textSecondary,
-            ),
-          ),
-          Row(
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontFamily.geist,
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.textPrimary,
-                ),
-              ),
-              if (onAction != null) ...[
-                SizedBox(width: 8.w),
-                GestureDetector(
-                  onTap: onAction,
-                  child: Text(
-                    actionText ?? 'Change',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
-                      fontWeight: FontWeight.w500,
-                      color: ColorManager.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // ── Treatments section ───────────────────────────────
 
   Widget _buildTreatmentsSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final treatments = isReadOnly
         ? dentalCase.treatmentItems
         : dentalCase.pendingTreatments.take(2).toList();
 
-    final sectionTitle = isReadOnly ? 'Treatments' : 'Previous Treatments';
+    final sectionTitle = isReadOnly ? l10n.treatments : l10n.previousTreatments;
     final showSeeAll = !isReadOnly && dentalCase.pendingTreatments.length > 2;
 
     return Column(
@@ -415,7 +445,7 @@ class CaseOverviewWidget extends StatelessWidget {
               sectionTitle,
               style: TextStyle(
                 fontSize: 16.sp,
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
                 color: ColorManager.textPrimary,
               ),
@@ -426,10 +456,10 @@ class CaseOverviewWidget extends StatelessWidget {
                   // TODO: Navigate to see all pending
                 },
                 child: Text(
-                  'See all (${dentalCase.pendingTreatments.length})',
+                  '${l10n.seeAll} (${dentalCase.pendingTreatments.length})',
                   style: TextStyle(
                     fontSize: 13.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
                     color: ColorManager.primary,
                   ),
@@ -439,7 +469,7 @@ class CaseOverviewWidget extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         if (treatments.isEmpty)
-          _buildEmptyTreatments()
+          _buildEmptyTreatments(context)
         else
           ...treatments.asMap().entries.map((entry) {
             final item = entry.value;
@@ -457,7 +487,8 @@ class CaseOverviewWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyTreatments() {
+  Widget _buildEmptyTreatments(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
@@ -466,10 +497,10 @@ class CaseOverviewWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          isReadOnly ? 'No treatments recorded' : 'All treatments completed!',
+          isReadOnly ? l10n.noTreatmentsRecorded : l10n.allTreatmentsCompleted,
           style: TextStyle(
             fontSize: 14.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textSecondary,
           ),
         ),

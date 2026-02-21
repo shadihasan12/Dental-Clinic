@@ -1,51 +1,6 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-/// Font family management
-class FontFamilyManager {
-  FontFamilyManager._();
-
-  /// Primary font - Inter (Modern sans-serif from Google Fonts)
-  static const String primary = 'Inter';
-
-  /// Fallback font - System default
-  static const String fallback = 'Roboto';
-
-  /// Font family with fallback chain
-  static const List<String> fontFamilyFallback = [
-    'Inter',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'Segoe UI',
-    'Roboto',
-    'Helvetica Neue',
-    'Arial',
-    'sans-serif',
-  ];
-
-  /// Get Inter text theme using Google Fonts
-  static TextTheme get interTextTheme => GoogleFonts.interTextTheme();
-
-  /// Get Inter text style with custom properties
-  static TextStyle inter({
-    double? fontSize,
-    FontWeight? fontWeight,
-    Color? color,
-    double? letterSpacing,
-    double? height,
-    TextDecoration? decoration,
-  }) {
-    return GoogleFonts.inter(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-      letterSpacing: letterSpacing,
-      height: height,
-      decoration: decoration,
-    );
-  }
-}
 
 /// Font weight management
 class FontWeightManager {
@@ -167,116 +122,141 @@ class TextStyleManager {
   TextStyleManager._();
 
   // Display styles
-  static TextStyle get displayLarge => GoogleFonts.inter(
+  static TextStyle get displayLarge => TextStyle(
         fontSize: FontSizesManager.s36,
         fontWeight: FontWeightManager.bold,
         height: FontHeightsManager.tight,
         letterSpacing: FontLetterSpacingManager.tighter,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get displayMedium => GoogleFonts.inter(
+  static TextStyle get displayMedium => TextStyle(
         fontSize: FontSizesManager.s30,
         fontWeight: FontWeightManager.bold,
         height: FontHeightsManager.snug,
         letterSpacing: FontLetterSpacingManager.tight,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get displaySmall => GoogleFonts.inter(
+  static TextStyle get displaySmall => TextStyle(
         fontSize: FontSizesManager.s24,
         fontWeight: FontWeightManager.semiBold,
         height: FontHeightsManager.snug,
+        fontFamily: FontFamily.geist
       );
 
   // Headline styles
-  static TextStyle get headlineLarge => GoogleFonts.inter(
+  static TextStyle get headlineLarge => TextStyle(
         fontSize: FontSizesManager.s22,
         fontWeight: FontWeightManager.semiBold,
         height: FontHeightsManager.snug,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get headlineMedium => GoogleFonts.inter(
+  static TextStyle get headlineMedium => TextStyle(
         fontSize: FontSizesManager.s20,
         fontWeight: FontWeightManager.semiBold,
         height: FontHeightsManager.snug,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get headlineSmall => GoogleFonts.inter(
+  static TextStyle get headlineSmall => TextStyle(
         fontSize: FontSizesManager.s18,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.snug,
+        fontFamily: FontFamily.geist
       );
 
   // Title styles
-  static TextStyle get titleLarge => GoogleFonts.inter(
+  static TextStyle get titleLarge => TextStyle(
         fontSize: FontSizesManager.s18,
         fontWeight: FontWeightManager.semiBold,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get titleMedium => GoogleFonts.inter(
+  static TextStyle get titleMedium => TextStyle(
         fontSize: FontSizesManager.s16,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get titleSmall => GoogleFonts.inter(
+  static TextStyle get titleSmall => TextStyle(
         fontSize: FontSizesManager.s14,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
   // Body styles
-  static TextStyle get bodyLarge => GoogleFonts.inter(
+  static TextStyle get bodyLarge => TextStyle(
         fontSize: FontSizesManager.s16,
         fontWeight: FontWeightManager.regular,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get bodyMedium => GoogleFonts.inter(
+  static TextStyle get bodyMedium => TextStyle(
         fontSize: FontSizesManager.s14,
         fontWeight: FontWeightManager.regular,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get bodySmall => GoogleFonts.inter(
+  static TextStyle get bodySmall => TextStyle(
         fontSize: FontSizesManager.s12,
         fontWeight: FontWeightManager.regular,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
   // Label styles
-  static TextStyle get labelLarge => GoogleFonts.inter(
+  static TextStyle get labelLarge => TextStyle(
         fontSize: FontSizesManager.s14,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.normal,
         letterSpacing: FontLetterSpacingManager.wide,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get labelMedium => GoogleFonts.inter(
+  static TextStyle get labelMedium => TextStyle(
         fontSize: FontSizesManager.s12,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.normal,
         letterSpacing: FontLetterSpacingManager.wide,
+        fontFamily: FontFamily.geist
       );
 
-  static TextStyle get labelSmall => GoogleFonts.inter(
+  static TextStyle get labelSmall => TextStyle(
         fontSize: FontSizesManager.s10,
         fontWeight: FontWeightManager.medium,
         height: FontHeightsManager.normal,
         letterSpacing: FontLetterSpacingManager.wide,
+        fontFamily: FontFamily.geist
       );
 
   // Button text style
-  static TextStyle get button => GoogleFonts.inter(
+  static TextStyle get button => TextStyle(
         fontSize: FontSizesManager.s16,
         fontWeight: FontWeightManager.semiBold,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
 
   // Caption style
-  static TextStyle get caption => GoogleFonts.inter(
+  static TextStyle get caption => TextStyle(
         fontSize: FontSizesManager.s12,
         fontWeight: FontWeightManager.regular,
         height: FontHeightsManager.normal,
+        fontFamily: FontFamily.geist
       );
+}
+
+
+class FontHelper {
+  static String fontFamily(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    return locale.languageCode == 'ar' ? FontFamily.cairo : FontFamily.geist;
+  }
 }

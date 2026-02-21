@@ -1,12 +1,12 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 enum PaymentMethod {
   cash('Cash', Icons.payments_outlined),
@@ -156,19 +156,19 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Record Payment',
+                                AppLocalizations.of(context)!.recordPaymentTitle,
                                 style: TextStyle(
                                   fontSize: 18.sp,
-                                  fontFamily: FontFamily.geist,
+                                  fontFamily: FontHelper.fontFamily(context),
                                   fontWeight: FontWeight.w600,
                                   color: ColorManager.textPrimary,
                                 ),
                               ),
                               Text(
-                                'Patient Name',
+                                AppLocalizations.of(context)!.patientName,
                                 style: TextStyle(
                                   fontSize: 12.sp,
-                                  fontFamily: FontFamily.geist,
+                                  fontFamily: FontHelper.fontFamily(context),
                                   color: ColorManager.textSecondary,
                                 ),
                               ),
@@ -198,12 +198,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                         children: [
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            'Total Cost',
+                            AppLocalizations.of(context)!.totalCost,
                             '\$${widget.totalCost.toStringAsFixed(2)}',
                           ),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            'Already Paid',
+                            AppLocalizations.of(context)!.alreadyPaid,
                             '\$${widget.paidAmount.toStringAsFixed(2)}',
                             valueColor: ColorManager.success,
                           ),
@@ -211,7 +211,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                           Divider(color: ColorManager.gray200),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            'Remaining',
+                            AppLocalizations.of(context)!.remaining,
                             '\$${_remainingAmount.toStringAsFixed(2)}',
                             valueColor: _remainingAmount > 0
                                 ? ColorManager.warning
@@ -230,16 +230,16 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     SizedBox(height: 16.h),
 
                     // Note (optional)
-                    _buildLabel('Note (Optional)'),
+                    _buildLabel(AppLocalizations.of(context)!.noteOptional),
                     SizedBox(height: 6.h),
                     TextFormField(
                       controller: _noteController,
                       maxLines: 2,
                       decoration: InputDecoration(
-                        hintText: 'Add a note...',
+                        hintText: AppLocalizations.of(context)!.addNote,
                         hintStyle: TextStyle(
                           color: ColorManager.textTertiary,
-                          fontFamily: FontFamily.geist,
+                          fontFamily: FontHelper.fontFamily(context),
                         ),
                         filled: true,
                         fillColor: ColorManager.white,
@@ -262,7 +262,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
 
                     // Save button
                     PrimaryButton(
-                      text: 'Save',
+                      text: AppLocalizations.of(context)!.save,
                       onPressed: () => context.pop(),
                     ),
                   ],
@@ -279,7 +279,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel('Amount *'),
+        _buildLabel(AppLocalizations.of(context)!.amountRequired),
         SizedBox(height: 6.h),
         Row(
           children: [
@@ -297,7 +297,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                   prefixText: '\$ ',
                   hintStyle: TextStyle(
                     color: ColorManager.textTertiary,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                   ),
                   filled: true,
                   fillColor: ColorManager.white,
@@ -316,11 +316,11 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an amount';
+                    return AppLocalizations.of(context)!.pleaseEnterAmount;
                   }
                   final amount = double.tryParse(value);
                   if (amount == null || amount <= 0) {
-                    return 'Please enter a valid amount';
+                    return AppLocalizations.of(context)!.pleaseEnterValidAmount;
                   }
                   return null;
                 },
@@ -337,10 +337,10 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                   border: Border.all(color: ColorManager.primary),
                 ),
                 child: Text(
-                  'Full',
+                  AppLocalizations.of(context)!.fullAmount,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
                     color: ColorManager.primary,
                   ),
@@ -359,7 +359,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
       text,
       style: TextStyle(
         fontSize: 14.sp,
-        fontFamily: FontFamily.geist,
+        fontFamily: FontHelper.fontFamily(context),
         fontWeight: FontWeight.w500,
         color: ColorManager.textPrimary,
       ),
@@ -379,7 +379,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           label,
           style: TextStyle(
             fontSize: 13.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textSecondary,
           ),
         ),
@@ -387,12 +387,30 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           value,
           style: TextStyle(
             fontSize: 13.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
             color: valueColor ?? ColorManager.textPrimary,
           ),
         ),
       ],
     );
+  }
+
+  String _getLocalizedPaymentMethod(PaymentMethod method) {
+    final locale = AppLocalizations.of(context)!;
+    switch (method) {
+      case PaymentMethod.cash:
+        return locale.paymentMethodCash;
+      case PaymentMethod.creditCard:
+        return locale.paymentMethodCreditCard;
+      case PaymentMethod.debitCard:
+        return locale.paymentMethodDebitCard;
+      case PaymentMethod.insurance:
+        return locale.paymentMethodInsurance;
+      case PaymentMethod.bankTransfer:
+        return locale.paymentMethodBankTransfer;
+      case PaymentMethod.other:
+        return locale.paymentMethodOther;
+    }
   }
 }

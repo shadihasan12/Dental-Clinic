@@ -1,19 +1,15 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/bloc/appointment_bloc.dart';
 
-/// Appointments page with BLoC state management
-/// ✅ No setState - all state managed by AppointmentBloc
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
 
@@ -33,35 +29,7 @@ class _AppointmentsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
-      appBar: AppBar(
-        title: Text(
-          'Schedule',
-          style: TextStyleManager.headlineMedium.copyWith(
-            color: ColorManager.textPrimary,
-          ),
-        ),
-        backgroundColor: ColorManager.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.today),
-            onPressed: () {
-              // ✅ BLoC event instead of setState
-              final now = DateTime.now();
-              final today = DateTime(now.year, now.month, now.day);
-              context.read<AppointmentBloc>().add(
-                    AppointmentEvent.selectDate(today),
-                  );
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.pushNamed(AppRoutesNames.newAppointment),
-        backgroundColor: ColorManager.primary,
-        child: const Icon(Icons.add, color: ColorManager.white),
-      ),
+      backgroundColor: Colors.white,
       body: BlocBuilder<AppointmentBloc, AppointmentState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -72,7 +40,9 @@ class _AppointmentsContent extends StatelessWidget {
             return Center(
               child: Text(
                 state.error!,
-                style: TextStyleManager.bodyMedium.copyWith(
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontFamily.geist,
                   color: ColorManager.error,
                 ),
               ),
@@ -81,34 +51,35 @@ class _AppointmentsContent extends StatelessWidget {
 
           return Column(
             children: [
-              // View Toggle & Date
-              Container(
-                color: ColorManager.white,
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  children: [
-                    // View Toggle
-                    _buildViewToggle(context, state),
-                    SizedBox(height: 16.h),
-                    // Date selector
-                    _buildDateSelector(context, state),
-                  ],
-                ),
+              // — Header (matches patients list style)
+              _buildHeader(context, state),
+              Divider(height: 1, color: Colors.grey.shade200),
+
+              // — Date selector
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 10.h),
+                child: _buildDateSelector(context, state),
               ),
 
-              // Appointments List
+              // — View toggle
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: _buildViewToggle(context, state),
+              ),
+              SizedBox(height: 12.h),
+
+              // — Appointments list
               Expanded(
                 child: state.filteredAppointments.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        padding: PaddingManager.all16,
+                    ? _buildEmptyState(context)
+                    : ListView.separated(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
                         itemCount: state.filteredAppointments.length,
+                        separatorBuilder: (_, __) =>
+                            Divider(height: 1, color: Colors.grey.shade100),
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: _buildAppointmentCard(
-                              state.filteredAppointments[index],
-                            ),
+                          return _buildAppointmentRow(
+                            state.filteredAppointments[index],
                           );
                         },
                       ),
@@ -120,7 +91,147 @@ class _AppointmentsContent extends StatelessWidget {
     );
   }
 
-  /// View toggle widget - ✅ Uses BLoC event instead of setState
+  // ─── Header ─────────────────────────────────────────────────────────────
+
+  Widget _buildHeader(BuildContext context, AppointmentState state) {
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.appointments,
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    '${state.filteredAppointments.length} ${AppLocalizations.of(context)!.total}',
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 13.sp,
+                      color: Colors.black38,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Today button
+            GestureDetector(
+              onTap: () {
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                context
+                    .read<AppointmentBloc>()
+                    .add(AppointmentEvent.selectDate(today));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.today,
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 10.w),
+            // Add button
+            GestureDetector(
+              onTap: () => context.pushNamed(AppRoutesNames.newAppointment),
+              child: Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.add, color: Colors.white, size: 20.w),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Date selector ──────────────────────────────────────────────────────
+
+  Widget _buildDateSelector(BuildContext context, AppointmentState state) {
+    final now = DateTime.now();
+    final days = List.generate(7, (i) => now.add(Duration(days: i - 2)));
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: days.map((date) {
+        final isSelected = date.day == state.selectedDate.day &&
+            date.month == state.selectedDate.month &&
+            date.year == state.selectedDate.year;
+        final isToday =
+            date.day == now.day && date.month == now.month && date.year == now.year;
+
+        return GestureDetector(
+          onTap: () => context
+              .read<AppointmentBloc>()
+              .add(AppointmentEvent.selectDate(date)),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? ColorManager.primary
+                  : isToday
+                      ? ColorManager.primary.withValues(alpha: 0.08)
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  _getDayName(date.weekday),
+                  style: TextStyle(
+                    fontFamily: FontFamily.geist,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? Colors.white70 : Colors.black38,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  date.day.toString(),
+                  style: TextStyle(
+                    fontFamily: FontFamily.geist,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // ─── View toggle ────────────────────────────────────────────────────────
+
   Widget _buildViewToggle(BuildContext context, AppointmentState state) {
     final views = [
       (AppointmentViewMode.day, 'Day'),
@@ -128,49 +239,34 @@ class _AppointmentsContent extends StatelessWidget {
     ];
 
     return Container(
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray100,
-        borderRadius: BorderRadiusManager.lg,
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
-        children: views.map((viewData) {
-          final mode = viewData.$1;
-          final label = viewData.$2;
-          final isSelected = state.viewMode == mode;
-
+        children: views.map((v) {
+          final isSelected = state.viewMode == v.$1;
           return Expanded(
             child: GestureDetector(
-              onTap: () {
-                context.read<AppointmentBloc>().add(
-                      AppointmentEvent.changeViewMode(mode),
-                    );
-              },
+              onTap: () => context
+                  .read<AppointmentBloc>()
+                  .add(AppointmentEvent.changeViewMode(v.$1)),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: EdgeInsets.symmetric(vertical: 10.h),
+                padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? ColorManager.white
-                      : ColorManager.transparent,
-                  borderRadius: BorderRadiusManager.md,
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: ColorManager.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
                   child: Text(
-                    label,
-                    style: TextStyleManager.labelLarge.copyWith(
-                      color: isSelected
-                          ? ColorManager.primary
-                          : ColorManager.textSecondary,
+                    v.$2,
+                    style: TextStyle(
+                      fontFamily: FontFamily.geist,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? ColorManager.primary : Colors.black38,
                     ),
                   ),
                 ),
@@ -182,87 +278,102 @@ class _AppointmentsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildDateSelector(BuildContext context, AppointmentState state) {
-    final now = DateTime.now();
-    final days = List.generate(7, (index) {
-      return now.add(Duration(days: index - 2));
-    });
+  // ─── Appointment row ────────────────────────────────────────────────────
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: days.map((date) {
-        final isSelected = date.day == state.selectedDate.day &&
-            date.month == state.selectedDate.month &&
-            date.year == state.selectedDate.year;
-        final isToday = date.day == now.day &&
-            date.month == now.month &&
-            date.year == now.year;
-
-        return GestureDetector(
-          onTap: () {
-            context.read<AppointmentBloc>().add(
-                  AppointmentEvent.selectDate(date),
-                );
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? ColorManager.primary
-                  : isToday
-                      ? ColorManager.primary10
-                      : ColorManager.transparent,
-              borderRadius: BorderRadiusManager.lg,
-            ),
+  Widget _buildAppointmentRow(AppointmentEntity appointment) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      child: Row(
+        children: [
+          // Time
+          SizedBox(
+            width: 60.w,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getDayName(date.weekday),
-                  style: TextStyleManager.labelSmall.copyWith(
-                    color: isSelected
-                        ? ColorManager.white.withValues(alpha: 0.9)
-                        : ColorManager.textSecondary,
+                  appointment.formattedTime,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontFamily: FontFamily.geist,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black45,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
-                  date.day.toString(),
-                  style: TextStyleManager.titleMedium.copyWith(
-                    color: isSelected
-                        ? ColorManager.white
-                        : ColorManager.textPrimary,
-                    fontWeight: FontWeight.w600,
+                  '${appointment.durationMinutes}m',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontFamily.geist,
+                    color: Colors.black26,
                   ),
                 ),
               ],
             ),
           ),
-        );
-      }).toList(),
+
+          // Status bar
+          Container(
+            width: 3.w,
+            height: 40.h,
+            decoration: BoxDecoration(
+              color: _getStatusColor(appointment.status),
+              borderRadius: BorderRadius.circular(2.r),
+            ),
+          ),
+          SizedBox(width: 12.w),
+
+          // Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  appointment.patientName,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: FontFamily.geist,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  appointment.treatmentType,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontFamily.geist,
+                    color: Colors.black38,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  String _getDayName(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[weekday - 1];
-  }
+  // ─── Empty state ────────────────────────────────────────────────────────
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.calendar_today_outlined,
-            size: 64.w,
-            color: ColorManager.textTertiary,
+            size: 48.w,
+            color: Colors.grey.shade300,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           Text(
-            'No appointments scheduled',
-            style: TextStyleManager.titleMedium.copyWith(
-              color: ColorManager.textSecondary,
+            AppLocalizations.of(context)!.noAppointments,
+            style: TextStyle(
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 14.sp,
+              color: Colors.black38,
             ),
           ),
         ],
@@ -270,84 +381,11 @@ class _AppointmentsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildAppointmentCard(AppointmentEntity appointment) {
-    return CustomCard(
-      onTap: () {},
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Time column
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                appointment.formattedTime,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: FontFamily.geist,
-                  fontWeight: FontWeight.w600,
-                  color: ColorManager.primary,
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                '${appointment.durationMinutes} min',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(width: 16.w),
-          // Divider
-          Container(
-            width: 3.w,
-            height: 60.h,
-            decoration: BoxDecoration(
-              color: _getStatusColor(appointment.status),
-              borderRadius: BorderRadiusManager.full,
-            ),
-          ),
-          SizedBox(width: 16.w),
-          // Details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        appointment.patientName,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontFamily: FontFamily.geist,
-                          fontWeight: FontWeight.w500,
-                          color: ColorManager.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  appointment.treatmentType,
-                  style: TextStyle(
-                    color: ColorManager.textSecondary,
-                    fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+  // ─── Helpers ────────────────────────────────────────────────────────────
+
+  String _getDayName(int weekday) {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return days[weekday - 1];
   }
 
   Color _getStatusColor(AppointmentStatus status) {
@@ -362,36 +400,6 @@ class _AppointmentsContent extends StatelessWidget {
         return ColorManager.error;
       case AppointmentStatus.noShow:
         return ColorManager.gray400;
-    }
-  }
-
-  String _getStatusLabel(AppointmentStatus status) {
-    switch (status) {
-      case AppointmentStatus.confirmed:
-        return 'Confirmed';
-      case AppointmentStatus.pending:
-        return 'Pending';
-      case AppointmentStatus.completed:
-        return 'Completed';
-      case AppointmentStatus.cancelled:
-        return 'Cancelled';
-      case AppointmentStatus.noShow:
-        return 'No Show';
-    }
-  }
-
-  StatusType _getStatusType(AppointmentStatus status) {
-    switch (status) {
-      case AppointmentStatus.confirmed:
-        return StatusType.success;
-      case AppointmentStatus.pending:
-        return StatusType.pending;
-      case AppointmentStatus.completed:
-        return StatusType.completed;
-      case AppointmentStatus.cancelled:
-        return StatusType.error;
-      case AppointmentStatus.noShow:
-        return StatusType.pending;
     }
   }
 }

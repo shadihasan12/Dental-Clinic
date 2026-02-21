@@ -1,12 +1,12 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
 
-/// Shows current subscription status on dashboard
 class SubscriptionStatusCard extends StatelessWidget {
   const SubscriptionStatusCard({
     super.key,
@@ -40,74 +40,69 @@ class SubscriptionStatusCard extends StatelessWidget {
   }
 }
 
-class _NoSubscriptionCard extends StatelessWidget {
-  final VoidCallback onStartTrial;
+// ─── No Subscription ──────────────────────────────────────────────────────────
 
+class _NoSubscriptionCard extends StatelessWidget {
   const _NoSubscriptionCard({required this.onStartTrial});
+
+  final VoidCallback onStartTrial;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        gradient: GradientManager.primaryButton,
-        borderRadius: BorderRadius.circular(16.r),
+        color: ColorManager.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: ColorManager.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10.r),
+          Icon(Icons.rocket_launch_outlined,
+              size: 22.w, color: ColorManager.primary),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Get Started',
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF2D2D2D),
+                  ),
                 ),
-                child: Icon(
-                  Icons.rocket_launch,
-                  color: ColorManager.white,
-                  size: 22.w,
+                SizedBox(height: 2.h),
+                Text(
+                  'Try all features free for 30 days',
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 12.sp,
+                    color: Colors.black38,
+                  ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Get Started',
-                      style: TextStyleManager.titleMedium.copyWith(
-                        color: ColorManager.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Try all features free for 30 days',
-                      style: TextStyleManager.bodySmall.copyWith(
-                        color: ColorManager.white.withValues(alpha: 0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SizedBox(height: 16.h),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onStartTrial,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManager.white,
-                foregroundColor: ColorManager.primary,
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
+          SizedBox(width: 8.w),
+          GestureDetector(
+            onTap: onStartTrial,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: ColorManager.primary,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Text(
+                'Start Trial',
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
               ),
-              child: const Text('Start Free Trial'),
             ),
           ),
         ],
@@ -116,94 +111,64 @@ class _NoSubscriptionCard extends StatelessWidget {
   }
 }
 
-class _TrialStatusCard extends StatelessWidget {
-  final UserSubscriptionEntity subscription;
-  final VoidCallback onUpgrade;
+// ─── Trial ────────────────────────────────────────────────────────────────────
 
+class _TrialStatusCard extends StatelessWidget {
   const _TrialStatusCard({
     required this.subscription,
     required this.onUpgrade,
   });
 
+  final UserSubscriptionEntity subscription;
+  final VoidCallback onUpgrade;
+
   @override
   Widget build(BuildContext context) {
     final daysLeft = subscription.trialDaysRemaining;
     final isUrgent = daysLeft <= 3;
+    final accentColor = isUrgent ? const Color(0xFFF59E0B) : ColorManager.primary;
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: isUrgent
-              ? ColorManager.warning.withValues(alpha: 0.5)
-              : ColorManager.primary.withValues(alpha: 0.3),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: accentColor.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row
           Row(
             children: [
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: isUrgent
-                      ? ColorManager.warning.withValues(alpha: 0.1)
-                      : ColorManager.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(
-                  isUrgent ? Icons.timer : Icons.star,
-                  color: isUrgent ? ColorManager.warning : ColorManager.primary,
-                  size: 22.w,
+              Icon(
+                isUrgent ? Icons.timer_outlined : Icons.star_outline,
+                size: 20.w,
+                color: accentColor,
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                'Free Trial',
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF2D2D2D),
                 ),
               ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Free Trial',
-                      style: TextStyleManager.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '$daysLeft day${daysLeft != 1 ? 's' : ''} remaining',
-                      style: TextStyleManager.bodySmall.copyWith(
-                        color: isUrgent
-                            ? ColorManager.warning
-                            : ColorManager.textSecondary,
-                        fontWeight:
-                            isUrgent ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const Spacer(),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
-                  color: ColorManager.info.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Text(
-                  'TRIAL',
-                  style: TextStyleManager.labelSmall.copyWith(
-                    color: ColorManager.info,
-                    fontWeight: FontWeight.bold,
+                  '$daysLeft day${daysLeft != 1 ? 's' : ''} left',
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: accentColor,
                   ),
                 ),
               ),
@@ -213,51 +178,38 @@ class _TrialStatusCard extends StatelessWidget {
 
           // Progress bar
           ClipRRect(
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(3.r),
             child: LinearProgressIndicator(
               value: daysLeft / 30,
-              backgroundColor: ColorManager.gray200,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                isUrgent ? ColorManager.warning : ColorManager.primary,
-              ),
-              minHeight: 6.h,
+              backgroundColor: accentColor.withValues(alpha: 0.12),
+              valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+              minHeight: 4.h,
             ),
           ),
+          SizedBox(height: 14.h),
 
-          SizedBox(height: 16.h),
-
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: onUpgrade,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ColorManager.primary,
-                    side: const BorderSide(color: ColorManager.primary),
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
+          // Upgrade button
+          GestureDetector(
+            onTap: onUpgrade,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              decoration: BoxDecoration(
+                color: ColorManager.primary,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Center(
+                child: Text(
+                  'Upgrade Now',
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
-                  child: const Text('View Plans'),
                 ),
               ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: onUpgrade,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManager.primary,
-                    foregroundColor: ColorManager.white,
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                  ),
-                  child: const Text('Upgrade Now'),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
@@ -265,127 +217,133 @@ class _TrialStatusCard extends StatelessWidget {
   }
 }
 
-class _ActiveSubscriptionCard extends StatelessWidget {
-  final UserSubscriptionEntity subscription;
-  final VoidCallback onManage;
-  final VoidCallback onUpgrade;
+// ─── Active ───────────────────────────────────────────────────────────────────
 
+class _ActiveSubscriptionCard extends StatelessWidget {
   const _ActiveSubscriptionCard({
     required this.subscription,
     required this.onManage,
     required this.onUpgrade,
   });
 
+  final UserSubscriptionEntity subscription;
+  final VoidCallback onManage;
+  final VoidCallback onUpgrade;
+
   @override
   Widget build(BuildContext context) {
     final planName = _getPlanName(subscription.planTier);
     final isCancelled = subscription.status == SubscriptionStatus.cancelled;
+    final statusColor =
+        isCancelled ? const Color(0xFFF59E0B) : const Color(0xFF10B981);
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row
           Row(
             children: [
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: ColorManager.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(
-                  Icons.verified,
-                  color: ColorManager.success,
-                  size: 22.w,
+              Icon(Icons.verified_outlined, size: 20.w, color: statusColor),
+              SizedBox(width: 8.w),
+              Text(
+                '$planName Plan',
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF2D2D2D),
                 ),
               ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$planName Plan',
-                      style: TextStyleManager.titleMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      isCancelled
-                          ? 'Cancels ${_formatDate(subscription.currentPeriodEnd)}'
-                          : 'Renews ${_formatDate(subscription.currentPeriodEnd)}',
-                      style: TextStyleManager.bodySmall.copyWith(
-                        color: isCancelled
-                            ? ColorManager.warning
-                            : ColorManager.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const Spacer(),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
-                  color: isCancelled
-                      ? ColorManager.warning.withValues(alpha: 0.1)
-                      : ColorManager.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12.r),
+                  color: statusColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Text(
                   isCancelled ? 'CANCELLING' : 'ACTIVE',
-                  style: TextStyleManager.labelSmall.copyWith(
-                    color:
-                        isCancelled ? ColorManager.warning : ColorManager.success,
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
+                    color: statusColor,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 6.h),
+
+          // Renewal info
+          Text(
+            isCancelled
+                ? 'Cancels ${_formatDate(subscription.currentPeriodEnd)}'
+                : 'Renews ${_formatDate(subscription.currentPeriodEnd)}',
+            style: TextStyle(
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 12.sp,
+              color: isCancelled ? const Color(0xFFF59E0B) : Colors.black38,
+            ),
+          ),
+          SizedBox(height: 14.h),
+
+          // Action buttons
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: onManage,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ColorManager.textSecondary,
-                    side: const BorderSide(color: ColorManager.gray300),
+                child: GestureDetector(
+                  onTap: onManage,
+                  child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10.h),
-                    shape: RoundedRectangleBorder(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Manage',
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                        ),
+                      ),
                     ),
                   ),
-                  child: const Text('Manage'),
                 ),
               ),
               if (subscription.planTier != PlanTier.advanced) ...[
-                SizedBox(width: 12.w),
+                SizedBox(width: 10.w),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: onUpgrade,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primary,
-                      foregroundColor: ColorManager.white,
+                  child: GestureDetector(
+                    onTap: onUpgrade,
+                    child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10.h),
-                      shape: RoundedRectangleBorder(
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
                         borderRadius: BorderRadius.circular(8.r),
                       ),
+                      child: Center(
+                        child: Text(
+                          'Upgrade',
+                          style: TextStyle(
+                            fontFamily: FontHelper.fontFamily(context),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: const Text('Upgrade'),
                   ),
                 ),
               ],
@@ -410,9 +368,9 @@ class _ActiveSubscriptionCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    final months = [
+    const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

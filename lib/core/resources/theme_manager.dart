@@ -1,14 +1,14 @@
+import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 
 /// Get the application theme data - Light theme
 ThemeData getApplicationThemeData() {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: FontFamilyManager.primary,
+    fontFamily: FontFamily.geist,
 
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
@@ -37,9 +37,6 @@ ThemeData getApplicationThemeData() {
       surfaceTintColor: ColorManager.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       iconTheme: const IconThemeData(color: ColorManager.textPrimary),
-      titleTextStyle: TextStyleManager.headlineMedium.copyWith(
-        color: ColorManager.textPrimary,
-      ),
     ),
 
     // Card Theme
@@ -79,12 +76,6 @@ ThemeData getApplicationThemeData() {
         borderSide: const BorderSide(color: ColorManager.error, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      hintStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.inputPlaceholder,
-      ),
-      labelStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.textSecondary,
-      ),
       prefixIconColor: ColorManager.textSecondary,
       suffixIconColor: ColorManager.textSecondary,
     ),
@@ -102,7 +93,6 @@ ThemeData getApplicationThemeData() {
           borderRadius: BorderRadiusManager.xl,
         ),
         elevation: 0,
-        textStyle: TextStyleManager.button,
       ),
     ),
 
@@ -117,7 +107,6 @@ ThemeData getApplicationThemeData() {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusManager.xl,
         ),
-        textStyle: TextStyleManager.button,
       ),
     ),
 
@@ -127,7 +116,6 @@ ThemeData getApplicationThemeData() {
         foregroundColor: ColorManager.primary,
         disabledForegroundColor: ColorManager.gray400,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        textStyle: TextStyleManager.button,
       ),
     ),
 
@@ -172,17 +160,7 @@ ThemeData getApplicationThemeData() {
       indicatorColor: ColorManager.primary10,
       surfaceTintColor: ColorManager.transparent,
       elevation: 0,
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return TextStyleManager.labelMedium.copyWith(
-            color: ColorManager.primary,
-            fontWeight: FontWeightManager.semiBold,
-          );
-        }
-        return TextStyleManager.labelMedium.copyWith(
-          color: ColorManager.gray500,
-        );
-      }),
+      
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return const IconThemeData(color: ColorManager.primary);
@@ -205,12 +183,6 @@ ThemeData getApplicationThemeData() {
       selectedColor: ColorManager.primary10,
       secondarySelectedColor: ColorManager.primaryLight,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      labelStyle: TextStyleManager.labelMedium.copyWith(
-        color: ColorManager.textPrimary,
-      ),
-      secondaryLabelStyle: TextStyleManager.labelMedium.copyWith(
-        color: ColorManager.primary,
-      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusManager.full,
       ),
@@ -224,12 +196,7 @@ ThemeData getApplicationThemeData() {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusManager.xl,
       ),
-      titleTextStyle: TextStyleManager.headlineMedium.copyWith(
-        color: ColorManager.textPrimary,
-      ),
-      contentTextStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.textSecondary,
-      ),
+     
     ),
 
     // Bottom Sheet Theme
@@ -247,9 +214,6 @@ ThemeData getApplicationThemeData() {
     // Snackbar Theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: ColorManager.gray800,
-      contentTextStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.white,
-      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusManager.lg,
       ),
@@ -261,10 +225,6 @@ ThemeData getApplicationThemeData() {
     tabBarTheme: TabBarThemeData(
       labelColor: ColorManager.primary,
       unselectedLabelColor: ColorManager.gray500,
-      labelStyle: TextStyleManager.labelLarge.copyWith(
-        fontWeight: FontWeightManager.semiBold,
-      ),
-      unselectedLabelStyle: TextStyleManager.labelLarge,
       indicatorColor: ColorManager.primary,
       indicatorSize: TabBarIndicatorSize.label,
       dividerColor: ColorManager.transparent,
@@ -332,36 +292,13 @@ ThemeData getApplicationThemeData() {
     // List Tile Theme
     listTileTheme: ListTileThemeData(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      titleTextStyle: TextStyleManager.titleMedium.copyWith(
-        color: ColorManager.textPrimary,
-      ),
-      subtitleTextStyle: TextStyleManager.bodySmall.copyWith(
-        color: ColorManager.textSecondary,
-      ),
       iconColor: ColorManager.textSecondary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusManager.lg,
       ),
     ),
 
-    // Text Theme
-    textTheme: TextTheme(
-      displayLarge: TextStyleManager.displayLarge,
-      displayMedium: TextStyleManager.displayMedium,
-      displaySmall: TextStyleManager.displaySmall,
-      headlineLarge: TextStyleManager.headlineLarge,
-      headlineMedium: TextStyleManager.headlineMedium,
-      headlineSmall: TextStyleManager.headlineSmall,
-      titleLarge: TextStyleManager.titleLarge,
-      titleMedium: TextStyleManager.titleMedium,
-      titleSmall: TextStyleManager.titleSmall,
-      bodyLarge: TextStyleManager.bodyLarge,
-      bodyMedium: TextStyleManager.bodyMedium,
-      bodySmall: TextStyleManager.bodySmall,
-      labelLarge: TextStyleManager.labelLarge,
-      labelMedium: TextStyleManager.labelMedium,
-      labelSmall: TextStyleManager.labelSmall,
-    ),
+  
   );
 }
 
@@ -369,7 +306,7 @@ ThemeData getApplicationThemeData() {
 ThemeData getDarkThemeData() {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: FontFamilyManager.primary,
+    fontFamily: FontFamily.geist,
 
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
@@ -397,9 +334,6 @@ ThemeData getDarkThemeData() {
       surfaceTintColor: ColorManager.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       iconTheme: const IconThemeData(color: ColorManager.white),
-      titleTextStyle: TextStyleManager.headlineMedium.copyWith(
-        color: ColorManager.white,
-      ),
     ),
 
     // Card Theme
@@ -429,9 +363,6 @@ ThemeData getDarkThemeData() {
         borderSide: const BorderSide(color: ColorManager.primary, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      hintStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.gray500,
-      ),
     ),
 
     // Elevated Button Theme
@@ -445,7 +376,6 @@ ThemeData getDarkThemeData() {
           borderRadius: BorderRadiusManager.xl,
         ),
         elevation: 0,
-        textStyle: TextStyleManager.button,
       ),
     ),
 
@@ -462,25 +392,6 @@ ThemeData getDarkThemeData() {
     dividerTheme: DividerThemeData(
       color: ColorManager.gray700,
       thickness: 1,
-    ),
-
-    // Text Theme
-    textTheme: TextTheme(
-      displayLarge: TextStyleManager.displayLarge.copyWith(color: ColorManager.white),
-      displayMedium: TextStyleManager.displayMedium.copyWith(color: ColorManager.white),
-      displaySmall: TextStyleManager.displaySmall.copyWith(color: ColorManager.white),
-      headlineLarge: TextStyleManager.headlineLarge.copyWith(color: ColorManager.white),
-      headlineMedium: TextStyleManager.headlineMedium.copyWith(color: ColorManager.white),
-      headlineSmall: TextStyleManager.headlineSmall.copyWith(color: ColorManager.white),
-      titleLarge: TextStyleManager.titleLarge.copyWith(color: ColorManager.white),
-      titleMedium: TextStyleManager.titleMedium.copyWith(color: ColorManager.white),
-      titleSmall: TextStyleManager.titleSmall.copyWith(color: ColorManager.white),
-      bodyLarge: TextStyleManager.bodyLarge.copyWith(color: ColorManager.gray200),
-      bodyMedium: TextStyleManager.bodyMedium.copyWith(color: ColorManager.gray300),
-      bodySmall: TextStyleManager.bodySmall.copyWith(color: ColorManager.gray400),
-      labelLarge: TextStyleManager.labelLarge.copyWith(color: ColorManager.gray200),
-      labelMedium: TextStyleManager.labelMedium.copyWith(color: ColorManager.gray300),
-      labelSmall: TextStyleManager.labelSmall.copyWith(color: ColorManager.gray400),
     ),
   );
 }

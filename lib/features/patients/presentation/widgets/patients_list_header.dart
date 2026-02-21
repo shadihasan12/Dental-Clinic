@@ -1,10 +1,9 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 
-/// Header for patients list page with title, count, add button and search bar
 class PatientsListHeader extends StatelessWidget {
   const PatientsListHeader({
     super.key,
@@ -21,101 +20,94 @@ class PatientsListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: GradientManager.primaryHeader,
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32.r), bottomRight: Radius.circular(32.r)),
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Decorative circles
-          Positioned(top: -40.h, right: -20.w, child: _circle(140.w, 0.1)),
-          Positioned(top: 80.h, left: -30.w, child: _circle(80.w, 0.08)),
-          Positioned(bottom: 50.h, right: 60.w, child: _circle(50.w, 0.06)),
-          // Content
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTitleRow(),
-                  SizedBox(height: 20.h),
-                  _buildSearchBar(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _circle(double size, double opacity) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: ColorManager.white.withValues(alpha: opacity)),
-    );
-  }
-
-  Widget _buildTitleRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
+    final l10n = AppLocalizations.of(context)!;
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Patients', style: TextStyleManager.headlineMedium.copyWith(color: ColorManager.white, fontWeight: FontWeight.bold)),
-            SizedBox(height: 4.h),
-            Text('$patientCount total patients', style: TextStyleManager.bodyMedium.copyWith(color: ColorManager.white.withValues(alpha: 0.9))),
+            // Title row
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.patients,
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        '$patientCount ${l10n.total.toLowerCase()}',
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 13.sp,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: onAddTap,
+                  child: Container(
+                    width: 40.w,
+                    height: 40.w,
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.add, color: Colors.white, size: 20.w),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 16.h),
+
+            // Search bar
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: TextField(
+                controller: searchController,
+                onChanged: onSearchChanged,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 14.sp,
+                ),
+                decoration: InputDecoration(
+                  hintText: l10n.search + ' ' + l10n.patients.toLowerCase() + '...',
+                  hintStyle: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 14.sp,
+                    color: Colors.grey.shade400,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 20.w,
+                    color: Colors.grey.shade400,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 12.h,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        _buildAddButton(),
-      ],
-    );
-  }
-
-  Widget _buildAddButton() {
-    return GestureDetector(
-      onTap: onAddTap,
-      child: Container(
-        width: 44.w,
-        height: 44.w,
-        decoration: BoxDecoration(
-          color: ColorManager.white,
-          shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: ColorManager.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))],
-        ),
-        child: Icon(Icons.add, color: ColorManager.primary, size: 24.w),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: ColorManager.white,
-        borderRadius: BorderRadius.circular(28.r),
-        boxShadow: [BoxShadow(color: ColorManager.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: TextField(
-        controller: searchController,
-        decoration: InputDecoration(
-          hintText: 'Search patients...',
-          hintStyle: TextStyleManager.bodyMedium.copyWith(color: ColorManager.textTertiary),
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(left: 16.w, right: 8.w),
-            child: Icon(Icons.search, color: ColorManager.textTertiary, size: 22.w),
-          ),
-          prefixIconConstraints: BoxConstraints(minWidth: 46.w),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
-        ),
-        onChanged: onSearchChanged,
       ),
     );
   }

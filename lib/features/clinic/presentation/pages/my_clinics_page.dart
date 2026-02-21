@@ -1,10 +1,10 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
@@ -55,89 +55,106 @@ class _MyClinicsContent extends StatelessWidget {
       backgroundColor: ColorManager.background,
       body: BlocConsumer<InvitationBloc, InvitationState>(
         listener: (context, state) {
+          final l10n = AppLocalizations.of(context)!;
           if (state.acceptSuccess) {
             AppSnackbar.showSuccess(
               context,
-              title: 'Invitation Accepted',
-              message: 'You have joined the clinic',
+              title: l10n.invitationAccepted,
+              message: l10n.invitationAcceptedMessage,
             );
           }
           if (state.rejectSuccess) {
             AppSnackbar.showSuccess(
               context,
-              title: 'Invitation Declined',
-              message: 'The invitation has been declined',
+              title: l10n.invitationDeclined,
+              message: l10n.invitationDeclinedMessage,
             );
           }
           if (state.error != null) {
             AppSnackbar.showError(
               context,
-              title: 'Error',
+              title: l10n.error,
               message: state.error,
             );
           }
         },
         builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              // Header
-              SliverToBoxAdapter(
-                child: GradientHeader(
-                  title: 'My Clinics',
-                  subtitle: 'Manage your clinic memberships',
-                  height: 170.h,
-                  showBackButton: true,
-                  onBackPressed: () => context.pop(),
-                ),
-              ),
-
-              // Pending Invitations Section
-              PendingInvitationsSection(
-                invitations: state.receivedInvitations,
-                isUpdating: state.isUpdating,
-              ),
-
-              // My Clinics Section
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'My Clinics',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
-                          fontFamily: FontFamily.geist,
+          return Column(
+            children: [
+              // Clean white header
+              Container(
+                width: double.infinity,
+                color: ColorManager.white,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 4.w,
+                      vertical: 8.h,
+                    ),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: ColorManager.textPrimary,
+                            size: 20.w,
+                          ),
+                          onPressed: () => context.pop(),
                         ),
-                      ),
-                    ],
+                        Text(
+                          AppLocalizations.of(context)!.myClinics,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            fontWeight: FontWeight.w600,
+                            color: ColorManager.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
 
-              SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final membership = memberships[index];
-                    return _ClinicMembershipCard(
-                      membership: membership,
-                      onTap: () {
-                        // Navigate to clinic details or switch context
-                      },
-                      onLeave: membership.role != ClinicRole.admin
-                          ? () {
-                              _showLeaveConfirmation(context, membership);
-                            }
-                          : null,
-                    );
-                  }, childCount: memberships.length),
+              Divider(height: 1, color: ColorManager.borderLight),
+
+              // Content
+              Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    // Pending Invitations Section
+                    PendingInvitationsSection(
+                      invitations: state.receivedInvitations,
+                      isUpdating: state.isUpdating,
+                    ),
+                    // // My Clinics Section
+                    SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final membership = memberships[index];
+                          return _ClinicMembershipCard(
+                            membership: membership,
+                            onTap: () {
+                              // Navigate to clinic details or switch context
+                            },
+                            onLeave: membership.role != ClinicRole.admin
+                                ? () {
+                                    _showLeaveConfirmation(context, membership);
+                                  }
+                                : null,
+                          );
+                        }, childCount: memberships.length),
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+                  ],
                 ),
               ),
-
-              SliverToBoxAdapter(child: SizedBox(height: 24.h)),
             ],
           );
         },
@@ -149,6 +166,7 @@ class _MyClinicsContent extends StatelessWidget {
     BuildContext context,
     ClinicMembershipEntity membership,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -157,17 +175,17 @@ class _MyClinicsContent extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
         ),
         title: Text(
-          'Leave Clinic',
+          l10n.leaveClinic,
           style: TextStyle(
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
-          'Are you sure you want to leave ${membership.clinicName}? You will need to be re-invited to rejoin.',
+          l10n.leaveClinicConfirmation(membership.clinicName),
           style: TextStyle(
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontSize: 14.sp,
             fontWeight: FontWeight.normal,
           ),
@@ -176,9 +194,9 @@ class _MyClinicsContent extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
-              'Cancel',
+              l10n.cancel,
               style: TextStyle(
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
               ),
@@ -190,9 +208,9 @@ class _MyClinicsContent extends StatelessWidget {
             },
             style: TextButton.styleFrom(foregroundColor: ColorManager.error),
             child: Text(
-              'Leave',
+              l10n.leaveClinic,
               style: TextStyle(
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
               ),
@@ -269,7 +287,7 @@ class _ClinicMembershipCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14.sp,
-                          fontFamily: FontFamily.geist,
+                          fontFamily: FontHelper.fontFamily(context),
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -287,22 +305,24 @@ class _ClinicMembershipCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
-                              _getRoleName(membership.role),
+                              _getRoleName(context, membership.role),
                               style: TextStyle(
                                 color: _getRoleColor(membership.role),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12.sp,
-                                fontFamily: FontFamily.geist,
+                                fontFamily: FontHelper.fontFamily(context),
                               ),
                             ),
                           ),
                           if (membership.joinedAt != null) ...[
                             SizedBox(width: 8.w),
                             Text(
-                              'Joined ${_formatDate(membership.joinedAt!)}',
+                              AppLocalizations.of(
+                                context,
+                              )!.joined(_formatDate(membership.joinedAt!)),
                               style: TextStyle(
                                 fontSize: 12.sp,
-                                fontFamily: FontFamily.geist,
+                                fontFamily: FontHelper.fontFamily(context),
                                 color: ColorManager.textTertiary,
                               ),
                             ),
@@ -331,15 +351,18 @@ class _ClinicMembershipCard extends StatelessWidget {
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'leave',
                         child: Row(
                           children: [
-                            Icon(Icons.exit_to_app, color: ColorManager.error),
-                            SizedBox(width: 8),
+                            const Icon(
+                              Icons.exit_to_app,
+                              color: ColorManager.error,
+                            ),
+                            const SizedBox(width: 8),
                             Text(
-                              'Leave Clinic',
-                              style: TextStyle(color: ColorManager.error),
+                              AppLocalizations.of(context)!.leaveClinic,
+                              style: const TextStyle(color: ColorManager.error),
                             ),
                           ],
                         ),
@@ -365,14 +388,15 @@ class _ClinicMembershipCard extends StatelessWidget {
     }
   }
 
-  String _getRoleName(ClinicRole role) {
+  String _getRoleName(BuildContext context, ClinicRole role) {
+    final l10n = AppLocalizations.of(context)!;
     switch (role) {
       case ClinicRole.admin:
-        return 'Admin';
+        return l10n.roleAdmin;
       case ClinicRole.dentist:
-        return 'Dentist';
+        return l10n.roleDentist;
       case ClinicRole.receptionist:
-        return 'Receptionist';
+        return l10n.roleReceptionist;
     }
   }
 

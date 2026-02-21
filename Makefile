@@ -56,6 +56,10 @@ analyze:
 rebuild: clean install generate
 	@echo "=> Full rebuild complete!"
 
+
+language: generate language keys
+	@echo "=> Generating language keys..."
+	@$(FLUTTER) gen-l10n
 # Help
 help:
 	@echo "=> Available commands"

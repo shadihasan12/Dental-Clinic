@@ -1,4 +1,3 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -60,7 +59,7 @@ class PrimaryButton extends StatelessWidget {
                         ),
                       ),
                     )
-                  : _buildContent(),
+                  : _buildContent(context),
             ),
           ),
         ),
@@ -68,13 +67,13 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     if (icon == null) {
       return Text(
         text,
         style: TextStyle(
           color: isEnabled ? ColorManager.white : ColorManager.gray500,
-          fontFamily: FontFamily.geist,
+          fontFamily: FontHelper.fontFamily(context),
           fontWeight: FontWeight.w600,
           fontSize: 16.sp
         ),

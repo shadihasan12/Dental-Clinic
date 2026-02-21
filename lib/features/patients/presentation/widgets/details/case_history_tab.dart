@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_card.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -18,7 +19,7 @@ class CaseHistoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (completedCases.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return ListView.builder(
@@ -37,7 +38,8 @@ class CaseHistoryTab extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -49,7 +51,7 @@ class CaseHistoryTab extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            'No case history',
+            l10n.noCaseHistory,
             style: TextStyle(
               fontSize: 16.sp,
               fontFamily: FontFamily.geist,
@@ -59,7 +61,7 @@ class CaseHistoryTab extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Completed cases will appear here',
+            l10n.completedCasesWillAppear,
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontFamily.geist,
