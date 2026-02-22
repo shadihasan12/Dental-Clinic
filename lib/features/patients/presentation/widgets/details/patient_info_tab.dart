@@ -1,5 +1,4 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -182,7 +181,7 @@ class _ContactRow extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
-    this.showDivider = true,
+    this.showDivider = true, 
   });
 
   @override

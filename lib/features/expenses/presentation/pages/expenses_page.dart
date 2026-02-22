@@ -26,14 +26,14 @@ class ExpenseData {
 
 enum ExpenseCategory { supplies, lab, equipment, rent, salary, other }
 
-class PaymentsPage extends StatefulWidget {
-  const PaymentsPage({super.key});
+class ExpensesPage extends StatefulWidget {
+  const ExpensesPage({super.key});
 
   @override
-  State<PaymentsPage> createState() => _PaymentsPageState();
+  State<ExpensesPage> createState() => _ExpensesPageState();
 }
 
-class _PaymentsPageState extends State<PaymentsPage> {
+class _ExpensesPageState extends State<ExpensesPage> {
   DateTime _selectedMonth = DateTime(DateTime.now().year, DateTime.now().month);
 
   final List<ExpenseData> _allExpenses = [
@@ -196,7 +196,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.payment,
+                    l10n.expenses,
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 22.sp,

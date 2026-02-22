@@ -91,6 +91,16 @@
   "closed": "Closed",
   "from": "From",
   "to": "To",
+  "shifts": "Shifts",
+  "oneShift": "One shift",
+  "shiftNumber": "Shift {number}",
+  "@shiftNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "notifications": "Notifications",
   "appSettings": "App Settings",
   "appearance": "Appearance",
@@ -258,6 +268,23 @@
   "endodontics": "Endodontics",
   "orthodontics": "Orthodontics",
   "cosmeticDentistry": "Cosmetic Dentistry",
-  "oralSurgery": "Oral Surgery"
+  "oralSurgery": "Oral Surgery",
+  "expenses": "Expenses",
+  "holidays": "Holidays & Days Off",
+  "addHoliday": "Add Holiday",
+  "editHoliday": "Edit Holiday",
+  "holidayName": "Holiday Name",
+  "holidayNameHint": "e.g. Eid Al-Fitr",
+  "recurring": "Recurring",
+  "recurringDescription": "Repeats every year",
+  "noHolidays": "No holidays added yet",
+  "supportResponseTime": "We typically respond within 24 hours",
+  "newConversation": "New Conversation",
+  "previousConversations": "Previous Conversations",
+  "typeAMessage": "Type a message...",
+  "noConversations": "No previous conversations",
+  "send": "Send",
+  "supportTeam": "Support Team",
+  "startConversationDesc": "Our support team is here to help you with any questions or issues."
 }
 

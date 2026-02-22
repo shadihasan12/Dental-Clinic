@@ -126,15 +126,20 @@ class MenuPage extends StatelessWidget {
                   _sectionLabel(context, l10n.support),
                   SizedBox(height: 10.h),
                   _buildMenuGroup(context, [
-                    MenuItem(
-                      icon: Icons.help_outline,
-                      title: l10n.helpCenter,
-                      onTap: () {},
-                    ),
+                    // TODO: Add help center page and uncomment this
+                    // MenuItem(
+                    //   icon: Icons.help_outline,
+                    //   title: l10n.helpCenter,
+                    //   onTap: () {
+                    //   },
+                    // ),
                     MenuItem(
                       icon: Icons.chat_bubble_outline,
                       title: l10n.contactSupport,
-                      onTap: () {},
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.contactSupport);
+
+                      },
                     ),
                     MenuItem(
                       icon: Icons.description_outlined,
@@ -226,24 +231,6 @@ class MenuPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-
-            // Edit button
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                width: 36.w,
-                height: 36.w,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.edit_outlined,
-                  size: 16.w,
-                  color: Colors.black45,
-                ),
               ),
             ),
           ],

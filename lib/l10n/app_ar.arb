@@ -91,6 +91,16 @@
   "closed": "مغلق",
   "from": "من",
   "to": "إلى",
+  "shifts": "الفترات",
+  "oneShift": "فترة واحدة",
+  "shiftNumber": "الفترة {number}",
+  "@shiftNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "notifications": "الإخطارات",
   "appSettings": "إعدادات التطبيق",
   "appearance": "المظهر",
@@ -259,6 +269,23 @@
   "orthodontics": "تقويم الأسنان",
   "cosmeticDentistry": "طبابة تجميلية",
   "oralSurgery": "جراحة الفم",
-  "noAppointments":"لا يوجد مواعيد"
+  "noAppointments":"لا يوجد مواعيد",
+  "expenses": "المدفوعات",
+  "holidays": "الإجازات وأيام العطل",
+  "addHoliday": "إضافة إجازة",
+  "editHoliday": "تعديل إجازة",
+  "holidayName": "اسم الإجازة",
+  "holidayNameHint": "مثال: عيد الفطر",
+  "recurring": "متكررة",
+  "recurringDescription": "تتكرر كل عام",
+  "noHolidays": "لم تتم إضافة إجازات بعد",
+  "supportResponseTime": "يستجيب فريق الدعم عادةً خلال 24 ساعة",
+  "newConversation": "محادثة جديدة",
+  "previousConversations": "المحادثات السابقة",
+  "typeAMessage": "اكتب رسالة...",
+  "noConversations": "لا توجد محادثات سابقة",
+  "send": "إرسال",
+  "supportTeam": "فريق الدعم",
+  "startConversationDesc": " نحن هنا لمساعدتك في أي استفسار أو مشكلة."
 }
 

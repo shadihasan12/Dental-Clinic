@@ -285,6 +285,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get to => 'To';
 
   @override
+  String get shifts => 'Shifts';
+
+  @override
+  String get oneShift => 'One shift';
+
+  @override
+  String shiftNumber(int number) {
+    return 'Shift $number';
+  }
+
+  @override
   String get notifications => 'Notifications';
 
   @override
@@ -786,4 +797,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get oralSurgery => 'Oral Surgery';
+
+  @override
+  String get expenses => 'Expenses';
+
+  @override
+  String get holidays => 'Holidays & Days Off';
+
+  @override
+  String get addHoliday => 'Add Holiday';
+
+  @override
+  String get editHoliday => 'Edit Holiday';
+
+  @override
+  String get holidayName => 'Holiday Name';
+
+  @override
+  String get holidayNameHint => 'e.g. Eid Al-Fitr';
+
+  @override
+  String get recurring => 'Recurring';
+
+  @override
+  String get recurringDescription => 'Repeats every year';
+
+  @override
+  String get noHolidays => 'No holidays added yet';
+
+  @override
+  String get supportResponseTime => 'We typically respond within 24 hours';
+
+  @override
+  String get newConversation => 'New Conversation';
+
+  @override
+  String get previousConversations => 'Previous Conversations';
+
+  @override
+  String get typeAMessage => 'Type a message...';
+
+  @override
+  String get noConversations => 'No previous conversations';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get supportTeam => 'Support Team';
+
+  @override
+  String get startConversationDesc =>
+      'Our support team is here to help you with any questions or issues.';
 }

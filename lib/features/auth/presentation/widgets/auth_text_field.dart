@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,7 +39,7 @@ class AuthTextField extends StatelessWidget {
           style: TextStyle(
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w500,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontSize: 12.sp
           ),
         ),
@@ -51,14 +52,14 @@ class AuthTextField extends StatelessWidget {
           onChanged: onChanged,
           style: TextStyle(
             color: ColorManager.textPrimary,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             fontSize: 14.sp
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
               color: ColorManager.textTertiary,
-              fontFamily: FontFamily.geist,
+              fontFamily: FontHelper.fontFamily(context),
               fontSize: 12.sp
             ),
             prefixIcon: prefixIcon != null

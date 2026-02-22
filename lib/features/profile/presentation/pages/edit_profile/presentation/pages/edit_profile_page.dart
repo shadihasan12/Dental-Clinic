@@ -2,6 +2,9 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_dropdown_field.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -120,14 +123,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Options
               ..._specializations.map((spec) {
                 final isSelected = _selectedSpecialization == spec;
-                final localizedSpec = _getLocalizedSpecialization(context, spec);
+                final localizedSpec = _getLocalizedSpecialization(
+                  context,
+                  spec,
+                );
                 return InkWell(
                   onTap: () {
                     setState(() => _selectedSpecialization = spec);
                     Navigator.pop(context);
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 14.h,
+                    ),
                     child: Row(
                       children: [
                         // Radio indicator
@@ -162,7 +171,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                            fontWeight: isSelected
+                                ? FontWeight.w500
+                                : FontWeight.w400,
                             color: isSelected
                                 ? ColorManager.primary
                                 : ColorManager.textPrimary,
@@ -188,43 +199,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       backgroundColor: ColorManager.scaffoldBackground,
+      bottomNavigationBar: saveButton(l10n, context),
       body: Column(
         children: [
-          // Header
-          Container(
-            width: double.infinity,
-            color: ColorManager.white,
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: ColorManager.textPrimary,
-                        size: 20.w,
-                      ),
-                      onPressed: () => context.pop(),
-                    ),
-                    Text(
-                      l10n.editProfile,
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          Divider(height: 1, color: ColorManager.borderLight),
-
+          PageHeader(title: l10n.editProfile, onBack: () => context.pop()),
           // Content
           Expanded(
             child: SingleChildScrollView(
@@ -235,39 +213,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   CustomCard(
                     child: Column(
                       children: [
-                        _ProfileTextField(
+                        ProfileTextField(
                           icon: Icons.person_outline,
                           label: l10n.firstName,
                           controller: _firstNameController,
                           textInputAction: TextInputAction.next,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           icon: Icons.person_outline,
                           label: l10n.lastName,
                           controller: _lastNameController,
                           textInputAction: TextInputAction.next,
                         ),
-                        _ProfileDropdownField(
+                        ProfileDropdownField(
                           icon: Icons.medical_services_outlined,
                           label: l10n.specialization,
                           value: _selectedSpecialization,
                           onTap: _showSpecializationPicker,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           icon: Icons.email_outlined,
                           label: l10n.email,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           icon: Icons.phone_outlined,
                           label: l10n.phone,
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
                         ),
-                        _ProfileTextField(
+                        ProfileTextField(
                           icon: Icons.location_on_outlined,
                           label: l10n.location,
                           controller: _locationController,
@@ -279,29 +257,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
 
                   SizedBox(height: 24.h),
-
-                  // Save button
-                  GestureDetector(
-                    onTap: _onSave,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      decoration: BoxDecoration(
-                        color: ColorManager.primary,
-                        borderRadius: BorderRadiusManager.lg,
-                      ),
-                      child: Text(
-                        l10n.saveChanges,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w600,
-                          color: ColorManager.white,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -310,146 +265,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
-}
 
-/// Editable text field row
-class _ProfileTextField extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final TextInputAction textInputAction;
-  final bool isLast;
-
-  const _ProfileTextField({
-    required this.icon,
-    required this.label,
-    required this.controller,
-    this.keyboardType = TextInputType.text,
-    this.textInputAction = TextInputAction.next,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: isLast
-          ? null
-          : BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: ColorManager.borderLight, width: 1),
-              ),
-            ),
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
-        children: [
-          Icon(icon, size: 18.w, color: ColorManager.textTertiary),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w400,
-                    color: ColorManager.textTertiary,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                TextField(
-                  controller: controller,
-                  keyboardType: keyboardType,
-                  textInputAction: textInputAction,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w400,
-                    color: ColorManager.textPrimary,
-                  ),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    border: InputBorder.none,
-                  ),
-                ),
-              ],
+  Widget saveButton(AppLocalizations l10n, BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: GestureDetector(
+        onTap: _onSave,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(14.h),
+          decoration: BoxDecoration(
+            color: ColorManager.primary,
+            borderRadius: BorderRadiusManager.lg,
+          ),
+          child: Text(
+            l10n.saveChanges,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w600,
+              color: ColorManager.white,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Tappable dropdown field row
-class _ProfileDropdownField extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String? value;
-  final VoidCallback onTap;
-  final bool isLast;
-
-  const _ProfileDropdownField({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onTap,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        decoration: isLast
-            ? null
-            : BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: ColorManager.borderLight, width: 1),
-                ),
-              ),
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        child: Row(
-          children: [
-            Icon(icon, size: 18.w, color: ColorManager.textTertiary),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontWeight: FontWeight.w400,
-                      color: ColorManager.textTertiary,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    value ?? '',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontWeight: FontWeight.w400,
-                      color: ColorManager.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 20.w,
-              color: ColorManager.textTertiary,
-            ),
-          ],
         ),
       ),
     );

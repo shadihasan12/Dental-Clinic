@@ -25,6 +25,12 @@ import 'core/di/third_party_injection.dart' as _i1007;
 import 'core/localization/language_bloc.dart' as _i924;
 import 'core/localization/language_service.dart' as _i934;
 import 'core/network/network_info.dart' as _i75;
+import 'features/patients/domain/use_cases/get_patient_cases_use_case.dart'
+    as _i129;
+import 'features/patients/domain/use_cases/get_patient_details_use_case.dart'
+    as _i1063;
+import 'features/patients/presentation/manager/patient_details_bloc.dart'
+    as _i741;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -44,6 +50,12 @@ extension GetItInjectableX on _i174.GetIt {
     await gh.singletonAsync<_i460.SharedPreferences>(
       () => thirdPartyInjection.sharedPreferences,
       preResolve: true,
+    );
+    gh.factory<_i741.PatientDetailsBloc>(
+      () => _i741.PatientDetailsBloc(
+        getPatientDetails: gh<_i1063.GetPatientDetailsUseCase>(),
+        getPatientCases: gh<_i129.GetPatientCasesUseCase>(),
+      ),
     );
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(

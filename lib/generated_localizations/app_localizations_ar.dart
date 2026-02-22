@@ -285,6 +285,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get to => 'إلى';
 
   @override
+  String get shifts => 'الفترات';
+
+  @override
+  String get oneShift => 'فترة واحدة';
+
+  @override
+  String shiftNumber(int number) {
+    return 'الفترة $number';
+  }
+
+  @override
   String get notifications => 'الإخطارات';
 
   @override
@@ -783,4 +794,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get oralSurgery => 'جراحة الفم';
+
+  @override
+  String get expenses => 'المدفوعات';
+
+  @override
+  String get holidays => 'الإجازات وأيام العطل';
+
+  @override
+  String get addHoliday => 'إضافة إجازة';
+
+  @override
+  String get editHoliday => 'تعديل إجازة';
+
+  @override
+  String get holidayName => 'اسم الإجازة';
+
+  @override
+  String get holidayNameHint => 'مثال: عيد الفطر';
+
+  @override
+  String get recurring => 'متكررة';
+
+  @override
+  String get recurringDescription => 'تتكرر كل عام';
+
+  @override
+  String get noHolidays => 'لم تتم إضافة إجازات بعد';
+
+  @override
+  String get supportResponseTime => 'يستجيب فريق الدعم عادةً خلال 24 ساعة';
+
+  @override
+  String get newConversation => 'محادثة جديدة';
+
+  @override
+  String get previousConversations => 'المحادثات السابقة';
+
+  @override
+  String get typeAMessage => 'اكتب رسالة...';
+
+  @override
+  String get noConversations => 'لا توجد محادثات سابقة';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get supportTeam => 'فريق الدعم';
+
+  @override
+  String get startConversationDesc =>
+      ' نحن هنا لمساعدتك في أي استفسار أو مشكلة.';
 }

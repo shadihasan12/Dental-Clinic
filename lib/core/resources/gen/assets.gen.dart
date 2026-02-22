@@ -54,6 +54,9 @@ class Assets {
   /// File path: assets/icons/root/menu.svg
   static const String iconsRootMenu = 'assets/icons/root/menu.svg';
 
+  /// File path: assets/icons/root/money.svg
+  static const String iconsRootMoney = 'assets/icons/root/money.svg';
+
   /// File path: assets/icons/root/patient.svg
   static const String iconsRootPatient = 'assets/icons/root/patient.svg';
 
@@ -73,6 +76,7 @@ class Assets {
     iconsRootAppointment,
     iconsRootHome,
     iconsRootMenu,
+    iconsRootMoney,
     iconsRootPatient,
     iconsRootStatistics,
   ];

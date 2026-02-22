@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -5,68 +7,69 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:go_router/go_router.dart';
 
 class StatisticsPage extends StatelessWidget {
   const StatisticsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ColorManager.scaffoldBackground,
-      appBar: AppBar(
-        title: Text(
-          'Statistics',
-          style: TextStyleManager.headlineMedium.copyWith(
-            color: ColorManager.textPrimary,
-          ),
-        ),
-        backgroundColor: ColorManager.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.calendar_today_outlined),
-            onPressed: () {},
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PageHeader(title: l10n.statistics, onBack: () => context.pop()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                children: [
+                  // Stats Overview
+                  Center(
+                    child: Text(
+                      "Coming Soon",
+                      style: TextStyleManager.bodyMedium.copyWith(
+                        color: ColorManager.textPrimary,
+                      ),
+                    ),
+                  ),
+                  // _buildStatsOverview(),
+                  // SizedBox(height: 24.h),
+
+                  // // Revenue Chart Placeholder
+                  // _buildChartCard(
+                  //   title: 'Revenue Trend',
+                  //   subtitle: 'Last 6 months',
+                  //   child: _buildRevenueChart(),
+                  // ),
+                  // SizedBox(height: 24.h),
+
+                  // // Treatment Distribution
+                  // _buildChartCard(
+                  //   title: 'Treatment Distribution',
+                  //   subtitle: 'This month',
+                  //   child: _buildTreatmentDistribution(),
+                  // ),
+                  // SizedBox(height: 24.h),
+
+                  // // Weekly Visits
+                  // _buildChartCard(
+                  //   title: 'Weekly Visits',
+                  //   subtitle: 'This week',
+                  //   child: _buildWeeklyVisits(),
+                  // ),
+                  // SizedBox(height: 24.h),
+
+                  // // Top Treatments
+                  // _buildTopTreatments(),
+                  // SizedBox(height: 32.h),
+                ],
+              ),
+            ),
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        padding: PaddingManager.all16,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Stats Overview
-            _buildStatsOverview(),
-            SizedBox(height: 24.h),
-
-            // Revenue Chart Placeholder
-            _buildChartCard(
-              title: 'Revenue Trend',
-              subtitle: 'Last 6 months',
-              child: _buildRevenueChart(),
-            ),
-            SizedBox(height: 24.h),
-
-            // Treatment Distribution
-            _buildChartCard(
-              title: 'Treatment Distribution',
-              subtitle: 'This month',
-              child: _buildTreatmentDistribution(),
-            ),
-            SizedBox(height: 24.h),
-
-            // Weekly Visits
-            _buildChartCard(
-              title: 'Weekly Visits',
-              subtitle: 'This week',
-              child: _buildWeeklyVisits(),
-            ),
-            SizedBox(height: 24.h),
-
-            // Top Treatments
-            _buildTopTreatments(),
-            SizedBox(height: 32.h),
-          ],
-        ),
       ),
     );
   }
@@ -125,7 +128,7 @@ class StatisticsPage extends StatelessWidget {
     required Color color,
   }) {
     return CustomCard(
-      padding: EdgeInsets.all(12.w),
+      // padding: EdgeInsets.all(12.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -143,8 +146,9 @@ class StatisticsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: (isPositive ? ColorManager.success : ColorManager.error)
-                      .withValues(alpha: 0.1),
+                  color:
+                      (isPositive ? ColorManager.success : ColorManager.error)
+                          .withValues(alpha: 0.1),
                   borderRadius: BorderRadiusManager.full,
                 ),
                 child: Row(
@@ -153,14 +157,17 @@ class StatisticsPage extends StatelessWidget {
                     Icon(
                       isPositive ? Icons.trending_up : Icons.trending_down,
                       size: 12.w,
-                      color: isPositive ? ColorManager.success : ColorManager.error,
+                      color: isPositive
+                          ? ColorManager.success
+                          : ColorManager.error,
                     ),
                     SizedBox(width: 2.w),
                     Text(
                       trend,
                       style: TextStyleManager.labelSmall.copyWith(
-                        color:
-                            isPositive ? ColorManager.success : ColorManager.error,
+                        color: isPositive
+                            ? ColorManager.success
+                            : ColorManager.error,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -396,7 +403,9 @@ class StatisticsPage extends StatelessWidget {
             final index = entry.key;
             final treatment = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < treatments.length - 1 ? 12.h : 0),
+              padding: EdgeInsets.only(
+                bottom: index < treatments.length - 1 ? 12.h : 0,
+              ),
               child: Row(
                 children: [
                   Container(

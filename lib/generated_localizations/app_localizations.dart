@@ -650,6 +650,24 @@ abstract class AppLocalizations {
   /// **'To'**
   String get to;
 
+  /// No description provided for @shifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shifts'**
+  String get shifts;
+
+  /// No description provided for @oneShift.
+  ///
+  /// In en, this message translates to:
+  /// **'One shift'**
+  String get oneShift;
+
+  /// No description provided for @shiftNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift {number}'**
+  String shiftNumber(int number);
+
   /// No description provided for @notifications.
   ///
   /// In en, this message translates to:
@@ -1627,6 +1645,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Oral Surgery'**
   String get oralSurgery;
+
+  /// No description provided for @expenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expenses;
+
+  /// No description provided for @holidays.
+  ///
+  /// In en, this message translates to:
+  /// **'Holidays & Days Off'**
+  String get holidays;
+
+  /// No description provided for @addHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Holiday'**
+  String get addHoliday;
+
+  /// No description provided for @editHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Holiday'**
+  String get editHoliday;
+
+  /// No description provided for @holidayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Holiday Name'**
+  String get holidayName;
+
+  /// No description provided for @holidayNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Eid Al-Fitr'**
+  String get holidayNameHint;
+
+  /// No description provided for @recurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get recurring;
+
+  /// No description provided for @recurringDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats every year'**
+  String get recurringDescription;
+
+  /// No description provided for @noHolidays.
+  ///
+  /// In en, this message translates to:
+  /// **'No holidays added yet'**
+  String get noHolidays;
+
+  /// No description provided for @supportResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'We typically respond within 24 hours'**
+  String get supportResponseTime;
+
+  /// No description provided for @newConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'New Conversation'**
+  String get newConversation;
+
+  /// No description provided for @previousConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Conversations'**
+  String get previousConversations;
+
+  /// No description provided for @typeAMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message...'**
+  String get typeAMessage;
+
+  /// No description provided for @noConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous conversations'**
+  String get noConversations;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @supportTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Team'**
+  String get supportTeam;
+
+  /// No description provided for @startConversationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Our support team is here to help you with any questions or issues.'**
+  String get startConversationDesc;
 }
 
 class _AppLocalizationsDelegate

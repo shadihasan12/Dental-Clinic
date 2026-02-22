@@ -5,12 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class PageHeader extends StatelessWidget implements PreferredSizeWidget {
-  const PageHeader({
-    super.key,
-    required this.title,
-    this.onBack,
-    this.actions,
-  });
+  const PageHeader({super.key, required this.title, this.onBack, this.actions});
 
   final String title;
   final VoidCallback? onBack;
@@ -21,28 +16,41 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: ColorManager.textDark),
-        onPressed: onBack ?? () => context.pop(),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: ColorManager.textDark,
-          fontSize: 18.sp,
-          fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w600,
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          color: ColorManager.white,
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: ColorManager.textPrimary,
+                      size: 20.w,
+                    ),
+                    onPressed: () => context.pop(),
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w600,
+                      color: ColorManager.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
-      actions: actions,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Divider(height: 1, color: Colors.grey.shade200),
-      ),
+        Divider(height: 1, color: ColorManager.borderLight),
+      ],
     );
   }
 }

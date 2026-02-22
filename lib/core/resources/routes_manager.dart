@@ -2,9 +2,11 @@ import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info_page.dart' show ClinicInfoPage;
-import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile_page.dart';
-import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart' show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/statistics/statistics_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/support_chat_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -283,6 +285,29 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const ClinicInfoPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/contact-support',
+          name: AppRoutesNames.contactSupport,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const ContactSupportPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/support-chat',
+          name: AppRoutesNames.supportChat,
+          pageBuilder: (context, state) {
+            final conversation = state.extra as SupportConversation;
+            return CupertinoPage(
+              child: SupportChatPage(conversation: conversation),
               key: state.pageKey,
               name: state.name,
             );

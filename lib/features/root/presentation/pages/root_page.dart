@@ -1,7 +1,7 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
-import 'package:dental_clinic_app/features/payments/presentation/pages/payments_page.dart';
+import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -25,7 +25,7 @@ class _RootPageState extends State<RootPage> {
     const HomePage(),
     const PatientsListPage(),
     const AppointmentsPage(),
-    const PaymentsPage(),
+    const ExpensesPage(),
     MenuPage(),
   ];
 
@@ -87,18 +87,18 @@ class _RootPageState extends State<RootPage> {
       ),
       _BottomNavItem(
         icon: SvgPicture.asset(
-          Assets.iconsRootStatistics,
+          Assets.iconsRootMoney,
           width: 24.w,
           height: 24.w,
           colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
-          Assets.iconsRootStatistics,
+          Assets.iconsRootMoney,
           width: 24.w,
           height: 24.w,
           colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
         ),
-        label: l10n.payments,
+        label: l10n.expenses,
       ),
       _BottomNavItem(
         icon: SvgPicture.asset(
