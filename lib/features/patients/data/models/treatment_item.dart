@@ -11,7 +11,8 @@ enum TreatmentType {
   xray('X-Ray', Icons.camera_alt_outlined),
   whitening('Whitening', Icons.wb_sunny_outlined),
   braces('Braces', Icons.straighten_outlined),
-  implant('Implant', Icons.add_box_outlined);
+  implant('Implant', Icons.add_box_outlined),
+  veneer('Veneer', Icons.layers_outlined);
 
   final String label;
   final IconData icon;

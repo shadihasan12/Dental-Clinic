@@ -1,6 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
-import 'package:dental_clinic_app/features/appointments/presentation/bloc/appointment_bloc.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -16,8 +16,9 @@ class AppointmentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppointmentBloc()
-        ..add(const AppointmentEvent.loadAppointments()),
+      create: (context) =>
+          getIt<AppointmentBloc>()
+            ..add(const AppointmentEvent.loadAppointments()),
       child: const _AppointmentsContent(),
     );
   }
@@ -42,7 +43,7 @@ class _AppointmentsContent extends StatelessWidget {
                 state.error!,
                 style: TextStyle(
                   fontSize: 14.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.error,
                 ),
               ),
@@ -79,6 +80,7 @@ class _AppointmentsContent extends StatelessWidget {
                             Divider(height: 1, color: Colors.grey.shade100),
                         itemBuilder: (context, index) {
                           return _buildAppointmentRow(
+                            context,
                             state.filteredAppointments[index],
                           );
                         },
@@ -130,9 +132,9 @@ class _AppointmentsContent extends StatelessWidget {
               onTap: () {
                 final now = DateTime.now();
                 final today = DateTime(now.year, now.month, now.day);
-                context
-                    .read<AppointmentBloc>()
-                    .add(AppointmentEvent.selectDate(today));
+                context.read<AppointmentBloc>().add(
+                  AppointmentEvent.selectDate(today),
+                );
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -180,16 +182,19 @@ class _AppointmentsContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days.map((date) {
-        final isSelected = date.day == state.selectedDate.day &&
+        final isSelected =
+            date.day == state.selectedDate.day &&
             date.month == state.selectedDate.month &&
             date.year == state.selectedDate.year;
         final isToday =
-            date.day == now.day && date.month == now.month && date.year == now.year;
+            date.day == now.day &&
+            date.month == now.month &&
+            date.year == now.year;
 
         return GestureDetector(
-          onTap: () => context
-              .read<AppointmentBloc>()
-              .add(AppointmentEvent.selectDate(date)),
+          onTap: () => context.read<AppointmentBloc>().add(
+            AppointmentEvent.selectDate(date),
+          ),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
@@ -197,8 +202,8 @@ class _AppointmentsContent extends StatelessWidget {
               color: isSelected
                   ? ColorManager.primary
                   : isToday
-                      ? ColorManager.primary.withValues(alpha: 0.08)
-                      : Colors.transparent,
+                  ? ColorManager.primary.withValues(alpha: 0.08)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: Column(
@@ -206,7 +211,7 @@ class _AppointmentsContent extends StatelessWidget {
                 Text(
                   _getDayName(date.weekday),
                   style: TextStyle(
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w500,
                     color: isSelected ? Colors.white70 : Colors.black38,
@@ -216,7 +221,7 @@ class _AppointmentsContent extends StatelessWidget {
                 Text(
                   date.day.toString(),
                   style: TextStyle(
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                     color: isSelected ? Colors.white : Colors.black87,
@@ -249,9 +254,9 @@ class _AppointmentsContent extends StatelessWidget {
           final isSelected = state.viewMode == v.$1;
           return Expanded(
             child: GestureDetector(
-              onTap: () => context
-                  .read<AppointmentBloc>()
-                  .add(AppointmentEvent.changeViewMode(v.$1)),
+              onTap: () => context.read<AppointmentBloc>().add(
+                AppointmentEvent.changeViewMode(v.$1),
+              ),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -263,7 +268,7 @@ class _AppointmentsContent extends StatelessWidget {
                   child: Text(
                     v.$2,
                     style: TextStyle(
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: isSelected ? ColorManager.primary : Colors.black38,
@@ -280,7 +285,10 @@ class _AppointmentsContent extends StatelessWidget {
 
   // ─── Appointment row ────────────────────────────────────────────────────
 
-  Widget _buildAppointmentRow(AppointmentEntity appointment) {
+  Widget _buildAppointmentRow(
+    BuildContext context,
+    AppointmentEntity appointment,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
@@ -295,7 +303,7 @@ class _AppointmentsContent extends StatelessWidget {
                   appointment.formattedTime,
                   style: TextStyle(
                     fontSize: 13.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
                     color: Colors.black45,
                   ),
@@ -305,7 +313,7 @@ class _AppointmentsContent extends StatelessWidget {
                   '${appointment.durationMinutes}m',
                   style: TextStyle(
                     fontSize: 11.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     color: Colors.black26,
                   ),
                 ),
@@ -333,7 +341,7 @@ class _AppointmentsContent extends StatelessWidget {
                   appointment.patientName,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
@@ -343,7 +351,7 @@ class _AppointmentsContent extends StatelessWidget {
                   appointment.treatmentType,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    fontFamily: FontFamily.geist,
+                    fontFamily: FontHelper.fontFamily(context),
                     color: Colors.black38,
                   ),
                 ),

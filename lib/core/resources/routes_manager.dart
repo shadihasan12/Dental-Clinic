@@ -1,8 +1,12 @@
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
+import 'package:dental_clinic_app/features/home/presentation/pages/notification_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart' show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart'
+    show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/statistics/statistics_page.dart';
@@ -141,9 +145,14 @@ class RoutesManager {
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>;
             final patientId = extra["patientId"] as String;
+            final patientName = extra["patientName"] as String? ?? '';
             final tabIndex = extra["tabIndex"] ?? 0;
             return CupertinoPage(
-              child: PatientDetailsPage(patientId: patientId, tabIndex: tabIndex,),
+              child: PatientDetailsPage(
+                patientId: patientId,
+                patientName: patientName,
+                tabIndex: tabIndex,
+              ),
               key: state.pageKey,
               name: state.name,
             );
@@ -154,13 +163,10 @@ class RoutesManager {
           name: AppRoutesNames.addTreatment,
           pageBuilder: (context, state) {
             final extra = state.extra as Map<String, dynamic>;
-            final caseId = extra['caseId'] as int;
+            final patientId = extra['patientId'] as String;
             final isInitial = extra['isInitial'] as bool? ?? false;
             return CupertinoPage(
-              child: AddTreatmentPage(
-                caseId: caseId,
-                isInitial: isInitial,
-              ),
+              child: AddTreatmentPage(patientId: patientId, isInitial: isInitial),
               key: state.pageKey,
               name: state.name,
             );
@@ -305,9 +311,31 @@ class RoutesManager {
           path: '/support-chat',
           name: AppRoutesNames.supportChat,
           pageBuilder: (context, state) {
-            final conversation = state.extra as SupportConversation;
+            final conversation = state.extra as SupportConversationEntity;
             return CupertinoPage(
               child: SupportChatPage(conversation: conversation),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/notifications-settigns',
+          name: AppRoutesNames.notificationsSettings,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const NotificationsSettingsPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/notifications',
+          name: AppRoutesNames.notifications,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const NotificationPage(),
               key: state.pageKey,
               name: state.name,
             );

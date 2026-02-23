@@ -124,7 +124,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
               ? Padding(
                   padding: EdgeInsets.only(top: 8.h),
                   child: AppFormField(
-                    label: l10n.allergies,
+                    label: '',
                     controller: widget.allergiesController,
                     hintText: l10n.listAnyAllergies,
                     maxLines: 2,

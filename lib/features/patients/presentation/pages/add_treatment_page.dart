@@ -2,29 +2,55 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
+import 'package:dental_clinic_app/features/patients/presentation/manager/add_treatment/add_treatment_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import '../widgets/widgets.dart';
 
-class AddTreatmentPage extends StatefulWidget {
+class AddTreatmentPage extends StatelessWidget {
   const AddTreatmentPage({
     super.key,
-    required this.caseId,
+    required this.patientId,
     this.isInitial = false,
   });
 
-  final int caseId;
+  final String patientId;
   final bool isInitial;
 
   @override
-  State<AddTreatmentPage> createState() => _AddTreatmentPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<AddTreatmentBloc>(),
+      child: _AddTreatmentContent(
+        patientId: patientId,
+        isInitial: isInitial,
+      ),
+    );
+  }
 }
 
-class _AddTreatmentPageState extends State<AddTreatmentPage> {
+class _AddTreatmentContent extends StatefulWidget {
+  const _AddTreatmentContent({
+    required this.patientId,
+    required this.isInitial,
+  });
+
+  final String patientId;
+  final bool isInitial;
+
+  @override
+  State<_AddTreatmentContent> createState() => _AddTreatmentContentState();
+}
+
+class _AddTreatmentContentState extends State<_AddTreatmentContent> {
   DateTime _visitDate = DateTime.now();
   final List<String> _selectedTreatmentTypes = [];
   final _visitSummaryController = TextEditingController();
@@ -32,6 +58,18 @@ class _AddTreatmentPageState extends State<AddTreatmentPage> {
   final _labFeesController = TextEditingController();
   List<int> _selectedTeeth = [];
   final List<String> _attachments = [];
+
+  /// Fixed mapping from form index → TreatmentType enum.
+  static const _treatmentTypeMap = [
+    TreatmentType.cleaning,
+    TreatmentType.filling,
+    TreatmentType.rootCanal,
+    TreatmentType.extraction,
+    TreatmentType.crown,
+    TreatmentType.implant,
+    TreatmentType.whitening,
+    TreatmentType.veneer,
+  ];
 
   List<String> _getLocalizedTreatmentTypes(AppLocalizations l10n) {
     return [
@@ -54,23 +92,32 @@ class _AddTreatmentPageState extends State<AddTreatmentPage> {
     super.dispose();
   }
 
-  Future<void> _saveTreatment() async {
-    final localizations = AppLocalizations.of(context)!;
-    AppLoadingDialog.show(context: context, message: localizations.savingTreatment);
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) AppLoadingDialog.dismiss(context);
+  void _saveTreatment() {
+    final localizedTypes = _getLocalizedTreatmentTypes(
+      AppLocalizations.of(context)!,
+    );
 
-    if (mounted) {
-      AppSnackbar.showSuccess(
-        context,
-        title: localizations.success,
-        message: localizations.treatmentSavedSuccessfully,
-      );
-      context.pushReplacementNamed(
-        AppRoutesNames.patientDetails,
-        extra: {'patientId': widget.caseId.toString(), 'tabIndex': 1},
-      );
+    // Map selected localized labels → TreatmentType enums
+    final selectedEnums = <TreatmentType>[];
+    for (final label in _selectedTreatmentTypes) {
+      final index = localizedTypes.indexOf(label);
+      if (index >= 0 && index < _treatmentTypeMap.length) {
+        selectedEnums.add(_treatmentTypeMap[index]);
+      }
     }
+
+    final params = AddTreatmentParams(
+      patientId: widget.patientId,
+      visitDate: _visitDate,
+      treatmentTypes: selectedEnums,
+      selectedTeeth: _selectedTeeth,
+      summary: _visitSummaryController.text.trim(),
+      totalCost: double.tryParse(_totalCostController.text) ?? 0,
+      labFees: double.tryParse(_labFeesController.text) ?? 0,
+      attachments: _attachments,
+    );
+
+    context.read<AddTreatmentBloc>().add(AddTreatmentEvent.submit(params));
   }
 
   Future<void> _selectDate() async {
@@ -140,56 +187,101 @@ class _AddTreatmentPageState extends State<AddTreatmentPage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return Scaffold(
-      backgroundColor: ColorManager.white,
-      appBar: PageHeader(
-        title: localizations.addTreatment,
-        onBack: () => context.pop(),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-        child: VisitInfoForm(
-          isInitial: widget.isInitial,
-          visitDate: _visitDate,
-          onVisitDateTap: _selectDate,
-          selectedTreatmentTypes: _selectedTreatmentTypes,
-          availableTreatmentTypes: _getLocalizedTreatmentTypes(localizations),
-          onTreatmentToggle: (t) => setState(
-            () => _selectedTreatmentTypes.contains(t)
-                ? _selectedTreatmentTypes.remove(t)
-                : _selectedTreatmentTypes.add(t),
-          ),
-          selectedTeeth: _selectedTeeth,
-          onTeethChanged: (teeth) => setState(() => _selectedTeeth = teeth),
-          visitSummaryController: _visitSummaryController,
-          totalCostController: _totalCostController,
-          labFeesController: _labFeesController,
-          attachments: _attachments,
-          onUploadTap: () {},
-          onAttachmentRemove: (i) => setState(() => _attachments.removeAt(i)),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
-        child: SafeArea(
-          top: false,
-          child: ElevatedButton(
-            onPressed: _saveTreatment,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
-              foregroundColor: ColorManager.white,
-              elevation: 0,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+    return BlocListener<AddTreatmentBloc, AddTreatmentState>(
+      listener: (context, state) {
+        state.when(
+          initial: () {},
+          saving: () {
+            AppLoadingDialog.show(
+              context: context,
+              message: localizations.savingTreatment,
+            );
+          },
+          success: (_) {
+            AppLoadingDialog.dismiss(context);
+            AppSnackbar.showSuccess(
+              context,
+              title: localizations.success,
+              message: localizations.treatmentSavedSuccessfully,
+            );
+            context.pushReplacementNamed(
+              AppRoutesNames.patientDetails,
+              extra: {
+                'patientId': widget.patientId,
+                'patientName': '',
+                'tabIndex': 1,
+              },
+            );
+          },
+          error: (message) {
+            AppLoadingDialog.dismiss(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: ColorManager.white,
+        body: Column(
+          children: [
+            PageHeader(
+              title: localizations.addTreatment,
+              onBack: () => context.pop(),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                child: VisitInfoForm(
+                  isInitial: widget.isInitial,
+                  visitDate: _visitDate,
+                  onVisitDateTap: _selectDate,
+                  selectedTreatmentTypes: _selectedTreatmentTypes,
+                  availableTreatmentTypes: _getLocalizedTreatmentTypes(
+                    localizations,
+                  ),
+                  onTreatmentToggle: (t) => setState(
+                    () => _selectedTreatmentTypes.contains(t)
+                        ? _selectedTreatmentTypes.remove(t)
+                        : _selectedTreatmentTypes.add(t),
+                  ),
+                  selectedTeeth: _selectedTeeth,
+                  onTeethChanged: (teeth) =>
+                      setState(() => _selectedTeeth = teeth),
+                  visitSummaryController: _visitSummaryController,
+                  totalCostController: _totalCostController,
+                  labFeesController: _labFeesController,
+                  attachments: _attachments,
+                  onUploadTap: () {},
+                  onAttachmentRemove: (i) =>
+                      setState(() => _attachments.removeAt(i)),
+                ),
               ),
             ),
-            child: Text(
-              localizations.save,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
+          ],
+        ),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
+          child: SafeArea(
+            top: false,
+            child: ElevatedButton(
+              onPressed: _saveTreatment,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.primary,
+                foregroundColor: ColorManager.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+              child: Text(
+                localizations.save,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

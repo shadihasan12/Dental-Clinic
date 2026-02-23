@@ -1,6 +1,3 @@
-import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
-import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
-import 'package:dental_clinic_app/features/subscription/presentation/widgets/subscription_status_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,18 +10,7 @@ import 'package:dental_clinic_app/features/profile/presentation/widgets/language
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
 class MenuPage extends StatelessWidget {
-  MenuPage({super.key});
-
-  UserSubscriptionEntity subscription = UserSubscriptionEntity(
-    id: 'sub_123',
-    userId: 'user_123',
-    planTier: PlanTier.trial,
-    status: SubscriptionStatus.trial,
-    billingCycle: BillingCycle.monthly,
-    startDate: DateTime.now(),
-    currentPeriodEnd: DateTime.now().add(const Duration(days: 7)),
-    trialEndDate: DateTime.now().add(const Duration(days: 7)),
-  );
+  const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +31,6 @@ class MenuPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
-                  // — Subscription
-                  SubscriptionStatusCard(
-                    subscription: subscription,
-                    onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),
-                    onManage: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.manageSubscription)),
-                      );
-                    },
-                  ),
                   SizedBox(height: 24.h),
 
                   // — Account Settings
@@ -85,7 +60,9 @@ class MenuPage extends StatelessWidget {
                       icon: Icons.notifications_outlined,
                       title: l10n.notifications,
                       trailing: _buildNotificationBadge(context),
-                      onTap: () {},
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.notificationsSettings);
+                      },
                     ),
                   ]),
                   SizedBox(height: 24.h),

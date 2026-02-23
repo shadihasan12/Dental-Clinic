@@ -26,11 +26,14 @@ mixin _$PatientEntity {
   String get address => throw _privateConstructorUsedError;
   DateTime get dateOfBirth => throw _privateConstructorUsedError;
   String? get medicalHistory => throw _privateConstructorUsedError;
+  String? get allergies => throw _privateConstructorUsedError;
   String? get insuranceProvider => throw _privateConstructorUsedError;
   String? get insuranceNumber => throw _privateConstructorUsedError;
   String? get emergencyContact => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get avatarUrl => throw _privateConstructorUsedError;
+  String? get nextVisit => throw _privateConstructorUsedError;
+  double get balance => throw _privateConstructorUsedError;
 
   /// Create a copy of PatientEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -56,11 +59,14 @@ abstract class $PatientEntityCopyWith<$Res> {
     String address,
     DateTime dateOfBirth,
     String? medicalHistory,
+    String? allergies,
     String? insuranceProvider,
     String? insuranceNumber,
     String? emergencyContact,
     String status,
     String? avatarUrl,
+    String? nextVisit,
+    double balance,
   });
 }
 
@@ -88,11 +94,14 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
     Object? address = null,
     Object? dateOfBirth = null,
     Object? medicalHistory = freezed,
+    Object? allergies = freezed,
     Object? insuranceProvider = freezed,
     Object? insuranceNumber = freezed,
     Object? emergencyContact = freezed,
     Object? status = null,
     Object? avatarUrl = freezed,
+    Object? nextVisit = freezed,
+    Object? balance = null,
   }) {
     return _then(
       _value.copyWith(
@@ -132,6 +141,10 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.medicalHistory
                 : medicalHistory // ignore: cast_nullable_to_non_nullable
                       as String?,
+            allergies: freezed == allergies
+                ? _value.allergies
+                : allergies // ignore: cast_nullable_to_non_nullable
+                      as String?,
             insuranceProvider: freezed == insuranceProvider
                 ? _value.insuranceProvider
                 : insuranceProvider // ignore: cast_nullable_to_non_nullable
@@ -152,6 +165,14 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.avatarUrl
                 : avatarUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
+            nextVisit: freezed == nextVisit
+                ? _value.nextVisit
+                : nextVisit // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            balance: null == balance
+                ? _value.balance
+                : balance // ignore: cast_nullable_to_non_nullable
+                      as double,
           )
           as $Val,
     );
@@ -177,11 +198,14 @@ abstract class _$$PatientEntityImplCopyWith<$Res>
     String address,
     DateTime dateOfBirth,
     String? medicalHistory,
+    String? allergies,
     String? insuranceProvider,
     String? insuranceNumber,
     String? emergencyContact,
     String status,
     String? avatarUrl,
+    String? nextVisit,
+    double balance,
   });
 }
 
@@ -208,11 +232,14 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
     Object? address = null,
     Object? dateOfBirth = null,
     Object? medicalHistory = freezed,
+    Object? allergies = freezed,
     Object? insuranceProvider = freezed,
     Object? insuranceNumber = freezed,
     Object? emergencyContact = freezed,
     Object? status = null,
     Object? avatarUrl = freezed,
+    Object? nextVisit = freezed,
+    Object? balance = null,
   }) {
     return _then(
       _$PatientEntityImpl(
@@ -252,6 +279,10 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.medicalHistory
             : medicalHistory // ignore: cast_nullable_to_non_nullable
                   as String?,
+        allergies: freezed == allergies
+            ? _value.allergies
+            : allergies // ignore: cast_nullable_to_non_nullable
+                  as String?,
         insuranceProvider: freezed == insuranceProvider
             ? _value.insuranceProvider
             : insuranceProvider // ignore: cast_nullable_to_non_nullable
@@ -272,6 +303,14 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.avatarUrl
             : avatarUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
+        nextVisit: freezed == nextVisit
+            ? _value.nextVisit
+            : nextVisit // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        balance: null == balance
+            ? _value.balance
+            : balance // ignore: cast_nullable_to_non_nullable
+                  as double,
       ),
     );
   }
@@ -290,11 +329,14 @@ class _$PatientEntityImpl implements _PatientEntity {
     required this.address,
     required this.dateOfBirth,
     this.medicalHistory,
+    this.allergies,
     this.insuranceProvider,
     this.insuranceNumber,
     this.emergencyContact,
     this.status = 'active',
     this.avatarUrl,
+    this.nextVisit,
+    this.balance = 0,
   });
 
   @override
@@ -316,6 +358,8 @@ class _$PatientEntityImpl implements _PatientEntity {
   @override
   final String? medicalHistory;
   @override
+  final String? allergies;
+  @override
   final String? insuranceProvider;
   @override
   final String? insuranceNumber;
@@ -326,10 +370,15 @@ class _$PatientEntityImpl implements _PatientEntity {
   final String status;
   @override
   final String? avatarUrl;
+  @override
+  final String? nextVisit;
+  @override
+  @JsonKey()
+  final double balance;
 
   @override
   String toString() {
-    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl)';
+    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance)';
   }
 
   @override
@@ -348,6 +397,8 @@ class _$PatientEntityImpl implements _PatientEntity {
                 other.dateOfBirth == dateOfBirth) &&
             (identical(other.medicalHistory, medicalHistory) ||
                 other.medicalHistory == medicalHistory) &&
+            (identical(other.allergies, allergies) ||
+                other.allergies == allergies) &&
             (identical(other.insuranceProvider, insuranceProvider) ||
                 other.insuranceProvider == insuranceProvider) &&
             (identical(other.insuranceNumber, insuranceNumber) ||
@@ -356,7 +407,10 @@ class _$PatientEntityImpl implements _PatientEntity {
                 other.emergencyContact == emergencyContact) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.avatarUrl, avatarUrl) ||
-                other.avatarUrl == avatarUrl));
+                other.avatarUrl == avatarUrl) &&
+            (identical(other.nextVisit, nextVisit) ||
+                other.nextVisit == nextVisit) &&
+            (identical(other.balance, balance) || other.balance == balance));
   }
 
   @override
@@ -371,11 +425,14 @@ class _$PatientEntityImpl implements _PatientEntity {
     address,
     dateOfBirth,
     medicalHistory,
+    allergies,
     insuranceProvider,
     insuranceNumber,
     emergencyContact,
     status,
     avatarUrl,
+    nextVisit,
+    balance,
   );
 
   /// Create a copy of PatientEntity
@@ -398,11 +455,14 @@ abstract class _PatientEntity implements PatientEntity {
     required final String address,
     required final DateTime dateOfBirth,
     final String? medicalHistory,
+    final String? allergies,
     final String? insuranceProvider,
     final String? insuranceNumber,
     final String? emergencyContact,
     final String status,
     final String? avatarUrl,
+    final String? nextVisit,
+    final double balance,
   }) = _$PatientEntityImpl;
 
   @override
@@ -424,6 +484,8 @@ abstract class _PatientEntity implements PatientEntity {
   @override
   String? get medicalHistory;
   @override
+  String? get allergies;
+  @override
   String? get insuranceProvider;
   @override
   String? get insuranceNumber;
@@ -433,6 +495,10 @@ abstract class _PatientEntity implements PatientEntity {
   String get status;
   @override
   String? get avatarUrl;
+  @override
+  String? get nextVisit;
+  @override
+  double get balance;
 
   /// Create a copy of PatientEntity
   /// with the given fields replaced by the non-null parameter values.

@@ -285,6 +285,89 @@
   "noConversations": "No previous conversations",
   "send": "Send",
   "supportTeam": "Support Team",
-  "startConversationDesc": "Our support team is here to help you with any questions or issues."
+  "startConversationDesc": "Our support team is here to help you with any questions or issues.",
+  "optional":"Optional",
+  "reminders": "Reminders",
+  "updates": "Updates",
+  "communication": "Communication",
+  "appointmentReminders": "Appointment Reminders",
+  "appointmentRemindersDesc": "Get notified before upcoming appointments",
+  "paymentReminders": "Payment Reminders",
+  "paymentRemindersDesc": "Alerts when patient invoices are due",
+  "patientFollowUp": "Patient Follow-up",
+  "patientFollowUpDesc": "Reminders to follow up with patients after treatment",
+  "newsAndUpdates": "News & Updates",
+  "newsAndUpdatesDesc": "Clinic tips, dental news and useful content",
+  "newFeatures": "New Features",
+  "newFeaturesDesc": "Discover new app features and improvements",
+  "promotionalOffers": "Promotional Offers",
+  "promotionalOffersDesc": "Special deals and subscription updates",
+  "smsNotifications": "SMS Notifications",
+  "smsNotificationsDesc": "Receive alerts via text message",
+  "emailNotifications": "Email Notifications",
+  "emailNotificationsDesc": "Get important updates sent to your email",
+  "pushNotifications": "Push Notifications",
+  "pushNotificationsDesc": "In-app and device push notifications",
+  "statisticsUpdates": "Statistics Updates",
+  "statisticsUpdatesDesc": "Weekly summaries and performance insights about your clinic",
+  "savingAppointment": "Saving appointment ...",
+  "markAllAsRead": "Mark all as read",
+  "noNotifications": "No notifications yet",
+  "noNotificationsDesc": "You're all caught up! New notifications will appear here.",
+  "justNow": "Just now",
+  "minutesAgo": "{count} min ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hoursAgo": "{count}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "daysAgo": "{count}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "notificationsSettings": "Notifications Settings",
+  "freeTrial": "Free Trial",
+  "daysLeft": "{count} days left",
+  "@daysLeft": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "upgradeNow": "Upgrade Now",
+  "active": "Active",
+  "inactive": "Inactive",
+  "storageUsed": "Storage",
+  "storageValue": "{used} / {total} GB",
+  "@storageValue": {
+    "placeholders": {
+      "used": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "viewAllPlans": "View All Plans",
+  "plan": "Plan",
+  "renewsOn": "Renews {date}",
+  "@renewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "trialEndsIn": "Your trial ends in {count} days",
+  "@trialEndsIn": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noSubscription": "No Active Plan",
+  "startFreeTrial": "Start Free Trial",
+  "tryAllFeatures": "Try all features free for 30 days"
 }
 

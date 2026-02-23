@@ -14,11 +14,14 @@ class PatientEntity with _$PatientEntity {
     required String address,
     required DateTime dateOfBirth,
     String? medicalHistory,
+    String? allergies,
     String? insuranceProvider,
     String? insuranceNumber,
     String? emergencyContact,
     @Default('active') String status,
     String? avatarUrl,
+    String? nextVisit,
+    @Default(0) double balance,
   }) = _PatientEntity;
 }
 

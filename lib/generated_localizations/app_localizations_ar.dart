@@ -159,10 +159,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get status => 'الحالة';
 
   @override
-  String get active => 'نشط';
+  String get active => 'فعّال';
 
   @override
-  String get inactive => 'غير نشط';
+  String get inactive => 'غير فعّال';
 
   @override
   String get pending => 'معلق';
@@ -296,7 +296,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get notifications => 'الإخطارات';
+  String get notifications => 'الإشعارات';
 
   @override
   String get appSettings => 'إعدادات التطبيق';
@@ -443,19 +443,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addXraysOrPhotos => 'أضف صور أشعة أو صور فوتوغرافية';
 
   @override
-  String get cleaning => 'التنظيف';
+  String get cleaning => 'تنظيف';
 
   @override
-  String get filling => 'الترميم';
+  String get filling => 'ترميم';
 
   @override
   String get rootCanal => 'علاج الجذور';
 
   @override
-  String get extraction => 'الخلع';
+  String get extraction => 'القلع';
 
   @override
-  String get crown => 'التاج';
+  String get crown => 'تيجان وجسور';
 
   @override
   String get implant => 'زرع';
@@ -464,7 +464,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whitening => 'تبييض';
 
   @override
-  String get veneer => 'قشرة الأسنان';
+  String get veneer => 'فحص دوري';
 
   @override
   String get info => 'معلومات';
@@ -511,10 +511,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get totalLabel => 'الكلي';
 
   @override
-  String get paidLabel => 'مدفوع';
+  String get paidLabel => 'المدفوع';
 
   @override
-  String get pendingLabel => 'معلق';
+  String get pendingLabel => 'المتبقي';
 
   @override
   String get viewPaymentHistory => 'عرض سجل الدفع';
@@ -846,4 +846,157 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get startConversationDesc =>
       ' نحن هنا لمساعدتك في أي استفسار أو مشكلة.';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get reminders => 'التذكيرات';
+
+  @override
+  String get updates => 'التحديثات';
+
+  @override
+  String get communication => 'التواصل';
+
+  @override
+  String get appointmentReminders => 'تذكيرات المواعيد';
+
+  @override
+  String get appointmentRemindersDesc => 'احصل على إشعار قبل المواعيد القادمة';
+
+  @override
+  String get paymentReminders => 'تذكيرات الدفع';
+
+  @override
+  String get paymentRemindersDesc => 'تنبيهات لاستكمال دفعات المرضى';
+
+  @override
+  String get patientFollowUp => 'متابعة المريض';
+
+  @override
+  String get patientFollowUpDesc => 'تذكيرات لمتابعة المرضى بعد العلاج';
+
+  @override
+  String get newsAndUpdates => 'الأخبار والتحديثات';
+
+  @override
+  String get newsAndUpdatesDesc =>
+      'نصائح العيادة وأخبار طب الأسنان والمحتوى المفيد';
+
+  @override
+  String get newFeatures => 'الميزات الجديدة';
+
+  @override
+  String get newFeaturesDesc => 'اكتشف الميزات الجديدة وتحسينات التطبيق';
+
+  @override
+  String get promotionalOffers => 'العروض الترويجية';
+
+  @override
+  String get promotionalOffersDesc => 'صفقات خاصة وتحديثات الاشتراك';
+
+  @override
+  String get smsNotifications => 'إشعارات الرسائل النصية';
+
+  @override
+  String get smsNotificationsDesc => 'احصل على تنبيهات عبر الرسائل النصية';
+
+  @override
+  String get emailNotifications => 'إشعارات البريد الإلكتروني';
+
+  @override
+  String get emailNotificationsDesc =>
+      'احصل على تحديثات مهمة على بريدك الإلكتروني';
+
+  @override
+  String get pushNotifications => 'الإشعارات الفورية';
+
+  @override
+  String get pushNotificationsDesc => 'إشعارات داخل التطبيق وعلى الجهاز';
+
+  @override
+  String get statisticsUpdates => 'تحديثات الإحصائيات';
+
+  @override
+  String get statisticsUpdatesDesc =>
+      'ملخصات أسبوعية وإحصائيات حول أداء عيادتك';
+
+  @override
+  String get savingAppointment => '... جاري إضافة موعد جديد ';
+
+  @override
+  String get markAllAsRead => 'تعيين الكل كمقروء';
+
+  @override
+  String get noNotifications => 'لا توجد إشعارات';
+
+  @override
+  String get noNotificationsDesc =>
+      'أنت على اطلاع! ستظهر الإشعارات الجديدة هنا.';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String minutesAgo(int count) {
+    return 'منذ $count دقيقة';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'منذ $count ساعة';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return 'منذ $count يوم';
+  }
+
+  @override
+  String get notificationsSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get freeTrial => 'فترة تجريبية مجانية';
+
+  @override
+  String daysLeft(int count) {
+    return '$count يوم متبقي';
+  }
+
+  @override
+  String get upgradeNow => 'ترقية الآن';
+
+  @override
+  String get storageUsed => 'التخزين';
+
+  @override
+  String storageValue(String used, String total) {
+    return '$used / $total جيجابايت';
+  }
+
+  @override
+  String get viewAllPlans => 'عرض جميع الباقات';
+
+  @override
+  String get plan => 'باقة';
+
+  @override
+  String renewsOn(String date) {
+    return 'يتجدد في $date';
+  }
+
+  @override
+  String trialEndsIn(int count) {
+    return 'تنتهي الفترة التجريبية خلال $count يوم';
+  }
+
+  @override
+  String get noSubscription => 'لا توجد باقة نشطة';
+
+  @override
+  String get startFreeTrial => 'ابدأ الفترة التجريبية';
+
+  @override
+  String get tryAllFeatures => 'جرّب جميع الميزات مجاناً لمدة 30 يوماً';
 }

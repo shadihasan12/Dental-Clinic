@@ -849,4 +849,159 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get startConversationDesc =>
       'Our support team is here to help you with any questions or issues.';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get updates => 'Updates';
+
+  @override
+  String get communication => 'Communication';
+
+  @override
+  String get appointmentReminders => 'Appointment Reminders';
+
+  @override
+  String get appointmentRemindersDesc =>
+      'Get notified before upcoming appointments';
+
+  @override
+  String get paymentReminders => 'Payment Reminders';
+
+  @override
+  String get paymentRemindersDesc => 'Alerts when patient invoices are due';
+
+  @override
+  String get patientFollowUp => 'Patient Follow-up';
+
+  @override
+  String get patientFollowUpDesc =>
+      'Reminders to follow up with patients after treatment';
+
+  @override
+  String get newsAndUpdates => 'News & Updates';
+
+  @override
+  String get newsAndUpdatesDesc =>
+      'Clinic tips, dental news and useful content';
+
+  @override
+  String get newFeatures => 'New Features';
+
+  @override
+  String get newFeaturesDesc => 'Discover new app features and improvements';
+
+  @override
+  String get promotionalOffers => 'Promotional Offers';
+
+  @override
+  String get promotionalOffersDesc => 'Special deals and subscription updates';
+
+  @override
+  String get smsNotifications => 'SMS Notifications';
+
+  @override
+  String get smsNotificationsDesc => 'Receive alerts via text message';
+
+  @override
+  String get emailNotifications => 'Email Notifications';
+
+  @override
+  String get emailNotificationsDesc =>
+      'Get important updates sent to your email';
+
+  @override
+  String get pushNotifications => 'Push Notifications';
+
+  @override
+  String get pushNotificationsDesc => 'In-app and device push notifications';
+
+  @override
+  String get statisticsUpdates => 'Statistics Updates';
+
+  @override
+  String get statisticsUpdatesDesc =>
+      'Weekly summaries and performance insights about your clinic';
+
+  @override
+  String get savingAppointment => 'Saving appointment ...';
+
+  @override
+  String get markAllAsRead => 'Mark all as read';
+
+  @override
+  String get noNotifications => 'No notifications yet';
+
+  @override
+  String get noNotificationsDesc =>
+      'You\'re all caught up! New notifications will appear here.';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String get notificationsSettings => 'Notifications Settings';
+
+  @override
+  String get freeTrial => 'Free Trial';
+
+  @override
+  String daysLeft(int count) {
+    return '$count days left';
+  }
+
+  @override
+  String get upgradeNow => 'Upgrade Now';
+
+  @override
+  String get storageUsed => 'Storage';
+
+  @override
+  String storageValue(String used, String total) {
+    return '$used / $total GB';
+  }
+
+  @override
+  String get viewAllPlans => 'View All Plans';
+
+  @override
+  String get plan => 'Plan';
+
+  @override
+  String renewsOn(String date) {
+    return 'Renews $date';
+  }
+
+  @override
+  String trialEndsIn(int count) {
+    return 'Your trial ends in $count days';
+  }
+
+  @override
+  String get noSubscription => 'No Active Plan';
+
+  @override
+  String get startFreeTrial => 'Start Free Trial';
+
+  @override
+  String get tryAllFeatures => 'Try all features free for 30 days';
 }

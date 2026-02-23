@@ -1,30 +1,42 @@
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/manager/support_chat_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'contact_support_page.dart';
-
-class SupportChatPage extends StatefulWidget {
-  final SupportConversation conversation;
-  final VoidCallback? onUpdated;
+class SupportChatPage extends StatelessWidget {
+  final SupportConversationEntity conversation;
 
   const SupportChatPage({
     super.key,
     required this.conversation,
-    this.onUpdated,
   });
 
   @override
-  State<SupportChatPage> createState() => _SupportChatPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<SupportChatBloc>()
+        ..add(SupportChatEvent.startConversation(conversation)),
+      child: const _SupportChatContent(),
+    );
+  }
 }
 
-class _SupportChatPageState extends State<SupportChatPage> {
+class _SupportChatContent extends StatefulWidget {
+  const _SupportChatContent();
+
+  @override
+  State<_SupportChatContent> createState() => _SupportChatContentState();
+}
+
+class _SupportChatContentState extends State<_SupportChatContent> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  bool _isSending = false;
 
   @override
   void dispose() {
@@ -37,46 +49,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    final newMessage = SupportMessage(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      text: text,
-      timestamp: DateTime.now(),
-      isFromUser: true,
-    );
-
-    // If this is the first message, use it as the subject
-    if (widget.conversation.messages.isEmpty) {
-      widget.conversation.subject =
-          text.length > 40 ? '${text.substring(0, 40)}...' : text;
-    }
-
-    setState(() {
-      widget.conversation.messages.add(newMessage);
-      _isSending = true;
-    });
     _messageController.clear();
-    widget.onUpdated?.call();
-
-    _scrollToBottom();
-
-    // Simulate support auto-response after 1.5 s
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      if (!mounted) return;
-      final reply = SupportMessage(
-        id: '${DateTime.now().millisecondsSinceEpoch}_reply',
-        text:
-            'Thank you for your message. Our support team has received your request and will respond shortly.',
-        timestamp: DateTime.now(),
-        isFromUser: false,
-      );
-      setState(() {
-        widget.conversation.messages.add(reply);
-        widget.conversation.isRead = true;
-        _isSending = false;
-      });
-      widget.onUpdated?.call();
-      _scrollToBottom();
-    });
+    context.read<SupportChatBloc>().add(SupportChatEvent.sendMessage(text));
   }
 
   void _scrollToBottom() {
@@ -94,38 +68,67 @@ class _SupportChatPageState extends State<SupportChatPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final messages = widget.conversation.messages;
 
     return Scaffold(
       backgroundColor: ColorManager.scaffoldBackground,
-      body: Column(
-        children: [
-          _buildHeader(l10n),
-          Expanded(
-            child: messages.isEmpty
-                ? _buildEmptyState(l10n)
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                    itemCount: _groupedItems(messages).length,
-                    itemBuilder: (context, index) {
-                      final item = _groupedItems(messages)[index];
-                      if (item is _DateSeparator) {
-                        return _buildDateSeparator(item.label);
-                      }
-                      return _buildMessageBubble(item as SupportMessage);
-                    },
-                  ),
-          ),
-          if (_isSending) _buildTypingIndicator(l10n),
-          _buildInputBar(l10n),
-        ],
+      body: BlocConsumer<SupportChatBloc, SupportChatState>(
+        listenWhen: (prev, curr) => curr.maybeMap(
+          loaded: (_) => true,
+          orElse: () => false,
+        ),
+        listener: (context, state) {
+          _scrollToBottom();
+        },
+        builder: (context, state) {
+          return state.maybeWhen(
+            loaded: (conversation, isReplying) =>
+                _buildChat(context, l10n, conversation, isReplying),
+            error: (message) => Center(child: Text(message)),
+            orElse: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildHeader(AppLocalizations l10n) {
+  Widget _buildChat(
+    BuildContext context,
+    AppLocalizations l10n,
+    SupportConversationEntity conversation,
+    bool isReplying,
+  ) {
+    final messages = conversation.messages;
+
+    return Column(
+      children: [
+        _buildHeader(l10n, conversation),
+        Expanded(
+          child: messages.isEmpty
+              ? _buildEmptyState(l10n)
+              : ListView.builder(
+                  controller: _scrollController,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  itemCount: _groupedItems(messages).length,
+                  itemBuilder: (context, index) {
+                    final item = _groupedItems(messages)[index];
+                    if (item is _DateSeparator) {
+                      return _buildDateSeparator(item.label);
+                    }
+                    return _buildMessageBubble(item as SupportMessageEntity);
+                  },
+                ),
+        ),
+        if (isReplying) _buildTypingIndicator(l10n),
+        _buildInputBar(l10n),
+      ],
+    );
+  }
+
+  Widget _buildHeader(
+      AppLocalizations l10n, SupportConversationEntity conversation) {
     return Column(
       children: [
         Container(
@@ -145,7 +148,6 @@ class _SupportChatPageState extends State<SupportChatPage> {
                     ),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  // Support avatar
                   Container(
                     width: 36.w,
                     height: 36.w,
@@ -174,7 +176,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
                           ),
                         ),
                         Text(
-                          widget.conversation.subject,
+                          conversation.subject,
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
@@ -294,7 +296,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
     );
   }
 
-  Widget _buildMessageBubble(SupportMessage message) {
+  Widget _buildMessageBubble(SupportMessageEntity message) {
     final isUser = message.isFromUser;
     final time = _formatTime(message.timestamp);
 
@@ -306,7 +308,6 @@ class _SupportChatPageState extends State<SupportChatPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // Support avatar (left side only)
             if (!isUser) ...[
               Container(
                 width: 28.w,
@@ -323,7 +324,6 @@ class _SupportChatPageState extends State<SupportChatPage> {
               ),
               SizedBox(width: 6.w),
             ],
-            // Bubble
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 0.72.sw),
               child: Column(
@@ -543,12 +543,12 @@ class _SupportChatPageState extends State<SupportChatPage> {
     return '$hour:$min $period';
   }
 
-  // Inserts _DateSeparator objects between messages from different days
-  List<dynamic> _groupedItems(List<SupportMessage> messages) {
+  List<dynamic> _groupedItems(List<SupportMessageEntity> messages) {
     final List<dynamic> items = [];
     DateTime? lastDate;
     for (final msg in messages) {
-      final msgDate = DateTime(msg.timestamp.year, msg.timestamp.month, msg.timestamp.day);
+      final msgDate =
+          DateTime(msg.timestamp.year, msg.timestamp.month, msg.timestamp.day);
       if (lastDate == null || msgDate != lastDate) {
         items.add(_DateSeparator(_dateLabel(msgDate)));
         lastDate = msgDate;
@@ -577,7 +577,6 @@ class _DateSeparator {
   const _DateSeparator(this.label);
 }
 
-// Animated typing dot
 class _TypingDot extends StatefulWidget {
   final Duration delay;
   const _TypingDot({required this.delay});

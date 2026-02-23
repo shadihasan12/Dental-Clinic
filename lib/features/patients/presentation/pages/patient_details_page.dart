@@ -1,13 +1,6 @@
-import 'package:dental_clinic_app/core/api/api_consumer.dart';
-import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/resources.dart';
-import 'package:dental_clinic_app/features/patients/data/data_sources/patient_remote_data_source.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
-import 'package:dental_clinic_app/features/patients/data/repositories/patient_repository_impl.dart';
-import 'package:dental_clinic_app/features/patients/domain/use_cases/get_patient_cases_use_case.dart';
-import 'package:dental_clinic_app/features/patients/domain/use_cases/get_patient_details_use_case.dart';
-import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details_bloc.dart';
+import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details/patient_details_bloc.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -16,42 +9,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 
 import '../widgets/details/widgets.dart';
 
 class PatientDetailsPage extends StatelessWidget {
   final String patientId;
+  final String patientName;
   final int? tabIndex;
 
   const PatientDetailsPage({
     super.key,
     required this.patientId,
+    required this.patientName,
     this.tabIndex,
   });
 
   @override
   Widget build(BuildContext context) {
-    final repository = PatientRepositoryImpl(
-      PatientRemoteDataSourceImpl(getIt<ApiConsumer>()),
-    );
-
     return BlocProvider(
-      create: (context) => PatientDetailsBloc(
-        getPatientDetails: GetPatientDetailsUseCase(repository),
-        getPatientCases: GetPatientCasesUseCase(repository),
-      )..add(PatientDetailsEvent.loadPatientDetails(patientId)),
-      child: _PatientDetailsContent(tabIndex: tabIndex),
+      create: (context) =>
+          getIt<PatientDetailsBloc>()
+            ..add(PatientDetailsEvent.loadPatientDetails(patientId)),
+      child: _PatientDetailsContent(
+        patientId: patientId,
+        tabIndex: tabIndex,
+        patientName: patientName,
+      ),
     );
   }
 }
 
 class _PatientDetailsContent extends StatefulWidget {
+  final String patientId;
   final int? tabIndex;
+  final String patientName;
 
-  const _PatientDetailsContent({this.tabIndex});
+  const _PatientDetailsContent({
+    required this.patientId,
+    this.tabIndex,
+    required this.patientName,
+  });
 
   @override
   State<_PatientDetailsContent> createState() => _PatientDetailsContentState();
@@ -78,10 +75,9 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
 
   void _onTabChanged() {
     if (_tabController.index != 1 && _isViewingHistoryCase) {
-      final activeCase = context
-          .read<PatientDetailsBloc>()
-          .state
-          .mapOrNull(loaded: (s) => s.activeCase);
+      final activeCase = context.read<PatientDetailsBloc>().state.mapOrNull(
+        loaded: (s) => s.activeCase,
+      );
       setState(() {
         _displayedCase = activeCase;
         _isViewingHistoryCase = false;
@@ -100,7 +96,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   void _createNewCase() {
     context.pushNamed(
       AppRoutesNames.addTreatment,
-      extra: {'caseId': 1234, 'isInitial': true},
+      extra: {'patientId': widget.patientId, 'isInitial': true},
     );
   }
 
@@ -126,12 +122,22 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
       },
       builder: (context, state) {
         return state.when(
-          initial: () => const Scaffold(
-            body: SizedBox.shrink(),
-          ),
-          loading: () => const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          ),
+          initial: () => const Scaffold(body: SizedBox.shrink()),
+          loading: () => Scaffold(
+                backgroundColor: ColorManager.scaffoldBackground,
+                body: Column(
+                  children: [
+                    PatientHeader(
+                      name: widget.patientName,
+                      onBackPressed: () => context.pop(),
+                      tabController: _tabController,
+                    ),
+                    const Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ],
+                ),
+              ),
           error: (message) => Scaffold(
             body: Center(
               child: Padding(
@@ -268,8 +274,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
             GestureDetector(
               onTap: _createNewCase,
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: ColorManager.primary,
                   borderRadius: BorderRadiusManager.lg,
@@ -341,9 +346,9 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context
-                  .read<PatientDetailsBloc>()
-                  .add(const PatientDetailsEvent.markCaseAsFinished());
+              context.read<PatientDetailsBloc>().add(
+                const PatientDetailsEvent.markCaseAsFinished(),
+              );
             },
             child: Text(
               l10n.confirm,

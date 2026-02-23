@@ -101,7 +101,7 @@
       }
     }
   },
-  "notifications": "الإخطارات",
+  "notifications": "الإشعارات",
   "appSettings": "إعدادات التطبيق",
   "appearance": "المظهر",
   "lightMode": "الوضع الفاتح",
@@ -151,14 +151,14 @@
   "today": "اليوم",
   "change": "تغيير",
   "addXraysOrPhotos": "أضف صور أشعة أو صور فوتوغرافية",
-  "cleaning": "التنظيف",
-  "filling": "الترميم",
+  "cleaning": "تنظيف",
+  "filling": "ترميم",
   "rootCanal": "علاج الجذور",
-  "extraction": "الخلع",
-  "crown": "التاج",
+  "extraction": "القلع",
+  "crown": "تيجان وجسور",
   "implant": "زرع",
   "whitening": "تبييض",
-  "veneer": "قشرة الأسنان",
+  "veneer": "فحص دوري",
   "info": "معلومات",
   "history": "السجل",
   "noOngoingCase": "لا توجد حالة نشطة",
@@ -173,8 +173,8 @@
   "addTreatmentButton": "إضافة معالجة",
   "addPaymentButton": "تسجيل دفعة",
   "totalLabel": "الكلي",
-  "paidLabel": "مدفوع",
-  "pendingLabel": "معلق",
+  "paidLabel": "المدفوع",
+  "pendingLabel": "المتبقي",
   "viewPaymentHistory": "عرض سجل الدفع",
   "startedLabel": "بدأت",
   "totalVisitsLabel": "إجمالي الزيارات",
@@ -286,6 +286,90 @@
   "noConversations": "لا توجد محادثات سابقة",
   "send": "إرسال",
   "supportTeam": "فريق الدعم",
-  "startConversationDesc": " نحن هنا لمساعدتك في أي استفسار أو مشكلة."
+  "startConversationDesc": " نحن هنا لمساعدتك في أي استفسار أو مشكلة.",
+  "optional": "اختياري",
+  "reminders": "التذكيرات",
+  "updates": "التحديثات",
+  "communication": "التواصل",
+  "appointmentReminders": "تذكيرات المواعيد",
+  "appointmentRemindersDesc": "احصل على إشعار قبل المواعيد القادمة",
+  "paymentReminders": "تذكيرات الدفع",
+  "paymentRemindersDesc": "تنبيهات لاستكمال دفعات المرضى",
+  "patientFollowUp": "متابعة المريض",
+  "patientFollowUpDesc": "تذكيرات لمتابعة المرضى بعد العلاج",
+  "newsAndUpdates": "الأخبار والتحديثات",
+  "newsAndUpdatesDesc": "نصائح العيادة وأخبار طب الأسنان والمحتوى المفيد",
+  "newFeatures": "الميزات الجديدة",
+  "newFeaturesDesc": "اكتشف الميزات الجديدة وتحسينات التطبيق",
+  "promotionalOffers": "العروض الترويجية",
+  "promotionalOffersDesc": "صفقات خاصة وتحديثات الاشتراك",
+  "smsNotifications": "إشعارات الرسائل النصية",
+  "smsNotificationsDesc": "احصل على تنبيهات عبر الرسائل النصية",
+  "emailNotifications": "إشعارات البريد الإلكتروني",
+  "emailNotificationsDesc": "احصل على تحديثات مهمة على بريدك الإلكتروني",
+  "pushNotifications": "الإشعارات الفورية",
+  "pushNotificationsDesc": "إشعارات داخل التطبيق وعلى الجهاز",
+  "statisticsUpdates": "تحديثات الإحصائيات",
+  "statisticsUpdatesDesc": "ملخصات أسبوعية وإحصائيات حول أداء عيادتك",
+  "savingAppointment": "... جاري إضافة موعد جديد ",
+  "markAllAsRead": "تعيين الكل كمقروء",
+  "noNotifications": "لا توجد إشعارات",
+  "noNotificationsDesc": "أنت على اطلاع! ستظهر الإشعارات الجديدة هنا.",
+  "justNow": "الآن",
+  "minutesAgo": "منذ {count} دقيقة",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hoursAgo": "منذ {count} ساعة",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "daysAgo": "منذ {count} يوم",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "notificationsSettings": "إعدادات الإشعارات",
+  "freeTrial": "فترة تجريبية مجانية",
+  "daysLeft": "{count} يوم متبقي",
+  "@daysLeft": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "upgradeNow": "ترقية الآن",
+  "active": "فعّال",
+  "inactive": "غير فعّال",
+  "storageUsed": "التخزين",
+  "storageValue": "{used} / {total} جيجابايت",
+  "@storageValue": {
+    "placeholders": {
+      "used": { "type": "String" },
+      "total": { "type": "String" }
+    }
+  },
+  "viewAllPlans": "عرض جميع الباقات",
+  "plan": "باقة",
+  "renewsOn": "يتجدد في {date}",
+  "@renewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "trialEndsIn": "تنتهي الفترة التجريبية خلال {count} يوم",
+  "@trialEndsIn": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noSubscription": "لا توجد باقة نشطة",
+  "startFreeTrial": "ابدأ الفترة التجريبية",
+  "tryAllFeatures": "جرّب جميع الميزات مجاناً لمدة 30 يوماً"
 }
 

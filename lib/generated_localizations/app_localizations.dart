@@ -1747,6 +1747,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Our support team is here to help you with any questions or issues.'**
   String get startConversationDesc;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get reminders;
+
+  /// No description provided for @updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get updates;
+
+  /// No description provided for @communication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get communication;
+
+  /// No description provided for @appointmentReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Reminders'**
+  String get appointmentReminders;
+
+  /// No description provided for @appointmentRemindersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified before upcoming appointments'**
+  String get appointmentRemindersDesc;
+
+  /// No description provided for @paymentReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Reminders'**
+  String get paymentReminders;
+
+  /// No description provided for @paymentRemindersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts when patient invoices are due'**
+  String get paymentRemindersDesc;
+
+  /// No description provided for @patientFollowUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Follow-up'**
+  String get patientFollowUp;
+
+  /// No description provided for @patientFollowUpDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders to follow up with patients after treatment'**
+  String get patientFollowUpDesc;
+
+  /// No description provided for @newsAndUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'News & Updates'**
+  String get newsAndUpdates;
+
+  /// No description provided for @newsAndUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic tips, dental news and useful content'**
+  String get newsAndUpdatesDesc;
+
+  /// No description provided for @newFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'New Features'**
+  String get newFeatures;
+
+  /// No description provided for @newFeaturesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover new app features and improvements'**
+  String get newFeaturesDesc;
+
+  /// No description provided for @promotionalOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotional Offers'**
+  String get promotionalOffers;
+
+  /// No description provided for @promotionalOffersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Special deals and subscription updates'**
+  String get promotionalOffersDesc;
+
+  /// No description provided for @smsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS Notifications'**
+  String get smsNotifications;
+
+  /// No description provided for @smsNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive alerts via text message'**
+  String get smsNotificationsDesc;
+
+  /// No description provided for @emailNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Notifications'**
+  String get emailNotifications;
+
+  /// No description provided for @emailNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get important updates sent to your email'**
+  String get emailNotificationsDesc;
+
+  /// No description provided for @pushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get pushNotifications;
+
+  /// No description provided for @pushNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'In-app and device push notifications'**
+  String get pushNotificationsDesc;
+
+  /// No description provided for @statisticsUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics Updates'**
+  String get statisticsUpdates;
+
+  /// No description provided for @statisticsUpdatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly summaries and performance insights about your clinic'**
+  String get statisticsUpdatesDesc;
+
+  /// No description provided for @savingAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving appointment ...'**
+  String get savingAppointment;
+
+  /// No description provided for @markAllAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllAsRead;
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotifications;
+
+  /// No description provided for @noNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up! New notifications will appear here.'**
+  String get noNotificationsDesc;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String minutesAgo(int count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String hoursAgo(int count);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String daysAgo(int count);
+
+  /// No description provided for @notificationsSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Settings'**
+  String get notificationsSettings;
+
+  /// No description provided for @freeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Trial'**
+  String get freeTrial;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days left'**
+  String daysLeft(int count);
+
+  /// No description provided for @upgradeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Now'**
+  String get upgradeNow;
+
+  /// No description provided for @storageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storageUsed;
+
+  /// No description provided for @storageValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} / {total} GB'**
+  String storageValue(String used, String total);
+
+  /// No description provided for @viewAllPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Plans'**
+  String get viewAllPlans;
+
+  /// No description provided for @plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get plan;
+
+  /// No description provided for @renewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews {date}'**
+  String renewsOn(String date);
+
+  /// No description provided for @trialEndsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trial ends in {count} days'**
+  String trialEndsIn(int count);
+
+  /// No description provided for @noSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'No Active Plan'**
+  String get noSubscription;
+
+  /// No description provided for @startFreeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Free Trial'**
+  String get startFreeTrial;
+
+  /// No description provided for @tryAllFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Try all features free for 30 days'**
+  String get tryAllFeatures;
 }
 
 class _AppLocalizationsDelegate

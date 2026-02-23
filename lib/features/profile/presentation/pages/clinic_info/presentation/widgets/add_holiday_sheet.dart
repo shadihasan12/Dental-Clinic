@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'clinic_info_models.dart';
-import 'clinic_info_widgets.dart';
+import 'helpers.dart';
 import 'cupertino_picker_sheet.dart';
 
 void showAddHolidaySheet(
@@ -37,7 +37,7 @@ void showAddHolidaySheet(
               20.w,
               16.h,
               20.w,
-              MediaQuery.of(ctx).viewInsets.bottom + 24.h,
+              MediaQuery.of(ctx).viewInsets.bottom + MediaQuery.of(ctx).padding.bottom + 24.h,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -121,7 +121,7 @@ void showAddHolidaySheet(
                   onTap: () => showCupertinoPickerSheet(
                     context: ctx,
                     cancelLabel: l10n.cancel,
-                    doneLabel: l10n.done,
+                    doneLabel: l10n.save,
                     picker: CupertinoDatePicker(
                       mode: CupertinoDatePickerMode.date,
                       initialDateTime: selectedDate,

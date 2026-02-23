@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
+import 'package:injectable/injectable.dart';
 
 class PatientCasesParams {
   final String patientId;
@@ -20,6 +21,7 @@ class PatientCasesResult {
   });
 }
 
+@injectable
 class GetPatientCasesUseCase
     implements UseCase<PatientCasesResult, PatientCasesParams> {
   final PatientRepository _repository;

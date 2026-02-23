@@ -4,144 +4,30 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/manager/support_conversations_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-// ──────────────────────────────────────────────
-// Models
-// ──────────────────────────────────────────────
-
-class SupportMessage {
-  final String id;
-  final String text;
-  final DateTime timestamp;
-  final bool isFromUser;
-
-  SupportMessage({
-    required this.id,
-    required this.text,
-    required this.timestamp,
-    required this.isFromUser,
-  });
-}
-
-class SupportConversation {
-  final String id;
-  String subject;
-  final List<SupportMessage> messages;
-  bool isRead;
-
-  SupportConversation({
-    required this.id,
-    required this.subject,
-    required this.messages,
-    this.isRead = true,
-  });
-
-  DateTime? get lastMessageTime =>
-      messages.isNotEmpty ? messages.last.timestamp : null;
-
-  String? get lastMessagePreview =>
-      messages.isNotEmpty ? messages.last.text : null;
-}
-
-// ──────────────────────────────────────────────
-// Page
-// ──────────────────────────────────────────────
-
-class ContactSupportPage extends StatefulWidget {
+class ContactSupportPage extends StatelessWidget {
   const ContactSupportPage({super.key});
 
   @override
-  State<ContactSupportPage> createState() => _ContactSupportPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<SupportConversationsBloc>()
+        ..add(const SupportConversationsEvent.loadConversations()),
+      child: const _ContactSupportContent(),
+    );
+  }
 }
 
-class _ContactSupportPageState extends State<ContactSupportPage> {
-  late final List<SupportConversation> _conversations;
-
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    _conversations = [
-      SupportConversation(
-        id: '1',
-        subject: 'Cannot access my account',
-        isRead: true,
-        messages: [
-          SupportMessage(
-            id: 'm1',
-            text:
-                'Hello, I am unable to log in to my account. I keep getting an invalid credentials error.',
-            timestamp: now.subtract(const Duration(days: 2, hours: 3)),
-            isFromUser: true,
-          ),
-          SupportMessage(
-            id: 'm2',
-            text:
-                'Hi! Thank you for reaching out. Could you please try resetting your password using the "Forgot Password" link on the login screen?',
-            timestamp: now.subtract(const Duration(days: 2, hours: 2)),
-            isFromUser: false,
-          ),
-          SupportMessage(
-            id: 'm3',
-            text: 'That worked! Thank you so much.',
-            timestamp: now.subtract(const Duration(days: 2, hours: 1)),
-            isFromUser: true,
-          ),
-          SupportMessage(
-            id: 'm4',
-            text: 'Great to hear! Let us know if you need anything else.',
-            timestamp: now.subtract(const Duration(days: 2)),
-            isFromUser: false,
-          ),
-        ],
-      ),
-      SupportConversation(
-        id: '2',
-        subject: 'Billing question about subscription',
-        isRead: false,
-        messages: [
-          SupportMessage(
-            id: 'm5',
-            text:
-                'Hi, I was charged twice this month for my subscription. Can you please look into this?',
-            timestamp: now.subtract(const Duration(hours: 5)),
-            isFromUser: true,
-          ),
-          SupportMessage(
-            id: 'm6',
-            text:
-                'We are sorry to hear that. We are looking into this and will get back to you within 24 hours.',
-            timestamp: now.subtract(const Duration(hours: 4)),
-            isFromUser: false,
-          ),
-        ],
-      ),
-    ];
-  }
-
-  void _openNewConversation() {
-    final newConvo = SupportConversation(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      subject: 'New Conversation',
-      messages: [],
-      isRead: true,
-    );
-    _conversations.insert(0, newConvo);
-    context
-        .pushNamed(AppRoutesNames.supportChat, extra: newConvo)
-        .then((_) => setState(() {}));
-  }
-
-  void _openConversation(SupportConversation convo) {
-    setState(() => convo.isRead = true);
-    context
-        .pushNamed(AppRoutesNames.supportChat, extra: convo)
-        .then((_) => setState(() {}));
-  }
+class _ContactSupportContent extends StatelessWidget {
+  const _ContactSupportContent();
 
   @override
   Widget build(BuildContext context) {
@@ -153,16 +39,61 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
         children: [
           PageHeader(title: l10n.contactSupport),
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16.w),
-              children: [
-                _buildResponseTimeBanner(l10n),
-                SizedBox(height: 16.h),
-                _buildNewConversationCard(l10n),
-                SizedBox(height: 24.h),
-                _buildConversationsList(l10n),
-                SizedBox(height: 16.h),
-              ],
+            child: BlocConsumer<SupportConversationsBloc,
+                SupportConversationsState>(
+              listenWhen: (prev, curr) => curr.maybeMap(
+                created: (_) => true,
+                error: (_) => true,
+                orElse: () => false,
+              ),
+              listener: (context, state) {
+                state.maybeWhen(
+                  created: (newConvo, _) {
+                    context
+                        .pushNamed(
+                      AppRoutesNames.supportChat,
+                      extra: newConvo,
+                    )
+                        .then((_) {
+                      context.read<SupportConversationsBloc>().add(
+                            const SupportConversationsEvent.loadConversations(),
+                          );
+                    });
+                  },
+                  error: (message) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(message)),
+                    );
+                  },
+                  orElse: () {},
+                );
+              },
+              buildWhen: (prev, curr) => curr.maybeMap(
+                loading: (_) => true,
+                loaded: (_) => true,
+                created: (_) => true,
+                error: (_) => true,
+                orElse: () => false,
+              ),
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  loaded: (conversations) => _buildBody(
+                    context,
+                    l10n,
+                    conversations,
+                  ),
+                  created: (_, conversations) => _buildBody(
+                    context,
+                    l10n,
+                    conversations,
+                  ),
+                  error: (message) => Center(child: Text(message)),
+                  orElse: () => const SizedBox.shrink(),
+                );
+              },
             ),
           ),
         ],
@@ -170,7 +101,36 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
     );
   }
 
-  Widget _buildResponseTimeBanner(AppLocalizations l10n) {
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    List<SupportConversationEntity> conversations,
+  ) {
+    return ListView(
+      padding: EdgeInsets.all(16.w),
+      children: [
+        _buildResponseTimeBanner(context, l10n),
+        SizedBox(height: 16.h),
+        _buildNewConversationCard(context, l10n),
+        SizedBox(height: 24.h),
+        _buildConversationsList(context, l10n, conversations),
+        SizedBox(height: 16.h),
+      ],
+    );
+  }
+
+  void _openConversation(
+      BuildContext context, SupportConversationEntity convo) {
+    context
+        .pushNamed(AppRoutesNames.supportChat, extra: convo)
+        .then((_) {
+      context.read<SupportConversationsBloc>().add(
+            const SupportConversationsEvent.loadConversations(),
+          );
+    });
+  }
+
+  Widget _buildResponseTimeBanner(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
@@ -210,9 +170,14 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
     );
   }
 
-  Widget _buildNewConversationCard(AppLocalizations l10n) {
+  Widget _buildNewConversationCard(
+      BuildContext context, AppLocalizations l10n) {
     return CustomCard(
-      onTap: _openNewConversation,
+      onTap: () {
+        context.read<SupportConversationsBloc>().add(
+              const SupportConversationsEvent.createConversation(),
+            );
+      },
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
       child: Row(
         children: [
@@ -268,7 +233,11 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
     );
   }
 
-  Widget _buildConversationsList(AppLocalizations l10n) {
+  Widget _buildConversationsList(
+    BuildContext context,
+    AppLocalizations l10n,
+    List<SupportConversationEntity> conversations,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -282,7 +251,7 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
           ),
         ),
         SizedBox(height: 10.h),
-        if (_conversations.isEmpty)
+        if (conversations.isEmpty)
           Center(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 24.h),
@@ -300,11 +269,11 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
           CustomCard(
             padding: EdgeInsets.zero,
             child: Column(
-              children: _conversations.asMap().entries.map((entry) {
+              children: conversations.asMap().entries.map((entry) {
                 final index = entry.key;
                 final convo = entry.value;
-                final isLast = index == _conversations.length - 1;
-                return _buildConversationTile(convo, isLast: isLast);
+                final isLast = index == conversations.length - 1;
+                return _buildConversationTile(context, convo, isLast: isLast);
               }).toList(),
             ),
           ),
@@ -313,11 +282,15 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
   }
 
   Widget _buildConversationTile(
-    SupportConversation convo, {
+    BuildContext context,
+    SupportConversationEntity convo, {
     bool isLast = false,
   }) {
+    final lastMessage =
+        convo.messages.isNotEmpty ? convo.messages.last : null;
+
     return InkWell(
-      onTap: () => _openConversation(convo),
+      onTap: () => _openConversation(context, convo),
       borderRadius: isLast
           ? BorderRadiusManager.xl
           : BorderRadius.only(
@@ -330,13 +303,13 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
             ? null
             : BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+                  bottom:
+                      BorderSide(color: ColorManager.borderLight, width: 1),
                 ),
               ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Support avatar
             Stack(
               children: [
                 Container(
@@ -372,7 +345,6 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
               ],
             ),
             SizedBox(width: 12.w),
-            // Text content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,10 +367,10 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (convo.lastMessageTime != null) ...[
+                      if (lastMessage != null) ...[
                         SizedBox(width: 8.w),
                         Text(
-                          _formatConvoTime(convo.lastMessageTime!),
+                          _formatConvoTime(lastMessage.timestamp),
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
@@ -413,10 +385,10 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
                       ],
                     ],
                   ),
-                  if (convo.lastMessagePreview != null) ...[
+                  if (lastMessage != null) ...[
                     SizedBox(height: 4.h),
                     Text(
-                      convo.lastMessagePreview!,
+                      lastMessage.text,
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),
@@ -461,18 +433,8 @@ class _ContactSupportPageState extends State<ContactSupportPage> {
       return days[time.weekday - 1];
     } else {
       const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
       ];
       return '${months[time.month - 1]} ${time.day}';
     }

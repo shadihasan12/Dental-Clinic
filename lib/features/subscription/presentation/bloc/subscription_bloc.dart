@@ -1,14 +1,24 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_plans_use_case.dart';
+import 'package:injectable/injectable.dart';
 
 part 'subscription_event.dart';
 part 'subscription_state.dart';
 part 'subscription_bloc.freezed.dart';
 
+@injectable
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
-  SubscriptionBloc() : super(const SubscriptionState()) {
+  final GetPlansUseCase _getPlans;
+
+  SubscriptionBloc({
+    required GetPlansUseCase getPlans,
+  })  : _getPlans = getPlans,
+        super(const SubscriptionState()) {
     on<_LoadSubscription>(_onLoadSubscription);
     on<_LoadPlans>(_onLoadPlans);
     on<_SelectPlan>(_onSelectPlan);
@@ -50,25 +60,20 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     _LoadPlans event,
     Emitter<SubscriptionState> emit,
   ) async {
-    emit(state.copyWith(isLoadingPlans: true));
+    emit(state.copyWith(isLoadingPlans: true, error: null));
 
-    try {
-      // TODO: Replace with actual API call
-      await Future.delayed(const Duration(milliseconds: 300));
+    final result = await _getPlans(NoParams());
 
-      // Unified plans for all users - scales based on practice size
-      final plans = SubscriptionPlans.allPlans;
-
-      emit(state.copyWith(
+    result.fold(
+      (error) => emit(state.copyWith(
+        isLoadingPlans: false,
+        error: NetworkExceptions.getErrorMessage(error),
+      )),
+      (plans) => emit(state.copyWith(
         isLoadingPlans: false,
         availablePlans: plans,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isLoadingPlans: false,
-        error: e.toString(),
-      ));
-    }
+      )),
+    );
   }
 
   void _onSelectPlan(

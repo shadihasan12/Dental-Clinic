@@ -362,7 +362,7 @@ class CaseOverviewWidget extends StatelessWidget {
           child: GestureDetector(
             onTap: () => context.pushNamed(
               AppRoutesNames.addTreatment,
-              extra: {'caseId': 123, 'isInitial': false},
+              extra: {'patientId': dentalCase.patientId, 'isInitial': false},
             ),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 13.h),

@@ -16,6 +16,7 @@ class AppRoutesNames {
 
   // Dashboard
   static const String dashboard = 'dashboard';
+  static const String notifications = 'notifications';
 
   // Appointments Routes
   static const String appointments = 'appointments';
@@ -49,6 +50,7 @@ class AppRoutesNames {
   static const String settings = 'settings';
   static const String moreMenu = 'moreMenu';
   static const String clinicInfo = 'clinicInfo';
+  static const String notificationsSettings = 'notificationsSettings';
 
   // Clinic Management Routes
   static const String staffManagement = 'staffManagement';
@@ -67,6 +69,5 @@ class AppRoutesNames {
   static const String manageSubscription = 'manageSubscription';
 
   // Other Routes
-  static const String notifications = 'notifications';
   static const String medicalHistory = 'medicalHistory';
 }
