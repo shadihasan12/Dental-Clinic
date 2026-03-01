@@ -520,7 +520,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pendingLabel => 'المتبقي';
 
   @override
-  String get viewPaymentHistory => 'عرض سجل الدفع';
+  String get viewPaymentHistory => 'عرض سجل الدفعات';
 
   @override
   String get startedLabel => 'بدأت';
@@ -1441,4 +1441,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+  String get caseTitleOptional => 'عنوان الحالة (اختياري)';
+
+  @override
+  String get caseTitleHint => 'أدخل عنوان للحالة المكتملة';
+
+  @override
+  String get caseMarkedAsFinished => 'تم إنهاء الحالة';
+
+  @override
+  String get paymentAddedSuccessfully => 'تمت إضافة الدفعة بنجاح';
 }

@@ -546,5 +546,9 @@
   "passwordResetSuccessMessage": "You can now sign in with your new password",
   "passwordTooShort": "Password must be at least 8 characters",
   "passwordsDoNotMatch": "Passwords do not match"
+  "caseTitleOptional": "Case Title (Optional)",
+  "caseTitleHint": "Enter a title for the completed case",
+  "caseMarkedAsFinished": "Case marked as finished",
+  "paymentAddedSuccessfully": "Payment added successfully"
 }
 

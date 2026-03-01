@@ -17,38 +17,72 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$PatientDetailsEvent {
+  String get patientId => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String patientId) loadPatientDetails,
-    required TResult Function() markCaseAsFinished,
+    required TResult Function(String patientId, String caseId, String? title)
+    markCaseAsFinished,
+    required TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )
+    addPayment,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String patientId)? loadPatientDetails,
-    TResult? Function()? markCaseAsFinished,
+    TResult? Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult? Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String patientId)? loadPatientDetails,
-    TResult Function()? markCaseAsFinished,
+    TResult Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadPatientDetails value) loadPatientDetails,
     required TResult Function(_MarkCaseAsFinished value) markCaseAsFinished,
+    required TResult Function(_AddPayment value) addPayment,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult? Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult? Function(_AddPayment value)? addPayment,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult Function(_AddPayment value)? addPayment,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PatientDetailsEventCopyWith<PatientDetailsEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -57,6 +91,8 @@ abstract class $PatientDetailsEventCopyWith<$Res> {
     PatientDetailsEvent value,
     $Res Function(PatientDetailsEvent) then,
   ) = _$PatientDetailsEventCopyWithImpl<$Res, PatientDetailsEvent>;
+  @useResult
+  $Res call({String patientId});
 }
 
 /// @nodoc
@@ -71,14 +107,29 @@ class _$PatientDetailsEventCopyWithImpl<$Res, $Val extends PatientDetailsEvent>
 
   /// Create a copy of PatientDetailsEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? patientId = null}) {
+    return _then(
+      _value.copyWith(
+            patientId: null == patientId
+                ? _value.patientId
+                : patientId // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
+  }
 }
 
 /// @nodoc
-abstract class _$$LoadPatientDetailsImplCopyWith<$Res> {
+abstract class _$$LoadPatientDetailsImplCopyWith<$Res>
+    implements $PatientDetailsEventCopyWith<$Res> {
   factory _$$LoadPatientDetailsImplCopyWith(
     _$LoadPatientDetailsImpl value,
     $Res Function(_$LoadPatientDetailsImpl) then,
   ) = __$$LoadPatientDetailsImplCopyWithImpl<$Res>;
+  @override
   @useResult
   $Res call({String patientId});
 }
@@ -148,7 +199,15 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String patientId) loadPatientDetails,
-    required TResult Function() markCaseAsFinished,
+    required TResult Function(String patientId, String caseId, String? title)
+    markCaseAsFinished,
+    required TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )
+    addPayment,
   }) {
     return loadPatientDetails(patientId);
   }
@@ -157,7 +216,15 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String patientId)? loadPatientDetails,
-    TResult? Function()? markCaseAsFinished,
+    TResult? Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult? Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
   }) {
     return loadPatientDetails?.call(patientId);
   }
@@ -166,7 +233,15 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String patientId)? loadPatientDetails,
-    TResult Function()? markCaseAsFinished,
+    TResult Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
     required TResult orElse(),
   }) {
     if (loadPatientDetails != null) {
@@ -180,6 +255,7 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadPatientDetails value) loadPatientDetails,
     required TResult Function(_MarkCaseAsFinished value) markCaseAsFinished,
+    required TResult Function(_AddPayment value) addPayment,
   }) {
     return loadPatientDetails(this);
   }
@@ -189,6 +265,7 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult? Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult? Function(_AddPayment value)? addPayment,
   }) {
     return loadPatientDetails?.call(this);
   }
@@ -198,6 +275,7 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult Function(_AddPayment value)? addPayment,
     required TResult orElse(),
   }) {
     if (loadPatientDetails != null) {
@@ -211,21 +289,27 @@ abstract class _LoadPatientDetails implements PatientDetailsEvent {
   const factory _LoadPatientDetails(final String patientId) =
       _$LoadPatientDetailsImpl;
 
+  @override
   String get patientId;
 
   /// Create a copy of PatientDetailsEvent
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadPatientDetailsImplCopyWith<_$LoadPatientDetailsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$MarkCaseAsFinishedImplCopyWith<$Res> {
+abstract class _$$MarkCaseAsFinishedImplCopyWith<$Res>
+    implements $PatientDetailsEventCopyWith<$Res> {
   factory _$$MarkCaseAsFinishedImplCopyWith(
     _$MarkCaseAsFinishedImpl value,
     $Res Function(_$MarkCaseAsFinishedImpl) then,
   ) = __$$MarkCaseAsFinishedImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String patientId, String caseId, String? title});
 }
 
 /// @nodoc
@@ -239,54 +323,129 @@ class __$$MarkCaseAsFinishedImplCopyWithImpl<$Res>
 
   /// Create a copy of PatientDetailsEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? patientId = null,
+    Object? caseId = null,
+    Object? title = freezed,
+  }) {
+    return _then(
+      _$MarkCaseAsFinishedImpl(
+        patientId: null == patientId
+            ? _value.patientId
+            : patientId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        caseId: null == caseId
+            ? _value.caseId
+            : caseId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: freezed == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
-  const _$MarkCaseAsFinishedImpl();
+  const _$MarkCaseAsFinishedImpl({
+    required this.patientId,
+    required this.caseId,
+    this.title,
+  });
+
+  @override
+  final String patientId;
+  @override
+  final String caseId;
+  @override
+  final String? title;
 
   @override
   String toString() {
-    return 'PatientDetailsEvent.markCaseAsFinished()';
+    return 'PatientDetailsEvent.markCaseAsFinished(patientId: $patientId, caseId: $caseId, title: $title)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MarkCaseAsFinishedImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$MarkCaseAsFinishedImpl &&
+            (identical(other.patientId, patientId) ||
+                other.patientId == patientId) &&
+            (identical(other.caseId, caseId) || other.caseId == caseId) &&
+            (identical(other.title, title) || other.title == title));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, patientId, caseId, title);
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MarkCaseAsFinishedImplCopyWith<_$MarkCaseAsFinishedImpl> get copyWith =>
+      __$$MarkCaseAsFinishedImplCopyWithImpl<_$MarkCaseAsFinishedImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String patientId) loadPatientDetails,
-    required TResult Function() markCaseAsFinished,
+    required TResult Function(String patientId, String caseId, String? title)
+    markCaseAsFinished,
+    required TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )
+    addPayment,
   }) {
-    return markCaseAsFinished();
+    return markCaseAsFinished(patientId, caseId, title);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String patientId)? loadPatientDetails,
-    TResult? Function()? markCaseAsFinished,
+    TResult? Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult? Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
   }) {
-    return markCaseAsFinished?.call();
+    return markCaseAsFinished?.call(patientId, caseId, title);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String patientId)? loadPatientDetails,
-    TResult Function()? markCaseAsFinished,
+    TResult Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
     required TResult orElse(),
   }) {
     if (markCaseAsFinished != null) {
-      return markCaseAsFinished();
+      return markCaseAsFinished(patientId, caseId, title);
     }
     return orElse();
   }
@@ -296,6 +455,7 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadPatientDetails value) loadPatientDetails,
     required TResult Function(_MarkCaseAsFinished value) markCaseAsFinished,
+    required TResult Function(_AddPayment value) addPayment,
   }) {
     return markCaseAsFinished(this);
   }
@@ -305,6 +465,7 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult? Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult? Function(_AddPayment value)? addPayment,
   }) {
     return markCaseAsFinished?.call(this);
   }
@@ -314,6 +475,7 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatientDetails value)? loadPatientDetails,
     TResult Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult Function(_AddPayment value)? addPayment,
     required TResult orElse(),
   }) {
     if (markCaseAsFinished != null) {
@@ -324,7 +486,237 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
 }
 
 abstract class _MarkCaseAsFinished implements PatientDetailsEvent {
-  const factory _MarkCaseAsFinished() = _$MarkCaseAsFinishedImpl;
+  const factory _MarkCaseAsFinished({
+    required final String patientId,
+    required final String caseId,
+    final String? title,
+  }) = _$MarkCaseAsFinishedImpl;
+
+  @override
+  String get patientId;
+  String get caseId;
+  String? get title;
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MarkCaseAsFinishedImplCopyWith<_$MarkCaseAsFinishedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AddPaymentImplCopyWith<$Res>
+    implements $PatientDetailsEventCopyWith<$Res> {
+  factory _$$AddPaymentImplCopyWith(
+    _$AddPaymentImpl value,
+    $Res Function(_$AddPaymentImpl) then,
+  ) = __$$AddPaymentImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String patientId, String caseId, double amount, String? notes});
+}
+
+/// @nodoc
+class __$$AddPaymentImplCopyWithImpl<$Res>
+    extends _$PatientDetailsEventCopyWithImpl<$Res, _$AddPaymentImpl>
+    implements _$$AddPaymentImplCopyWith<$Res> {
+  __$$AddPaymentImplCopyWithImpl(
+    _$AddPaymentImpl _value,
+    $Res Function(_$AddPaymentImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? patientId = null,
+    Object? caseId = null,
+    Object? amount = null,
+    Object? notes = freezed,
+  }) {
+    return _then(
+      _$AddPaymentImpl(
+        patientId: null == patientId
+            ? _value.patientId
+            : patientId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        caseId: null == caseId
+            ? _value.caseId
+            : caseId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        amount: null == amount
+            ? _value.amount
+            : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$AddPaymentImpl implements _AddPayment {
+  const _$AddPaymentImpl({
+    required this.patientId,
+    required this.caseId,
+    required this.amount,
+    this.notes,
+  });
+
+  @override
+  final String patientId;
+  @override
+  final String caseId;
+  @override
+  final double amount;
+  @override
+  final String? notes;
+
+  @override
+  String toString() {
+    return 'PatientDetailsEvent.addPayment(patientId: $patientId, caseId: $caseId, amount: $amount, notes: $notes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AddPaymentImpl &&
+            (identical(other.patientId, patientId) ||
+                other.patientId == patientId) &&
+            (identical(other.caseId, caseId) || other.caseId == caseId) &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.notes, notes) || other.notes == notes));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, patientId, caseId, amount, notes);
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AddPaymentImplCopyWith<_$AddPaymentImpl> get copyWith =>
+      __$$AddPaymentImplCopyWithImpl<_$AddPaymentImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String patientId) loadPatientDetails,
+    required TResult Function(String patientId, String caseId, String? title)
+    markCaseAsFinished,
+    required TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )
+    addPayment,
+  }) {
+    return addPayment(patientId, caseId, amount, notes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String patientId)? loadPatientDetails,
+    TResult? Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult? Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
+  }) {
+    return addPayment?.call(patientId, caseId, amount, notes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String patientId)? loadPatientDetails,
+    TResult Function(String patientId, String caseId, String? title)?
+    markCaseAsFinished,
+    TResult Function(
+      String patientId,
+      String caseId,
+      double amount,
+      String? notes,
+    )?
+    addPayment,
+    required TResult orElse(),
+  }) {
+    if (addPayment != null) {
+      return addPayment(patientId, caseId, amount, notes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadPatientDetails value) loadPatientDetails,
+    required TResult Function(_MarkCaseAsFinished value) markCaseAsFinished,
+    required TResult Function(_AddPayment value) addPayment,
+  }) {
+    return addPayment(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadPatientDetails value)? loadPatientDetails,
+    TResult? Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult? Function(_AddPayment value)? addPayment,
+  }) {
+    return addPayment?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadPatientDetails value)? loadPatientDetails,
+    TResult Function(_MarkCaseAsFinished value)? markCaseAsFinished,
+    TResult Function(_AddPayment value)? addPayment,
+    required TResult orElse(),
+  }) {
+    if (addPayment != null) {
+      return addPayment(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _AddPayment implements PatientDetailsEvent {
+  const factory _AddPayment({
+    required final String patientId,
+    required final String caseId,
+    required final double amount,
+    final String? notes,
+  }) = _$AddPaymentImpl;
+
+  @override
+  String get patientId;
+  String get caseId;
+  double get amount;
+  String? get notes;
+
+  /// Create a copy of PatientDetailsEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddPaymentImplCopyWith<_$AddPaymentImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

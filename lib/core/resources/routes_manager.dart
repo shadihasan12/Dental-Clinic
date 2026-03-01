@@ -252,8 +252,13 @@ class RoutesManager {
             final extra = state.extra as Map<String, dynamic>;
             final patientId = extra['patientId'] as String;
             final isInitial = extra['isInitial'] as bool? ?? false;
+            final caseId = extra['caseId'] as String?;
             return CupertinoPage(
-              child: AddTreatmentPage(patientId: patientId, isInitial: isInitial),
+              child: AddTreatmentPage(
+                patientId: patientId,
+                isInitial: isInitial,
+                caseId: caseId,
+              ),
               key: state.pageKey,
               name: state.name,
             );

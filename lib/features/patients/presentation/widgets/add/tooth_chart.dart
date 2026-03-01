@@ -1,18 +1,22 @@
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:flutter_svg/svg.dart';
 
 /// Interactive tooth chart for selecting teeth
-/// Uses standard dental numbering (1-32 for adults)
+/// Uses teeth data from the API, mapped by FDI universal codes
 class ToothChart extends StatefulWidget {
-  final List<int> selectedTeeth;
-  final ValueChanged<List<int>>? onSelectionChanged;
+  final List<Tooth> teeth;
+  final List<String> selectedTeeth;
+  final ValueChanged<List<String>>? onSelectionChanged;
   final bool enabled;
   final double aspectRatio;
+
   const ToothChart({
     super.key,
+    required this.teeth,
     this.selectedTeeth = const [],
     this.onSelectionChanged,
     this.enabled = true,
@@ -24,18 +28,55 @@ class ToothChart extends StatefulWidget {
 }
 
 class _ToothChartState extends State<ToothChart> {
-  void _toggleTooth(int toothNumber) {
-    print('toothNumber: $toothNumber');
+  void _toggleTooth(String toothId) {
+    print(toothId);
     if (!widget.enabled || widget.onSelectionChanged == null) return;
 
-    final newSelection = List<int>.from(widget.selectedTeeth);
-    if (newSelection.contains(toothNumber)) {
-      newSelection.remove(toothNumber);
+    final newSelection = List<String>.from(widget.selectedTeeth);
+    if (newSelection.contains(toothId)) {
+      newSelection.remove(toothId);
     } else {
-      newSelection.add(toothNumber);
+      newSelection.add(toothId);
     }
     setState(() {});
     widget.onSelectionChanged!(newSelection);
+  }
+
+  /// Get the SVG asset for a tooth based on its type index (last digit of FDI code)
+  String _assetForToothType(int typeIndex) {
+    switch (typeIndex) {
+      case 1:
+        return Assets.iconsCaseTeethCentralInc;
+      case 2:
+        return Assets.iconsCaseTeethLateralInc;
+      case 3:
+        return Assets.iconsCaseTeethCanine;
+      case 4:
+        return Assets.iconsCaseTeethFirstPreMolar;
+      case 5:
+        return Assets.iconsCaseTeethSecondPreMolar;
+      case 6:
+        return Assets.iconsCaseTeethFirstMolar;
+      case 7:
+        return Assets.iconsCaseTeethSecondMolar;
+      case 8:
+        return Assets.iconsCaseTeethWisdom;
+      default:
+        return Assets.iconsCaseTeethCentralInc;
+    }
+  }
+
+  /// Get the tooth from API data for a given quadrant and type index.
+  /// Returns null if no matching tooth exists.
+  Tooth? _findTooth(int quadrant, int typeIndex) {
+    final code = '$quadrant$typeIndex';
+    try {
+      return widget.teeth.firstWhere(
+        (t) => t.universalCode == code,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -49,9 +90,7 @@ class _ToothChartState extends State<ToothChart> {
           border: Border.all(color: ColorManager.gray200),
         ),
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            // minHeight: 500.h,
-          ),
+          constraints: const BoxConstraints(),
           child: AspectRatio(
             aspectRatio: widget.aspectRatio,
             child: FittedBox(
@@ -61,9 +100,9 @@ class _ToothChartState extends State<ToothChart> {
                 child: Column(
                   children: [
                     _buildUpperJaw(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Divider(color: ColorManager.gray200, thickness: 2),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildLowerJaw(),
                   ],
                 ),
@@ -80,14 +119,14 @@ class _ToothChartState extends State<ToothChart> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildHalf(isUpper: true, isRight: false),
-        // Right side (teeth 1-8) - mirrored
+        // Left side (Upper Left, quadrant 2) — drawn first, on the left visually
+        _buildHalf(quadrant: 2),
+        // Right side (Upper Right, quadrant 1) — mirrored
         Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
-          child: _buildHalf(isUpper: true, isRight: true),
+          child: _buildHalf(quadrant: 1),
         ),
-        // Left side (teeth 9-16)
       ],
     );
   }
@@ -100,117 +139,66 @@ class _ToothChartState extends State<ToothChart> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildHalf(isUpper: false, isRight: false),
-          // Right side (teeth 32-25) - mirrored
+          // Left side (Lower Left, quadrant 3)
+          _buildHalf(quadrant: 3),
+          // Right side (Lower Right, quadrant 4) — mirrored
           Transform(
             alignment: Alignment.center,
             transform: Matrix4.identity()..scale(-1.0, 1.0, -1.0),
-            child: _buildHalf(isUpper: false, isRight: true),
+            child: _buildHalf(quadrant: 4),
           ),
-          // Left side (teeth 24-17)
         ],
       ),
     );
   }
 
-  /// Builds one half (8 teeth) of a jaw
-  /// This is the reusable component that gets transformed to create the full mouth
-  Widget _buildHalf({required bool isUpper, required bool isRight}) {
-    // Calculate tooth numbers
-    final List<int> toothNumbers;
-    if (isUpper && isRight) {
-      toothNumbers = [1, 2, 3, 4, 5, 6, 7, 8]; // Upper right
-    } else if (isUpper && !isRight) {
-      toothNumbers = [9, 10, 11, 12, 13, 14, 15, 16]; // Upper left
-    } else if (!isUpper && isRight) {
-      toothNumbers = [32, 31, 30, 29, 28, 27, 26, 25]; // Lower right
-    } else {
-      toothNumbers = [24, 23, 22, 21, 20, 19, 18, 17]; // Lower left
-    }
+  /// Builds one half (8 teeth) of a jaw for the given FDI quadrant
+  Widget _buildHalf({required int quadrant}) {
+    // Tooth type indices 1-8 map to positions in the half
+    // Index 1 = Central Incisor (near center), Index 8 = Wisdom (at edge)
+    // Position data: [left, bottom, size] — identical to original layout
+    const positions = <int, List<double>>{
+      8: [1, 1, 50],     // Wisdom tooth
+      7: [10, 40, 50],   // Second molar
+      6: [20, 82, 50],   // First molar
+      5: [35, 122, 40],  // Second premolar
+      4: [50, 148, 40],  // First premolar
+      3: [68, 175, 35],  // Canine
+      2: [88, 195, 35],  // Lateral incisor
+      1: [115, 200, 40], // Central incisor
+    };
 
     return SizedBox(
       width: 154,
       height: 280,
       child: Stack(
-        children: [
-          // Wisdom tooth (8th tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[7],
-            asset: Assets.iconsCaseTeethWisdom,
-            left: 1,
-            bottom: 1,
-            size: 50,
-          ),
-          // Second molar (7th tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[6],
-            asset: Assets.iconsCaseTeethSecondMolar,
-            left: 10,
-            bottom: 40,
-            size: 50,
-          ),
-          // First molar (6th tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[5],
-            asset: Assets.iconsCaseTeethFirstMolar,
-            left: 20,
-            bottom: 82,
-            size: 50,
-          ),
-          // Second premolar (5th tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[4],
-            asset: Assets.iconsCaseTeethSecondPreMolar,
-            left: 35,
-            bottom: 122,
-            size: 40,
-          ),
-          // First premolar (4th tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[3],
-            asset: Assets.iconsCaseTeethFirstPreMolar,
-            left: 50,
-            bottom: 148,
-            size: 40,
-          ),
-          // Canine (3rd tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[2],
-            asset: Assets.iconsCaseTeethCanine,
-            left: 68,
-            bottom: 175,
-            size: 35,
-          ),
-          // Lateral incisor (2nd tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[1],
-            asset: Assets.iconsCaseTeethLateralInc,
-            left: 88,
-            bottom: 195,
-            size: 35,
-          ),
-          // Central incisor (1st tooth)
-          _buildTooth(
-            toothNumber: toothNumbers[0],
-            asset: Assets.iconsCaseTeethCentralInc,
-            left: 115,
-            bottom: 200,
-            size: 40,
-          ),
-        ],
+        children: positions.entries.map((entry) {
+          final typeIndex = entry.key;
+          final pos = entry.value;
+          final tooth = _findTooth(quadrant, typeIndex);
+
+          return _buildTooth(
+            tooth: tooth,
+            typeIndex: typeIndex,
+            left: pos[0],
+            bottom: pos[1],
+            size: pos[2],
+          );
+        }).toList(),
       ),
     );
   }
 
   /// Builds a single tooth with selection capability
   Widget _buildTooth({
-    required int toothNumber,
-    required String asset,
+    required Tooth? tooth,
+    required int typeIndex,
     required double left,
     required double bottom,
     required double size,
   }) {
-    final isSelected = widget.selectedTeeth.contains(toothNumber);
+    final isSelected = tooth != null && widget.selectedTeeth.contains(tooth.id);
+    final asset = _assetForToothType(typeIndex);
 
     return Positioned(
       left: left,
@@ -218,8 +206,10 @@ class _ToothChartState extends State<ToothChart> {
       width: size,
       height: size,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // Makes entire area tappable
-        onTap: widget.enabled ? () => _toggleTooth(toothNumber) : null,
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.enabled && tooth != null
+            ? () => _toggleTooth(tooth.id)
+            : null,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
@@ -235,7 +225,7 @@ class _ToothChartState extends State<ToothChart> {
             colorFilter: isSelected
                 ? ColorFilter.mode(
                     ColorManager.primary,
-                    BlendMode.srcIn, // Use srcIn for solid color replacement
+                    BlendMode.srcIn,
                   )
                 : null,
           ),

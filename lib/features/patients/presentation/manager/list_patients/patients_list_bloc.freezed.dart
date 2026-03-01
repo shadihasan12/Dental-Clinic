@@ -20,27 +20,33 @@ mixin _$PatientsListEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadPatients,
+    required TResult Function() loadMore,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadPatients,
+    TResult? Function()? loadMore,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadPatients,
+    TResult Function()? loadMore,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadPatients value) loadPatients,
+    required TResult Function(_LoadMore value) loadMore,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatients value)? loadPatients,
+    TResult? Function(_LoadMore value)? loadMore,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatients value)? loadPatients,
+    TResult Function(_LoadMore value)? loadMore,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -111,6 +117,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadPatients,
+    required TResult Function() loadMore,
   }) {
     return loadPatients();
   }
@@ -119,6 +126,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadPatients,
+    TResult? Function()? loadMore,
   }) {
     return loadPatients?.call();
   }
@@ -127,6 +135,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadPatients,
+    TResult Function()? loadMore,
     required TResult orElse(),
   }) {
     if (loadPatients != null) {
@@ -139,6 +148,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadPatients value) loadPatients,
+    required TResult Function(_LoadMore value) loadMore,
   }) {
     return loadPatients(this);
   }
@@ -147,6 +157,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatients value)? loadPatients,
+    TResult? Function(_LoadMore value)? loadMore,
   }) {
     return loadPatients?.call(this);
   }
@@ -155,6 +166,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatients value)? loadPatients,
+    TResult Function(_LoadMore value)? loadMore,
     required TResult orElse(),
   }) {
     if (loadPatients != null) {
@@ -169,26 +181,137 @@ abstract class _LoadPatients implements PatientsListEvent {
 }
 
 /// @nodoc
+abstract class _$$LoadMoreImplCopyWith<$Res> {
+  factory _$$LoadMoreImplCopyWith(
+    _$LoadMoreImpl value,
+    $Res Function(_$LoadMoreImpl) then,
+  ) = __$$LoadMoreImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LoadMoreImplCopyWithImpl<$Res>
+    extends _$PatientsListEventCopyWithImpl<$Res, _$LoadMoreImpl>
+    implements _$$LoadMoreImplCopyWith<$Res> {
+  __$$LoadMoreImplCopyWithImpl(
+    _$LoadMoreImpl _value,
+    $Res Function(_$LoadMoreImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of PatientsListEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$LoadMoreImpl implements _LoadMore {
+  const _$LoadMoreImpl();
+
+  @override
+  String toString() {
+    return 'PatientsListEvent.loadMore()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$LoadMoreImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadPatients,
+    required TResult Function() loadMore,
+  }) {
+    return loadMore();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadPatients,
+    TResult? Function()? loadMore,
+  }) {
+    return loadMore?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadPatients,
+    TResult Function()? loadMore,
+    required TResult orElse(),
+  }) {
+    if (loadMore != null) {
+      return loadMore();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadPatients value) loadPatients,
+    required TResult Function(_LoadMore value) loadMore,
+  }) {
+    return loadMore(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadPatients value)? loadPatients,
+    TResult? Function(_LoadMore value)? loadMore,
+  }) {
+    return loadMore?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadPatients value)? loadPatients,
+    TResult Function(_LoadMore value)? loadMore,
+    required TResult orElse(),
+  }) {
+    if (loadMore != null) {
+      return loadMore(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadMore implements PatientsListEvent {
+  const factory _LoadMore() = _$LoadMoreImpl;
+}
+
+/// @nodoc
 mixin _$PatientsListState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<PatientEntity> patients) loaded,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
     required TResult Function(String message) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<PatientEntity> patients)? loaded,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
     TResult? Function(String message)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<PatientEntity> patients)? loaded,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -197,6 +320,7 @@ mixin _$PatientsListState {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
     required TResult Function(_Error value) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -204,6 +328,7 @@ mixin _$PatientsListState {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
     TResult? Function(_Error value)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -211,6 +336,7 @@ mixin _$PatientsListState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -283,7 +409,9 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<PatientEntity> patients) loaded,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -294,7 +422,8 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<PatientEntity> patients)? loaded,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -305,7 +434,8 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<PatientEntity> patients)? loaded,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -321,6 +451,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -332,6 +463,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -343,6 +475,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -402,7 +535,9 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<PatientEntity> patients) loaded,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -413,7 +548,8 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<PatientEntity> patients)? loaded,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -424,7 +560,8 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<PatientEntity> patients)? loaded,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -440,6 +577,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -451,6 +589,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -462,6 +601,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -483,7 +623,7 @@ abstract class _$$LoadedImplCopyWith<$Res> {
     $Res Function(_$LoadedImpl) then,
   ) = __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<PatientEntity> patients});
+  $Res call({List<PatientEntity> patients, bool hasMore});
 }
 
 /// @nodoc
@@ -499,13 +639,17 @@ class __$$LoadedImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? patients = null}) {
+  $Res call({Object? patients = null, Object? hasMore = null}) {
     return _then(
       _$LoadedImpl(
-        null == patients
+        patients: null == patients
             ? _value._patients
             : patients // ignore: cast_nullable_to_non_nullable
                   as List<PatientEntity>,
+        hasMore: null == hasMore
+            ? _value.hasMore
+            : hasMore // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -514,7 +658,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(final List<PatientEntity> patients) : _patients = patients;
+  const _$LoadedImpl({
+    required final List<PatientEntity> patients,
+    this.hasMore = false,
+  }) : _patients = patients;
 
   final List<PatientEntity> _patients;
   @override
@@ -525,8 +672,12 @@ class _$LoadedImpl implements _Loaded {
   }
 
   @override
+  @JsonKey()
+  final bool hasMore;
+
+  @override
   String toString() {
-    return 'PatientsListState.loaded(patients: $patients)';
+    return 'PatientsListState.loaded(patients: $patients, hasMore: $hasMore)';
   }
 
   @override
@@ -534,12 +685,16 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality().equals(other._patients, _patients));
+            const DeepCollectionEquality().equals(other._patients, _patients) &&
+            (identical(other.hasMore, hasMore) || other.hasMore == hasMore));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_patients));
+  int get hashCode => Object.hash(
+    runtimeType,
+    const DeepCollectionEquality().hash(_patients),
+    hasMore,
+  );
 
   /// Create a copy of PatientsListState
   /// with the given fields replaced by the non-null parameter values.
@@ -554,10 +709,12 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<PatientEntity> patients) loaded,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
     required TResult Function(String message) error,
   }) {
-    return loaded(patients);
+    return loaded(patients, hasMore);
   }
 
   @override
@@ -565,10 +722,11 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<PatientEntity> patients)? loaded,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(patients);
+    return loaded?.call(patients, hasMore);
   }
 
   @override
@@ -576,12 +734,13 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<PatientEntity> patients)? loaded,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(patients);
+      return loaded(patients, hasMore);
     }
     return orElse();
   }
@@ -592,6 +751,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -603,6 +763,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -614,6 +775,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -625,14 +787,187 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements PatientsListState {
-  const factory _Loaded(final List<PatientEntity> patients) = _$LoadedImpl;
+  const factory _Loaded({
+    required final List<PatientEntity> patients,
+    final bool hasMore,
+  }) = _$LoadedImpl;
+
+  List<PatientEntity> get patients;
+  bool get hasMore;
+
+  /// Create a copy of PatientsListState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LoadingMoreImplCopyWith<$Res> {
+  factory _$$LoadingMoreImplCopyWith(
+    _$LoadingMoreImpl value,
+    $Res Function(_$LoadingMoreImpl) then,
+  ) = __$$LoadingMoreImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<PatientEntity> patients});
+}
+
+/// @nodoc
+class __$$LoadingMoreImplCopyWithImpl<$Res>
+    extends _$PatientsListStateCopyWithImpl<$Res, _$LoadingMoreImpl>
+    implements _$$LoadingMoreImplCopyWith<$Res> {
+  __$$LoadingMoreImplCopyWithImpl(
+    _$LoadingMoreImpl _value,
+    $Res Function(_$LoadingMoreImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of PatientsListState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? patients = null}) {
+    return _then(
+      _$LoadingMoreImpl(
+        patients: null == patients
+            ? _value._patients
+            : patients // ignore: cast_nullable_to_non_nullable
+                  as List<PatientEntity>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$LoadingMoreImpl implements _LoadingMore {
+  const _$LoadingMoreImpl({required final List<PatientEntity> patients})
+    : _patients = patients;
+
+  final List<PatientEntity> _patients;
+  @override
+  List<PatientEntity> get patients {
+    if (_patients is EqualUnmodifiableListView) return _patients;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_patients);
+  }
+
+  @override
+  String toString() {
+    return 'PatientsListState.loadingMore(patients: $patients)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoadingMoreImpl &&
+            const DeepCollectionEquality().equals(other._patients, _patients));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_patients));
+
+  /// Create a copy of PatientsListState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadingMoreImplCopyWith<_$LoadingMoreImpl> get copyWith =>
+      __$$LoadingMoreImplCopyWithImpl<_$LoadingMoreImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
+    required TResult Function(String message) error,
+  }) {
+    return loadingMore(patients);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
+    TResult? Function(String message)? error,
+  }) {
+    return loadingMore?.call(patients);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (loadingMore != null) {
+      return loadingMore(patients);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
+    required TResult Function(_Error value) error,
+  }) {
+    return loadingMore(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loadingMore?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loadingMore != null) {
+      return loadingMore(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadingMore implements PatientsListState {
+  const factory _LoadingMore({required final List<PatientEntity> patients}) =
+      _$LoadingMoreImpl;
 
   List<PatientEntity> get patients;
 
   /// Create a copy of PatientsListState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+  _$$LoadingMoreImplCopyWith<_$LoadingMoreImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -708,7 +1043,9 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<PatientEntity> patients) loaded,
+    required TResult Function(List<PatientEntity> patients, bool hasMore)
+    loaded,
+    required TResult Function(List<PatientEntity> patients) loadingMore,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -719,7 +1056,8 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<PatientEntity> patients)? loaded,
+    TResult? Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult? Function(List<PatientEntity> patients)? loadingMore,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -730,7 +1068,8 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<PatientEntity> patients)? loaded,
+    TResult Function(List<PatientEntity> patients, bool hasMore)? loaded,
+    TResult Function(List<PatientEntity> patients)? loadingMore,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -746,6 +1085,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingMore value) loadingMore,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -757,6 +1097,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingMore value)? loadingMore,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -768,6 +1109,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingMore value)? loadingMore,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

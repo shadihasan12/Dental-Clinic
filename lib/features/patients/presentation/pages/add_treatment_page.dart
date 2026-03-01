@@ -1,9 +1,13 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_core_treatments_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/add_treatment/add_treatment_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -20,10 +24,12 @@ class AddTreatmentPage extends StatelessWidget {
     super.key,
     required this.patientId,
     this.isInitial = false,
+    this.caseId,
   });
 
   final String patientId;
   final bool isInitial;
+  final String? caseId;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,7 @@ class AddTreatmentPage extends StatelessWidget {
       child: _AddTreatmentContent(
         patientId: patientId,
         isInitial: isInitial,
+        caseId: caseId,
       ),
     );
   }
@@ -41,10 +48,12 @@ class _AddTreatmentContent extends StatefulWidget {
   const _AddTreatmentContent({
     required this.patientId,
     required this.isInitial,
+    this.caseId,
   });
 
   final String patientId;
   final bool isInitial;
+  final String? caseId;
 
   @override
   State<_AddTreatmentContent> createState() => _AddTreatmentContentState();
@@ -56,32 +65,32 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
   final _visitSummaryController = TextEditingController();
   final _totalCostController = TextEditingController();
   final _labFeesController = TextEditingController();
-  List<int> _selectedTeeth = [];
+  List<String> _selectedTeeth = [];
   final List<String> _attachments = [];
+  List<Tooth> _teeth = [];
+  List<CoreTreatment> _coreTreatments = [];
 
-  /// Fixed mapping from form index → TreatmentType enum.
-  static const _treatmentTypeMap = [
-    TreatmentType.cleaning,
-    TreatmentType.filling,
-    TreatmentType.rootCanal,
-    TreatmentType.extraction,
-    TreatmentType.crown,
-    TreatmentType.implant,
-    TreatmentType.whitening,
-    TreatmentType.veneer,
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadTeeth();
+    _loadCoreTreatments();
+  }
 
-  List<String> _getLocalizedTreatmentTypes(AppLocalizations l10n) {
-    return [
-      l10n.cleaning,
-      l10n.filling,
-      l10n.rootCanal,
-      l10n.extraction,
-      l10n.crown,
-      l10n.implant,
-      l10n.whitening,
-      l10n.veneer,
-    ];
+  Future<void> _loadTeeth() async {
+    final result = await getIt<GetAllTeethUseCase>()(NoParams());
+    result.fold(
+      (_) {},
+      (teeth) => setState(() => _teeth = teeth),
+    );
+  }
+
+  Future<void> _loadCoreTreatments() async {
+    final result = await getIt<GetAllCoreTreatmentsUseCase>()(NoParams());
+    result.fold(
+      (_) {},
+      (treatments) => setState(() => _coreTreatments = treatments),
+    );
   }
 
   @override
@@ -93,23 +102,12 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
   }
 
   void _saveTreatment() {
-    final localizedTypes = _getLocalizedTreatmentTypes(
-      AppLocalizations.of(context)!,
-    );
-
-    // Map selected localized labels → TreatmentType enums
-    final selectedEnums = <TreatmentType>[];
-    for (final label in _selectedTreatmentTypes) {
-      final index = localizedTypes.indexOf(label);
-      if (index >= 0 && index < _treatmentTypeMap.length) {
-        selectedEnums.add(_treatmentTypeMap[index]);
-      }
-    }
-
     final params = AddTreatmentParams(
       patientId: widget.patientId,
+      isInitial: widget.isInitial,
+      caseId: widget.caseId,
       visitDate: _visitDate,
-      treatmentTypes: selectedEnums,
+      treatmentTypes: _selectedTreatmentTypes,
       selectedTeeth: _selectedTeeth,
       summary: _visitSummaryController.text.trim(),
       totalCost: double.tryParse(_totalCostController.text) ?? 0,
@@ -215,8 +213,10 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+            AppSnackbar.showError(
+              context,
+              title: localizations.error,
+              message: message,
             );
           },
         );
@@ -237,14 +237,13 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
                   visitDate: _visitDate,
                   onVisitDateTap: _selectDate,
                   selectedTreatmentTypes: _selectedTreatmentTypes,
-                  availableTreatmentTypes: _getLocalizedTreatmentTypes(
-                    localizations,
-                  ),
+                  availableTreatmentTypes: _coreTreatments,
                   onTreatmentToggle: (t) => setState(
                     () => _selectedTreatmentTypes.contains(t)
                         ? _selectedTreatmentTypes.remove(t)
                         : _selectedTreatmentTypes.add(t),
                   ),
+                  teeth: _teeth,
                   selectedTeeth: _selectedTeeth,
                   onTeethChanged: (teeth) =>
                       setState(() => _selectedTeeth = teeth),

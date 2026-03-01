@@ -72,14 +72,22 @@ import 'features/patients/data/repositories/patient_repository_impl.dart'
     as _i504;
 import 'features/patients/domain/repositories/patient_repository.dart' as _i192;
 import 'features/patients/domain/use_cases/add_patient_use_case.dart' as _i594;
+import 'features/patients/domain/use_cases/add_payment_use_case.dart' as _i924;
 import 'features/patients/domain/use_cases/add_treatment_use_case.dart'
     as _i208;
+import 'features/patients/domain/use_cases/get_all_core_treatments_use_case.dart'
+    as _i931;
 import 'features/patients/domain/use_cases/get_all_patients_use_case.dart'
     as _i281;
+import 'features/patients/domain/use_cases/get_all_teeth_use_case.dart'
+    as _i126;
 import 'features/patients/domain/use_cases/get_patient_cases_use_case.dart'
     as _i129;
 import 'features/patients/domain/use_cases/get_patient_details_use_case.dart'
     as _i1063;
+import 'features/patients/domain/use_cases/get_payments_use_case.dart' as _i773;
+import 'features/patients/domain/use_cases/mark_case_as_finished_use_case.dart'
+    as _i920;
 import 'features/patients/presentation/manager/add_patient/add_patient_bloc.dart'
     as _i527;
 import 'features/patients/presentation/manager/add_treatment/add_treatment_bloc.dart'
@@ -338,6 +346,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i208.AddTreatmentUseCase>(
       () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
     );
+    gh.factory<_i126.GetAllTeethUseCase>(
+      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
+      () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i920.MarkCaseAsFinishedUseCase>(
+      () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i924.AddPaymentUseCase>(
+      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i773.GetPaymentsUseCase>(
+      () => _i773.GetPaymentsUseCase(gh<_i192.PatientRepository>()),
+    );
     gh.factory<_i506.ClinicInfoBloc>(
       () => _i506.ClinicInfoBloc(
         getClinicInfo: gh<_i127.GetClinicInfoUseCase>(),
@@ -403,7 +426,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i548.PatientDetailsBloc>(
       () => _i548.PatientDetailsBloc(
         getPatientDetails: gh<_i1063.GetPatientDetailsUseCase>(),
-        getPatientCases: gh<_i129.GetPatientCasesUseCase>(),
+        markCaseAsFinished: gh<_i920.MarkCaseAsFinishedUseCase>(),
+        addPayment: gh<_i924.AddPaymentUseCase>(),
       ),
     );
     gh.factory<_i154.AddTreatmentBloc>(

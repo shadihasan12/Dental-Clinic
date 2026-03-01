@@ -1449,4 +1449,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+  String get caseTitleOptional => 'Case Title (Optional)';
+
+  @override
+  String get caseTitleHint => 'Enter a title for the completed case';
+
+  @override
+  String get caseMarkedAsFinished => 'Case marked as finished';
+
+  @override
+  String get paymentAddedSuccessfully => 'Payment added successfully';
 }

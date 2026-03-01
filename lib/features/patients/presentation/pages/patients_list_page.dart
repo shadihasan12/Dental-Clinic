@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -16,7 +17,8 @@ class PatientsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PatientsListBloc>()..add(const PatientsListEvent.loadPatients()),
+      create: (_) => getIt<PatientsListBloc>()
+        ..add(const PatientsListEvent.loadPatients()),
       child: const _PatientsListContent(),
     );
   }
@@ -31,12 +33,27 @@ class _PatientsListContent extends StatefulWidget {
 
 class _PatientsListContentState extends State<_PatientsListContent> {
   final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
   int _selectedFilterIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<PatientsListBloc>().add(const PatientsListEvent.loadMore());
+    }
   }
 
   List<Patient> _mapToDisplayModel(List<PatientEntity> entities) {
@@ -85,8 +102,18 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           return state.when(
             initial: () => const SizedBox.shrink(),
             loading: () => _buildLoading(l10n, filters),
-            loaded: (entities) =>
-                _buildLoaded(l10n, filters, _mapToDisplayModel(entities)),
+            loaded: (entities, hasMore) => _buildLoaded(
+              l10n,
+              filters,
+              _mapToDisplayModel(entities),
+              hasMore: hasMore,
+            ),
+            loadingMore: (entities) => _buildLoaded(
+              l10n,
+              filters,
+              _mapToDisplayModel(entities),
+              isLoadingMore: true,
+            ),
             error: (message) => _buildError(l10n, filters, message),
           );
         },
@@ -118,7 +145,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           child: ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             itemCount: 5,
-            itemBuilder: (_, _) => _ShimmerCard(),
+            itemBuilder: (_, __) => _ShimmerCard(),
           ),
         ),
       ],
@@ -130,8 +157,10 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   Widget _buildLoaded(
     AppLocalizations l10n,
     List<String> filters,
-    List<Patient> allPatients,
-  ) {
+    List<Patient> allPatients, {
+    bool hasMore = false,
+    bool isLoadingMore = false,
+  }) {
     final filtered = _applyFilters(allPatients);
 
     return Column(
@@ -154,11 +183,28 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         ),
         Expanded(
           child: ListView.separated(
+            controller: _scrollController,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: filtered.length,
-            separatorBuilder: (_, _) =>
+            itemCount: filtered.length + (isLoadingMore || hasMore ? 1 : 0),
+            separatorBuilder: (_, __) =>
                 Divider(height: 1, color: Colors.grey.shade100),
             itemBuilder: (context, index) {
+              if (index == filtered.length) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  ),
+                );
+              }
+
               final patient = filtered[index];
               return PatientCard(
                 patient: patient,

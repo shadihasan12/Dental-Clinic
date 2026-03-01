@@ -49,6 +49,33 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
   const factory NetworkExceptions.unexpectedError() = UnexpectedError;
 
+  /// Extracts the `message` field from the API error response body.
+  /// API format: { "result": "error", "message": "...", "error_list": {...}, "code": 400 }
+  static String _extractMessage(Response? response, String fallback) {
+    try {
+      final data = response?.data;
+      Map<String, dynamic>? body;
+
+      if (data is Map<String, dynamic>) {
+        body = data;
+      } else if (data is String && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is Map<String, dynamic>) body = decoded;
+      }
+
+      if (body != null) {
+        final message = body['message'] as String? ?? fallback;
+        final errorList = body['error_list'];
+        if (errorList is Map<String, dynamic> && errorList.isNotEmpty) {
+          final details = errorList.values.join('\n');
+          return '$message\n$details';
+        }
+        return message;
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
   static NetworkExceptions handleResponse(Response? response) {
     int statusCode = response?.statusCode ?? 0;
 
@@ -81,13 +108,19 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
     switch (statusCode) {
       case 400:
-        return NetworkExceptions.badRequest(errorMessage ?? 'Bad request');
+        return NetworkExceptions.badRequest(
+          _extractMessage(response, 'Bad request'),
+        );
       case 401:
-        return NetworkExceptions.unauthorizedRequest(errorMessage ?? 'Unauthorized');
+        return NetworkExceptions.unauthorizedRequest(
+          _extractMessage(response, 'Unauthorized'),
+        );
       case 403:
         return const NetworkExceptions.forbidden();
       case 404:
-        return NetworkExceptions.notFound(errorMessage ?? 'Not found');
+        return NetworkExceptions.notFound(
+          _extractMessage(response, 'Not found'),
+        );
       case 405:
         return const NetworkExceptions.methodNotAllowed();
       case 408:
@@ -95,16 +128,16 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       case 409:
         return const NetworkExceptions.conflict();
       case 422:
-        return NetworkExceptions.unprocessableEntity(errorMessage ?? 'Invalid data');
-      case 429:
-        return NetworkExceptions.tooManyRequests(errorMessage ?? 'Too many requests');
+        return NetworkExceptions.unprocessableEntity(
+          _extractMessage(response, 'Invalid data'),
+        );
       case 500:
         return const NetworkExceptions.internalServerError();
       case 503:
         return const NetworkExceptions.serviceUnavailable();
       default:
         return NetworkExceptions.defaultError(
-          errorMessage ?? 'Received invalid status code: $statusCode',
+          _extractMessage(response, 'Received invalid status code: $statusCode'),
         );
     }
   }

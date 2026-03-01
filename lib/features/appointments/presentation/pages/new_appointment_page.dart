@@ -2,7 +2,6 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
@@ -71,7 +70,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Future<void> _loadPatients() async {
-    final result = await getIt<GetAllPatientsUseCase>()(NoParams());
+    final result = await getIt<GetAllPatientsUseCase>()(1);
     result.fold(
       (error) {
         if (mounted) {
@@ -81,10 +80,10 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
               message: NetworkExceptions.getErrorMessage(error));
         }
       },
-      (patients) {
+      (response) {
         if (mounted) {
           setState(() {
-            _patients = patients;
+            _patients = response.data;
             _isPatientsLoading = false;
           });
         }

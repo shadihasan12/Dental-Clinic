@@ -42,7 +42,7 @@ class RecordPaymentPopup extends StatefulWidget {
   final String caseTitle;
   final double totalCost;
   final double paidAmount;
-  final ValueChanged<PaymentRecord> onSave;
+  final Future<void> Function(double amount, String? notes) onSave;
 
   const RecordPaymentPopup({
     super.key,
@@ -53,15 +53,15 @@ class RecordPaymentPopup extends StatefulWidget {
     required this.onSave,
   });
 
-  static Future<PaymentRecord?> show(
+  static Future<void> show(
     BuildContext context, {
     required String patientName,
     required String caseTitle,
     required double totalCost,
     required double paidAmount,
-    required ValueChanged<PaymentRecord> onSave,
+    required Future<void> Function(double amount, String? notes) onSave,
   }) {
-    return showModalBottomSheet<PaymentRecord>(
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -86,6 +86,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   final _formKey = GlobalKey<FormState>();
 
   DateTime _selectedDate = DateTime.now();
+  bool _isSubmitting = false;
 
   double get _remainingAmount => widget.totalCost - widget.paidAmount;
 
@@ -261,10 +262,30 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     SizedBox(height: 24.h),
 
                     // Save button
-                    PrimaryButton(
-                      text: AppLocalizations.of(context)!.save,
-                      onPressed: () => context.pop(),
-                    ),
+                    _isSubmitting
+                        ? const Center(child: CircularProgressIndicator())
+                        : PrimaryButton(
+                            text: AppLocalizations.of(context)!.save,
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final amount =
+                                    double.parse(_amountController.text);
+                                final notes =
+                                    _noteController.text.trim().isEmpty
+                                        ? null
+                                        : _noteController.text.trim();
+                                setState(() => _isSubmitting = true);
+                                try {
+                                  await widget.onSave(amount, notes);
+                                  if (mounted) context.pop();
+                                } catch (_) {
+                                  if (mounted) {
+                                    setState(() => _isSubmitting = false);
+                                  }
+                                }
+                              }
+                            },
+                          ),
                   ],
                 ),
               ),

@@ -23,8 +23,8 @@ enum TreatmentType {
 class TreatmentItem {
   final String id;
   final String description;
-  final List<TreatmentType> treatmentTypes;
-  final List<int> selectedTeeth;
+  final List<String> treatmentTypes;
+  final List<String> selectedTeeth;
   final List<String> attachments;
   final DateTime createdAt;
   final DateTime? completedAt;
@@ -44,8 +44,8 @@ class TreatmentItem {
   TreatmentItem copyWith({
     String? id,
     String? description,
-    List<TreatmentType>? treatmentTypes,
-    List<int>? selectedTeeth,
+    List<String>? treatmentTypes,
+    List<String>? selectedTeeth,
     List<String>? attachments,
     DateTime? createdAt,
     DateTime? completedAt,
@@ -89,6 +89,19 @@ class DentalCase {
     required this.paidAmount,
     this.treatmentItems = const [],
   });
+
+  factory DentalCase.fromJson(Map<String, dynamic> json, {String patientName = ''}) {
+    return DentalCase(
+      id: json['id'] as String,
+      patientId: json['patient_id'] as String? ?? '',
+      patientName: patientName,
+      title: json['title'] as String? ?? '',
+      startDate: DateTime.parse(json['started_date'] as String),
+      status: json['status'] as String,
+      totalCost: (json['total_cost'] as num?)?.toDouble() ?? 0,
+      paidAmount: (json['paid_amount'] as num?)?.toDouble() ?? 0,
+    );
+  }
 
   double get pendingAmount => totalCost - paidAmount;
   

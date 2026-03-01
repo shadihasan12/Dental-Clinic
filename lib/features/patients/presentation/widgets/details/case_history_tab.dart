@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -54,7 +55,7 @@ class CaseHistoryTab extends StatelessWidget {
             l10n.noCaseHistory,
             style: TextStyle(
               fontSize: 16.sp,
-              fontFamily: FontFamily.geist,
+              fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
               color: ColorManager.textSecondary,
             ),
@@ -64,7 +65,7 @@ class CaseHistoryTab extends StatelessWidget {
             l10n.completedCasesWillAppear,
             style: TextStyle(
               fontSize: 14.sp,
-              fontFamily: FontFamily.geist,
+              fontFamily: FontHelper.fontFamily(context),
               color: ColorManager.textTertiary,
             ),
           ),

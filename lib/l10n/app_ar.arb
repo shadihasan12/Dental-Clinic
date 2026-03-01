@@ -176,7 +176,7 @@
   "totalLabel": "الكلي",
   "paidLabel": "المدفوع",
   "pendingLabel": "المتبقي",
-  "viewPaymentHistory": "عرض سجل الدفع",
+  "viewPaymentHistory": "عرض سجل الدفعات",
   "startedLabel": "بدأت",
   "totalVisitsLabel": "إجمالي الزيارات",
   "seeAll": "عرض الكل",
@@ -548,5 +548,9 @@
   "passwordResetSuccessMessage": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة",
   "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
   "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+  "caseTitleOptional": "عنوان الحالة (اختياري)",
+  "caseTitleHint": "أدخل عنوان للحالة المكتملة",
+  "caseMarkedAsFinished": "تم إنهاء الحالة",
+  "paymentAddedSuccessfully": "تمت إضافة الدفعة بنجاح"
 }
 
