@@ -1,7 +1,7 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 
 /// A reusable loading dialog with customizable message
 class AppLoadingDialog extends StatelessWidget {
@@ -56,7 +56,7 @@ class AppLoadingDialog extends StatelessWidget {
                 message,
                 style: TextStyle(
                   fontSize: 16.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
                   color: ColorManager.textPrimary,
                 ),

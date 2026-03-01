@@ -1,8 +1,9 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +21,7 @@ class TreatmentItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -42,10 +44,10 @@ class TreatmentItemCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          'Treatment #${index + 1}',
+                          '${l10n.treatment} #${index + 1}',
                           style: TextStyle(
                             fontSize: 14.sp,
-                            fontFamily: FontFamily.geist,
+                            fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w600,
                             color: ColorManager.textPrimary,
                           ),
@@ -56,7 +58,7 @@ class TreatmentItemCard extends StatelessWidget {
                           DateFormat('MMM d').format(item.completedAt!),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontFamily: FontFamily.geist,
+                            fontFamily: FontHelper.fontFamily(context),
                             color: ColorManager.textSecondary,
                           ),
                         ),
@@ -70,7 +72,7 @@ class TreatmentItemCard extends StatelessWidget {
                     item.description,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
+                      fontFamily: FontHelper.fontFamily(context),
                       color: ColorManager.textSecondary,
                     ),
                     maxLines: 2,
@@ -84,7 +86,7 @@ class TreatmentItemCard extends StatelessWidget {
                       spacing: 4.w,
                       runSpacing: 4.h,
                       children: item.treatmentTypes
-                          .map((type) => _buildTag(type.label))
+                          .map((type) => _buildTag(context, type.label))
                           .toList(),
                     ),
                     SizedBox(height: 10.h),
@@ -102,10 +104,10 @@ class TreatmentItemCard extends StatelessWidget {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          'Teeth: ${item.selectedTeeth.join(", ")}',
+                          '${l10n.teeth}: ${item.selectedTeeth.join(", ")}',
                           style: TextStyle(
                             fontSize: 12.sp,
-                            fontFamily: FontFamily.geist,
+                            fontFamily: FontHelper.fontFamily(context),
                             color: ColorManager.textTertiary,
                           ),
                         ),
@@ -128,7 +130,7 @@ class TreatmentItemCard extends StatelessWidget {
                           '${item.attachments.length} attachment(s)',
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontFamily: FontFamily.geist,
+                            fontFamily: FontHelper.fontFamily(context),
                             color: ColorManager.textTertiary,
                           ),
                         ),
@@ -151,7 +153,7 @@ class TreatmentItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(String label) {
+  Widget _buildTag(BuildContext context, String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
@@ -162,7 +164,7 @@ class TreatmentItemCard extends StatelessWidget {
         label,
         style: TextStyle(
           fontSize: 12.sp,
-          fontFamily: FontFamily.geist,
+          fontFamily: FontHelper.fontFamily(context),
           fontWeight: FontWeight.w500,
           color: ColorManager.primary,
         ),

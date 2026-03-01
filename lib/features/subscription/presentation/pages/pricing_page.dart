@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +10,7 @@ import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/presentation/bloc/subscription_bloc.dart';
+import 'package:dental_clinic_app/injection.dart';
 
 class PricingPage extends StatelessWidget {
   const PricingPage({super.key});
@@ -16,20 +18,43 @@ class PricingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SubscriptionBloc()
+      create: (_) => getIt<SubscriptionBloc>()
         ..add(const SubscriptionEvent.loadPlans()),
       child: const _PricingContent(),
     );
   }
 }
 
-class _PricingContent extends StatelessWidget {
+class _PricingContent extends StatefulWidget {
   const _PricingContent();
+
+  @override
+  State<_PricingContent> createState() => _PricingContentState();
+}
+
+class _PricingContentState extends State<_PricingContent> {
+  late PageController _pageController;
+  int _currentPage = 1; // Start on "Growing" (popular)
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      viewportFraction: 0.82,
+      initialPage: _currentPage,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.scaffoldBackground,
       body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
         listener: (context, state) {
           if (state.subscribeSuccess) {
@@ -57,98 +82,13 @@ class _PricingContent extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              // Header
-              SliverToBoxAdapter(
-                child: _buildHeader(context),
-              ),
-
-              // Billing Toggle
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: _BillingToggle(
-                    selectedCycle: state.selectedBillingCycle,
-                    onChanged: (cycle) {
-                      context.read<SubscriptionBloc>().add(
-                            SubscriptionEvent.changeBillingCycle(cycle),
-                          );
-                    },
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 24.h).sliver,
-
-              // Plans
-              if (state.isLoadingPlans)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final plan = state.availablePlans[index];
-                        return _PlanCard(
-                          plan: plan,
-                          billingCycle: state.selectedBillingCycle,
-                          isSelected: state.selectedPlan?.id == plan.id,
-                          isCurrentPlan:
-                              state.currentSubscription?.planTier == plan.tier,
-                          onSelect: () {
-                            context.read<SubscriptionBloc>().add(
-                                  SubscriptionEvent.selectPlan(plan),
-                                );
-                          },
-                        );
-                      },
-                      childCount: state.availablePlans.length,
-                    ),
-                  ),
-                ),
-
-              // Free Trial Banner
-              if (!state.hasActiveSubscription)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: _TrialBanner(
-                      onStartTrial: () {
-                        context.read<SubscriptionBloc>().add(
-                              const SubscriptionEvent.startTrial('user_id'),
-                            );
-                      },
-                    ),
-                  ),
-                ),
-
-              // Subscribe Button
-              if (state.selectedPlan != null)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: _SubscribeButton(
-                      plan: state.selectedPlan!,
-                      billingCycle: state.selectedBillingCycle,
-                      isProcessing: state.isProcessing,
-                      onSubscribe: () {
-                        context.read<SubscriptionBloc>().add(
-                              const SubscriptionEvent.subscribe(
-                                userId: 'user_id',
-                                paymentMethodId: 'payment_method_id',
-                              ),
-                            );
-                      },
-                    ),
-                  ),
-                ),
-
-              SliverToBoxAdapter(
-                child: SizedBox(height: 32.h),
+          return Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: state.isLoadingPlans
+                    ? const Center(child: CircularProgressIndicator())
+                    : _buildContent(context, state),
               ),
             ],
           );
@@ -166,43 +106,64 @@ class _PricingContent extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        color: ColorManager.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: ColorManager.white,
-                        size: 20.w,
-                      ),
-                    ),
+              GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  width: 40.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: ColorManager.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                'Choose Your Plan',
-                style: TextStyleManager.headlineMedium.copyWith(
-                  color: ColorManager.white,
-                  fontWeight: FontWeight.bold,
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: ColorManager.white,
+                    size: 18.w,
+                  ),
                 ),
               ),
-              SizedBox(height: 8.h),
-              Text(
-                'Simple pricing that grows with your practice',
-                style: TextStyleManager.bodyMedium.copyWith(
-                  color: ColorManager.white.withValues(alpha: 0.9),
+              SizedBox(height: 20.h),
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 56.w,
+                      height: 56.w,
+                      decoration: BoxDecoration(
+                        color: ColorManager.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      child: Icon(
+                        Icons.workspace_premium_rounded,
+                        color: ColorManager.white,
+                        size: 30.w,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Choose Your Plan',
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w700,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      'Simple pricing that grows with your practice',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w400,
+                        color: ColorManager.white.withValues(alpha: 0.85),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -211,7 +172,132 @@ class _PricingContent extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildContent(BuildContext context, SubscriptionState state) {
+    final plans = state.availablePlans;
+    if (plans.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 20.h),
+
+          // Billing toggle
+          _BillingToggle(
+            selectedCycle: state.selectedBillingCycle,
+            onChanged: (cycle) {
+              context.read<SubscriptionBloc>().add(
+                    SubscriptionEvent.changeBillingCycle(cycle),
+                  );
+            },
+          ),
+
+          SizedBox(height: 24.h),
+
+          // Horizontal sliding plan cards
+          SizedBox(
+            height: 460.h,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: plans.length,
+              onPageChanged: (index) {
+                setState(() => _currentPage = index);
+              },
+              itemBuilder: (context, index) {
+                return AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double scale = 1.0;
+                    if (_pageController.position.haveDimensions) {
+                      final page = _pageController.page ??
+                          _pageController.initialPage.toDouble();
+                      scale = math.max(0.88, 1 - (page - index).abs() * 0.12);
+                    }
+                    return Transform.scale(
+                      scale: scale,
+                      child: child,
+                    );
+                  },
+                  child: _PlanCard(
+                    plan: plans[index],
+                    billingCycle: state.selectedBillingCycle,
+                    isSelected: state.selectedPlan?.id == plans[index].id,
+                    isCurrentPlan:
+                        state.currentSubscription?.planTier == plans[index].tier,
+                    onSelect: () {
+                      context.read<SubscriptionBloc>().add(
+                            SubscriptionEvent.selectPlan(plans[index]),
+                          );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Page indicator dots
+          SizedBox(height: 16.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              plans.length,
+              (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 4.w),
+                width: _currentPage == index ? 24.w : 8.w,
+                height: 8.w,
+                decoration: BoxDecoration(
+                  color: _currentPage == index
+                      ? ColorManager.primary
+                      : ColorManager.gray300,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          // Free trial banner
+          if (!state.hasActiveSubscription)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: _TrialBanner(
+                onStartTrial: () {
+                  context.read<SubscriptionBloc>().add(
+                        const SubscriptionEvent.startTrial('user_id'),
+                      );
+                },
+              ),
+            ),
+
+          // Subscribe button
+          if (state.selectedPlan != null)
+            Padding(
+              padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+              child: _SubscribeButton(
+                plan: state.selectedPlan!,
+                billingCycle: state.selectedBillingCycle,
+                isProcessing: state.isProcessing,
+                onSubscribe: () {
+                  context.read<SubscriptionBloc>().add(
+                        const SubscriptionEvent.subscribe(
+                          userId: 'user_id',
+                          paymentMethodId: 'payment_method_id',
+                        ),
+                      );
+                },
+              ),
+            ),
+
+          SizedBox(height: 32.h),
+        ],
+      ),
+    );
+  }
 }
+
+// ─── Billing Toggle ────────────────────────────
 
 class _BillingToggle extends StatelessWidget {
   final BillingCycle selectedCycle;
@@ -225,101 +311,91 @@ class _BillingToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 24.h),
+      margin: EdgeInsets.symmetric(horizontal: 40.w),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: ColorManager.gray100,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
       ),
       child: Row(
         children: [
-          Expanded(
-            child: _ToggleOption(
-              label: 'Monthly',
-              isSelected: selectedCycle == BillingCycle.monthly,
-              onTap: () => onChanged(BillingCycle.monthly),
-            ),
-          ),
-          Expanded(
-            child: _ToggleOption(
-              label: 'Yearly',
-              badge: AppConfig.yearlyBadgeText,
-              isSelected: selectedCycle == BillingCycle.yearly,
-              onTap: () => onChanged(BillingCycle.yearly),
-            ),
-          ),
+          _buildOption(context, 'Monthly', BillingCycle.monthly),
+          _buildOption(context, 'Yearly', BillingCycle.yearly,
+              badge: AppConfig.yearlyBadgeText),
         ],
       ),
     );
   }
-}
 
-class _ToggleOption extends StatelessWidget {
-  final String label;
-  final String? badge;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ToggleOption({
-    required this.label,
-    this.badge,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        decoration: BoxDecoration(
-          color: isSelected ? ColorManager.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: ColorManager.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                  )
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyleManager.titleSmall.copyWith(
-                color: isSelected
-                    ? ColorManager.primary
-                    : ColorManager.textSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-            if (badge != null) ...[
-              SizedBox(width: 6.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                decoration: BoxDecoration(
-                  color: ColorManager.success,
-                  borderRadius: BorderRadius.circular(4.r),
+  Widget _buildOption(
+    BuildContext context,
+    String label,
+    BillingCycle cycle, {
+    String? badge,
+  }) {
+    final isSelected = selectedCycle == cycle;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onChanged(cycle),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          decoration: BoxDecoration(
+            color: isSelected ? ColorManager.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(10.r),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: ColorManager.black.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: isSelected
+                      ? ColorManager.primary
+                      : ColorManager.textSecondary,
                 ),
-                child: Text(
-                  badge!,
-                  style: TextStyleManager.labelSmall.copyWith(
-                    color: ColorManager.white,
-                    fontSize: 10.sp,
+              ),
+              if (badge != null) ...[
+                SizedBox(width: 6.w),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: ColorManager.success,
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    badge,
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w600,
+                      color: ColorManager.white,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
+// ─── Plan Card ────────────────────────────────
 
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlanEntity plan;
@@ -336,6 +412,32 @@ class _PlanCard extends StatelessWidget {
     required this.onSelect,
   });
 
+  IconData get _planIcon {
+    switch (plan.tier) {
+      case PlanTier.starter:
+        return Icons.rocket_launch_rounded;
+      case PlanTier.growing:
+        return Icons.trending_up_rounded;
+      case PlanTier.advanced:
+        return Icons.diamond_rounded;
+      default:
+        return Icons.star_rounded;
+    }
+  }
+
+  Color get _accentColor {
+    switch (plan.tier) {
+      case PlanTier.starter:
+        return ColorManager.info;
+      case PlanTier.growing:
+        return ColorManager.primary;
+      case PlanTier.advanced:
+        return ColorManager.purple;
+      default:
+        return ColorManager.primary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final price = plan.getPrice(billingCycle);
@@ -344,187 +446,281 @@ class _PlanCard extends StatelessWidget {
     return GestureDetector(
       onTap: isCurrentPlan ? null : onSelect,
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
+        margin: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: ColorManager.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: isSelected
-                ? ColorManager.primary
+                ? _accentColor
                 : plan.isPopular
-                    ? ColorManager.primary.withValues(alpha: 0.3)
+                    ? _accentColor.withValues(alpha: 0.3)
                     : ColorManager.gray200,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? ColorManager.primary.withValues(alpha: 0.15)
-                  : ColorManager.black.withValues(alpha: 0.05),
-              blurRadius: isSelected ? 12 : 8,
-              offset: const Offset(0, 4),
+                  ? _accentColor.withValues(alpha: 0.2)
+                  : ColorManager.black.withValues(alpha: 0.06),
+              blurRadius: isSelected ? 20 : 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with badges
+            // Top badge
             if (plan.isPopular || isCurrentPlan)
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 8.h),
+                padding: EdgeInsets.symmetric(vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: isCurrentPlan
-                      ? ColorManager.success
-                      : ColorManager.primary,
+                  gradient: isCurrentPlan
+                      ? GradientManager.success
+                      : LinearGradient(
+                          colors: [
+                            _accentColor,
+                            _accentColor.withValues(alpha: 0.8),
+                          ],
+                        ),
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(14.r),
-                    topRight: Radius.circular(14.r),
+                    topLeft: Radius.circular(22.r),
+                    topRight: Radius.circular(22.r),
                   ),
                 ),
-                child: Text(
-                  isCurrentPlan ? 'Current Plan' : 'Most Popular',
-                  style: TextStyleManager.labelMedium.copyWith(
-                    color: ColorManager.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isCurrentPlan
+                          ? Icons.check_circle_rounded
+                          : Icons.star_rounded,
+                      color: ColorManager.white,
+                      size: 14.w,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      isCurrentPlan ? 'Current Plan' : 'Most Popular',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
-            Padding(
-              padding: EdgeInsets.all(20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Plan name
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        plan.name,
-                        style: TextStyleManager.headlineSmall.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (isSelected)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Plan icon + name
+                    Row(
+                      children: [
                         Container(
-                          width: 24.w,
-                          height: 24.w,
-                          decoration: const BoxDecoration(
-                            color: ColorManager.primary,
-                            shape: BoxShape.circle,
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            color: _accentColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Icon(
-                            Icons.check,
-                            color: ColorManager.white,
-                            size: 16.w,
+                            _planIcon,
+                            color: _accentColor,
+                            size: 22.w,
                           ),
                         ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    plan.description,
-                    style: TextStyleManager.bodySmall.copyWith(
-                      color: ColorManager.textSecondary,
-                    ),
-                  ),
-
-                  SizedBox(height: 16.h),
-
-                  // Price
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '\$${price.toStringAsFixed(2)}',
-                        style: TextStyleManager.headlineMedium.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 4.h, left: 4.w),
-                        child: Text(
-                          isYearly ? '/year' : '/month',
-                          style: TextStyleManager.bodyMedium.copyWith(
-                            color: ColorManager.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (isYearly) ...[
-                    SizedBox(height: 4.h),
-                    Text(
-                      '\$${plan.yearlyMonthlyEquivalent.toStringAsFixed(2)}/mo • Save \$${plan.yearlySavings.toStringAsFixed(0)}',
-                      style: TextStyleManager.labelSmall.copyWith(
-                        color: ColorManager.success,
-                      ),
-                    ),
-                  ],
-
-                  SizedBox(height: 16.h),
-                  Divider(color: ColorManager.gray200, height: 1),
-                  SizedBox(height: 16.h),
-
-                  // Features
-                  ...plan.features.take(5).map(
-                        (feature) => Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                color: ColorManager.success,
-                                size: 18.w,
+                        SizedBox(width: 12.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              plan.name,
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontFamily: FontHelper.fontFamily(context),
+                                fontWeight: FontWeight.w700,
+                                color: ColorManager.textPrimary,
                               ),
-                              SizedBox(width: 10.w),
-                              Expanded(
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              plan.description,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontFamily: FontHelper.fontFamily(context),
+                                color: ColorManager.textTertiary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 20.h),
+
+                    // Price
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '\$${price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 32.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            fontWeight: FontWeight.w800,
+                            color: _accentColor,
+                            height: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 4.h, left: 4.w),
+                          child: Text(
+                            isYearly ? '/year' : '/month',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontFamily: FontHelper.fontFamily(context),
+                              color: ColorManager.textTertiary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (isYearly) ...[
+                      SizedBox(height: 4.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 3.h),
+                        decoration: BoxDecoration(
+                          color: ColorManager.successBackground,
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                        child: Text(
+                          '\$${plan.yearlyMonthlyEquivalent.toStringAsFixed(2)}/mo · Save \$${plan.yearlySavings.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            fontWeight: FontWeight.w600,
+                            color: ColorManager.success,
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    SizedBox(height: 16.h),
+                    Divider(color: ColorManager.gray200, height: 1),
+                    SizedBox(height: 12.h),
+
+                    // Features
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: Column(
+                          children: [
+                            ...plan.features.take(5).map(
+                                  (feature) => Padding(
+                                    padding: EdgeInsets.only(bottom: 8.h),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 18.w,
+                                          height: 18.w,
+                                          decoration: BoxDecoration(
+                                            color: _accentColor
+                                                .withValues(alpha: 0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.check_rounded,
+                                            color: _accentColor,
+                                            size: 12.w,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10.w),
+                                        Expanded(
+                                          child: Text(
+                                            feature,
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              fontFamily:
+                                                  FontHelper.fontFamily(
+                                                      context),
+                                              color: ColorManager.textPrimary,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            if (plan.features.length > 5)
+                              Padding(
+                                padding: EdgeInsets.only(top: 4.h),
                                 child: Text(
-                                  feature,
-                                  style: TextStyleManager.bodySmall.copyWith(
-                                    color: ColorManager.textPrimary,
+                                  '+ ${plan.features.length - 5} more features',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily:
+                                        FontHelper.fontFamily(context),
+                                    fontWeight: FontWeight.w500,
+                                    color: _accentColor,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-
-                  if (plan.features.length > 5) ...[
-                    SizedBox(height: 8.h),
-                    Text(
-                      '+ ${plan.features.length - 5} more features',
-                      style: TextStyleManager.labelSmall.copyWith(
-                        color: ColorManager.primary,
-                      ),
                     ),
-                  ],
 
-                  // Limitations
-                  if (plan.limitations.isNotEmpty) ...[
-                    SizedBox(height: 12.h),
-                    ...plan.limitations.map(
-                      (limitation) => Padding(
-                        padding: EdgeInsets.only(bottom: 4.h),
+                    // Choose button
+                    SizedBox(height: 8.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: isCurrentPlan ? null : onSelect,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? _accentColor
+                              : _accentColor.withValues(alpha: 0.1),
+                          foregroundColor:
+                              isSelected ? ColorManager.white : _accentColor,
+                          elevation: 0,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                        ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: ColorManager.textTertiary,
-                              size: 16.w,
-                            ),
-                            SizedBox(width: 8.w),
-                            Expanded(
-                              child: Text(
-                                limitation,
-                                style: TextStyleManager.labelSmall.copyWith(
-                                  color: ColorManager.textTertiary,
+                            if (isSelected)
+                              Padding(
+                                padding: EdgeInsets.only(right: 6.w),
+                                child: Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 18.w,
                                 ),
+                              ),
+                            Text(
+                              isCurrentPlan
+                                  ? 'Current Plan'
+                                  : isSelected
+                                      ? 'Selected'
+                                      : 'Choose ${plan.name}',
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontFamily: FontHelper.fontFamily(context),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -532,7 +728,7 @@ class _PlanCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                ],
+                ),
               ),
             ),
           ],
@@ -541,6 +737,8 @@ class _PlanCard extends StatelessWidget {
     );
   }
 }
+
+// ─── Trial Banner ────────────────────────────────
 
 class _TrialBanner extends StatelessWidget {
   final VoidCallback onStartTrial;
@@ -553,7 +751,14 @@ class _TrialBanner extends StatelessWidget {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         gradient: GradientManager.primaryButton,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: ColorManager.primary.withValues(alpha: 0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -562,53 +767,67 @@ class _TrialBanner extends StatelessWidget {
             height: 48.w,
             decoration: BoxDecoration(
               color: ColorManager.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(14.r),
             ),
             child: Icon(
-              Icons.rocket_launch,
+              Icons.rocket_launch_rounded,
               color: ColorManager.white,
               size: 24.w,
             ),
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Start Free Trial',
-                  style: TextStyleManager.titleMedium.copyWith(
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w700,
                     color: ColorManager.white,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  '${AppConfig.freeTrialText} • ${AppConfig.noCreditCardText}',
-                  style: TextStyleManager.bodySmall.copyWith(
+                  '${AppConfig.freeTrialText} · ${AppConfig.noCreditCardText}',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontHelper.fontFamily(context),
                     color: ColorManager.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: onStartTrial,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.white,
-              foregroundColor: ColorManager.primary,
+          SizedBox(width: 10.w),
+          GestureDetector(
+            onTap: onStartTrial,
+            child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
+              decoration: BoxDecoration(
+                color: ColorManager.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                'Start',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.primary,
+                ),
               ),
             ),
-            child: const Text('Start'),
           ),
         ],
       ),
     );
   }
 }
+
+// ─── Subscribe Button ────────────────────────────
 
 class _SubscribeButton extends StatelessWidget {
   final SubscriptionPlanEntity plan;
@@ -637,8 +856,9 @@ class _SubscribeButton extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManager.primary,
               foregroundColor: ColorManager.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(16.r),
               ),
             ),
             child: isProcessing
@@ -654,24 +874,24 @@ class _SubscribeButton extends StatelessWidget {
                   )
                 : Text(
                     'Subscribe to ${plan.name} - \$${price.toStringAsFixed(2)}${billingCycle == BillingCycle.yearly ? '/yr' : '/mo'}',
-                    style: TextStyleManager.button.copyWith(
-                      color: ColorManager.white,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 10.h),
         Text(
           AppConfig.cancelAnytimeText,
-          style: TextStyleManager.labelSmall.copyWith(
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textTertiary,
           ),
         ),
       ],
     );
   }
-}
-
-extension on SizedBox {
-  Widget get sliver => SliverToBoxAdapter(child: this);
 }

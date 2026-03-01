@@ -1,4 +1,5 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -53,10 +54,10 @@ class PatientCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _buildMainRow(),
+            _buildMainRow(context),
             if (patient.balance > 0 || patient.nextVisit != null) ...[
               SizedBox(height: 12.h),
-              _buildExtraInfo(),
+              _buildExtraInfo(context),
             ],
           ],
         ),
@@ -64,17 +65,17 @@ class PatientCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMainRow() {
+  Widget _buildMainRow(BuildContext context) {
     return Row(
       children: [
-        _buildAvatar(),
+        _buildAvatar(context),
         SizedBox(width: 12.w),
-        Expanded(child: _buildPatientInfo()),
+        Expanded(child: _buildPatientInfo(context)),
       ],
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     return Container(
       width: 52.w,
       height: 52.w,
@@ -89,14 +90,21 @@ class PatientCard extends StatelessWidget {
             color: ColorManager.primary,
             fontWeight: FontWeight.w600,
             fontSize: 16.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPatientInfo() {
+  Widget _buildPatientInfo(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Get localized gender label
+    final genderLabel = patient.gender.toLowerCase() == 'female' 
+        ? l10n.female 
+        : l10n.male;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,17 +112,17 @@ class PatientCard extends StatelessWidget {
           patient.name,
           style: TextStyle(
             fontSize: 16.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         SizedBox(height: 4.h),
         Text(
-          '${patient.age} years • ${patient.gender}',
+          '${patient.age} ${l10n.years} • $genderLabel',
           style: TextStyle(
             fontSize: 12.sp,
-            fontFamily: FontFamily.geist,
+            fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.textSecondary,
           ),
         ),
@@ -131,7 +139,7 @@ class PatientCard extends StatelessWidget {
               patient.phone,
               style: TextStyle(
                 fontSize: 12.sp,
-                fontFamily: FontFamily.geist,
+                fontFamily: FontHelper.fontFamily(context),
                 color: ColorManager.textSecondary,
               ),
             ),
@@ -141,17 +149,19 @@ class PatientCard extends StatelessWidget {
     );
   }
 
-  Widget _buildExtraInfo() {
+  Widget _buildExtraInfo(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Column(
       children: [
         if (patient.balance > 0)
           Row(
             children: [
               Text(
-                'Outstanding balance: ',
+                '${l10n.outstandingBalance}: ',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.textSecondary,
                 ),
               ),
@@ -159,7 +169,7 @@ class PatientCard extends StatelessWidget {
                 '\$${patient.balance.toInt()}',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.warning,
                   fontWeight: FontWeight.w600,
                 ),
@@ -177,10 +187,10 @@ class PatientCard extends StatelessWidget {
               ),
               SizedBox(width: 4.w),
               Text(
-                'Next visit: ${patient.nextVisit}',
+                '${l10n.nextVisit}: ${patient.nextVisit}',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   color: ColorManager.primary,
                   fontWeight: FontWeight.w500,
                 ),

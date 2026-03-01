@@ -1,8 +1,9 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/widgets/action_button.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 
 /// A reusable confirmation dialog with success icon and Yes/No options
 class AppConfirmationDialog extends StatelessWidget {
@@ -13,8 +14,8 @@ class AppConfirmationDialog extends StatelessWidget {
     this.icon = Icons.check_circle,
     this.iconColor = const Color(0xFF70B2B2),
     this.iconBackgroundColor = const Color(0xFFE8F5F5),
-    this.yesText = 'Yes',
-    this.noText = 'No',
+    required this.yesText,
+    required this.noText,
     this.onYesPressed,
     this.onNoPressed,
     this.barrierDismissible = false,
@@ -39,12 +40,13 @@ class AppConfirmationDialog extends StatelessWidget {
     IconData icon = Icons.check_circle,
     Color iconColor = const Color(0xFF70B2B2),
     Color iconBackgroundColor = const Color(0xFFE8F5F5),
-    String yesText = 'Yes',
-    String noText = 'No',
+    String? yesText,
+    String? noText,
     VoidCallback? onYesPressed,
     VoidCallback? onNoPressed,
     bool barrierDismissible = false,
   }) {
+    final l10n = AppLocalizations.of(context);
     return showDialog<bool>(
       context: context,
       barrierDismissible: barrierDismissible,
@@ -54,8 +56,8 @@ class AppConfirmationDialog extends StatelessWidget {
         icon: icon,
         iconColor: iconColor,
         iconBackgroundColor: iconBackgroundColor,
-        yesText: yesText,
-        noText: noText,
+        yesText: yesText ?? l10n!.yes,
+        noText: noText ?? l10n!.no,
         onYesPressed: onYesPressed,
         onNoPressed: onNoPressed,
         barrierDismissible: barrierDismissible,
@@ -86,7 +88,7 @@ class AppConfirmationDialog extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18.sp,
-              fontFamily: FontFamily.geist,
+              fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w600,
               color: ColorManager.textPrimary,
             ),
@@ -97,7 +99,7 @@ class AppConfirmationDialog extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14.sp,
-              fontFamily: FontFamily.geist,
+              fontFamily: FontHelper.fontFamily(context),
               color: ColorManager.textSecondary,
             ),
           ),

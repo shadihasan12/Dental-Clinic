@@ -144,17 +144,21 @@ class _SnackbarContent extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyleManager.titleSmall.copyWith(
+                  style: TextStyle(
                     color: ColorManager.white,
                     fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                    fontFamily: FontHelper.fontFamily(context)
                   ),
                 ),
                 if (message != null) ...[
                   SizedBox(height: 2.h),
                   Text(
                     message!,
-                    style: TextStyleManager.bodySmall.copyWith(
+                    style: TextStyle(
                       color: ColorManager.white.withValues(alpha: 0.9),
+                      fontSize: 14.sp,
+                      fontFamily: FontHelper.fontFamily(context)
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

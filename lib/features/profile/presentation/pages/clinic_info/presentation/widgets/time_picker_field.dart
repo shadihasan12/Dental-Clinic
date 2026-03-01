@@ -1,0 +1,56 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/helpers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class TimePickerField extends StatelessWidget {
+  const TimePickerField({
+    super.key,
+    required this.label,
+    required this.time,
+    required this.onTap,
+  });
+
+  final String label;
+  final TimeOfDay time;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              color: ColorManager.textTertiary,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: ColorManager.gray50,
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(color: ColorManager.borderLight),
+            ),
+            child: Text(
+              formatTime(time),
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

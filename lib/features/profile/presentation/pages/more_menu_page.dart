@@ -1,150 +1,147 @@
-import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
-import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
-import 'package:dental_clinic_app/features/subscription/presentation/widgets/subscription_status_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
-class MoreMenuPage extends StatelessWidget {
-  MoreMenuPage({super.key});
-
-  final UserSubscriptionEntity subscription = UserSubscriptionEntity(
-    id: 'sub_123',
-    userId: 'user_123',
-    planTier: PlanTier.trial,
-    status: SubscriptionStatus.trial,
-    billingCycle: BillingCycle.monthly,
-    startDate: DateTime.now(),
-    currentPeriodEnd: DateTime.now().add(const Duration(days: 7)),
-    trialEndDate: DateTime.now().add(const Duration(days: 7)),
-  );
+class MenuPage extends StatelessWidget {
+  const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(),
+            // — Profile header
+            _buildProfileHeader(context),
+            Divider(height: 1, color: Colors.grey.shade200),
+
             Padding(
-              padding: PaddingManager.all16,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // User Stats
-                  _buildUserStats(),
                   SizedBox(height: 24.h),
 
-                  // Subscription status card
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: SubscriptionStatusCard(
-                      subscription: subscription,
-                      onUpgrade: () {
-                        context.pushNamed(AppRoutesNames.pricing);
-                      },
-                      onManage: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Manage subscription coming soon'),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // Account Settings
-                  _buildSectionTitle('Account Settings'),
-                  SizedBox(height: 12.h),
-                  _buildMenuGroup([
+                  // — Account Settings
+                  _sectionLabel(context, l10n.accountSettings),
+                  SizedBox(height: 10.h),
+                  _buildMenuGroup(context, [
                     MenuItem(
                       icon: Icons.person_outline,
-                      title: 'Edit Profile',
-                      onTap: () {},
+                      title: l10n.editProfile,
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.editProfile);
+                      },
                     ),
                     MenuItem(
                       icon: Icons.business_outlined,
-                      title: 'Clinic Information',
-                      onTap: () {},
+                      title: l10n.clinicInformation,
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.clinicInfo);
+                      },
+                    ),
+                    MenuItem(
+                      icon: Icons.bar_chart_rounded,
+                      title: l10n.analytics,
+                      onTap: () => context.pushNamed(AppRoutesNames.statistics),
                     ),
                     MenuItem(
                       icon: Icons.notifications_outlined,
-                      title: 'Notifications',
-                      trailing: _buildNotificationBadge(),
-                      onTap: () {},
+                      title: l10n.notifications,
+                      trailing: _buildNotificationBadge(context),
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.notificationsSettings);
+                      },
                     ),
                   ]),
                   SizedBox(height: 24.h),
 
-                  // App Settings
-                  _buildSectionTitle('App Settings'),
-                  SizedBox(height: 12.h),
-                  _buildMenuGroup([
+                  // — App Settings
+                  _sectionLabel(context, l10n.appSettings),
+                  SizedBox(height: 10.h),
+                  _buildMenuGroup(context, [
                     MenuItem(
                       icon: Icons.color_lens_outlined,
-                      title: 'Appearance',
-                      subtitle: 'Light mode',
+                      title: l10n.appearance,
+                      subtitle: l10n.lightMode,
                       onTap: () {},
                     ),
                     MenuItem(
                       icon: Icons.language_outlined,
-                      title: 'Language',
-                      subtitle: 'English',
-                      onTap: () {},
+                      title: l10n.language,
+                      subtitle:
+                          context
+                                  .read<LanguageBloc>()
+                                  .state
+                                  .locale
+                                  .languageCode ==
+                              'ar'
+                          ? l10n.arabic
+                          : l10n.english,
+                      onTap: () => showLanguageSettingsDialog(context),
                     ),
                     MenuItem(
                       icon: Icons.security_outlined,
-                      title: 'Privacy & Security',
+                      title: l10n.privacySecurity,
                       onTap: () {},
                     ),
                   ]),
                   SizedBox(height: 24.h),
 
-                  // Support
-                  _buildSectionTitle('Support'),
-                  SizedBox(height: 12.h),
-                  _buildMenuGroup([
-                    MenuItem(
-                      icon: Icons.help_outline,
-                      title: 'Help Center',
-                      onTap: () {},
-                    ),
+                  // — Support
+                  _sectionLabel(context, l10n.support),
+                  SizedBox(height: 10.h),
+                  _buildMenuGroup(context, [
+                    // TODO: Add help center page and uncomment this
+                    // MenuItem(
+                    //   icon: Icons.help_outline,
+                    //   title: l10n.helpCenter,
+                    //   onTap: () {
+                    //   },
+                    // ),
                     MenuItem(
                       icon: Icons.chat_bubble_outline,
-                      title: 'Contact Support',
-                      onTap: () {},
+                      title: l10n.contactSupport,
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.contactSupport);
+
+                      },
                     ),
                     MenuItem(
                       icon: Icons.description_outlined,
-                      title: 'Terms & Privacy',
+                      title: l10n.termsPrivacy,
                       onTap: () {},
                     ),
                   ]),
                   SizedBox(height: 24.h),
 
-                  // Logout
-                  _buildLogoutButton(context),
+                  // — Logout
+                  _buildLogoutRow(context, l10n),
                   SizedBox(height: 32.h),
 
-                  // App Version
+                  // — Version
                   Center(
                     child: Text(
-                      'Version 1.0.0',
-                      style: TextStyleManager.bodySmall.copyWith(
-                        color: ColorManager.textTertiary,
+                      '${l10n.version} 1.0.0',
+                      style: TextStyle(
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontSize: 12.sp,
+                        color: Colors.black26,
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 24.h),
                 ],
               ),
             ),
@@ -154,130 +151,91 @@ class MoreMenuPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: 60.h,
-        left: 20.w,
-        right: 20.w,
-        bottom: 24.h,
+  Widget _sectionLabel(BuildContext context, String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w600,
+        color: Colors.black54,
+        fontFamily: FontHelper.fontFamily(context),
       ),
-      decoration: BoxDecoration(
-        gradient: GradientManager.primaryHeader,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Avatar
-          Container(
-            width: 80.w,
-            height: 80.h,
-            decoration: BoxDecoration(
-              color: ColorManager.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: ColorManager.white, width: 3),
-            ),
-            child: ClipOval(
+    );
+  }
+
+  // ─── Profile Header ─────────────────────────────────────────────────────
+
+  Widget _buildProfileHeader(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
+        child: Row(
+          children: [
+            // Avatar
+            CircleAvatar(
+              radius: 28.r,
+              backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
               child: Icon(
                 Icons.person,
-                size: 40.w,
+                size: 28.w,
                 color: ColorManager.primary,
               ),
             ),
-          ),
-          SizedBox(height: 12.h),
-          // Name
-          Text(
-            'Dr. Sarah Johnson',
-            style: TextStyleManager.headlineMedium.copyWith(
-              color: ColorManager.white,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          // Role
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: ColorManager.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadiusManager.full,
-            ),
-            child: Text(
-              'Dentist',
-              style: TextStyleManager.labelMedium.copyWith(
-                color: ColorManager.white,
+            SizedBox(width: 14.w),
+
+            // Name + role
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Dr. Sarah Johnson',
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2D2D2D),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    AppLocalizations.of(context)!.dentist,
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 13.sp,
+                      color: Colors.black38,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildUserStats() {
-    return CustomCard(
-      child: Row(
-        children: [
-          _buildStatItem('248', 'Patients'),
-          _buildStatDivider(),
-          _buildStatItem('1,245', 'Visits'),
-          _buildStatDivider(),
-          _buildStatItem('156', 'Cases'),
-        ],
+  // ─── Menu Groups ────────────────────────────────────────────────────────
+
+  Widget _buildMenuGroup(BuildContext context, List<MenuItem> items) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12.r),
       ),
-    );
-  }
-
-  Widget _buildStatItem(String value, String label) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyleManager.headlineMedium.copyWith(
-              color: ColorManager.primary,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            label,
-            style: TextStyleManager.bodySmall.copyWith(
-              color: ColorManager.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatDivider() {
-    return Container(width: 1.w, height: 40.h, color: ColorManager.divider);
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyleManager.labelLarge.copyWith(
-        color: ColorManager.textSecondary,
-      ),
-    );
-  }
-
-  Widget _buildMenuGroup(List<MenuItem> items) {
-    return CustomCard(
-      padding: EdgeInsets.zero,
       child: Column(
         children: items.asMap().entries.map((entry) {
           final index = entry.key;
           final item = entry.value;
           return Column(
             children: [
-              _buildMenuItem(item),
+              _buildMenuItem(context, item),
               if (index < items.length - 1)
-                Divider(height: 1.h, indent: 56.w, color: ColorManager.divider),
+                Padding(
+                  padding: EdgeInsets.only(left: 56.w),
+                  child: Divider(height: 1, color: Colors.grey.shade200),
+                ),
             ],
           );
         }).toList(),
@@ -285,27 +243,24 @@ class MoreMenuPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(MenuItem item) {
+  Widget _buildMenuItem(BuildContext context, MenuItem item) {
     return Material(
-      color: ColorManager.transparent,
+      color: Colors.transparent,
       child: InkWell(
         onTap: item.onTap,
+        borderRadius: BorderRadius.circular(12.r),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
           child: Row(
             children: [
               Container(
-                width: 40.w,
-                height: 40.h,
+                width: 34.w,
+                height: 34.w,
                 decoration: BoxDecoration(
-                  color: ColorManager.gray100,
-                  borderRadius: BorderRadiusManager.lg,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(
-                  item.icon,
-                  size: 20.w,
-                  color: ColorManager.textSecondary,
-                ),
+                child: Icon(item.icon, size: 18.w, color: Colors.black45),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -314,16 +269,21 @@ class MoreMenuPage extends StatelessWidget {
                   children: [
                     Text(
                       item.title,
-                      style: TextStyleManager.titleSmall.copyWith(
-                        color: ColorManager.textPrimary,
+                      style: TextStyle(
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
                     ),
                     if (item.subtitle != null) ...[
-                      SizedBox(height: 2.h),
+                      SizedBox(height: 1.h),
                       Text(
                         item.subtitle!,
-                        style: TextStyleManager.bodySmall.copyWith(
-                          color: ColorManager.textSecondary,
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 12.sp,
+                          color: Colors.black38,
                         ),
                       ),
                     ],
@@ -335,8 +295,8 @@ class MoreMenuPage extends StatelessWidget {
               else
                 Icon(
                   Icons.chevron_right,
-                  size: 20.w,
-                  color: ColorManager.textTertiary,
+                  size: 18.w,
+                  color: Colors.grey.shade400,
                 ),
             ],
           ),
@@ -345,86 +305,112 @@ class MoreMenuPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationBadge() {
+  // ─── Notification Badge ─────────────────────────────────────────────────
+
+  Widget _buildNotificationBadge(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
       decoration: BoxDecoration(
-        color: ColorManager.error,
-        borderRadius: BorderRadiusManager.full,
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(10.r),
       ),
       child: Text(
         '3',
-        style: TextStyleManager.labelSmall.copyWith(
-          color: ColorManager.white,
+        style: TextStyle(
+          fontFamily: FontHelper.fontFamily(context),
+          fontSize: 11.sp,
+          color: Colors.white,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context) {
-    return CustomCard(
-      padding: EdgeInsets.zero,
-      child: Material(
-        color: ColorManager.transparent,
-        child: InkWell(
-          onTap: () {
-            _showLogoutDialog(context);
-          },
-          borderRadius: BorderRadiusManager.xl,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            child: Row(
-              children: [
-                Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: ColorManager.errorBackground,
-                    borderRadius: BorderRadiusManager.lg,
-                  ),
-                  child: Icon(
-                    Icons.logout,
-                    size: 20.w,
-                    color: ColorManager.error,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    'Logout',
-                    style: TextStyleManager.titleSmall.copyWith(
-                      color: ColorManager.error,
-                    ),
-                  ),
-                ),
-              ],
+  // ─── Logout ─────────────────────────────────────────────────────────────
+
+  Widget _buildLogoutRow(BuildContext context, AppLocalizations l10n) {
+    return GestureDetector(
+      onTap: () => _showLogoutDialog(context, l10n),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 34.w,
+              height: 34.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(Icons.logout, size: 18.w, color: Colors.red.shade400),
             ),
-          ),
+            SizedBox(width: 12.w),
+            Text(
+              l10n.logout,
+              style: TextStyle(
+                fontFamily: FontHelper.fontFamily(context),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.red.shade400,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void _showLogoutDialog(BuildContext context) {
+  void _showLogoutDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          l10n.logout,
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
+            fontFamily: FontHelper.fontFamily(context),
+          ),
+        ),
+        content: Text(
+          l10n.areYouSureLogout,
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 14.sp,
+            fontFamily: FontHelper.fontFamily(context),
+          ),
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: Colors.black54,
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+              ),
+            ),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               context.goNamed(AppRoutesNames.login);
             },
-            child: const Text(
-              'Logout',
-              style: TextStyle(color: ColorManager.error),
+            child: Text(
+              l10n.logout,
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+              ),
             ),
           ),
         ],

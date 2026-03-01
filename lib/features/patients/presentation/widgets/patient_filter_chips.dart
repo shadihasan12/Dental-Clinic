@@ -66,7 +66,9 @@ class FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyleManager.bodySmall.copyWith(
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: FontHelper.fontFamily(context),
             color: isSelected ? ColorManager.white : ColorManager.textSecondary,
             fontWeight: FontWeight.w500,
           ),

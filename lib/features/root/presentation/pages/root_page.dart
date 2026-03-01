@@ -1,14 +1,15 @@
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
+import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/appointments_page.dart';
-import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -21,89 +22,11 @@ class _RootPageState extends State<RootPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const DashboardPage(),
+    const HomePage(),
     const PatientsListPage(),
     const AppointmentsPage(),
-    const StatisticsPage(),
-    MoreMenuPage(),
-  ];
-
-  final List<_BottomNavItem> _navItems = [
-    _BottomNavItem(
-      icon: SvgPicture.asset(
-        Assets.iconsRootHome,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
-      ),
-      activeIcon: SvgPicture.asset(
-        Assets.iconsRootHome,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-      ),
-      label: 'Home',
-    ),
-    _BottomNavItem(
-      icon: SvgPicture.asset(
-        Assets.iconsRootPatient,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
-      ),
-      activeIcon: SvgPicture.asset(
-        Assets.iconsRootPatient,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-      ),
-      label: 'Patients',
-    ),
-    _BottomNavItem(
-      icon: SvgPicture.asset(
-        Assets.iconsRootAppointment,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
-      ),
-      activeIcon: SvgPicture.asset(
-        Assets.iconsRootAppointment,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-      ),
-      label: 'Schedule',
-    ),
-    _BottomNavItem(
-      icon: SvgPicture.asset(
-        Assets.iconsRootStatistics,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
-      ),
-      activeIcon: SvgPicture.asset(
-        Assets.iconsRootStatistics,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-      ),
-      label: 'Stats',
-    ),
-    _BottomNavItem(
-      icon: SvgPicture.asset(
-        Assets.iconsRootMenu,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
-      ),
-      activeIcon: SvgPicture.asset(
-        Assets.iconsRootMenu,
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-      ),
-      label: 'More',
-    ),
+    const ExpensesPage(),
+    MenuPage(),
   ];
 
   void _onTabSelected(int index) {
@@ -114,6 +37,86 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final List<_BottomNavItem> _navItems = [
+      _BottomNavItem(
+        icon: SvgPicture.asset(
+          Assets.iconsRootHome,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          Assets.iconsRootHome,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
+        ),
+        label: l10n.home,
+      ),
+      _BottomNavItem(
+        icon: SvgPicture.asset(
+          Assets.iconsRootPatient,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          Assets.iconsRootPatient,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
+        ),
+        label: l10n.patients,
+      ),
+      _BottomNavItem(
+        icon: SvgPicture.asset(
+          Assets.iconsRootAppointment,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          Assets.iconsRootAppointment,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
+        ),
+        label: l10n.appointments,
+      ),
+      _BottomNavItem(
+        icon: SvgPicture.asset(
+          Assets.iconsRootMoney,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          Assets.iconsRootMoney,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
+        ),
+        label: l10n.expenses,
+      ),
+      _BottomNavItem(
+        icon: SvgPicture.asset(
+          Assets.iconsRootMenu,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+        ),
+        activeIcon: SvgPicture.asset(
+          Assets.iconsRootMenu,
+          width: 24.w,
+          height: 24.w,
+          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
+        ),
+        label: l10n.more,
+      ),
+    ];
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
@@ -135,7 +138,7 @@ class _RootPageState extends State<RootPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(
                 _navItems.length,
-                (index) => _buildNavItem(index),
+                (index) => _buildNavItem(index, _navItems),
               ),
             ),
           ),
@@ -144,8 +147,8 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-  Widget _buildNavItem(int index) {
-    final item = _navItems[index];
+  Widget _buildNavItem(int index, List<_BottomNavItem> navItems) {
+    final item = navItems[index];
     final isSelected = _currentIndex == index;
 
     return Expanded(
@@ -167,7 +170,7 @@ class _RootPageState extends State<RootPage> {
               Text(
                 item.label,
                 style: TextStyle(
-                  fontFamily: FontFamily.geist,
+                  fontFamily: FontHelper.fontFamily(context),
                   fontSize: 10.sp,
                   color: isSelected
                       ? ColorManager.primary

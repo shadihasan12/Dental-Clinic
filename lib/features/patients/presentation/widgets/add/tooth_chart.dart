@@ -40,30 +40,33 @@ class _ToothChartState extends State<ToothChart> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: ColorManager.gray50,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.gray200),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          // minHeight: 500.h,
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorManager.gray50,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: ColorManager.gray200),
         ),
-        child: AspectRatio(
-          aspectRatio: widget.aspectRatio,
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: SizedBox(
-              width: 308,
-              child: Column(
-                children: [
-                  _buildUpperJaw(),
-                  SizedBox(height: 10),
-                  Divider(color: ColorManager.gray200, thickness: 2),
-                  SizedBox(height: 10),
-                  _buildLowerJaw(),
-                ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            // minHeight: 500.h,
+          ),
+          child: AspectRatio(
+            aspectRatio: widget.aspectRatio,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: SizedBox(
+                width: 308,
+                child: Column(
+                  children: [
+                    _buildUpperJaw(),
+                    SizedBox(height: 10),
+                    Divider(color: ColorManager.gray200, thickness: 2),
+                    SizedBox(height: 10),
+                    _buildLowerJaw(),
+                  ],
+                ),
               ),
             ),
           ),

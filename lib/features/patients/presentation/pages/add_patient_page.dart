@@ -1,5 +1,12 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
+import 'package:dental_clinic_app/features/patients/presentation/manager/add_patient/add_patient_bloc.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -7,21 +14,29 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import '../widgets/widgets.dart';
 
-/// Add new patient page
-class AddPatientPage extends StatefulWidget {
+class AddPatientPage extends StatelessWidget {
   const AddPatientPage({super.key});
 
   @override
-  State<AddPatientPage> createState() => _AddPatientPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<AddPatientBloc>(),
+      child: const _AddPatientContent(),
+    );
+  }
 }
 
-class _AddPatientPageState extends State<AddPatientPage> {
-  // Form controllers
+class _AddPatientContent extends StatefulWidget {
+  const _AddPatientContent();
+
+  @override
+  State<_AddPatientContent> createState() => _AddPatientContentState();
+}
+
+class _AddPatientContentState extends State<_AddPatientContent> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _addressController = TextEditingController();
   final _medicalHistoryController = TextEditingController();
   final _allergiesController = TextEditingController();
   String? _selectedGender;
@@ -32,134 +47,190 @@ class _AddPatientPageState extends State<AddPatientPage> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
-    _emailController.dispose();
-    _addressController.dispose();
     _medicalHistoryController.dispose();
     _allergiesController.dispose();
     super.dispose();
   }
 
-  Future<void> _savePatient() async {
-    // Show loading dialog
-    AppLoadingDialog.show(context: context, message: 'Saving Patient...');
+  void _savePatient() {
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final phone = _phoneController.text.trim();
 
-    // Simulate saving process
-    await Future.delayed(const Duration(seconds: 2));
+    if (firstName.isEmpty || lastName.isEmpty || phone.isEmpty) return;
 
-    // Close loading dialog
-    if (mounted) AppLoadingDialog.dismiss(context);
+    final now = DateTime.now();
+    final dob = _dateOfBirth ?? DateTime(1990);
+    final age = now.year - dob.year - ((now.month < dob.month || (now.month == dob.month && now.day < dob.day)) ? 1 : 0);
 
-    // Show success dialog with treatment option
-    if (mounted) {
-      final shouldAddTreatment = await AppConfirmationDialog.show(
-        context: context,
-        title: 'Patient Saved Successfully!',
-        subtitle: 'Would you like to add treatment for this patient?',
-        icon: Icons.check_circle,
-      );
+    final patient = PatientEntity(
+      id: '',
+      name: '$firstName $lastName',
+      age: age,
+      gender: _selectedGender ?? '',
+      phone: phone,
+      email: '',
+      address: '',
+      dateOfBirth: dob,
+      medicalHistory: _medicalHistoryController.text.trim().isEmpty
+          ? null
+          : _medicalHistoryController.text.trim(),
+      allergies: _allergiesController.text.trim().isEmpty
+          ? null
+          : _allergiesController.text.trim(),
+    );
 
-      if (shouldAddTreatment == true) {
-        // Navigate to add treatment page
-        if (mounted) {
-          context.pushNamed(
-            AppRoutesNames.addTreatment,
-            extra: {'dentalCase': '', 'isInitial': true},
-          );
-        }
-      } else {
-        // Go back to patients list
-        if (mounted) context.pop();
-      }
-    }
+    context.read<AddPatientBloc>().add(AddPatientEvent.submit(patient));
   }
 
   Future<void> _selectDate() async {
-    final picked = await showDatePicker(
+    final l10n = AppLocalizations.of(context)!;
+    DateTime tempDate = _dateOfBirth ?? DateTime(1990);
+
+    await showModalBottomSheet(
       context: context,
-      initialDate: _dateOfBirth ?? DateTime(1990),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(primary: Color(0xFF70B2B2)),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (context) => SizedBox(
+        height: 300.h,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      l10n.cancel,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() => _dateOfBirth = tempDate);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      l10n.close,
+                      style: TextStyle(
+                        color: const Color(0xFF70B2B2),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: FontHelper.fontFamily(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: Colors.grey.shade200),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: _dateOfBirth ?? DateTime(1990),
+                minimumDate: DateTime(1900),
+                maximumDate: DateTime.now(),
+                onDateTimeChanged: (date) => tempDate = date,
+              ),
+            ),
+          ],
         ),
-        child: child!,
       ),
     );
-    if (picked != null) {
-      setState(() => _dateOfBirth = picked);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF70B2B2),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorManager.white),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          'Add New Patient',
-          style: TextStyle(
-            color: ColorManager.white,
-            fontSize: 18.sp,
-            fontFamily: FontFamily.geist,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: PatientInfoForm(
-          firstNameController: _firstNameController,
-          lastNameController: _lastNameController,
-          phoneController: _phoneController,
-          emailController: _emailController,
-          addressController: _addressController,
-          medicalHistoryController: _medicalHistoryController,
-          allergiesController: _allergiesController,
-          selectedGender: _selectedGender,
-          dateOfBirth: _dateOfBirth,
-          onGenderChanged: (v) => setState(() => _selectedGender = v),
-          onDateOfBirthTap: _selectDate,
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: ColorManager.white,
-          boxShadow: [
-            BoxShadow(
-              color: ColorManager.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+    final l10n = AppLocalizations.of(context)!;
+    return BlocListener<AddPatientBloc, AddPatientState>(
+      listener: (context, state) {
+        state.when(
+          initial: () {},
+          saving: () {
+            AppLoadingDialog.show(context: context, message: l10n.savingPatient);
+          },
+          success: (patient) async {
+            AppLoadingDialog.dismiss(context);
+
+            final shouldAddTreatment = await AppConfirmationDialog.show(
+              context: context,
+              title: l10n.patientSavedSuccessfully,
+              subtitle: l10n.addTreatmentQuestion,
+              icon: Icons.check_circle,
+            );
+
+            if (shouldAddTreatment == true) {
+              if (context.mounted) {
+                context.pushReplacementNamed(
+                  AppRoutesNames.addTreatment,
+                  extra: {'patientId': patient.id, 'isInitial': true},
+                );
+              }
+            } else {
+              if (context.mounted) context.pop();
+            }
+          },
+          error: (message) {
+            AppLoadingDialog.dismiss(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: ColorManager.white,
+        body: Column(
+          children: [
+            PageHeader(title: l10n.addPatient, onBack: () => context.pop()),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                child: PatientInfoForm(
+                  firstNameController: _firstNameController,
+                  lastNameController: _lastNameController,
+                  phoneController: _phoneController,
+                  medicalHistoryController: _medicalHistoryController,
+                  allergiesController: _allergiesController,
+                  selectedGender: _selectedGender,
+                  dateOfBirth: _dateOfBirth,
+                  onGenderChanged: (v) => setState(() => _selectedGender = v),
+                  onDateOfBirthTap: _selectDate,
+                ),
+              ),
             ),
           ],
         ),
-        child: SafeArea(
-          top: false,
-          child: ElevatedButton(
-            onPressed: _savePatient,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF70B2B2),
-              foregroundColor: ColorManager.white,
-              elevation: 2,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
+          child: SafeArea(
+            top: false,
+            child: ElevatedButton(
+              onPressed: _savePatient,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.primary,
+                foregroundColor: ColorManager.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
               ),
-            ),
-            child: Text(
-              'Save Patient',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: FontFamily.geist,
-                fontWeight: FontWeight.w600,
-                color: ColorManager.white,
+              child: Text(
+                l10n.save,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

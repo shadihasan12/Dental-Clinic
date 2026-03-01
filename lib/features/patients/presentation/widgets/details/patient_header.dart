@@ -1,14 +1,11 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 
 class PatientHeader extends StatelessWidget {
   final String name;
-  final int age;
-  final String gender;
-  final String phone;
   final VoidCallback onBackPressed;
   final VoidCallback? onEditPressed;
   final TabController tabController;
@@ -16,9 +13,6 @@ class PatientHeader extends StatelessWidget {
   const PatientHeader({
     super.key,
     required this.name,
-    required this.age,
-    required this.gender,
-    required this.phone,
     required this.onBackPressed,
     required this.tabController,
     this.onEditPressed,
@@ -26,100 +20,80 @@ class PatientHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: GradientManager.primaryHeader,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
+      color: ColorManager.white,
       child: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            _buildAppBar(),
-            _buildPatientInfo(),
-            _buildTabBar(),
+            // App bar row: back + name + edit
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: ColorManager.textPrimary,
+                      size: 20.w,
+                    ),
+                    onPressed: onBackPressed,
+                  ),
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (onEditPressed != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: ColorManager.textSecondary,
+                        size: 20.w,
+                      ),
+                      onPressed: onEditPressed,
+                    ),
+                ],
+              ),
+            ),
+
+            // Tab bar
+            TabBar(
+              controller: tabController,
+              labelColor: ColorManager.primary,
+              unselectedLabelColor: ColorManager.textTertiary,
+              indicatorColor: ColorManager.primary,
+              indicatorWeight: 2.5,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: ColorManager.borderLight,
+              labelStyle: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w600,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w400,
+              ),
+              tabs: [
+                Tab(text: l10n.info),
+                Tab(text: l10n.case_),
+                Tab(text: l10n.history),
+              ],
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: ColorManager.white),
-            onPressed: onBackPressed,
-          ),
-          const Spacer(),
-          if (onEditPressed != null)
-            IconButton(
-              icon: const Icon(Icons.edit, color: ColorManager.white),
-              onPressed: onEditPressed,
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPatientInfo() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 16.h),
-      child: Column(
-        children: [
-          Text(
-            name,
-            style: TextStyle(
-              fontSize: 22.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            '$age years • $gender',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: FontFamily.geist,
-              fontWeight: FontWeight.w400,
-              color: ColorManager.white.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabBar() {
-    return TabBar(
-      controller: tabController,
-      labelColor: ColorManager.white,
-      unselectedLabelColor: ColorManager.white.withValues(alpha: 0.6),
-      indicatorColor: ColorManager.white,
-      indicatorWeight: 3,
-      indicatorSize: TabBarIndicatorSize.tab,
-      labelStyle: TextStyle(
-        fontSize: 14.sp,
-        fontFamily: FontFamily.geist,
-        fontWeight: FontWeight.w600,
-      ),
-      unselectedLabelStyle: TextStyle(
-        fontSize: 14.sp,
-        fontFamily: FontFamily.geist,
-        fontWeight: FontWeight.w400,
-      ),
-      tabs: const [
-        Tab(text: 'Info'),
-        Tab(text: 'Case'),
-        Tab(text: 'History'),
-      ],
     );
   }
 }

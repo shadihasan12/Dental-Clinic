@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # UI
   cupertino_icons: ^1.0.8
@@ -40,8 +42,6 @@ dependencies:
   # Local Storage
   shared_preferences: ^2.2.2
 
-  # Google Fonts (for Inter font)
-  google_fonts: ^6.1.0
   flutter_gen: ^5.12.0
   flutter_gen_runner: ^5.12.0
   carousel_slider: ^5.1.1
@@ -62,6 +62,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  generate: true  # Enable localization generation
+
   assets:
     - assets/icons/
     - assets/icons/root/
@@ -72,18 +74,28 @@ flutter:
   fonts:
     - family: Geist
       fonts:
-        - asset: assets/fonts/Geist-Light.ttf
+        - asset: assets/fonts/geist/Geist-Light.ttf
           weight: 300
-        - asset: assets/fonts/Geist-Regular.ttf
+        - asset: assets/fonts/geist/Geist-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Geist-Medium.ttf
+        - asset: assets/fonts/geist/Geist-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Geist-SemiBold.ttf
+        - asset: assets/fonts/geist/Geist-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Geist-Bold.ttf
+        - asset: assets/fonts/geist/Geist-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Geist-ExtraBold.ttf
+        - asset: assets/fonts/geist/Geist-ExtraBold.ttf
           weight: 800
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/cairo/Cairo-Light.ttf
+          weight: 300
+        - asset: assets/fonts/cairo/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/cairo/Cairo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/cairo/Cairo-Bold.ttf
+          weight: 700
 
 
 flutter_gen:

@@ -1,16 +1,15 @@
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dental_clinic_app/core/localization/language_service.dart';
+import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 
-/// Dependency injection module for BLoCs and Cubits
-/// Add your feature BLoCs here as you create them
-///
-/// Example:
-/// ```dart
-/// @singleton
-/// AppointmentsBloc appointmentsBloc(
-///   GetAppointmentsUseCase getAppointmentsUseCase,
-/// ) => AppointmentsBloc(getAppointmentsUseCase);
-/// ```
 @module
 abstract class BlocInjection {
-  // Add your BLoC registrations here
+  @lazySingleton
+  LanguageService languageService(SharedPreferences sharedPreferences) =>
+      LanguageService(sharedPreferences);
+
+  @lazySingleton
+  LanguageBloc languageBloc(LanguageService languageService) =>
+      LanguageBloc(languageService: languageService);
 }
