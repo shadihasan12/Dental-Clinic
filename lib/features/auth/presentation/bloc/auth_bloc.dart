@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
@@ -102,35 +103,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLoginSubmitted(_LoginSubmitted event, Emitter<AuthState> emit) async {
     if (!state.isLoginFormValid) {
+      debugPrint('[AuthBloc] Login validation failed — identifier: "${state.loginEmail}"');
       emit(state.copyWith(loginError: 'Please fill in all fields correctly'));
       return;
     }
 
+    debugPrint('[AuthBloc] Login submitted — identifier: "${state.loginEmail}"');
     emit(state.copyWith(isLoginLoading: true, loginError: null));
 
-    try {
-      // TODO: Implement actual login API call
-      await Future.delayed(const Duration(seconds: 2));
+    final params = LoginParams(
+      emailOrMobileNumber: state.loginEmail,
+      password: state.loginPassword,
+    );
 
-      // Mock successful login - create a mock user based on email
-      // In real app, this would come from API response
-      final mockUser = UserEntity(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        email: state.loginEmail,
-        name: 'Dr. ${state.loginEmail.split('@').first}',
-      );
+    final result = await _authRepository.login(params: params);
 
-      emit(state.copyWith(
-        isLoginLoading: false,
-        status: AuthStatus.authenticated,
-        currentUser: mockUser,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isLoginLoading: false,
-        loginError: 'Login failed. Please try again.',
-      ));
-    }
+    result.fold(
+      (failure) {
+        debugPrint('[AuthBloc] ✗ Login failed — ${NetworkExceptions.getErrorMessage(failure)}');
+        emit(state.copyWith(
+          isLoginLoading: false,
+          loginError: NetworkExceptions.getErrorMessage(failure),
+        ));
+      },
+      (loginResult) {
+        debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), memberships: ${loginResult.memberships.length}');
+        emit(state.copyWith(
+          isLoginLoading: false,
+          status: AuthStatus.authenticated,
+          currentUser: loginResult.user,
+          memberships: loginResult.memberships,
+          activeClinicId: loginResult.memberships.isNotEmpty
+              ? loginResult.memberships.first.clinicId
+              : null,
+        ));
+      },
+    );
   }
 
   // Signup handlers

@@ -49,11 +49,16 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     }
   }
 
-  String? _validateEmail(String? value) {
+  String? _validateEmailOrPhone(String? value) {
     if (!_showValidationErrors) return null;
-    if (value == null || value.isEmpty) return 'Please enter your email';
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Please enter a valid email';
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email or phone number';
+    }
+    final isEmail =
+        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
+    final isPhone = RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value.trim());
+    if (!isEmail && !isPhone) {
+      return 'Please enter a valid email or phone number';
     }
     return null;
   }
@@ -128,12 +133,12 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   Widget _buildEmailField(AuthState state) {
     return AuthTextField(
-      label: 'Email',
-      hint: 'doctor@example.com',
+      label: 'Email or Phone Number',
+      hint: 'doctor@example.com or 0935315978',
       controller: _emailController,
-      prefixIcon: Icons.email_outlined,
-      keyboardType: TextInputType.emailAddress,
-      validator: _validateEmail,
+      prefixIcon: Icons.person_outline,
+      keyboardType: TextInputType.text,
+      validator: _validateEmailOrPhone,
       onChanged: (value) {
         context.read<AuthBloc>().add(AuthEvent.loginEmailChanged(value));
         if (_showValidationErrors) _formKey.currentState?.validate();

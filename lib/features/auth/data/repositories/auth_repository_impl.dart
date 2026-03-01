@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/network/network_info.dart';
@@ -147,6 +148,33 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Left(NetworkExceptions.unexpectedError());
       }
     } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, LoginResult>> login({
+    required LoginParams params,
+  }) async {
+    debugPrint('[LoginRepo] Login requested — no internet: ${!await _networkInfo.isConnected}');
+    if (await _networkInfo.isConnected) {
+      try {
+        final model = await _remoteDataSource.login(params.toJson());
+        final result = LoginResult(
+          user: model.toUserEntity(),
+          memberships: model.toMemberships(),
+        );
+        debugPrint('[LoginRepo] ✓ Success — user: ${result.user.name}, memberships: ${result.memberships.length}');
+        return Right(result);
+      } on NetworkExceptions catch (e) {
+        debugPrint('[LoginRepo] ✗ NetworkException: ${NetworkExceptions.getErrorMessage(e)}');
+        return Left(e);
+      } catch (e) {
+        debugPrint('[LoginRepo] ✗ Unexpected error: $e');
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      debugPrint('[LoginRepo] ✗ No internet connection');
       return const Left(NetworkExceptions.noInternetConnection());
     }
   }

@@ -4,6 +4,8 @@ import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 
 /// Parameters for requesting OTP
 class RequestOtpParams {
@@ -59,6 +61,33 @@ class VerifyOtpResponse {
       sessionId: json['meta']?['session'] ?? '',
     );
   }
+}
+
+/// Parameters for login request
+class LoginParams {
+  final String emailOrMobileNumber;
+  final String password;
+
+  LoginParams({
+    required this.emailOrMobileNumber,
+    required this.password,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'email_or_mobile_number': emailOrMobileNumber,
+        'password': password,
+      };
+}
+
+/// Result from a successful login
+class LoginResult {
+  final UserEntity user;
+  final List<ClinicMembershipEntity> memberships;
+
+  LoginResult({
+    required this.user,
+    required this.memberships,
+  });
 }
 
 /// Parameters for registration request
@@ -140,5 +169,10 @@ abstract class AuthRepository {
   /// Register a new user with clinic creation
   Future<Either<NetworkExceptions, RegisterResponseEntity>> register({
     required RegisterRequestParams params,
+  });
+
+  /// Login with email or mobile number
+  Future<Either<NetworkExceptions, LoginResult>> login({
+    required LoginParams params,
   });
 }

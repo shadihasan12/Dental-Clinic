@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
@@ -5,6 +6,7 @@ import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.da
 import 'package:dental_clinic_app/features/auth/data/models/specialty_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/location_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/plan_model.dart';
+import 'package:dental_clinic_app/features/auth/data/models/login_response_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/register_response_model.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 
@@ -30,6 +32,9 @@ abstract class AuthRemoteDataSource {
 
   /// Register new user with clinic
   Future<RegisterResponseModel> register(Map<String, dynamic> body);
+
+  /// Login with email or mobile number
+  Future<LoginResponseModel> login(Map<String, dynamic> body);
 }
 
 /// Implementation of auth remote data source using API consumer
@@ -149,5 +154,43 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     // Map JSON to RegisterResponseModel
     return RegisterResponseModel.fromJson(data);
+  }
+
+  @override
+  Future<LoginResponseModel> login(Map<String, dynamic> body) async {
+    debugPrint('[LOGIN] → POST ${AuthEndpoints.login}');
+    debugPrint('[LOGIN] Request: { email_or_mobile_number: ${body['email_or_mobile_number']}, password: *** }');
+
+    final response = await _apiConsumer.post(
+      AuthEndpoints.login,
+      body: body,
+    );
+
+    debugPrint('[LOGIN] ← Raw response: $response');
+
+    // Extract and save token if present at root level
+    final token = response['token'] as String?;
+    debugPrint('[LOGIN] Token present: ${token != null && token.isNotEmpty}');
+    if (token != null && token.isNotEmpty) {
+      await _tokenStorage.saveToken(token);
+    }
+
+    // Extract data object from response
+    final data = response['data'] as Map<String, dynamic>?;
+    if (data == null) {
+      debugPrint('[LOGIN] ✗ Response "data" field is null');
+      throw Exception('Login failed: Invalid response data');
+    }
+
+    debugPrint('[LOGIN] ✓ Parsed user — id: ${data['id']}, name: ${data['name']}, email: ${data['email']}');
+
+    // Save user ID for later use
+    final userId = data['id'] as String?;
+    if (userId != null && userId.isNotEmpty) {
+      await _tokenStorage.saveUserId(userId);
+      debugPrint('[LOGIN] User ID saved: $userId');
+    }
+
+    return LoginResponseModel.fromJson(data);
   }
 }

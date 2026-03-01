@@ -78,7 +78,8 @@ enum AuthStatus {
 
 // Validation helpers
 extension AuthStateValidation on AuthState {
-  bool get isLoginEmailValid => _isValidEmail(loginEmail);
+  bool get isLoginEmailValid =>
+      _isValidEmail(loginEmail) || _isValidPhone(loginEmail);
   bool get isLoginPasswordValid => loginPassword.length >= 6;
   bool get isLoginFormValid => isLoginEmailValid && isLoginPasswordValid;
 
@@ -124,5 +125,9 @@ extension AuthStateValidation on AuthState {
 
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  bool _isValidPhone(String phone) {
+    return RegExp(r'^\+?[0-9]{7,15}$').hasMatch(phone.trim());
   }
 }

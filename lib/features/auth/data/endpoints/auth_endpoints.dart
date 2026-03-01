@@ -20,4 +20,7 @@ class AuthEndpoints {
 
   /// POST /auth/verify-otp - Verify OTP and get session token
   static const String verifyOtp = '/auth/verify-otp';
+
+  /// POST /auth/login - Login with email or mobile number
+  static const String login = '/auth/login';
 }
