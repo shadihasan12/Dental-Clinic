@@ -75,7 +75,7 @@ class PrimaryButton extends StatelessWidget {
           color: isEnabled ? ColorManager.white : ColorManager.gray500,
           fontFamily: FontHelper.fontFamily(context),
           fontWeight: FontWeight.w600,
-          fontSize: 16.sp
+          fontSize: 14.sp
         ),
       );
     }

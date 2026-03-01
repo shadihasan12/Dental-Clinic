@@ -1,4 +1,4 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -52,32 +52,37 @@ class GradientHeader extends StatelessWidget {
             right: 20.w,
             bottom: bottomPadding ?? 20.h,
             child: child ??
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (title != null)
-                      Text(
-                        title!,
-                        style: TextStyle(
-                          color: ColorManager.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22.sp,
-                          fontFamily: FontFamily.geist,
-                        ),
-                      ),
-                    if (subtitle != null) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        subtitle!,
-                        style: TextStyle(
-                          color: ColorManager.white.withValues(alpha: 0.9),
-                          fontSize: 16.sp,
-                          fontFamily: FontFamily.geist,
-                        ),
-                      ),
-                    ],
-                  ],
+                Builder(
+                  builder: (context) {
+                    final fontFamily = FontHelper.fontFamily(context);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (title != null)
+                          Text(
+                            title!,
+                            style: TextStyle(
+                              color: ColorManager.white,
+                              fontWeight: FontWeightManager.bold,
+                              fontSize: FontSizesManager.s22,
+                              fontFamily: fontFamily,
+                            ),
+                          ),
+                        if (subtitle != null) ...[
+                          SizedBox(height: 4.h),
+                          Text(
+                            subtitle!,
+                            style: TextStyle(
+                              color: ColorManager.white.withValues(alpha: 0.9),
+                              fontSize: FontSizesManager.s16,
+                              fontFamily: fontFamily,
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
                 ),
           ),
         ],

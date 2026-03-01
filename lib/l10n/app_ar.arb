@@ -120,7 +120,8 @@
   "payments": "الدفعات",
   "more": "المزيد",
   "total": "الكلي",
-  "welcomeBack":"مرحباً",
+  "welcomeBack":"مرحباً بعودتك",
+  "signInToContinue":"سجّل الدخول إلى حسابك للمتابعة",
   "allFilter": "الكل",
   "newFilter": "الأحدث",
   "years": "سنوات",
@@ -370,6 +371,182 @@
   },
   "noSubscription": "لا توجد باقة نشطة",
   "startFreeTrial": "ابدأ الفترة التجريبية",
-  "tryAllFeatures": "جرّب جميع الميزات مجاناً لمدة 30 يوماً"
+  "tryAllFeatures": "جرّب جميع الميزات مجاناً لمدة 30 يوماً",
+  "skip": "تخطي",
+  "next": "التالي",
+  "getStarted": "ابدأ الآن",
+  "onboardingTitle1": "إدارة المرضى\nبسهولة",
+  "onboardingDesc1": "تبسيط إدارة المرضى مع إنشاء الحالات تلقائياً وملفات شاملة للمرضى",
+  "onboardingTitle2": "جدولة ذكية",
+  "onboardingDesc2": "إدارة المواعيد بسهولة مع عرض التقويم والتذكيرات التلقائية",
+  "onboardingTitle3": "سجلات علاجية\nتفاعلية",
+  "onboardingDesc3": "تسجيل العلاجات باستخدام مخطط الأسنان ثنائي الأبعاد لتتبع دقيق وبصري للعلاج",
+  "onboardingTitle4": "رؤى وتحليلات",
+  "onboardingDesc4": "تتبع أداء العيادة مع إحصائيات شاملة وإدارة المدفوعات",
+
+  "signIn": "تسجيل الدخول",
+  "signUp": "إنشاء حساب",
+  "logIn": "تسجيل الدخول",
+  "password": "كلمة المرور",
+  "emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
+  "emailOrPhoneHint": "doctor@example.com أو 0935315978",
+  "passwordHint": "********",
+  "forgotPasswordQuestion": "نسيت كلمة المرور؟",
+  "orContinueWith": "أو تابع عبر",
+  "dontHaveAccount": "ليس لديك حساب؟ ",
+  "alreadyHaveAccount": "لديك حساب بالفعل؟ ",
+  "copyrightSmylos": "\u00A9 2026 SmylOS Pro. جميع الحقوق محفوظة.",
+  "pleaseEnterEmailOrPhone": "يرجى إدخال بريدك الإلكتروني أو رقم هاتفك",
+  "pleaseEnterValidEmailOrPhone": "يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح",
+  "pleaseEnterPassword": "يرجى إدخال كلمة المرور",
+  "passwordMinLength": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  "loginFailed": "فشل تسجيل الدخول",
+  "appName": "SmylOS Pro",
+  "professionalClinicManagement": "إدارة العيادات الاحترافية",
+
+  "createAccount": "إنشاء حساب",
+  "joinDentalCommunity": "انضم إلى مجتمعنا الطبي",
+  "fullNameRequired": "الاسم الكامل *",
+  "fullNameHint": "د. أحمد محمد",
+  "emailRequired": "البريد الإلكتروني *",
+  "emailHint": "doctor@example.com",
+  "mobileNumber": "رقم الهاتف *",
+  "mobileHint": "091234567",
+  "selectYourSpecialization": "اختر تخصصك",
+  "specializationRequired": "التخصص *",
+  "createPassword": "أنشئ كلمة مرور",
+  "passwordRequired": "كلمة المرور *",
+  "confirmPassword": "تأكيد كلمة المرور *",
+  "confirmPasswordHint": "أعد إدخال كلمة المرور",
+  "pleaseConfirmPassword": "يرجى تأكيد كلمة المرور",
+  "mobileRequired": "رقم الهاتف مطلوب",
+  "mobileTooShort": "رقم الهاتف قصير جداً",
+  "validationError": "خطأ في التحقق",
+  "pleaseSelectSpecialization": "يرجى اختيار التخصص",
+  "signupFailed": "فشل إنشاء الحساب",
+  "failedToLoadData": "فشل تحميل البيانات المطلوبة",
+  "checkConnectionRetry": "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
+  "retry": "إعادة المحاولة",
+  "signupInfoBox": "أنشئ حسابك، ثم قم بإعداد أو الانضمام إلى عيادة من لوحة التحكم.",
+
+  "enterEmailToGetStarted": "أدخل بريدك الإلكتروني للبدء",
+  "verificationCodeInfo": "سنرسل لك رمز تحقق لتأكيد بريدك الإلكتروني.",
+  "emailAddress": "البريد الإلكتروني",
+  "pleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+  "sendVerificationCode": "إرسال رمز التحقق",
+  "emailRequiredTitle": "البريد الإلكتروني مطلوب",
+  "pleaseEnterEmailAddress": "يرجى إدخال بريدك الإلكتروني",
+  "otpSent": "تم إرسال الرمز",
+  "verificationCodeSentTo": "تم إرسال رمز التحقق إلى {email}",
+  "@verificationCodeSentTo": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+
+  "verifyYourEmail": "تحقق من بريدك الإلكتروني",
+  "enterCodeSentToEmail": "أدخل الرمز المرسل إلى بريدك الإلكتروني",
+  "sentVerificationCode": "لقد أرسلنا رمز تحقق مكون من 6 أرقام",
+  "sendingCode": "جاري إرسال الرمز...",
+  "resendCodeIn": "إعادة الإرسال خلال {seconds} ثانية",
+  "@resendCodeIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "didntReceiveCode": "لم تستلم الرمز؟ ",
+  "resend": "إعادة الإرسال",
+  "verifyAndContinue": "تحقق ومتابعة",
+  "invalidCode": "رمز غير صالح",
+  "pleaseEnterAllDigits": "يرجى إدخال جميع الأرقام الستة",
+  "emailVerified": "تم التحقق من البريد الإلكتروني",
+  "completeYourRegistration": "يرجى إكمال التسجيل",
+  "verificationFailed": "فشل التحقق",
+
+  "forgotPassword": "نسيت كلمة المرور",
+  "forgotPasswordSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين",
+  "enterRegisteredEmail": "أدخل بريدك الإلكتروني المسجل",
+  "sendResetLink": "إرسال رابط إعادة التعيين",
+  "backToSignIn": "العودة لتسجيل الدخول",
+  "emailSent": "تم إرسال البريد!",
+  "resetLinkSentMessage": "لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد واتباع التعليمات.",
+  "didntReceiveEmail": "لم تستلم البريد الإلكتروني؟ ",
+
+  "chooseYourPlan": "اختر باقتك",
+  "selectPlanSubtitle": "اختر الخطة المثالية لعيادتك",
+  "noPlansAvailable": "لا توجد خطط متاحة",
+  "monthly": "شهري",
+  "yearly": "سنوي",
+  "savePercent": "وفر 17%",
+  "perMonth": "/شهرياً",
+  "perYear": "/سنوياً",
+  "dayFreeTrial": "تجربة مجانية لمدة {days} يوم",
+  "@dayFreeTrial": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "mostPopular": "الأكثر شيوعاً",
+  "unlimitedPatients": "مرضى غير محدودين",
+  "oneDoctorOneAssistant": "طبيب واحد ومساعد واحد",
+  "storageAmount": "{amount} جيجابايت تخزين",
+  "@storageAmount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "allFeaturesIncluded": "جميع الميزات مضمّنة",
+  "support247": "دعم على مدار الساعة",
+  "upToDoctors": "حتى {count} أطباء",
+  "@upToDoctors": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "prioritySupport": "دعم ذو أولوية",
+  "unlimitedDoctorsAssistants": "أطباء ومساعدون غير محدودين",
+  "storagePerAccount": "{amount} جيجابايت تخزين لكل حساب",
+  "@storagePerAccount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "advancedAnalytics": "تحليلات متقدمة",
+  "adminRoleIncluded": "صلاحيات مسؤول مضمّنة",
+  "fullPatientManagement": "إدارة كاملة للمرضى",
+  "appointmentScheduling": "جدولة المواعيد",
+  "treatmentTracking": "تتبع العلاج",
+
+  "completeYourProfile": "أكمل ملفك الشخصي",
+  "setupClinicDetails": "قم بإعداد تفاصيل عيادتك",
+  "clinicDetailsInfo": "أدخل تفاصيل عيادتك لإكمال التسجيل. يمكنك تحديثها لاحقاً من الإعدادات.",
+  "clinicNameRequired": "اسم العيادة *",
+  "clinicNameHintExample": "مثال: عيادة الابتسامة المشرقة",
+  "locationRequired": "الموقع *",
+  "searchForLocation": "ابحث عن موقع...",
+  "noLocationsFound": "لم يتم العثور على مواقع. جرّب كلمة بحث أخرى.",
+  "detailedAddress": "العنوان التفصيلي",
+  "detailedAddressHint": "الشارع، رقم المبنى، إلخ.",
+  "completeRegistration": "إكمال التسجيل",
+  "pleaseEnterClinicName": "يرجى إدخال اسم العيادة",
+  "clinicNameMinChars": "يجب أن يكون اسم العيادة 3 أحرف على الأقل",
+  "clinicNameMaxChars": "يجب أن يكون اسم العيادة أقل من 100 حرف",
+  "pleaseSelectLocation": "يرجى اختيار الموقع",
+  "pleaseSelectPlan": "يرجى اختيار خطة الاشتراك",
+  "sessionExpired": "انتهت الجلسة",
+  "pleaseVerifyEmailAgain": "يرجى التحقق من بريدك الإلكتروني مجدداً",
+  "welcome": "مرحباً!",
+  "accountCreatedSuccessfully": "تم إنشاء حسابك بنجاح",
+  "registrationFailed": "فشل التسجيل",
+
+  "rememberPassword": "تتذكر كلمة المرور؟ ",
+  "setNewPassword": "تعيين كلمة مرور جديدة",
+  "enterNewPasswordBelow": "أدخل كلمة المرور الجديدة أدناه",
+  "newPassword": "كلمة المرور الجديدة",
+  "resetPasswordButton": "إعادة تعيين كلمة المرور",
+  "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+  "passwordResetSuccessMessage": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة",
+  "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
 }
 

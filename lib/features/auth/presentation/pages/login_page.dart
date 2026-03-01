@@ -1,4 +1,5 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +9,8 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
-import '../widgets/widgets.dart';
+import '../widgets/social_login_buttons.dart';
+import '../widgets/auth_text_field.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -51,27 +53,32 @@ class _LoginPageContentState extends State<_LoginPageContent> {
 
   String? _validateEmailOrPhone(String? value) {
     if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Please enter your email or phone number';
+      return l10n.pleaseEnterEmailOrPhone;
     }
     final isEmail =
         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
     final isPhone = RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value.trim());
     if (!isEmail && !isPhone) {
-      return 'Please enter a valid email or phone number';
+      return l10n.pleaseEnterValidEmailOrPhone;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (!_showValidationErrors) return null;
-    if (value == null || value.isEmpty) return 'Please enter your password';
-    if (value.length < 6) return 'Password must be at least 6 characters';
+    final l10n = AppLocalizations.of(context)!;
+    if (value == null || value.isEmpty) return l10n.pleaseEnterPassword;
+    if (value.length < 6) return l10n.passwordMinLength;
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Scaffold(
       backgroundColor: ColorManager.white,
       body: BlocConsumer<AuthBloc, AuthState>(
@@ -82,48 +89,101 @@ class _LoginPageContentState extends State<_LoginPageContent> {
           if (state.loginError != null) {
             AppSnackbar.showError(
               context,
-              title: 'Login Failed',
+              title: l10n.loginFailed,
               message: state.loginError,
             );
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                const AuthHeader(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 32.h),
-                        _buildEmailField(state),
-                        SizedBox(height: 20.h),
-                        _buildPasswordField(state),
-                        SizedBox(height: 12.h),
-                        _buildForgotPasswordLink(),
-                        SizedBox(height: 24.h),
-                        _buildSignInButton(state),
-                        SizedBox(height: 24.h),
-                        _buildDivider(),
-                        SizedBox(height: 24.h),
-                        SocialLoginButtons(
-                          onGooglePressed: () {},
-                          onFacebookPressed: () {},
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 60.h),
+
+                    // Logo
+                    Center(
+                      child: Container(
+                        width: 64.w,
+                        height: 64.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.primary10,
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
-                        SizedBox(height: 32.h),
-                        _buildSignUpLink(),
-                        SizedBox(height: 32.h),
-                        _buildFooter(),
-                        SizedBox(height: 24.h),
-                      ],
+                        child: Icon(
+                          Icons.medical_services_rounded,
+                          color: ColorManager.primary,
+                          size: 32.w,
+                        ),
+                      ),
                     ),
-                  ),
+
+                    SizedBox(height: 32.h),
+
+                    // Welcome text
+                    Center(
+                      child: Text(
+                        l10n.welcomeBack,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s28,
+                          fontWeight: FontWeightManager.bold,
+                          fontFamily: fontFamily,
+                          color: ColorManager.textPrimary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Center(
+                      child: Text(
+                        l10n.signInToContinue,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s14,
+                          fontFamily: fontFamily,
+                          color: ColorManager.textSecondary,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 40.h),
+
+                    // Fields
+                    _buildEmailField(state, l10n),
+                    SizedBox(height: 16.h),
+                    _buildPasswordField(state, l10n),
+                    SizedBox(height: 12.h),
+                    _buildForgotPasswordLink(l10n, fontFamily),
+
+                    SizedBox(height: 28.h),
+
+                    // Sign in button
+                    _buildSignInButton(state, l10n),
+
+                    SizedBox(height: 28.h),
+
+                    // Divider
+                    _buildDivider(l10n, fontFamily),
+
+                    // SizedBox(height: 28.h),
+
+                    // // Social buttons
+                    // SocialLoginButtons(
+                    //   onGooglePressed: () {},
+                    //   onFacebookPressed: () {},
+                    // ),
+
+                    SizedBox(height: 40.h),
+
+                    // Sign up link
+                    _buildSignUpLink(l10n, fontFamily),
+
+                    SizedBox(height: 24.h),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         },
@@ -131,10 +191,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildEmailField(AuthState state) {
+  Widget _buildEmailField(AuthState state, AppLocalizations l10n) {
     return AuthTextField(
-      label: 'Email or Phone Number',
-      hint: 'doctor@example.com or 0935315978',
+      label: l10n.emailOrPhone,
+      hint: l10n.emailOrPhoneHint,
       controller: _emailController,
       prefixIcon: Icons.person_outline,
       keyboardType: TextInputType.text,
@@ -146,10 +206,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildPasswordField(AuthState state) {
+  Widget _buildPasswordField(AuthState state, AppLocalizations l10n) {
     return AuthTextField(
-      label: 'Password',
-      hint: '********',
+      label: l10n.password,
+      hint: l10n.passwordHint,
       controller: _passwordController,
       prefixIcon: Icons.lock_outline,
       obscureText: !state.isLoginPasswordVisible,
@@ -173,9 +233,9 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildForgotPasswordLink() {
+  Widget _buildForgotPasswordLink(AppLocalizations l10n, String fontFamily) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: AlignmentDirectional.centerEnd,
       child: TextButton(
         onPressed: () => context.pushNamed(AppRoutesNames.forgotPassword),
         style: TextButton.styleFrom(
@@ -184,38 +244,38 @@ class _LoginPageContentState extends State<_LoginPageContent> {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Text(
-          'Forgot Password?',
+          l10n.forgotPasswordQuestion,
           style: TextStyle(
             color: ColorManager.primary,
-            fontWeight: FontWeight.w500,
-            fontFamily: FontFamily.geist,
-            fontSize: 12.sp,
+            fontWeight: FontWeightManager.medium,
+            fontFamily: fontFamily,
+            fontSize: FontSizesManager.s12,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSignInButton(AuthState state) {
+  Widget _buildSignInButton(AuthState state, AppLocalizations l10n) {
     return PrimaryButton(
-      text: 'Sign In',
+      text: l10n.signIn,
       onPressed: state.isLoginLoading ? null : _handleSignIn,
       isLoading: state.isLoginLoading,
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(AppLocalizations l10n, String fontFamily) {
     return Row(
       children: [
         Expanded(child: Divider(color: ColorManager.gray200, thickness: 1)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'Or continue with',
+            l10n.orContinueWith,
             style: TextStyle(
               color: ColorManager.textTertiary,
-              fontSize: 12.sp,
-              fontFamily: FontFamily.geist
+              fontSize: FontSizesManager.s12,
+              fontFamily: fontFamily,
             ),
           ),
         ),
@@ -224,16 +284,16 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildSignUpLink() {
+  Widget _buildSignUpLink(AppLocalizations l10n, String fontFamily) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Don't have an account? ",
+          l10n.dontHaveAccount,
           style: TextStyle(
             color: ColorManager.textSecondary,
-             fontSize: 14.sp,
-              fontFamily: FontFamily.geist
+            fontSize: FontSizesManager.s14,
+            fontFamily: fontFamily,
           ),
         ),
         TextButton(
@@ -244,12 +304,12 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           child: Text(
-            'Sign Up',
+            l10n.signUp,
             style: TextStyle(
               color: ColorManager.primary,
-              fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
-              fontFamily: FontFamily.geist
+              fontWeight: FontWeightManager.semiBold,
+              fontSize: FontSizesManager.s14,
+              fontFamily: fontFamily,
             ),
           ),
         ),
@@ -257,16 +317,4 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildFooter() {
-    return Center(
-      child: Text(
-        '\u00A9 2026 SmylOS Pro. All rights reserved.',
-        style: TextStyle(
-          color: ColorManager.textTertiary,
-          fontSize: 12.sp,
-          fontFamily: FontFamily.geist
-        ),
-      ),
-    );
-  }
 }

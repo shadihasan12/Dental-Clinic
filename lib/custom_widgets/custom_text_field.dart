@@ -90,13 +90,17 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: fillColor ?? ColorManager.gray50,
-        hintStyle: TextStyleManager.bodyMedium.copyWith(
+        hintStyle: TextStyle(
           color: ColorManager.textHint,
+          fontFamily: FontHelper.fontFamily(context),
+          fontSize: 12.sp
         ),
-        labelStyle: TextStyleManager.bodyMedium.copyWith(
+        labelStyle: TextStyle(
           color: ColorManager.textSecondary,
+          fontFamily: FontHelper.fontFamily(context),
         ),
-        contentPadding: contentPadding ??
+        contentPadding:
+            contentPadding ??
             EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         border: OutlineInputBorder(
           borderRadius: borderRadius ?? BorderRadiusManager.xl,
@@ -108,24 +112,15 @@ class CustomTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(
-            color: ColorManager.primary,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: ColorManager.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(
-            color: ColorManager.error,
-            width: 1,
-          ),
+          borderSide: const BorderSide(color: ColorManager.error, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(
-            color: ColorManager.error,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: ColorManager.error, width: 2),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: borderRadius ?? BorderRadiusManager.xl,

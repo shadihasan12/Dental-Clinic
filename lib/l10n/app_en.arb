@@ -121,6 +121,7 @@
   "more": "More",
   "total": "Total",
   "welcomeBack":"Welcome back",
+  "signInToContinue":"Sign in to your account to continue",
   "allFilter": "All",
   "newFilter": "New",
   "years": "years",
@@ -368,6 +369,182 @@
   },
   "noSubscription": "No Active Plan",
   "startFreeTrial": "Start Free Trial",
-  "tryAllFeatures": "Try all features free for 30 days"
+  "tryAllFeatures": "Try all features free for 30 days",
+  "skip": "Skip",
+  "next": "Next",
+  "getStarted": "Get Started",
+  "onboardingTitle1": "Manage Patients\nEffortlessly",
+  "onboardingDesc1": "Streamline patient management with automated case creation and comprehensive patient profiles",
+  "onboardingTitle2": "Smart Scheduling",
+  "onboardingDesc2": "Easily manage appointments with intuitive calendar views and automated reminders",
+  "onboardingTitle3": "Interactive Treatment\nRecords",
+  "onboardingDesc3": "Record treatments with our 2D teeth diagram for precise and visual treatment tracking",
+  "onboardingTitle4": "Insights & Analytics",
+  "onboardingDesc4": "Track clinic performance with comprehensive statistics and payment management",
+
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "logIn": "Log In",
+  "password": "Password",
+  "emailOrPhone": "Email or Phone Number",
+  "emailOrPhoneHint": "doctor@example.com or 0935315978",
+  "passwordHint": "********",
+  "forgotPasswordQuestion": "Forgot Password?",
+  "orContinueWith": "Or continue with",
+  "dontHaveAccount": "Don't have an account? ",
+  "alreadyHaveAccount": "Already have an account? ",
+  "copyrightSmylos": "\u00A9 2026 SmylOS Pro. All rights reserved.",
+  "pleaseEnterEmailOrPhone": "Please enter your email or phone number",
+  "pleaseEnterValidEmailOrPhone": "Please enter a valid email or phone number",
+  "pleaseEnterPassword": "Please enter your password",
+  "passwordMinLength": "Password must be at least 8 characters",
+  "loginFailed": "Login Failed",
+  "appName": "SmylOS Pro",
+  "professionalClinicManagement": "Professional Clinic Management",
+
+  "createAccount": "Create Account",
+  "joinDentalCommunity": "Join our dental community",
+  "fullNameRequired": "Full Name *",
+  "fullNameHint": "Dr. John Smith",
+  "emailRequired": "Email *",
+  "emailHint": "doctor@example.com",
+  "mobileNumber": "Mobile Number *",
+  "mobileHint": "091234567",
+  "selectYourSpecialization": "Select your specialization",
+  "specializationRequired": "Specialization *",
+  "createPassword": "Create a password",
+  "passwordRequired": "Password *",
+  "confirmPassword": "Confirm Password *",
+  "confirmPasswordHint": "Confirm your password",
+  "pleaseConfirmPassword": "Please confirm your password",
+  "mobileRequired": "Mobile number is required",
+  "mobileTooShort": "Mobile number is too short",
+  "validationError": "Validation Error",
+  "pleaseSelectSpecialization": "Please select a specialization",
+  "signupFailed": "Signup Failed",
+  "failedToLoadData": "Failed to load required data",
+  "checkConnectionRetry": "Please check your connection and try again",
+  "retry": "Retry",
+  "signupInfoBox": "Create your account, then set up or join a clinic from your dashboard.",
+
+  "enterEmailToGetStarted": "Enter your email to get started",
+  "verificationCodeInfo": "We'll send you a verification code to confirm your email address.",
+  "emailAddress": "Email Address",
+  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "sendVerificationCode": "Send Verification Code",
+  "emailRequiredTitle": "Email Required",
+  "pleaseEnterEmailAddress": "Please enter your email address",
+  "otpSent": "OTP Sent",
+  "verificationCodeSentTo": "Verification code sent to {email}",
+  "@verificationCodeSentTo": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+
+  "verifyYourEmail": "Verify Your Email",
+  "enterCodeSentToEmail": "Enter the code sent to your email",
+  "sentVerificationCode": "We've sent a 6-digit verification code",
+  "sendingCode": "Sending code...",
+  "resendCodeIn": "Resend code in {seconds}s",
+  "@resendCodeIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "didntReceiveCode": "Didn't receive the code? ",
+  "resend": "Resend",
+  "verifyAndContinue": "Verify & Continue",
+  "invalidCode": "Invalid Code",
+  "pleaseEnterAllDigits": "Please enter all 6 digits",
+  "emailVerified": "Email Verified",
+  "completeYourRegistration": "Please complete your registration",
+  "verificationFailed": "Verification Failed",
+
+  "forgotPassword": "Forgot Password",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
+  "enterRegisteredEmail": "Enter your registered email",
+  "sendResetLink": "Send Reset Link",
+  "backToSignIn": "Back to Sign In",
+  "emailSent": "Email Sent!",
+  "resetLinkSentMessage": "We have sent a password reset link to your email address. Please check your inbox and follow the instructions.",
+  "didntReceiveEmail": "Didn't receive the email? ",
+
+  "chooseYourPlan": "Choose Your Plan",
+  "selectPlanSubtitle": "Select the perfect plan for your clinic",
+  "noPlansAvailable": "No plans available",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "savePercent": "Save 17%",
+  "perMonth": "/month",
+  "perYear": "/year",
+  "dayFreeTrial": "{days}-day free trial",
+  "@dayFreeTrial": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "mostPopular": "MOST POPULAR",
+  "unlimitedPatients": "Unlimited patients",
+  "oneDoctorOneAssistant": "1 doctor and 1 assistant",
+  "storageAmount": "{amount} GB storage",
+  "@storageAmount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "allFeaturesIncluded": "All features included",
+  "support247": "24/7 support",
+  "upToDoctors": "Up to {count} doctors",
+  "@upToDoctors": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "prioritySupport": "Priority support",
+  "unlimitedDoctorsAssistants": "Unlimited doctors & assistants",
+  "storagePerAccount": "{amount} GB storage per account",
+  "@storagePerAccount": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "advancedAnalytics": "Advanced analytics",
+  "adminRoleIncluded": "Admin role included",
+  "fullPatientManagement": "Full patient management",
+  "appointmentScheduling": "Appointment scheduling",
+  "treatmentTracking": "Treatment tracking",
+
+  "completeYourProfile": "Complete Your Profile",
+  "setupClinicDetails": "Set up your clinic details",
+  "clinicDetailsInfo": "Enter your clinic details to complete registration. You can update these later in settings.",
+  "clinicNameRequired": "Clinic Name *",
+  "clinicNameHintExample": "e.g., Bright Smile Dental Clinic",
+  "locationRequired": "Location *",
+  "searchForLocation": "Search for location...",
+  "noLocationsFound": "No locations found. Try a different search term.",
+  "detailedAddress": "Detailed Address",
+  "detailedAddressHint": "Street, building number, etc.",
+  "completeRegistration": "Complete Registration",
+  "pleaseEnterClinicName": "Please enter your clinic name",
+  "clinicNameMinChars": "Clinic name must be at least 3 characters",
+  "clinicNameMaxChars": "Clinic name must be less than 100 characters",
+  "pleaseSelectLocation": "Please select a location",
+  "pleaseSelectPlan": "Please select a subscription plan",
+  "sessionExpired": "Session Expired",
+  "pleaseVerifyEmailAgain": "Please verify your email again",
+  "welcome": "Welcome!",
+  "accountCreatedSuccessfully": "Your account has been created successfully",
+  "registrationFailed": "Registration Failed",
+
+  "rememberPassword": "Remember your password? ",
+  "setNewPassword": "Set New Password",
+  "enterNewPasswordBelow": "Enter your new password below",
+  "newPassword": "New Password",
+  "resetPasswordButton": "Reset Password",
+  "passwordResetSuccess": "Password Reset Successfully",
+  "passwordResetSuccessMessage": "You can now sign in with your new password",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "passwordsDoNotMatch": "Passwords do not match"
 }
 

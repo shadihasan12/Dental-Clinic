@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/config/app_config.dart';
+import 'package:dental_clinic_app/core/api/interceptors/auth_interceptor.dart';
 import 'package:dental_clinic_app/core/api/interceptors/error_interceptor.dart';
 import 'package:dental_clinic_app/core/api/interceptors/logging_interceptor.dart';
 import 'package:dental_clinic_app/core/constants/app_constants.dart';
@@ -17,6 +18,7 @@ import 'package:dental_clinic_app/core/resources/strings_manager.dart';
 class DioConsumer implements ApiConsumer {
   DioConsumer(
     this._client,
+    this._authInterceptor,
     this._errorInterceptor,
     this._loggingInterceptor,
   ) {
@@ -32,7 +34,10 @@ class DioConsumer implements ApiConsumer {
         StringsManager.contentType: StringsManager.applicationJson,
       };
 
-    // Add error interceptor first (it should process errors before logging)
+    // Add auth interceptor first (attaches token to requests, extracts from responses)
+    _client.interceptors.add(_authInterceptor);
+
+    // Add error interceptor
     _client.interceptors.add(_errorInterceptor);
 
     // Add logging interceptor only in debug mode
@@ -52,6 +57,7 @@ class DioConsumer implements ApiConsumer {
   }
 
   final Dio _client;
+  final AuthInterceptor _authInterceptor;
   final ErrorInterceptor _errorInterceptor;
   final LoggingInterceptor _loggingInterceptor;
 

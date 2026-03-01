@@ -1,10 +1,10 @@
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:dental_clinic_app/features/auth/presentation/pages/choose_clinic_name_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/finish_profile_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/email_entry_page.dart';
-import 'package:dental_clinic_app/features/auth/presentation/pages/email_verification_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/verify_otp_page.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/notification_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
@@ -23,6 +23,8 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/login_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/forgot_password_verify_otp_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/set_new_password_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patient_details_page.dart';
@@ -117,6 +119,36 @@ class RoutesManager {
             );
           },
         ),
+        GoRoute(
+          path: '/forgot-password-verify-otp',
+          name: AppRoutesNames.forgotPasswordVerifyOtp,
+          pageBuilder: (context, state) {
+            final authBloc = state.extra as AuthBloc;
+            return CupertinoPage(
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
+                child: const ForgotPasswordVerifyOtpPage(),
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/set-new-password',
+          name: AppRoutesNames.setNewPassword,
+          pageBuilder: (context, state) {
+            final authBloc = state.extra as AuthBloc;
+            return CupertinoPage(
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
+                child: const SetNewPasswordPage(),
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
 
         GoRoute(
           path: '/choose-plan',
@@ -144,7 +176,7 @@ class RoutesManager {
             return CupertinoPage(
               child: BlocProvider<AuthBloc>.value(
                 value: authBloc,
-                child: const ChooseClinicNamePage(),
+                child: const FinishProfilePage(),
               ),
               key: state.pageKey,
               name: state.name,
@@ -161,7 +193,7 @@ class RoutesManager {
             return CupertinoPage(
               child: BlocProvider<AuthBloc>.value(
                 value: authBloc,
-                child: const EmailVerificationPage(),
+                child: const VerifyOTPPage(),
               ),
               key: state.pageKey,
               name: state.name,

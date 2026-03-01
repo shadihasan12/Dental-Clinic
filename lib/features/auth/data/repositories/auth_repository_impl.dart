@@ -178,4 +178,40 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(NetworkExceptions.noInternetConnection());
     }
   }
+
+  @override
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForResetPassword({
+    required RequestOtpParams params,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.requestOtpForResetPassword(params.toJson());
+        return Right(response);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> resetPassword({
+    required ResetPasswordParams params,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.resetPassword(params.toJson());
+        return const Right(null);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
 }

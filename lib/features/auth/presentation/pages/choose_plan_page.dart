@@ -1,10 +1,10 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -24,7 +24,6 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch plans from API only if not already loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = context.read<AuthBloc>().state;
       if (state.plans.isEmpty && !state.isLoadingPlans) {
@@ -35,83 +34,140 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Scaffold(
       backgroundColor: ColorManager.white,
-      body: Column(
-        children: [
-          // Gradient Header
-          GradientHeader(
-            title: 'Choose Your Plan',
-            subtitle: 'Select the perfect plan for your clinic',
-            height: 200.h,
-            showBackButton: true,
-            onBackPressed: () => context.pop(),
-          ),
-
-          // Content
-          Expanded(
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                if (state.isLoadingPlans) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (state.plans.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No plans available',
-                          style: TextStyle(
-                            color: ColorManager.textSecondary,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        TextButton(
-                          onPressed: () {
-                            context.read<AuthBloc>().add(
-                                  const AuthEvent.plansRequested(),
-                                );
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
+      body: SafeArea(
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state.isLoadingPlans) {
+              return Column(
+                children: [
+                  _buildTopBar(l10n, fontFamily),
+                  const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(),
                     ),
-                  );
-                }
-
-                return SingleChildScrollView(
-                  padding: PaddingManager.horizontalPadding,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 24.h),
-
-                      // Billing Toggle
-                      _buildBillingToggle(),
-
-                      SizedBox(height: 24.h),
-
-                      // Plans List from API
-                      ...state.plans.map((plan) => _buildPlanCard(plan)),
-
-                      SizedBox(height: 100.h), // Space for bottom button
-                    ],
                   ),
-                );
-              },
+                ],
+              );
+            }
+
+            if (state.plans.isEmpty) {
+              return Column(
+                children: [
+                  _buildTopBar(l10n, fontFamily),
+                  Expanded(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64.w,
+                              color: ColorManager.error,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              l10n.noPlansAvailable,
+                              style: TextStyle(
+                                color: ColorManager.textPrimary,
+                                fontSize: FontSizesManager.s18,
+                                fontWeight: FontWeightManager.semiBold,
+                                fontFamily: fontFamily,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 32.h),
+                            PrimaryButton(
+                              text: l10n.retry,
+                              onPressed: () {
+                                context.read<AuthBloc>().add(
+                                      const AuthEvent.plansRequested(),
+                                    );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTopBar(l10n, fontFamily),
+                  SizedBox(height: 8.h),
+                  _buildBillingToggle(l10n, fontFamily),
+                  SizedBox(height: 24.h),
+                  ...state.plans.map((plan) => _buildPlanCard(plan, l10n, fontFamily)),
+                  SizedBox(height: 100.h),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: _buildBottomButton(l10n),
+    );
+  }
+
+  Widget _buildTopBar(AppLocalizations l10n, String fontFamily) {
+    return Padding(
+      padding: EdgeInsets.only(top: 16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: ColorManager.gray100,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                color: ColorManager.textPrimary,
+                size: 18.w,
+              ),
+            ),
+          ),
+          SizedBox(height: 24.h),
+          Text(
+            l10n.chooseYourPlan,
+            style: TextStyle(
+              fontSize: FontSizesManager.s28,
+              fontWeight: FontWeightManager.bold,
+              fontFamily: fontFamily,
+              color: ColorManager.textPrimary,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            l10n.selectPlanSubtitle,
+            style: TextStyle(
+              fontSize: FontSizesManager.s14,
+              fontFamily: fontFamily,
+              color: ColorManager.textSecondary,
             ),
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomButton(),
     );
   }
 
-  Widget _buildBillingToggle() {
+  Widget _buildBillingToggle(AppLocalizations l10n, String fontFamily) {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -140,16 +196,16 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                 ),
                 child: Center(
                   child: Text(
-                    'Monthly',
+                    l10n.monthly,
                     style: TextStyle(
                       color: !_isYearly
                           ? ColorManager.textPrimary
                           : ColorManager.textSecondary,
                       fontWeight: !_isYearly
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                      fontFamily: FontFamily.geist,
-                      fontSize: 14.sp,
+                          ? FontWeightManager.semiBold
+                          : FontWeightManager.regular,
+                      fontFamily: fontFamily,
+                      fontSize: FontSizesManager.s14,
                     ),
                   ),
                 ),
@@ -179,16 +235,16 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Yearly',
+                        l10n.yearly,
                         style: TextStyle(
                           color: _isYearly
                               ? ColorManager.textPrimary
                               : ColorManager.textSecondary,
                           fontWeight: _isYearly
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                          fontFamily: FontFamily.geist,
-                          fontSize: 14.sp,
+                              ? FontWeightManager.semiBold
+                              : FontWeightManager.regular,
+                          fontFamily: fontFamily,
+                          fontSize: FontSizesManager.s14,
                         ),
                       ),
                       SizedBox(width: 6.w),
@@ -202,12 +258,12 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
-                          'Save 17%',
+                          l10n.savePercent,
                           style: TextStyle(
                             color: ColorManager.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10.sp,
-                            fontFamily: FontFamily.geist,
+                            fontWeight: FontWeightManager.semiBold,
+                            fontSize: FontSizesManager.s10,
+                            fontFamily: fontFamily,
                           ),
                         ),
                       ),
@@ -222,59 +278,54 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     );
   }
 
-  // Helper method to get features for a plan
-  List<String> _getPlanFeatures(PlanEntity plan) {
-    // Map features based on plan name or type
-    // This could also come from the backend in the future
+  List<String> _getPlanFeatures(PlanEntity plan, AppLocalizations l10n) {
     switch (plan.name.toLowerCase()) {
       case 'starter':
         return [
-          'Unlimited patients',
-          '1 doctor and 1 assistant',
-          '2 GB storage',
-          'All features included',
-          '24/7 support',
+          l10n.unlimitedPatients,
+          l10n.oneDoctorOneAssistant,
+          l10n.storageAmount('2'),
+          l10n.allFeaturesIncluded,
+          l10n.support247,
         ];
       case 'growing':
         return [
-          'Unlimited patients',
-          'Up to 4 doctors',
-          '4 GB storage',
-          'All features included',
-          'Priority support',
+          l10n.unlimitedPatients,
+          l10n.upToDoctors(4),
+          l10n.storageAmount('4'),
+          l10n.allFeaturesIncluded,
+          l10n.prioritySupport,
         ];
       case 'professional':
         return [
-          'Unlimited patients',
-          'Unlimited doctors & assistants',
-          '10 GB storage per account',
-          'Advanced analytics',
-          'Priority support',
-          'Admin role included',
+          l10n.unlimitedPatients,
+          l10n.unlimitedDoctorsAssistants,
+          l10n.storagePerAccount('10'),
+          l10n.advancedAnalytics,
+          l10n.prioritySupport,
+          l10n.adminRoleIncluded,
         ];
       default:
         return [
-          'All features included',
-          'Full patient management',
-          'Appointment scheduling',
-          'Treatment tracking',
+          l10n.allFeaturesIncluded,
+          l10n.fullPatientManagement,
+          l10n.appointmentScheduling,
+          l10n.treatmentTracking,
         ];
     }
   }
 
-  Widget _buildPlanCard(PlanEntity plan) {
+  Widget _buildPlanCard(PlanEntity plan, AppLocalizations l10n, String fontFamily) {
     final isSelected = _selectedPlanId == plan.id;
-    // Mark "Growing" plan as popular
     final isPopular = plan.name.toLowerCase() == 'growing';
 
-    // Get the price based on billing cycle (default to USD)
     final priceEntity = _isYearly
         ? plan.getYearlyPrice('USD')
         : plan.getMonthlyPrice('USD');
     final price = priceEntity.display;
-    final period = _isYearly ? '/year' : '/month';
+    final period = _isYearly ? l10n.perYear : l10n.perMonth;
     final trialDays = plan.trialPeriodDays;
-    final features = _getPlanFeatures(plan);
+    final features = _getPlanFeatures(plan, l10n);
 
     return GestureDetector(
       onTap: () => setState(() => _selectedPlanId = plan.id),
@@ -300,7 +351,6 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with popular badge
             if (isPopular)
               Container(
                 width: double.infinity,
@@ -316,13 +366,13 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                 ),
                 child: Center(
                   child: Text(
-                    '⭐ MOST POPULAR',
+                    l10n.mostPopular,
                     style: TextStyle(
                       color: ColorManager.white,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeightManager.bold,
                       letterSpacing: 1,
-                      fontFamily: FontFamily.geist,
-                      fontSize: 12.sp,
+                      fontFamily: fontFamily,
+                      fontSize: FontSizesManager.s12,
                     ),
                   ),
                 ),
@@ -333,7 +383,6 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Plan name and radio
                   Row(
                     children: [
                       Expanded(
@@ -344,9 +393,9 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                               plan.name,
                               style: TextStyle(
                                 color: ColorManager.textPrimary,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: FontFamily.geist,
-                                fontSize: 18.sp,
+                                fontWeight: FontWeightManager.bold,
+                                fontFamily: fontFamily,
+                                fontSize: FontSizesManager.s18,
                               ),
                             ),
                             SizedBox(height: 4.h),
@@ -354,8 +403,8 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                               plan.description,
                               style: TextStyle(
                                 color: ColorManager.textSecondary,
-                                fontFamily: FontFamily.geist,
-                                fontSize: 13.sp,
+                                fontFamily: fontFamily,
+                                fontSize: FontSizesManager.s13,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -392,7 +441,6 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
 
                   SizedBox(height: 16.h),
 
-                  // Price
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -400,9 +448,9 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         '\$$price',
                         style: TextStyle(
                           color: ColorManager.primary,
-                          fontWeight: FontWeight.w800,
-                          fontFamily: FontFamily.geist,
-                          fontSize: 22.sp,
+                          fontWeight: FontWeightManager.extraBold,
+                          fontFamily: fontFamily,
+                          fontSize: FontSizesManager.s22,
                         ),
                       ),
                       SizedBox(width: 4.w),
@@ -412,15 +460,14 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           period,
                           style: TextStyle(
                             color: ColorManager.textSecondary,
-                            fontFamily: FontFamily.geist,
-                            fontSize: 14.sp,
+                            fontFamily: fontFamily,
+                            fontSize: FontSizesManager.s14,
                           ),
                         ),
                       ),
                     ],
                   ),
 
-                  // Trial badge
                   if (plan.supportsTrial) ...[
                     SizedBox(height: 12.h),
                     Container(
@@ -433,25 +480,21 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Text(
-                        '$trialDays-day free trial',
+                        l10n.dayFreeTrial(trialDays),
                         style: TextStyle(
                           color: ColorManager.primary,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: FontFamily.geist,
-                          fontSize: 10.sp,
+                          fontWeight: FontWeightManager.regular,
+                          fontFamily: fontFamily,
+                          fontSize: FontSizesManager.s10,
                         ),
                       ),
                     ),
                   ],
 
                   SizedBox(height: 16.h),
-
-                  // Divider
                   Divider(color: ColorManager.gray300, height: 1),
-
                   SizedBox(height: 16.h),
 
-                  // Features
                   ...features.map(
                     (feature) => Padding(
                       padding: EdgeInsets.only(bottom: 10.h),
@@ -461,9 +504,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             width: 20.w,
                             height: 20.w,
                             decoration: BoxDecoration(
-                              color: ColorManager.success.withValues(
-                                alpha: 0.1,
-                              ),
+                              color: ColorManager.success.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -478,8 +519,8 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                               feature,
                               style: TextStyle(
                                 color: ColorManager.textPrimary,
-                                fontFamily: FontFamily.geist,
-                                fontSize: 12.sp,
+                                fontFamily: fontFamily,
+                                fontSize: FontSizesManager.s12,
                               ),
                             ),
                           ),
@@ -496,7 +537,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton(AppLocalizations l10n) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Container(
@@ -513,23 +554,19 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
           ),
           child: SafeArea(
             child: PrimaryButton(
-              text: 'Next',
+              text: l10n.next,
               isEnabled: _selectedPlanId != null,
               onPressed: _selectedPlanId != null
                   ? () {
-                      // Find the selected plan entity
                       final selectedPlan = state.plans.firstWhere(
                         (plan) => plan.id == _selectedPlanId,
                       );
 
-                      // Store selected plan in BLoC state
                       final authBloc = context.read<AuthBloc>();
                       authBloc.add(
                         AuthEvent.signupPlanEntitySelected(selectedPlan),
                       );
 
-                      // Navigate to Choose Clinic Name page
-                      // Pass the AuthBloc instance to the next route
                       context.pushNamed(
                         AppRoutesNames.chooseClinicName,
                         extra: authBloc,

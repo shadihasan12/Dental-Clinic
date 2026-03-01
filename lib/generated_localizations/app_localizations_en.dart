@@ -356,6 +356,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBack => 'Welcome back';
 
   @override
+  String get signInToContinue => 'Sign in to your account to continue';
+
+  @override
   String get allFilter => 'All';
 
   @override
@@ -1004,4 +1007,446 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tryAllFeatures => 'Try all features free for 30 days';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get onboardingTitle1 => 'Manage Patients\nEffortlessly';
+
+  @override
+  String get onboardingDesc1 =>
+      'Streamline patient management with automated case creation and comprehensive patient profiles';
+
+  @override
+  String get onboardingTitle2 => 'Smart Scheduling';
+
+  @override
+  String get onboardingDesc2 =>
+      'Easily manage appointments with intuitive calendar views and automated reminders';
+
+  @override
+  String get onboardingTitle3 => 'Interactive Treatment\nRecords';
+
+  @override
+  String get onboardingDesc3 =>
+      'Record treatments with our 2D teeth diagram for precise and visual treatment tracking';
+
+  @override
+  String get onboardingTitle4 => 'Insights & Analytics';
+
+  @override
+  String get onboardingDesc4 =>
+      'Track clinic performance with comprehensive statistics and payment management';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get logIn => 'Log In';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get emailOrPhone => 'Email or Phone Number';
+
+  @override
+  String get emailOrPhoneHint => 'doctor@example.com or 0935315978';
+
+  @override
+  String get passwordHint => '********';
+
+  @override
+  String get forgotPasswordQuestion => 'Forgot Password?';
+
+  @override
+  String get orContinueWith => 'Or continue with';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? ';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? ';
+
+  @override
+  String get copyrightSmylos => '© 2026 SmylOS Pro. All rights reserved.';
+
+  @override
+  String get pleaseEnterEmailOrPhone =>
+      'Please enter your email or phone number';
+
+  @override
+  String get pleaseEnterValidEmailOrPhone =>
+      'Please enter a valid email or phone number';
+
+  @override
+  String get pleaseEnterPassword => 'Please enter your password';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 8 characters';
+
+  @override
+  String get loginFailed => 'Login Failed';
+
+  @override
+  String get appName => 'SmylOS Pro';
+
+  @override
+  String get professionalClinicManagement => 'Professional Clinic Management';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get joinDentalCommunity => 'Join our dental community';
+
+  @override
+  String get fullNameRequired => 'Full Name *';
+
+  @override
+  String get fullNameHint => 'Dr. John Smith';
+
+  @override
+  String get emailRequired => 'Email *';
+
+  @override
+  String get emailHint => 'doctor@example.com';
+
+  @override
+  String get mobileNumber => 'Mobile Number *';
+
+  @override
+  String get mobileHint => '091234567';
+
+  @override
+  String get selectYourSpecialization => 'Select your specialization';
+
+  @override
+  String get specializationRequired => 'Specialization *';
+
+  @override
+  String get createPassword => 'Create a password';
+
+  @override
+  String get passwordRequired => 'Password *';
+
+  @override
+  String get confirmPassword => 'Confirm Password *';
+
+  @override
+  String get confirmPasswordHint => 'Confirm your password';
+
+  @override
+  String get pleaseConfirmPassword => 'Please confirm your password';
+
+  @override
+  String get mobileRequired => 'Mobile number is required';
+
+  @override
+  String get mobileTooShort => 'Mobile number is too short';
+
+  @override
+  String get validationError => 'Validation Error';
+
+  @override
+  String get pleaseSelectSpecialization => 'Please select a specialization';
+
+  @override
+  String get signupFailed => 'Signup Failed';
+
+  @override
+  String get failedToLoadData => 'Failed to load required data';
+
+  @override
+  String get checkConnectionRetry =>
+      'Please check your connection and try again';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get signupInfoBox =>
+      'Create your account, then set up or join a clinic from your dashboard.';
+
+  @override
+  String get enterEmailToGetStarted => 'Enter your email to get started';
+
+  @override
+  String get verificationCodeInfo =>
+      'We\'ll send you a verification code to confirm your email address.';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email address';
+
+  @override
+  String get sendVerificationCode => 'Send Verification Code';
+
+  @override
+  String get emailRequiredTitle => 'Email Required';
+
+  @override
+  String get pleaseEnterEmailAddress => 'Please enter your email address';
+
+  @override
+  String get otpSent => 'OTP Sent';
+
+  @override
+  String verificationCodeSentTo(String email) {
+    return 'Verification code sent to $email';
+  }
+
+  @override
+  String get verifyYourEmail => 'Verify Your Email';
+
+  @override
+  String get enterCodeSentToEmail => 'Enter the code sent to your email';
+
+  @override
+  String get sentVerificationCode => 'We\'ve sent a 6-digit verification code';
+
+  @override
+  String get sendingCode => 'Sending code...';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Resend code in ${seconds}s';
+  }
+
+  @override
+  String get didntReceiveCode => 'Didn\'t receive the code? ';
+
+  @override
+  String get resend => 'Resend';
+
+  @override
+  String get verifyAndContinue => 'Verify & Continue';
+
+  @override
+  String get invalidCode => 'Invalid Code';
+
+  @override
+  String get pleaseEnterAllDigits => 'Please enter all 6 digits';
+
+  @override
+  String get emailVerified => 'Email Verified';
+
+  @override
+  String get completeYourRegistration => 'Please complete your registration';
+
+  @override
+  String get verificationFailed => 'Verification Failed';
+
+  @override
+  String get forgotPassword => 'Forgot Password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email and we\'ll send you a reset link';
+
+  @override
+  String get enterRegisteredEmail => 'Enter your registered email';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get backToSignIn => 'Back to Sign In';
+
+  @override
+  String get emailSent => 'Email Sent!';
+
+  @override
+  String get resetLinkSentMessage =>
+      'We have sent a password reset link to your email address. Please check your inbox and follow the instructions.';
+
+  @override
+  String get didntReceiveEmail => 'Didn\'t receive the email? ';
+
+  @override
+  String get chooseYourPlan => 'Choose Your Plan';
+
+  @override
+  String get selectPlanSubtitle => 'Select the perfect plan for your clinic';
+
+  @override
+  String get noPlansAvailable => 'No plans available';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearly => 'Yearly';
+
+  @override
+  String get savePercent => 'Save 17%';
+
+  @override
+  String get perMonth => '/month';
+
+  @override
+  String get perYear => '/year';
+
+  @override
+  String dayFreeTrial(int days) {
+    return '$days-day free trial';
+  }
+
+  @override
+  String get mostPopular => 'MOST POPULAR';
+
+  @override
+  String get unlimitedPatients => 'Unlimited patients';
+
+  @override
+  String get oneDoctorOneAssistant => '1 doctor and 1 assistant';
+
+  @override
+  String storageAmount(String amount) {
+    return '$amount GB storage';
+  }
+
+  @override
+  String get allFeaturesIncluded => 'All features included';
+
+  @override
+  String get support247 => '24/7 support';
+
+  @override
+  String upToDoctors(int count) {
+    return 'Up to $count doctors';
+  }
+
+  @override
+  String get prioritySupport => 'Priority support';
+
+  @override
+  String get unlimitedDoctorsAssistants => 'Unlimited doctors & assistants';
+
+  @override
+  String storagePerAccount(String amount) {
+    return '$amount GB storage per account';
+  }
+
+  @override
+  String get advancedAnalytics => 'Advanced analytics';
+
+  @override
+  String get adminRoleIncluded => 'Admin role included';
+
+  @override
+  String get fullPatientManagement => 'Full patient management';
+
+  @override
+  String get appointmentScheduling => 'Appointment scheduling';
+
+  @override
+  String get treatmentTracking => 'Treatment tracking';
+
+  @override
+  String get completeYourProfile => 'Complete Your Profile';
+
+  @override
+  String get setupClinicDetails => 'Set up your clinic details';
+
+  @override
+  String get clinicDetailsInfo =>
+      'Enter your clinic details to complete registration. You can update these later in settings.';
+
+  @override
+  String get clinicNameRequired => 'Clinic Name *';
+
+  @override
+  String get clinicNameHintExample => 'e.g., Bright Smile Dental Clinic';
+
+  @override
+  String get locationRequired => 'Location *';
+
+  @override
+  String get searchForLocation => 'Search for location...';
+
+  @override
+  String get noLocationsFound =>
+      'No locations found. Try a different search term.';
+
+  @override
+  String get detailedAddress => 'Detailed Address';
+
+  @override
+  String get detailedAddressHint => 'Street, building number, etc.';
+
+  @override
+  String get completeRegistration => 'Complete Registration';
+
+  @override
+  String get pleaseEnterClinicName => 'Please enter your clinic name';
+
+  @override
+  String get clinicNameMinChars => 'Clinic name must be at least 3 characters';
+
+  @override
+  String get clinicNameMaxChars =>
+      'Clinic name must be less than 100 characters';
+
+  @override
+  String get pleaseSelectLocation => 'Please select a location';
+
+  @override
+  String get pleaseSelectPlan => 'Please select a subscription plan';
+
+  @override
+  String get sessionExpired => 'Session Expired';
+
+  @override
+  String get pleaseVerifyEmailAgain => 'Please verify your email again';
+
+  @override
+  String get welcome => 'Welcome!';
+
+  @override
+  String get accountCreatedSuccessfully =>
+      'Your account has been created successfully';
+
+  @override
+  String get registrationFailed => 'Registration Failed';
+
+  @override
+  String get rememberPassword => 'Remember your password? ';
+
+  @override
+  String get setNewPassword => 'Set New Password';
+
+  @override
+  String get enterNewPasswordBelow => 'Enter your new password below';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get resetPasswordButton => 'Reset Password';
+
+  @override
+  String get passwordResetSuccess => 'Password Reset Successfully';
+
+  @override
+  String get passwordResetSuccessMessage =>
+      'You can now sign in with your new password';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 8 characters';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
 }

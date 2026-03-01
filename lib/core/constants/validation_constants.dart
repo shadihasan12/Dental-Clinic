@@ -7,7 +7,7 @@ class ValidationConstants {
   static const String phonePattern = r'^\+?[\d\s\-\(\)]+$';
 
   // Length constraints
-  static const int minPasswordLength = 6;
+  static const int minPasswordLength = 8;
   static const int maxPasswordLength = 128;
   static const int minNameLength = 2;
   static const int maxNameLength = 100;

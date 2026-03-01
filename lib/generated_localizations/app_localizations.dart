@@ -788,6 +788,12 @@ abstract class AppLocalizations {
   /// **'Welcome back'**
   String get welcomeBack;
 
+  /// No description provided for @signInToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to your account to continue'**
+  String get signInToContinue;
+
   /// No description provided for @allFilter.
   ///
   /// In en, this message translates to:
@@ -2017,6 +2023,834 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try all features free for 30 days'**
   String get tryAllFeatures;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @onboardingTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Patients\nEffortlessly'**
+  String get onboardingTitle1;
+
+  /// No description provided for @onboardingDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Streamline patient management with automated case creation and comprehensive patient profiles'**
+  String get onboardingDesc1;
+
+  /// No description provided for @onboardingTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Scheduling'**
+  String get onboardingTitle2;
+
+  /// No description provided for @onboardingDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Easily manage appointments with intuitive calendar views and automated reminders'**
+  String get onboardingDesc2;
+
+  /// No description provided for @onboardingTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive Treatment\nRecords'**
+  String get onboardingTitle3;
+
+  /// No description provided for @onboardingDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Record treatments with our 2D teeth diagram for precise and visual treatment tracking'**
+  String get onboardingDesc3;
+
+  /// No description provided for @onboardingTitle4.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights & Analytics'**
+  String get onboardingTitle4;
+
+  /// No description provided for @onboardingDesc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Track clinic performance with comprehensive statistics and payment management'**
+  String get onboardingDesc4;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @logIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get logIn;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @emailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or Phone Number'**
+  String get emailOrPhone;
+
+  /// No description provided for @emailOrPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'doctor@example.com or 0935315978'**
+  String get emailOrPhoneHint;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'********'**
+  String get passwordHint;
+
+  /// No description provided for @forgotPasswordQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPasswordQuestion;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get dontHaveAccount;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @copyrightSmylos.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 SmylOS Pro. All rights reserved.'**
+  String get copyrightSmylos;
+
+  /// No description provided for @pleaseEnterEmailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email or phone number'**
+  String get pleaseEnterEmailOrPhone;
+
+  /// No description provided for @pleaseEnterValidEmailOrPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email or phone number'**
+  String get pleaseEnterValidEmailOrPhone;
+
+  /// No description provided for @pleaseEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get pleaseEnterPassword;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get passwordMinLength;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get loginFailed;
+
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'SmylOS Pro'**
+  String get appName;
+
+  /// No description provided for @professionalClinicManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Clinic Management'**
+  String get professionalClinicManagement;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// No description provided for @joinDentalCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Join our dental community'**
+  String get joinDentalCommunity;
+
+  /// No description provided for @fullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name *'**
+  String get fullNameRequired;
+
+  /// No description provided for @fullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. John Smith'**
+  String get fullNameHint;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email *'**
+  String get emailRequired;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'doctor@example.com'**
+  String get emailHint;
+
+  /// No description provided for @mobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number *'**
+  String get mobileNumber;
+
+  /// No description provided for @mobileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'091234567'**
+  String get mobileHint;
+
+  /// No description provided for @selectYourSpecialization.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your specialization'**
+  String get selectYourSpecialization;
+
+  /// No description provided for @specializationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialization *'**
+  String get specializationRequired;
+
+  /// No description provided for @createPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a password'**
+  String get createPassword;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password *'**
+  String get passwordRequired;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password *'**
+  String get confirmPassword;
+
+  /// No description provided for @confirmPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password'**
+  String get confirmPasswordHint;
+
+  /// No description provided for @pleaseConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get pleaseConfirmPassword;
+
+  /// No description provided for @mobileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number is required'**
+  String get mobileRequired;
+
+  /// No description provided for @mobileTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number is too short'**
+  String get mobileTooShort;
+
+  /// No description provided for @validationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation Error'**
+  String get validationError;
+
+  /// No description provided for @pleaseSelectSpecialization.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a specialization'**
+  String get pleaseSelectSpecialization;
+
+  /// No description provided for @signupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Signup Failed'**
+  String get signupFailed;
+
+  /// No description provided for @failedToLoadData.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load required data'**
+  String get failedToLoadData;
+
+  /// No description provided for @checkConnectionRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your connection and try again'**
+  String get checkConnectionRetry;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @signupInfoBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account, then set up or join a clinic from your dashboard.'**
+  String get signupInfoBox;
+
+  /// No description provided for @enterEmailToGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to get started'**
+  String get enterEmailToGetStarted;
+
+  /// No description provided for @verificationCodeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send you a verification code to confirm your email address.'**
+  String get verificationCodeInfo;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @sendVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Verification Code'**
+  String get sendVerificationCode;
+
+  /// No description provided for @emailRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Required'**
+  String get emailRequiredTitle;
+
+  /// No description provided for @pleaseEnterEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email address'**
+  String get pleaseEnterEmailAddress;
+
+  /// No description provided for @otpSent.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Sent'**
+  String get otpSent;
+
+  /// No description provided for @verificationCodeSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to {email}'**
+  String verificationCodeSentTo(String email);
+
+  /// No description provided for @verifyYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Email'**
+  String get verifyYourEmail;
+
+  /// No description provided for @enterCodeSentToEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to your email'**
+  String get enterCodeSentToEmail;
+
+  /// No description provided for @sentVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a 6-digit verification code'**
+  String get sentVerificationCode;
+
+  /// No description provided for @sendingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending code...'**
+  String get sendingCode;
+
+  /// No description provided for @resendCodeIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {seconds}s'**
+  String resendCodeIn(int seconds);
+
+  /// No description provided for @didntReceiveCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code? '**
+  String get didntReceiveCode;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// No description provided for @verifyAndContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & Continue'**
+  String get verifyAndContinue;
+
+  /// No description provided for @invalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Code'**
+  String get invalidCode;
+
+  /// No description provided for @pleaseEnterAllDigits.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all 6 digits'**
+  String get pleaseEnterAllDigits;
+
+  /// No description provided for @emailVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Verified'**
+  String get emailVerified;
+
+  /// No description provided for @completeYourRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete your registration'**
+  String get completeYourRegistration;
+
+  /// No description provided for @verificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Failed'**
+  String get verificationFailed;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get forgotPassword;
+
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a reset link'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @enterRegisteredEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your registered email'**
+  String get enterRegisteredEmail;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get sendResetLink;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign In'**
+  String get backToSignIn;
+
+  /// No description provided for @emailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Sent!'**
+  String get emailSent;
+
+  /// No description provided for @resetLinkSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We have sent a password reset link to your email address. Please check your inbox and follow the instructions.'**
+  String get resetLinkSentMessage;
+
+  /// No description provided for @didntReceiveEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the email? '**
+  String get didntReceiveEmail;
+
+  /// No description provided for @chooseYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Plan'**
+  String get chooseYourPlan;
+
+  /// No description provided for @selectPlanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the perfect plan for your clinic'**
+  String get selectPlanSubtitle;
+
+  /// No description provided for @noPlansAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No plans available'**
+  String get noPlansAvailable;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
+
+  /// No description provided for @savePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Save 17%'**
+  String get savePercent;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/month'**
+  String get perMonth;
+
+  /// No description provided for @perYear.
+  ///
+  /// In en, this message translates to:
+  /// **'/year'**
+  String get perYear;
+
+  /// No description provided for @dayFreeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day free trial'**
+  String dayFreeTrial(int days);
+
+  /// No description provided for @mostPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'MOST POPULAR'**
+  String get mostPopular;
+
+  /// No description provided for @unlimitedPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited patients'**
+  String get unlimitedPatients;
+
+  /// No description provided for @oneDoctorOneAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'1 doctor and 1 assistant'**
+  String get oneDoctorOneAssistant;
+
+  /// No description provided for @storageAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} GB storage'**
+  String storageAmount(String amount);
+
+  /// No description provided for @allFeaturesIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'All features included'**
+  String get allFeaturesIncluded;
+
+  /// No description provided for @support247.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 support'**
+  String get support247;
+
+  /// No description provided for @upToDoctors.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {count} doctors'**
+  String upToDoctors(int count);
+
+  /// No description provided for @prioritySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get prioritySupport;
+
+  /// No description provided for @unlimitedDoctorsAssistants.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited doctors & assistants'**
+  String get unlimitedDoctorsAssistants;
+
+  /// No description provided for @storagePerAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} GB storage per account'**
+  String storagePerAccount(String amount);
+
+  /// No description provided for @advancedAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced analytics'**
+  String get advancedAnalytics;
+
+  /// No description provided for @adminRoleIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin role included'**
+  String get adminRoleIncluded;
+
+  /// No description provided for @fullPatientManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Full patient management'**
+  String get fullPatientManagement;
+
+  /// No description provided for @appointmentScheduling.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment scheduling'**
+  String get appointmentScheduling;
+
+  /// No description provided for @treatmentTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment tracking'**
+  String get treatmentTracking;
+
+  /// No description provided for @completeYourProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Your Profile'**
+  String get completeYourProfile;
+
+  /// No description provided for @setupClinicDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your clinic details'**
+  String get setupClinicDetails;
+
+  /// No description provided for @clinicDetailsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your clinic details to complete registration. You can update these later in settings.'**
+  String get clinicDetailsInfo;
+
+  /// No description provided for @clinicNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic Name *'**
+  String get clinicNameRequired;
+
+  /// No description provided for @clinicNameHintExample.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Bright Smile Dental Clinic'**
+  String get clinicNameHintExample;
+
+  /// No description provided for @locationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location *'**
+  String get locationRequired;
+
+  /// No description provided for @searchForLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for location...'**
+  String get searchForLocation;
+
+  /// No description provided for @noLocationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No locations found. Try a different search term.'**
+  String get noLocationsFound;
+
+  /// No description provided for @detailedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Address'**
+  String get detailedAddress;
+
+  /// No description provided for @detailedAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Street, building number, etc.'**
+  String get detailedAddressHint;
+
+  /// No description provided for @completeRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Registration'**
+  String get completeRegistration;
+
+  /// No description provided for @pleaseEnterClinicName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your clinic name'**
+  String get pleaseEnterClinicName;
+
+  /// No description provided for @clinicNameMinChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name must be at least 3 characters'**
+  String get clinicNameMinChars;
+
+  /// No description provided for @clinicNameMaxChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic name must be less than 100 characters'**
+  String get clinicNameMaxChars;
+
+  /// No description provided for @pleaseSelectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a location'**
+  String get pleaseSelectLocation;
+
+  /// No description provided for @pleaseSelectPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a subscription plan'**
+  String get pleaseSelectPlan;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Expired'**
+  String get sessionExpired;
+
+  /// No description provided for @pleaseVerifyEmailAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email again'**
+  String get pleaseVerifyEmailAgain;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome!'**
+  String get welcome;
+
+  /// No description provided for @accountCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been created successfully'**
+  String get accountCreatedSuccessfully;
+
+  /// No description provided for @registrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Failed'**
+  String get registrationFailed;
+
+  /// No description provided for @rememberPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember your password? '**
+  String get rememberPassword;
+
+  /// No description provided for @setNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New Password'**
+  String get setNewPassword;
+
+  /// No description provided for @enterNewPasswordBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password below'**
+  String get enterNewPasswordBelow;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @resetPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordButton;
+
+  /// No description provided for @passwordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Reset Successfully'**
+  String get passwordResetSuccess;
+
+  /// No description provided for @passwordResetSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now sign in with your new password'**
+  String get passwordResetSuccessMessage;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
 }
 
 class _AppLocalizationsDelegate

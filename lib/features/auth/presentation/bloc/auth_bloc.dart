@@ -67,6 +67,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_ForgotPasswordSubmitted>(_onForgotPasswordSubmitted);
     on<_ForgotPasswordReset>(_onForgotPasswordReset);
 
+    // Reset password events
+    on<_ResetPasswordOtpRequested>(_onResetPasswordOtpRequested);
+    on<_ResetPasswordOtpVerified>(_onResetPasswordOtpVerified);
+    on<_ResetPasswordOtpResendRequested>(_onResetPasswordOtpResendRequested);
+    on<_ResetPasswordNewChanged>(_onResetPasswordNewChanged);
+    on<_ResetPasswordConfirmChanged>(_onResetPasswordConfirmChanged);
+    on<_ResetPasswordVisibilityToggled>(_onResetPasswordVisibilityToggled);
+    on<_ResetPasswordConfirmVisibilityToggled>(_onResetPasswordConfirmVisibilityToggled);
+    on<_ResetPasswordSubmitted>(_onResetPasswordSubmitted);
+
     // Clinic context
     on<_ActiveClinicChanged>(_onActiveClinicChanged);
 
@@ -432,7 +442,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
     if (!state.isSignupPasswordValid) {
-      emit(state.copyWith(signupError: 'Password must be at least 6 characters'));
+      emit(state.copyWith(signupError: 'Password must be at least 8 characters'));
       return;
     }
     if (!state.isSignupConfirmPasswordValid) {
@@ -533,20 +543,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(state.copyWith(isForgotPasswordLoading: true, forgotPasswordError: null));
 
-    try {
-      // TODO: Implement actual forgot password API call
-      await Future.delayed(const Duration(seconds: 2));
+    final params = RequestOtpParams(email: state.forgotPasswordEmail);
+    final result = await _authRepository.requestOtpForResetPassword(params: params);
 
-      emit(state.copyWith(
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isForgotPasswordLoading: false,
+        forgotPasswordError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
         isForgotPasswordLoading: false,
         isForgotPasswordSuccess: true,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isForgotPasswordLoading: false,
-        forgotPasswordError: 'Failed to send reset email. Please try again.',
-      ));
-    }
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+      )),
+    );
   }
 
   void _onForgotPasswordReset(_ForgotPasswordReset event, Emitter<AuthState> emit) {
@@ -555,6 +566,157 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       isForgotPasswordSuccess: false,
       forgotPasswordError: null,
     ));
+  }
+
+  // Reset password handlers
+  Future<void> _onResetPasswordOtpRequested(
+    _ResetPasswordOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isOtpLoading: true, otpError: null));
+
+    final params = RequestOtpParams(email: state.forgotPasswordEmail);
+    final result = await _authRepository.requestOtpForResetPassword(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+      )),
+    );
+  }
+
+  Future<void> _onResetPasswordOtpVerified(
+    _ResetPasswordOtpVerified event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state.otpCode.length != 6) {
+      emit(state.copyWith(otpError: 'Please enter a valid 6-digit code'));
+      return;
+    }
+
+    emit(state.copyWith(isOtpVerifying: true, otpError: null));
+
+    final params = VerifyOtpParams(
+      email: state.forgotPasswordEmail,
+      otp: state.otpCode,
+    );
+    final result = await _authRepository.verifyOtp(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpVerifying: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpVerifying: false,
+        resetPasswordSessionId: response.sessionId,
+      )),
+    );
+  }
+
+  Future<void> _onResetPasswordOtpResendRequested(
+    _ResetPasswordOtpResendRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isOtpLoading: true, otpError: null));
+
+    final params = RequestOtpParams(email: state.forgotPasswordEmail);
+    final result = await _authRepository.requestOtpForResetPassword(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+        otpCode: '',
+      )),
+    );
+  }
+
+  void _onResetPasswordNewChanged(
+    _ResetPasswordNewChanged event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      resetPasswordNew: event.password,
+      resetPasswordError: null,
+    ));
+  }
+
+  void _onResetPasswordConfirmChanged(
+    _ResetPasswordConfirmChanged event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      resetPasswordConfirm: event.confirm,
+      resetPasswordError: null,
+    ));
+  }
+
+  void _onResetPasswordVisibilityToggled(
+    _ResetPasswordVisibilityToggled event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      isResetPasswordVisible: !state.isResetPasswordVisible,
+    ));
+  }
+
+  void _onResetPasswordConfirmVisibilityToggled(
+    _ResetPasswordConfirmVisibilityToggled event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      isResetPasswordConfirmVisible: !state.isResetPasswordConfirmVisible,
+    ));
+  }
+
+  Future<void> _onResetPasswordSubmitted(
+    _ResetPasswordSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state.resetPasswordNew.length < 8) {
+      emit(state.copyWith(resetPasswordError: 'Password must be at least 8 characters'));
+      return;
+    }
+    if (state.resetPasswordNew != state.resetPasswordConfirm) {
+      emit(state.copyWith(resetPasswordError: 'Passwords do not match'));
+      return;
+    }
+    if (state.resetPasswordSessionId == null || state.resetPasswordSessionId!.isEmpty) {
+      emit(state.copyWith(resetPasswordError: 'Session expired. Please try again.'));
+      return;
+    }
+
+    emit(state.copyWith(isResetPasswordLoading: true, resetPasswordError: null));
+
+    final params = ResetPasswordParams(
+      sessionId: state.resetPasswordSessionId!,
+      password: state.resetPasswordNew,
+      passwordConfirmation: state.resetPasswordConfirm,
+    );
+    final result = await _authRepository.resetPassword(params: params);
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isResetPasswordLoading: false,
+        resetPasswordError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (_) => emit(state.copyWith(
+        isResetPasswordLoading: false,
+        isResetPasswordSuccess: true,
+      )),
+    );
   }
 
   // Clinic context handler

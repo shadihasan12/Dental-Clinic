@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
@@ -16,197 +18,230 @@ class ForgotPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc(getIt(), getIt()),
-      child: const _ForgotPasswordPageContent(),
+      child: const _ForgotPasswordContent(),
     );
   }
 }
 
-class _ForgotPasswordPageContent extends StatelessWidget {
-  const _ForgotPasswordPageContent();
+class _ForgotPasswordContent extends StatefulWidget {
+  const _ForgotPasswordContent();
+
+  @override
+  State<_ForgotPasswordContent> createState() => _ForgotPasswordContentState();
+}
+
+class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _handleSendOtp() {
+    context.read<AuthBloc>().add(const AuthEvent.forgotPasswordSubmitted());
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Scaffold(
       backgroundColor: ColorManager.white,
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state.forgotPasswordError != null) {
-            AppSnackbar.showError(context, title: 'Error', message: state.forgotPasswordError);
-          }
-        },
-        builder: (context, state) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // Gradient Header
-                GradientHeader(
-                  title: 'Forgot Password',
-                  subtitle: "Enter your email and we'll send you a reset link",
-                  height: 240.h,
-                  showBackButton: true,
-                  onBackPressed: () => context.pop(),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+                previous.isForgotPasswordSuccess != current.isForgotPasswordSuccess,
+            listener: (context, state) {
+              if (state.isForgotPasswordSuccess) {
+                AppSnackbar.showSuccess(
+                  context,
+                  title: l10n.otpSent,
+                  message: l10n.verificationCodeSentTo(state.forgotPasswordEmail),
+                );
+                context.pushNamed(
+                  AppRoutesNames.forgotPasswordVerifyOtp,
+                  extra: context.read<AuthBloc>(),
+                );
+              }
+            },
+          ),
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+                previous.forgotPasswordError != current.forgotPasswordError,
+            listener: (context, state) {
+              if (state.forgotPasswordError != null &&
+                  state.forgotPasswordError!.isNotEmpty) {
+                AppSnackbar.showError(
+                  context,
+                  title: l10n.error,
+                  message: state.forgotPasswordError,
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<AuthBloc, AuthState>(
+          buildWhen: (previous, current) =>
+              previous.isForgotPasswordLoading != current.isForgotPasswordLoading ||
+              previous.isForgotPasswordEmailValid != current.isForgotPasswordEmailValid,
+          builder: (context, state) {
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.h),
+
+                    // Back button
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.gray100,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          color: ColorManager.textPrimary,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 24.h),
+
+                    // Title
+                    Text(
+                      l10n.forgotPassword,
+                      style: TextStyle(
+                        fontSize: FontSizesManager.s28,
+                        fontWeight: FontWeightManager.bold,
+                        fontFamily: fontFamily,
+                        color: ColorManager.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      l10n.forgotPasswordSubtitle,
+                      style: TextStyle(
+                        fontSize: FontSizesManager.s14,
+                        fontFamily: fontFamily,
+                        color: ColorManager.textSecondary,
+                      ),
+                    ),
+
+                    SizedBox(height: 40.h),
+
+                    // Lock icon
+                    Center(
+                      child: Container(
+                        width: 72.w,
+                        height: 72.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.primary10,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.lock_reset_outlined,
+                          size: 36.w,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 24.h),
+
+                    Center(
+                      child: Text(
+                        l10n.verificationCodeInfo,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s14,
+                          fontFamily: fontFamily,
+                          color: ColorManager.textSecondary,
+                          height: FontHeightsManager.normal,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                    SizedBox(height: 32.h),
+
+                    // Email field
+                    AuthTextField(
+                      label: l10n.emailAddress,
+                      hint: l10n.enterRegisteredEmail,
+                      controller: _emailController,
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      enabled: !state.isForgotPasswordLoading,
+                      onChanged: (value) {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthEvent.forgotPasswordEmailChanged(value));
+                      },
+                    ),
+
+                    SizedBox(height: 32.h),
+
+                    // Send OTP button
+                    PrimaryButton(
+                      text: l10n.sendVerificationCode,
+                      isLoading: state.isForgotPasswordLoading,
+                      onPressed: state.isForgotPasswordLoading ||
+                              !state.isForgotPasswordEmailValid
+                          ? null
+                          : _handleSendOtp,
+                    ),
+
+                    SizedBox(height: 24.h),
+
+                    // Back to login link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          l10n.rememberPassword,
+                          style: TextStyle(
+                            fontSize: FontSizesManager.s14,
+                            fontFamily: fontFamily,
+                            color: ColorManager.textSecondary,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context.pop(),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            l10n.logIn,
+                            style: TextStyle(
+                              fontSize: FontSizesManager.s14,
+                              fontFamily: fontFamily,
+                              color: ColorManager.primary,
+                              fontWeight: FontWeightManager.semiBold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 24.h),
+                  ],
                 ),
-
-                // Content
-                Padding(
-                  padding: PaddingManager.horizontalPadding,
-                  child: state.isForgotPasswordSuccess
-                      ? _buildSuccessContent(context)
-                      : _buildFormContent(context, state),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildFormContent(BuildContext context, AuthState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 32.h),
-
-        // Email illustration
-        Center(
-          child: Container(
-            width: 100.w,
-            height: 100.h,
-            decoration: BoxDecoration(
-              color: ColorManager.primary10,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.mail_outline,
-              size: 48.w,
-              color: ColorManager.primary,
-            ),
-          ),
-        ),
-
-        SizedBox(height: 32.h),
-
-        // Email Field
-        Text(
-          'Email Address',
-          style: TextStyleManager.labelLarge.copyWith(
-            color: ColorManager.textPrimary,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        CustomTextField(
-          hintText: 'Enter your registered email',
-          keyboardType: TextInputType.emailAddress,
-          prefixIcon: const Icon(
-            Icons.email_outlined,
-            color: ColorManager.textSecondary,
-          ),
-          onChanged: (value) {
-            context
-                .read<AuthBloc>()
-                .add(AuthEvent.forgotPasswordEmailChanged(value));
-          },
-        ),
-
-        SizedBox(height: 32.h),
-
-        // Submit Button
-        PrimaryButton(
-          text: 'Send Reset Link',
-          isLoading: state.isForgotPasswordLoading,
-          isEnabled: state.isForgotPasswordEmailValid,
-          onPressed: () {
-            context
-                .read<AuthBloc>()
-                .add(const AuthEvent.forgotPasswordSubmitted());
-          },
-        ),
-
-        SizedBox(height: 24.h),
-
-        // Back to Login
-        Center(
-          child: CustomTextButton(
-            text: 'Back to Sign In',
-            onPressed: () => context.pop(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSuccessContent(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 48.h),
-
-        // Success illustration
-        Container(
-          width: 120.w,
-          height: 120.h,
-          decoration: BoxDecoration(
-            color: ColorManager.successBackground,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.check_circle_outline,
-            size: 64.w,
-            color: ColorManager.success,
-          ),
-        ),
-
-        SizedBox(height: 32.h),
-
-        // Success message
-        Text(
-          'Email Sent!',
-          style: TextStyleManager.headlineLarge.copyWith(
-            color: ColorManager.textPrimary,
-          ),
-        ),
-
-        SizedBox(height: 12.h),
-
-        Text(
-          'We have sent a password reset link to your email address. Please check your inbox and follow the instructions.',
-          textAlign: TextAlign.center,
-          style: TextStyleManager.bodyMedium.copyWith(
-            color: ColorManager.textSecondary,
-          ),
-        ),
-
-        SizedBox(height: 40.h),
-
-        // Back to Login Button
-        PrimaryButton(
-          text: 'Back to Sign In',
-          onPressed: () => context.pop(),
-        ),
-
-        SizedBox(height: 16.h),
-
-        // Resend Link
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Didn't receive the email? ",
-              style: TextStyleManager.bodyMedium.copyWith(
-                color: ColorManager.textSecondary,
               ),
-            ),
-            CustomTextButton(
-              text: 'Resend',
-              onPressed: () {
-                context
-                    .read<AuthBloc>()
-                    .add(const AuthEvent.forgotPasswordReset());
-              },
-            ),
-          ],
+            );
+          },
         ),
-      ],
+      ),
     );
   }
 }

@@ -1,47 +1,45 @@
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 
-class ChooseClinicNamePage extends StatefulWidget {
-  const ChooseClinicNamePage({super.key});
+class FinishProfilePage extends StatefulWidget {
+  const FinishProfilePage({super.key});
 
   @override
-  State<ChooseClinicNamePage> createState() => _ChooseClinicNamePageState();
+  State<FinishProfilePage> createState() => _FinishProfilePageState();
 }
 
-class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
+class _FinishProfilePageState extends State<FinishProfilePage> {
   final _clinicNameController = TextEditingController();
   final _addressController = TextEditingController();
   final _locationSearchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _showValidationErrors = false;
   Timer? _debounce;
-  final String _selectedCountryCode = 'SY'; // Default to Syria
+  final String _selectedCountryCode = 'SY';
 
   @override
   void initState() {
     super.initState();
-    // Add clinic name change listener
     _clinicNameController.addListener(() {
       context.read<AuthBloc>().add(
-            AuthEvent.signupClinicNameChanged(_clinicNameController.text),
-          );
+        AuthEvent.signupClinicNameChanged(_clinicNameController.text),
+      );
     });
-    // Add address change listener
     _addressController.addListener(() {
       context.read<AuthBloc>().add(
-            AuthEvent.signupClinicAddressChanged(_addressController.text),
-          );
+        AuthEvent.signupClinicAddressChanged(_addressController.text),
+      );
     });
   }
 
@@ -56,14 +54,15 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
 
   String? _validateClinicName(String? value) {
     if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.trim().isEmpty) {
-      return 'Please enter your clinic name';
+      return l10n.pleaseEnterClinicName;
     }
     if (value.trim().length < 3) {
-      return 'Clinic name must be at least 3 characters';
+      return l10n.clinicNameMinChars;
     }
     if (value.trim().length > 100) {
-      return 'Clinic name must be less than 100 characters';
+      return l10n.clinicNameMaxChars;
     }
     return null;
   }
@@ -77,30 +76,29 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       context.read<AuthBloc>().add(
-            AuthEvent.locationSearchRequested(
-              query: query,
-              countryCode: _selectedCountryCode,
-            ),
-          );
+        AuthEvent.locationSearchRequested(
+          query: query,
+          countryCode: _selectedCountryCode,
+        ),
+      );
     });
   }
 
   void _handleCreate() {
     setState(() => _showValidationErrors = true);
+    final l10n = AppLocalizations.of(context)!;
 
     final state = context.read<AuthBloc>().state;
 
-    // Validate form
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
-    // Validate required fields from state
     if (state.selectedLocation == null) {
       AppSnackbar.showError(
         context,
-        title: 'Validation Error',
-        message: 'Please select a location',
+        title: l10n.validationError,
+        message: l10n.pleaseSelectLocation,
       );
       return;
     }
@@ -108,8 +106,8 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
     if (state.selectedPlan == null) {
       AppSnackbar.showError(
         context,
-        title: 'Validation Error',
-        message: 'Please select a subscription plan',
+        title: l10n.validationError,
+        message: l10n.pleaseSelectPlan,
       );
       return;
     }
@@ -117,134 +115,156 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
     if (state.selectedSpecialty == null) {
       AppSnackbar.showError(
         context,
-        title: 'Validation Error',
-        message: 'Please select a specialization',
+        title: l10n.validationError,
+        message: l10n.pleaseSelectSpecialization,
       );
       return;
     }
 
-    // Check if we have session_id from OTP verification
     if (state.sessionId == null || state.sessionId!.isEmpty) {
       AppSnackbar.showError(
         context,
-        title: 'Session Expired',
-        message: 'Please verify your email again',
+        title: l10n.sessionExpired,
+        message: l10n.pleaseVerifyEmailAgain,
       );
       return;
     }
 
-    // Submit registration with session_id
     context.read<AuthBloc>().add(const AuthEvent.signupSubmitted());
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Scaffold(
       backgroundColor: ColorManager.white,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          // Handle successful registration
           if (state.status == AuthStatus.authenticated) {
             AppSnackbar.showSuccess(
               context,
-              title: 'Welcome!',
-              message: 'Your account has been created successfully',
+              title: l10n.welcome,
+              message: l10n.accountCreatedSuccessfully,
             );
             context.goNamed(AppRoutesNames.root);
           }
 
-          // Handle registration errors
           if (state.signupError != null) {
             AppSnackbar.showError(
               context,
-              title: 'Registration Failed',
+              title: l10n.registrationFailed,
               message: state.signupError,
             );
           }
         },
         builder: (context, state) {
           return SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                // Gradient Header
-                GradientHeader(
-                  title: 'Complete Your Profile',
-                  subtitle: 'Set up your clinic details',
-                  height: 200.h,
-                  showBackButton: true,
-                  onBackPressed: () => context.pop(),
-                ),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.h),
 
-                // Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: PaddingManager.horizontalPadding,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 20.h),
-
-                          // Info box
-                          _buildInfoBox(),
-
-                          SizedBox(height: 20.h),
-
-                        // Clinic Name Field
-                        AuthTextField(
-                          label: 'Clinic Name *',
-                          hint: 'e.g., Bright Smile Dental Clinic',
-                          controller: _clinicNameController,
-                          prefixIcon: Icons.business_outlined,
-                          keyboardType: TextInputType.text,
-                          validator: _validateClinicName,
-                          onChanged: (value) {
-                            if (_showValidationErrors) {
-                              _formKey.currentState?.validate();
-                            }
-                          },
+                    // Back button
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          color: ColorManager.gray100,
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-
-                        SizedBox(height: 20.h),
-
-                        // Location Search Section
-                        _buildLocationSearch(state),
-
-                        // Selected Location Display
-                        if (state.selectedLocation != null) ...[
-                          SizedBox(height: 12.h),
-                          _buildSelectedLocation(state.selectedLocation!),
-                        ],
-
-                        SizedBox(height: 20.h),
-
-                        // Detailed Address Field
-                        AuthTextField(
-                          label: 'Detailed Address',
-                          hint: 'Street, building number, etc.',
-                          controller: _addressController,
-                          prefixIcon: Icons.location_on_outlined,
-                          keyboardType: TextInputType.streetAddress,
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          color: ColorManager.textPrimary,
+                          size: 18.w,
                         ),
-
-                        SizedBox(height: 100.h),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    SizedBox(height: 24.h),
+
+                    // Title
+                    Text(
+                      l10n.completeYourProfile,
+                      style: TextStyle(
+                        fontSize: FontSizesManager.s28,
+                        fontWeight: FontWeightManager.bold,
+                        fontFamily: fontFamily,
+                        color: ColorManager.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      l10n.setupClinicDetails,
+                      style: TextStyle(
+                        fontSize: FontSizesManager.s14,
+                        fontFamily: fontFamily,
+                        color: ColorManager.textSecondary,
+                      ),
+                    ),
+
+                    SizedBox(height: 24.h),
+
+                    _buildInfoBox(l10n, fontFamily),
+
+                    SizedBox(height: 20.h),
+
+                    AuthTextField(
+                      label: l10n.clinicNameRequired,
+                      hint: l10n.clinicNameHintExample,
+                      controller: _clinicNameController,
+                      prefixIcon: Icons.business_outlined,
+                      keyboardType: TextInputType.text,
+                      validator: _validateClinicName,
+                      onChanged: (value) {
+                        if (_showValidationErrors) {
+                          _formKey.currentState?.validate();
+                        }
+                      },
+                    ),
+
+                    SizedBox(height: 20.h),
+
+                    _buildLocationSearch(state, l10n, fontFamily),
+
+                    if (state.selectedLocation != null) ...[
+                      SizedBox(height: 12.h),
+                      _buildSelectedLocation(
+                        state.selectedLocation!,
+                        fontFamily,
+                      ),
+                    ],
+
+                    SizedBox(height: 20.h),
+
+                    AuthTextField(
+                      label: l10n.detailedAddress,
+                      hint: l10n.detailedAddressHint,
+                      controller: _addressController,
+                      prefixIcon: Icons.location_on_outlined,
+                      keyboardType: TextInputType.streetAddress,
+                    ),
+
+                    SizedBox(height: 100.h),
+                  ],
                 ),
               ),
-            ],
             ),
           );
         },
       ),
-      bottomNavigationBar: _buildBottomButton(),
+      bottomNavigationBar: _buildBottomButton(l10n),
     );
   }
 
-  Widget _buildInfoBox() {
+  Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -265,11 +285,11 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
           SizedBox(width: 12.w),
           Expanded(
             child: Text(
-              'Enter your clinic details to complete registration. You can update these later in settings.',
+              l10n.clinicDetailsInfo,
               style: TextStyle(
                 color: ColorManager.infoExtraLight,
-                fontFamily: FontFamily.geist,
-                fontSize: 14.sp,
+                fontFamily: fontFamily,
+                fontSize: FontSizesManager.s12,
               ),
             ),
           ),
@@ -278,26 +298,17 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
     );
   }
 
-  Widget _buildLocationSearch(AuthState state) {
+  Widget _buildLocationSearch(
+    AuthState state,
+    AppLocalizations l10n,
+    String fontFamily,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
-        Text(
-          'Location *',
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            fontFamily: FontFamily.geist,
-            color: ColorManager.textPrimary,
-          ),
-        ),
-        SizedBox(height: 8.h),
-
-        // Search Field
         AuthTextField(
-          label: '',
-          hint: 'Search for location...',
+          label: l10n.locationRequired,
+          hint: l10n.searchForLocation,
           controller: _locationSearchController,
           prefixIcon: Icons.search,
           suffixIcon: state.isSearchingLocations
@@ -316,7 +327,6 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
           onChanged: _onLocationSearchChanged,
         ),
 
-        // Search Results
         if (_locationSearchController.text.trim().length >= 2 &&
             state.searchedLocations.isNotEmpty &&
             state.selectedLocation == null)
@@ -339,10 +349,8 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: state.searchedLocations.length,
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-                color: ColorManager.gray300,
-              ),
+              separatorBuilder: (context, index) =>
+                  Divider(height: 1, color: ColorManager.gray300),
               itemBuilder: (context, index) {
                 final location = state.searchedLocations[index];
                 return ListTile(
@@ -350,23 +358,23 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
                   title: Text(
                     location.name,
                     style: TextStyle(
-                      fontSize: 14.sp,
-                      fontFamily: FontFamily.geist,
-                      fontWeight: FontWeight.w500,
+                      fontSize: FontSizesManager.s14,
+                      fontFamily: fontFamily,
+                      fontWeight: FontWeightManager.medium,
                     ),
                   ),
                   subtitle: Text(
                     location.fullName,
                     style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontFamily.geist,
+                      fontSize: FontSizesManager.s12,
+                      fontFamily: fontFamily,
                       color: ColorManager.textSecondary,
                     ),
                   ),
                   onTap: () {
                     context.read<AuthBloc>().add(
-                          AuthEvent.signupLocationEntitySelected(location),
-                        );
+                      AuthEvent.signupLocationEntitySelected(location),
+                    );
                     _locationSearchController.clear();
                   },
                 );
@@ -374,7 +382,6 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
             ),
           ),
 
-        // Empty state for search
         if (_locationSearchController.text.trim().length >= 2 &&
             !state.isSearchingLocations &&
             state.searchedLocations.isEmpty &&
@@ -387,10 +394,10 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Text(
-              'No locations found. Try a different search term.',
+              l10n.noLocationsFound,
               style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontFamily.geist,
+                fontSize: FontSizesManager.s14,
+                fontFamily: fontFamily,
                 color: ColorManager.textSecondary,
               ),
             ),
@@ -399,7 +406,7 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
     );
   }
 
-  Widget _buildSelectedLocation(LocationEntity location) {
+  Widget _buildSelectedLocation(LocationEntity location, String fontFamily) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -409,11 +416,7 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.location_on,
-            color: ColorManager.primary,
-            size: 20.w,
-          ),
+          Icon(Icons.location_on, color: ColorManager.primary, size: 20.w),
           SizedBox(width: 8.w),
           Expanded(
             child: Column(
@@ -422,30 +425,29 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
                 Text(
                   location.name,
                   style: TextStyle(
-                    fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
-                    fontWeight: FontWeight.w600,
+                    fontSize: FontSizesManager.s14,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeightManager.semiBold,
                     color: ColorManager.primary,
                   ),
                 ),
                 Text(
                   location.fullName,
                   style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: FontFamily.geist,
+                    fontSize: FontSizesManager.s12,
+                    fontFamily: fontFamily,
                     color: ColorManager.primary,
                   ),
                 ),
               ],
             ),
           ),
-          // Remove button removed - user should search again to change location
         ],
       ),
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton(AppLocalizations l10n) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Container(
@@ -462,8 +464,9 @@ class _ChooseClinicNamePageState extends State<ChooseClinicNamePage> {
           ),
           child: SafeArea(
             child: PrimaryButton(
-              text: 'Complete Registration',
-              isEnabled: _clinicNameController.text.trim().isNotEmpty &&
+              text: l10n.completeRegistration,
+              isEnabled:
+                  _clinicNameController.text.trim().isNotEmpty &&
                   state.selectedLocation != null &&
                   !state.isSignupLoading,
               isLoading: state.isSignupLoading,

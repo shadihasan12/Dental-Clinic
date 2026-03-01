@@ -1,12 +1,13 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -19,38 +20,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<OnboardingItem> _items = [
-    OnboardingItem(
-      icon: Icons.people,
-      badgeIcon: Icons.groups_outlined,
-      title: 'Manage Patients\nEffortlessly',
-      description:
-          'Streamline patient management with automated case creation and comprehensive patient profiles',
-    ),
-    OnboardingItem(
-      icon: Icons.calendar_today,
-      badgeIcon: Icons.calendar_month_outlined,
-      title: 'Smart Scheduling',
-      description:
-          'Easily manage appointments with intuitive calendar views and automated reminders',
-    ),
-    OnboardingItem(
-      icon: Icons.description,
-      badgeIcon: Icons.description_outlined,
-      title: 'Interactive Treatment\nRecords',
-      description:
-          'Record treatments with our 2D teeth diagram for precise and visual treatment tracking',
-      useToothIcon: true,
-    ),
-    OnboardingItem(
-      icon: Icons.bar_chart,
-      badgeIcon: Icons.trending_up,
-      title: 'Insights & Analytics',
-      description:
-          'Track clinic performance with comprehensive statistics and payment management',
-      useChartIcon: true,
-    ),
-  ];
+  List<OnboardingItem> _items(AppLocalizations l10n) => [
+        OnboardingItem(
+          icon: Icons.people,
+          badgeIcon: Icons.groups_outlined,
+          title: l10n.onboardingTitle1,
+          description: l10n.onboardingDesc1,
+        ),
+        OnboardingItem(
+          icon: Icons.calendar_today,
+          badgeIcon: Icons.calendar_month_outlined,
+          title: l10n.onboardingTitle2,
+          description: l10n.onboardingDesc2,
+        ),
+        OnboardingItem(
+          icon: Icons.description,
+          badgeIcon: Icons.description_outlined,
+          title: l10n.onboardingTitle3,
+          description: l10n.onboardingDesc3,
+          useToothIcon: true,
+        ),
+        OnboardingItem(
+          icon: Icons.bar_chart,
+          badgeIcon: Icons.trending_up,
+          title: l10n.onboardingTitle4,
+          description: l10n.onboardingDesc4,
+          useChartIcon: true,
+        ),
+      ];
 
   @override
   void dispose() {
@@ -64,8 +61,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
-  void _nextPage() {
-    if (_currentPage < _items.length - 1) {
+  void _nextPage(int itemCount) {
+    if (_currentPage < itemCount - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -81,6 +78,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final items = _items(l10n);
+    final isLastPage = _currentPage == items.length - 1;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Scaffold(
       backgroundColor: ColorManager.gray50,
       body: SafeArea(
@@ -90,33 +92,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
               child: Align(
-                alignment: Alignment.centerRight,
+                alignment: AlignmentDirectional.centerEnd,
                 child: TextButton(
                   onPressed: _navigateToLogin,
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   ),
                   child: Text(
-                    'Skip',
+                    l10n.skip,
                     style: TextStyle(
                       color: ColorManager.textSecondary,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: FontFamily.geist,
-                      fontSize: 14.sp
+                      fontWeight: FontWeightManager.regular,
+                      fontFamily: fontFamily,
+                      fontSize: FontSizesManager.s14,
                     ),
                   ),
                 ),
               ),
             ),
 
-            // Page View - Takes remaining space
+            // Page View
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
-                itemCount: _items.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return _buildPage(_items[index], index);
+                  return _buildPage(items[index], index, fontFamily);
                 },
               ),
             ),
@@ -127,28 +130,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _items.length,
+                  items.length,
                   (index) => _buildIndicator(index == _currentPage),
                 ),
               ),
             ),
 
-            // Next Button
-           PrimaryButton(
-            text: 'Next',
-            onPressed: _nextPage,
-            height: 60.h,
-           )
+            // Next / Get Started Button
+            PrimaryButton(
+              text: isLastPage ? l10n.getStarted : l10n.next,
+              onPressed: () => _nextPage(items.length),
+              height: 60.h,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPage(OnboardingItem item, int index) {
+  Widget _buildPage(OnboardingItem item, int index, String fontFamily) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate sizes based on available height
         final availableHeight = constraints.maxHeight;
         final cardSize = (availableHeight * 0.42).clamp(180.0, 260.0);
 
@@ -245,10 +247,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   item.title,
                   style: TextStyle(
                     color: ColorManager.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    height: 1.2,
-                    fontFamily: FontFamily.geist,
-                    fontSize: 20.sp,
+                    fontWeight: FontWeightManager.bold,
+                    height: FontHeightsManager.h120,
+                    fontFamily: fontFamily,
+                    fontSize: FontSizesManager.s22,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -262,9 +264,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     item.description,
                     style: TextStyle(
                       color: ColorManager.textSecondary,
-                      height: 1.4,
-                      fontFamily: FontFamily.geist,
-                      fontSize: 16.sp,
+                      height: FontHeightsManager.h140,
+                      fontFamily: fontFamily,
+                      fontSize: FontSizesManager.s15,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -284,8 +286,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     if (item.useToothIcon == true) {
       return Text(
-        '🦷',
-        style: TextStyle(fontSize: iconSize * 0.9, fontFamily: FontFamily.geist,),
+        '\u{1F9B7}',
+        style: TextStyle(fontSize: iconSize * 0.9),
       );
     } else if (item.useChartIcon == true) {
       return Row(

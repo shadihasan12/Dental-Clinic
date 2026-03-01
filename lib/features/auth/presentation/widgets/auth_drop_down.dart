@@ -1,5 +1,5 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -33,9 +33,9 @@ class AuthDropdownField extends StatelessWidget {
           label,
           style: TextStyle(
             color: ColorManager.textPrimary,
-            fontWeight: FontWeight.w500,
-            fontFamily: FontFamily.geist,
-            fontSize: 12.sp,
+            fontWeight: FontWeightManager.medium,
+            fontFamily: FontHelper.fontFamily(context),
+            fontSize: FontSizesManager.s12,
           ),
         ),
         SizedBox(height: 8.h),
@@ -49,19 +49,20 @@ class AuthDropdownField extends StatelessWidget {
             Icons.keyboard_arrow_down,
             color: ColorManager.textTertiary,
           ),
+          style: TextStyle(
+            color: ColorManager.textTertiary,
+            fontFamily: FontHelper.fontFamily(context),
+            fontSize: FontSizesManager.s12,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
               color: ColorManager.textTertiary,
-              fontFamily: FontFamily.geist,
-              fontSize: 12.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: FontSizesManager.s12,
             ),
             prefixIcon: prefixIcon != null
-                ? Icon(
-                    prefixIcon,
-                    color: ColorManager.textTertiary,
-                    size: 20.w,
-                  )
+                ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
                 : null,
             filled: true,
             fillColor: ColorManager.gray50,
@@ -88,8 +89,8 @@ class AuthDropdownField extends StatelessWidget {
                   child: Text(
                     item,
                     style: TextStyle(
-                      fontFamily: FontFamily.geist,
-                      fontSize: 14.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: FontSizesManager.s14,
                       color: ColorManager.textPrimary,
                     ),
                   ),

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
@@ -35,6 +34,12 @@ abstract class AuthRemoteDataSource {
 
   /// Login with email or mobile number
   Future<LoginResponseModel> login(Map<String, dynamic> body);
+
+  /// Request OTP for password reset
+  Future<OtpResponse> requestOtpForResetPassword(Map<String, dynamic> body);
+
+  /// Reset password with session ID
+  Future<void> resetPassword(Map<String, dynamic> body);
 }
 
 /// Implementation of auth remote data source using API consumer
@@ -134,11 +139,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: body,
     );
 
-    // Extract and save token from response root level
-    final token = response['token'] as String?;
-    if (token != null && token.isNotEmpty) {
-      await _tokenStorage.saveToken(token);
-    }
+    // Token is extracted from Authorization response header by AuthInterceptor
 
     // Extract data object from response
     final data = response['data'] as Map<String, dynamic>?;
@@ -158,39 +159,42 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<LoginResponseModel> login(Map<String, dynamic> body) async {
-    debugPrint('[LOGIN] → POST ${AuthEndpoints.login}');
-    debugPrint('[LOGIN] Request: { email_or_mobile_number: ${body['email_or_mobile_number']}, password: *** }');
-
     final response = await _apiConsumer.post(
       AuthEndpoints.login,
       body: body,
     );
 
-    debugPrint('[LOGIN] ← Raw response: $response');
-
-    // Extract and save token if present at root level
-    final token = response['token'] as String?;
-    debugPrint('[LOGIN] Token present: ${token != null && token.isNotEmpty}');
-    if (token != null && token.isNotEmpty) {
-      await _tokenStorage.saveToken(token);
-    }
+    // Token is extracted from Authorization response header by AuthInterceptor
 
     // Extract data object from response
     final data = response['data'] as Map<String, dynamic>?;
     if (data == null) {
-      debugPrint('[LOGIN] ✗ Response "data" field is null');
       throw Exception('Login failed: Invalid response data');
     }
-
-    debugPrint('[LOGIN] ✓ Parsed user — id: ${data['id']}, name: ${data['name']}, email: ${data['email']}');
 
     // Save user ID for later use
     final userId = data['id'] as String?;
     if (userId != null && userId.isNotEmpty) {
       await _tokenStorage.saveUserId(userId);
-      debugPrint('[LOGIN] User ID saved: $userId');
     }
 
     return LoginResponseModel.fromJson(data);
+  }
+
+  @override
+  Future<OtpResponse> requestOtpForResetPassword(Map<String, dynamic> body) async {
+    final response = await _apiConsumer.post(
+      AuthEndpoints.requestOtpForResetPassword,
+      body: body,
+    );
+    return OtpResponse.fromJson(response);
+  }
+
+  @override
+  Future<void> resetPassword(Map<String, dynamic> body) async {
+    await _apiConsumer.post(
+      AuthEndpoints.resetPassword,
+      body: body,
+    );
   }
 }

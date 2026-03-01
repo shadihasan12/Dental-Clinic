@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import 'core/api/api_consumer.dart' as _i962;
 import 'core/api/dio_consumer.dart' as _i737;
+import 'core/api/interceptors/auth_interceptor.dart' as _i240;
 import 'core/api/interceptors/error_interceptor.dart' as _i809;
 import 'core/api/interceptors/logging_interceptor.dart' as _i416;
 import 'core/di/bloc_injection.dart' as _i732;
@@ -179,12 +180,16 @@ extension GetItInjectableX on _i174.GetIt {
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
       ),
     );
+    gh.singleton<_i240.AuthInterceptor>(
+      () => _i240.AuthInterceptor(gh<_i23.TokenStorage>()),
+    );
     gh.lazySingleton<_i934.LanguageService>(
       () => blocInjection.languageService(gh<_i460.SharedPreferences>()),
     );
     gh.singleton<_i962.ApiConsumer>(
       () => _i737.DioConsumer(
         gh<_i361.Dio>(),
+        gh<_i240.AuthInterceptor>(),
         gh<_i809.ErrorInterceptor>(),
         gh<_i416.LoggingInterceptor>(),
       ),

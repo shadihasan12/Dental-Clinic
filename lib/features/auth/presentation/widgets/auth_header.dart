@@ -1,4 +1,5 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -32,30 +33,36 @@ class AuthHeader extends StatelessWidget {
           // Content
           SafeArea(
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildLogoContainer(),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'SmylOS Pro',
-                    style: TextStyle(
-                      color: ColorManager.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22.sp,
-                      fontFamily: FontFamily.geist,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'Professional Clinic Management',
-                    style: TextStyle(
-                      color: ColorManager.white.withValues(alpha: 0.9),
-                      fontSize: 16.sp,
-                      fontFamily: FontFamily.geist,
-                    ),
-                  ),
-                ],
+              child: Builder(
+                builder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  final fontFamily = FontHelper.fontFamily(context);
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildLogoContainer(),
+                      SizedBox(height: 20.h),
+                      Text(
+                        l10n.appName,
+                        style: TextStyle(
+                          color: ColorManager.white,
+                          fontWeight: FontWeightManager.bold,
+                          fontSize: FontSizesManager.s22,
+                          fontFamily: fontFamily,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        l10n.professionalClinicManagement,
+                        style: TextStyle(
+                          color: ColorManager.white.withValues(alpha: 0.9),
+                          fontSize: FontSizesManager.s16,
+                          fontFamily: fontFamily,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),

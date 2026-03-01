@@ -353,7 +353,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get total => 'الكلي';
 
   @override
-  String get welcomeBack => 'مرحباً';
+  String get welcomeBack => 'مرحباً بعودتك';
+
+  @override
+  String get signInToContinue => 'سجّل الدخول إلى حسابك للمتابعة';
 
   @override
   String get allFilter => 'الكل';
@@ -999,4 +1002,443 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tryAllFeatures => 'جرّب جميع الميزات مجاناً لمدة 30 يوماً';
+
+  @override
+  String get skip => 'تخطي';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get getStarted => 'ابدأ الآن';
+
+  @override
+  String get onboardingTitle1 => 'إدارة المرضى\nبسهولة';
+
+  @override
+  String get onboardingDesc1 =>
+      'تبسيط إدارة المرضى مع إنشاء الحالات تلقائياً وملفات شاملة للمرضى';
+
+  @override
+  String get onboardingTitle2 => 'جدولة ذكية';
+
+  @override
+  String get onboardingDesc2 =>
+      'إدارة المواعيد بسهولة مع عرض التقويم والتذكيرات التلقائية';
+
+  @override
+  String get onboardingTitle3 => 'سجلات علاجية\nتفاعلية';
+
+  @override
+  String get onboardingDesc3 =>
+      'تسجيل العلاجات باستخدام مخطط الأسنان ثنائي الأبعاد لتتبع دقيق وبصري للعلاج';
+
+  @override
+  String get onboardingTitle4 => 'رؤى وتحليلات';
+
+  @override
+  String get onboardingDesc4 =>
+      'تتبع أداء العيادة مع إحصائيات شاملة وإدارة المدفوعات';
+
+  @override
+  String get signIn => 'تسجيل الدخول';
+
+  @override
+  String get signUp => 'إنشاء حساب';
+
+  @override
+  String get logIn => 'تسجيل الدخول';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get emailOrPhone => 'البريد الإلكتروني أو رقم الهاتف';
+
+  @override
+  String get emailOrPhoneHint => 'doctor@example.com أو 0935315978';
+
+  @override
+  String get passwordHint => '********';
+
+  @override
+  String get forgotPasswordQuestion => 'نسيت كلمة المرور؟';
+
+  @override
+  String get orContinueWith => 'أو تابع عبر';
+
+  @override
+  String get dontHaveAccount => 'ليس لديك حساب؟ ';
+
+  @override
+  String get alreadyHaveAccount => 'لديك حساب بالفعل؟ ';
+
+  @override
+  String get copyrightSmylos => '© 2026 SmylOS Pro. جميع الحقوق محفوظة.';
+
+  @override
+  String get pleaseEnterEmailOrPhone =>
+      'يرجى إدخال بريدك الإلكتروني أو رقم هاتفك';
+
+  @override
+  String get pleaseEnterValidEmailOrPhone =>
+      'يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح';
+
+  @override
+  String get pleaseEnterPassword => 'يرجى إدخال كلمة المرور';
+
+  @override
+  String get passwordMinLength => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
+
+  @override
+  String get loginFailed => 'فشل تسجيل الدخول';
+
+  @override
+  String get appName => 'SmylOS Pro';
+
+  @override
+  String get professionalClinicManagement => 'إدارة العيادات الاحترافية';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get joinDentalCommunity => 'انضم إلى مجتمعنا الطبي';
+
+  @override
+  String get fullNameRequired => 'الاسم الكامل *';
+
+  @override
+  String get fullNameHint => 'د. أحمد محمد';
+
+  @override
+  String get emailRequired => 'البريد الإلكتروني *';
+
+  @override
+  String get emailHint => 'doctor@example.com';
+
+  @override
+  String get mobileNumber => 'رقم الهاتف *';
+
+  @override
+  String get mobileHint => '091234567';
+
+  @override
+  String get selectYourSpecialization => 'اختر تخصصك';
+
+  @override
+  String get specializationRequired => 'التخصص *';
+
+  @override
+  String get createPassword => 'أنشئ كلمة مرور';
+
+  @override
+  String get passwordRequired => 'كلمة المرور *';
+
+  @override
+  String get confirmPassword => 'تأكيد كلمة المرور *';
+
+  @override
+  String get confirmPasswordHint => 'أعد إدخال كلمة المرور';
+
+  @override
+  String get pleaseConfirmPassword => 'يرجى تأكيد كلمة المرور';
+
+  @override
+  String get mobileRequired => 'رقم الهاتف مطلوب';
+
+  @override
+  String get mobileTooShort => 'رقم الهاتف قصير جداً';
+
+  @override
+  String get validationError => 'خطأ في التحقق';
+
+  @override
+  String get pleaseSelectSpecialization => 'يرجى اختيار التخصص';
+
+  @override
+  String get signupFailed => 'فشل إنشاء الحساب';
+
+  @override
+  String get failedToLoadData => 'فشل تحميل البيانات المطلوبة';
+
+  @override
+  String get checkConnectionRetry =>
+      'يرجى التحقق من الاتصال والمحاولة مرة أخرى';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get signupInfoBox =>
+      'أنشئ حسابك، ثم قم بإعداد أو الانضمام إلى عيادة من لوحة التحكم.';
+
+  @override
+  String get enterEmailToGetStarted => 'أدخل بريدك الإلكتروني للبدء';
+
+  @override
+  String get verificationCodeInfo =>
+      'سنرسل لك رمز تحقق لتأكيد بريدك الإلكتروني.';
+
+  @override
+  String get emailAddress => 'البريد الإلكتروني';
+
+  @override
+  String get pleaseEnterValidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get sendVerificationCode => 'إرسال رمز التحقق';
+
+  @override
+  String get emailRequiredTitle => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get pleaseEnterEmailAddress => 'يرجى إدخال بريدك الإلكتروني';
+
+  @override
+  String get otpSent => 'تم إرسال الرمز';
+
+  @override
+  String verificationCodeSentTo(String email) {
+    return 'تم إرسال رمز التحقق إلى $email';
+  }
+
+  @override
+  String get verifyYourEmail => 'تحقق من بريدك الإلكتروني';
+
+  @override
+  String get enterCodeSentToEmail => 'أدخل الرمز المرسل إلى بريدك الإلكتروني';
+
+  @override
+  String get sentVerificationCode => 'لقد أرسلنا رمز تحقق مكون من 6 أرقام';
+
+  @override
+  String get sendingCode => 'جاري إرسال الرمز...';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'إعادة الإرسال خلال $seconds ثانية';
+  }
+
+  @override
+  String get didntReceiveCode => 'لم تستلم الرمز؟ ';
+
+  @override
+  String get resend => 'إعادة الإرسال';
+
+  @override
+  String get verifyAndContinue => 'تحقق ومتابعة';
+
+  @override
+  String get invalidCode => 'رمز غير صالح';
+
+  @override
+  String get pleaseEnterAllDigits => 'يرجى إدخال جميع الأرقام الستة';
+
+  @override
+  String get emailVerified => 'تم التحقق من البريد الإلكتروني';
+
+  @override
+  String get completeYourRegistration => 'يرجى إكمال التسجيل';
+
+  @override
+  String get verificationFailed => 'فشل التحقق';
+
+  @override
+  String get forgotPassword => 'نسيت كلمة المرور';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين';
+
+  @override
+  String get enterRegisteredEmail => 'أدخل بريدك الإلكتروني المسجل';
+
+  @override
+  String get sendResetLink => 'إرسال رابط إعادة التعيين';
+
+  @override
+  String get backToSignIn => 'العودة لتسجيل الدخول';
+
+  @override
+  String get emailSent => 'تم إرسال البريد!';
+
+  @override
+  String get resetLinkSentMessage =>
+      'لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد واتباع التعليمات.';
+
+  @override
+  String get didntReceiveEmail => 'لم تستلم البريد الإلكتروني؟ ';
+
+  @override
+  String get chooseYourPlan => 'اختر باقتك';
+
+  @override
+  String get selectPlanSubtitle => 'اختر الخطة المثالية لعيادتك';
+
+  @override
+  String get noPlansAvailable => 'لا توجد خطط متاحة';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get yearly => 'سنوي';
+
+  @override
+  String get savePercent => 'وفر 17%';
+
+  @override
+  String get perMonth => '/شهرياً';
+
+  @override
+  String get perYear => '/سنوياً';
+
+  @override
+  String dayFreeTrial(int days) {
+    return 'تجربة مجانية لمدة $days يوم';
+  }
+
+  @override
+  String get mostPopular => 'الأكثر شيوعاً';
+
+  @override
+  String get unlimitedPatients => 'مرضى غير محدودين';
+
+  @override
+  String get oneDoctorOneAssistant => 'طبيب واحد ومساعد واحد';
+
+  @override
+  String storageAmount(String amount) {
+    return '$amount جيجابايت تخزين';
+  }
+
+  @override
+  String get allFeaturesIncluded => 'جميع الميزات مضمّنة';
+
+  @override
+  String get support247 => 'دعم على مدار الساعة';
+
+  @override
+  String upToDoctors(int count) {
+    return 'حتى $count أطباء';
+  }
+
+  @override
+  String get prioritySupport => 'دعم ذو أولوية';
+
+  @override
+  String get unlimitedDoctorsAssistants => 'أطباء ومساعدون غير محدودين';
+
+  @override
+  String storagePerAccount(String amount) {
+    return '$amount جيجابايت تخزين لكل حساب';
+  }
+
+  @override
+  String get advancedAnalytics => 'تحليلات متقدمة';
+
+  @override
+  String get adminRoleIncluded => 'صلاحيات مسؤول مضمّنة';
+
+  @override
+  String get fullPatientManagement => 'إدارة كاملة للمرضى';
+
+  @override
+  String get appointmentScheduling => 'جدولة المواعيد';
+
+  @override
+  String get treatmentTracking => 'تتبع العلاج';
+
+  @override
+  String get completeYourProfile => 'أكمل ملفك الشخصي';
+
+  @override
+  String get setupClinicDetails => 'قم بإعداد تفاصيل عيادتك';
+
+  @override
+  String get clinicDetailsInfo =>
+      'أدخل تفاصيل عيادتك لإكمال التسجيل. يمكنك تحديثها لاحقاً من الإعدادات.';
+
+  @override
+  String get clinicNameRequired => 'اسم العيادة *';
+
+  @override
+  String get clinicNameHintExample => 'مثال: عيادة الابتسامة المشرقة';
+
+  @override
+  String get locationRequired => 'الموقع *';
+
+  @override
+  String get searchForLocation => 'ابحث عن موقع...';
+
+  @override
+  String get noLocationsFound => 'لم يتم العثور على مواقع. جرّب كلمة بحث أخرى.';
+
+  @override
+  String get detailedAddress => 'العنوان التفصيلي';
+
+  @override
+  String get detailedAddressHint => 'الشارع، رقم المبنى، إلخ.';
+
+  @override
+  String get completeRegistration => 'إكمال التسجيل';
+
+  @override
+  String get pleaseEnterClinicName => 'يرجى إدخال اسم العيادة';
+
+  @override
+  String get clinicNameMinChars => 'يجب أن يكون اسم العيادة 3 أحرف على الأقل';
+
+  @override
+  String get clinicNameMaxChars => 'يجب أن يكون اسم العيادة أقل من 100 حرف';
+
+  @override
+  String get pleaseSelectLocation => 'يرجى اختيار الموقع';
+
+  @override
+  String get pleaseSelectPlan => 'يرجى اختيار خطة الاشتراك';
+
+  @override
+  String get sessionExpired => 'انتهت الجلسة';
+
+  @override
+  String get pleaseVerifyEmailAgain => 'يرجى التحقق من بريدك الإلكتروني مجدداً';
+
+  @override
+  String get welcome => 'مرحباً!';
+
+  @override
+  String get accountCreatedSuccessfully => 'تم إنشاء حسابك بنجاح';
+
+  @override
+  String get registrationFailed => 'فشل التسجيل';
+
+  @override
+  String get rememberPassword => 'تتذكر كلمة المرور؟ ';
+
+  @override
+  String get setNewPassword => 'تعيين كلمة مرور جديدة';
+
+  @override
+  String get enterNewPasswordBelow => 'أدخل كلمة المرور الجديدة أدناه';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get resetPasswordButton => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get passwordResetSuccess => 'تم إعادة تعيين كلمة المرور بنجاح';
+
+  @override
+  String get passwordResetSuccessMessage =>
+      'يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة';
+
+  @override
+  String get passwordTooShort => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
+
+  @override
+  String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
 }

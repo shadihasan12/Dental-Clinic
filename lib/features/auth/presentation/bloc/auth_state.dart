@@ -59,6 +59,16 @@ class AuthState with _$AuthState {
     @Default(false) bool isForgotPasswordSuccess,
     @Default(null) String? forgotPasswordError,
 
+    // Reset password fields
+    @Default('') String resetPasswordNew,
+    @Default('') String resetPasswordConfirm,
+    @Default(false) bool isResetPasswordVisible,
+    @Default(false) bool isResetPasswordConfirmVisible,
+    @Default(false) bool isResetPasswordLoading,
+    @Default(false) bool isResetPasswordSuccess,
+    @Default(null) String? resetPasswordError,
+    @Default(null) String? resetPasswordSessionId,
+
     // Authenticated user data
     @Default(null) UserEntity? currentUser,
     @Default([]) List<ClinicMembershipEntity> memberships,
@@ -80,12 +90,12 @@ enum AuthStatus {
 extension AuthStateValidation on AuthState {
   bool get isLoginEmailValid =>
       _isValidEmail(loginEmail) || _isValidPhone(loginEmail);
-  bool get isLoginPasswordValid => loginPassword.length >= 6;
+  bool get isLoginPasswordValid => loginPassword.length >= 8;
   bool get isLoginFormValid => isLoginEmailValid && isLoginPasswordValid;
 
   bool get isSignupNameValid => signupName.length >= 2;
   bool get isSignupEmailValid => _isValidEmail(signupEmail);
-  bool get isSignupPasswordValid => signupPassword.length >= 6;
+  bool get isSignupPasswordValid => signupPassword.length >= 8;
   bool get isSignupConfirmPasswordValid =>
       signupConfirmPassword == signupPassword && signupConfirmPassword.isNotEmpty;
 
@@ -96,6 +106,11 @@ extension AuthStateValidation on AuthState {
       isSignupConfirmPasswordValid;
 
   bool get isForgotPasswordEmailValid => _isValidEmail(forgotPasswordEmail);
+
+  bool get isResetPasswordValid => resetPasswordNew.length >= 8;
+  bool get isResetPasswordConfirmValid =>
+      resetPasswordConfirm == resetPasswordNew && resetPasswordConfirm.isNotEmpty;
+  bool get isResetPasswordFormValid => isResetPasswordValid && isResetPasswordConfirmValid;
 
   // Get the current user's role in the active clinic
   ClinicRole? get activeClinicRole {

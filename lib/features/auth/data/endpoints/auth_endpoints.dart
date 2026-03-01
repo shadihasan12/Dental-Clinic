@@ -23,4 +23,10 @@ class AuthEndpoints {
 
   /// POST /auth/login - Login with email or mobile number
   static const String login = '/auth/login';
+
+  /// POST /auth/reset-password/request-otp - Request OTP for password reset
+  static const String requestOtpForResetPassword = '/auth/reset-password/request-otp';
+
+  /// POST /auth/reset-password - Reset password with session ID
+  static const String resetPassword = '/auth/reset-password';
 }

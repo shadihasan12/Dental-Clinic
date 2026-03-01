@@ -65,6 +65,10 @@ class AuthTextField extends StatelessWidget {
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 12.sp
             ),
+            errorStyle: TextStyle(
+              fontSize: 10.sp,
+              fontFamily: FontHelper.fontFamily(context)
+            ),
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
                 : null,

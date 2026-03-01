@@ -52,6 +52,16 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.forgotPasswordSubmitted() = _ForgotPasswordSubmitted;
   const factory AuthEvent.forgotPasswordReset() = _ForgotPasswordReset;
 
+  // Reset password events
+  const factory AuthEvent.resetPasswordOtpRequested() = _ResetPasswordOtpRequested;
+  const factory AuthEvent.resetPasswordOtpVerified() = _ResetPasswordOtpVerified;
+  const factory AuthEvent.resetPasswordOtpResendRequested() = _ResetPasswordOtpResendRequested;
+  const factory AuthEvent.resetPasswordNewChanged(String password) = _ResetPasswordNewChanged;
+  const factory AuthEvent.resetPasswordConfirmChanged(String confirm) = _ResetPasswordConfirmChanged;
+  const factory AuthEvent.resetPasswordVisibilityToggled() = _ResetPasswordVisibilityToggled;
+  const factory AuthEvent.resetPasswordConfirmVisibilityToggled() = _ResetPasswordConfirmVisibilityToggled;
+  const factory AuthEvent.resetPasswordSubmitted() = _ResetPasswordSubmitted;
+
   // Clinic context switching
   const factory AuthEvent.activeClinicChanged(String? clinicId) = _ActiveClinicChanged;
 

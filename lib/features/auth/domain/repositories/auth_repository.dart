@@ -137,6 +137,25 @@ class RegisterRequestParams {
   }
 }
 
+/// Parameters for resetting password
+class ResetPasswordParams {
+  final String sessionId;
+  final String password;
+  final String passwordConfirmation;
+
+  ResetPasswordParams({
+    required this.sessionId,
+    required this.password,
+    required this.passwordConfirmation,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'session_id': sessionId,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      };
+}
+
 /// Abstract repository interface for authentication operations
 abstract class AuthRepository {
   /// Fetch list of available dental specialties
@@ -174,5 +193,15 @@ abstract class AuthRepository {
   /// Login with email or mobile number
   Future<Either<NetworkExceptions, LoginResult>> login({
     required LoginParams params,
+  });
+
+  /// Request OTP for password reset
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForResetPassword({
+    required RequestOtpParams params,
+  });
+
+  /// Reset password with session ID
+  Future<Either<NetworkExceptions, void>> resetPassword({
+    required ResetPasswordParams params,
   });
 }
