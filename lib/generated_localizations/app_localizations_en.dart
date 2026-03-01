@@ -1004,4 +1004,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tryAllFeatures => 'Try all features free for 30 days';
+
+  @override
+  String get caseTitleOptional => 'Case Title (Optional)';
+
+  @override
+  String get caseTitleHint => 'Enter a title for the completed case';
+
+  @override
+  String get caseMarkedAsFinished => 'Case marked as finished';
+
+  @override
+  String get paymentAddedSuccessfully => 'Payment added successfully';
 }

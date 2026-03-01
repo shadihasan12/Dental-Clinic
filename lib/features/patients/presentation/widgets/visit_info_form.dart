@@ -1,4 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ class VisitInfoForm extends StatefulWidget {
     required this.selectedTreatmentTypes,
     required this.availableTreatmentTypes,
     required this.onTreatmentToggle,
+    required this.teeth,
     required this.selectedTeeth,
     required this.onTeethChanged,
     required this.visitSummaryController,
@@ -30,10 +33,11 @@ class VisitInfoForm extends StatefulWidget {
   final DateTime visitDate;
   final VoidCallback onVisitDateTap;
   final List<String> selectedTreatmentTypes;
-  final List<String> availableTreatmentTypes;
-  final void Function(String treatment) onTreatmentToggle;
-  final List<int> selectedTeeth;
-  final ValueChanged<List<int>> onTeethChanged;
+  final List<CoreTreatment> availableTreatmentTypes;
+  final void Function(String treatmentId) onTreatmentToggle;
+  final List<Tooth> teeth;
+  final List<String> selectedTeeth;
+  final ValueChanged<List<String>> onTeethChanged;
   final TextEditingController visitSummaryController;
   final List<String> attachments;
   final VoidCallback onUploadTap;
@@ -72,6 +76,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
         _sectionLabel(context, l10n.teeth),
         SizedBox(height: 10.h),
         ToothChart(
+          teeth: widget.teeth,
           selectedTeeth: widget.selectedTeeth,
           onSelectionChanged: widget.onTeethChanged,
         ),
@@ -231,7 +236,7 @@ class _TreatmentChips extends StatelessWidget {
     required this.onToggle,
   });
 
-  final List<String> treatments;
+  final List<CoreTreatment> treatments;
   final List<String> selected;
   final void Function(String) onToggle;
 
@@ -241,9 +246,9 @@ class _TreatmentChips extends StatelessWidget {
       spacing: 8.w,
       runSpacing: 8.h,
       children: treatments.map((treatment) {
-        final isSelected = selected.contains(treatment);
+        final isSelected = selected.contains(treatment.id);
         return GestureDetector(
-          onTap: () => onToggle(treatment),
+          onTap: () => onToggle(treatment.id),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
@@ -259,7 +264,7 @@ class _TreatmentChips extends StatelessWidget {
               ),
             ),
             child: Text(
-              treatment,
+              treatment.displayName,
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),

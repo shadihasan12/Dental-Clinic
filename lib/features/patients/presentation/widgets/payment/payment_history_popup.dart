@@ -1,5 +1,5 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/record_payment_popup.dart';
+import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,16 +7,16 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:intl/intl.dart';
 
-class PaymentHistoryPopup extends StatelessWidget {
+class PaymentHistoryPopup extends StatefulWidget {
   final String caseTitle;
-  final List<PaymentRecord> payments;
+  final Future<List<Payment>> Function() onLoadPayments;
   final double totalCost;
   final double paidAmount;
 
   const PaymentHistoryPopup({
     super.key,
     required this.caseTitle,
-    required this.payments,
+    required this.onLoadPayments,
     required this.totalCost,
     required this.paidAmount,
   });
@@ -24,7 +24,7 @@ class PaymentHistoryPopup extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required String caseTitle,
-    required List<PaymentRecord> payments,
+    required Future<List<Payment>> Function() onLoadPayments,
     required double totalCost,
     required double paidAmount,
   }) {
@@ -34,11 +34,44 @@ class PaymentHistoryPopup extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (context) => PaymentHistoryPopup(
         caseTitle: caseTitle,
-        payments: payments,
+        onLoadPayments: onLoadPayments,
         totalCost: totalCost,
         paidAmount: paidAmount,
       ),
     );
+  }
+
+  @override
+  State<PaymentHistoryPopup> createState() => _PaymentHistoryPopupState();
+}
+
+class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
+  List<Payment>? _payments;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPayments();
+  }
+
+  Future<void> _loadPayments() async {
+    try {
+      final payments = await widget.onLoadPayments();
+      if (mounted) {
+        setState(() {
+          _payments = payments;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _payments = [];
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -92,24 +125,29 @@ class PaymentHistoryPopup extends StatelessWidget {
 
           // Payments list
           Flexible(
-            child: payments.isEmpty
-                ? _buildEmptyState(context)
-                : ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.all(16.w),
-                    itemCount: payments.length,
-                    separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                    itemBuilder: (context, index) {
-                      return _buildPaymentItem(context, payments[index]);
-                    },
-                  ),
+            child: _isLoading
+                ? Padding(
+                    padding: EdgeInsets.all(32.w),
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
+                : _payments!.isEmpty
+                    ? _buildEmptyState(context)
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.all(16.w),
+                        itemCount: _payments!.length,
+                        separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                        itemBuilder: (context, index) {
+                          return _buildPaymentItem(context, _payments![index]);
+                        },
+                      ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPaymentItem(BuildContext context, PaymentRecord payment) {
+  Widget _buildPaymentItem(BuildContext context, Payment payment) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -142,7 +180,7 @@ class PaymentHistoryPopup extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  payment.note ?? AppLocalizations.of(context)!.payment,
+                  payment.notes ?? AppLocalizations.of(context)!.payment,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
@@ -154,7 +192,7 @@ class PaymentHistoryPopup extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      DateFormat('MMM d, yyyy').format(payment.date),
+                      DateFormat('MMM d, yyyy').format(payment.createdAt),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),

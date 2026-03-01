@@ -40,24 +40,48 @@ class PatientModel {
   });
 
   factory PatientModel.fromJson(Map<String, dynamic> json) {
+    // Support both combined 'name' and separate 'first_name'/'last_name' from API
+    final name = json['name'] as String? ??
+        '${json['first_name'] ?? ''} ${json['last_name'] ?? ''}'.trim();
+
+    // Calculate age from date_of_birth if not provided
+    final dob = json['date_of_birth'] as String? ?? '';
+    int age = json['age'] as int? ?? 0;
+    if (age == 0 && dob.isNotEmpty) {
+      final birthDate = DateTime.tryParse(dob);
+      if (birthDate != null) {
+        final now = DateTime.now();
+        age = now.year - birthDate.year -
+            ((now.month < birthDate.month ||
+                    (now.month == birthDate.month && now.day < birthDate.day))
+                ? 1
+                : 0);
+      }
+    }
+
     return PatientModel(
       id: json['id'] as String,
-      name: json['name'] as String,
-      age: json['age'] as int,
-      gender: json['gender'] as String,
-      phone: json['phone'] as String,
-      email: json['email'] as String,
-      address: json['address'] as String,
-      dateOfBirth: json['date_of_birth'] as String,
-      medicalHistory: json['medical_history'] as String?,
-      allergies: json['allergies'] as String?,
+      name: name,
+      age: age,
+      gender: json['gender'] as String? ?? '',
+      phone: json['phone'] as String? ?? json['phone_number'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      dateOfBirth: dob,
+      medicalHistory: json['medical_history'] as String? ??
+          json['medical_history_notes'] as String?,
+      allergies:
+          json['allergies'] as String? ?? json['allergy_notes'] as String?,
       insuranceProvider: json['insurance_provider'] as String?,
       insuranceNumber: json['insurance_number'] as String?,
       emergencyContact: json['emergency_contact'] as String?,
       status: json['status'] as String? ?? 'active',
       avatarUrl: json['avatar_url'] as String?,
-      nextVisit: json['next_visit'] as String?,
-      balance: (json['balance'] as num?)?.toDouble() ?? 0,
+      nextVisit: json['next_visit_date'] as String? ??
+          json['next_visit'] as String?,
+      balance: (json['outstanding_balance'] as num?)?.toDouble() ??
+          (json['balance'] as num?)?.toDouble() ??
+          0,
     );
   }
 

@@ -1,4 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +12,16 @@ import 'package:intl/intl.dart';
 class TreatmentItemCard extends StatelessWidget {
   final TreatmentItem item;
   final int index;
+  final List<Tooth> teeth;
+  final List<CoreTreatment> coreTreatments;
   final VoidCallback? onTap;
 
   const TreatmentItemCard({
     super.key,
     required this.item,
     required this.index,
+    required this.teeth,
+    required this.coreTreatments,
     this.onTap,
   });
 
@@ -86,7 +92,7 @@ class TreatmentItemCard extends StatelessWidget {
                       spacing: 4.w,
                       runSpacing: 4.h,
                       children: item.treatmentTypes
-                          .map((type) => _buildTag(context, type.label))
+                          .map((id) => _buildTag(context, _treatmentDisplayName(id)))
                           .toList(),
                     ),
                     SizedBox(height: 10.h),
@@ -104,7 +110,7 @@ class TreatmentItemCard extends StatelessWidget {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          '${l10n.teeth}: ${item.selectedTeeth.join(", ")}',
+                          '${l10n.teeth}: ${_teethDisplayText()}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontFamily: FontHelper.fontFamily(context),
@@ -151,6 +157,24 @@ class TreatmentItemCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _treatmentDisplayName(String id) {
+    try {
+      return coreTreatments.firstWhere((t) => t.id == id).displayName;
+    } catch (_) {
+      return id;
+    }
+  }
+
+  String _teethDisplayText() {
+    return item.selectedTeeth.map((id) {
+      try {
+        return teeth.firstWhere((t) => t.id == id).universalCode;
+      } catch (_) {
+        return id;
+      }
+    }).join(', ');
   }
 
   Widget _buildTag(BuildContext context, String label) {

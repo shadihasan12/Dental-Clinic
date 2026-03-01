@@ -368,6 +368,10 @@
   },
   "noSubscription": "No Active Plan",
   "startFreeTrial": "Start Free Trial",
-  "tryAllFeatures": "Try all features free for 30 days"
+  "tryAllFeatures": "Try all features free for 30 days",
+  "caseTitleOptional": "Case Title (Optional)",
+  "caseTitleHint": "Enter a title for the completed case",
+  "caseMarkedAsFinished": "Case marked as finished",
+  "paymentAddedSuccessfully": "Payment added successfully"
 }
 

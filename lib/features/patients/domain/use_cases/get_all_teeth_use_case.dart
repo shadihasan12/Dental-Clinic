@@ -1,20 +1,18 @@
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class GetPatientDetailsUseCase
-    implements UseCase<PatientFullDetailsResult, String> {
+class GetAllTeethUseCase implements UseCase<List<Tooth>, NoParams> {
   final PatientRepository _repository;
 
-  GetPatientDetailsUseCase(this._repository);
+  GetAllTeethUseCase(this._repository);
 
   @override
-  Future<Either<NetworkExceptions, PatientFullDetailsResult>> call(
-    String patientId,
-  ) {
-    return _repository.getPatientFullDetails(patientId);
+  Future<Either<NetworkExceptions, List<Tooth>>> call(NoParams params) {
+    return _repository.getAllTeeth();
   }
 }

@@ -1,4 +1,7 @@
 import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_detail_popup.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_item_card.dart';
@@ -13,16 +16,22 @@ import 'package:intl/intl.dart';
 
 class CaseOverviewWidget extends StatelessWidget {
   final DentalCase dentalCase;
+  final List<Tooth> teeth;
+  final List<CoreTreatment> coreTreatments;
   final bool isReadOnly;
-  final VoidCallback? onPaymentRecorded;
+  final Future<void> Function(double amount, String? notes)? onPaymentRecorded;
   final VoidCallback? onMarkAsFinished;
+  final Future<List<Payment>> Function()? onLoadPayments;
 
   const CaseOverviewWidget({
     super.key,
     required this.dentalCase,
+    required this.teeth,
+    required this.coreTreatments,
     this.isReadOnly = false,
     this.onPaymentRecorded,
     this.onMarkAsFinished,
+    this.onLoadPayments,
   });
 
   void _showRecordPaymentPopup(BuildContext context) {
@@ -32,8 +41,8 @@ class CaseOverviewWidget extends StatelessWidget {
       caseTitle: dentalCase.title,
       totalCost: dentalCase.totalCost,
       paidAmount: dentalCase.paidAmount,
-      onSave: (payment) {
-        onPaymentRecorded?.call();
+      onSave: (amount, notes) async {
+        await onPaymentRecorded?.call(amount, notes);
       },
     );
   }
@@ -42,22 +51,7 @@ class CaseOverviewWidget extends StatelessWidget {
     PaymentHistoryPopup.show(
       context,
       caseTitle: dentalCase.title,
-      payments: [
-        PaymentRecord(
-          id: '1',
-          amount: 100,
-          method: PaymentMethod.cash,
-          date: DateTime.now(),
-          note: 'Payment',
-        ),
-        PaymentRecord(
-          id: '2',
-          amount: 200,
-          method: PaymentMethod.cash,
-          date: DateTime.now(),
-          note: 'Payment',
-        ),
-      ],
+      onLoadPayments: onLoadPayments ?? () async => [],
       totalCost: dentalCase.totalCost,
       paidAmount: dentalCase.paidAmount,
     );
@@ -100,7 +94,7 @@ class CaseOverviewWidget extends StatelessWidget {
 
   Widget _buildCaseCard(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isInProgress = dentalCase.status.toLowerCase() == 'in progress';
+    final isInProgress = dentalCase.status.toUpperCase() != 'COMPLETED';
     return CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +356,11 @@ class CaseOverviewWidget extends StatelessWidget {
           child: GestureDetector(
             onTap: () => context.pushNamed(
               AppRoutesNames.addTreatment,
-              extra: {'patientId': dentalCase.patientId, 'isInitial': false},
+              extra: {
+                'patientId': dentalCase.patientId,
+                'isInitial': false,
+                'caseId': dentalCase.id,
+              },
             ),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 13.h),
@@ -479,7 +477,15 @@ class CaseOverviewWidget extends StatelessWidget {
               child: TreatmentItemCard(
                 item: item,
                 index: index,
-                onTap: () => TreatmentDetailPopup.show(context, item, index),
+                teeth: teeth,
+                coreTreatments: coreTreatments,
+                onTap: () => TreatmentDetailPopup.show(
+                  context,
+                  item,
+                  index,
+                  teeth: teeth,
+                  coreTreatments: coreTreatments,
+                ),
               ),
             );
           }),

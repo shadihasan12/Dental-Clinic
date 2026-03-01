@@ -52,6 +52,13 @@ class _AddPatientContentState extends State<_AddPatientContent> {
     super.dispose();
   }
 
+  String _mapGenderToApi(String? localizedGender) {
+    final l10n = AppLocalizations.of(context)!;
+    if (localizedGender == l10n.male) return 'MALE';
+    if (localizedGender == l10n.female) return 'FEMALE';
+    return 'OTHER';
+  }
+
   void _savePatient() {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
@@ -67,7 +74,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
       id: '',
       name: '$firstName $lastName',
       age: age,
-      gender: _selectedGender ?? '',
+      gender: _mapGenderToApi(_selectedGender),
       phone: phone,
       email: '',
       address: '',
@@ -180,8 +187,10 @@ class _AddPatientContentState extends State<_AddPatientContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+            AppSnackbar.showError(
+              context,
+              title: l10n.error,
+              message: message,
             );
           },
         );

@@ -1,5 +1,14 @@
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/add_payment_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_core_treatments_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_payments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details/patient_details_bloc.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
@@ -61,6 +70,8 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   // UI-only state: which case is currently displayed in the Case tab
   DentalCase? _displayedCase;
   bool _isViewingHistoryCase = false;
+  List<Tooth> _teeth = [];
+  List<CoreTreatment> _coreTreatments = [];
 
   @override
   void initState() {
@@ -71,6 +82,24 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
       initialIndex: widget.tabIndex ?? 0,
     );
     _tabController.addListener(_onTabChanged);
+    _loadTeeth();
+    _loadCoreTreatments();
+  }
+
+  Future<void> _loadTeeth() async {
+    final result = await getIt<GetAllTeethUseCase>()(NoParams());
+    result.fold(
+      (_) {},
+      (teeth) => setState(() => _teeth = teeth),
+    );
+  }
+
+  Future<void> _loadCoreTreatments() async {
+    final result = await getIt<GetAllCoreTreatmentsUseCase>()(NoParams());
+    result.fold(
+      (_) {},
+      (treatments) => setState(() => _coreTreatments = treatments),
+    );
   }
 
   void _onTabChanged() {
@@ -208,12 +237,21 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     );
   }
 
+  Future<List<Payment>> _loadPayments(String caseId) async {
+    final result = await getIt<GetPaymentsUseCase>()(
+      GetPaymentsParams(patientId: widget.patientId, caseId: caseId),
+    );
+    return result.fold((_) => [], (payments) => payments);
+  }
+
   Widget _buildCaseTab(DentalCase? activeCase) {
     if (_isViewingHistoryCase && _displayedCase != null) {
       return CaseOverviewWidget(
         dentalCase: _displayedCase!,
+        teeth: _teeth,
+        coreTreatments: _coreTreatments,
         isReadOnly: true,
-        onPaymentRecorded: () => setState(() {}),
+        onLoadPayments: () => _loadPayments(_displayedCase!.id),
       );
     }
 
@@ -223,8 +261,32 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
 
     return CaseOverviewWidget(
       dentalCase: activeCase,
+      teeth: _teeth,
+      coreTreatments: _coreTreatments,
       isReadOnly: false,
-      onPaymentRecorded: () => setState(() {}),
+      onPaymentRecorded: (amount, notes) async {
+        final result = await getIt<AddPaymentUseCase>()(
+          AddPaymentParams(
+            patientId: widget.patientId,
+            caseId: activeCase.id,
+            amount: amount,
+            notes: notes,
+          ),
+        );
+        final error = result.fold<NetworkExceptions?>(
+          (l) => l,
+          (_) => null,
+        );
+        if (error != null) {
+          throw Exception(NetworkExceptions.getErrorMessage(error));
+        }
+        if (mounted) {
+          context.read<PatientDetailsBloc>().add(
+            PatientDetailsEvent.loadPatientDetails(widget.patientId),
+          );
+        }
+      },
+      onLoadPayments: () => _loadPayments(activeCase.id),
       onMarkAsFinished: () => _showMarkAsFinishedDialog(),
     );
   }
@@ -309,6 +371,13 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
 
   void _showMarkAsFinishedDialog() {
     final l10n = AppLocalizations.of(context)!;
+    final activeCase = context.read<PatientDetailsBloc>().state.mapOrNull(
+      loaded: (s) => s.activeCase,
+    );
+    if (activeCase == null) return;
+
+    final titleController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -321,14 +390,59 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
             color: ColorManager.textPrimary,
           ),
         ),
-        content: Text(
-          l10n.markCaseFinishedQuestion,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w400,
-            color: ColorManager.textSecondary,
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.markCaseFinishedQuestion,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w400,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                labelText: l10n.caseTitleOptional,
+                hintText: l10n.caseTitleHint,
+                labelStyle: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  color: ColorManager.textSecondary,
+                ),
+                hintStyle: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  color: ColorManager.textTertiary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: ColorManager.borderLight),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: ColorManager.borderLight),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: ColorManager.primary),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 10.h,
+                ),
+              ),
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.textPrimary,
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -345,9 +459,14 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           ),
           TextButton(
             onPressed: () {
+              final title = titleController.text.trim();
               Navigator.pop(dialogContext);
               context.read<PatientDetailsBloc>().add(
-                const PatientDetailsEvent.markCaseAsFinished(),
+                PatientDetailsEvent.markCaseAsFinished(
+                  patientId: widget.patientId,
+                  caseId: activeCase.id,
+                  title: title.isEmpty ? null : title,
+                ),
               );
             },
             child: Text(

@@ -175,7 +175,7 @@
   "totalLabel": "الكلي",
   "paidLabel": "المدفوع",
   "pendingLabel": "المتبقي",
-  "viewPaymentHistory": "عرض سجل الدفع",
+  "viewPaymentHistory": "عرض سجل الدفعات",
   "startedLabel": "بدأت",
   "totalVisitsLabel": "إجمالي الزيارات",
   "seeAll": "عرض الكل",
@@ -370,6 +370,10 @@
   },
   "noSubscription": "لا توجد باقة نشطة",
   "startFreeTrial": "ابدأ الفترة التجريبية",
-  "tryAllFeatures": "جرّب جميع الميزات مجاناً لمدة 30 يوماً"
+  "tryAllFeatures": "جرّب جميع الميزات مجاناً لمدة 30 يوماً",
+  "caseTitleOptional": "عنوان الحالة (اختياري)",
+  "caseTitleHint": "أدخل عنوان للحالة المكتملة",
+  "caseMarkedAsFinished": "تم إنهاء الحالة",
+  "paymentAddedSuccessfully": "تمت إضافة الدفعة بنجاح"
 }
 

@@ -1,4 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -11,23 +13,34 @@ import 'package:intl/intl.dart';
 class TreatmentDetailPopup extends StatelessWidget {
   final TreatmentItem item;
   final int index;
+  final List<Tooth> teeth;
+  final List<CoreTreatment> coreTreatments;
 
   const TreatmentDetailPopup({
     super.key,
     required this.item,
     required this.index,
+    required this.teeth,
+    required this.coreTreatments,
   });
 
   static Future<void> show(
     BuildContext context,
     TreatmentItem item,
-    int index,
-  ) {
+    int index, {
+    required List<Tooth> teeth,
+    required List<CoreTreatment> coreTreatments,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => TreatmentDetailPopup(item: item, index: index),
+      builder: (_) => TreatmentDetailPopup(
+        item: item,
+        index: index,
+        teeth: teeth,
+        coreTreatments: coreTreatments,
+      ),
     );
   }
 
@@ -206,7 +219,13 @@ class TreatmentDetailPopup extends StatelessWidget {
         Wrap(
           spacing: 8.w,
           runSpacing: 8.h,
-          children: item.treatmentTypes.map((type) {
+          children: item.treatmentTypes.map((id) {
+            String displayName;
+            try {
+              displayName = coreTreatments.firstWhere((t) => t.id == id).displayName;
+            } catch (_) {
+              displayName = id;
+            }
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
               decoration: BoxDecoration(
@@ -214,7 +233,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Text(
-                type.label,
+                displayName,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: FontHelper.fontFamily(context),
@@ -244,6 +263,7 @@ class TreatmentDetailPopup extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         ToothChart(
+          teeth: teeth,
           selectedTeeth: item.selectedTeeth,
           enabled: false,
           aspectRatio: 1.1,

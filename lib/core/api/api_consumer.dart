@@ -13,6 +13,13 @@ abstract class ApiConsumer {
     String? token,
     Map<String, dynamic>? queryParameters,
   });
+  Future<dynamic> patch(
+    String path, {
+    Map<String, dynamic>? body,
+    FormData? formData,
+    String? token,
+    Map<String, dynamic>? queryParameters,
+  });
   Future<dynamic> put(
     String path, {
     Map<String, dynamic>? body,

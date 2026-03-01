@@ -8,9 +8,11 @@ import 'package:injectable/injectable.dart';
 
 class AddTreatmentParams extends Equatable {
   final String patientId;
+  final bool isInitial;
+  final String? caseId;
   final DateTime visitDate;
-  final List<TreatmentType> treatmentTypes;
-  final List<int> selectedTeeth;
+  final List<String> treatmentTypes;
+  final List<String> selectedTeeth;
   final String summary;
   final double totalCost;
   final double labFees;
@@ -18,6 +20,8 @@ class AddTreatmentParams extends Equatable {
 
   const AddTreatmentParams({
     required this.patientId,
+    required this.isInitial,
+    this.caseId,
     required this.visitDate,
     required this.treatmentTypes,
     required this.selectedTeeth,
@@ -30,6 +34,8 @@ class AddTreatmentParams extends Equatable {
   @override
   List<Object?> get props => [
         patientId,
+        isInitial,
+        caseId,
         visitDate,
         treatmentTypes,
         selectedTeeth,

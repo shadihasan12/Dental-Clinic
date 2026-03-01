@@ -30,6 +30,10 @@ class DioConsumer implements ApiConsumer {
       ..headers = {
         StringsManager.accept: StringsManager.applicationJson,
         StringsManager.contentType: StringsManager.applicationJson,
+        // TODO: Remove hardcoded token and clinic ID after auth is implemented
+        StringsManager.authorization:
+            '${StringsManager.bearer}eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2RlbnRlY2guYXlhcy11YWUuY29tL2FwaS9hdXRoL2xvZ2luIiwiaWF0IjoxNzcyMzYwNDQ5LCJleHAiOjE3NzI0NDY4NDksIm5iZiI6MTc3MjM2MDQ0OSwianRpIjoiUlQ4ZU1IaEZ6cktPR0JKSSIsInN1YiI6IjAxOWNhMzljLTA1ODktNzBlMS05NzJkLWMxMGU4ZmU3NDU2NiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.t_ppv-rSMI8ZUw2c-V-FTpH8YWj4Ac8KiCiv7L4D-uI',
+        'X-Selected-Clinic-id': '019ca39c-0590-72a1-a48d-737996f0bec7',
       };
 
     // Add error interceptor first (it should process errors before logging)
@@ -83,6 +87,30 @@ class DioConsumer implements ApiConsumer {
   }) async {
     try {
       final Response response = await _client.post(
+        path,
+        queryParameters: queryParameters,
+        options: Options(
+          contentType:
+              formData == null ? StringsManager.jsonContentType : null,
+        ),
+        data: formData ?? body,
+      );
+      return _handleOnlineResponseAsJson(response);
+    } catch (error) {
+      throw NetworkExceptions.getException(error);
+    }
+  }
+
+  @override
+  Future patch(
+    String path, {
+    Map<String, dynamic>? body,
+    String? token,
+    FormData? formData,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final Response response = await _client.patch(
         path,
         queryParameters: queryParameters,
         options: Options(

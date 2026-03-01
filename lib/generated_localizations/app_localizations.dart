@@ -2017,6 +2017,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try all features free for 30 days'**
   String get tryAllFeatures;
+
+  /// No description provided for @caseTitleOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Title (Optional)'**
+  String get caseTitleOptional;
+
+  /// No description provided for @caseTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title for the completed case'**
+  String get caseTitleHint;
+
+  /// No description provided for @caseMarkedAsFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Case marked as finished'**
+  String get caseMarkedAsFinished;
+
+  /// No description provided for @paymentAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment added successfully'**
+  String get paymentAddedSuccessfully;
 }
 
 class _AppLocalizationsDelegate
