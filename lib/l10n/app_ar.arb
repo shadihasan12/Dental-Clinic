@@ -547,10 +547,15 @@
   "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
   "passwordResetSuccessMessage": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة",
   "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
-  "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
   "caseTitleOptional": "عنوان الحالة (اختياري)",
   "caseTitleHint": "أدخل عنوان للحالة المكتملة",
   "caseMarkedAsFinished": "تم إنهاء الحالة",
-  "paymentAddedSuccessfully": "تمت إضافة الدفعة بنجاح"
+  "paymentAddedSuccessfully": "تمت إضافة الدفعة بنجاح",
+
+  "noPatientsYet": "لا يوجد مرضى حتى الآن",
+  "noPatientsYetDesc": "أضف أول مريض للبدء",
+  "noMatchingPatients": "لا يوجد مرضى مطابقين",
+  "noMatchingPatientsDesc": "حاول تعديل البحث أو الفلاتر"
 }
 

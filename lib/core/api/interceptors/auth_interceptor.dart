@@ -20,6 +20,12 @@ class AuthInterceptor extends Interceptor {
       options.headers[StringsManager.authorization] =
           '${StringsManager.bearer}$token';
     }
+
+    final clinicId = _tokenStorage.getClinicId();
+    if (clinicId != null && clinicId.isNotEmpty) {
+      options.headers['X-Selected-Clinic-id'] = clinicId;
+    }
+
     super.onRequest(options, handler);
   }
 

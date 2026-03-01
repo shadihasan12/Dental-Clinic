@@ -1449,6 +1449,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
   String get caseTitleOptional => 'Case Title (Optional)';
 
   @override
@@ -1459,4 +1461,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paymentAddedSuccessfully => 'Payment added successfully';
+
+  @override
+  String get noPatientsYet => 'No patients yet';
+
+  @override
+  String get noPatientsYetDesc => 'Add your first patient to get started';
+
+  @override
+  String get noMatchingPatients => 'No matching patients';
+
+  @override
+  String get noMatchingPatientsDesc => 'Try adjusting your search or filters';
 }

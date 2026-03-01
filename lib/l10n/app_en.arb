@@ -545,10 +545,15 @@
   "passwordResetSuccess": "Password Reset Successfully",
   "passwordResetSuccessMessage": "You can now sign in with your new password",
   "passwordTooShort": "Password must be at least 8 characters",
-  "passwordsDoNotMatch": "Passwords do not match"
+  "passwordsDoNotMatch": "Passwords do not match",
   "caseTitleOptional": "Case Title (Optional)",
   "caseTitleHint": "Enter a title for the completed case",
   "caseMarkedAsFinished": "Case marked as finished",
-  "paymentAddedSuccessfully": "Payment added successfully"
+  "paymentAddedSuccessfully": "Payment added successfully",
+
+  "noPatientsYet": "No patients yet",
+  "noPatientsYetDesc": "Add your first patient to get started",
+  "noMatchingPatients": "No matching patients",
+  "noMatchingPatientsDesc": "Try adjusting your search or filters"
 }
 

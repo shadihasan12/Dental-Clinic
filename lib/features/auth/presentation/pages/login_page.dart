@@ -45,6 +45,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   }
 
   void _handleSignIn() {
+    FocusScope.of(context).unfocus();
     setState(() => _showValidationErrors = true);
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(const AuthEvent.loginSubmitted());

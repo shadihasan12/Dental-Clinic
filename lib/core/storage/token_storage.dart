@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TokenStorage {
   static const String _tokenKey = 'auth_token';
   static const String _userIdKey = 'user_id';
+  static const String _clinicIdKey = 'selected_clinic_id';
 
   final SharedPreferences _prefs;
 
@@ -44,10 +45,25 @@ class TokenStorage {
     return _prefs.getString(_userIdKey);
   }
 
+  /// Save selected clinic ID
+  Future<void> saveClinicId(String clinicId) async {
+    if (clinicId.isEmpty) {
+      throw ArgumentError('Clinic ID cannot be empty');
+    }
+    await _prefs.setString(_clinicIdKey, clinicId);
+  }
+
+  /// Get stored clinic ID
+  String? getClinicId() {
+    final clinicId = _prefs.getString(_clinicIdKey);
+    return (clinicId?.isEmpty ?? true) ? null : clinicId;
+  }
+
   /// Clear all stored authentication data
   Future<void> clearAuthData() async {
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_userIdKey);
+    await _prefs.remove(_clinicIdKey);
   }
 
   /// Clear all data (including other app preferences)

@@ -2851,6 +2851,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
   /// No description provided for @caseTitleOptional.
   ///
   /// In en, this message translates to:
@@ -2874,6 +2875,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Payment added successfully'**
   String get paymentAddedSuccessfully;
+
+  /// No description provided for @noPatientsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No patients yet'**
+  String get noPatientsYet;
+
+  /// No description provided for @noPatientsYetDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first patient to get started'**
+  String get noPatientsYetDesc;
+
+  /// No description provided for @noMatchingPatients.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching patients'**
+  String get noMatchingPatients;
+
+  /// No description provided for @noMatchingPatientsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get noMatchingPatientsDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -17,8 +18,9 @@ class PatientsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PatientsListBloc>()
-        ..add(const PatientsListEvent.loadPatients()),
+      create: (_) =>
+          getIt<PatientsListBloc>()
+            ..add(const PatientsListEvent.loadPatients()),
       child: const _PatientsListContent(),
     );
   }
@@ -182,44 +184,96 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           ),
         ),
         Expanded(
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: filtered.length + (isLoadingMore || hasMore ? 1 : 0),
-            separatorBuilder: (_, __) =>
-                Divider(height: 1, color: Colors.grey.shade100),
-            itemBuilder: (context, index) {
-              if (index == filtered.length) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  child: Center(
-                    child: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: ColorManager.primary,
-                      ),
-                    ),
-                  ),
-                );
-              }
+          child: filtered.isEmpty
+              ? _buildEmptyState(l10n, allPatients.isEmpty)
+              : ListView.separated(
+                  controller: _scrollController,
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  itemCount:
+                      filtered.length + (isLoadingMore || hasMore ? 1 : 0),
+                  separatorBuilder: (_, __) =>
+                      Divider(height: 1, color: Colors.grey.shade100),
+                  itemBuilder: (context, index) {
+                    if (index == filtered.length) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        child: Center(
+                          child: SizedBox(
+                            width: 24.w,
+                            height: 24.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: ColorManager.primary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
 
-              final patient = filtered[index];
-              return PatientCard(
-                patient: patient,
-                onTap: () => context.pushNamed(
-                  AppRoutesNames.patientDetails,
-                  extra: {
-                    "patientId": patient.id,
-                    "patientName": patient.name,
+                    final patient = filtered[index];
+                    return PatientCard(
+                      patient: patient,
+                      onTap: () => context.pushNamed(
+                        AppRoutesNames.patientDetails,
+                        extra: {
+                          "patientId": patient.id,
+                          "patientName": patient.name,
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
         ),
       ],
+    );
+  }
+
+  // ─── Empty state ──────────────────────────────────────────────────────
+
+  Widget _buildEmptyState(AppLocalizations l10n, bool isCompletelyEmpty) {
+    final fontFamily = FontHelper.fontFamily(context);
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isCompletelyEmpty
+                  ? Icons.person_add_outlined
+                  : Icons.search_off_outlined,
+              size: 30.w,
+              color: ColorManager.gray300,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              isCompletelyEmpty ? l10n.noPatientsYet : l10n.noMatchingPatients,
+              style: TextStyle(
+                fontSize: FontSizesManager.s14,
+                fontFamily: fontFamily,
+                color: Colors.black38,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            GestureDetector(
+              onTap: () {
+                context.pushNamed(AppRoutesNames.addPatient);
+              },
+              child: Text(
+                isCompletelyEmpty
+                    ? l10n.noPatientsYetDesc
+                    : l10n.noMatchingPatientsDesc,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

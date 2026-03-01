@@ -346,20 +346,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i208.AddTreatmentUseCase>(
       () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
     );
-    gh.factory<_i126.GetAllTeethUseCase>(
-      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
+    gh.factory<_i924.AddPaymentUseCase>(
+      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
       () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
     );
-    gh.factory<_i920.MarkCaseAsFinishedUseCase>(
-      () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i924.AddPaymentUseCase>(
-      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
+    gh.factory<_i126.GetAllTeethUseCase>(
+      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i773.GetPaymentsUseCase>(
       () => _i773.GetPaymentsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i920.MarkCaseAsFinishedUseCase>(
+      () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i506.ClinicInfoBloc>(
       () => _i506.ClinicInfoBloc(

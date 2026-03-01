@@ -1441,6 +1441,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+
+  @override
   String get caseTitleOptional => 'عنوان الحالة (اختياري)';
 
   @override
@@ -1451,4 +1453,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paymentAddedSuccessfully => 'تمت إضافة الدفعة بنجاح';
+
+  @override
+  String get noPatientsYet => 'لا يوجد مرضى حتى الآن';
+
+  @override
+  String get noPatientsYetDesc => 'أضف أول مريض للبدء';
+
+  @override
+  String get noMatchingPatients => 'لا يوجد مرضى مطابقين';
+
+  @override
+  String get noMatchingPatientsDesc => 'حاول تعديل البحث أو الفلاتر';
 }

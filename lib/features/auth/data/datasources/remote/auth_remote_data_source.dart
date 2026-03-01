@@ -153,6 +153,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _tokenStorage.saveUserId(userId);
     }
 
+    // Save first clinic ID for X-Selected-Clinic-id header
+    final clinics = data['clinics'] as List?;
+    if (clinics != null && clinics.isNotEmpty) {
+      final clinicId = clinics[0]['clinic']?['id'] as String?;
+      if (clinicId != null && clinicId.isNotEmpty) {
+        await _tokenStorage.saveClinicId(clinicId);
+      }
+    }
+
     // Map JSON to RegisterResponseModel
     return RegisterResponseModel.fromJson(data);
   }
@@ -176,6 +185,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final userId = data['id'] as String?;
     if (userId != null && userId.isNotEmpty) {
       await _tokenStorage.saveUserId(userId);
+    }
+
+    // Save first clinic ID for X-Selected-Clinic-id header
+    final clinics = data['clinics'] as List?;
+    if (clinics != null && clinics.isNotEmpty) {
+      final clinicId = clinics[0]['clinic']?['id'] as String?;
+      if (clinicId != null && clinicId.isNotEmpty) {
+        await _tokenStorage.saveClinicId(clinicId);
+      }
     }
 
     return LoginResponseModel.fromJson(data);
