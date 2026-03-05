@@ -68,7 +68,7 @@ flutter:
     - assets/icons/
     - assets/icons/root/
     - assets/icons/case/teeth/
-    - assets/images/
+    - assets/images/onboarding/
     - .env
 
   fonts:

@@ -2069,26 +2069,14 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTitle3.
   ///
   /// In en, this message translates to:
-  /// **'Interactive Treatment\nRecords'**
+  /// **'Track & Grow\nYour Practice'**
   String get onboardingTitle3;
 
   /// No description provided for @onboardingDesc3.
   ///
   /// In en, this message translates to:
-  /// **'Record treatments with our 2D teeth diagram for precise and visual treatment tracking'**
+  /// **'Monitor clinic performance with comprehensive analytics and financial insights'**
   String get onboardingDesc3;
-
-  /// No description provided for @onboardingTitle4.
-  ///
-  /// In en, this message translates to:
-  /// **'Insights & Analytics'**
-  String get onboardingTitle4;
-
-  /// No description provided for @onboardingDesc4.
-  ///
-  /// In en, this message translates to:
-  /// **'Track clinic performance with comprehensive statistics and payment management'**
-  String get onboardingDesc4;
 
   /// No description provided for @signIn.
   ///

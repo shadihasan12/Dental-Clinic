@@ -1027,18 +1027,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'إدارة المواعيد بسهولة مع عرض التقويم والتذكيرات التلقائية';
 
   @override
-  String get onboardingTitle3 => 'سجلات علاجية\nتفاعلية';
+  String get onboardingTitle3 => 'تتبع وطوّر\nعيادتك';
 
   @override
-  String get onboardingDesc3 =>
-      'تسجيل العلاجات باستخدام مخطط الأسنان ثنائي الأبعاد لتتبع دقيق وبصري للعلاج';
-
-  @override
-  String get onboardingTitle4 => 'رؤى وتحليلات';
-
-  @override
-  String get onboardingDesc4 =>
-      'تتبع أداء العيادة مع إحصائيات شاملة وإدارة المدفوعات';
+  String get onboardingDesc3 => 'راقب أداء العيادة مع تحليلات شاملة ورؤى مالية';
 
   @override
   String get signIn => 'تسجيل الدخول';

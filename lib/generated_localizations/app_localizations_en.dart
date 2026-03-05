@@ -1032,18 +1032,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Easily manage appointments with intuitive calendar views and automated reminders';
 
   @override
-  String get onboardingTitle3 => 'Interactive Treatment\nRecords';
+  String get onboardingTitle3 => 'Track & Grow\nYour Practice';
 
   @override
   String get onboardingDesc3 =>
-      'Record treatments with our 2D teeth diagram for precise and visual treatment tracking';
-
-  @override
-  String get onboardingTitle4 => 'Insights & Analytics';
-
-  @override
-  String get onboardingDesc4 =>
-      'Track clinic performance with comprehensive statistics and payment management';
+      'Monitor clinic performance with comprehensive analytics and financial insights';
 
   @override
   String get signIn => 'Sign In';

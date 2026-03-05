@@ -377,10 +377,8 @@
   "onboardingDesc1": "Streamline patient management with automated case creation and comprehensive patient profiles",
   "onboardingTitle2": "Smart Scheduling",
   "onboardingDesc2": "Easily manage appointments with intuitive calendar views and automated reminders",
-  "onboardingTitle3": "Interactive Treatment\nRecords",
-  "onboardingDesc3": "Record treatments with our 2D teeth diagram for precise and visual treatment tracking",
-  "onboardingTitle4": "Insights & Analytics",
-  "onboardingDesc4": "Track clinic performance with comprehensive statistics and payment management",
+  "onboardingTitle3": "Track & Grow\nYour Practice",
+  "onboardingDesc3": "Monitor clinic performance with comprehensive analytics and financial insights",
 
   "signIn": "Sign In",
   "signUp": "Sign Up",

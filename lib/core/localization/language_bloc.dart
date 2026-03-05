@@ -48,9 +48,17 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
     LoadLanguageEvent event,
     Emitter<LanguageState> emit,
   ) async {
-    final languageCode = languageService.currentLanguage;
-    final locale = Locale(languageCode);
-    emit(LanguageLoadedState(locale));
+    String languageCode;
+    if (!languageService.hasLanguageSaved) {
+      final deviceCode = languageService.deviceLanguageCode;
+      languageCode = languageService.isSupported(deviceCode)
+          ? deviceCode
+          : 'en';
+      await languageService.setLanguage(languageCode);
+    } else {
+      languageCode = languageService.currentLanguage;
+    }
+    emit(LanguageLoadedState(Locale(languageCode)));
   }
 
   Future<void> _onChangeLanguage(
