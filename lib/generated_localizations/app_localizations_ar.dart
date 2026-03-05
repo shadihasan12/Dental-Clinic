@@ -180,6 +180,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filter => 'تصفية';
 
   @override
+  String get expenseType => 'نوع المصروف';
+
+  @override
   String get sort => 'ترتيب';
 
   @override
@@ -800,6 +803,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get expenses => 'المدفوعات';
+
+  @override
+  String get currency => 'العملة';
 
   @override
   String get holidays => 'الإجازات وأيام العطل';
@@ -1457,4 +1463,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMatchingPatientsDesc => 'حاول تعديل البحث أو الفلاتر';
+
+  @override
+  String get pleaseEnterYourName => 'يرجى إدخال اسمك';
+
+  @override
+  String get nameTooShort => 'يجب أن يكون الاسم حرفين على الأقل';
+
+  @override
+  String get pleaseEnterYourEmail => 'يرجى إدخال بريدك الإلكتروني';
+
+  @override
+  String get pleaseEnterYourPassword => 'يرجى إدخال كلمة المرور';
+
+  @override
+  String get pleaseSelectSpecialty => 'يرجى اختيار التخصص';
+
+  @override
+  String get workingHoursAndHolidays => 'ساعات العمل والعطل';
 }

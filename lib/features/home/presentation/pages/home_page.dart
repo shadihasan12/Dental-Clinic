@@ -6,6 +6,8 @@ import 'package:dental_clinic_app/features/home/presentation/widgets/todays_sche
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +21,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final String _userName = 'Dr. Smith';
+  late final String _userName;
+  late final String _clinicName;
+
+  @override
+  void initState() {
+    super.initState();
+    final userStorage = getIt<UserStorage>();
+    _userName = userStorage.getUserName() ?? '';
+    _clinicName = userStorage.getClinicName() ?? '';
+  }
 
   // ── Mock subscription states for demo switching (long-press to cycle) ──
   int _subscriptionTypeIndex = 0;
@@ -115,8 +126,8 @@ class _HomePageState extends State<HomePage> {
 
               // — Header: greeting + actions
               HomeHeader(
-                userName: _userName,
-                clinicName: '[Clinic name here]',
+                userName: _userName.isNotEmpty ? _userName : 'Dr. Smith',
+                clinicName: _clinicName,
                 onNotificationTap: () {
                   context.pushNamed(AppRoutesNames.notifications);
                 },

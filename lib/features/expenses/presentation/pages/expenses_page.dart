@@ -7,7 +7,6 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../widgets/add_expense_sheet.dart';
 import '../widgets/expense_detail_sheet.dart';
@@ -19,50 +18,17 @@ class ExpensesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ExpenseBloc>()..add(const ExpenseEvent.loadExpenses()),
+      create: (_) => getIt<ExpenseBloc>()
+        ..add(const ExpenseEvent.loadExpenses()),
       child: const _ExpensesContent(),
     );
   }
 }
 
-class _ExpensesContent extends StatefulWidget {
+class _ExpensesContent extends StatelessWidget {
   const _ExpensesContent();
 
-  @override
-  State<_ExpensesContent> createState() => _ExpensesContentState();
-}
-
-class _ExpensesContentState extends State<_ExpensesContent> {
-  DateTime _selectedMonth = DateTime(DateTime.now().year, DateTime.now().month);
-
-  bool get _isCurrentMonth {
-    final now = DateTime.now();
-    return _selectedMonth.year == now.year && _selectedMonth.month == now.month;
-  }
-
-  void _previousMonth() => setState(() {
-        _selectedMonth =
-            DateTime(_selectedMonth.year, _selectedMonth.month - 1);
-      });
-
-  void _nextMonth() {
-    final next = DateTime(_selectedMonth.year, _selectedMonth.month + 1);
-    final now = DateTime.now();
-    if (next.isBefore(DateTime(now.year, now.month + 1))) {
-      setState(() => _selectedMonth = next);
-    }
-  }
-
-  List<ExpenseEntity> _filterByMonth(List<ExpenseEntity> expenses) {
-    return expenses
-        .where((e) =>
-            e.date.year == _selectedMonth.year &&
-            e.date.month == _selectedMonth.month)
-        .toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
-  }
-
-  void _showAddExpense() {
+  void _showAddExpense(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -71,14 +37,17 @@ class _ExpensesContentState extends State<_ExpensesContent> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (_) => AddExpenseSheet(
-        onSave: (expense) {
-          context.read<ExpenseBloc>().add(ExpenseEvent.addExpense(expense));
+        onSave: (body) {
+          context.read<ExpenseBloc>().add(ExpenseEvent.addExpense(body));
         },
       ),
     );
   }
 
-  void _showExpenseDetails(ExpenseEntity expense) {
+  void _showExpenseDetails(
+    BuildContext context,
+    ExpenseEntity expense,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -88,7 +57,35 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       builder: (_) => ExpenseDetailSheet(
         expense: expense,
         onDelete: () {
-          context.read<ExpenseBloc>().add(ExpenseEvent.deleteExpense(expense.id));
+          context
+              .read<ExpenseBloc>()
+              .add(ExpenseEvent.deleteExpense(expense.id));
+        },
+        onEdit: () {
+          Navigator.pop(context); // close detail sheet
+          _showEditExpense(context, expense);
+        },
+      ),
+    );
+  }
+
+  void _showEditExpense(
+    BuildContext context,
+    ExpenseEntity expense,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (_) => AddExpenseSheet(
+        expense: expense,
+        onSave: (body) {
+          context
+              .read<ExpenseBloc>()
+              .add(ExpenseEvent.updateExpense(expense.id, body));
         },
       ),
     );
@@ -98,38 +95,64 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocBuilder<ExpenseBloc, ExpenseState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const SizedBox.shrink(),
-            loading: () => Column(
-              children: [
-                _buildHeader(context, 0),
-                Divider(height: 1, color: Colors.grey.shade200),
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-            ),
-            loaded: (expenses) {
-              final filtered = _filterByMonth(expenses);
-              return Column(
+      body: BlocListener<ExpenseBloc, ExpenseState>(
+        listenWhen: (prev, curr) {
+          String? prevError;
+          String? currError;
+          prev.whenOrNull(loaded: (_, _, e) => prevError = e);
+          curr.whenOrNull(loaded: (_, _, e) => currError = e);
+          return currError != null && currError != prevError;
+        },
+        listener: (context, state) {
+          state.whenOrNull(
+            loaded: (_, _, actionError) {
+              if (actionError != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      actionError,
+                      style: TextStyle(
+                        fontFamily: FontHelper.fontFamily(context),
+                      ),
+                    ),
+                    backgroundColor: Colors.red.shade400,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+          );
+        },
+        child: BlocBuilder<ExpenseBloc, ExpenseState>(
+          builder: (context, state) {
+            return state.when(
+              initial: () => const SizedBox.shrink(),
+              loading: () => Column(
                 children: [
-                  _buildHeader(context, filtered.length),
+                  _buildHeader(context, [], 0),
                   Divider(height: 1, color: Colors.grey.shade200),
-                  _buildMonthSelector(context, filtered),
-                  Divider(height: 1, color: Colors.grey.shade100),
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+              ),
+              loaded: (expenses, totals, _) {
+                return Column(
+                children: [
+                  _buildHeader(context, totals, expenses.length),
+                  Divider(height: 1, color: Colors.grey.shade200),
                   Expanded(
-                    child: filtered.isEmpty
+                    child: expenses.isEmpty
                         ? _buildEmptyState(context)
                         : ListView.separated(
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            itemCount: filtered.length,
-                            separatorBuilder: (context, i) =>
+                            itemCount: expenses.length,
+                            separatorBuilder: (_, _) =>
                                 Divider(height: 1, color: Colors.grey.shade100),
                             itemBuilder: (_, index) => ExpenseRow(
-                              expense: filtered[index],
-                              onTap: () => _showExpenseDetails(filtered[index]),
+                              expense: expenses[index],
+                              onTap: () => _showExpenseDetails(
+                                  context, expenses[index]),
                             ),
                           ),
                   ),
@@ -138,7 +161,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
             },
             error: (message) => Column(
               children: [
-                _buildHeader(context, 0),
+                _buildHeader(context, [], 0),
                 Divider(height: 1, color: Colors.grey.shade200),
                 Expanded(
                   child: Center(
@@ -154,106 +177,118 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 ),
               ],
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, int count) {
-    final l10n = AppLocalizations.of(context)!;
-    return SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.expenses,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 22.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF2D2D2D),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    '$count ${l10n.transactions}',
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 13.sp,
-                      color: Colors.black38,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: _showAddExpense,
-              child: Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: ColorManager.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.add, color: Colors.white, size: 20.w),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildMonthSelector(BuildContext context, List<ExpenseEntity> filtered) {
-    final monthLabel = DateFormat('MMMM yyyy').format(_selectedMonth);
-    final monthTotal = filtered.fold<double>(0, (sum, e) => sum + e.amount);
+  Widget _buildHeader(
+    BuildContext context,
+    List<ExpenseTotalEntity> totals,
+    int count,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: _previousMonth,
-            child: Icon(Icons.chevron_left, size: 22.w, color: Colors.black54),
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            monthLabel,
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.expenses,
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF2D2D2D),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        '$count ${l10n.transactions}',
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 13.sp,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _showAddExpense(context),
+                  child: Container(
+                    width: 40.w,
+                    height: 40.w,
+                    decoration: const BoxDecoration(
+                      color: ColorManager.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.add, color: Colors.white, size: 20.w),
+                  ),
+                ),
+              ],
             ),
-          ),
-          SizedBox(width: 8.w),
-          GestureDetector(
-            onTap: _isCurrentMonth ? null : _nextMonth,
-            child: Icon(
-              Icons.chevron_right,
-              size: 22.w,
-              color:
-                  _isCurrentMonth ? Colors.grey.shade300 : Colors.black54,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '\$${monthTotal.toStringAsFixed(0)}',
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2D2D2D),
-            ),
-          ),
-        ],
+
+            // Multi-currency totals
+            if (totals.isNotEmpty) ...[
+              SizedBox(height: 14.h),
+              Row(
+                children: totals.asMap().entries.map((entry) {
+                  final t = entry.value;
+                  final isLast = entry.key == totals.length - 1;
+                  return Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.h, horizontal: 12.w),
+                      margin: EdgeInsetsDirectional.only(
+                        end: isLast ? 0 : 8.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            t.currencyCode,
+                            style: TextStyle(
+                              fontFamily: FontHelper.fontFamily(context),
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                              color: ColorManager.primary,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            t.total,
+                            style: TextStyle(
+                              fontFamily: FontHelper.fontFamily(context),
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF2D2D2D),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -264,7 +299,8 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined, size: 48.w, color: Colors.grey.shade300),
+          Icon(Icons.receipt_long_outlined,
+              size: 48.w, color: Colors.grey.shade300),
           SizedBox(height: 12.h),
           Text(
             l10n.noExpensesThisMonth,
@@ -276,7 +312,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           ),
           SizedBox(height: 16.h),
           GestureDetector(
-            onTap: _showAddExpense,
+            onTap: () => _showAddExpense(context),
             child: Text(
               l10n.addOne,
               style: TextStyle(

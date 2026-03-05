@@ -3,12 +3,20 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 class ClinicInfoModel {
   final String id;
   final String name;
+  final String locationId;
+  final String locationName;
+  final String locationFullName;
+  final String address;
   final List<WorkingDayModel> workingDays;
   final List<HolidayModel> holidays;
 
   const ClinicInfoModel({
     required this.id,
     required this.name,
+    this.locationId = '',
+    this.locationName = '',
+    this.locationFullName = '',
+    this.address = '',
     required this.workingDays,
     required this.holidays,
   });
@@ -17,6 +25,10 @@ class ClinicInfoModel {
     return ClinicInfoModel(
       id: json['id'] as String,
       name: json['name'] as String,
+      locationId: json['location_id'] as String? ?? '',
+      locationName: json['location_name'] as String? ?? '',
+      locationFullName: json['location_full_name'] as String? ?? '',
+      address: json['address'] as String? ?? '',
       workingDays: (json['workingDays'] as List)
           .map((e) => WorkingDayModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -30,6 +42,10 @@ class ClinicInfoModel {
     return {
       'id': id,
       'name': name,
+      'location_id': locationId,
+      'location_name': locationName,
+      'location_full_name': locationFullName,
+      'address': address,
       'workingDays': workingDays.map((d) => d.toJson()).toList(),
       'holidays': holidays.map((h) => h.toJson()).toList(),
     };
@@ -39,6 +55,10 @@ class ClinicInfoModel {
     return ClinicInfoModel(
       id: entity.id,
       name: entity.name,
+      locationId: entity.locationId,
+      locationName: entity.locationName,
+      locationFullName: entity.locationFullName,
+      address: entity.address,
       workingDays: entity.workingDays
           .map((d) => WorkingDayModel.fromEntity(d))
           .toList(),
@@ -51,6 +71,10 @@ class ClinicInfoModel {
     return ClinicInfoEntity(
       id: id,
       name: name,
+      locationId: locationId,
+      locationName: locationName,
+      locationFullName: locationFullName,
+      address: address,
       workingDays: workingDays.map((d) => d.toEntity()).toList(),
       holidays: holidays.map((h) => h.toEntity()).toList(),
     );

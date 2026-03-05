@@ -27,6 +27,7 @@ import 'core/localization/language_bloc.dart' as _i924;
 import 'core/localization/language_service.dart' as _i934;
 import 'core/network/network_info.dart' as _i75;
 import 'core/storage/token_storage.dart' as _i23;
+import 'core/storage/user_storage.dart' as _i663;
 import 'features/appointments/data/data_sources/appointment_remote_data_source.dart'
     as _i41;
 import 'features/appointments/data/repositories/appointment_repository_impl.dart'
@@ -43,6 +44,7 @@ import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
     as _i689;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
+import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
 import 'features/expenses/data/data_sources/expense_remote_data_source.dart'
     as _i355;
 import 'features/expenses/data/repositories/expense_repository_impl.dart'
@@ -53,6 +55,10 @@ import 'features/expenses/domain/use_cases/delete_expense_use_case.dart'
     as _i526;
 import 'features/expenses/domain/use_cases/get_all_expenses_use_case.dart'
     as _i66;
+import 'features/expenses/domain/use_cases/get_categories_use_case.dart'
+    as _i342;
+import 'features/expenses/domain/use_cases/update_expense_use_case.dart'
+    as _i315;
 import 'features/expenses/presentation/manager/expense_bloc.dart' as _i763;
 import 'features/home/data/data_sources/notification_remote_data_source.dart'
     as _i573;
@@ -98,16 +104,24 @@ import 'features/patients/presentation/manager/patient_details/patient_details_b
     as _i548;
 import 'features/profile/presentation/pages/clinic_info/data/data_sources/clinic_info_remote_data_source.dart'
     as _i485;
+import 'features/profile/presentation/pages/clinic_info/data/data_sources/working_hours_remote_data_source.dart'
+    as _i158;
 import 'features/profile/presentation/pages/clinic_info/data/repositories/clinic_info_repository_impl.dart'
     as _i841;
+import 'features/profile/presentation/pages/clinic_info/data/repositories/working_hours_repository_impl.dart'
+    as _i96;
 import 'features/profile/presentation/pages/clinic_info/domain/repositories/clinic_info_repository.dart'
     as _i1027;
+import 'features/profile/presentation/pages/clinic_info/domain/repositories/working_hours_repository.dart'
+    as _i61;
 import 'features/profile/presentation/pages/clinic_info/domain/use_cases/get_clinic_info_use_case.dart'
     as _i127;
 import 'features/profile/presentation/pages/clinic_info/domain/use_cases/update_clinic_info_use_case.dart'
     as _i8;
 import 'features/profile/presentation/pages/clinic_info/presentation/manager/clinic_info_bloc.dart'
     as _i506;
+import 'features/profile/presentation/pages/clinic_info/presentation/manager/working_hours_bloc.dart'
+    as _i283;
 import 'features/profile/presentation/pages/edit_profile/data/data_sources/edit_profile_remote_data_source.dart'
     as _i423;
 import 'features/profile/presentation/pages/edit_profile/data/repositories/edit_profile_repository_impl.dart'
@@ -160,6 +174,10 @@ import 'features/subscription/domain/use_cases/get_plans_use_case.dart'
     as _i779;
 import 'features/subscription/presentation/bloc/subscription_bloc.dart'
     as _i1011;
+import 'services/currency/currency_bloc.dart' as _i46;
+import 'services/currency/currency_service.dart' as _i315;
+import 'services/file_picker/file_picker_service.dart' as _i525;
+import 'services/media/media_service.dart' as _i977;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -180,19 +198,26 @@ extension GetItInjectableX on _i174.GetIt {
       () => thirdPartyInjection.sharedPreferences,
       preResolve: true,
     );
+    gh.lazySingleton<_i525.FilePickerService>(() => _i525.FilePickerService());
     gh.factory<_i23.TokenStorage>(
       () => _i23.TokenStorage(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i663.UserStorage>(
+      () => _i663.UserStorage(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
       ),
     );
-    gh.singleton<_i240.AuthInterceptor>(
-      () => _i240.AuthInterceptor(gh<_i23.TokenStorage>()),
-    );
     gh.lazySingleton<_i934.LanguageService>(
       () => blocInjection.languageService(gh<_i460.SharedPreferences>()),
+    );
+    gh.singleton<_i240.AuthInterceptor>(
+      () => _i240.AuthInterceptor(
+        gh<_i23.TokenStorage>(),
+        gh<_i934.LanguageService>(),
+      ),
     );
     gh.singleton<_i962.ApiConsumer>(
       () => _i737.DioConsumer(
@@ -206,7 +231,11 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i689.AuthRemoteDataSourceImpl(
         gh<_i962.ApiConsumer>(),
         gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
       ),
+    );
+    gh.factory<_i158.WorkingHoursRemoteDataSource>(
+      () => _i158.WorkingHoursRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.factory<_i573.NotificationRemoteDataSource>(
       () => _i573.NotificationRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
@@ -217,8 +246,27 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i75.NetworkInfo>(),
       ),
     );
+    gh.factory<_i363.AuthBloc>(
+      () => _i363.AuthBloc(
+        gh<_i1015.AuthRepository>(),
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
+      ),
+    );
+    gh.factory<_i485.ClinicInfoRemoteDataSource>(
+      () => _i485.ClinicInfoRemoteDataSourceImpl(
+        gh<_i962.ApiConsumer>(),
+        gh<_i663.UserStorage>(),
+      ),
+    );
     gh.factory<_i806.NotificationSettingsRemoteDataSource>(
       () => _i806.NotificationSettingsRemoteDataSourceImpl(
+        gh<_i962.ApiConsumer>(),
+      ),
+    );
+    gh.lazySingleton<_i924.LanguageBloc>(
+      () => blocInjection.languageBloc(
+        gh<_i934.LanguageService>(),
         gh<_i962.ApiConsumer>(),
       ),
     );
@@ -228,17 +276,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i41.AppointmentRemoteDataSource>(
       () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
-    gh.lazySingleton<_i924.LanguageBloc>(
-      () => blocInjection.languageBloc(gh<_i934.LanguageService>()),
+    gh.lazySingleton<_i977.MediaService>(
+      () => _i977.MediaService(gh<_i962.ApiConsumer>()),
     );
-    gh.factory<_i355.ExpenseRemoteDataSource>(
+    gh.lazySingleton<_i315.CurrencyService>(
+      () => _i315.CurrencyService(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i355.ExpenseRemoteDataSource>(
       () => _i355.ExpenseRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.lazySingleton<_i536.PatientRemoteDataSource>(
       () => _i536.PatientRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i485.ClinicInfoRemoteDataSource>(
-      () => _i485.ClinicInfoRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.factory<_i455.NotificationSettingsRepository>(
       () => _i395.NotificationSettingsRepositoryImpl(
@@ -266,6 +314,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i573.NotificationRemoteDataSource>(),
       ),
     );
+    gh.factory<_i61.WorkingHoursRepository>(
+      () => _i96.WorkingHoursRepositoryImpl(
+        gh<_i158.WorkingHoursRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i493.NotificationSettingsBloc>(
       () => _i493.NotificationSettingsBloc(
         getSettings: gh<_i275.GetNotificationSettingsUseCase>(),
@@ -276,6 +329,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i155.SubscriptionRepositoryImpl(
         gh<_i151.SubscriptionRemoteDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i46.CurrencyBloc>(
+      () => _i46.CurrencyBloc(gh<_i315.CurrencyService>()),
     );
     gh.factory<_i192.PatientRepository>(
       () => _i504.PatientRepositoryImpl(gh<_i536.PatientRemoteDataSource>()),
@@ -319,6 +375,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i66.GetAllExpensesUseCase>(
       () => _i66.GetAllExpensesUseCase(gh<_i18.ExpenseRepository>()),
     );
+    gh.factory<_i342.GetCategoriesUseCase>(
+      () => _i342.GetCategoriesUseCase(gh<_i18.ExpenseRepository>()),
+    );
+    gh.factory<_i315.UpdateExpenseUseCase>(
+      () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
+    );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
     );
@@ -331,29 +393,33 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i8.UpdateClinicInfoUseCase>(
       () => _i8.UpdateClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
     );
+    gh.factory<_i283.WorkingHoursBloc>(
+      () =>
+          _i283.WorkingHoursBloc(repository: gh<_i61.WorkingHoursRepository>()),
+    );
+    gh.factory<_i594.AddPatientUseCase>(
+      () => _i594.AddPatientUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i924.AddPaymentUseCase>(
+      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i208.AddTreatmentUseCase>(
+      () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
+      () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i281.GetAllPatientsUseCase>(
+      () => _i281.GetAllPatientsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i126.GetAllTeethUseCase>(
+      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
+    );
     gh.factory<_i129.GetPatientCasesUseCase>(
       () => _i129.GetPatientCasesUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i1063.GetPatientDetailsUseCase>(
       () => _i1063.GetPatientDetailsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i281.GetAllPatientsUseCase>(
-      () => _i281.GetAllPatientsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i594.AddPatientUseCase>(
-      () => _i594.AddPatientUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i208.AddTreatmentUseCase>(
-      () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i924.AddPaymentUseCase>(
-      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
-      () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i126.GetAllTeethUseCase>(
-      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i773.GetPaymentsUseCase>(
       () => _i773.GetPaymentsUseCase(gh<_i192.PatientRepository>()),
@@ -389,13 +455,6 @@ extension GetItInjectableX on _i174.GetIt {
         getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
       ),
     );
-    gh.factory<_i763.ExpenseBloc>(
-      () => _i763.ExpenseBloc(
-        getAllExpenses: gh<_i66.GetAllExpensesUseCase>(),
-        addExpense: gh<_i841.AddExpenseUseCase>(),
-        deleteExpense: gh<_i526.DeleteExpenseUseCase>(),
-      ),
-    );
     gh.factory<_i134.CreateConversationUseCase>(
       () => _i134.CreateConversationUseCase(gh<_i778.SupportRepository>()),
     );
@@ -413,6 +472,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i791.GetAllAppointmentsUseCase>(
       () => _i791.GetAllAppointmentsUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i763.ExpenseBloc>(
+      () => _i763.ExpenseBloc(
+        getAllExpenses: gh<_i66.GetAllExpensesUseCase>(),
+        addExpense: gh<_i841.AddExpenseUseCase>(),
+        updateExpense: gh<_i315.UpdateExpenseUseCase>(),
+        deleteExpense: gh<_i526.DeleteExpenseUseCase>(),
+      ),
     );
     gh.factory<_i527.AddPatientBloc>(
       () => _i527.AddPatientBloc(addPatient: gh<_i594.AddPatientUseCase>()),

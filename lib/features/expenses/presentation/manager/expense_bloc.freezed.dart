@@ -20,19 +20,23 @@ mixin _$ExpenseEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadExpenses,
-    required TResult Function(ExpenseEntity expense) addExpense,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
     required TResult Function(String id) deleteExpense,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadExpenses,
-    TResult? Function(ExpenseEntity expense)? addExpense,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadExpenses,
-    TResult Function(ExpenseEntity expense)? addExpense,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -40,18 +44,21 @@ mixin _$ExpenseEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadExpenses value) loadExpenses,
     required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadExpenses value)? loadExpenses,
     TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadExpenses value)? loadExpenses,
     TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -123,7 +130,9 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadExpenses,
-    required TResult Function(ExpenseEntity expense) addExpense,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
     required TResult Function(String id) deleteExpense,
   }) {
     return loadExpenses();
@@ -133,7 +142,8 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadExpenses,
-    TResult? Function(ExpenseEntity expense)? addExpense,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) {
     return loadExpenses?.call();
@@ -143,7 +153,8 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadExpenses,
-    TResult Function(ExpenseEntity expense)? addExpense,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
     required TResult orElse(),
   }) {
@@ -158,6 +169,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadExpenses value) loadExpenses,
     required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
   }) {
     return loadExpenses(this);
@@ -168,6 +180,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadExpenses value)? loadExpenses,
     TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
   }) {
     return loadExpenses?.call(this);
@@ -178,6 +191,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadExpenses value)? loadExpenses,
     TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
     required TResult orElse(),
   }) {
@@ -199,9 +213,7 @@ abstract class _$$AddExpenseImplCopyWith<$Res> {
     $Res Function(_$AddExpenseImpl) then,
   ) = __$$AddExpenseImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({ExpenseEntity expense});
-
-  $ExpenseEntityCopyWith<$Res> get expense;
+  $Res call({Map<String, dynamic> body});
 }
 
 /// @nodoc
@@ -217,39 +229,34 @@ class __$$AddExpenseImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? expense = null}) {
+  $Res call({Object? body = null}) {
     return _then(
       _$AddExpenseImpl(
-        null == expense
-            ? _value.expense
-            : expense // ignore: cast_nullable_to_non_nullable
-                  as ExpenseEntity,
+        null == body
+            ? _value._body
+            : body // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>,
       ),
     );
-  }
-
-  /// Create a copy of ExpenseEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ExpenseEntityCopyWith<$Res> get expense {
-    return $ExpenseEntityCopyWith<$Res>(_value.expense, (value) {
-      return _then(_value.copyWith(expense: value));
-    });
   }
 }
 
 /// @nodoc
 
 class _$AddExpenseImpl implements _AddExpense {
-  const _$AddExpenseImpl(this.expense);
+  const _$AddExpenseImpl(final Map<String, dynamic> body) : _body = body;
 
+  final Map<String, dynamic> _body;
   @override
-  final ExpenseEntity expense;
+  Map<String, dynamic> get body {
+    if (_body is EqualUnmodifiableMapView) return _body;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_body);
+  }
 
   @override
   String toString() {
-    return 'ExpenseEvent.addExpense(expense: $expense)';
+    return 'ExpenseEvent.addExpense(body: $body)';
   }
 
   @override
@@ -257,11 +264,12 @@ class _$AddExpenseImpl implements _AddExpense {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AddExpenseImpl &&
-            (identical(other.expense, expense) || other.expense == expense));
+            const DeepCollectionEquality().equals(other._body, _body));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, expense);
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_body));
 
   /// Create a copy of ExpenseEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -275,32 +283,36 @@ class _$AddExpenseImpl implements _AddExpense {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadExpenses,
-    required TResult Function(ExpenseEntity expense) addExpense,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
     required TResult Function(String id) deleteExpense,
   }) {
-    return addExpense(expense);
+    return addExpense(body);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadExpenses,
-    TResult? Function(ExpenseEntity expense)? addExpense,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) {
-    return addExpense?.call(expense);
+    return addExpense?.call(body);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadExpenses,
-    TResult Function(ExpenseEntity expense)? addExpense,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
     required TResult orElse(),
   }) {
     if (addExpense != null) {
-      return addExpense(expense);
+      return addExpense(body);
     }
     return orElse();
   }
@@ -310,6 +322,7 @@ class _$AddExpenseImpl implements _AddExpense {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadExpenses value) loadExpenses,
     required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
   }) {
     return addExpense(this);
@@ -320,6 +333,7 @@ class _$AddExpenseImpl implements _AddExpense {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadExpenses value)? loadExpenses,
     TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
   }) {
     return addExpense?.call(this);
@@ -330,6 +344,7 @@ class _$AddExpenseImpl implements _AddExpense {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadExpenses value)? loadExpenses,
     TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
     required TResult orElse(),
   }) {
@@ -341,14 +356,187 @@ class _$AddExpenseImpl implements _AddExpense {
 }
 
 abstract class _AddExpense implements ExpenseEvent {
-  const factory _AddExpense(final ExpenseEntity expense) = _$AddExpenseImpl;
+  const factory _AddExpense(final Map<String, dynamic> body) = _$AddExpenseImpl;
 
-  ExpenseEntity get expense;
+  Map<String, dynamic> get body;
 
   /// Create a copy of ExpenseEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddExpenseImplCopyWith<_$AddExpenseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpdateExpenseImplCopyWith<$Res> {
+  factory _$$UpdateExpenseImplCopyWith(
+    _$UpdateExpenseImpl value,
+    $Res Function(_$UpdateExpenseImpl) then,
+  ) = __$$UpdateExpenseImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String id, Map<String, dynamic> body});
+}
+
+/// @nodoc
+class __$$UpdateExpenseImplCopyWithImpl<$Res>
+    extends _$ExpenseEventCopyWithImpl<$Res, _$UpdateExpenseImpl>
+    implements _$$UpdateExpenseImplCopyWith<$Res> {
+  __$$UpdateExpenseImplCopyWithImpl(
+    _$UpdateExpenseImpl _value,
+    $Res Function(_$UpdateExpenseImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? id = null, Object? body = null}) {
+    return _then(
+      _$UpdateExpenseImpl(
+        null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        null == body
+            ? _value._body
+            : body // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$UpdateExpenseImpl implements _UpdateExpense {
+  const _$UpdateExpenseImpl(this.id, final Map<String, dynamic> body)
+    : _body = body;
+
+  @override
+  final String id;
+  final Map<String, dynamic> _body;
+  @override
+  Map<String, dynamic> get body {
+    if (_body is EqualUnmodifiableMapView) return _body;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_body);
+  }
+
+  @override
+  String toString() {
+    return 'ExpenseEvent.updateExpense(id: $id, body: $body)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateExpenseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            const DeepCollectionEquality().equals(other._body, _body));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, const DeepCollectionEquality().hash(_body));
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateExpenseImplCopyWith<_$UpdateExpenseImpl> get copyWith =>
+      __$$UpdateExpenseImplCopyWithImpl<_$UpdateExpenseImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
+    required TResult Function(String id) deleteExpense,
+  }) {
+    return updateExpense(id, body);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
+    TResult? Function(String id)? deleteExpense,
+  }) {
+    return updateExpense?.call(id, body);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
+    TResult Function(String id)? deleteExpense,
+    required TResult orElse(),
+  }) {
+    if (updateExpense != null) {
+      return updateExpense(id, body);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadExpenses value) loadExpenses,
+    required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
+    required TResult Function(_DeleteExpense value) deleteExpense,
+  }) {
+    return updateExpense(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadExpenses value)? loadExpenses,
+    TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
+    TResult? Function(_DeleteExpense value)? deleteExpense,
+  }) {
+    return updateExpense?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadExpenses value)? loadExpenses,
+    TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
+    TResult Function(_DeleteExpense value)? deleteExpense,
+    required TResult orElse(),
+  }) {
+    if (updateExpense != null) {
+      return updateExpense(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UpdateExpense implements ExpenseEvent {
+  const factory _UpdateExpense(
+    final String id,
+    final Map<String, dynamic> body,
+  ) = _$UpdateExpenseImpl;
+
+  String get id;
+  Map<String, dynamic> get body;
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateExpenseImplCopyWith<_$UpdateExpenseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -423,7 +611,9 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loadExpenses,
-    required TResult Function(ExpenseEntity expense) addExpense,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
     required TResult Function(String id) deleteExpense,
   }) {
     return deleteExpense(id);
@@ -433,7 +623,8 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadExpenses,
-    TResult? Function(ExpenseEntity expense)? addExpense,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) {
     return deleteExpense?.call(id);
@@ -443,7 +634,8 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadExpenses,
-    TResult Function(ExpenseEntity expense)? addExpense,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
     required TResult orElse(),
   }) {
@@ -458,6 +650,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadExpenses value) loadExpenses,
     required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
   }) {
     return deleteExpense(this);
@@ -468,6 +661,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadExpenses value)? loadExpenses,
     TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
   }) {
     return deleteExpense?.call(this);
@@ -478,6 +672,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadExpenses value)? loadExpenses,
     TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
     required TResult orElse(),
   }) {
@@ -506,21 +701,36 @@ mixin _$ExpenseState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ExpenseEntity> expenses) loaded,
+    required TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ExpenseEntity> expenses)? loaded,
+    TResult? Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ExpenseEntity> expenses)? loaded,
+    TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -615,7 +825,12 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ExpenseEntity> expenses) loaded,
+    required TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -626,7 +841,12 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ExpenseEntity> expenses)? loaded,
+    TResult? Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -637,7 +857,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ExpenseEntity> expenses)? loaded,
+    TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -734,7 +959,12 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ExpenseEntity> expenses) loaded,
+    required TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -745,7 +975,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ExpenseEntity> expenses)? loaded,
+    TResult? Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -756,7 +991,12 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ExpenseEntity> expenses)? loaded,
+    TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -815,7 +1055,11 @@ abstract class _$$LoadedImplCopyWith<$Res> {
     $Res Function(_$LoadedImpl) then,
   ) = __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<ExpenseEntity> expenses});
+  $Res call({
+    List<ExpenseEntity> expenses,
+    List<ExpenseTotalEntity> totals,
+    String? actionError,
+  });
 }
 
 /// @nodoc
@@ -831,13 +1075,25 @@ class __$$LoadedImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? expenses = null}) {
+  $Res call({
+    Object? expenses = null,
+    Object? totals = null,
+    Object? actionError = freezed,
+  }) {
     return _then(
       _$LoadedImpl(
-        null == expenses
+        expenses: null == expenses
             ? _value._expenses
             : expenses // ignore: cast_nullable_to_non_nullable
                   as List<ExpenseEntity>,
+        totals: null == totals
+            ? _value._totals
+            : totals // ignore: cast_nullable_to_non_nullable
+                  as List<ExpenseTotalEntity>,
+        actionError: freezed == actionError
+            ? _value.actionError
+            : actionError // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -846,7 +1102,12 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(final List<ExpenseEntity> expenses) : _expenses = expenses;
+  const _$LoadedImpl({
+    required final List<ExpenseEntity> expenses,
+    required final List<ExpenseTotalEntity> totals,
+    this.actionError = null,
+  }) : _expenses = expenses,
+       _totals = totals;
 
   final List<ExpenseEntity> _expenses;
   @override
@@ -856,9 +1117,21 @@ class _$LoadedImpl implements _Loaded {
     return EqualUnmodifiableListView(_expenses);
   }
 
+  final List<ExpenseTotalEntity> _totals;
+  @override
+  List<ExpenseTotalEntity> get totals {
+    if (_totals is EqualUnmodifiableListView) return _totals;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_totals);
+  }
+
+  @override
+  @JsonKey()
+  final String? actionError;
+
   @override
   String toString() {
-    return 'ExpenseState.loaded(expenses: $expenses)';
+    return 'ExpenseState.loaded(expenses: $expenses, totals: $totals, actionError: $actionError)';
   }
 
   @override
@@ -866,12 +1139,19 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality().equals(other._expenses, _expenses));
+            const DeepCollectionEquality().equals(other._expenses, _expenses) &&
+            const DeepCollectionEquality().equals(other._totals, _totals) &&
+            (identical(other.actionError, actionError) ||
+                other.actionError == actionError));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_expenses));
+  int get hashCode => Object.hash(
+    runtimeType,
+    const DeepCollectionEquality().hash(_expenses),
+    const DeepCollectionEquality().hash(_totals),
+    actionError,
+  );
 
   /// Create a copy of ExpenseState
   /// with the given fields replaced by the non-null parameter values.
@@ -886,10 +1166,15 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ExpenseEntity> expenses) loaded,
+    required TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(expenses);
+    return loaded(expenses, totals, actionError);
   }
 
   @override
@@ -897,10 +1182,15 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ExpenseEntity> expenses)? loaded,
+    TResult? Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(expenses);
+    return loaded?.call(expenses, totals, actionError);
   }
 
   @override
@@ -908,12 +1198,17 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ExpenseEntity> expenses)? loaded,
+    TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(expenses);
+      return loaded(expenses, totals, actionError);
     }
     return orElse();
   }
@@ -957,9 +1252,15 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements ExpenseState {
-  const factory _Loaded(final List<ExpenseEntity> expenses) = _$LoadedImpl;
+  const factory _Loaded({
+    required final List<ExpenseEntity> expenses,
+    required final List<ExpenseTotalEntity> totals,
+    final String? actionError,
+  }) = _$LoadedImpl;
 
   List<ExpenseEntity> get expenses;
+  List<ExpenseTotalEntity> get totals;
+  String? get actionError;
 
   /// Create a copy of ExpenseState
   /// with the given fields replaced by the non-null parameter values.
@@ -1040,7 +1341,12 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ExpenseEntity> expenses) loaded,
+    required TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )
+    loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -1051,7 +1357,12 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ExpenseEntity> expenses)? loaded,
+    TResult? Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -1062,7 +1373,12 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ExpenseEntity> expenses)? loaded,
+    TResult Function(
+      List<ExpenseEntity> expenses,
+      List<ExpenseTotalEntity> totals,
+      String? actionError,
+    )?
+    loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

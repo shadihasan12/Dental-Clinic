@@ -180,6 +180,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter => 'Filter';
 
   @override
+  String get expenseType => 'Expense type';
+
+  @override
   String get sort => 'Sort';
 
   @override
@@ -805,6 +808,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenses => 'Expenses';
 
   @override
+  String get currency => 'Currency';
+
+  @override
   String get holidays => 'Holidays & Days Off';
 
   @override
@@ -1182,7 +1188,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailAddress => 'Email Address';
 
   @override
-  String get pleaseEnterValidEmail => 'Please enter a valid email address';
+  String get pleaseEnterValidEmail => 'Please enter a valid email';
 
   @override
   String get sendVerificationCode => 'Send Verification Code';
@@ -1466,4 +1472,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMatchingPatientsDesc => 'Try adjusting your search or filters';
+
+  @override
+  String get pleaseEnterYourName => 'Please enter your name';
+
+  @override
+  String get nameTooShort => 'Name must be at least 2 characters';
+
+  @override
+  String get pleaseEnterYourEmail => 'Please enter your email';
+
+  @override
+  String get pleaseEnterYourPassword => 'Please enter your password';
+
+  @override
+  String get pleaseSelectSpecialty => 'Please select your specialization';
+
+  @override
+  String get workingHoursAndHolidays => 'Working Hours & Holidays';
 }

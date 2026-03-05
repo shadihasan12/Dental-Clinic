@@ -1,25 +1,25 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-
-import 'expense_models.dart';
 
 class ExpenseDetailSheet extends StatelessWidget {
   const ExpenseDetailSheet({
     super.key,
     required this.expense,
     required this.onDelete,
+    required this.onEdit,
   });
 
   final ExpenseEntity expense;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final formatted = DateFormat('EEEE, MMM d, yyyy').format(expense.date);
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
 
     return Padding(
@@ -41,9 +41,9 @@ class ExpenseDetailSheet extends StatelessWidget {
           ),
           SizedBox(height: 20.h),
 
-          // Amount + title
+          // Amount + currency
           Text(
-            '\$${expense.amount.toStringAsFixed(0)}',
+            '${expense.amount} ${expense.currency.currencyCode}',
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 32.sp,
@@ -53,7 +53,7 @@ class ExpenseDetailSheet extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            expense.title,
+            expense.category.name,
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 16.sp,
@@ -64,29 +64,70 @@ class ExpenseDetailSheet extends StatelessWidget {
           SizedBox(height: 20.h),
 
           // Details rows
-          _DetailRow(icon: Icons.calendar_today_outlined, text: formatted),
-          SizedBox(height: 12.h),
           _DetailRow(
-            icon: Icons.category_outlined,
-            text: categoryLabel(context, expense.category),
-          ),
+              icon: Icons.calendar_today_outlined, text: expense.entryDate),
+          if (expense.notes.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            _DetailRow(icon: Icons.notes_outlined, text: expense.notes),
+          ],
+          if (expense.attachments.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            _DetailRow(
+              icon: Icons.attach_file,
+              text: '${expense.attachments.length} ${l10n.attachments}',
+            ),
+          ],
           SizedBox(height: 24.h),
 
-          // Delete button
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () => _confirmDelete(context, l10n),
-              child: Text(
-                l10n.deleteExpenseButton,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.red.shade400,
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: Icon(Icons.edit_outlined, size: 16.w),
+                  label: Text(
+                    l10n.edit,
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: ColorManager.primary,
+                    side: BorderSide(color: ColorManager.primary),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _confirmDelete(context, l10n),
+                  icon: Icon(Icons.delete_outline, size: 16.w),
+                  label: Text(
+                    l10n.delete,
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red.shade400,
+                    side: BorderSide(color: Colors.red.shade400),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -115,8 +156,8 @@ class ExpenseDetailSheet extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(ctx);   // close dialog
-              onDelete();           // remove from data
+              Navigator.pop(ctx); // close dialog
+              onDelete(); // remove from data
               Navigator.pop(context); // close sheet
             },
             child: Text(

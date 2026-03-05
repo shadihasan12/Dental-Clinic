@@ -7,13 +7,13 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetAllExpensesUseCase
-    implements UseCase<List<ExpenseEntity>, NoParams> {
+    implements UseCase<ExpenseListResponse, NoParams> {
   final ExpenseRepository _repository;
 
   GetAllExpensesUseCase(this._repository);
 
   @override
-  Future<Either<NetworkExceptions, List<ExpenseEntity>>> call(
+  Future<Either<NetworkExceptions, ExpenseListResponse>> call(
     NoParams params,
   ) {
     return _repository.getAllExpenses();

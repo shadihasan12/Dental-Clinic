@@ -10,6 +10,8 @@ import 'package:dental_clinic_app/features/home/presentation/pages/notification_
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart'
     show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/working_hours_page.dart'
+    show WorkingHoursPage;
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
@@ -100,7 +102,7 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: BlocProvider(
-                create: (context) => AuthBloc(getIt(), getIt()),
+                create: (context) => getIt<AuthBloc>(),
                 child: const EmailEntryPage(),
               ),
               key: state.pageKey,
@@ -383,6 +385,17 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const ClinicInfoPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/working-hours',
+          name: AppRoutesNames.workingHours,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const WorkingHoursPage(),
               key: state.pageKey,
               name: state.name,
             );

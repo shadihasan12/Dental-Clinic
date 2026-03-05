@@ -1,99 +1,76 @@
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/features/expenses/data/endpoints/expense_endpoints.dart';
 import 'package:dental_clinic_app/features/expenses/data/models/expense_model.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class ExpenseRemoteDataSource {
-  Future<List<ExpenseModel>> getAllExpenses();
-  Future<ExpenseModel> addExpense(ExpenseModel expense);
+  Future<Map<String, dynamic>> getAllExpenses();
+  Future<List<ExpenseCategoryModel>> getCategories();
+  Future<ExpenseModel> addExpense(Map<String, dynamic> body);
+  Future<ExpenseModel> updateExpense(String id, Map<String, dynamic> body);
   Future<void> deleteExpense(String id);
 }
 
-@Injectable(as: ExpenseRemoteDataSource)
+@LazySingleton(as: ExpenseRemoteDataSource)
 class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
-  // ignore: unused_field
   final ApiConsumer _apiConsumer;
 
   ExpenseRemoteDataSourceImpl(this._apiConsumer);
 
-  // In-memory mock store
-  List<ExpenseModel>? _cachedExpenses;
+  @override
+  Future<Map<String, dynamic>> getAllExpenses() async {
+    final response = await _apiConsumer.get(ExpenseEndpoints.expenses);
 
-  List<ExpenseModel> _getMockExpenses() {
-    if (_cachedExpenses != null) return _cachedExpenses!;
+    final dataList = response['data'] as List;
+    final expenses = dataList
+        .map((e) => ExpenseModel.fromJson(e as Map<String, dynamic>))
+        .toList();
 
-    final now = DateTime.now();
-    _cachedExpenses = [
-      ExpenseModel(
-        id: '1',
-        title: 'صيانة كرسي العيادة',
-        amount: 450,
-        date: now.subtract(const Duration(days: 1)).toIso8601String(),
-        category: 'supplies',
-      ),
-      ExpenseModel(
-        id: '2',
-        title: 'رسوم مختبر',
-        amount: 320,
-        date: now.subtract(const Duration(days: 3)).toIso8601String(),
-        category: 'lab',
-      ),
-      ExpenseModel(
-        id: '3',
-        title: 'إيجار مكتب',
-        amount: 2500,
-        date: now.subtract(const Duration(days: 5)).toIso8601String(),
-        category: 'rent',
-      ),
-      ExpenseModel(
-        id: '4',
-        title: 'رواتب المساعد',
-        amount: 1800,
-        date: now.subtract(const Duration(days: 10)).toIso8601String(),
-        category: 'salary',
-      ),
-    ];
-    return _cachedExpenses!;
+    final meta = response['meta'] as Map<String, dynamic>?;
+    final totalsList = (meta?['totals'] as List?) ?? [];
+    final totals = totalsList
+        .map((e) => ExpenseTotalModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    return {
+      'expenses': expenses,
+      'totals': totals,
+    };
   }
 
   @override
-  Future<List<ExpenseModel>> getAllExpenses() async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.get(ExpenseEndpoints.expenses);
-    // return (response as List)
-    //     .map((e) => ExpenseModel.fromJson(e as Map<String, dynamic>))
-    //     .toList();
+  Future<List<ExpenseCategoryModel>> getCategories() async {
+    final response = await _apiConsumer.get(ExpenseEndpoints.categories);
 
-    await Future.delayed(const Duration(milliseconds: 800));
-    return _getMockExpenses();
+    final dataList = response['data'] as List;
+    return dataList
+        .map((e) => ExpenseCategoryModel.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override
-  Future<ExpenseModel> addExpense(ExpenseModel expense) async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.post(
-    //   ExpenseEndpoints.expenses,
-    //   body: expense.toJson(),
-    // );
-    // return ExpenseModel.fromJson(response as Map<String, dynamic>);
-
-    await Future.delayed(const Duration(milliseconds: 500));
-    final newExpense = ExpenseModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title: expense.title,
-      amount: expense.amount,
-      date: expense.date,
-      category: expense.category,
+  Future<ExpenseModel> addExpense(Map<String, dynamic> body) async {
+    final response = await _apiConsumer.post(
+      ExpenseEndpoints.expenses,
+      body: body,
     );
-    _getMockExpenses().insert(0, newExpense);
-    return newExpense;
+    return ExpenseModel.fromJson(response['data'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<ExpenseModel> updateExpense(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _apiConsumer.put(
+      ExpenseEndpoints.expenseById(id),
+      body: body,
+    );
+    return ExpenseModel.fromJson(response['data'] as Map<String, dynamic>);
   }
 
   @override
   Future<void> deleteExpense(String id) async {
-    // TODO: Replace with real API call when backend is ready
-    // await _apiConsumer.delete(ExpenseEndpoints.deleteExpense(id));
-
-    await Future.delayed(const Duration(milliseconds: 300));
-    _getMockExpenses().removeWhere((e) => e.id == id);
+    await _apiConsumer.delete(ExpenseEndpoints.expenseById(id));
   }
 }

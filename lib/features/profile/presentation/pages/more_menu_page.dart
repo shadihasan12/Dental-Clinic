@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
@@ -49,6 +52,13 @@ class MenuPage extends StatelessWidget {
                       title: l10n.clinicInformation,
                       onTap: () {
                         context.pushNamed(AppRoutesNames.clinicInfo);
+                      },
+                    ),
+                    MenuItem(
+                      icon: Icons.schedule_outlined,
+                      title: l10n.workingHoursAndHolidays,
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.workingHours);
                       },
                     ),
                     MenuItem(
@@ -399,9 +409,13 @@ class MenuPage extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(dialogContext);
-              context.goNamed(AppRoutesNames.login);
+              await getIt<TokenStorage>().clearAuthData();
+              await getIt<UserStorage>().clear();
+              if (context.mounted) {
+                context.goNamed(AppRoutesNames.login);
+              }
             },
             child: Text(
               l10n.logout,

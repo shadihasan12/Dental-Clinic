@@ -6,14 +6,15 @@ import 'package:dental_clinic_app/features/expenses/domain/repositories/expense_
 import 'package:injectable/injectable.dart';
 
 @injectable
-class AddExpenseUseCase implements UseCase<ExpenseEntity, ExpenseEntity> {
+class AddExpenseUseCase
+    implements UseCase<ExpenseEntity, Map<String, dynamic>> {
   final ExpenseRepository _repository;
 
   AddExpenseUseCase(this._repository);
 
   @override
   Future<Either<NetworkExceptions, ExpenseEntity>> call(
-    ExpenseEntity params,
+    Map<String, dynamic> params,
   ) {
     return _repository.addExpense(params);
   }

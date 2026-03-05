@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
@@ -15,11 +17,13 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 part 'auth_bloc.freezed.dart';
 
+@injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final TokenStorage _tokenStorage;
+  final UserStorage _userStorage;
 
-  AuthBloc(this._authRepository, this._tokenStorage) : super(const AuthState()) {
+  AuthBloc(this._authRepository, this._tokenStorage, this._userStorage) : super(const AuthState()) {
     // Login events
     on<_LoginEmailChanged>(_onLoginEmailChanged);
     on<_LoginPasswordChanged>(_onLoginPasswordChanged);
@@ -743,8 +747,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogoutRequested(_LogoutRequested event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
 
-    // Clear authentication data from local storage
+    // Clear authentication and user data from local storage
     await _tokenStorage.clearAuthData();
+    await _userStorage.clear();
 
     // Reset to initial state (unauthenticated)
     emit(const AuthState());

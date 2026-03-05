@@ -440,6 +440,12 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get filter;
 
+  /// No description provided for @expenseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense type'**
+  String get expenseType;
+
   /// No description provided for @sort.
   ///
   /// In en, this message translates to:
@@ -1658,6 +1664,12 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get expenses;
 
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
   /// No description provided for @holidays.
   ///
   /// In en, this message translates to:
@@ -2357,7 +2369,7 @@ abstract class AppLocalizations {
   /// No description provided for @pleaseEnterValidEmail.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid email address'**
+  /// **'Please enter a valid email'**
   String get pleaseEnterValidEmail;
 
   /// No description provided for @sendVerificationCode.
@@ -2887,6 +2899,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try adjusting your search or filters'**
   String get noMatchingPatientsDesc;
+
+  /// No description provided for @pleaseEnterYourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterYourName;
+
+  /// No description provided for @nameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least 2 characters'**
+  String get nameTooShort;
+
+  /// No description provided for @pleaseEnterYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get pleaseEnterYourEmail;
+
+  /// No description provided for @pleaseEnterYourPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get pleaseEnterYourPassword;
+
+  /// No description provided for @pleaseSelectSpecialty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your specialization'**
+  String get pleaseSelectSpecialty;
+
+  /// No description provided for @workingHoursAndHolidays.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours & Holidays'**
+  String get workingHoursAndHolidays;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,10 @@ class ClinicInfoEntity with _$ClinicInfoEntity {
   const factory ClinicInfoEntity({
     required String id,
     required String name,
+    @Default('') String locationId,
+    @Default('') String locationName,
+    @Default('') String locationFullName,
+    @Default('') String address,
     required List<WorkingDayEntity> workingDays,
     @Default([]) List<HolidayEntity> holidays,
   }) = _ClinicInfoEntity;

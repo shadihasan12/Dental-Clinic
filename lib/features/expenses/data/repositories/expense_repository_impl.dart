@@ -13,10 +13,27 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   ExpenseRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Either<NetworkExceptions, List<ExpenseEntity>>>
+  Future<Either<NetworkExceptions, ExpenseListResponse>>
       getAllExpenses() async {
     try {
-      final models = await _remoteDataSource.getAllExpenses();
+      final result = await _remoteDataSource.getAllExpenses();
+      final expenses = (result['expenses'] as List<ExpenseModel>)
+          .map((m) => m.toEntity())
+          .toList();
+      final totals = (result['totals'] as List<ExpenseTotalModel>)
+          .map((m) => m.toEntity())
+          .toList();
+      return Right(ExpenseListResponse(expenses: expenses, totals: totals));
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<ExpenseCategoryEntity>>>
+      getCategories() async {
+    try {
+      final models = await _remoteDataSource.getCategories();
       return Right(models.map((m) => m.toEntity()).toList());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
@@ -25,11 +42,23 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
 
   @override
   Future<Either<NetworkExceptions, ExpenseEntity>> addExpense(
-    ExpenseEntity expense,
+    Map<String, dynamic> body,
   ) async {
     try {
-      final model =
-          await _remoteDataSource.addExpense(ExpenseModel.fromEntity(expense));
+      final model = await _remoteDataSource.addExpense(body);
+      return Right(model.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, ExpenseEntity>> updateExpense(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final model = await _remoteDataSource.updateExpense(id, body);
       return Right(model.toEntity());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));

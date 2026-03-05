@@ -1,26 +1,19 @@
+import 'dart:async';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/entities/clinic_info_entity.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/clinic_info_repository.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/clinic_info_bloc.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/day_toggle.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/holiday_item.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/shift_count_control.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/time_picker_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-
-import '../widgets/add_holiday_sheet.dart';
-import '../widgets/clinic_info_models.dart';
-import '../widgets/helpers.dart';
-import '../widgets/cupertino_picker_sheet.dart';
 
 class ClinicInfoPage extends StatelessWidget {
   const ClinicInfoPage({super.key});
@@ -44,151 +37,97 @@ class _ClinicInfoContent extends StatefulWidget {
 
 class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   late final TextEditingController _clinicNameController;
-  String? _expandedDay;
-  List<WorkingDay> _workingDays = [];
-  final List<HolidayEntry> _holidays = [];
+  late final TextEditingController _addressController;
+  late final TextEditingController _locationSearchController;
   String _clinicId = '';
+  bool _formPopulated = false;
+  ClinicInfoEntity? _originalEntity;
+  Timer? _debounce;
 
-  static const int _maxShifts = 3;
+  LocationEntity? _selectedLocation;
+  List<LocationEntity> _searchedLocations = [];
+  bool _isSearchingLocations = false;
 
   @override
   void initState() {
     super.initState();
     _clinicNameController = TextEditingController();
+    _addressController = TextEditingController();
+    _locationSearchController = TextEditingController();
   }
 
   @override
   void dispose() {
     _clinicNameController.dispose();
+    _addressController.dispose();
+    _locationSearchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
-
-  // ── Entity ↔ UI model conversion ──
 
   void _populateFromEntity(ClinicInfoEntity entity) {
     _clinicId = entity.id;
     _clinicNameController.text = entity.name;
+    _addressController.text = entity.address;
+    _originalEntity = entity;
 
-    _workingDays = entity.workingDays.map((day) {
-      return WorkingDay(
-        key: day.key,
-        labelEn: day.labelEn,
-        labelAr: day.labelAr,
-        enabled: day.enabled,
-        shifts: day.shifts.map((s) {
-          return WorkingShift(
-            from: TimeOfDay(hour: s.fromHour, minute: s.fromMinute),
-            to: TimeOfDay(hour: s.toHour, minute: s.toMinute),
-          );
-        }).toList(),
+    if (entity.locationId.isNotEmpty) {
+      _selectedLocation = LocationEntity(
+        id: entity.locationId,
+        name: entity.locationName,
+        fullName: entity.locationFullName,
+        countryCode: '',
       );
-    }).toList();
-
-    _holidays
-      ..clear()
-      ..addAll(entity.holidays.map((h) {
-        return HolidayEntry(
-          name: h.name,
-          date: h.date,
-          recurring: h.recurring,
-        );
-      }));
-  }
-
-  ClinicInfoEntity _buildEntity() {
-    return ClinicInfoEntity(
-      id: _clinicId,
-      name: _clinicNameController.text.trim(),
-      workingDays: _workingDays.map((day) {
-        return WorkingDayEntity(
-          key: day.key,
-          labelEn: day.labelEn,
-          labelAr: day.labelAr,
-          enabled: day.enabled,
-          shifts: day.shifts.map((s) {
-            return ShiftEntity(
-              fromHour: s.from.hour,
-              fromMinute: s.from.minute,
-              toHour: s.to.hour,
-              toMinute: s.to.minute,
-            );
-          }).toList(),
-        );
-      }).toList(),
-      holidays: _holidays.map((h) {
-        return HolidayEntity(
-          name: h.name,
-          date: h.date,
-          recurring: h.recurring,
-        );
-      }).toList(),
-    );
-  }
-
-  // ── Actions ──
-
-  String _dayLabel(WorkingDay day) {
-    final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? day.labelAr : day.labelEn;
-  }
-
-  String _daySummary(WorkingDay day) {
-    if (day.shifts.length == 1) {
-      return '${formatTime(day.shifts[0].from)} – ${formatTime(day.shifts[0].to)}';
     }
-    return '${day.shifts.length} ${AppLocalizations.of(context)!.shifts}';
+
+    _formPopulated = true;
   }
 
-  Future<void> _pickShiftTime(
-    WorkingDay day,
-    int shiftIndex, {
-    required bool isFrom,
-  }) async {
-    final shift = day.shifts[shiftIndex];
-    final initial = isFrom ? shift.from : shift.to;
-    final l10n = AppLocalizations.of(context)!;
-    TimeOfDay selected = initial;
+  void _onLocationSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    await showCupertinoPickerSheet(
-      context: context,
-      cancelLabel: l10n.cancel,
-      doneLabel: l10n.save,
-      onDone: () => setState(() {
-        if (isFrom) {
-          shift.from = selected;
-        } else {
-          shift.to = selected;
-        }
-      }),
-      picker: CupertinoDatePicker(
-        mode: CupertinoDatePickerMode.time,
-        use24hFormat: false,
-        initialDateTime: DateTime(2000, 1, 1, initial.hour, initial.minute),
-        onDateTimeChanged: (dt) =>
-            selected = TimeOfDay(hour: dt.hour, minute: dt.minute),
-      ),
-    );
-  }
+    if (query.trim().length < 2) {
+      setState(() {
+        _searchedLocations = [];
+        _isSearchingLocations = false;
+      });
+      return;
+    }
 
-  void _addShift(WorkingDay day) {
-    if (day.shifts.length >= _maxShifts) return;
-    setState(
-      () => day.shifts.add(
-        WorkingShift(
-          from: const TimeOfDay(hour: 9, minute: 0),
-          to: const TimeOfDay(hour: 17, minute: 0),
-        ),
-      ),
-    );
-  }
+    setState(() => _isSearchingLocations = true);
 
-  void _removeShift(WorkingDay day) {
-    if (day.shifts.length <= 1) return;
-    setState(() => day.shifts.removeLast());
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      final result = await getIt<ClinicInfoRepository>().searchLocations(
+        query: query,
+        countryCode: 'SY',
+      );
+      if (!mounted) return;
+      result.fold(
+        (_) => setState(() {
+          _searchedLocations = [];
+          _isSearchingLocations = false;
+        }),
+        (locations) => setState(() {
+          _searchedLocations = locations;
+          _isSearchingLocations = false;
+        }),
+      );
+    });
   }
 
   void _onSave() {
-    final entity = _buildEntity();
+    if (_originalEntity == null) return;
+    final entity = ClinicInfoEntity(
+      id: _clinicId,
+      name: _clinicNameController.text.trim(),
+      locationId: _selectedLocation?.id ?? _originalEntity!.locationId,
+      locationName: _selectedLocation?.name ?? _originalEntity!.locationName,
+      locationFullName:
+          _selectedLocation?.fullName ?? _originalEntity!.locationFullName,
+      address: _addressController.text.trim(),
+      workingDays: _originalEntity!.workingDays,
+      holidays: _originalEntity!.holidays,
+    );
     context.read<ClinicInfoBloc>().add(
           ClinicInfoEvent.updateClinicInfo(entity),
         );
@@ -239,7 +178,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         return Scaffold(
           backgroundColor: ColorManager.scaffoldBackground,
           bottomNavigationBar:
-              _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
+              _formPopulated ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [
               PageHeader(
@@ -255,7 +194,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                     child: Text(message),
                   ),
                   loaded: (clinicInfo) {
-                    if (_workingDays.isEmpty) {
+                    if (!_formPopulated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         setState(() => _populateFromEntity(clinicInfo));
                       });
@@ -266,7 +205,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                     return _buildForm(l10n);
                   },
                   orElse: () {
-                    if (_workingDays.isEmpty) {
+                    if (!_formPopulated) {
                       return const SizedBox.shrink();
                     }
                     return _buildForm(l10n);
@@ -281,15 +220,27 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   }
 
   Widget _buildForm(AppLocalizations l10n) {
+    final fontFamily = FontHelper.fontFamily(context);
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
           CustomCard(child: _buildClinicNameField()),
           SizedBox(height: 16.h),
-          CustomCard(child: _buildWorkingHoursSection()),
-          SizedBox(height: 16.h),
-          _buildHolidaysSection(),
+          CustomCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLocationSearch(l10n, fontFamily),
+                if (_selectedLocation != null) ...[
+                  SizedBox(height: 12.h),
+                  _buildSelectedLocation(_selectedLocation!, fontFamily),
+                ],
+                SizedBox(height: 16.h),
+                _buildAddressField(l10n, fontFamily),
+              ],
+            ),
+          ),
           SizedBox(height: 24.h),
         ],
       ),
@@ -366,277 +317,227 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
     );
   }
 
-  Widget _buildWorkingHoursSection() {
-    final l10n = AppLocalizations.of(context)!;
+  Widget _buildLocationSearch(AppLocalizations l10n, String fontFamily) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.workingHours,
+          l10n.location,
           style: TextStyle(
-            fontSize: 16.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.textPrimary,
+            fontSize: 12.sp,
+            fontFamily: fontFamily,
+            color: ColorManager.textTertiary,
           ),
         ),
         SizedBox(height: 8.h),
-        ..._workingDays.asMap().entries.map(
-              (e) => _buildDayRow(e.value,
-                  isLast: e.key == _workingDays.length - 1),
+        TextField(
+          controller: _locationSearchController,
+          onChanged: _onLocationSearchChanged,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: fontFamily,
+            color: ColorManager.textPrimary,
+          ),
+          decoration: InputDecoration(
+            hintText: l10n.searchForLocation,
+            hintStyle: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: fontFamily,
+              color: ColorManager.textTertiary,
             ),
+            prefixIcon: Icon(Icons.search, size: 20.w, color: ColorManager.textTertiary),
+            suffixIcon: _isSearchingLocations
+                ? Padding(
+                    padding: EdgeInsets.all(12.w),
+                    child: SizedBox(
+                      width: 20.w,
+                      height: 20.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  )
+                : null,
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            filled: true,
+            fillColor: ColorManager.gray50,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        if (_locationSearchController.text.trim().length >= 2 &&
+            _searchedLocations.isNotEmpty &&
+            _selectedLocation == null)
+          Container(
+            margin: EdgeInsets.only(top: 8.h),
+            decoration: BoxDecoration(
+              color: ColorManager.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: ColorManager.gray300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            constraints: BoxConstraints(maxHeight: 200.h),
+            child: ListView.separated(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              itemCount: _searchedLocations.length,
+              separatorBuilder: (context, index) =>
+                  Divider(height: 1, color: ColorManager.gray300),
+              itemBuilder: (context, index) {
+                final location = _searchedLocations[index];
+                return ListTile(
+                  dense: true,
+                  title: Text(
+                    location.name,
+                    style: TextStyle(
+                      fontSize: FontSizesManager.s14,
+                      fontFamily: fontFamily,
+                      fontWeight: FontWeightManager.medium,
+                    ),
+                  ),
+                  subtitle: Text(
+                    location.fullName,
+                    style: TextStyle(
+                      fontSize: FontSizesManager.s12,
+                      fontFamily: fontFamily,
+                      color: ColorManager.textSecondary,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedLocation = location;
+                      _searchedLocations = [];
+                      _locationSearchController.clear();
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        if (_locationSearchController.text.trim().length >= 2 &&
+            !_isSearchingLocations &&
+            _searchedLocations.isEmpty &&
+            _selectedLocation == null)
+          Container(
+            margin: EdgeInsets.only(top: 8.h),
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: ColorManager.gray100,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Text(
+              l10n.noLocationsFound,
+              style: TextStyle(
+                fontSize: FontSizesManager.s14,
+                fontFamily: fontFamily,
+                color: ColorManager.textSecondary,
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buildDayRow(WorkingDay day, {bool isLast = false}) {
-    final isExpanded = _expandedDay == day.key;
-    final l10n = AppLocalizations.of(context)!;
+  Widget _buildSelectedLocation(LocationEntity location, String fontFamily) {
     return Container(
-      decoration: isLast
-          ? null
-          : BoxDecoration(
-              border: Border(
-                bottom:
-                    BorderSide(color: ColorManager.borderLight, width: 1),
-              ),
-            ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: day.enabled
-                ? () => setState(
-                    () => _expandedDay = isExpanded ? null : day.key)
-                : null,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => setState(() {
-                      day.enabled = !day.enabled;
-                      if (!day.enabled && _expandedDay == day.key) {
-                        _expandedDay = null;
-                      }
-                    }),
-                    child: DayToggle(enabled: day.enabled),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: Text(
-                      _dayLabel(day),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        color: day.enabled
-                            ? ColorManager.textPrimary
-                            : ColorManager.textTertiary,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    day.enabled ? _daySummary(day) : l10n.closed,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      color: day.enabled
-                          ? ColorManager.textSecondary
-                          : ColorManager.textTertiary,
-                    ),
-                  ),
-                  if (day.enabled) ...[
-                    SizedBox(width: 6.w),
-                    AnimatedRotation(
-                      turns: isExpanded ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 20.w,
-                        color: ColorManager.textTertiary,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox.shrink(),
-            secondChild: _buildShiftsPanel(day),
-            crossFadeState: isExpanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 200),
-          ),
-        ],
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: ColorManager.primary10,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: ColorManager.primary),
       ),
-    );
-  }
-
-  Widget _buildShiftsPanel(WorkingDay day) {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Text(
-                l10n.shifts,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.textSecondary,
-                ),
-              ),
-              const Spacer(),
-              ShiftCountControl(
-                count: day.shifts.length,
-                canDecrement: day.shifts.length > 1,
-                canIncrement: day.shifts.length < _maxShifts,
-                onDecrement: () => _removeShift(day),
-                onIncrement: () => _addShift(day),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          for (int i = 0; i < day.shifts.length; i++) ...[
-            if (day.shifts.length > 1) ...[
-              Text(
-                l10n.shiftNumber(i + 1),
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.primary,
-                ),
-              ),
-              SizedBox(height: 6.h),
-            ],
-            Row(
+          Icon(Icons.location_on, color: ColorManager.primary, size: 20.w),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TimePickerField(
-                    label: l10n.from,
-                    time: day.shifts[i].from,
-                    onTap: () => _pickShiftTime(day, i, isFrom: true),
+                Text(
+                  location.name,
+                  style: TextStyle(
+                    fontSize: FontSizesManager.s14,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeightManager.semiBold,
+                    color: ColorManager.primary,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    '–',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: ColorManager.textTertiary,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TimePickerField(
-                    label: l10n.to,
-                    time: day.shifts[i].to,
-                    onTap: () => _pickShiftTime(day, i, isFrom: false),
+                Text(
+                  location.fullName,
+                  style: TextStyle(
+                    fontSize: FontSizesManager.s12,
+                    fontFamily: fontFamily,
+                    color: ColorManager.primary,
                   ),
                 ),
               ],
             ),
-            if (i < day.shifts.length - 1) SizedBox(height: 12.h),
-          ],
+          ),
+          GestureDetector(
+            onTap: () => setState(() => _selectedLocation = null),
+            child: Icon(Icons.close, size: 18.w, color: ColorManager.primary),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHolidaysSection() {
-    final l10n = AppLocalizations.of(context)!;
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  Widget _buildAddressField(AppLocalizations l10n, String fontFamily) {
+    return Row(
+      children: [
+        Icon(
+          Icons.location_on_outlined,
+          size: 18.w,
+          color: ColorManager.textTertiary,
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.holidays,
+                l10n.detailedAddress,
                 style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.textPrimary,
+                  fontSize: 12.sp,
+                  fontFamily: fontFamily,
+                  color: ColorManager.textTertiary,
                 ),
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => showAddHolidaySheet(
-                  context,
-                  onSave: (entry, _) => setState(() => _holidays.add(entry)),
+              SizedBox(height: 2.h),
+              TextField(
+                controller: _addressController,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: fontFamily,
+                  color: ColorManager.textPrimary,
                 ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add, size: 14.w, color: ColorManager.primary),
-                      SizedBox(width: 4.w),
-                      Text(
-                        l10n.addHoliday,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w500,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ],
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  hintText: l10n.detailedAddressHint,
+                  hintStyle: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: fontFamily,
+                    color: ColorManager.textTertiary,
                   ),
                 ),
               ),
             ],
           ),
-          if (_holidays.isEmpty) ...[
-            SizedBox(height: 20.h),
-            Center(
-              child: Text(
-                l10n.noHolidays,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
-                ),
-              ),
-            ),
-            SizedBox(height: 8.h),
-          ] else ...[
-            SizedBox(height: 8.h),
-            ..._holidays.asMap().entries.map(
-                  (e) => HolidayItem(
-                    holiday: e.value,
-                    isLast: e.key == _holidays.length - 1,
-                    onEdit: () => showAddHolidaySheet(
-                      context,
-                      existing: e.value,
-                      index: e.key,
-                      onSave: (entry, idx) =>
-                          setState(() => _holidays[idx!] = entry),
-                    ),
-                    onDelete: () =>
-                        setState(() => _holidays.removeAt(e.key)),
-                  ),
-                ),
-          ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

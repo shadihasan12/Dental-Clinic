@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/get_all_expenses_use_case.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/add_expense_use_case.dart';
+import 'package:dental_clinic_app/features/expenses/domain/use_cases/update_expense_use_case.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/delete_expense_use_case.dart';
 import 'package:injectable/injectable.dart';
 
@@ -16,18 +17,22 @@ part 'expense_state.dart';
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final GetAllExpensesUseCase _getAllExpenses;
   final AddExpenseUseCase _addExpense;
+  final UpdateExpenseUseCase _updateExpense;
   final DeleteExpenseUseCase _deleteExpense;
 
   ExpenseBloc({
     required GetAllExpensesUseCase getAllExpenses,
     required AddExpenseUseCase addExpense,
+    required UpdateExpenseUseCase updateExpense,
     required DeleteExpenseUseCase deleteExpense,
   })  : _getAllExpenses = getAllExpenses,
         _addExpense = addExpense,
+        _updateExpense = updateExpense,
         _deleteExpense = deleteExpense,
         super(const ExpenseState.initial()) {
     on<_LoadExpenses>(_onLoadExpenses);
     on<_AddExpense>(_onAddExpense);
+    on<_UpdateExpense>(_onUpdateExpense);
     on<_DeleteExpense>(_onDeleteExpense);
   }
 
@@ -43,7 +48,10 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       (error) => emit(
         ExpenseState.error(NetworkExceptions.getErrorMessage(error)),
       ),
-      (expenses) => emit(ExpenseState.loaded(expenses)),
+      (response) => emit(ExpenseState.loaded(
+        expenses: response.expenses,
+        totals: response.totals,
+      )),
     );
   }
 
@@ -52,16 +60,47 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     Emitter<ExpenseState> emit,
   ) async {
     final currentState = state;
-    if (currentState is! _Loaded) return;
+    // Clear previous action error
+    if (currentState is _Loaded) {
+      emit(currentState.copyWith(actionError: null));
+    }
 
-    final result = await _addExpense(event.expense);
+    final result = await _addExpense(event.body);
 
     result.fold(
-      (_) {},
-      (newExpense) {
-        final updated = [newExpense, ...currentState.expenses];
-        emit(ExpenseState.loaded(updated));
+      (error) {
+        if (state is _Loaded) {
+          emit((state as _Loaded).copyWith(
+            actionError: NetworkExceptions.getErrorMessage(error),
+          ));
+        }
       },
+      (_) => add(const ExpenseEvent.loadExpenses()),
+    );
+  }
+
+  Future<void> _onUpdateExpense(
+    _UpdateExpense event,
+    Emitter<ExpenseState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is _Loaded) {
+      emit(currentState.copyWith(actionError: null));
+    }
+
+    final result = await _updateExpense(
+      UpdateExpenseParams(id: event.id, body: event.body),
+    );
+
+    result.fold(
+      (error) {
+        if (state is _Loaded) {
+          emit((state as _Loaded).copyWith(
+            actionError: NetworkExceptions.getErrorMessage(error),
+          ));
+        }
+      },
+      (_) => add(const ExpenseEvent.loadExpenses()),
     );
   }
 
@@ -71,16 +110,19 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   ) async {
     final currentState = state;
     if (currentState is! _Loaded) return;
+    emit(currentState.copyWith(actionError: null));
 
     final result = await _deleteExpense(event.id);
 
     result.fold(
-      (_) {},
-      (_) {
-        final updated =
-            currentState.expenses.where((e) => e.id != event.id).toList();
-        emit(ExpenseState.loaded(updated));
+      (error) {
+        if (state is _Loaded) {
+          emit((state as _Loaded).copyWith(
+            actionError: NetworkExceptions.getErrorMessage(error),
+          ));
+        }
       },
+      (_) => add(const ExpenseEvent.loadExpenses()),
     );
   }
 }

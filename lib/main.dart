@@ -14,6 +14,7 @@ import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,8 +72,16 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<LanguageBloc>(
-      create: (context) =>  getIt<LanguageBloc>()..add(const LoadLanguageEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LanguageBloc>(
+          create: (_) => getIt<LanguageBloc>()..add(const LoadLanguageEvent()),
+        ),
+        BlocProvider<CurrencyBloc>(
+          lazy: false,
+          create: (_) => getIt<CurrencyBloc>()..add(const CurrencyEvent.load()),
+        ),
+      ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         bloc: getIt<LanguageBloc>(),
         builder: (context, languageState) {

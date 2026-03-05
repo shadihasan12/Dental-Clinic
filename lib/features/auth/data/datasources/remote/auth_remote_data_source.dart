@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/features/auth/data/models/specialty_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/location_model.dart';
@@ -47,8 +48,9 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final ApiConsumer _apiConsumer;
   final TokenStorage _tokenStorage;
+  final UserStorage _userStorage;
 
-  AuthRemoteDataSourceImpl(this._apiConsumer, this._tokenStorage);
+  AuthRemoteDataSourceImpl(this._apiConsumer, this._tokenStorage, this._userStorage);
 
   @override
   Future<List<SpecialtyModel>> getSpecialties() async {
@@ -153,10 +155,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _tokenStorage.saveUserId(userId);
     }
 
+    // Cache user data
+    await _cacheUserData(data);
+
     // Save first clinic ID for X-Selected-Clinic-id header
     final clinics = data['clinics'] as List?;
     if (clinics != null && clinics.isNotEmpty) {
-      final clinicId = clinics[0]['clinic']?['id'] as String?;
+      final clinic = clinics[0]['clinic'] as Map<String, dynamic>?;
+      final clinicId = clinic?['id'] as String?;
       if (clinicId != null && clinicId.isNotEmpty) {
         await _tokenStorage.saveClinicId(clinicId);
       }
@@ -187,16 +193,60 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _tokenStorage.saveUserId(userId);
     }
 
+    // Cache user data
+    await _cacheUserData(data);
+
     // Save first clinic ID for X-Selected-Clinic-id header
     final clinics = data['clinics'] as List?;
     if (clinics != null && clinics.isNotEmpty) {
-      final clinicId = clinics[0]['clinic']?['id'] as String?;
+      final clinic = clinics[0]['clinic'] as Map<String, dynamic>?;
+      final clinicId = clinic?['id'] as String?;
       if (clinicId != null && clinicId.isNotEmpty) {
         await _tokenStorage.saveClinicId(clinicId);
       }
     }
 
     return LoginResponseModel.fromJson(data);
+  }
+
+  Future<void> _cacheUserData(Map<String, dynamic> data) async {
+    final userName = data['name'] as String?;
+    if (userName != null && userName.isNotEmpty) {
+      await _userStorage.saveUserName(userName);
+    }
+    final email = data['email'] as String?;
+    if (email != null && email.isNotEmpty) {
+      await _userStorage.saveUserEmail(email);
+    }
+    final clinics = data['clinics'] as List?;
+    if (clinics != null && clinics.isNotEmpty) {
+      final clinic = clinics[0]['clinic'] as Map<String, dynamic>?;
+      if (clinic != null) {
+        final clinicName = clinic['name'] as String?;
+        if (clinicName != null && clinicName.isNotEmpty) {
+          await _userStorage.saveClinicName(clinicName);
+        }
+        final detailedAddress = clinic['detailed_address'] as String?;
+        if (detailedAddress != null) {
+          await _userStorage.saveDetailedAddress(detailedAddress);
+        }
+        final location = clinic['location'] as Map<String, dynamic>?;
+        if (location != null) {
+          final locationId = location['id'] as String?;
+          if (locationId != null && locationId.isNotEmpty) {
+            await _userStorage.saveLocationId(locationId);
+          }
+          final locationName = location['name'] as String?;
+          if (locationName != null && locationName.isNotEmpty) {
+            await _userStorage.saveLocationName(locationName);
+          }
+          final locationFullName = location['full_name'] as String?;
+          if (locationFullName != null && locationFullName.isNotEmpty) {
+            await _userStorage.saveLocationFullName(locationFullName);
+          }
+        }
+      }
+    }
   }
 
   @override

@@ -169,9 +169,10 @@ class _RootPageState extends State<RootPage> {
               SizedBox(height: 4.h),
               Text(
                 item.label,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 10.sp,
+                  fontSize: 9.sp,
                   color: isSelected
                       ? ColorManager.primary
                       : ColorManager.gray500,

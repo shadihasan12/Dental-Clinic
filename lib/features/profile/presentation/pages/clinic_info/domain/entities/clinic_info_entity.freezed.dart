@@ -19,6 +19,10 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ClinicInfoEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get locationId => throw _privateConstructorUsedError;
+  String get locationName => throw _privateConstructorUsedError;
+  String get locationFullName => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
   List<WorkingDayEntity> get workingDays => throw _privateConstructorUsedError;
   List<HolidayEntity> get holidays => throw _privateConstructorUsedError;
 
@@ -39,6 +43,10 @@ abstract class $ClinicInfoEntityCopyWith<$Res> {
   $Res call({
     String id,
     String name,
+    String locationId,
+    String locationName,
+    String locationFullName,
+    String address,
     List<WorkingDayEntity> workingDays,
     List<HolidayEntity> holidays,
   });
@@ -61,6 +69,10 @@ class _$ClinicInfoEntityCopyWithImpl<$Res, $Val extends ClinicInfoEntity>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? locationId = null,
+    Object? locationName = null,
+    Object? locationFullName = null,
+    Object? address = null,
     Object? workingDays = null,
     Object? holidays = null,
   }) {
@@ -73,6 +85,22 @@ class _$ClinicInfoEntityCopyWithImpl<$Res, $Val extends ClinicInfoEntity>
             name: null == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            locationId: null == locationId
+                ? _value.locationId
+                : locationId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            locationName: null == locationName
+                ? _value.locationName
+                : locationName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            locationFullName: null == locationFullName
+                ? _value.locationFullName
+                : locationFullName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            address: null == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
                       as String,
             workingDays: null == workingDays
                 ? _value.workingDays
@@ -100,6 +128,10 @@ abstract class _$$ClinicInfoEntityImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
+    String locationId,
+    String locationName,
+    String locationFullName,
+    String address,
     List<WorkingDayEntity> workingDays,
     List<HolidayEntity> holidays,
   });
@@ -121,6 +153,10 @@ class __$$ClinicInfoEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? locationId = null,
+    Object? locationName = null,
+    Object? locationFullName = null,
+    Object? address = null,
     Object? workingDays = null,
     Object? holidays = null,
   }) {
@@ -133,6 +169,22 @@ class __$$ClinicInfoEntityImplCopyWithImpl<$Res>
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        locationId: null == locationId
+            ? _value.locationId
+            : locationId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        locationName: null == locationName
+            ? _value.locationName
+            : locationName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        locationFullName: null == locationFullName
+            ? _value.locationFullName
+            : locationFullName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        address: null == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
                   as String,
         workingDays: null == workingDays
             ? _value._workingDays
@@ -153,6 +205,10 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
   const _$ClinicInfoEntityImpl({
     required this.id,
     required this.name,
+    this.locationId = '',
+    this.locationName = '',
+    this.locationFullName = '',
+    this.address = '',
     required final List<WorkingDayEntity> workingDays,
     final List<HolidayEntity> holidays = const [],
   }) : _workingDays = workingDays,
@@ -162,6 +218,18 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
   final String id;
   @override
   final String name;
+  @override
+  @JsonKey()
+  final String locationId;
+  @override
+  @JsonKey()
+  final String locationName;
+  @override
+  @JsonKey()
+  final String locationFullName;
+  @override
+  @JsonKey()
+  final String address;
   final List<WorkingDayEntity> _workingDays;
   @override
   List<WorkingDayEntity> get workingDays {
@@ -181,7 +249,7 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
 
   @override
   String toString() {
-    return 'ClinicInfoEntity(id: $id, name: $name, workingDays: $workingDays, holidays: $holidays)';
+    return 'ClinicInfoEntity(id: $id, name: $name, locationId: $locationId, locationName: $locationName, locationFullName: $locationFullName, address: $address, workingDays: $workingDays, holidays: $holidays)';
   }
 
   @override
@@ -191,6 +259,13 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
             other is _$ClinicInfoEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.locationId, locationId) ||
+                other.locationId == locationId) &&
+            (identical(other.locationName, locationName) ||
+                other.locationName == locationName) &&
+            (identical(other.locationFullName, locationFullName) ||
+                other.locationFullName == locationFullName) &&
+            (identical(other.address, address) || other.address == address) &&
             const DeepCollectionEquality().equals(
               other._workingDays,
               _workingDays,
@@ -203,6 +278,10 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
     runtimeType,
     id,
     name,
+    locationId,
+    locationName,
+    locationFullName,
+    address,
     const DeepCollectionEquality().hash(_workingDays),
     const DeepCollectionEquality().hash(_holidays),
   );
@@ -223,6 +302,10 @@ abstract class _ClinicInfoEntity implements ClinicInfoEntity {
   const factory _ClinicInfoEntity({
     required final String id,
     required final String name,
+    final String locationId,
+    final String locationName,
+    final String locationFullName,
+    final String address,
     required final List<WorkingDayEntity> workingDays,
     final List<HolidayEntity> holidays,
   }) = _$ClinicInfoEntityImpl;
@@ -231,6 +314,14 @@ abstract class _ClinicInfoEntity implements ClinicInfoEntity {
   String get id;
   @override
   String get name;
+  @override
+  String get locationId;
+  @override
+  String get locationName;
+  @override
+  String get locationFullName;
+  @override
+  String get address;
   @override
   List<WorkingDayEntity> get workingDays;
   @override

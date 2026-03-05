@@ -56,6 +56,7 @@
   "cancelled": "ملغى",
   "search": "بحث",
   "filter": "تصفية",
+  "expenseType": "نوع المصروف",
   "sort": "ترتيب",
   "export": "تصدير",
   "import": "استيراد",
@@ -272,6 +273,7 @@
   "oralSurgery": "جراحة الفم",
   "noAppointments":"لا يوجد مواعيد",
   "expenses": "المدفوعات",
+  "currency": "العملة",
   "holidays": "الإجازات وأيام العطل",
   "addHoliday": "إضافة إجازة",
   "editHoliday": "تعديل إجازة",
@@ -554,6 +556,14 @@
   "noPatientsYet": "لا يوجد مرضى حتى الآن",
   "noPatientsYetDesc": "أضف أول مريض للبدء",
   "noMatchingPatients": "لا يوجد مرضى مطابقين",
-  "noMatchingPatientsDesc": "حاول تعديل البحث أو الفلاتر"
+  "noMatchingPatientsDesc": "حاول تعديل البحث أو الفلاتر",
+
+  "pleaseEnterYourName": "يرجى إدخال اسمك",
+  "nameTooShort": "يجب أن يكون الاسم حرفين على الأقل",
+  "pleaseEnterYourEmail": "يرجى إدخال بريدك الإلكتروني",
+  "pleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+  "pleaseEnterYourPassword": "يرجى إدخال كلمة المرور",
+  "pleaseSelectSpecialty": "يرجى اختيار التخصص",
+  "workingHoursAndHolidays": "ساعات العمل والعطل"
 }
 

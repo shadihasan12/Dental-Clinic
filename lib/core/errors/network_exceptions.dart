@@ -143,6 +143,9 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   }
 
   static NetworkExceptions getException(error) {
+    // Already converted — return as-is
+    if (error is NetworkExceptions) return error;
+
     if (error is Exception) {
       try {
         NetworkExceptions networkExceptions;

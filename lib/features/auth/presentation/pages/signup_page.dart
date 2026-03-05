@@ -1,5 +1,5 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_drop_down.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +26,7 @@ class SignupPage extends StatelessWidget {
       return const _SignupContent();
     } else {
       return BlocProvider(
-        create: (context) => AuthBloc(getIt(), getIt()),
+        create: (context) => getIt<AuthBloc>(),
         child: const _SignupContent(),
       );
     }
@@ -49,7 +49,7 @@ class _SignupContentState extends State<_SignupContent> {
   final _confirmPasswordController = TextEditingController();
   bool _showValidationErrors = false;
 
-  String? _selectedSpecialtyName;
+  SpecialtyEntity? _selectedSpecialty;
 
   @override
   initState() {
@@ -87,7 +87,7 @@ class _SignupContentState extends State<_SignupContent> {
     final l10n = AppLocalizations.of(context)!;
 
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedSpecialtyName == null) {
+      if (_selectedSpecialty == null) {
         AppSnackbar.showError(
           context,
           title: l10n.validationError,
@@ -106,33 +106,36 @@ class _SignupContentState extends State<_SignupContent> {
 
   String? _validateName(String? value) {
     if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return ValidationConstants.nameRequired;
+      return l10n.pleaseEnterYourName;
     }
     if (!ValidationConstants.isValidName(value)) {
-      return ValidationConstants.nameTooShort;
+      return l10n.nameTooShort;
     }
     return null;
   }
 
   String? _validateEmail(String? value) {
     if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return ValidationConstants.emailRequired;
+      return l10n.pleaseEnterYourEmail;
     }
     if (!ValidationConstants.isValidEmail(value)) {
-      return ValidationConstants.emailInvalid;
+      return l10n.pleaseEnterValidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return ValidationConstants.passwordRequired;
+      return l10n.pleaseEnterYourPassword;
     }
     if (!ValidationConstants.isValidPassword(value)) {
-      return ValidationConstants.passwordTooShort;
+      return l10n.passwordTooShort;
     }
     return null;
   }
@@ -144,7 +147,7 @@ class _SignupContentState extends State<_SignupContent> {
       return l10n.pleaseConfirmPassword;
     }
     if (value != _passwordController.text) {
-      return ValidationConstants.passwordsDoNotMatch;
+      return l10n.passwordsDoNotMatch;
     }
     return null;
   }
@@ -190,9 +193,10 @@ class _SignupContentState extends State<_SignupContent> {
         builder: (context, state) {
           if (state.isLoadingSpecialties || state.isLoadingPlans) {
             return SafeArea(
-              child: SizedBox(
-                width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTopBar(l10n, fontFamily),
                     Expanded(
@@ -347,21 +351,7 @@ class _SignupContentState extends State<_SignupContent> {
                     ),
                     SizedBox(height: 16.h),
 
-                    AuthDropdownField(
-                      label: l10n.specializationRequired,
-                      hint: l10n.selectYourSpecialization,
-                      value: _selectedSpecialtyName,
-                      items: state.specialties.map((s) => s.name).toList(),
-                      prefixIcon: Icons.local_hospital_outlined,
-                      onChanged: (value) {
-                        final selectedSpecialty = state.specialties
-                            .firstWhere((s) => s.name == value);
-                        setState(() => _selectedSpecialtyName = value);
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupSpecialtyEntitySelected(selectedSpecialty),
-                        );
-                      },
-                    ),
+                    _buildSpecialtyPicker(l10n, fontFamily, state),
                     SizedBox(height: 16.h),
 
                     AuthTextField(
@@ -440,6 +430,173 @@ class _SignupContentState extends State<_SignupContent> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildSpecialtyPicker(AppLocalizations l10n, String fontFamily, AuthState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.specializationRequired,
+          style: TextStyle(
+            color: ColorManager.textPrimary,
+            fontWeight: FontWeightManager.medium,
+            fontFamily: fontFamily,
+            fontSize: FontSizesManager.s12,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        GestureDetector(
+          onTap: () => _showSpecialtySheet(l10n, fontFamily, state),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            decoration: BoxDecoration(
+              color: ColorManager.gray50,
+              borderRadius: BorderRadius.circular(12.r),
+              border: _showValidationErrors && _selectedSpecialty == null
+                  ? Border.all(color: ColorManager.error, width: 1)
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.local_hospital_outlined, color: ColorManager.textTertiary, size: 20.w),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Text(
+                    _selectedSpecialty?.name ?? l10n.selectYourSpecialization,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: FontSizesManager.s14,
+                      color: _selectedSpecialty != null
+                          ? ColorManager.textPrimary
+                          : ColorManager.textTertiary,
+                    ),
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_down, color: ColorManager.textTertiary),
+              ],
+            ),
+          ),
+        ),
+        if (_showValidationErrors && _selectedSpecialty == null)
+          Padding(
+            padding: EdgeInsets.only(top: 8.h, left: 12.w),
+            child: Text(
+              l10n.pleaseSelectSpecialty,
+              style: TextStyle(
+                fontSize: FontSizesManager.s12,
+                fontFamily: fontFamily,
+                color: ColorManager.error,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showSpecialtySheet(AppLocalizations l10n, String fontFamily, AuthState state) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: ColorManager.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 12.h),
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: ColorManager.borderLight,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+                child: Text(
+                  l10n.specialization,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.textPrimary,
+                  ),
+                ),
+              ),
+              ...state.specialties.map((spec) {
+                final isSelected = _selectedSpecialty?.id == spec.id;
+                return InkWell(
+                  onTap: () {
+                    setState(() => _selectedSpecialty = spec);
+                    this.context.read<AuthBloc>().add(
+                      AuthEvent.signupSpecialtyEntitySelected(spec),
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 14.h,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 20.w,
+                          height: 20.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? ColorManager.primary
+                                  : ColorManager.borderLight,
+                              width: 2,
+                            ),
+                          ),
+                          child: isSelected
+                              ? Center(
+                                  child: Container(
+                                    width: 10.w,
+                                    height: 10.w,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: ColorManager.primary,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                        SizedBox(width: 12.w),
+                        Text(
+                          spec.name,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: fontFamily,
+                            fontWeight: isSelected
+                                ? FontWeight.w500
+                                : FontWeight.w400,
+                            color: isSelected
+                                ? ColorManager.primary
+                                : ColorManager.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              SizedBox(height: 12.h),
+            ],
+          ),
+        );
+      },
     );
   }
 

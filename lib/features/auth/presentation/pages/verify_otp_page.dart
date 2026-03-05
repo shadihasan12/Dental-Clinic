@@ -28,6 +28,18 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
     (index) => FocusNode(),
   );
 
+  void _handleKeyEvent(int index, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace &&
+        _otpControllers[index].text.isEmpty &&
+        index > 0) {
+      _otpControllers[index - 1].clear();
+      _otpFocusNodes[index - 1].requestFocus();
+      final otpCode = _otpControllers.map((c) => c.text).join();
+      context.read<AuthBloc>().add(AuthEvent.otpCodeChanged(otpCode));
+    }
+  }
+
   Timer? _countdownTimer;
   final ValueNotifier<int> _secondsNotifier = ValueNotifier<int>(0);
 
@@ -277,7 +289,10 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                         width: 48.w,
                         height: 56.h,
                         margin: EdgeInsets.symmetric(horizontal: 3.w),
-                        child: TextField(
+                        child: KeyboardListener(
+                          focusNode: FocusNode(),
+                          onKeyEvent: (event) => _handleKeyEvent(index, event),
+                          child: TextField(
                           controller: _otpControllers[index],
                           focusNode: _otpFocusNodes[index],
                           enabled: !state.isOtpVerifying,
@@ -326,6 +341,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                           ],
                           onChanged: (value) =>
                               _onOtpChanged(index, value),
+                        ),
                         ),
                       );
                     }),
