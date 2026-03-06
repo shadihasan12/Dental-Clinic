@@ -73,6 +73,9 @@ class AppRoutesNames {
   static const String subscription = 'subscription';
   static const String manageSubscription = 'manageSubscription';
 
+  // Prototype
+  static const String treatmentPrototype = 'treatmentPrototype';
+
   // Other Routes
   static const String medicalHistory = 'medicalHistory';
 }
