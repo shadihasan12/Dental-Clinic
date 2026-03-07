@@ -33,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     this.fillColor,
     this.contentPadding,
     this.borderRadius,
+    this.textDirection,
   });
 
   final TextEditingController? controller;
@@ -59,10 +60,12 @@ class CustomTextField extends StatelessWidget {
   final Color? fillColor;
   final EdgeInsetsGeometry? contentPadding;
   final BorderRadius? borderRadius;
+  final TextDirection? textDirection;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textDirection: textDirection,
       controller: controller,
       focusNode: focusNode,
       obscureText: obscureText,

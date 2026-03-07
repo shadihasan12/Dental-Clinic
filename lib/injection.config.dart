@@ -276,11 +276,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i41.AppointmentRemoteDataSource>(
       () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
-    gh.lazySingleton<_i977.MediaService>(
-      () => _i977.MediaService(gh<_i962.ApiConsumer>()),
-    );
     gh.lazySingleton<_i315.CurrencyService>(
       () => _i315.CurrencyService(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i977.MediaService>(
+      () => _i977.MediaService(gh<_i962.ApiConsumer>()),
     );
     gh.lazySingleton<_i355.ExpenseRemoteDataSource>(
       () => _i355.ExpenseRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
@@ -467,6 +467,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i166.SendMessageUseCase>(
       () => _i166.SendMessageUseCase(gh<_i778.SupportRepository>()),
     );
+    gh.factory<_i890.EditProfileBloc>(
+      () => _i890.EditProfileBloc(
+        getUserProfile: gh<_i527.GetUserProfileUseCase>(),
+        updateUserProfile: gh<_i494.UpdateUserProfileUseCase>(),
+        mediaService: gh<_i977.MediaService>(),
+      ),
+    );
     gh.factory<_i213.CreateAppointmentUseCase>(
       () => _i213.CreateAppointmentUseCase(gh<_i675.AppointmentRepository>()),
     );
@@ -500,12 +507,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i154.AddTreatmentBloc>(
       () =>
           _i154.AddTreatmentBloc(addTreatment: gh<_i208.AddTreatmentUseCase>()),
-    );
-    gh.factory<_i890.EditProfileBloc>(
-      () => _i890.EditProfileBloc(
-        getUserProfile: gh<_i527.GetUserProfileUseCase>(),
-        updateUserProfile: gh<_i494.UpdateUserProfileUseCase>(),
-      ),
     );
     gh.factory<_i45.SupportConversationsBloc>(
       () => _i45.SupportConversationsBloc(

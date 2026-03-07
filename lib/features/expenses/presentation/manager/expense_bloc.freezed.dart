@@ -19,7 +19,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ExpenseEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
     required TResult Function(Map<String, dynamic> body) addExpense,
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
@@ -27,14 +28,14 @@ mixin _$ExpenseEvent {
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
@@ -92,6 +93,8 @@ abstract class _$$LoadExpensesImplCopyWith<$Res> {
     _$LoadExpensesImpl value,
     $Res Function(_$LoadExpensesImpl) then,
   ) = __$$LoadExpensesImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({Map<String, dynamic>? queryParameters});
 }
 
 /// @nodoc
@@ -105,61 +108,101 @@ class __$$LoadExpensesImplCopyWithImpl<$Res>
 
   /// Create a copy of ExpenseEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? queryParameters = freezed}) {
+    return _then(
+      _$LoadExpensesImpl(
+        queryParameters: freezed == queryParameters
+            ? _value._queryParameters
+            : queryParameters // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$LoadExpensesImpl implements _LoadExpenses {
-  const _$LoadExpensesImpl();
+  const _$LoadExpensesImpl({final Map<String, dynamic>? queryParameters})
+    : _queryParameters = queryParameters;
+
+  final Map<String, dynamic>? _queryParameters;
+  @override
+  Map<String, dynamic>? get queryParameters {
+    final value = _queryParameters;
+    if (value == null) return null;
+    if (_queryParameters is EqualUnmodifiableMapView) return _queryParameters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'ExpenseEvent.loadExpenses()';
+    return 'ExpenseEvent.loadExpenses(queryParameters: $queryParameters)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadExpensesImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$LoadExpensesImpl &&
+            const DeepCollectionEquality().equals(
+              other._queryParameters,
+              _queryParameters,
+            ));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+    runtimeType,
+    const DeepCollectionEquality().hash(_queryParameters),
+  );
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadExpensesImplCopyWith<_$LoadExpensesImpl> get copyWith =>
+      __$$LoadExpensesImplCopyWithImpl<_$LoadExpensesImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
     required TResult Function(Map<String, dynamic> body) addExpense,
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
   }) {
-    return loadExpenses();
+    return loadExpenses(queryParameters);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
   }) {
-    return loadExpenses?.call();
+    return loadExpenses?.call(queryParameters);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
     required TResult orElse(),
   }) {
     if (loadExpenses != null) {
-      return loadExpenses();
+      return loadExpenses(queryParameters);
     }
     return orElse();
   }
@@ -203,7 +246,16 @@ class _$LoadExpensesImpl implements _LoadExpenses {
 }
 
 abstract class _LoadExpenses implements ExpenseEvent {
-  const factory _LoadExpenses() = _$LoadExpensesImpl;
+  const factory _LoadExpenses({final Map<String, dynamic>? queryParameters}) =
+      _$LoadExpensesImpl;
+
+  Map<String, dynamic>? get queryParameters;
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadExpensesImplCopyWith<_$LoadExpensesImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -282,7 +334,8 @@ class _$AddExpenseImpl implements _AddExpense {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
     required TResult Function(Map<String, dynamic> body) addExpense,
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
@@ -294,7 +347,7 @@ class _$AddExpenseImpl implements _AddExpense {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
@@ -305,7 +358,7 @@ class _$AddExpenseImpl implements _AddExpense {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
@@ -451,7 +504,8 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
     required TResult Function(Map<String, dynamic> body) addExpense,
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
@@ -463,7 +517,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
@@ -474,7 +528,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
@@ -610,7 +664,8 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadExpenses,
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
     required TResult Function(Map<String, dynamic> body) addExpense,
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
@@ -622,7 +677,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadExpenses,
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
@@ -633,7 +688,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadExpenses,
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,

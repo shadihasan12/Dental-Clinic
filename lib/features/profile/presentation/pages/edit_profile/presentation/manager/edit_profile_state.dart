@@ -7,5 +7,7 @@ class EditProfileState with _$EditProfileState {
   const factory EditProfileState.loaded(UserProfileEntity profile) = _Loaded;
   const factory EditProfileState.saving(UserProfileEntity profile) = _Saving;
   const factory EditProfileState.saved(UserProfileEntity profile) = _Saved;
+  const factory EditProfileState.imageUploading(UserProfileEntity profile) = _ImageUploading;
+  const factory EditProfileState.imageUploaded(UserProfileEntity profile, String imageId, String imageUrl) = _ImageUploaded;
   const factory EditProfileState.error(String message) = _Error;
 }

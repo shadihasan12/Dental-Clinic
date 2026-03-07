@@ -43,22 +43,28 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state.isLoadingPlans) {
-              return Column(
-                children: [
-                  _buildTopBar(l10n, fontFamily),
-                  const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Column(
+                  children: [
+                    _buildTopBar(l10n, fontFamily),
+                    const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
 
             if (state.plans.isEmpty) {
               return Column(
                 children: [
-                  _buildTopBar(l10n, fontFamily),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: _buildTopBar(l10n, fontFamily),
+                  ),
                   Expanded(
                     child: Center(
                       child: Padding(
@@ -127,23 +133,23 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: ColorManager.gray100,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new,
-                color: ColorManager.textPrimary,
-                size: 18.w,
-              ),
-            ),
-          ),
-          SizedBox(height: 24.h),
+          // GestureDetector(
+          //   onTap: () => context.goNamed(AppRoutesNames.login),
+          //   child: Container(
+          //     width: 40.w,
+          //     height: 40.w,
+          //     decoration: BoxDecoration(
+          //       color: ColorManager.gray100,
+          //       borderRadius: BorderRadius.circular(12.r),
+          //     ),
+          //     child: Icon(
+          //       Icons.arrow_back_ios_new,
+          //       color: ColorManager.textPrimary,
+          //       size: 18.w,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: 24.h),
           Text(
             l10n.chooseYourPlan,
             style: TextStyle(
@@ -568,7 +574,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                       );
 
                       context.pushNamed(
-                        AppRoutesNames.chooseClinicName,
+                        AppRoutesNames.register,
                         extra: authBloc,
                       );
                     }

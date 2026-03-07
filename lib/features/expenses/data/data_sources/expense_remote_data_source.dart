@@ -4,7 +4,9 @@ import 'package:dental_clinic_app/features/expenses/data/models/expense_model.da
 import 'package:injectable/injectable.dart';
 
 abstract class ExpenseRemoteDataSource {
-  Future<Map<String, dynamic>> getAllExpenses();
+  Future<Map<String, dynamic>> getAllExpenses({
+    Map<String, dynamic>? queryParameters,
+  });
   Future<List<ExpenseCategoryModel>> getCategories();
   Future<ExpenseModel> addExpense(Map<String, dynamic> body);
   Future<ExpenseModel> updateExpense(String id, Map<String, dynamic> body);
@@ -18,8 +20,13 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
   ExpenseRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<Map<String, dynamic>> getAllExpenses() async {
-    final response = await _apiConsumer.get(ExpenseEndpoints.expenses);
+  Future<Map<String, dynamic>> getAllExpenses({
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final response = await _apiConsumer.get(
+      ExpenseEndpoints.expenses,
+      queryParameters: queryParameters ?? {},
+    );
 
     final dataList = response['data'] as List;
     final expenses = dataList

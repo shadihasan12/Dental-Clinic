@@ -6,4 +6,5 @@ class EditProfileEvent with _$EditProfileEvent {
   const factory EditProfileEvent.updateProfile(
     UserProfileEntity profile,
   ) = _UpdateProfile;
+  const factory EditProfileEvent.uploadImage(File imageFile) = _UploadImage;
 }

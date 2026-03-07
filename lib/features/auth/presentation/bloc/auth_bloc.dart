@@ -31,7 +31,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_LoginSubmitted>(_onLoginSubmitted);
 
     // Signup events - Unified
-    on<_SignupNameChanged>(_onSignupNameChanged);
+    on<_SignupFirstNameChanged>(_onSignupFirstNameChanged);
+    on<_SignupLastNameChanged>(_onSignupLastNameChanged);
     on<_SignupEmailChanged>(_onSignupEmailChanged);
     on<_SignupPasswordChanged>(_onSignupPasswordChanged);
     on<_SignupConfirmPasswordChanged>(_onSignupConfirmPasswordChanged);
@@ -156,9 +157,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // Signup handlers
-  void _onSignupNameChanged(_SignupNameChanged event, Emitter<AuthState> emit) {
+  void _onSignupFirstNameChanged(_SignupFirstNameChanged event, Emitter<AuthState> emit) {
     emit(state.copyWith(
-      signupName: event.name,
+      signupFirstName: event.firstName,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupLastNameChanged(_SignupLastNameChanged event, Emitter<AuthState> emit) {
+    emit(state.copyWith(
+      signupLastName: event.lastName,
       signupError: null,
     ));
   }
@@ -437,8 +445,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onSignupSubmitted(_SignupSubmitted event, Emitter<AuthState> emit) async {
     // Validate basic form fields
-    if (!state.isSignupNameValid) {
-      emit(state.copyWith(signupError: 'Name must be at least 2 characters'));
+    if (!state.isSignupFirstNameValid) {
+      emit(state.copyWith(signupError: 'First name must be at least 2 characters'));
+      return;
+    }
+    if (!state.isSignupLastNameValid) {
+      emit(state.copyWith(signupError: 'Last name must be at least 2 characters'));
       return;
     }
     if (!state.isSignupEmailValid) {
@@ -486,7 +498,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Create register request params
     final params = RegisterRequestParams(
-      userName: state.signupName,
+      firstName: state.signupFirstName,
+      lastName: state.signupLastName,
       mobileNumber: state.mobileNumber,
       password: state.signupPassword,
       passwordConfirmation: state.signupConfirmPassword,
@@ -758,7 +771,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // Reset signup form
   void _onSignupFormReset(_SignupFormReset event, Emitter<AuthState> emit) {
     emit(state.copyWith(
-      signupName: '',
+      signupFirstName: '',
+      signupLastName: '',
       signupEmail: '',
       signupPassword: '',
       signupConfirmPassword: '',

@@ -161,7 +161,8 @@ class RegisterClinicMembershipModel {
 class RegisterResponseModel {
   final String id;
   final String? image;
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final bool emailVerified;
   final String mobileNumber;
@@ -172,7 +173,8 @@ class RegisterResponseModel {
   RegisterResponseModel({
     required this.id,
     this.image,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.emailVerified,
     required this.mobileNumber,
@@ -181,11 +183,14 @@ class RegisterResponseModel {
     required this.clinics,
   });
 
+  String get fullName => '$firstName $lastName'.trim();
+
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) {
     return RegisterResponseModel(
       id: json['id'] as String,
       image: json['image'] as String?,
-      name: json['name'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       email: json['email'] as String,
       emailVerified: json['email_verified'] as bool,
       mobileNumber: json['mobile_number'] as String,
@@ -204,7 +209,8 @@ class RegisterResponseModel {
     return {
       'id': id,
       'image': image,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
       'email': email,
       'email_verified': emailVerified,
       'mobile_number': mobileNumber,
@@ -218,7 +224,7 @@ class RegisterResponseModel {
     return RegisterResponseEntity(
       id: id,
       image: image,
-      name: name,
+      name: fullName,
       email: email,
       emailVerified: emailVerified,
       mobileNumber: mobileNumber,

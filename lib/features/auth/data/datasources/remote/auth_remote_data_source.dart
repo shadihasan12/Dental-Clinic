@@ -210,8 +210,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   Future<void> _cacheUserData(Map<String, dynamic> data) async {
-    final userName = data['name'] as String?;
-    if (userName != null && userName.isNotEmpty) {
+    final firstName = data['first_name'] as String? ?? '';
+    final lastName = data['last_name'] as String? ?? '';
+    if (firstName.isNotEmpty) {
+      await _userStorage.saveFirstName(firstName);
+    }
+    if (lastName.isNotEmpty) {
+      await _userStorage.saveLastName(lastName);
+    }
+    final userName = '$firstName $lastName'.trim();
+    if (userName.isNotEmpty) {
       await _userStorage.saveUserName(userName);
     }
     final email = data['email'] as String?;

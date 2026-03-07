@@ -96,6 +96,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
   String get success => 'Success';
 
   @override
@@ -1110,10 +1113,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get joinDentalCommunity => 'Join our dental community';
 
   @override
-  String get fullNameRequired => 'Full Name *';
+  String get firstNameRequired => 'First Name *';
 
   @override
-  String get fullNameHint => 'Dr. John Smith';
+  String get firstNameHint => 'John';
+
+  @override
+  String get lastNameRequired => 'Last Name *';
+
+  @override
+  String get lastNameHint => 'Smith';
+
+  @override
+  String get pleaseEnterFirstName => 'Please enter your first name';
+
+  @override
+  String get pleaseEnterLastName => 'Please enter your last name';
 
   @override
   String get emailRequired => 'Email *';
@@ -1490,4 +1505,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workingHoursAndHolidays => 'Working Hours & Holidays';
+
+  @override
+  String get photoPermissionRequired => 'Photo Permission Required';
+
+  @override
+  String get photoPermissionMessage =>
+      'This app needs access to your photos to set your profile picture. Please grant permission in Settings.';
+
+  @override
+  String get openSettings => 'Open Settings';
 }

@@ -10,7 +10,9 @@ class UserProfileEntity with _$UserProfileEntity {
     required String lastName,
     required String email,
     @Default('') String phone,
-    @Default('') String location,
-    String? specialization,
+    String? specialtyId,
+    String? specialtyName,
+    String? imageId,
+    String? imageUrl,
   }) = _UserProfileEntity;
 }

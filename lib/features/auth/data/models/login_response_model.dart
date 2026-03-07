@@ -6,7 +6,8 @@ import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_members
 class LoginResponseModel {
   final String id;
   final String? image;
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final bool emailVerified;
   final String mobileNumber;
@@ -17,7 +18,8 @@ class LoginResponseModel {
   LoginResponseModel({
     required this.id,
     this.image,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.emailVerified,
     required this.mobileNumber,
@@ -26,11 +28,14 @@ class LoginResponseModel {
     required this.clinics,
   });
 
+  String get fullName => '$firstName $lastName'.trim();
+
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
       id: json['id'] as String,
       image: json['image'] as String?,
-      name: json['name'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       email: json['email'] as String,
       emailVerified: json['email_verified'] as bool,
       mobileNumber: json['mobile_number'] as String,
@@ -55,7 +60,7 @@ class LoginResponseModel {
     return UserEntity(
       id: id,
       email: email,
-      name: name,
+      name: fullName,
       phone: mobileNumber,
       avatarUrl: image,
       specialization: specialty?.name,
@@ -79,7 +84,7 @@ class LoginResponseModel {
         clinicName: membership.clinic.name,
         role: role,
         status: MembershipStatus.active,
-        userName: name,
+        userName: fullName,
         userEmail: email,
         userAvatarUrl: image,
         joinedAt: DateTime.now(),

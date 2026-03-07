@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/domain/entities/user_profile_entity.dart';
 
 abstract class EditProfileRepository {
@@ -7,4 +8,5 @@ abstract class EditProfileRepository {
   Future<Either<NetworkExceptions, UserProfileEntity>> updateUserProfile(
     UserProfileEntity profile,
   );
+  Future<Either<NetworkExceptions, List<SpecialtyEntity>>> getSpecialties();
 }

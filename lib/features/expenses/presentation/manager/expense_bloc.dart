@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
-import 'package:dental_clinic_app/core/use_case/use_case.dart';
+
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/get_all_expenses_use_case.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/add_expense_use_case.dart';
@@ -19,6 +19,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
   final AddExpenseUseCase _addExpense;
   final UpdateExpenseUseCase _updateExpense;
   final DeleteExpenseUseCase _deleteExpense;
+
+  Map<String, dynamic>? _lastQueryParameters;
 
   ExpenseBloc({
     required GetAllExpensesUseCase getAllExpenses,
@@ -40,9 +42,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     _LoadExpenses event,
     Emitter<ExpenseState> emit,
   ) async {
+    if (event.queryParameters != null) {
+      _lastQueryParameters = event.queryParameters;
+    }
     emit(const ExpenseState.loading());
 
-    final result = await _getAllExpenses(NoParams());
+    final result = await _getAllExpenses(
+      GetAllExpensesParams(queryParameters: _lastQueryParameters),
+    );
 
     result.fold(
       (error) => emit(

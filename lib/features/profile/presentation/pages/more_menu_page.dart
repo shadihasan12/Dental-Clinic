@@ -18,6 +18,8 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final userStorage = getIt<UserStorage>();
+    final fullName = userStorage.getUserName() ?? '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -26,7 +28,7 @@ class MenuPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // — Profile header
-            _buildProfileHeader(context),
+            _buildProfileHeader(context, fullName),
             Divider(height: 1, color: Colors.grey.shade200),
 
             Padding(
@@ -175,7 +177,7 @@ class MenuPage extends StatelessWidget {
 
   // ─── Profile Header ─────────────────────────────────────────────────────
 
-  Widget _buildProfileHeader(BuildContext context) {
+  Widget _buildProfileHeader(BuildContext context, String fullName) {
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -200,7 +202,7 @@ class MenuPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Dr. Sarah Johnson',
+                    fullName.isNotEmpty ? fullName : 'Doctor',
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 18.sp,

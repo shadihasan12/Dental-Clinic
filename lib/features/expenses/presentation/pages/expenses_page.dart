@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../widgets/add_expense_sheet.dart';
 import '../widgets/expense_detail_sheet.dart';
@@ -18,15 +19,74 @@ class ExpensesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ExpenseBloc>()
-        ..add(const ExpenseEvent.loadExpenses()),
+      create: (_) => getIt<ExpenseBloc>(),
       child: const _ExpensesContent(),
     );
   }
 }
 
-class _ExpensesContent extends StatelessWidget {
+class _ExpensesContent extends StatefulWidget {
   const _ExpensesContent();
+
+  @override
+  State<_ExpensesContent> createState() => _ExpensesContentState();
+}
+
+class _ExpensesContentState extends State<_ExpensesContent> {
+  late DateTime _currentMonth;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _currentMonth = DateTime(now.year, now.month);
+    _loadMonth();
+  }
+
+  Map<String, dynamic> _buildDateFilter() {
+    final start =
+        '${_currentMonth.year}-${_currentMonth.month.toString().padLeft(2, '0')}-01';
+    final lastDay =
+        DateTime(_currentMonth.year, _currentMonth.month + 1, 0).day;
+    final end =
+        '${_currentMonth.year}-${_currentMonth.month.toString().padLeft(2, '0')}-${lastDay.toString().padLeft(2, '0')}';
+    return {
+      'filters[entry_date][between]': '$start,$end',
+    };
+  }
+
+  void _loadMonth() {
+    context.read<ExpenseBloc>().add(
+          ExpenseEvent.loadExpenses(queryParameters: _buildDateFilter()),
+        );
+  }
+
+  void _goToPreviousMonth() {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+    });
+    _loadMonth();
+  }
+
+  void _goToNextMonth() {
+    final now = DateTime.now();
+    final currentMonthStart = DateTime(now.year, now.month);
+    if (!_currentMonth.isBefore(currentMonthStart)) return;
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+    });
+    _loadMonth();
+  }
+
+  bool get _isCurrentMonth {
+    final now = DateTime.now();
+    return _currentMonth.year == now.year && _currentMonth.month == now.month;
+  }
+
+  String _monthLabel(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat.yMMMM(locale).format(_currentMonth);
+  }
 
   void _showAddExpense(BuildContext context) {
     showModalBottomSheet(
@@ -62,7 +122,7 @@ class _ExpensesContent extends StatelessWidget {
               .add(ExpenseEvent.deleteExpense(expense.id));
         },
         onEdit: () {
-          Navigator.pop(context); // close detail sheet
+          Navigator.pop(context);
           _showEditExpense(context, expense);
         },
       ),
@@ -130,6 +190,7 @@ class _ExpensesContent extends StatelessWidget {
               loading: () => Column(
                 children: [
                   _buildHeader(context, [], 0),
+                  _buildMonthSelector(context),
                   Divider(height: 1, color: Colors.grey.shade200),
                   const Expanded(
                     child: Center(child: CircularProgressIndicator()),
@@ -140,6 +201,7 @@ class _ExpensesContent extends StatelessWidget {
                 return Column(
                 children: [
                   _buildHeader(context, totals, expenses.length),
+                  _buildMonthSelector(context),
                   Divider(height: 1, color: Colors.grey.shade200),
                   Expanded(
                     child: expenses.isEmpty
@@ -162,6 +224,7 @@ class _ExpensesContent extends StatelessWidget {
             error: (message) => Column(
               children: [
                 _buildHeader(context, [], 0),
+                _buildMonthSelector(context),
                 Divider(height: 1, color: Colors.grey.shade200),
                 Expanded(
                   child: Center(
@@ -180,6 +243,64 @@ class _ExpensesContent extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildMonthSelector(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _goToPreviousMonth,
+            child: Container(
+              width: 32.w,
+              height: 32.w,
+              decoration: BoxDecoration(
+                color: ColorManager.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 20.w,
+                color: ColorManager.primary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              _monthLabel(context),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: FontHelper.fontFamily(context),
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF2D2D2D),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: _isCurrentMonth ? null : _goToNextMonth,
+            child: Container(
+              width: 32.w,
+              height: 32.w,
+              decoration: BoxDecoration(
+                color: _isCurrentMonth
+                    ? Colors.grey.shade100
+                    : ColorManager.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                size: 20.w,
+                color: _isCurrentMonth
+                    ? Colors.grey.shade400
+                    : ColorManager.primary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

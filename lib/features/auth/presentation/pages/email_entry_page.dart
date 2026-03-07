@@ -183,6 +183,7 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
                     controller: _emailController,
                     hintText: l10n.emailAddress,
                     keyboardType: TextInputType.emailAddress,
+                    textDirection: TextDirection.ltr,
                     prefixIcon: Icon(
                       Icons.email_outlined,
                       color: ColorManager.textTertiary,

@@ -21,14 +21,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final String _userName;
+  late final String _firstName;
   late final String _clinicName;
 
   @override
   void initState() {
     super.initState();
     final userStorage = getIt<UserStorage>();
-    _userName = userStorage.getUserName() ?? '';
+    _firstName = userStorage.getFirstName() ?? userStorage.getUserName() ?? '';
     _clinicName = userStorage.getClinicName() ?? '';
   }
 
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
 
               // — Header: greeting + actions
               HomeHeader(
-                userName: _userName.isNotEmpty ? _userName : 'Dr. Smith',
+                userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
                 clinicName: _clinicName,
                 onNotificationTap: () {
                   context.pushNamed(AppRoutesNames.notifications);

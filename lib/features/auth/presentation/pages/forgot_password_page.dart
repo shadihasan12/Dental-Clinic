@@ -180,6 +180,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                       controller: _emailController,
                       prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      textDirection: TextDirection.ltr,
                       enabled: !state.isForgotPasswordLoading,
                       onChanged: (value) {
                         context

@@ -23,7 +23,8 @@ mixin _$AuthEvent {
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -73,7 +74,8 @@ mixin _$AuthEvent {
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -119,7 +121,8 @@ mixin _$AuthEvent {
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -166,7 +169,10 @@ mixin _$AuthEvent {
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -236,7 +242,8 @@ mixin _$AuthEvent {
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -299,7 +306,8 @@ mixin _$AuthEvent {
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -463,7 +471,8 @@ class _$LoginEmailChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -517,7 +526,8 @@ class _$LoginEmailChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -567,7 +577,8 @@ class _$LoginEmailChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -621,7 +632,10 @@ class _$LoginEmailChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -695,7 +709,8 @@ class _$LoginEmailChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -762,7 +777,8 @@ class _$LoginEmailChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -926,7 +942,8 @@ class _$LoginPasswordChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -980,7 +997,8 @@ class _$LoginPasswordChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1030,7 +1048,8 @@ class _$LoginPasswordChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1084,7 +1103,10 @@ class _$LoginPasswordChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -1158,7 +1180,8 @@ class _$LoginPasswordChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -1225,7 +1248,8 @@ class _$LoginPasswordChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -1358,7 +1382,8 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -1412,7 +1437,8 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1462,7 +1488,8 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1516,7 +1543,10 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -1590,7 +1620,8 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -1657,7 +1688,8 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -1779,7 +1811,8 @@ class _$LoginSubmittedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -1833,7 +1866,8 @@ class _$LoginSubmittedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1883,7 +1917,8 @@ class _$LoginSubmittedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -1937,7 +1972,10 @@ class _$LoginSubmittedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -2011,7 +2049,8 @@ class _$LoginSubmittedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -2078,7 +2117,8 @@ class _$LoginSubmittedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -2145,34 +2185,34 @@ abstract class _LoginSubmitted implements AuthEvent {
 }
 
 /// @nodoc
-abstract class _$$SignupNameChangedImplCopyWith<$Res> {
-  factory _$$SignupNameChangedImplCopyWith(
-    _$SignupNameChangedImpl value,
-    $Res Function(_$SignupNameChangedImpl) then,
-  ) = __$$SignupNameChangedImplCopyWithImpl<$Res>;
+abstract class _$$SignupFirstNameChangedImplCopyWith<$Res> {
+  factory _$$SignupFirstNameChangedImplCopyWith(
+    _$SignupFirstNameChangedImpl value,
+    $Res Function(_$SignupFirstNameChangedImpl) then,
+  ) = __$$SignupFirstNameChangedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String name});
+  $Res call({String firstName});
 }
 
 /// @nodoc
-class __$$SignupNameChangedImplCopyWithImpl<$Res>
-    extends _$AuthEventCopyWithImpl<$Res, _$SignupNameChangedImpl>
-    implements _$$SignupNameChangedImplCopyWith<$Res> {
-  __$$SignupNameChangedImplCopyWithImpl(
-    _$SignupNameChangedImpl _value,
-    $Res Function(_$SignupNameChangedImpl) _then,
+class __$$SignupFirstNameChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupFirstNameChangedImpl>
+    implements _$$SignupFirstNameChangedImplCopyWith<$Res> {
+  __$$SignupFirstNameChangedImplCopyWithImpl(
+    _$SignupFirstNameChangedImpl _value,
+    $Res Function(_$SignupFirstNameChangedImpl) _then,
   ) : super(_value, _then);
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? name = null}) {
+  $Res call({Object? firstName = null}) {
     return _then(
-      _$SignupNameChangedImpl(
-        null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
+      _$SignupFirstNameChangedImpl(
+        null == firstName
+            ? _value.firstName
+            : firstName // ignore: cast_nullable_to_non_nullable
                   as String,
       ),
     );
@@ -2181,45 +2221,47 @@ class __$$SignupNameChangedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SignupNameChangedImpl
+class _$SignupFirstNameChangedImpl
     with DiagnosticableTreeMixin
-    implements _SignupNameChanged {
-  const _$SignupNameChangedImpl(this.name);
+    implements _SignupFirstNameChanged {
+  const _$SignupFirstNameChangedImpl(this.firstName);
 
   @override
-  final String name;
+  final String firstName;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthEvent.signupNameChanged(name: $name)';
+    return 'AuthEvent.signupFirstNameChanged(firstName: $firstName)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AuthEvent.signupNameChanged'))
-      ..add(DiagnosticsProperty('name', name));
+      ..add(DiagnosticsProperty('type', 'AuthEvent.signupFirstNameChanged'))
+      ..add(DiagnosticsProperty('firstName', firstName));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SignupNameChangedImpl &&
-            (identical(other.name, name) || other.name == name));
+            other is _$SignupFirstNameChangedImpl &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name);
+  int get hashCode => Object.hash(runtimeType, firstName);
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SignupNameChangedImplCopyWith<_$SignupNameChangedImpl> get copyWith =>
-      __$$SignupNameChangedImplCopyWithImpl<_$SignupNameChangedImpl>(
+  _$$SignupFirstNameChangedImplCopyWith<_$SignupFirstNameChangedImpl>
+  get copyWith =>
+      __$$SignupFirstNameChangedImplCopyWithImpl<_$SignupFirstNameChangedImpl>(
         this,
         _$identity,
       );
@@ -2231,7 +2273,8 @@ class _$SignupNameChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -2275,7 +2318,7 @@ class _$SignupNameChangedImpl
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
   }) {
-    return signupNameChanged(name);
+    return signupFirstNameChanged(firstName);
   }
 
   @override
@@ -2285,7 +2328,8 @@ class _$SignupNameChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -2325,7 +2369,7 @@ class _$SignupNameChangedImpl
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
   }) {
-    return signupNameChanged?.call(name);
+    return signupFirstNameChanged?.call(firstName);
   }
 
   @override
@@ -2335,7 +2379,8 @@ class _$SignupNameChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -2375,8 +2420,8 @@ class _$SignupNameChangedImpl
     TResult Function()? logoutRequested,
     required TResult orElse(),
   }) {
-    if (signupNameChanged != null) {
-      return signupNameChanged(name);
+    if (signupFirstNameChanged != null) {
+      return signupFirstNameChanged(firstName);
     }
     return orElse();
   }
@@ -2389,7 +2434,10 @@ class _$SignupNameChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -2452,7 +2500,7 @@ class _$SignupNameChangedImpl
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
   }) {
-    return signupNameChanged(this);
+    return signupFirstNameChanged(this);
   }
 
   @override
@@ -2463,7 +2511,8 @@ class _$SignupNameChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -2519,7 +2568,7 @@ class _$SignupNameChangedImpl
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
   }) {
-    return signupNameChanged?.call(this);
+    return signupFirstNameChanged?.call(this);
   }
 
   @override
@@ -2530,7 +2579,8 @@ class _$SignupNameChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -2585,23 +2635,495 @@ class _$SignupNameChangedImpl
     TResult Function(_LogoutRequested value)? logoutRequested,
     required TResult orElse(),
   }) {
-    if (signupNameChanged != null) {
-      return signupNameChanged(this);
+    if (signupFirstNameChanged != null) {
+      return signupFirstNameChanged(this);
     }
     return orElse();
   }
 }
 
-abstract class _SignupNameChanged implements AuthEvent {
-  const factory _SignupNameChanged(final String name) = _$SignupNameChangedImpl;
+abstract class _SignupFirstNameChanged implements AuthEvent {
+  const factory _SignupFirstNameChanged(final String firstName) =
+      _$SignupFirstNameChangedImpl;
 
-  String get name;
+  String get firstName;
 
   /// Create a copy of AuthEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SignupNameChangedImplCopyWith<_$SignupNameChangedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SignupFirstNameChangedImplCopyWith<_$SignupFirstNameChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupLastNameChangedImplCopyWith<$Res> {
+  factory _$$SignupLastNameChangedImplCopyWith(
+    _$SignupLastNameChangedImpl value,
+    $Res Function(_$SignupLastNameChangedImpl) then,
+  ) = __$$SignupLastNameChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String lastName});
+}
+
+/// @nodoc
+class __$$SignupLastNameChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupLastNameChangedImpl>
+    implements _$$SignupLastNameChangedImplCopyWith<$Res> {
+  __$$SignupLastNameChangedImplCopyWithImpl(
+    _$SignupLastNameChangedImpl _value,
+    $Res Function(_$SignupLastNameChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? lastName = null}) {
+    return _then(
+      _$SignupLastNameChangedImpl(
+        null == lastName
+            ? _value.lastName
+            : lastName // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupLastNameChangedImpl
+    with DiagnosticableTreeMixin
+    implements _SignupLastNameChanged {
+  const _$SignupLastNameChangedImpl(this.lastName);
+
+  @override
+  final String lastName;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.signupLastNameChanged(lastName: $lastName)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.signupLastNameChanged'))
+      ..add(DiagnosticsProperty('lastName', lastName));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupLastNameChangedImpl &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, lastName);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupLastNameChangedImplCopyWith<_$SignupLastNameChangedImpl>
+  get copyWith =>
+      __$$SignupLastNameChangedImplCopyWithImpl<_$SignupLastNameChangedImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function() resetPasswordOtpRequested,
+    required TResult Function() resetPasswordOtpVerified,
+    required TResult Function() resetPasswordOtpResendRequested,
+    required TResult Function(String password) resetPasswordNewChanged,
+    required TResult Function(String confirm) resetPasswordConfirmChanged,
+    required TResult Function() resetPasswordVisibilityToggled,
+    required TResult Function() resetPasswordConfirmVisibilityToggled,
+    required TResult Function() resetPasswordSubmitted,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+  }) {
+    return signupLastNameChanged(lastName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function()? resetPasswordOtpRequested,
+    TResult? Function()? resetPasswordOtpVerified,
+    TResult? Function()? resetPasswordOtpResendRequested,
+    TResult? Function(String password)? resetPasswordNewChanged,
+    TResult? Function(String confirm)? resetPasswordConfirmChanged,
+    TResult? Function()? resetPasswordVisibilityToggled,
+    TResult? Function()? resetPasswordConfirmVisibilityToggled,
+    TResult? Function()? resetPasswordSubmitted,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+  }) {
+    return signupLastNameChanged?.call(lastName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function()? resetPasswordOtpRequested,
+    TResult Function()? resetPasswordOtpVerified,
+    TResult Function()? resetPasswordOtpResendRequested,
+    TResult Function(String password)? resetPasswordNewChanged,
+    TResult Function(String confirm)? resetPasswordConfirmChanged,
+    TResult Function()? resetPasswordVisibilityToggled,
+    TResult Function()? resetPasswordConfirmVisibilityToggled,
+    TResult Function()? resetPasswordSubmitted,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLastNameChanged != null) {
+      return signupLastNameChanged(lastName);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ResetPasswordOtpRequested value)
+    resetPasswordOtpRequested,
+    required TResult Function(_ResetPasswordOtpVerified value)
+    resetPasswordOtpVerified,
+    required TResult Function(_ResetPasswordOtpResendRequested value)
+    resetPasswordOtpResendRequested,
+    required TResult Function(_ResetPasswordNewChanged value)
+    resetPasswordNewChanged,
+    required TResult Function(_ResetPasswordConfirmChanged value)
+    resetPasswordConfirmChanged,
+    required TResult Function(_ResetPasswordVisibilityToggled value)
+    resetPasswordVisibilityToggled,
+    required TResult Function(_ResetPasswordConfirmVisibilityToggled value)
+    resetPasswordConfirmVisibilityToggled,
+    required TResult Function(_ResetPasswordSubmitted value)
+    resetPasswordSubmitted,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+  }) {
+    return signupLastNameChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult? Function(_ResetPasswordOtpVerified value)?
+    resetPasswordOtpVerified,
+    TResult? Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult? Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult? Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult? Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult? Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult? Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+  }) {
+    return signupLastNameChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult Function(_ResetPasswordOtpVerified value)? resetPasswordOtpVerified,
+    TResult Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    required TResult orElse(),
+  }) {
+    if (signupLastNameChanged != null) {
+      return signupLastNameChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupLastNameChanged implements AuthEvent {
+  const factory _SignupLastNameChanged(final String lastName) =
+      _$SignupLastNameChangedImpl;
+
+  String get lastName;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupLastNameChangedImplCopyWith<_$SignupLastNameChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2691,7 +3213,8 @@ class _$SignupEmailChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -2745,7 +3268,8 @@ class _$SignupEmailChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -2795,7 +3319,8 @@ class _$SignupEmailChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -2849,7 +3374,10 @@ class _$SignupEmailChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -2923,7 +3451,8 @@ class _$SignupEmailChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -2990,7 +3519,8 @@ class _$SignupEmailChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -3154,7 +3684,8 @@ class _$SignupPasswordChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -3208,7 +3739,8 @@ class _$SignupPasswordChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -3258,7 +3790,8 @@ class _$SignupPasswordChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -3312,7 +3845,10 @@ class _$SignupPasswordChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -3386,7 +3922,8 @@ class _$SignupPasswordChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -3453,7 +3990,8 @@ class _$SignupPasswordChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -3620,7 +4158,8 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -3674,7 +4213,8 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -3724,7 +4264,8 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -3778,7 +4319,10 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -3852,7 +4396,8 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -3919,7 +4464,8 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -4054,7 +4600,8 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -4108,7 +4655,8 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -4158,7 +4706,8 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -4212,7 +4761,10 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -4286,7 +4838,8 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -4353,7 +4906,8 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -4485,7 +5039,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -4539,7 +5094,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -4589,7 +5145,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -4643,7 +5200,10 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -4717,7 +5277,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -4784,7 +5345,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -4906,7 +5468,8 @@ class _$SignupSubmittedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -4960,7 +5523,8 @@ class _$SignupSubmittedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5010,7 +5574,8 @@ class _$SignupSubmittedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5064,7 +5629,10 @@ class _$SignupSubmittedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -5138,7 +5706,8 @@ class _$SignupSubmittedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -5205,7 +5774,8 @@ class _$SignupSubmittedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -5326,7 +5896,8 @@ class _$SignupFormResetImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -5380,7 +5951,8 @@ class _$SignupFormResetImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5430,7 +6002,8 @@ class _$SignupFormResetImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5484,7 +6057,10 @@ class _$SignupFormResetImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -5558,7 +6134,8 @@ class _$SignupFormResetImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -5625,7 +6202,8 @@ class _$SignupFormResetImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -5779,7 +6357,8 @@ class _$SignupLicenseNumberChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -5833,7 +6412,8 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5883,7 +6463,8 @@ class _$SignupLicenseNumberChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -5937,7 +6518,10 @@ class _$SignupLicenseNumberChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -6011,7 +6595,8 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -6078,7 +6663,8 @@ class _$SignupLicenseNumberChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -6243,7 +6829,8 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -6297,7 +6884,8 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -6347,7 +6935,8 @@ class _$SignupSpecializationChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -6401,7 +6990,10 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -6475,7 +7067,8 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -6542,7 +7135,8 @@ class _$SignupSpecializationChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -6706,7 +7300,8 @@ class _$SignupLocationChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -6760,7 +7355,8 @@ class _$SignupLocationChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -6810,7 +7406,8 @@ class _$SignupLocationChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -6864,7 +7461,10 @@ class _$SignupLocationChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -6938,7 +7538,8 @@ class _$SignupLocationChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -7005,7 +7606,8 @@ class _$SignupLocationChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -7137,7 +7739,8 @@ class _$SpecialtiesRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -7191,7 +7794,8 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -7241,7 +7845,8 @@ class _$SpecialtiesRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -7295,7 +7900,10 @@ class _$SpecialtiesRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -7369,7 +7977,8 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -7436,7 +8045,8 @@ class _$SpecialtiesRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -7557,7 +8167,8 @@ class _$PlansRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -7611,7 +8222,8 @@ class _$PlansRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -7661,7 +8273,8 @@ class _$PlansRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -7715,7 +8328,10 @@ class _$PlansRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -7789,7 +8405,8 @@ class _$PlansRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -7856,7 +8473,8 @@ class _$PlansRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -8021,7 +8639,8 @@ class _$LocationSearchRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -8075,7 +8694,8 @@ class _$LocationSearchRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -8125,7 +8745,8 @@ class _$LocationSearchRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -8179,7 +8800,10 @@ class _$LocationSearchRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -8253,7 +8877,8 @@ class _$LocationSearchRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -8320,7 +8945,8 @@ class _$LocationSearchRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -8502,7 +9128,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -8556,7 +9183,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -8606,7 +9234,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -8660,7 +9289,10 @@ class _$SignupSpecialtyEntitySelectedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -8734,7 +9366,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -8801,7 +9434,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -8983,7 +9617,8 @@ class _$SignupLocationEntitySelectedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -9037,7 +9672,8 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -9087,7 +9723,8 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -9141,7 +9778,10 @@ class _$SignupLocationEntitySelectedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -9215,7 +9855,8 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -9282,7 +9923,8 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -9458,7 +10100,8 @@ class _$SignupPlanEntitySelectedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -9512,7 +10155,8 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -9562,7 +10206,8 @@ class _$SignupPlanEntitySelectedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -9616,7 +10261,10 @@ class _$SignupPlanEntitySelectedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -9690,7 +10338,8 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -9757,7 +10406,8 @@ class _$SignupPlanEntitySelectedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -9919,7 +10569,8 @@ class _$SignupClinicNameChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -9973,7 +10624,8 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10023,7 +10675,8 @@ class _$SignupClinicNameChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10077,7 +10730,10 @@ class _$SignupClinicNameChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -10151,7 +10807,8 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -10218,7 +10875,8 @@ class _$SignupClinicNameChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -10380,7 +11038,8 @@ class _$SignupClinicAddressChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -10434,7 +11093,8 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10484,7 +11144,8 @@ class _$SignupClinicAddressChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10538,7 +11199,10 @@ class _$SignupClinicAddressChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -10612,7 +11276,8 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -10679,7 +11344,8 @@ class _$SignupClinicAddressChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -10841,7 +11507,8 @@ class _$SignupMobileNumberChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -10895,7 +11562,8 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10945,7 +11613,8 @@ class _$SignupMobileNumberChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -10999,7 +11668,10 @@ class _$SignupMobileNumberChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -11073,7 +11745,8 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -11140,7 +11813,8 @@ class _$SignupMobileNumberChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -11268,7 +11942,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -11322,7 +11997,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -11372,7 +12048,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -11426,7 +12103,10 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -11500,7 +12180,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -11567,7 +12248,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -11720,7 +12402,8 @@ class _$OtpCodeChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -11774,7 +12457,8 @@ class _$OtpCodeChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -11824,7 +12508,8 @@ class _$OtpCodeChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -11878,7 +12563,10 @@ class _$OtpCodeChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -11952,7 +12640,8 @@ class _$OtpCodeChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -12019,7 +12708,8 @@ class _$OtpCodeChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -12146,7 +12836,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -12200,7 +12891,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -12250,7 +12942,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -12304,7 +12997,10 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -12378,7 +13074,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -12445,7 +13142,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -12567,7 +13265,8 @@ class _$OtpResendRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -12621,7 +13320,8 @@ class _$OtpResendRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -12671,7 +13371,8 @@ class _$OtpResendRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -12725,7 +13426,10 @@ class _$OtpResendRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -12799,7 +13503,8 @@ class _$OtpResendRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -12866,7 +13571,8 @@ class _$OtpResendRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -13019,7 +13725,8 @@ class _$ForgotPasswordEmailChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -13073,7 +13780,8 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -13123,7 +13831,8 @@ class _$ForgotPasswordEmailChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -13177,7 +13886,10 @@ class _$ForgotPasswordEmailChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -13251,7 +13963,8 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -13318,7 +14031,8 @@ class _$ForgotPasswordEmailChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -13450,7 +14164,8 @@ class _$ForgotPasswordSubmittedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -13504,7 +14219,8 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -13554,7 +14270,8 @@ class _$ForgotPasswordSubmittedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -13608,7 +14325,10 @@ class _$ForgotPasswordSubmittedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -13682,7 +14402,8 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -13749,7 +14470,8 @@ class _$ForgotPasswordSubmittedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -13872,7 +14594,8 @@ class _$ForgotPasswordResetImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -13926,7 +14649,8 @@ class _$ForgotPasswordResetImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -13976,7 +14700,8 @@ class _$ForgotPasswordResetImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -14030,7 +14755,10 @@ class _$ForgotPasswordResetImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -14104,7 +14832,8 @@ class _$ForgotPasswordResetImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -14171,7 +14900,8 @@ class _$ForgotPasswordResetImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -14294,7 +15024,8 @@ class _$ResetPasswordOtpRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -14348,7 +15079,8 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -14398,7 +15130,8 @@ class _$ResetPasswordOtpRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -14452,7 +15185,10 @@ class _$ResetPasswordOtpRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -14526,7 +15262,8 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -14593,7 +15330,8 @@ class _$ResetPasswordOtpRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -14716,7 +15454,8 @@ class _$ResetPasswordOtpVerifiedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -14770,7 +15509,8 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -14820,7 +15560,8 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -14874,7 +15615,10 @@ class _$ResetPasswordOtpVerifiedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -14948,7 +15692,8 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -15015,7 +15760,8 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -15139,7 +15885,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -15193,7 +15940,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -15243,7 +15991,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -15297,7 +16046,10 @@ class _$ResetPasswordOtpResendRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -15371,7 +16123,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -15438,7 +16191,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -15593,7 +16347,8 @@ class _$ResetPasswordNewChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -15647,7 +16402,8 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -15697,7 +16453,8 @@ class _$ResetPasswordNewChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -15751,7 +16508,10 @@ class _$ResetPasswordNewChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -15825,7 +16585,8 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -15892,7 +16653,8 @@ class _$ResetPasswordNewChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -16056,7 +16818,8 @@ class _$ResetPasswordConfirmChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -16110,7 +16873,8 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -16160,7 +16924,8 @@ class _$ResetPasswordConfirmChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -16214,7 +16979,10 @@ class _$ResetPasswordConfirmChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -16288,7 +17056,8 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -16355,7 +17124,8 @@ class _$ResetPasswordConfirmChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -16488,7 +17258,8 @@ class _$ResetPasswordVisibilityToggledImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -16542,7 +17313,8 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -16592,7 +17364,8 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -16646,7 +17419,10 @@ class _$ResetPasswordVisibilityToggledImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -16720,7 +17496,8 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -16787,7 +17564,8 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -16919,7 +17697,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -16973,7 +17752,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17023,7 +17803,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17077,7 +17858,10 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -17151,7 +17935,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -17218,7 +18003,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -17342,7 +18128,8 @@ class _$ResetPasswordSubmittedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -17396,7 +18183,8 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17446,7 +18234,8 @@ class _$ResetPasswordSubmittedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17500,7 +18289,10 @@ class _$ResetPasswordSubmittedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -17574,7 +18366,8 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -17641,7 +18434,8 @@ class _$ResetPasswordSubmittedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -17795,7 +18589,8 @@ class _$ActiveClinicChangedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -17849,7 +18644,8 @@ class _$ActiveClinicChangedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17899,7 +18695,8 @@ class _$ActiveClinicChangedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -17953,7 +18750,10 @@ class _$ActiveClinicChangedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -18027,7 +18827,8 @@ class _$ActiveClinicChangedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -18094,7 +18895,8 @@ class _$ActiveClinicChangedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -18225,7 +19027,8 @@ class _$AuthCheckRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -18279,7 +19082,8 @@ class _$AuthCheckRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -18329,7 +19133,8 @@ class _$AuthCheckRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -18383,7 +19188,10 @@ class _$AuthCheckRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -18457,7 +19265,8 @@ class _$AuthCheckRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -18524,7 +19333,8 @@ class _$AuthCheckRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -18645,7 +19455,8 @@ class _$LogoutRequestedImpl
     required TResult Function(String password) loginPasswordChanged,
     required TResult Function() loginPasswordVisibilityToggled,
     required TResult Function() loginSubmitted,
-    required TResult Function(String name) signupNameChanged,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
     required TResult Function(String email) signupEmailChanged,
     required TResult Function(String password) signupPasswordChanged,
     required TResult Function(String confirmPassword)
@@ -18699,7 +19510,8 @@ class _$LogoutRequestedImpl
     TResult? Function(String password)? loginPasswordChanged,
     TResult? Function()? loginPasswordVisibilityToggled,
     TResult? Function()? loginSubmitted,
-    TResult? Function(String name)? signupNameChanged,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
     TResult? Function(String email)? signupEmailChanged,
     TResult? Function(String password)? signupPasswordChanged,
     TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -18749,7 +19561,8 @@ class _$LogoutRequestedImpl
     TResult Function(String password)? loginPasswordChanged,
     TResult Function()? loginPasswordVisibilityToggled,
     TResult Function()? loginSubmitted,
-    TResult Function(String name)? signupNameChanged,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
     TResult Function(String email)? signupEmailChanged,
     TResult Function(String password)? signupPasswordChanged,
     TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
@@ -18803,7 +19616,10 @@ class _$LogoutRequestedImpl
     required TResult Function(_LoginPasswordVisibilityToggled value)
     loginPasswordVisibilityToggled,
     required TResult Function(_LoginSubmitted value) loginSubmitted,
-    required TResult Function(_SignupNameChanged value) signupNameChanged,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
     required TResult Function(_SignupEmailChanged value) signupEmailChanged,
     required TResult Function(_SignupPasswordChanged value)
     signupPasswordChanged,
@@ -18877,7 +19693,8 @@ class _$LogoutRequestedImpl
     TResult? Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult? Function(_LoginSubmitted value)? loginSubmitted,
-    TResult? Function(_SignupNameChanged value)? signupNameChanged,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult? Function(_SignupConfirmPasswordChanged value)?
@@ -18944,7 +19761,8 @@ class _$LogoutRequestedImpl
     TResult Function(_LoginPasswordVisibilityToggled value)?
     loginPasswordVisibilityToggled,
     TResult Function(_LoginSubmitted value)? loginSubmitted,
-    TResult Function(_SignupNameChanged value)? signupNameChanged,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
     TResult Function(_SignupEmailChanged value)? signupEmailChanged,
     TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
     TResult Function(_SignupConfirmPasswordChanged value)?
@@ -19019,7 +19837,8 @@ mixin _$AuthState {
   bool get isLoginLoading => throw _privateConstructorUsedError;
   String? get loginError =>
       throw _privateConstructorUsedError; // Signup fields - Unified (all users are dental professionals)
-  String get signupName => throw _privateConstructorUsedError;
+  String get signupFirstName => throw _privateConstructorUsedError;
+  String get signupLastName => throw _privateConstructorUsedError;
   String get signupEmail => throw _privateConstructorUsedError;
   String get signupPassword => throw _privateConstructorUsedError;
   String get signupConfirmPassword => throw _privateConstructorUsedError;
@@ -19098,7 +19917,8 @@ abstract class $AuthStateCopyWith<$Res> {
     bool isLoginPasswordVisible,
     bool isLoginLoading,
     String? loginError,
-    String signupName,
+    String signupFirstName,
+    String signupLastName,
     String signupEmail,
     String signupPassword,
     String signupConfirmPassword,
@@ -19173,7 +19993,8 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? isLoginPasswordVisible = null,
     Object? isLoginLoading = null,
     Object? loginError = freezed,
-    Object? signupName = null,
+    Object? signupFirstName = null,
+    Object? signupLastName = null,
     Object? signupEmail = null,
     Object? signupPassword = null,
     Object? signupConfirmPassword = null,
@@ -19243,9 +20064,13 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.loginError
                 : loginError // ignore: cast_nullable_to_non_nullable
                       as String?,
-            signupName: null == signupName
-                ? _value.signupName
-                : signupName // ignore: cast_nullable_to_non_nullable
+            signupFirstName: null == signupFirstName
+                ? _value.signupFirstName
+                : signupFirstName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            signupLastName: null == signupLastName
+                ? _value.signupLastName
+                : signupLastName // ignore: cast_nullable_to_non_nullable
                       as String,
             signupEmail: null == signupEmail
                 ? _value.signupEmail
@@ -19509,7 +20334,8 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     bool isLoginPasswordVisible,
     bool isLoginLoading,
     String? loginError,
-    String signupName,
+    String signupFirstName,
+    String signupLastName,
     String signupEmail,
     String signupPassword,
     String signupConfirmPassword,
@@ -19587,7 +20413,8 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? isLoginPasswordVisible = null,
     Object? isLoginLoading = null,
     Object? loginError = freezed,
-    Object? signupName = null,
+    Object? signupFirstName = null,
+    Object? signupLastName = null,
     Object? signupEmail = null,
     Object? signupPassword = null,
     Object? signupConfirmPassword = null,
@@ -19657,9 +20484,13 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.loginError
             : loginError // ignore: cast_nullable_to_non_nullable
                   as String?,
-        signupName: null == signupName
-            ? _value.signupName
-            : signupName // ignore: cast_nullable_to_non_nullable
+        signupFirstName: null == signupFirstName
+            ? _value.signupFirstName
+            : signupFirstName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        signupLastName: null == signupLastName
+            ? _value.signupLastName
+            : signupLastName // ignore: cast_nullable_to_non_nullable
                   as String,
         signupEmail: null == signupEmail
             ? _value.signupEmail
@@ -19859,7 +20690,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     this.isLoginPasswordVisible = false,
     this.isLoginLoading = false,
     this.loginError = null,
-    this.signupName = '',
+    this.signupFirstName = '',
+    this.signupLastName = '',
     this.signupEmail = '',
     this.signupPassword = '',
     this.signupConfirmPassword = '',
@@ -19931,7 +20763,10 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   // Signup fields - Unified (all users are dental professionals)
   @override
   @JsonKey()
-  final String signupName;
+  final String signupFirstName;
+  @override
+  @JsonKey()
+  final String signupLastName;
   @override
   @JsonKey()
   final String signupEmail;
@@ -20116,7 +20951,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupName: $signupName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
   }
 
   @override
@@ -20131,7 +20966,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       )
       ..add(DiagnosticsProperty('isLoginLoading', isLoginLoading))
       ..add(DiagnosticsProperty('loginError', loginError))
-      ..add(DiagnosticsProperty('signupName', signupName))
+      ..add(DiagnosticsProperty('signupFirstName', signupFirstName))
+      ..add(DiagnosticsProperty('signupLastName', signupLastName))
       ..add(DiagnosticsProperty('signupEmail', signupEmail))
       ..add(DiagnosticsProperty('signupPassword', signupPassword))
       ..add(DiagnosticsProperty('signupConfirmPassword', signupConfirmPassword))
@@ -20219,8 +21055,10 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
                 other.isLoginLoading == isLoginLoading) &&
             (identical(other.loginError, loginError) ||
                 other.loginError == loginError) &&
-            (identical(other.signupName, signupName) ||
-                other.signupName == signupName) &&
+            (identical(other.signupFirstName, signupFirstName) ||
+                other.signupFirstName == signupFirstName) &&
+            (identical(other.signupLastName, signupLastName) ||
+                other.signupLastName == signupLastName) &&
             (identical(other.signupEmail, signupEmail) ||
                 other.signupEmail == signupEmail) &&
             (identical(other.signupPassword, signupPassword) ||
@@ -20345,7 +21183,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     isLoginPasswordVisible,
     isLoginLoading,
     loginError,
-    signupName,
+    signupFirstName,
+    signupLastName,
     signupEmail,
     signupPassword,
     signupConfirmPassword,
@@ -20410,7 +21249,8 @@ abstract class _AuthState implements AuthState {
     final bool isLoginPasswordVisible,
     final bool isLoginLoading,
     final String? loginError,
-    final String signupName,
+    final String signupFirstName,
+    final String signupLastName,
     final String signupEmail,
     final String signupPassword,
     final String signupConfirmPassword,
@@ -20471,7 +21311,9 @@ abstract class _AuthState implements AuthState {
   @override
   String? get loginError; // Signup fields - Unified (all users are dental professionals)
   @override
-  String get signupName;
+  String get signupFirstName;
+  @override
+  String get signupLastName;
   @override
   String get signupEmail;
   @override

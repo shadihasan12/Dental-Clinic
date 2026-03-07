@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 @injectable
 class UserStorage {
   static const String _userNameKey = 'user_name';
+  static const String _firstNameKey = 'first_name';
+  static const String _lastNameKey = 'last_name';
   static const String _userEmailKey = 'user_email';
   static const String _clinicNameKey = 'clinic_name';
   static const String _locationIdKey = 'location_id';
@@ -23,6 +25,22 @@ class UserStorage {
   }
 
   String? getUserName() => _prefs.getString(_userNameKey);
+
+  // ── First name ──
+
+  Future<void> saveFirstName(String name) async {
+    await _prefs.setString(_firstNameKey, name);
+  }
+
+  String? getFirstName() => _prefs.getString(_firstNameKey);
+
+  // ── Last name ──
+
+  Future<void> saveLastName(String name) async {
+    await _prefs.setString(_lastNameKey, name);
+  }
+
+  String? getLastName() => _prefs.getString(_lastNameKey);
 
   // ── User email ──
 
@@ -72,6 +90,8 @@ class UserStorage {
 
   Future<void> clear() async {
     await _prefs.remove(_userNameKey);
+    await _prefs.remove(_firstNameKey);
+    await _prefs.remove(_lastNameKey);
     await _prefs.remove(_userEmailKey);
     await _prefs.remove(_clinicNameKey);
     await _prefs.remove(_locationIdKey);

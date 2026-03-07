@@ -11,7 +11,8 @@ class AuthState with _$AuthState {
     @Default(null) String? loginError,
 
     // Signup fields - Unified (all users are dental professionals)
-    @Default('') String signupName,
+    @Default('') String signupFirstName,
+    @Default('') String signupLastName,
     @Default('') String signupEmail,
     @Default('') String signupPassword,
     @Default('') String signupConfirmPassword,
@@ -93,14 +94,16 @@ extension AuthStateValidation on AuthState {
   bool get isLoginPasswordValid => loginPassword.length >= 8;
   bool get isLoginFormValid => isLoginEmailValid && isLoginPasswordValid;
 
-  bool get isSignupNameValid => signupName.length >= 2;
+  bool get isSignupFirstNameValid => signupFirstName.length >= 2;
+  bool get isSignupLastNameValid => signupLastName.length >= 2;
   bool get isSignupEmailValid => _isValidEmail(signupEmail);
   bool get isSignupPasswordValid => signupPassword.length >= 8;
   bool get isSignupConfirmPasswordValid =>
       signupConfirmPassword == signupPassword && signupConfirmPassword.isNotEmpty;
 
   bool get isSignupFormValid =>
-      isSignupNameValid &&
+      isSignupFirstNameValid &&
+      isSignupLastNameValid &&
       isSignupEmailValid &&
       isSignupPasswordValid &&
       isSignupConfirmPasswordValid;

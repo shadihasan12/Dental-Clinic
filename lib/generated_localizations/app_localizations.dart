@@ -272,6 +272,12 @@ abstract class AppLocalizations {
   /// **'Error'**
   String get error;
 
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
   /// No description provided for @success.
   ///
   /// In en, this message translates to:
@@ -2216,17 +2222,41 @@ abstract class AppLocalizations {
   /// **'Join our dental community'**
   String get joinDentalCommunity;
 
-  /// No description provided for @fullNameRequired.
+  /// No description provided for @firstNameRequired.
   ///
   /// In en, this message translates to:
-  /// **'Full Name *'**
-  String get fullNameRequired;
+  /// **'First Name *'**
+  String get firstNameRequired;
 
-  /// No description provided for @fullNameHint.
+  /// No description provided for @firstNameHint.
   ///
   /// In en, this message translates to:
-  /// **'Dr. John Smith'**
-  String get fullNameHint;
+  /// **'John'**
+  String get firstNameHint;
+
+  /// No description provided for @lastNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name *'**
+  String get lastNameRequired;
+
+  /// No description provided for @lastNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Smith'**
+  String get lastNameHint;
+
+  /// No description provided for @pleaseEnterFirstName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your first name'**
+  String get pleaseEnterFirstName;
+
+  /// No description provided for @pleaseEnterLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your last name'**
+  String get pleaseEnterLastName;
 
   /// No description provided for @emailRequired.
   ///
@@ -2935,6 +2965,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working Hours & Holidays'**
   String get workingHoursAndHolidays;
+
+  /// No description provided for @photoPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Permission Required'**
+  String get photoPermissionRequired;
+
+  /// No description provided for @photoPermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This app needs access to your photos to set your profile picture. Please grant permission in Settings.'**
+  String get photoPermissionMessage;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

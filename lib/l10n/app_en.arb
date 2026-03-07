@@ -28,6 +28,7 @@
   "close": "Close",
   "loading": "Loading...",
   "error": "Error",
+  "somethingWentWrong": "Something went wrong",
   "success": "Success",
   "noData": "No data available",
   "firstName": "First Name",
@@ -404,8 +405,12 @@
 
   "createAccount": "Create Account",
   "joinDentalCommunity": "Join our dental community",
-  "fullNameRequired": "Full Name *",
-  "fullNameHint": "Dr. John Smith",
+  "firstNameRequired": "First Name *",
+  "firstNameHint": "John",
+  "lastNameRequired": "Last Name *",
+  "lastNameHint": "Smith",
+  "pleaseEnterFirstName": "Please enter your first name",
+  "pleaseEnterLastName": "Please enter your last name",
   "emailRequired": "Email *",
   "emailHint": "doctor@example.com",
   "mobileNumber": "Mobile Number *",
@@ -562,6 +567,9 @@
   "pleaseEnterValidEmail": "Please enter a valid email",
   "pleaseEnterYourPassword": "Please enter your password",
   "pleaseSelectSpecialty": "Please select your specialization",
-  "workingHoursAndHolidays": "Working Hours & Holidays"
+  "workingHoursAndHolidays": "Working Hours & Holidays",
+  "photoPermissionRequired": "Photo Permission Required",
+  "photoPermissionMessage": "This app needs access to your photos to set your profile picture. Please grant permission in Settings.",
+  "openSettings": "Open Settings"
 }
 

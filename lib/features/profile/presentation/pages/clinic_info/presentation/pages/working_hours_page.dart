@@ -50,38 +50,60 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
 
   static const int _maxShifts = 3;
 
+  List<WorkingDay> _buildDefaultWorkingDays() {
+    return List.generate(7, (i) {
+      final dayOfWeek = i + 1; // 1=Monday ... 7=Sunday
+      final isWeekend = dayOfWeek == 6 || dayOfWeek == 7;
+      return WorkingDay(
+        id: '',
+        dayOfWeek: dayOfWeek,
+        enabled: !isWeekend,
+        shifts: [
+          WorkingShift(
+            from: const TimeOfDay(hour: 9, minute: 0),
+            to: const TimeOfDay(hour: 17, minute: 0),
+          ),
+        ],
+      );
+    });
+  }
+
   void _populateFromApi(
     List<WorkingDayApiModel> apiDays,
     List<HolidayApiModel> apiHolidays,
   ) {
-    _workingDays = apiDays.map((day) {
-      return WorkingDay(
-        id: day.id,
-        dayOfWeek: day.dayOfWeek,
-        enabled: day.isOpen,
-        shifts: day.ranges.isEmpty
-            ? [
-                WorkingShift(
-                  from: const TimeOfDay(hour: 9, minute: 0),
-                  to: const TimeOfDay(hour: 17, minute: 0),
-                ),
-              ]
-            : day.ranges.map((r) {
-                final fromParts = r.startTime.split(':');
-                final toParts = r.endTime.split(':');
-                return WorkingShift(
-                  from: TimeOfDay(
-                    hour: int.parse(fromParts[0]),
-                    minute: int.parse(fromParts[1]),
+    if (apiDays.isEmpty) {
+      _workingDays = _buildDefaultWorkingDays();
+    } else {
+      _workingDays = apiDays.map((day) {
+        return WorkingDay(
+          id: day.id,
+          dayOfWeek: day.dayOfWeek,
+          enabled: day.isOpen,
+          shifts: day.ranges.isEmpty
+              ? [
+                  WorkingShift(
+                    from: const TimeOfDay(hour: 9, minute: 0),
+                    to: const TimeOfDay(hour: 17, minute: 0),
                   ),
-                  to: TimeOfDay(
-                    hour: int.parse(toParts[0]),
-                    minute: int.parse(toParts[1]),
-                  ),
-                );
-              }).toList(),
-      );
-    }).toList();
+                ]
+              : day.ranges.map((r) {
+                  final fromParts = r.startTime.split(':');
+                  final toParts = r.endTime.split(':');
+                  return WorkingShift(
+                    from: TimeOfDay(
+                      hour: int.parse(fromParts[0]),
+                      minute: int.parse(fromParts[1]),
+                    ),
+                    to: TimeOfDay(
+                      hour: int.parse(toParts[0]),
+                      minute: int.parse(toParts[1]),
+                    ),
+                  );
+                }).toList(),
+        );
+      }).toList();
+    }
 
     _holidays
       ..clear()
@@ -207,7 +229,6 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
       buildWhen: (prev, curr) => curr.maybeMap(
         loading: (_) => true,
         loaded: (_) => true,
-        error: (_) => true,
         orElse: () => false,
       ),
       listenWhen: (prev, curr) => curr.maybeMap(
@@ -234,8 +255,10 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+            AppSnackbar.showError(
+              context,
+              title: l10n.error,
+              message: message,
             );
           },
           orElse: () {},

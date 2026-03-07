@@ -22,12 +22,15 @@ class WorkingDayApiModel {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'day_of_week': dayOfWeek,
-        'is_open': isOpen,
-        'ranges': ranges.map((r) => r.toJson()).toList(),
-      };
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'day_of_week': dayOfWeek,
+      'is_open': isOpen,
+      'ranges': ranges.map((r) => r.toJson()).toList(),
+    };
+    if (id.isNotEmpty) map['id'] = id;
+    return map;
+  }
 }
 
 class TimeRangeModel {

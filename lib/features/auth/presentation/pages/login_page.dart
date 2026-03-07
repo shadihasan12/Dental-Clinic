@@ -9,7 +9,6 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
-import '../widgets/social_login_buttons.dart';
 import '../widgets/auth_text_field.dart';
 
 class LoginPage extends StatelessWidget {
@@ -199,6 +198,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
       controller: _emailController,
       prefixIcon: Icons.person_outline,
       keyboardType: TextInputType.text,
+      textDirection: TextDirection.ltr,
       validator: _validateEmailOrPhone,
       onChanged: (value) {
         context.read<AuthBloc>().add(AuthEvent.loginEmailChanged(value));

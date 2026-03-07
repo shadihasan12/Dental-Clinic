@@ -11,6 +11,8 @@ class ProfileTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final bool isLast;
+  final bool enabled;
+  final Widget? suffixWidget;
 
   const ProfileTextField({
     super.key,
@@ -20,6 +22,8 @@ class ProfileTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.isLast = false,
+    this.enabled = true,
+    this.suffixWidget,
   });
 
   @override
@@ -39,6 +43,8 @@ class ProfileTextField extends StatelessWidget {
         controller: controller,
         prefixIcon: icon,
         keyboardType: keyboardType,
+        enabled: enabled,
+        suffixIcon: suffixWidget,
         onChanged: (value) {},
       ),
     );

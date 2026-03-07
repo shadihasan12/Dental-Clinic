@@ -96,6 +96,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get error => 'خطأ';
 
   @override
+  String get somethingWentWrong => 'حدث خطأ ما';
+
+  @override
   String get success => 'تم بنجاح';
 
   @override
@@ -1104,10 +1107,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get joinDentalCommunity => 'انضم إلى مجتمعنا الطبي';
 
   @override
-  String get fullNameRequired => 'الاسم الكامل *';
+  String get firstNameRequired => 'الاسم الأول *';
 
   @override
-  String get fullNameHint => 'د. أحمد محمد';
+  String get firstNameHint => 'أحمد';
+
+  @override
+  String get lastNameRequired => 'الاسم الأخير *';
+
+  @override
+  String get lastNameHint => 'محمد';
+
+  @override
+  String get pleaseEnterFirstName => 'يرجى إدخال الاسم الأول';
+
+  @override
+  String get pleaseEnterLastName => 'يرجى إدخال الاسم الأخير';
 
   @override
   String get emailRequired => 'البريد الإلكتروني *';
@@ -1481,4 +1496,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workingHoursAndHolidays => 'ساعات العمل والعطل';
+
+  @override
+  String get photoPermissionRequired => 'إذن الوصول للصور مطلوب';
+
+  @override
+  String get photoPermissionMessage =>
+      'يحتاج التطبيق إلى إذن الوصول للصور لتعيين صورة ملفك الشخصي. يرجى منح الإذن من الإعدادات.';
+
+  @override
+  String get openSettings => 'فتح الإعدادات';
 }
