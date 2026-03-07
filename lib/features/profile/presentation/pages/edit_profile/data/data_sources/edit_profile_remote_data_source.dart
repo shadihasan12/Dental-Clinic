@@ -1,57 +1,44 @@
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/features/auth/data/models/specialty_model.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/data/models/user_profile_model.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class EditProfileRemoteDataSource {
   Future<UserProfileModel> getUserProfile();
   Future<UserProfileModel> updateUserProfile(UserProfileModel profile);
+  Future<List<SpecialtyEntity>> getSpecialties();
 }
 
 @Injectable(as: EditProfileRemoteDataSource)
 class EditProfileRemoteDataSourceImpl implements EditProfileRemoteDataSource {
-  // ignore: unused_field
   final ApiConsumer _apiConsumer;
 
   EditProfileRemoteDataSourceImpl(this._apiConsumer);
 
-  UserProfileModel? _cachedProfile;
-
-  UserProfileModel _getMockProfile() {
-    if (_cachedProfile != null) return _cachedProfile!;
-
-    _cachedProfile = const UserProfileModel(
-      id: 'user_1',
-      firstName: 'Ahmed',
-      lastName: 'Hassan',
-      email: 'dr.ahmed@clinic.com',
-      phone: '+963 988 026 431',
-      location: 'Damascus, Syria',
-      specialization: 'Endodontics',
-    );
-    return _cachedProfile!;
-  }
-
   @override
   Future<UserProfileModel> getUserProfile() async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.get(EditProfileEndpoints.profile);
-    // return UserProfileModel.fromJson(response as Map<String, dynamic>);
-
-    await Future.delayed(const Duration(milliseconds: 800));
-    return _getMockProfile();
+    final response = await _apiConsumer.get('/auth/profile');
+    final data = response['data'] as Map<String, dynamic>;
+    return UserProfileModel.fromJson(data);
   }
 
   @override
   Future<UserProfileModel> updateUserProfile(UserProfileModel profile) async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.put(
-    //   EditProfileEndpoints.updateProfile,
-    //   body: profile.toJson(),
-    // );
-    // return UserProfileModel.fromJson(response as Map<String, dynamic>);
-
-    await Future.delayed(const Duration(milliseconds: 600));
-    _cachedProfile = profile;
+    final body = profile.toUpdateJson();
+    await _apiConsumer.post(
+      '/auth/update-profile',
+      body: body,
+    );
     return profile;
+  }
+
+  @override
+  Future<List<SpecialtyEntity>> getSpecialties() async {
+    final response = await _apiConsumer.get('/specialties');
+    final data = response['data'] as List;
+    return data
+        .map((json) => SpecialtyModel.fromJson(json as Map<String, dynamic>).toEntity())
+        .toList();
   }
 }

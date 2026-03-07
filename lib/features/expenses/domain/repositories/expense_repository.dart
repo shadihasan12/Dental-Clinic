@@ -3,7 +3,9 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 
 abstract class ExpenseRepository {
-  Future<Either<NetworkExceptions, ExpenseListResponse>> getAllExpenses();
+  Future<Either<NetworkExceptions, ExpenseListResponse>> getAllExpenses({
+    Map<String, dynamic>? queryParameters,
+  });
   Future<Either<NetworkExceptions, List<ExpenseCategoryEntity>>> getCategories();
   Future<Either<NetworkExceptions, ExpenseEntity>> addExpense(
       Map<String, dynamic> body);

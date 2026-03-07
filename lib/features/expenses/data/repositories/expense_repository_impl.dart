@@ -13,10 +13,13 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   ExpenseRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Either<NetworkExceptions, ExpenseListResponse>>
-      getAllExpenses() async {
+  Future<Either<NetworkExceptions, ExpenseListResponse>> getAllExpenses({
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
-      final result = await _remoteDataSource.getAllExpenses();
+      final result = await _remoteDataSource.getAllExpenses(
+        queryParameters: queryParameters,
+      );
       final expenses = (result['expenses'] as List<ExpenseModel>)
           .map((m) => m.toEntity())
           .toList();

@@ -21,32 +21,38 @@ mixin _$EditProfileEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() loadProfile,
     required TResult Function(UserProfileEntity profile) updateProfile,
+    required TResult Function(File imageFile) uploadImage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadProfile,
     TResult? Function(UserProfileEntity profile)? updateProfile,
+    TResult? Function(File imageFile)? uploadImage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadProfile,
     TResult Function(UserProfileEntity profile)? updateProfile,
+    TResult Function(File imageFile)? uploadImage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadProfile value) loadProfile,
     required TResult Function(_UpdateProfile value) updateProfile,
+    required TResult Function(_UploadImage value) uploadImage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadProfile value)? loadProfile,
     TResult? Function(_UpdateProfile value)? updateProfile,
+    TResult? Function(_UploadImage value)? uploadImage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadProfile value)? loadProfile,
     TResult Function(_UpdateProfile value)? updateProfile,
+    TResult Function(_UploadImage value)? uploadImage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -118,6 +124,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult when<TResult extends Object?>({
     required TResult Function() loadProfile,
     required TResult Function(UserProfileEntity profile) updateProfile,
+    required TResult Function(File imageFile) uploadImage,
   }) {
     return loadProfile();
   }
@@ -127,6 +134,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadProfile,
     TResult? Function(UserProfileEntity profile)? updateProfile,
+    TResult? Function(File imageFile)? uploadImage,
   }) {
     return loadProfile?.call();
   }
@@ -136,6 +144,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadProfile,
     TResult Function(UserProfileEntity profile)? updateProfile,
+    TResult Function(File imageFile)? uploadImage,
     required TResult orElse(),
   }) {
     if (loadProfile != null) {
@@ -149,6 +158,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadProfile value) loadProfile,
     required TResult Function(_UpdateProfile value) updateProfile,
+    required TResult Function(_UploadImage value) uploadImage,
   }) {
     return loadProfile(this);
   }
@@ -158,6 +168,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadProfile value)? loadProfile,
     TResult? Function(_UpdateProfile value)? updateProfile,
+    TResult? Function(_UploadImage value)? uploadImage,
   }) {
     return loadProfile?.call(this);
   }
@@ -167,6 +178,7 @@ class _$LoadProfileImpl implements _LoadProfile {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadProfile value)? loadProfile,
     TResult Function(_UpdateProfile value)? updateProfile,
+    TResult Function(_UploadImage value)? uploadImage,
     required TResult orElse(),
   }) {
     if (loadProfile != null) {
@@ -264,6 +276,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult when<TResult extends Object?>({
     required TResult Function() loadProfile,
     required TResult Function(UserProfileEntity profile) updateProfile,
+    required TResult Function(File imageFile) uploadImage,
   }) {
     return updateProfile(profile);
   }
@@ -273,6 +286,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadProfile,
     TResult? Function(UserProfileEntity profile)? updateProfile,
+    TResult? Function(File imageFile)? uploadImage,
   }) {
     return updateProfile?.call(profile);
   }
@@ -282,6 +296,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadProfile,
     TResult Function(UserProfileEntity profile)? updateProfile,
+    TResult Function(File imageFile)? uploadImage,
     required TResult orElse(),
   }) {
     if (updateProfile != null) {
@@ -295,6 +310,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadProfile value) loadProfile,
     required TResult Function(_UpdateProfile value) updateProfile,
+    required TResult Function(_UploadImage value) uploadImage,
   }) {
     return updateProfile(this);
   }
@@ -304,6 +320,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadProfile value)? loadProfile,
     TResult? Function(_UpdateProfile value)? updateProfile,
+    TResult? Function(_UploadImage value)? uploadImage,
   }) {
     return updateProfile?.call(this);
   }
@@ -313,6 +330,7 @@ class _$UpdateProfileImpl implements _UpdateProfile {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadProfile value)? loadProfile,
     TResult Function(_UpdateProfile value)? updateProfile,
+    TResult Function(_UploadImage value)? uploadImage,
     required TResult orElse(),
   }) {
     if (updateProfile != null) {
@@ -336,6 +354,155 @@ abstract class _UpdateProfile implements EditProfileEvent {
 }
 
 /// @nodoc
+abstract class _$$UploadImageImplCopyWith<$Res> {
+  factory _$$UploadImageImplCopyWith(
+    _$UploadImageImpl value,
+    $Res Function(_$UploadImageImpl) then,
+  ) = __$$UploadImageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({File imageFile});
+}
+
+/// @nodoc
+class __$$UploadImageImplCopyWithImpl<$Res>
+    extends _$EditProfileEventCopyWithImpl<$Res, _$UploadImageImpl>
+    implements _$$UploadImageImplCopyWith<$Res> {
+  __$$UploadImageImplCopyWithImpl(
+    _$UploadImageImpl _value,
+    $Res Function(_$UploadImageImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of EditProfileEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? imageFile = null}) {
+    return _then(
+      _$UploadImageImpl(
+        null == imageFile
+            ? _value.imageFile
+            : imageFile // ignore: cast_nullable_to_non_nullable
+                  as File,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$UploadImageImpl implements _UploadImage {
+  const _$UploadImageImpl(this.imageFile);
+
+  @override
+  final File imageFile;
+
+  @override
+  String toString() {
+    return 'EditProfileEvent.uploadImage(imageFile: $imageFile)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadImageImpl &&
+            (identical(other.imageFile, imageFile) ||
+                other.imageFile == imageFile));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, imageFile);
+
+  /// Create a copy of EditProfileEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadImageImplCopyWith<_$UploadImageImpl> get copyWith =>
+      __$$UploadImageImplCopyWithImpl<_$UploadImageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadProfile,
+    required TResult Function(UserProfileEntity profile) updateProfile,
+    required TResult Function(File imageFile) uploadImage,
+  }) {
+    return uploadImage(imageFile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadProfile,
+    TResult? Function(UserProfileEntity profile)? updateProfile,
+    TResult? Function(File imageFile)? uploadImage,
+  }) {
+    return uploadImage?.call(imageFile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadProfile,
+    TResult Function(UserProfileEntity profile)? updateProfile,
+    TResult Function(File imageFile)? uploadImage,
+    required TResult orElse(),
+  }) {
+    if (uploadImage != null) {
+      return uploadImage(imageFile);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadProfile value) loadProfile,
+    required TResult Function(_UpdateProfile value) updateProfile,
+    required TResult Function(_UploadImage value) uploadImage,
+  }) {
+    return uploadImage(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadProfile value)? loadProfile,
+    TResult? Function(_UpdateProfile value)? updateProfile,
+    TResult? Function(_UploadImage value)? uploadImage,
+  }) {
+    return uploadImage?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadProfile value)? loadProfile,
+    TResult Function(_UpdateProfile value)? updateProfile,
+    TResult Function(_UploadImage value)? uploadImage,
+    required TResult orElse(),
+  }) {
+    if (uploadImage != null) {
+      return uploadImage(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UploadImage implements EditProfileEvent {
+  const factory _UploadImage(final File imageFile) = _$UploadImageImpl;
+
+  File get imageFile;
+
+  /// Create a copy of EditProfileEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadImageImplCopyWith<_$UploadImageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$EditProfileState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
@@ -344,6 +511,13 @@ mixin _$EditProfileState {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -353,6 +527,13 @@ mixin _$EditProfileState {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -362,6 +543,13 @@ mixin _$EditProfileState {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -372,6 +560,8 @@ mixin _$EditProfileState {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -381,6 +571,8 @@ mixin _$EditProfileState {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -390,6 +582,8 @@ mixin _$EditProfileState {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -465,6 +659,13 @@ class _$InitialImpl implements _Initial {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -478,6 +679,13 @@ class _$InitialImpl implements _Initial {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -491,6 +699,13 @@ class _$InitialImpl implements _Initial {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -508,6 +723,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -521,6 +738,8 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -534,6 +753,8 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -596,6 +817,13 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -609,6 +837,13 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -622,6 +857,13 @@ class _$LoadingImpl implements _Loading {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -639,6 +881,8 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -652,6 +896,8 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -665,6 +911,8 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -766,6 +1014,13 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return loaded(profile);
@@ -779,6 +1034,13 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(profile);
@@ -792,6 +1054,13 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -809,6 +1078,8 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -822,6 +1093,8 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -835,6 +1108,8 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -944,6 +1219,13 @@ class _$SavingImpl implements _Saving {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return saving(profile);
@@ -957,6 +1239,13 @@ class _$SavingImpl implements _Saving {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return saving?.call(profile);
@@ -970,6 +1259,13 @@ class _$SavingImpl implements _Saving {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -987,6 +1283,8 @@ class _$SavingImpl implements _Saving {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return saving(this);
@@ -1000,6 +1298,8 @@ class _$SavingImpl implements _Saving {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return saving?.call(this);
@@ -1013,6 +1313,8 @@ class _$SavingImpl implements _Saving {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -1122,6 +1424,13 @@ class _$SavedImpl implements _Saved {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return saved(profile);
@@ -1135,6 +1444,13 @@ class _$SavedImpl implements _Saved {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return saved?.call(profile);
@@ -1148,6 +1464,13 @@ class _$SavedImpl implements _Saved {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1165,6 +1488,8 @@ class _$SavedImpl implements _Saved {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return saved(this);
@@ -1178,6 +1503,8 @@ class _$SavedImpl implements _Saved {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return saved?.call(this);
@@ -1191,6 +1518,8 @@ class _$SavedImpl implements _Saved {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -1210,6 +1539,445 @@ abstract class _Saved implements EditProfileState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SavedImplCopyWith<_$SavedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ImageUploadingImplCopyWith<$Res> {
+  factory _$$ImageUploadingImplCopyWith(
+    _$ImageUploadingImpl value,
+    $Res Function(_$ImageUploadingImpl) then,
+  ) = __$$ImageUploadingImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserProfileEntity profile});
+
+  $UserProfileEntityCopyWith<$Res> get profile;
+}
+
+/// @nodoc
+class __$$ImageUploadingImplCopyWithImpl<$Res>
+    extends _$EditProfileStateCopyWithImpl<$Res, _$ImageUploadingImpl>
+    implements _$$ImageUploadingImplCopyWith<$Res> {
+  __$$ImageUploadingImplCopyWithImpl(
+    _$ImageUploadingImpl _value,
+    $Res Function(_$ImageUploadingImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? profile = null}) {
+    return _then(
+      _$ImageUploadingImpl(
+        null == profile
+            ? _value.profile
+            : profile // ignore: cast_nullable_to_non_nullable
+                  as UserProfileEntity,
+      ),
+    );
+  }
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserProfileEntityCopyWith<$Res> get profile {
+    return $UserProfileEntityCopyWith<$Res>(_value.profile, (value) {
+      return _then(_value.copyWith(profile: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$ImageUploadingImpl implements _ImageUploading {
+  const _$ImageUploadingImpl(this.profile);
+
+  @override
+  final UserProfileEntity profile;
+
+  @override
+  String toString() {
+    return 'EditProfileState.imageUploading(profile: $profile)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ImageUploadingImpl &&
+            (identical(other.profile, profile) || other.profile == profile));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, profile);
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ImageUploadingImplCopyWith<_$ImageUploadingImpl> get copyWith =>
+      __$$ImageUploadingImplCopyWithImpl<_$ImageUploadingImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserProfileEntity profile) loaded,
+    required TResult Function(UserProfileEntity profile) saving,
+    required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
+    required TResult Function(String message) error,
+  }) {
+    return imageUploading(profile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserProfileEntity profile)? loaded,
+    TResult? Function(UserProfileEntity profile)? saving,
+    TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
+    TResult? Function(String message)? error,
+  }) {
+    return imageUploading?.call(profile);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserProfileEntity profile)? loaded,
+    TResult Function(UserProfileEntity profile)? saving,
+    TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (imageUploading != null) {
+      return imageUploading(profile);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Saving value) saving,
+    required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return imageUploading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Saving value)? saving,
+    TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return imageUploading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Saving value)? saving,
+    TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (imageUploading != null) {
+      return imageUploading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ImageUploading implements EditProfileState {
+  const factory _ImageUploading(final UserProfileEntity profile) =
+      _$ImageUploadingImpl;
+
+  UserProfileEntity get profile;
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ImageUploadingImplCopyWith<_$ImageUploadingImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ImageUploadedImplCopyWith<$Res> {
+  factory _$$ImageUploadedImplCopyWith(
+    _$ImageUploadedImpl value,
+    $Res Function(_$ImageUploadedImpl) then,
+  ) = __$$ImageUploadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserProfileEntity profile, String imageId, String imageUrl});
+
+  $UserProfileEntityCopyWith<$Res> get profile;
+}
+
+/// @nodoc
+class __$$ImageUploadedImplCopyWithImpl<$Res>
+    extends _$EditProfileStateCopyWithImpl<$Res, _$ImageUploadedImpl>
+    implements _$$ImageUploadedImplCopyWith<$Res> {
+  __$$ImageUploadedImplCopyWithImpl(
+    _$ImageUploadedImpl _value,
+    $Res Function(_$ImageUploadedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? profile = null,
+    Object? imageId = null,
+    Object? imageUrl = null,
+  }) {
+    return _then(
+      _$ImageUploadedImpl(
+        null == profile
+            ? _value.profile
+            : profile // ignore: cast_nullable_to_non_nullable
+                  as UserProfileEntity,
+        null == imageId
+            ? _value.imageId
+            : imageId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        null == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserProfileEntityCopyWith<$Res> get profile {
+    return $UserProfileEntityCopyWith<$Res>(_value.profile, (value) {
+      return _then(_value.copyWith(profile: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$ImageUploadedImpl implements _ImageUploaded {
+  const _$ImageUploadedImpl(this.profile, this.imageId, this.imageUrl);
+
+  @override
+  final UserProfileEntity profile;
+  @override
+  final String imageId;
+  @override
+  final String imageUrl;
+
+  @override
+  String toString() {
+    return 'EditProfileState.imageUploaded(profile: $profile, imageId: $imageId, imageUrl: $imageUrl)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ImageUploadedImpl &&
+            (identical(other.profile, profile) || other.profile == profile) &&
+            (identical(other.imageId, imageId) || other.imageId == imageId) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, profile, imageId, imageUrl);
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ImageUploadedImplCopyWith<_$ImageUploadedImpl> get copyWith =>
+      __$$ImageUploadedImplCopyWithImpl<_$ImageUploadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(UserProfileEntity profile) loaded,
+    required TResult Function(UserProfileEntity profile) saving,
+    required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
+    required TResult Function(String message) error,
+  }) {
+    return imageUploaded(profile, imageId, imageUrl);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(UserProfileEntity profile)? loaded,
+    TResult? Function(UserProfileEntity profile)? saving,
+    TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
+    TResult? Function(String message)? error,
+  }) {
+    return imageUploaded?.call(profile, imageId, imageUrl);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(UserProfileEntity profile)? loaded,
+    TResult Function(UserProfileEntity profile)? saving,
+    TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (imageUploaded != null) {
+      return imageUploaded(profile, imageId, imageUrl);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Saving value) saving,
+    required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return imageUploaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Saving value)? saving,
+    TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return imageUploaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Saving value)? saving,
+    TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (imageUploaded != null) {
+      return imageUploaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ImageUploaded implements EditProfileState {
+  const factory _ImageUploaded(
+    final UserProfileEntity profile,
+    final String imageId,
+    final String imageUrl,
+  ) = _$ImageUploadedImpl;
+
+  UserProfileEntity get profile;
+  String get imageId;
+  String get imageUrl;
+
+  /// Create a copy of EditProfileState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ImageUploadedImplCopyWith<_$ImageUploadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1288,6 +2056,13 @@ class _$ErrorImpl implements _Error {
     required TResult Function(UserProfileEntity profile) loaded,
     required TResult Function(UserProfileEntity profile) saving,
     required TResult Function(UserProfileEntity profile) saved,
+    required TResult Function(UserProfileEntity profile) imageUploading,
+    required TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )
+    imageUploaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -1301,6 +2076,13 @@ class _$ErrorImpl implements _Error {
     TResult? Function(UserProfileEntity profile)? loaded,
     TResult? Function(UserProfileEntity profile)? saving,
     TResult? Function(UserProfileEntity profile)? saved,
+    TResult? Function(UserProfileEntity profile)? imageUploading,
+    TResult? Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -1314,6 +2096,13 @@ class _$ErrorImpl implements _Error {
     TResult Function(UserProfileEntity profile)? loaded,
     TResult Function(UserProfileEntity profile)? saving,
     TResult Function(UserProfileEntity profile)? saved,
+    TResult Function(UserProfileEntity profile)? imageUploading,
+    TResult Function(
+      UserProfileEntity profile,
+      String imageId,
+      String imageUrl,
+    )?
+    imageUploaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1331,6 +2120,8 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
+    required TResult Function(_ImageUploading value) imageUploading,
+    required TResult Function(_ImageUploaded value) imageUploaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -1344,6 +2135,8 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
+    TResult? Function(_ImageUploading value)? imageUploading,
+    TResult? Function(_ImageUploaded value)? imageUploaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -1357,6 +2150,8 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
+    TResult Function(_ImageUploading value)? imageUploading,
+    TResult Function(_ImageUploaded value)? imageUploaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

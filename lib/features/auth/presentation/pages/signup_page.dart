@@ -42,7 +42,8 @@ class _SignupContent extends StatefulWidget {
 
 class _SignupContentState extends State<_SignupContent> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _mobileController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -74,7 +75,8 @@ class _SignupContentState extends State<_SignupContent> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _mobileController.dispose();
     _passwordController.dispose();
@@ -98,17 +100,29 @@ class _SignupContentState extends State<_SignupContent> {
 
       final authBloc = context.read<AuthBloc>();
       context.pushNamed(
-        AppRoutesNames.choosePlan,
+        AppRoutesNames.chooseClinicName,
         extra: authBloc,
       );
     }
   }
 
-  String? _validateName(String? value) {
+  String? _validateFirstName(String? value) {
     if (!_showValidationErrors) return null;
     final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return l10n.pleaseEnterYourName;
+      return l10n.pleaseEnterFirstName;
+    }
+    if (!ValidationConstants.isValidName(value)) {
+      return l10n.nameTooShort;
+    }
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    if (!_showValidationErrors) return null;
+    final l10n = AppLocalizations.of(context)!;
+    if (value == null || value.isEmpty) {
+      return l10n.pleaseEnterLastName;
     }
     if (!ValidationConstants.isValidName(value)) {
       return l10n.nameTooShort;
@@ -299,19 +313,42 @@ class _SignupContentState extends State<_SignupContent> {
                     _buildInfoBox(l10n, fontFamily),
                     SizedBox(height: 24.h),
 
-                    AuthTextField(
-                      label: l10n.fullNameRequired,
-                      hint: l10n.fullNameHint,
-                      controller: _nameController,
-                      prefixIcon: Icons.person_outline,
-                      keyboardType: TextInputType.name,
-                      validator: _validateName,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupNameChanged(value),
-                        );
-                        _validateForm();
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AuthTextField(
+                            label: l10n.firstNameRequired,
+                            hint: l10n.firstNameHint,
+                            controller: _firstNameController,
+                            prefixIcon: Icons.person_outline,
+                            keyboardType: TextInputType.name,
+                            validator: _validateFirstName,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(
+                                AuthEvent.signupFirstNameChanged(value),
+                              );
+                              _validateForm();
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: AuthTextField(
+                            label: l10n.lastNameRequired,
+                            hint: l10n.lastNameHint,
+                            controller: _lastNameController,
+                            prefixIcon: Icons.person_outline,
+                            keyboardType: TextInputType.name,
+                            validator: _validateLastName,
+                            onChanged: (value) {
+                              context.read<AuthBloc>().add(
+                                AuthEvent.signupLastNameChanged(value),
+                              );
+                              _validateForm();
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 16.h),
 
@@ -321,6 +358,7 @@ class _SignupContentState extends State<_SignupContent> {
                       controller: _emailController,
                       prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      textDirection: TextDirection.ltr,
                       validator: _validateEmail,
                       enabled: state.sessionId == null || state.sessionId!.isEmpty,
                       suffixIcon: state.sessionId != null && state.sessionId!.isNotEmpty

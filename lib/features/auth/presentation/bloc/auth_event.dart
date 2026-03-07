@@ -9,7 +9,8 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.loginSubmitted() = _LoginSubmitted;
 
   // Signup events - Unified for all dental professionals
-  const factory AuthEvent.signupNameChanged(String name) = _SignupNameChanged;
+  const factory AuthEvent.signupFirstNameChanged(String firstName) = _SignupFirstNameChanged;
+  const factory AuthEvent.signupLastNameChanged(String lastName) = _SignupLastNameChanged;
   const factory AuthEvent.signupEmailChanged(String email) = _SignupEmailChanged;
   const factory AuthEvent.signupPasswordChanged(String password) = _SignupPasswordChanged;
   const factory AuthEvent.signupConfirmPasswordChanged(String confirmPassword) = _SignupConfirmPasswordChanged;

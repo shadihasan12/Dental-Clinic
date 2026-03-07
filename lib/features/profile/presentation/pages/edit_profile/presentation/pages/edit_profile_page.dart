@@ -1,15 +1,21 @@
+import 'dart:io';
+
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/data/data_sources/edit_profile_remote_data_source.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/domain/entities/user_profile_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/manager/edit_profile_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_dropdown_field.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -39,37 +45,19 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
-  late final TextEditingController _locationController;
 
-  String? _selectedSpecialization;
+  String? _selectedSpecialtyId;
+  String? _selectedSpecialtyName;
   String _profileId = '';
   bool _formPopulated = false;
 
-  final List<String> _specializations = [
-    'General Dentistry',
-    'Endodontics',
-    'Orthodontics',
-    'Cosmetic Dentistry',
-    'Oral Surgery',
-  ];
+  // Image state
+  String? _uploadedImageId;
+  String? _imageUrl;
+  File? _pickedImageFile;
+  bool _isUploadingImage = false;
 
-  String _getLocalizedSpecialization(BuildContext context, String spec) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (spec) {
-      case 'General Dentistry':
-        return l10n.generalDentistry;
-      case 'Endodontics':
-        return l10n.endodontics;
-      case 'Orthodontics':
-        return l10n.orthodontics;
-      case 'Cosmetic Dentistry':
-        return l10n.cosmeticDentistry;
-      case 'Oral Surgery':
-        return l10n.oralSurgery;
-      default:
-        return spec;
-    }
-  }
+  List<SpecialtyEntity>? _specialties;
 
   @override
   void initState() {
@@ -78,7 +66,6 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     _lastNameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
-    _locationController = TextEditingController();
   }
 
   @override
@@ -87,7 +74,6 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _locationController.dispose();
     super.dispose();
   }
 
@@ -97,8 +83,9 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     _lastNameController.text = profile.lastName;
     _emailController.text = profile.email;
     _phoneController.text = profile.phone;
-    _locationController.text = profile.location;
-    _selectedSpecialization = profile.specialization;
+    _selectedSpecialtyId = profile.specialtyId;
+    _selectedSpecialtyName = profile.specialtyName;
+    _imageUrl = profile.imageUrl;
     _formPopulated = true;
   }
 
@@ -109,8 +96,10 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       lastName: _lastNameController.text.trim(),
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
-      location: _locationController.text.trim(),
-      specialization: _selectedSpecialization,
+      specialtyId: _selectedSpecialtyId,
+      specialtyName: _selectedSpecialtyName,
+      imageId: _uploadedImageId,
+      imageUrl: _imageUrl,
     );
   }
 
@@ -121,8 +110,179 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         );
   }
 
-  void _showSpecializationPicker() {
+  Future<void> _onPickImage() async {
+    final hasPermission = await _requestPhotoPermission();
+    if (!hasPermission || !mounted) return;
+
+    final bloc = context.read<EditProfileBloc>();
+    final result = await getIt<FilePickerService>().pickImage();
+    if (result == null || !mounted) return;
+
+    setState(() {
+      _pickedImageFile = result.file;
+      _isUploadingImage = true;
+    });
+
+    bloc.add(
+          EditProfileEvent.uploadImage(result.file),
+        );
+  }
+
+  Future<bool> _requestPhotoPermission() async {
+    PermissionStatus status;
+
+    // Android 13+ uses photos permission, older uses storage
+    if (Platform.isAndroid) {
+      status = await Permission.photos.status;
+      if (!status.isGranted) {
+        status = await Permission.photos.request();
+      }
+      // Fallback for older Android versions
+      if (status.isDenied) {
+        status = await Permission.storage.request();
+      }
+    } else {
+      status = await Permission.photos.status;
+      if (!status.isGranted) {
+        status = await Permission.photos.request();
+      }
+    }
+
+    if (status.isPermanentlyDenied && mounted) {
+      _showPermissionDeniedBottomSheet();
+      return false;
+    }
+
+    return status.isGranted || status.isLimited;
+  }
+
+  void _showPermissionDeniedBottomSheet() {
     final l10n = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: ColorManager.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: ColorManager.borderLight,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Icon(
+                  Icons.photo_library_outlined,
+                  size: 48.w,
+                  color: ColorManager.primary,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  l10n.photoPermissionRequired,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  l10n.photoPermissionMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w400,
+                    color: ColorManager.textSecondary,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    openAppSettings();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(14.h),
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: BorderRadiusManager.lg,
+                    ),
+                    child: Text(
+                      l10n.openSettings,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                GestureDetector(
+                  onTap: () => Navigator.pop(sheetContext),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(14.h),
+                    decoration: BoxDecoration(
+                      color: ColorManager.scaffoldBackground,
+                      borderRadius: BorderRadiusManager.lg,
+                    ),
+                    child: Text(
+                      l10n.cancel,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.textPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showSpecializationPicker() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Load specialties if not cached
+    if (_specialties == null) {
+      try {
+        final dataSource = getIt<EditProfileRemoteDataSource>();
+        final specs = await dataSource.getSpecialties();
+        _specialties = specs;
+      } catch (_) {
+        if (mounted) {
+          AppSnackbar.showError(
+            context,
+            title: l10n.error,
+            message: l10n.somethingWentWrong,
+          );
+        }
+        return;
+      }
+    }
+
+    if (!mounted) return;
 
     showModalBottomSheet(
       context: context,
@@ -130,7 +290,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -159,16 +319,15 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   ),
                 ),
               ),
-              ..._specializations.map((spec) {
-                final isSelected = _selectedSpecialization == spec;
-                final localizedSpec = _getLocalizedSpecialization(
-                  context,
-                  spec,
-                );
+              ..._specialties!.map((spec) {
+                final isSelected = _selectedSpecialtyId == spec.id;
                 return InkWell(
                   onTap: () {
-                    setState(() => _selectedSpecialization = spec);
-                    Navigator.pop(context);
+                    setState(() {
+                      _selectedSpecialtyId = spec.id;
+                      _selectedSpecialtyName = spec.name;
+                    });
+                    Navigator.pop(sheetContext);
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -204,7 +363,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                         ),
                         SizedBox(width: 12.w),
                         Text(
-                          localizedSpec,
+                          spec.name,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
@@ -238,12 +397,15 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         loading: (_) => true,
         loaded: (_) => true,
         error: (_) => true,
+        imageUploading: (_) => true,
+        imageUploaded: (_, {profile, imageId, imageUrl}) => true,
         orElse: () => false,
       ),
       listenWhen: (prev, curr) => curr.maybeMap(
         saving: (_) => true,
         saved: (_) => true,
         error: (_) => true,
+        imageUploaded: (_, {profile, imageId, imageUrl}) => true,
         orElse: () => false,
       ),
       listener: (context, state) {
@@ -262,10 +424,20 @@ class _EditProfileContentState extends State<_EditProfileContent> {
               message: l10n.saveChanges,
             );
           },
+          imageUploaded: (profile, imageId, imageUrl) {
+            setState(() {
+              _uploadedImageId = imageId;
+              _imageUrl = imageUrl;
+              _isUploadingImage = false;
+            });
+          },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
+            setState(() => _isUploadingImage = false);
+            AppSnackbar.showError(
+              context,
+              title: l10n.error,
+              message: message,
             );
           },
           orElse: () {},
@@ -287,9 +459,10 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   loading: () => const Center(
                     child: CircularProgressIndicator(),
                   ),
-                  error: (message) => Center(
-                    child: Text(message),
-                  ),
+                  error: (message) {
+                    if (_formPopulated) return _buildForm(l10n);
+                    return Center(child: Text(message));
+                  },
                   loaded: (profile) {
                     if (!_formPopulated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -316,11 +489,75 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     );
   }
 
+  Widget _buildProfileImage() {
+    return Center(
+      child: GestureDetector(
+        onTap: _isUploadingImage ? null : _onPickImage,
+        child: Stack(
+          children: [
+            CircleAvatar(
+              radius: 50.r,
+              backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
+              backgroundImage: _pickedImageFile != null
+                  ? FileImage(_pickedImageFile!)
+                  : (_imageUrl != null && _imageUrl!.isNotEmpty
+                      ? NetworkImage(_imageUrl!) as ImageProvider
+                      : null),
+              child: _pickedImageFile == null &&
+                      (_imageUrl == null || _imageUrl!.isEmpty)
+                  ? Icon(
+                      Icons.person,
+                      size: 50.w,
+                      color: ColorManager.primary,
+                    )
+                  : null,
+            ),
+            if (_isUploadingImage)
+              Positioned.fill(
+                child: CircleAvatar(
+                  radius: 50.r,
+                  backgroundColor: Colors.black38,
+                  child: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: Icon(
+                  Icons.camera_alt_outlined,
+                  size: 16.w,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildForm(AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
+          _buildProfileImage(),
+          SizedBox(height: 20.h),
           CustomCard(
             child: Column(
               children: [
@@ -339,7 +576,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                 ProfileDropdownField(
                   icon: Icons.medical_services_outlined,
                   label: l10n.specialization,
-                  value: _selectedSpecialization,
+                  value: _selectedSpecialtyName,
                   onTap: _showSpecializationPicker,
                 ),
                 ProfileTextField(
@@ -348,18 +585,30 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
+                  enabled: false,
+                  suffixWidget: GestureDetector(
+                    onTap: () {
+                      // TODO: Navigate to change email flow
+                    },
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.only(end: 12.w),
+                      child: Text(
+                        l10n.edit,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 ProfileTextField(
                   icon: Icons.phone_outlined,
                   label: l10n.phone,
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileTextField(
-                  icon: Icons.location_on_outlined,
-                  label: l10n.location,
-                  controller: _locationController,
                   textInputAction: TextInputAction.done,
                   isLast: true,
                 ),

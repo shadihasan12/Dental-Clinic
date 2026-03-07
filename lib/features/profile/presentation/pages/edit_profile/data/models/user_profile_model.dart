@@ -6,8 +6,10 @@ class UserProfileModel {
   final String lastName;
   final String email;
   final String phone;
-  final String location;
-  final String? specialization;
+  final String? specialtyId;
+  final String? specialtyName;
+  final String? imageId;
+  final String? imageUrl;
 
   const UserProfileModel({
     required this.id,
@@ -15,32 +17,39 @@ class UserProfileModel {
     required this.lastName,
     required this.email,
     required this.phone,
-    required this.location,
-    this.specialization,
+    this.specialtyId,
+    this.specialtyName,
+    this.imageId,
+    this.imageUrl,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    final specialty = json['specialty'] as Map<String, dynamic>?;
     return UserProfileModel(
       id: json['id'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       email: json['email'] as String,
-      phone: json['phone'] as String? ?? '',
-      location: json['location'] as String? ?? '',
-      specialization: json['specialization'] as String?,
+      phone: json['mobile_number'] as String? ?? '',
+      specialtyId: specialty?['id'] as String?,
+      specialtyName: specialty?['name'] as String?,
+      imageUrl: json['image'] as String?,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'phone': phone,
-      'location': location,
-      'specialization': specialization,
+  Map<String, dynamic> toUpdateJson() {
+    final body = <String, dynamic>{
+      'first_name': firstName,
+      'last_name': lastName,
+      'mobile_number': phone,
     };
+    if (specialtyId != null) {
+      body['specialty_id'] = specialtyId;
+    }
+    if (imageId != null) {
+      body['image_id'] = imageId;
+    }
+    return body;
   }
 
   factory UserProfileModel.fromEntity(UserProfileEntity entity) {
@@ -50,8 +59,10 @@ class UserProfileModel {
       lastName: entity.lastName,
       email: entity.email,
       phone: entity.phone,
-      location: entity.location,
-      specialization: entity.specialization,
+      specialtyId: entity.specialtyId,
+      specialtyName: entity.specialtyName,
+      imageId: entity.imageId,
+      imageUrl: entity.imageUrl,
     );
   }
 
@@ -62,8 +73,10 @@ class UserProfileModel {
       lastName: lastName,
       email: email,
       phone: phone,
-      location: location,
-      specialization: specialization,
+      specialtyId: specialtyId,
+      specialtyName: specialtyName,
+      imageId: imageId,
+      imageUrl: imageUrl,
     );
   }
 }

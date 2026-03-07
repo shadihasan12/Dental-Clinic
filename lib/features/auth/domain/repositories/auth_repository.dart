@@ -92,7 +92,8 @@ class LoginResult {
 
 /// Parameters for registration request
 class RegisterRequestParams {
-  final String userName;
+  final String firstName;
+  final String lastName;
   final String mobileNumber;
   final String password;
   final String passwordConfirmation;
@@ -104,7 +105,8 @@ class RegisterRequestParams {
   final String sessionId;
 
   RegisterRequestParams({
-    required this.userName,
+    required this.firstName,
+    required this.lastName,
     required this.mobileNumber,
     required this.password,
     required this.passwordConfirmation,
@@ -120,7 +122,8 @@ class RegisterRequestParams {
   Map<String, dynamic> toJson() {
     return {
       'user': {
-        'name': userName,
+        'first_name': firstName,
+        'last_name': lastName,
         'mobile_number': mobileNumber,
         'password': password,
         'password_confirmation': passwordConfirmation,

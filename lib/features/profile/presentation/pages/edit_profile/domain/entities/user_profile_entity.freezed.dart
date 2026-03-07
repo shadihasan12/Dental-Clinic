@@ -22,8 +22,10 @@ mixin _$UserProfileEntity {
   String get lastName => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
-  String get location => throw _privateConstructorUsedError;
-  String? get specialization => throw _privateConstructorUsedError;
+  String? get specialtyId => throw _privateConstructorUsedError;
+  String? get specialtyName => throw _privateConstructorUsedError;
+  String? get imageId => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
 
   /// Create a copy of UserProfileEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -45,8 +47,10 @@ abstract class $UserProfileEntityCopyWith<$Res> {
     String lastName,
     String email,
     String phone,
-    String location,
-    String? specialization,
+    String? specialtyId,
+    String? specialtyName,
+    String? imageId,
+    String? imageUrl,
   });
 }
 
@@ -70,8 +74,10 @@ class _$UserProfileEntityCopyWithImpl<$Res, $Val extends UserProfileEntity>
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
-    Object? location = null,
-    Object? specialization = freezed,
+    Object? specialtyId = freezed,
+    Object? specialtyName = freezed,
+    Object? imageId = freezed,
+    Object? imageUrl = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -95,13 +101,21 @@ class _$UserProfileEntityCopyWithImpl<$Res, $Val extends UserProfileEntity>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
-            location: null == location
-                ? _value.location
-                : location // ignore: cast_nullable_to_non_nullable
-                      as String,
-            specialization: freezed == specialization
-                ? _value.specialization
-                : specialization // ignore: cast_nullable_to_non_nullable
+            specialtyId: freezed == specialtyId
+                ? _value.specialtyId
+                : specialtyId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            specialtyName: freezed == specialtyName
+                ? _value.specialtyName
+                : specialtyName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageId: freezed == imageId
+                ? _value.imageId
+                : imageId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
           )
           as $Val,
@@ -124,8 +138,10 @@ abstract class _$$UserProfileEntityImplCopyWith<$Res>
     String lastName,
     String email,
     String phone,
-    String location,
-    String? specialization,
+    String? specialtyId,
+    String? specialtyName,
+    String? imageId,
+    String? imageUrl,
   });
 }
 
@@ -148,8 +164,10 @@ class __$$UserProfileEntityImplCopyWithImpl<$Res>
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
-    Object? location = null,
-    Object? specialization = freezed,
+    Object? specialtyId = freezed,
+    Object? specialtyName = freezed,
+    Object? imageId = freezed,
+    Object? imageUrl = freezed,
   }) {
     return _then(
       _$UserProfileEntityImpl(
@@ -173,13 +191,21 @@ class __$$UserProfileEntityImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
-        location: null == location
-            ? _value.location
-            : location // ignore: cast_nullable_to_non_nullable
-                  as String,
-        specialization: freezed == specialization
-            ? _value.specialization
-            : specialization // ignore: cast_nullable_to_non_nullable
+        specialtyId: freezed == specialtyId
+            ? _value.specialtyId
+            : specialtyId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        specialtyName: freezed == specialtyName
+            ? _value.specialtyName
+            : specialtyName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageId: freezed == imageId
+            ? _value.imageId
+            : imageId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
       ),
     );
@@ -195,8 +221,10 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
     required this.lastName,
     required this.email,
     this.phone = '',
-    this.location = '',
-    this.specialization,
+    this.specialtyId,
+    this.specialtyName,
+    this.imageId,
+    this.imageUrl,
   });
 
   @override
@@ -211,14 +239,17 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
   @JsonKey()
   final String phone;
   @override
-  @JsonKey()
-  final String location;
+  final String? specialtyId;
   @override
-  final String? specialization;
+  final String? specialtyName;
+  @override
+  final String? imageId;
+  @override
+  final String? imageUrl;
 
   @override
   String toString() {
-    return 'UserProfileEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, location: $location, specialization: $specialization)';
+    return 'UserProfileEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, specialtyId: $specialtyId, specialtyName: $specialtyName, imageId: $imageId, imageUrl: $imageUrl)';
   }
 
   @override
@@ -233,10 +264,13 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
                 other.lastName == lastName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
-            (identical(other.specialization, specialization) ||
-                other.specialization == specialization));
+            (identical(other.specialtyId, specialtyId) ||
+                other.specialtyId == specialtyId) &&
+            (identical(other.specialtyName, specialtyName) ||
+                other.specialtyName == specialtyName) &&
+            (identical(other.imageId, imageId) || other.imageId == imageId) &&
+            (identical(other.imageUrl, imageUrl) ||
+                other.imageUrl == imageUrl));
   }
 
   @override
@@ -247,8 +281,10 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
     lastName,
     email,
     phone,
-    location,
-    specialization,
+    specialtyId,
+    specialtyName,
+    imageId,
+    imageUrl,
   );
 
   /// Create a copy of UserProfileEntity
@@ -270,8 +306,10 @@ abstract class _UserProfileEntity implements UserProfileEntity {
     required final String lastName,
     required final String email,
     final String phone,
-    final String location,
-    final String? specialization,
+    final String? specialtyId,
+    final String? specialtyName,
+    final String? imageId,
+    final String? imageUrl,
   }) = _$UserProfileEntityImpl;
 
   @override
@@ -285,9 +323,13 @@ abstract class _UserProfileEntity implements UserProfileEntity {
   @override
   String get phone;
   @override
-  String get location;
+  String? get specialtyId;
   @override
-  String? get specialization;
+  String? get specialtyName;
+  @override
+  String? get imageId;
+  @override
+  String? get imageUrl;
 
   /// Create a copy of UserProfileEntity
   /// with the given fields replaced by the non-null parameter values.

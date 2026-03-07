@@ -28,6 +28,7 @@
   "close": "إغلاق",
   "loading": "جاري التحميل...",
   "error": "خطأ",
+  "somethingWentWrong": "حدث خطأ ما",
   "success": "تم بنجاح",
   "noData": "لا توجد بيانات متاحة",
   "firstName": "الاسم الأول",
@@ -406,8 +407,12 @@
 
   "createAccount": "إنشاء حساب",
   "joinDentalCommunity": "انضم إلى مجتمعنا الطبي",
-  "fullNameRequired": "الاسم الكامل *",
-  "fullNameHint": "د. أحمد محمد",
+  "firstNameRequired": "الاسم الأول *",
+  "firstNameHint": "أحمد",
+  "lastNameRequired": "الاسم الأخير *",
+  "lastNameHint": "محمد",
+  "pleaseEnterFirstName": "يرجى إدخال الاسم الأول",
+  "pleaseEnterLastName": "يرجى إدخال الاسم الأخير",
   "emailRequired": "البريد الإلكتروني *",
   "emailHint": "doctor@example.com",
   "mobileNumber": "رقم الهاتف *",
@@ -564,6 +569,9 @@
   "pleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صحيح",
   "pleaseEnterYourPassword": "يرجى إدخال كلمة المرور",
   "pleaseSelectSpecialty": "يرجى اختيار التخصص",
-  "workingHoursAndHolidays": "ساعات العمل والعطل"
+  "workingHoursAndHolidays": "ساعات العمل والعطل",
+  "photoPermissionRequired": "إذن الوصول للصور مطلوب",
+  "photoPermissionMessage": "يحتاج التطبيق إلى إذن الوصول للصور لتعيين صورة ملفك الشخصي. يرجى منح الإذن من الإعدادات.",
+  "openSettings": "فتح الإعدادات"
 }
 
