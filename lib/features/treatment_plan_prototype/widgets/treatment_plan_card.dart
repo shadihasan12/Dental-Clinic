@@ -8,6 +8,7 @@ import '../models/prototype_models.dart';
 class TreatmentPlanCard extends StatelessWidget {
   final PlannedTreatment treatment;
   final bool showCheckbox;
+  final bool removeBorder;
   final ValueChanged<bool?>? onStatusChanged;
   final VoidCallback? onTap;
 
@@ -15,6 +16,7 @@ class TreatmentPlanCard extends StatelessWidget {
     super.key,
     required this.treatment,
     this.showCheckbox = false,
+    this.removeBorder = false,
     this.onStatusChanged,
     this.onTap,
   });
@@ -27,17 +29,19 @@ class TreatmentPlanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: isCompleted
-              ? ColorManager.success.withValues(alpha: 0.04)
-              : ColorManager.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: isCompleted
-                ? ColorManager.success.withValues(alpha: 0.2)
-                : ColorManager.borderLight,
-          ),
-        ),
+        decoration: removeBorder
+            ? null
+            : BoxDecoration(
+                color: isCompleted
+                    ? ColorManager.success.withValues(alpha: 0.04)
+                    : ColorManager.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: isCompleted
+                      ? ColorManager.success.withValues(alpha: 0.2)
+                      : ColorManager.borderLight,
+                ),
+              ),
         child: Row(
           children: [
             // Status indicator or checkbox
@@ -130,37 +134,41 @@ class TreatmentPlanCard extends StatelessWidget {
                       ],
                     )
                   else
-                    Text(
-                      'General',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textTertiary,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'General',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            color: ColorManager.textTertiary,
+                          ),
+                        ),
+                        if (treatment.visitNotes.isNotEmpty) ...[
+                          SizedBox(width: 6.w),
+                          Icon(
+                            Icons.sticky_note_2_outlined,
+                            size: 12.w,
+                            color: ColorManager.primary,
+                          ),
+                          SizedBox(width: 2.w),
+                          Text(
+                            '${treatment.visitNotes.length}',
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontFamily: FontHelper.fontFamily(context),
+                              fontWeight: FontWeight.w500,
+                              color: ColorManager.primary,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),
             ),
 
-            // Cost + status
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '\$${treatment.cost.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: isCompleted
-                        ? ColorManager.textTertiary
-                        : ColorManager.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                _buildStatusBadge(context),
-              ],
-            ),
+            _buildStatusBadge(context),
           ],
         ),
       ),

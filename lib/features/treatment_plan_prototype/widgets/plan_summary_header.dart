@@ -96,35 +96,28 @@ class PlanSummaryHeader extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
 
-          // Stats row
+          // Financial stats row
           Row(
             children: [
               _buildStat(
                 context,
-                icon: Icons.assignment_outlined,
-                value: '$total',
+                icon: Icons.account_balance_wallet_outlined,
+                value: plan.grandTotal.toStringAsFixed(0),
                 label: 'Total',
               ),
               _divider(),
               _buildStat(
                 context,
                 icon: Icons.check_circle_outline,
-                value: '$done',
-                label: 'Done',
+                value: plan.paid.toStringAsFixed(0),
+                label: 'Paid',
               ),
               _divider(),
               _buildStat(
                 context,
                 icon: Icons.schedule,
-                value: '${plan.planned.length}',
-                label: 'Remaining',
-              ),
-              _divider(),
-              _buildStat(
-                context,
-                icon: Icons.attach_money,
-                value: '\$${plan.totalCost.toStringAsFixed(0)}',
-                label: 'Total Cost',
+                value: plan.pending.toStringAsFixed(0),
+                label: 'Pending',
               ),
             ],
           ),

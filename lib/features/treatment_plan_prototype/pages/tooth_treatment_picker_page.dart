@@ -71,7 +71,6 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
             id: 'new_${_idCounter++}',
             type: type,
             toothNumber: toothNumber,
-            cost: type.defaultCost,
           ));
         }
       });
@@ -83,7 +82,6 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       _newTreatments.add(PlannedTreatment(
         id: 'new_${_idCounter++}',
         type: type,
-        cost: type.defaultCost,
       ));
     });
   }
@@ -362,9 +360,6 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
   }
 
   Widget _buildBottomBar(BuildContext context) {
-    final totalCost =
-        _newTreatments.fold<double>(0, (sum, t) => sum + t.cost);
-
     return Container(
       padding: EdgeInsets.fromLTRB(
         20.w,
@@ -384,28 +379,14 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       ),
       child: Row(
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${_newTreatments.length} treatments',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
-                ),
-              ),
-              Text(
-                '\$${totalCost.toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w700,
-                  color: ColorManager.textPrimary,
-                ),
-              ),
-            ],
+          Text(
+            '${_newTreatments.length} treatments',
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w500,
+              color: ColorManager.textSecondary,
+            ),
           ),
           SizedBox(width: 20.w),
           Expanded(

@@ -130,7 +130,6 @@ class _VisitSessionPageState extends State<VisitSessionPage> {
                             type: t.type,
                             toothNumber: t.toothNumber,
                             status: TreatmentPlanStatus.completed,
-                            cost: t.cost,
                           ),
                           showCheckbox: true,
                           onStatusChanged: (_) => _toggleTreatment(t),

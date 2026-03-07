@@ -1,8 +1,8 @@
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -11,13 +11,16 @@ import '../models/prototype_models.dart';
 import '../widgets/plan_summary_header.dart';
 import '../widgets/treatment_plan_card.dart';
 import 'tooth_treatment_picker_page.dart';
-import 'visit_session_page.dart';
-import 'quick_add_treatment_page.dart';
 
-/// Main dashboard showing the treatment plan overview.
-/// This is the primary page a dentist sees when viewing a patient's plan.
 class TreatmentDashboardPage extends StatefulWidget {
-  const TreatmentDashboardPage({super.key});
+  final double totalCost;
+  final double labFees;
+
+  const TreatmentDashboardPage({
+    super.key,
+    required this.totalCost,
+    required this.labFees,
+  });
 
   @override
   State<TreatmentDashboardPage> createState() =>
@@ -26,18 +29,51 @@ class TreatmentDashboardPage extends StatefulWidget {
 
 class _TreatmentDashboardPageState extends State<TreatmentDashboardPage> {
   late TreatmentPlan _plan;
-  int _selectedTab = 0; // 0=All, 1=By Tooth, 2=General
 
   @override
   void initState() {
     super.initState();
-    _plan = MockData.samplePlan();
+    _plan = TreatmentPlan(
+      id: 'plan_001',
+      patientName: 'Ahmed Mohammed',
+      treatments: [],
+      createdAt: DateTime.now(),
+      totalCost: widget.totalCost,
+      labFees: widget.labFees,
+    );
   }
 
   void _addTreatments(List<PlannedTreatment> treatments) {
     setState(() {
       _plan.treatments.addAll(treatments);
     });
+  }
+
+  void _markFinished(PlannedTreatment treatment) {
+    setState(() {
+      treatment.status = TreatmentPlanStatus.completed;
+      treatment.completedDate = DateTime.now();
+    });
+  }
+
+  void _showTreatmentDetailsSheet(PlannedTreatment treatment) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _TreatmentDetailsSheet(
+        treatment: treatment,
+        allTreatments: _plan.treatments,
+        onNoteSaved: (text) {
+          setState(() {
+            treatment.visitNotes.add(VisitNote(
+              date: DateTime.now(),
+              text: text,
+            ));
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -56,22 +92,9 @@ class _TreatmentDashboardPageState extends State<TreatmentDashboardPage> {
               padding: EdgeInsets.all(16.w),
               child: Column(
                 children: [
-                  // Summary header
                   PlanSummaryHeader(plan: _plan),
                   SizedBox(height: 16.h),
-
-                  // Quick actions
-                  _buildQuickActions(context),
-                  SizedBox(height: 16.h),
-
-                  // View tabs
-                  _buildViewTabs(context),
-                  SizedBox(height: 12.h),
-
-                  // Treatment list based on tab
-                  if (_selectedTab == 0) _buildAllTreatments(context),
-                  if (_selectedTab == 1) _buildByToothView(context),
-                  if (_selectedTab == 2) _buildGeneralView(context),
+                  _buildTreatmentsList(context),
                   SizedBox(height: 80.h),
                 ],
               ),
@@ -82,215 +105,118 @@ class _TreatmentDashboardPageState extends State<TreatmentDashboardPage> {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.play_arrow_rounded,
-            label: 'Start Visit',
-            color: ColorManager.success,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => VisitSessionPage(plan: _plan),
-              ),
-            ).then((_) => setState(() {})),
-          ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.add_circle_outline,
-            label: 'Plan from Chart',
-            color: ColorManager.primary,
-            onTap: () async {
-              final result = await Navigator.push<List<PlannedTreatment>>(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ToothTreatmentPickerPage(
-                    existingTreatments: _plan.treatments,
-                  ),
-                ),
-              );
-              if (result != null && result.isNotEmpty) {
-                _addTreatments(result);
-              }
-            },
-          ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.bolt,
-            label: 'Quick Add',
-            color: ColorManager.warning,
-            onTap: () async {
-              final result = await Navigator.push<PlannedTreatment>(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const QuickAddTreatmentPage(),
-                ),
-              );
-              if (result != null) {
-                _addTreatments([result]);
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildViewTabs(BuildContext context) {
-    final tabs = ['All', 'By Tooth', 'General'];
-    return Row(
-      children: List.generate(tabs.length, (i) {
-        final isSelected = _selectedTab == i;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _selectedTab = i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: EdgeInsets.symmetric(vertical: 10.h),
-              decoration: BoxDecoration(
-                color:
-                    isSelected ? ColorManager.primary : Colors.transparent,
-                borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(
-                  color: isSelected
-                      ? ColorManager.primary
-                      : ColorManager.borderLight,
-                ),
-              ),
-              child: Text(
-                tabs[i],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? ColorManager.white
-                      : ColorManager.textSecondary,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).expand((w) sync* {
-        yield w;
-        yield SizedBox(width: 8.w);
-      }).toList()
-        ..removeLast(),
-    );
-  }
-
-  Widget _buildAllTreatments(BuildContext context) {
-    // Show planned first, then completed
+  Widget _buildTreatmentsList(BuildContext context) {
     final sorted = [
       ..._plan.planned,
       ..._plan.inProgress,
       ..._plan.completed,
     ];
 
-    return Column(
-      children: sorted
-          .map((t) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: TreatmentPlanCard(treatment: t),
-              ))
-          .toList(),
-    );
-  }
-
-  Widget _buildByToothView(BuildContext context) {
-    final byTooth = _plan.byTooth;
-
-    if (byTooth.isEmpty) {
-      return _emptyState('No tooth-specific treatments yet');
-    }
+    if (sorted.isEmpty) return _emptyState('No treatments yet — add one!');
 
     return Column(
-      children: byTooth.entries.map((entry) {
+      children: sorted.map((t) {
+        final isCompleted = t.status == TreatmentPlanStatus.completed;
         return Padding(
           padding: EdgeInsets.only(bottom: 12.h),
-          child: CustomCard(
+          child: Container(
+            decoration: BoxDecoration(
+              color: isCompleted
+                  ? ColorManager.success.withValues(alpha: 0.04)
+                  : ColorManager.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: isCompleted
+                    ? ColorManager.success.withValues(alpha: 0.2)
+                    : ColorManager.borderLight,
+              ),
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tooth header
-                Row(
-                  children: [
-                    Container(
-                      width: 36.w,
-                      height: 36.w,
-                      decoration: BoxDecoration(
-                        color: ColorManager.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: Center(
-                        child: Text(
-                          entry.key,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w700,
-                            color: ColorManager.primary,
+                TreatmentPlanCard(
+                  treatment: t,
+                  removeBorder: true,
+                  onTap: () => _showTreatmentDetailsSheet(t),
+                ),
+                if (!isCompleted) ...[
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: ColorManager.borderLight,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _showTreatmentDetailsSheet(t),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.note_add_outlined,
+                                  size: 15.w,
+                                  color: ColorManager.textSecondary,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  'Add Note',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily:
+                                        FontHelper.fontFamily(context),
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorManager.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      'Tooth ${entry.key}',
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                      Container(
+                        width: 1,
+                        height: 28.h,
+                        color: ColorManager.borderLight,
                       ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${entry.value.where((t) => t.status == TreatmentPlanStatus.completed).length}/${entry.value.length}',
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textTertiary,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _markFinished(t),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  size: 15.w,
+                                  color: ColorManager.textSecondary,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  'Mark Finished',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily:
+                                        FontHelper.fontFamily(context),
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorManager.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-                ...entry.value.map(
-                  (t) => Padding(
-                    padding: EdgeInsets.only(bottom: 6.h),
-                    child: TreatmentPlanCard(treatment: t),
+                    ],
                   ),
-                ),
+                ],
               ],
             ),
           ),
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildGeneralView(BuildContext context) {
-    final generalTreatments = _plan.generalTreatments;
-
-    if (generalTreatments.isEmpty) {
-      return _emptyState('No general treatments yet');
-    }
-
-    return Column(
-      children: generalTreatments
-          .map((t) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: TreatmentPlanCard(treatment: t),
-              ))
-          .toList(),
     );
   }
 
@@ -349,47 +275,449 @@ class _TreatmentDashboardPageState extends State<TreatmentDashboardPage> {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
+class _TreatmentDetailsSheet extends StatefulWidget {
+  final PlannedTreatment treatment;
+  final List<PlannedTreatment> allTreatments;
+  final ValueChanged<String> onNoteSaved;
 
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
+  const _TreatmentDetailsSheet({
+    required this.treatment,
+    required this.allTreatments,
+    required this.onNoteSaved,
   });
 
   @override
+  State<_TreatmentDetailsSheet> createState() => _TreatmentDetailsSheetState();
+}
+
+class _TreatmentDetailsSheetState extends State<_TreatmentDetailsSheet> {
+  final _controller = TextEditingController();
+  bool _showNoteInput = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 14.h),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadiusManager.lg,
-          border: Border.all(color: color.withValues(alpha: 0.2)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 22.w, color: color),
-            SizedBox(height: 4.h),
-            Text(
-              label,
-              textAlign: TextAlign.center,
+    final t = widget.treatment;
+    final isCompleted = t.status == TreatmentPlanStatus.completed;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20.w,
+        16.h,
+        20.w,
+        MediaQuery.of(context).viewInsets.bottom + 16.h,
+      ),
+      decoration: BoxDecoration(
+        color: ColorManager.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Handle
+          Center(
+            child: Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: ColorManager.gray300,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+          ),
+          SizedBox(height: 16.h),
+
+          // Header: icon + name + status
+          Row(
+            children: [
+              Container(
+                width: 44.w,
+                height: 44.w,
+                decoration: BoxDecoration(
+                  color: _statusColor(t).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  t.type.icon,
+                  size: 22.w,
+                  color: _statusColor(t),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      t.type.nameEn,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      t.type.nameAr,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: ColorManager.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: _statusColor(t).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  _statusLabel(t),
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w500,
+                    color: _statusColor(t),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+
+          // Info rows
+          if (t.toothNumber != null)
+            _infoRow(
+              context,
+              icon: Icons.location_on_outlined,
+              label: 'Tooth',
+              value: t.toothNumber!,
+            ),
+          if (!t.isToothSpecific)
+            _infoRow(
+              context,
+              icon: Icons.category_outlined,
+              label: 'Type',
+              value: 'General Treatment',
+            ),
+          if (isCompleted && t.completedDate != null)
+            _infoRow(
+              context,
+              icon: Icons.check_circle_outline,
+              label: 'Completed',
+              value:
+                  '${t.completedDate!.day}/${t.completedDate!.month}/${t.completedDate!.year}',
+            ),
+
+          // Tooth chart for tooth-specific treatments
+          if (t.isToothSpecific) ...[
+            SizedBox(height: 8.h),
+            ToothChart(
+              teeth: _allTeeth(),
+              selectedTeeth: widget.allTreatments
+                  .where((tr) => tr.toothNumber != null)
+                  .map((tr) => tr.toothNumber!)
+                  .toSet()
+                  .toList(),
+              enabled: false,
+              aspectRatio: 0.75,
+            ),
+          ],
+          SizedBox(height: 8.h),
+
+          // Visit notes section
+          if (t.visitNotes.isNotEmpty) ...[
+            Row(
+              children: [
+                Text(
+                  'Visit Notes',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.textPrimary,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Text(
+                    '${t.visitNotes.length}',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w500,
+                      color: ColorManager.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 180.h),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: t.visitNotes.map((note) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: ColorManager.gray50,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: ColorManager.borderLight),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.event_note,
+                                  size: 14.w,
+                                  color: ColorManager.primary,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  '${note.date.day}/${note.date.month}/${note.date.year}',
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontFamily:
+                                        FontHelper.fontFamily(context),
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorManager.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 6.h),
+                            Text(
+                              note.text,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                fontFamily: FontHelper.fontFamily(context),
+                                color: ColorManager.textPrimary,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+          ],
+
+          // Add note input (expandable)
+          if (_showNoteInput) ...[
+            TextField(
+              controller: _controller,
+              maxLines: 3,
+              autofocus: true,
               style: TextStyle(
-                fontSize: 11.sp,
+                fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
-                color: color,
+                color: ColorManager.textPrimary,
+              ),
+              decoration: InputDecoration(
+                hintText: 'e.g. Changed upper wire to 0.016 NiTi...',
+                hintStyle: TextStyle(
+                  fontSize: 13.sp,
+                  color: ColorManager.textTertiary,
+                ),
+                contentPadding: EdgeInsets.all(12.w),
+                filled: true,
+                fillColor: ColorManager.gray50,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: ColorManager.borderLight),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: ColorManager.borderLight),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: ColorManager.primary),
+                ),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _showNoteInput = false),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: ColorManager.borderLight),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w500,
+                          color: ColorManager.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_controller.text.trim().isNotEmpty) {
+                        widget.onNoteSaved(_controller.text.trim());
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Text(
+                        'Save Note',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            GestureDetector(
+              onTap: () => setState(() => _showNoteInput = true),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                decoration: BoxDecoration(
+                  border: Border.all(color: ColorManager.borderLight),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.note_add_outlined,
+                      size: 16.w,
+                      color: ColorManager.textSecondary,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      'Add Visit Note',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w500,
+                        color: ColorManager.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
-        ),
+        ],
       ),
     );
+  }
+
+  Widget _infoRow(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        children: [
+          Icon(icon, size: 16.w, color: ColorManager.textTertiary),
+          SizedBox(width: 8.w),
+          Text(
+            '$label: ',
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              color: ColorManager.textTertiary,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w500,
+              color: ColorManager.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Tooth> _allTeeth() {
+    final teeth = <Tooth>[];
+    for (int q = 1; q <= 4; q++) {
+      for (int t = 1; t <= 8; t++) {
+        final code = '$q$t';
+        teeth.add(Tooth(
+          id: code,
+          name: 'Tooth $code',
+          universalCode: code,
+          quadrant: '$q',
+        ));
+      }
+    }
+    return teeth;
+  }
+
+  Color _statusColor(PlannedTreatment t) {
+    return switch (t.status) {
+      TreatmentPlanStatus.completed => ColorManager.success,
+      TreatmentPlanStatus.inProgress => ColorManager.warning,
+      TreatmentPlanStatus.planned => ColorManager.primary,
+    };
+  }
+
+  String _statusLabel(PlannedTreatment t) {
+    return switch (t.status) {
+      TreatmentPlanStatus.completed => 'Done',
+      TreatmentPlanStatus.inProgress => 'In Progress',
+      TreatmentPlanStatus.planned => 'Planned',
+    };
   }
 }

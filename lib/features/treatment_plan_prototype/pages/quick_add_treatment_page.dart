@@ -11,7 +11,7 @@ import '../models/prototype_models.dart';
 
 /// Quick add treatment — simple mode for doctors who don't want
 /// to use the full treatment planning system.
-/// Just pick a treatment type, optionally set a tooth, add cost, done.
+/// Just pick a treatment type, optionally set a tooth, done.
 class QuickAddTreatmentPage extends StatefulWidget {
   const QuickAddTreatmentPage({super.key});
 
@@ -21,14 +21,12 @@ class QuickAddTreatmentPage extends StatefulWidget {
 
 class _QuickAddTreatmentPageState extends State<QuickAddTreatmentPage> {
   TreatmentTypeInfo? _selectedType;
-  final TextEditingController _costController = TextEditingController();
   final TextEditingController _toothController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   int _idCounter = 0;
 
   @override
   void dispose() {
-    _costController.dispose();
     _toothController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -37,14 +35,12 @@ class _QuickAddTreatmentPageState extends State<QuickAddTreatmentPage> {
   void _selectType(TreatmentTypeInfo type) {
     setState(() {
       _selectedType = type;
-      _costController.text = type.defaultCost.toStringAsFixed(0);
     });
   }
 
   void _save() {
     if (_selectedType == null) return;
 
-    final cost = double.tryParse(_costController.text) ?? 0;
     final toothNumber =
         _toothController.text.trim().isEmpty ? null : _toothController.text.trim();
 
@@ -52,7 +48,6 @@ class _QuickAddTreatmentPageState extends State<QuickAddTreatmentPage> {
       id: 'quick_${_idCounter++}',
       type: _selectedType!,
       toothNumber: toothNumber,
-      cost: cost,
       notes: _notesController.text.trim(),
     );
 
@@ -159,45 +154,6 @@ class _QuickAddTreatmentPageState extends State<QuickAddTreatmentPage> {
                       ),
                       SizedBox(height: 12.h),
                     ],
-
-                    // Cost
-                    CustomCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Cost',
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w500,
-                              color: ColorManager.textSecondary,
-                            ),
-                          ),
-                          SizedBox(height: 6.h),
-                          TextField(
-                            controller: _costController,
-                            keyboardType: TextInputType.number,
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w700,
-                              color: ColorManager.textPrimary,
-                            ),
-                            decoration: _inputDecoration('\$0').copyWith(
-                              prefixText: '\$ ',
-                              prefixStyle: TextStyle(
-                                fontSize: 24.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontWeight: FontWeight.w700,
-                                color: ColorManager.textTertiary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
 
                     // Notes
                     CustomCard(

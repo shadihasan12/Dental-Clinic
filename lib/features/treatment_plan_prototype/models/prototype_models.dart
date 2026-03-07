@@ -13,7 +13,6 @@ class TreatmentTypeInfo {
   final String nameAr;
   final IconData icon;
   final TreatmentCategory category;
-  final double defaultCost;
 
   const TreatmentTypeInfo({
     required this.id,
@@ -21,8 +20,15 @@ class TreatmentTypeInfo {
     required this.nameAr,
     required this.icon,
     required this.category,
-    this.defaultCost = 0,
   });
+}
+
+// ─── Visit Note (a single note entry for a treatment) ───────────────
+class VisitNote {
+  final DateTime date;
+  final String text;
+
+  VisitNote({required this.date, required this.text});
 }
 
 // ─── Planned Treatment (a single item in the plan) ──────────────────
@@ -31,21 +37,21 @@ class PlannedTreatment {
   final TreatmentTypeInfo type;
   final String? toothNumber; // null = general treatment
   TreatmentPlanStatus status;
-  double cost;
   String notes;
   DateTime? completedDate;
   int? visitNumber;
+  final List<VisitNote> visitNotes;
 
   PlannedTreatment({
     required this.id,
     required this.type,
     this.toothNumber,
     this.status = TreatmentPlanStatus.planned,
-    this.cost = 0,
     this.notes = '',
     this.completedDate,
     this.visitNumber,
-  });
+    List<VisitNote>? visitNotes,
+  }) : visitNotes = visitNotes ?? [];
 
   bool get isToothSpecific => toothNumber != null;
 
@@ -70,13 +76,22 @@ class TreatmentPlan {
   final String patientName;
   final List<PlannedTreatment> treatments;
   final DateTime createdAt;
+  double totalCost;
+  double labFees;
+  double paid;
 
   TreatmentPlan({
     required this.id,
     required this.patientName,
     required this.treatments,
     required this.createdAt,
+    this.totalCost = 0,
+    this.labFees = 0,
+    this.paid = 0,
   });
+
+  double get grandTotal => totalCost + labFees;
+  double get pending => grandTotal - paid;
 
   List<PlannedTreatment> get planned =>
       treatments.where((t) => t.status == TreatmentPlanStatus.planned).toList();
@@ -88,11 +103,6 @@ class TreatmentPlan {
   List<PlannedTreatment> get inProgress => treatments
       .where((t) => t.status == TreatmentPlanStatus.inProgress)
       .toList();
-
-  double get totalCost => treatments.fold(0, (sum, t) => sum + t.cost);
-
-  double get completedCost =>
-      completed.fold(0, (sum, t) => sum + t.cost);
 
   /// Group tooth-specific treatments by tooth number
   Map<String, List<PlannedTreatment>> get byTooth {
@@ -120,7 +130,6 @@ class MockTreatmentTypes {
       nameAr: 'علاج عصب',
       icon: Icons.healing,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 500,
     ),
     TreatmentTypeInfo(
       id: 'filling_composite',
@@ -128,7 +137,6 @@ class MockTreatmentTypes {
       nameAr: 'حشوة (كومبوزيت)',
       icon: Icons.circle,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 200,
     ),
     TreatmentTypeInfo(
       id: 'filling_amalgam',
@@ -136,7 +144,6 @@ class MockTreatmentTypes {
       nameAr: 'حشوة (أملغم)',
       icon: Icons.circle_outlined,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 150,
     ),
     TreatmentTypeInfo(
       id: 'crown',
@@ -144,7 +151,6 @@ class MockTreatmentTypes {
       nameAr: 'تاج',
       icon: Icons.shield,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 800,
     ),
     TreatmentTypeInfo(
       id: 'extraction',
@@ -152,7 +158,6 @@ class MockTreatmentTypes {
       nameAr: 'خلع',
       icon: Icons.arrow_upward,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 300,
     ),
     TreatmentTypeInfo(
       id: 'veneer',
@@ -160,7 +165,6 @@ class MockTreatmentTypes {
       nameAr: 'فينير',
       icon: Icons.auto_awesome,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 1000,
     ),
     TreatmentTypeInfo(
       id: 'implant',
@@ -168,7 +172,6 @@ class MockTreatmentTypes {
       nameAr: 'زراعة',
       icon: Icons.push_pin,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 2000,
     ),
     TreatmentTypeInfo(
       id: 'bridge',
@@ -176,7 +179,6 @@ class MockTreatmentTypes {
       nameAr: 'جسر',
       icon: Icons.join_full,
       category: TreatmentCategory.toothSpecific,
-      defaultCost: 1200,
     ),
   ];
 
@@ -187,7 +189,6 @@ class MockTreatmentTypes {
       nameAr: 'تنظيف',
       icon: Icons.cleaning_services,
       category: TreatmentCategory.general,
-      defaultCost: 100,
     ),
     TreatmentTypeInfo(
       id: 'checkup',
@@ -195,7 +196,6 @@ class MockTreatmentTypes {
       nameAr: 'فحص',
       icon: Icons.search,
       category: TreatmentCategory.general,
-      defaultCost: 50,
     ),
     TreatmentTypeInfo(
       id: 'upper_braces',
@@ -203,7 +203,6 @@ class MockTreatmentTypes {
       nameAr: 'تقويم علوي معدني',
       icon: Icons.view_comfy_alt,
       category: TreatmentCategory.general,
-      defaultCost: 3000,
     ),
     TreatmentTypeInfo(
       id: 'lower_braces',
@@ -211,7 +210,6 @@ class MockTreatmentTypes {
       nameAr: 'تقويم سفلي معدني',
       icon: Icons.view_comfy_alt_outlined,
       category: TreatmentCategory.general,
-      defaultCost: 3000,
     ),
     TreatmentTypeInfo(
       id: 'gum_cleaning',
@@ -219,7 +217,6 @@ class MockTreatmentTypes {
       nameAr: 'تنظيف لثة',
       icon: Icons.water_drop_outlined,
       category: TreatmentCategory.general,
-      defaultCost: 150,
     ),
     TreatmentTypeInfo(
       id: 'gum_trimming',
@@ -227,7 +224,6 @@ class MockTreatmentTypes {
       nameAr: 'قص لثة',
       icon: Icons.content_cut,
       category: TreatmentCategory.general,
-      defaultCost: 200,
     ),
     TreatmentTypeInfo(
       id: 'whitening',
@@ -235,7 +231,6 @@ class MockTreatmentTypes {
       nameAr: 'تبييض',
       icon: Icons.light_mode,
       category: TreatmentCategory.general,
-      defaultCost: 500,
     ),
     TreatmentTypeInfo(
       id: 'xray',
@@ -243,7 +238,6 @@ class MockTreatmentTypes {
       nameAr: 'أشعة',
       icon: Icons.image,
       category: TreatmentCategory.general,
-      defaultCost: 80,
     ),
   ];
 
@@ -263,7 +257,6 @@ class MockData {
           type: MockTreatmentTypes.toothSpecific[0], // Root Canal
           toothNumber: '16',
           status: TreatmentPlanStatus.completed,
-          cost: 500,
           completedDate: DateTime.now().subtract(const Duration(days: 5)),
           visitNumber: 1,
         ),
@@ -272,7 +265,6 @@ class MockData {
           type: MockTreatmentTypes.toothSpecific[3], // Crown
           toothNumber: '16',
           status: TreatmentPlanStatus.inProgress,
-          cost: 800,
           visitNumber: 2,
         ),
         PlannedTreatment(
@@ -280,20 +272,17 @@ class MockData {
           type: MockTreatmentTypes.toothSpecific[1], // Filling Composite
           toothNumber: '24',
           status: TreatmentPlanStatus.planned,
-          cost: 200,
         ),
         PlannedTreatment(
           id: 't4',
           type: MockTreatmentTypes.toothSpecific[4], // Extraction
           toothNumber: '48',
           status: TreatmentPlanStatus.planned,
-          cost: 300,
         ),
         PlannedTreatment(
           id: 't5',
           type: MockTreatmentTypes.general[0], // Cleaning
           status: TreatmentPlanStatus.completed,
-          cost: 100,
           completedDate: DateTime.now().subtract(const Duration(days: 5)),
           visitNumber: 1,
         ),
@@ -301,10 +290,8 @@ class MockData {
           id: 't6',
           type: MockTreatmentTypes.general[7], // X-Ray
           status: TreatmentPlanStatus.planned,
-          cost: 80,
         ),
       ],
     );
   }
 }
-
