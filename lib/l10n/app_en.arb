@@ -570,6 +570,17 @@
   "workingHoursAndHolidays": "Working Hours & Holidays",
   "photoPermissionRequired": "Photo Permission Required",
   "photoPermissionMessage": "This app needs access to your photos to set your profile picture. Please grant permission in Settings.",
-  "openSettings": "Open Settings"
+  "openSettings": "Open Settings",
+  "changeEmail": "Change Email",
+  "newEmail": "New Email",
+  "currentPassword": "Current Password",
+  "changeEmailDescription": "Enter your new email and current password to verify your identity.",
+  "sendVerificationCode": "Send Verification Code",
+  "verifyNewEmail": "Verify New Email",
+  "changeEmailOtpDescription": "Enter the 6-digit code sent to your new email address.",
+  "confirmChangeEmail": "Confirm Change",
+  "emailChangedSuccess": "Email changed successfully! Please login with your new email.",
+  "pleaseEnterNewEmail": "Please enter your new email",
+  "pleaseEnterCurrentPassword": "Please enter your current password"
 }
 

@@ -572,6 +572,17 @@
   "workingHoursAndHolidays": "ساعات العمل والعطل",
   "photoPermissionRequired": "إذن الوصول للصور مطلوب",
   "photoPermissionMessage": "يحتاج التطبيق إلى إذن الوصول للصور لتعيين صورة ملفك الشخصي. يرجى منح الإذن من الإعدادات.",
-  "openSettings": "فتح الإعدادات"
+  "openSettings": "فتح الإعدادات",
+  "changeEmail": "تغيير البريد الإلكتروني",
+  "newEmail": "البريد الإلكتروني الجديد",
+  "currentPassword": "كلمة المرور الحالية",
+  "changeEmailDescription": "أدخل بريدك الإلكتروني الجديد وكلمة المرور الحالية للتحقق من هويتك.",
+  "sendVerificationCode": "إرسال رمز التحقق",
+  "verifyNewEmail": "تحقق من البريد الجديد",
+  "changeEmailOtpDescription": "أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني الجديد.",
+  "confirmChangeEmail": "تأكيد التغيير",
+  "emailChangedSuccess": "تم تغيير البريد الإلكتروني بنجاح! يرجى تسجيل الدخول بالبريد الجديد.",
+  "pleaseEnterNewEmail": "يرجى إدخال البريد الإلكتروني الجديد",
+  "pleaseEnterCurrentPassword": "يرجى إدخال كلمة المرور الحالية"
 }
 

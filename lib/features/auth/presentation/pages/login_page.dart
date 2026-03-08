@@ -162,10 +162,10 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                     // Sign in button
                     _buildSignInButton(state, l10n),
 
-                    SizedBox(height: 28.h),
+                    // SizedBox(height: 28.h),
 
                     // Divider
-                    _buildDivider(l10n, fontFamily),
+                    // _buildDivider(l10n, fontFamily),
 
                     // SizedBox(height: 28.h),
 
@@ -215,16 +215,16 @@ class _LoginPageContentState extends State<_LoginPageContent> {
       prefixIcon: Icons.lock_outline,
       obscureText: !state.isLoginPasswordVisible,
       validator: _validatePassword,
-      suffixIcon: IconButton(
-        icon: Icon(
+      suffixIcon: GestureDetector(
+        onTap: () => context.read<AuthBloc>().add(
+          const AuthEvent.loginPasswordVisibilityToggled(),
+        ),
+        child: Icon(
           state.isLoginPasswordVisible
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
           color: ColorManager.textTertiary,
           size: 20.w,
-        ),
-        onPressed: () => context.read<AuthBloc>().add(
-          const AuthEvent.loginPasswordVisibilityToggled(),
         ),
       ),
       onChanged: (value) {

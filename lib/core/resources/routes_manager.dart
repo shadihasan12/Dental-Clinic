@@ -15,6 +15,8 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/statistics/statistics_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/support_chat_page.dart';
@@ -441,6 +443,39 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const NotificationPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        // Change Email
+        GoRoute(
+          path: '/change-email',
+          name: AppRoutesNames.changeEmail,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final currentEmail = extra['currentEmail'] as String? ?? '';
+            return CupertinoPage(
+              child: ChangeEmailPage(currentEmail: currentEmail),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/change-email-otp',
+          name: AppRoutesNames.changeEmailOtpPage,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final newEmail = extra['newEmail'] as String? ?? '';
+            final sessionId = extra['sessionId'] as String?;
+            final secondsRemaining = extra['secondsRemaining'] as int? ?? 60;
+            return CupertinoPage(
+              child: ChangeEmailOtpPage(
+                newEmail: newEmail,
+                sessionId: sessionId,
+                secondsRemaining: secondsRemaining,
+              ),
               key: state.pageKey,
               name: state.name,
             );

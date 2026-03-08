@@ -1,9 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for caching user profile and clinic data
 @injectable
 class UserStorage {
+  /// Notifier that increments whenever the profile is updated.
+  /// Listen to this in widgets to refresh after profile edits.
+  static final ValueNotifier<int> profileUpdateNotifier = ValueNotifier<int>(0);
+
+  /// Call this after saving profile changes to notify listeners.
+  static void notifyProfileUpdated() {
+    profileUpdateNotifier.value++;
+  }
+
   static const String _userNameKey = 'user_name';
   static const String _firstNameKey = 'first_name';
   static const String _lastNameKey = 'last_name';
@@ -13,6 +23,7 @@ class UserStorage {
   static const String _locationNameKey = 'location_name';
   static const String _locationFullNameKey = 'location_full_name';
   static const String _detailedAddressKey = 'detailed_address';
+  static const String _profileImageUrlKey = 'profile_image_url';
 
   final SharedPreferences _prefs;
 
@@ -86,6 +97,14 @@ class UserStorage {
 
   String? getDetailedAddress() => _prefs.getString(_detailedAddressKey);
 
+  // ── Profile image URL ──
+
+  Future<void> saveProfileImageUrl(String url) async {
+    await _prefs.setString(_profileImageUrlKey, url);
+  }
+
+  String? getProfileImageUrl() => _prefs.getString(_profileImageUrlKey);
+
   // ── Clear ──
 
   Future<void> clear() async {
@@ -98,5 +117,6 @@ class UserStorage {
     await _prefs.remove(_locationNameKey);
     await _prefs.remove(_locationFullNameKey);
     await _prefs.remove(_detailedAddressKey);
+    await _prefs.remove(_profileImageUrlKey);
   }
 }

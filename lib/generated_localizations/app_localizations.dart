@@ -2983,6 +2983,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open Settings'**
   String get openSettings;
+
+  /// No description provided for @changeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Email'**
+  String get changeEmail;
+
+  /// No description provided for @newEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'New Email'**
+  String get newEmail;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// No description provided for @changeEmailDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new email and current password to verify your identity.'**
+  String get changeEmailDescription;
+
+  /// No description provided for @verifyNewEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify New Email'**
+  String get verifyNewEmail;
+
+  /// No description provided for @changeEmailOtpDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent to your new email address.'**
+  String get changeEmailOtpDescription;
+
+  /// No description provided for @confirmChangeEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Change'**
+  String get confirmChangeEmail;
+
+  /// No description provided for @emailChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Email changed successfully! Please login with your new email.'**
+  String get emailChangedSuccess;
+
+  /// No description provided for @pleaseEnterNewEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your new email'**
+  String get pleaseEnterNewEmail;
+
+  /// No description provided for @pleaseEnterCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your current password'**
+  String get pleaseEnterCurrentPassword;
 }
 
 class _AppLocalizationsDelegate

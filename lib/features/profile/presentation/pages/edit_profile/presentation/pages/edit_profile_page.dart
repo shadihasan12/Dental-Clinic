@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
@@ -59,6 +61,26 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   List<SpecialtyEntity>? _specialties;
 
+  // Initial snapshot for dirty-checking
+  String _initialFirstName = '';
+  String _initialLastName = '';
+  String _initialPhone = '';
+  String? _initialSpecialtyId;
+  String? _initialImageId;
+  String? _initialImageUrl;
+
+  bool get _hasChanges {
+    if (!_formPopulated) return false;
+    return _firstNameController.text.trim() != _initialFirstName ||
+        _lastNameController.text.trim() != _initialLastName ||
+        _phoneController.text.trim() != _initialPhone ||
+        _selectedSpecialtyId != _initialSpecialtyId ||
+        _uploadedImageId != _initialImageId ||
+        _imageUrl != _initialImageUrl;
+  }
+
+  void _onFieldChanged() => setState(() {});
+
   @override
   void initState() {
     super.initState();
@@ -66,6 +88,9 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     _lastNameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
+    _firstNameController.addListener(_onFieldChanged);
+    _lastNameController.addListener(_onFieldChanged);
+    _phoneController.addListener(_onFieldChanged);
   }
 
   @override
@@ -87,6 +112,20 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     _selectedSpecialtyName = profile.specialtyName;
     _imageUrl = profile.imageUrl;
     _formPopulated = true;
+    _takeSnapshot(profile);
+    // Cache profile image from API on first load
+    if (profile.imageUrl != null && profile.imageUrl!.isNotEmpty) {
+      getIt<UserStorage>().saveProfileImageUrl(profile.imageUrl!);
+    }
+  }
+
+  void _takeSnapshot(UserProfileEntity profile) {
+    _initialFirstName = profile.firstName;
+    _initialLastName = profile.lastName;
+    _initialPhone = profile.phone;
+    _initialSpecialtyId = profile.specialtyId;
+    _initialImageId = _uploadedImageId;
+    _initialImageUrl = profile.imageUrl;
   }
 
   UserProfileEntity _buildEntity() {
@@ -105,9 +144,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   void _onSave() {
     final entity = _buildEntity();
-    context.read<EditProfileBloc>().add(
-          EditProfileEvent.updateProfile(entity),
-        );
+    context.read<EditProfileBloc>().add(EditProfileEvent.updateProfile(entity));
   }
 
   Future<void> _onPickImage() async {
@@ -123,9 +160,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       _isUploadingImage = true;
     });
 
-    bloc.add(
-          EditProfileEvent.uploadImage(result.file),
-        );
+    bloc.add(EditProfileEvent.uploadImage(result.file));
   }
 
   Future<bool> _requestPhotoPermission() async {
@@ -411,13 +446,30 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       listener: (context, state) {
         state.maybeWhen(
           saving: (_) {
-            AppLoadingDialog.show(
-              context: context,
-              message: l10n.save,
-            );
+            AppLoadingDialog.show(context: context, message: l10n.save);
           },
-          saved: (_) {
+          saved: (profile) {
             AppLoadingDialog.dismiss(context);
+            // Re-snapshot so save button disables again
+            setState(() {
+              _initialFirstName = _firstNameController.text.trim();
+              _initialLastName = _lastNameController.text.trim();
+              _initialPhone = _phoneController.text.trim();
+              _initialSpecialtyId = _selectedSpecialtyId;
+              _initialImageId = _uploadedImageId;
+              _initialImageUrl = _imageUrl;
+            });
+            // Cache updated profile data for home & menu pages
+            final userStorage = getIt<UserStorage>();
+            final firstName = _firstNameController.text.trim();
+            final lastName = _lastNameController.text.trim();
+            userStorage.saveFirstName(firstName);
+            userStorage.saveLastName(lastName);
+            userStorage.saveUserName('$firstName $lastName');
+            if (_imageUrl != null && _imageUrl!.isNotEmpty) {
+              userStorage.saveProfileImageUrl(_imageUrl!);
+            }
+            UserStorage.notifyProfileUpdated();
             AppSnackbar.showSuccess(
               context,
               title: l10n.success,
@@ -434,11 +486,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
           error: (message) {
             AppLoadingDialog.dismiss(context);
             setState(() => _isUploadingImage = false);
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: message,
-            );
+            AppSnackbar.showError(context, title: l10n.error, message: message);
           },
           orElse: () {},
         );
@@ -446,19 +494,14 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: ColorManager.scaffoldBackground,
-          bottomNavigationBar:
-              _formPopulated ? _buildSaveButton(l10n) : null,
+          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [
-              PageHeader(
-                title: l10n.editProfile,
-                onBack: () => context.pop(),
-              ),
+              PageHeader(title: l10n.editProfile, onBack: () => context.pop()),
               Expanded(
                 child: state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (message) {
                     if (_formPopulated) return _buildForm(l10n);
                     return Center(child: Text(message));
@@ -468,9 +511,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         setState(() => _populateFromEntity(profile));
                       });
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
                     return _buildForm(l10n);
                   },
@@ -501,15 +542,12 @@ class _EditProfileContentState extends State<_EditProfileContent> {
               backgroundImage: _pickedImageFile != null
                   ? FileImage(_pickedImageFile!)
                   : (_imageUrl != null && _imageUrl!.isNotEmpty
-                      ? NetworkImage(_imageUrl!) as ImageProvider
-                      : null),
-              child: _pickedImageFile == null &&
+                        ? NetworkImage(_imageUrl!) as ImageProvider
+                        : null),
+              child:
+                  _pickedImageFile == null &&
                       (_imageUrl == null || _imageUrl!.isEmpty)
-                  ? Icon(
-                      Icons.person,
-                      size: 50.w,
-                      color: ColorManager.primary,
-                    )
+                  ? Icon(Icons.person, size: 50.w, color: ColorManager.primary)
                   : null,
             ),
             if (_isUploadingImage)
@@ -579,29 +617,41 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   value: _selectedSpecialtyName,
                   onTap: _showSpecializationPicker,
                 ),
-                ProfileTextField(
-                  icon: Icons.email_outlined,
-                  label: l10n.email,
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  enabled: false,
-                  suffixWidget: GestureDetector(
-                    onTap: () {
-                      // TODO: Navigate to change email flow
-                    },
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.only(end: 12.w),
-                      child: Text(
-                        l10n.edit,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w600,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    context.pushNamed(
+                      AppRoutesNames.changeEmail,
+                      extra: {'currentEmail': _emailController.text.trim()},
+                    );
+                  },
+                  child: ProfileTextField(
+                    icon: Icons.edit,
+                    label: l10n.email,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    enabled: false,
+                    textDirection: TextDirection.ltr,
+                    // suffixWidget: GestureDetector(
+                    //   onTap: () {
+                    //     context.pushNamed(
+                    //       AppRoutesNames.changeEmail,
+                    //       extra: {'currentEmail': _emailController.text.trim()},
+                    //     );
+                    //   },
+                    //   child: Padding(
+                    //     padding: EdgeInsetsDirectional.only(end: 12.w),
+                    //     child: Text(
+                    //       l10n.edit,
+                    //       style: TextStyle(
+                    //         fontSize: 13.sp,
+                    //         fontFamily: FontHelper.fontFamily(context),
+                    //         fontWeight: FontWeight.w600,
+                    //         color: ColorManager.primary,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                 ),
                 ProfileTextField(
@@ -622,15 +672,19 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   }
 
   Widget _buildSaveButton(AppLocalizations l10n) {
+    final enabled = _hasChanges;
     return Padding(
       padding: EdgeInsets.all(16.w),
       child: GestureDetector(
-        onTap: _onSave,
-        child: Container(
+        onTap: enabled ? _onSave : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           width: double.infinity,
           padding: EdgeInsets.all(14.h),
           decoration: BoxDecoration(
-            color: ColorManager.primary,
+            color: enabled
+                ? ColorManager.primary
+                : ColorManager.primary.withValues(alpha: 0.35),
             borderRadius: BorderRadiusManager.lg,
           ),
           child: Text(
