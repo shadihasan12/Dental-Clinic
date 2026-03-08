@@ -13,6 +13,7 @@ class ProfileTextField extends StatelessWidget {
   final bool isLast;
   final bool enabled;
   final Widget? suffixWidget;
+  final TextDirection? textDirection;
 
   const ProfileTextField({
     super.key,
@@ -24,10 +25,23 @@ class ProfileTextField extends StatelessWidget {
     this.isLast = false,
     this.enabled = true,
     this.suffixWidget,
+    this.textDirection,
   });
 
   @override
   Widget build(BuildContext context) {
+    final field = AuthTextField(
+      label: label,
+      hint: 'Enter $label',
+      controller: controller,
+      prefixIcon: icon,
+      keyboardType: keyboardType,
+      enabled: enabled,
+      suffixIcon: !enabled && suffixWidget != null ? null : suffixWidget,
+      textDirection: textDirection,
+      onChanged: (value) {},
+    );
+
     return Container(
       decoration: isLast
           ? null
@@ -37,16 +51,20 @@ class ProfileTextField extends StatelessWidget {
               ),
             ),
       padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: AuthTextField(
-        label: label,
-        hint: 'Enter $label',
-        controller: controller,
-        prefixIcon: icon,
-        keyboardType: keyboardType,
-        enabled: enabled,
-        suffixIcon: suffixWidget,
-        onChanged: (value) {},
-      ),
+      child: !enabled && suffixWidget != null
+          ? Stack(
+              children: [
+                field,
+                Positioned.directional(
+                  textDirection: Directionality.of(context),
+                  end: 0,
+                  bottom: 0,
+                  top: 20.h,
+                  child: Center(child: suffixWidget!),
+                ),
+              ],
+            )
+          : field,
     );
   }
 }

@@ -1515,4 +1515,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSettings => 'Open Settings';
+
+  @override
+  String get changeEmail => 'Change Email';
+
+  @override
+  String get newEmail => 'New Email';
+
+  @override
+  String get currentPassword => 'Current Password';
+
+  @override
+  String get changeEmailDescription =>
+      'Enter your new email and current password to verify your identity.';
+
+  @override
+  String get verifyNewEmail => 'Verify New Email';
+
+  @override
+  String get changeEmailOtpDescription =>
+      'Enter the 6-digit code sent to your new email address.';
+
+  @override
+  String get confirmChangeEmail => 'Confirm Change';
+
+  @override
+  String get emailChangedSuccess =>
+      'Email changed successfully! Please login with your new email.';
+
+  @override
+  String get pleaseEnterNewEmail => 'Please enter your new email';
+
+  @override
+  String get pleaseEnterCurrentPassword => 'Please enter your current password';
 }

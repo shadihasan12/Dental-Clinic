@@ -1506,4 +1506,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openSettings => 'فتح الإعدادات';
+
+  @override
+  String get changeEmail => 'تغيير البريد الإلكتروني';
+
+  @override
+  String get newEmail => 'البريد الإلكتروني الجديد';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get changeEmailDescription =>
+      'أدخل بريدك الإلكتروني الجديد وكلمة المرور الحالية للتحقق من هويتك.';
+
+  @override
+  String get verifyNewEmail => 'تحقق من البريد الجديد';
+
+  @override
+  String get changeEmailOtpDescription =>
+      'أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني الجديد.';
+
+  @override
+  String get confirmChangeEmail => 'تأكيد التغيير';
+
+  @override
+  String get emailChangedSuccess =>
+      'تم تغيير البريد الإلكتروني بنجاح! يرجى تسجيل الدخول بالبريد الجديد.';
+
+  @override
+  String get pleaseEnterNewEmail => 'يرجى إدخال البريد الإلكتروني الجديد';
+
+  @override
+  String get pleaseEnterCurrentPassword => 'يرجى إدخال كلمة المرور الحالية';
 }

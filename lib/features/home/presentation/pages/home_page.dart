@@ -21,16 +21,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final String _firstName;
-  late final String _clinicName;
+  String get _firstName {
+    final s = getIt<UserStorage>();
+    return s.getFirstName() ?? s.getUserName() ?? '';
+  }
+
+  String get _clinicName => getIt<UserStorage>().getClinicName() ?? '';
+  String? get _profileImageUrl => getIt<UserStorage>().getProfileImageUrl();
 
   @override
   void initState() {
     super.initState();
-    final userStorage = getIt<UserStorage>();
-    _firstName = userStorage.getFirstName() ?? userStorage.getUserName() ?? '';
-    _clinicName = userStorage.getClinicName() ?? '';
+    UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
   }
+
+  @override
+  void dispose() {
+    UserStorage.profileUpdateNotifier.removeListener(_onProfileUpdated);
+    super.dispose();
+  }
+
+  void _onProfileUpdated() => setState(() {});
 
   // ── Mock subscription states for demo switching (long-press to cycle) ──
   int _subscriptionTypeIndex = 0;
@@ -128,6 +139,7 @@ class _HomePageState extends State<HomePage> {
               HomeHeader(
                 userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
                 clinicName: _clinicName,
+                profileImageUrl: _profileImageUrl,
                 onNotificationTap: () {
                   context.pushNamed(AppRoutesNames.notifications);
                 },

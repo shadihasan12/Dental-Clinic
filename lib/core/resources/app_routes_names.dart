@@ -17,6 +17,8 @@ class AppRoutesNames {
   static const String emailVerification = 'emailVerification';
   static const String forgotPasswordVerifyOtp = 'forgotPasswordVerifyOtp';
   static const String setNewPassword = 'setNewPassword';
+  static const String changeEmail = 'changeEmail';
+  static const String changeEmailOtpPage = 'changeEmailOtpPage';
 
   // Dashboard
   static const String dashboard = 'dashboard';

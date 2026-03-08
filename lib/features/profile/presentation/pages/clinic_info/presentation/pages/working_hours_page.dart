@@ -48,7 +48,45 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
   final List<HolidayEntry> _holidays = [];
   bool _populated = false;
 
+  // Snapshot of initial state for dirty-checking
+  List<_DaySnapshot> _initialDays = [];
+  List<_HolidaySnapshot> _initialHolidays = [];
+
   static const int _maxShifts = 3;
+
+  List<_DaySnapshot> _snapshotDays(List<WorkingDay> days) {
+    return days
+        .map((d) => _DaySnapshot(
+              d.dayOfWeek,
+              d.enabled,
+              d.shifts
+                  .map((s) =>
+                      _ShiftSnapshot(s.from.hour, s.from.minute, s.to.hour, s.to.minute))
+                  .toList(),
+            ))
+        .toList();
+  }
+
+  List<_HolidaySnapshot> _snapshotHolidays(List<HolidayEntry> holidays) {
+    return holidays
+        .map((h) => _HolidaySnapshot(
+              h.id, h.name, h.date.year, h.date.month, h.date.day, h.recurring))
+        .toList();
+  }
+
+  bool get _hasChanges {
+    final currentDays = _snapshotDays(_workingDays);
+    final currentHolidays = _snapshotHolidays(_holidays);
+    if (currentDays.length != _initialDays.length) return true;
+    for (int i = 0; i < currentDays.length; i++) {
+      if (currentDays[i] != _initialDays[i]) return true;
+    }
+    if (currentHolidays.length != _initialHolidays.length) return true;
+    for (int i = 0; i < currentHolidays.length; i++) {
+      if (currentHolidays[i] != _initialHolidays[i]) return true;
+    }
+    return false;
+  }
 
   List<WorkingDay> _buildDefaultWorkingDays() {
     return List.generate(7, (i) {
@@ -117,6 +155,10 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
       }));
 
     _populated = true;
+
+    // Take snapshot for dirty-checking
+    _initialDays = _snapshotDays(_workingDays);
+    _initialHolidays = _snapshotHolidays(_holidays);
   }
 
   List<WorkingDayApiModel> _buildWorkingDaysPayload() {
@@ -247,6 +289,10 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
           },
           saved: () {
             AppLoadingDialog.dismiss(context);
+            setState(() {
+              _initialDays = _snapshotDays(_workingDays);
+              _initialHolidays = _snapshotHolidays(_holidays);
+            });
             AppSnackbar.showSuccess(
               context,
               title: l10n.success,
@@ -325,15 +371,19 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
   }
 
   Widget _buildSaveButton(AppLocalizations l10n) {
+    final enabled = _hasChanges;
     return Padding(
       padding: EdgeInsets.all(16.w),
       child: GestureDetector(
-        onTap: _onSave,
-        child: Container(
+        onTap: enabled ? _onSave : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           width: double.infinity,
           padding: EdgeInsets.symmetric(vertical: 14.h),
           decoration: BoxDecoration(
-            color: ColorManager.primary,
+            color: enabled
+                ? ColorManager.primary
+                : ColorManager.primary.withValues(alpha: 0.35),
             borderRadius: BorderRadiusManager.lg,
           ),
           child: Text(
@@ -624,4 +674,65 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
       ),
     );
   }
+}
+
+// ─── Lightweight snapshot classes for dirty-checking ─────────────────
+
+class _ShiftSnapshot {
+  final int fromH, fromM, toH, toM;
+  const _ShiftSnapshot(this.fromH, this.fromM, this.toH, this.toM);
+
+  @override
+  bool operator ==(Object other) =>
+      other is _ShiftSnapshot &&
+      fromH == other.fromH &&
+      fromM == other.fromM &&
+      toH == other.toH &&
+      toM == other.toM;
+
+  @override
+  int get hashCode => Object.hash(fromH, fromM, toH, toM);
+}
+
+class _DaySnapshot {
+  final int dayOfWeek;
+  final bool enabled;
+  final List<_ShiftSnapshot> shifts;
+  const _DaySnapshot(this.dayOfWeek, this.enabled, this.shifts);
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! _DaySnapshot) return false;
+    if (dayOfWeek != other.dayOfWeek || enabled != other.enabled) return false;
+    if (shifts.length != other.shifts.length) return false;
+    for (int i = 0; i < shifts.length; i++) {
+      if (shifts[i] != other.shifts[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hash(dayOfWeek, enabled, Object.hashAll(shifts));
+}
+
+class _HolidaySnapshot {
+  final String? id;
+  final String name;
+  final int year, month, day;
+  final bool recurring;
+  const _HolidaySnapshot(
+      this.id, this.name, this.year, this.month, this.day, this.recurring);
+
+  @override
+  bool operator ==(Object other) =>
+      other is _HolidaySnapshot &&
+      id == other.id &&
+      name == other.name &&
+      year == other.year &&
+      month == other.month &&
+      day == other.day &&
+      recurring == other.recurring;
+
+  @override
+  int get hashCode => Object.hash(id, name, year, month, day, recurring);
 }

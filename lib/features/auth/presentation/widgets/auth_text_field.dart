@@ -1,5 +1,4 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -75,7 +74,7 @@ class AuthTextField extends StatelessWidget {
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
                 : null,
-            suffixIcon: suffixIcon,
+            suffix: suffixIcon,
             filled: true,
             fillColor: ColorManager.gray50,
             border: _buildBorder(BorderSide.none),

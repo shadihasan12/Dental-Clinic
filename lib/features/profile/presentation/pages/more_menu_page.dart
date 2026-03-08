@@ -12,14 +12,34 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
+
+  @override
+  State<MenuPage> createState() => _MenuPageState();
+}
+
+class _MenuPageState extends State<MenuPage> {
+  @override
+  void initState() {
+    super.initState();
+    UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
+  }
+
+  @override
+  void dispose() {
+    UserStorage.profileUpdateNotifier.removeListener(_onProfileUpdated);
+    super.dispose();
+  }
+
+  void _onProfileUpdated() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final userStorage = getIt<UserStorage>();
     final fullName = userStorage.getUserName() ?? '';
+    final profileImageUrl = userStorage.getProfileImageUrl();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -28,7 +48,7 @@ class MenuPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // — Profile header
-            _buildProfileHeader(context, fullName),
+            _buildProfileHeader(context, fullName, profileImageUrl),
             Divider(height: 1, color: Colors.grey.shade200),
 
             Padding(
@@ -191,7 +211,8 @@ class MenuPage extends StatelessWidget {
 
   // ─── Profile Header ─────────────────────────────────────────────────────
 
-  Widget _buildProfileHeader(BuildContext context, String fullName) {
+  Widget _buildProfileHeader(
+      BuildContext context, String fullName, String? profileImageUrl) {
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -202,11 +223,17 @@ class MenuPage extends StatelessWidget {
             CircleAvatar(
               radius: 28.r,
               backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
-              child: Icon(
-                Icons.person,
-                size: 28.w,
-                color: ColorManager.primary,
-              ),
+              backgroundImage:
+                  profileImageUrl != null && profileImageUrl.isNotEmpty
+                      ? NetworkImage(profileImageUrl)
+                      : null,
+              child: profileImageUrl == null || profileImageUrl.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      size: 28.w,
+                      color: ColorManager.primary,
+                    )
+                  : null,
             ),
             SizedBox(width: 14.w),
 

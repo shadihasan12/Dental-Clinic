@@ -11,11 +11,13 @@ class HomeHeader extends StatelessWidget {
     super.key,
     required this.userName,
     required this.clinicName,
+    this.profileImageUrl,
     this.onNotificationTap,
   });
 
   final String userName;
   final String clinicName;
+  final String? profileImageUrl;
   final VoidCallback? onNotificationTap;
 
   @override

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/c/Users/Ismail/fvm/versions/3.38.2/bin/flutter analyze lib/features/profile/presentation/pages/clinic_info/presentation/pages/working_hours_page.dart)"
+    ]
+  }
+}
