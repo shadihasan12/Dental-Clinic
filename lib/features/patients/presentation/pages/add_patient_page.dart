@@ -178,7 +178,11 @@ class _AddPatientContentState extends State<_AddPatientContent> {
               if (context.mounted) {
                 context.pushReplacementNamed(
                   AppRoutesNames.addTreatment,
-                  extra: {'patientId': patient.id, 'isInitial': true},
+                  extra: {
+                    'patientId': patient.id,
+                    'patientName': patient.name,
+                    'isInitial': true,
+                  },
                 );
               }
             } else {

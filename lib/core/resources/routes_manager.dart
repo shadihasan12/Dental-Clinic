@@ -15,6 +15,8 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
+import 'package:dental_clinic_app/features/treatment_plan_prototype/models/prototype_models.dart';
+import 'package:dental_clinic_app/features/treatment_plan_prototype/pages/treatment_dashboard_page.dart';
 import 'package:dental_clinic_app/features/treatment_plan_prototype/treatment_prototype_hub.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/statistics/statistics_page.dart';
@@ -237,11 +239,13 @@ class RoutesManager {
             final patientId = extra["patientId"] as String;
             final patientName = extra["patientName"] as String? ?? '';
             final tabIndex = extra["tabIndex"] ?? 0;
+            final prototypePlan = extra["prototypePlan"] as TreatmentPlan?;
             return CupertinoPage(
               child: PatientDetailsPage(
                 patientId: patientId,
                 patientName: patientName,
                 tabIndex: tabIndex,
+                prototypePlan: prototypePlan,
               ),
               key: state.pageKey,
               name: state.name,
@@ -256,6 +260,19 @@ class RoutesManager {
             final patientId = extra['patientId'] as String;
             final isInitial = extra['isInitial'] as bool? ?? false;
             final caseId = extra['caseId'] as String?;
+            final patientName = extra['patientName'] as String? ?? '';
+
+            if (isInitial && caseId == null) {
+              return CupertinoPage(
+                child: TreatmentDashboardPage(
+                  patientId: patientId,
+                  patientName: patientName,
+                ),
+                key: state.pageKey,
+                name: state.name,
+              );
+            }
+
             return CupertinoPage(
               child: AddTreatmentPage(
                 patientId: patientId,

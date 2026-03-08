@@ -35,15 +35,19 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     onPressed: () => context.pop(),
                   ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.textPrimary,
+                      ),
                     ),
                   ),
+                  if (actions != null) ...actions!,
+                  if (actions != null) SizedBox(width: 12.w),
                 ],
               ),
             ),

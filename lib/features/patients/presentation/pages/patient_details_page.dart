@@ -12,6 +12,8 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_payment
 import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details/patient_details_bloc.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
+import 'package:dental_clinic_app/features/treatment_plan_prototype/models/prototype_models.dart';
+import 'package:dental_clinic_app/features/treatment_plan_prototype/pages/treatment_plan_view_page.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +27,14 @@ class PatientDetailsPage extends StatelessWidget {
   final String patientId;
   final String patientName;
   final int? tabIndex;
+  final TreatmentPlan? prototypePlan;
 
   const PatientDetailsPage({
     super.key,
     required this.patientId,
     required this.patientName,
     this.tabIndex,
+    this.prototypePlan,
   });
 
   @override
@@ -43,6 +47,7 @@ class PatientDetailsPage extends StatelessWidget {
         patientId: patientId,
         tabIndex: tabIndex,
         patientName: patientName,
+        prototypePlan: prototypePlan,
       ),
     );
   }
@@ -52,11 +57,13 @@ class _PatientDetailsContent extends StatefulWidget {
   final String patientId;
   final int? tabIndex;
   final String patientName;
+  final TreatmentPlan? prototypePlan;
 
   const _PatientDetailsContent({
     required this.patientId,
     this.tabIndex,
     required this.patientName,
+    this.prototypePlan,
   });
 
   @override
@@ -125,7 +132,11 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   void _createNewCase() {
     context.pushNamed(
       AppRoutesNames.addTreatment,
-      extra: {'patientId': widget.patientId, 'isInitial': true},
+      extra: {
+        'patientId': widget.patientId,
+        'patientName': widget.patientName,
+        'isInitial': true,
+      },
     );
   }
 
@@ -252,6 +263,13 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
         coreTreatments: _coreTreatments,
         isReadOnly: true,
         onLoadPayments: () => _loadPayments(_displayedCase!.id),
+      );
+    }
+
+    if (activeCase == null && widget.prototypePlan != null) {
+      return TreatmentPlanViewPage(
+        plan: widget.prototypePlan!,
+        embedded: true,
       );
     }
 
