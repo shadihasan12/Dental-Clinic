@@ -150,6 +150,64 @@ class PatientRepositoryImpl implements PatientRepository {
   }
 
   @override
+  Future<Either<NetworkExceptions, void>> updateTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+    String? description,
+    required List<Map<String, String>> notes,
+  }) async {
+    try {
+      await _remoteDataSource.updateTreatmentPlanItem(
+        patientId: patientId,
+        caseId: caseId,
+        itemId: itemId,
+        description: description,
+        notes: notes,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> deleteTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  }) async {
+    try {
+      await _remoteDataSource.deleteTreatmentPlanItem(
+        patientId: patientId,
+        caseId: caseId,
+        itemId: itemId,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> toggleTreatmentPlanItemStatus({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  }) async {
+    try {
+      await _remoteDataSource.toggleTreatmentPlanItemStatus(
+        patientId: patientId,
+        caseId: caseId,
+        itemId: itemId,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
   Future<Either<NetworkExceptions, List<Payment>>> getPayments(
     String patientId,
     String caseId,
@@ -176,6 +234,64 @@ class PatientRepositoryImpl implements PatientRepository {
         caseId,
         amount,
         notes: notes,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> updateCaseCosts({
+    required String patientId,
+    required String caseId,
+    required double totalCost,
+    String? totalCostCurrencyId,
+    required double labFees,
+    String? labFeesCurrencyId,
+  }) async {
+    try {
+      await _remoteDataSource.updateCaseCosts(
+        patientId: patientId,
+        caseId: caseId,
+        totalCost: totalCost,
+        totalCostCurrencyId: totalCostCurrencyId,
+        labFees: labFees,
+        labFeesCurrencyId: labFeesCurrencyId,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> updateCaseTitle({
+    required String patientId,
+    required String caseId,
+    required String? title,
+  }) async {
+    try {
+      await _remoteDataSource.updateCaseTitle(
+        patientId: patientId,
+        caseId: caseId,
+        title: title,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> reactivateCase({
+    required String patientId,
+    required String caseId,
+  }) async {
+    try {
+      await _remoteDataSource.reactivateCase(
+        patientId: patientId,
+        caseId: caseId,
       );
       return const Right(null);
     } catch (e) {

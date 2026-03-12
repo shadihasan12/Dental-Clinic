@@ -131,20 +131,6 @@ class _MenuPageState extends State<MenuPage> {
                   ]),
                   SizedBox(height: 24.h),
 
-                  // — Prototype (Test)
-                  _sectionLabel(context, 'Prototype'),
-                  SizedBox(height: 10.h),
-                  _buildMenuGroup(context, [
-                    MenuItem(
-                      icon: Icons.science_outlined,
-                      title: 'Treatment Plan Prototype',
-                      subtitle: 'UX experiment — tap to explore',
-                      onTap: () =>
-                          context.pushNamed(AppRoutesNames.treatmentPrototype),
-                    ),
-                  ]),
-                  SizedBox(height: 24.h),
-
                   // — Support
                   _sectionLabel(context, l10n.support),
                   SizedBox(height: 10.h),

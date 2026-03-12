@@ -1,9 +1,8 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../models/prototype_models.dart';
 
 class TreatmentTypeGrid extends StatelessWidget {
   final List<TreatmentTypeInfo> types;
@@ -74,7 +73,7 @@ class TreatmentTypeGrid extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.w),
                   child: Text(
-                    type.nameEn,
+                    type.name,
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

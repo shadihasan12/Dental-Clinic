@@ -29,6 +29,8 @@ class TreatmentItem {
   final DateTime createdAt;
   final DateTime? completedAt;
   final bool isDone;
+  /// Raw notes from the API: [{note: '...', date: '2026-03-12'}, ...]
+  final List<Map<String, String>> notes;
 
   const TreatmentItem({
     required this.id,
@@ -39,6 +41,7 @@ class TreatmentItem {
     required this.createdAt,
     this.completedAt,
     this.isDone = false,
+    this.notes = const [],
   });
 
   TreatmentItem copyWith({
@@ -50,6 +53,7 @@ class TreatmentItem {
     DateTime? createdAt,
     DateTime? completedAt,
     bool? isDone,
+    List<Map<String, String>>? notes,
   }) {
     return TreatmentItem(
       id: id ?? this.id,
@@ -60,6 +64,7 @@ class TreatmentItem {
       createdAt: createdAt ?? this.createdAt,
       completedAt: completedAt ?? this.completedAt,
       isDone: isDone ?? this.isDone,
+      notes: notes ?? this.notes,
     );
   }
 }
@@ -74,7 +79,10 @@ class DentalCase {
   final DateTime? endDate;
   final String status; // 'In Progress', 'Done', 'Pending'
   final double totalCost;
+  final double labFees;
   final double paidAmount;
+  final String? totalCostCurrencyId;
+  final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
 
   const DentalCase({
@@ -86,7 +94,10 @@ class DentalCase {
     this.endDate,
     required this.status,
     required this.totalCost,
+    this.labFees = 0,
     required this.paidAmount,
+    this.totalCostCurrencyId,
+    this.labFeesCurrencyId,
     this.treatmentItems = const [],
   });
 
@@ -99,8 +110,18 @@ class DentalCase {
       startDate: DateTime.parse(json['started_date'] as String),
       status: json['status'] as String,
       totalCost: (json['total_cost'] as num?)?.toDouble() ?? 0,
+      labFees: (json['lab_fees'] as num?)?.toDouble() ?? 0,
       paidAmount: (json['paid_amount'] as num?)?.toDouble() ?? 0,
+      totalCostCurrencyId: _parseCurrencyId(json, 'total_cost_currency'),
+      labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
     );
+  }
+
+  static String? _parseCurrencyId(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    if (value is Map<String, dynamic>) return value['id'] as String?;
+    if (value is String) return value;
+    return json['${key}_id'] as String?;
   }
 
   double get pendingAmount => totalCost - paidAmount;
@@ -145,7 +166,10 @@ class DentalCase {
     DateTime? endDate,
     String? status,
     double? totalCost,
+    double? labFees,
     double? paidAmount,
+    String? totalCostCurrencyId,
+    String? labFeesCurrencyId,
     List<TreatmentItem>? treatmentItems,
   }) {
     return DentalCase(
@@ -157,7 +181,10 @@ class DentalCase {
       endDate: endDate ?? this.endDate,
       status: status ?? this.status,
       totalCost: totalCost ?? this.totalCost,
+      labFees: labFees ?? this.labFees,
       paidAmount: paidAmount ?? this.paidAmount,
+      totalCostCurrencyId: totalCostCurrencyId ?? this.totalCostCurrencyId,
+      labFeesCurrencyId: labFeesCurrencyId ?? this.labFeesCurrencyId,
       treatmentItems: treatmentItems ?? this.treatmentItems,
     );
   }

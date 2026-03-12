@@ -6,29 +6,63 @@ import 'package:dental_clinic_app/features/patients/domain/repositories/patient_
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 
+/// A single treatment plan item to be sent to the API.
+class TreatmentPlanItemParam extends Equatable {
+  final String? description;
+  final List<String> coreTreatmentIds;
+  final List<String> toothIds;
+  final List<Map<String, String>> notes; // [{note, date}]
+
+  const TreatmentPlanItemParam({
+    this.description,
+    required this.coreTreatmentIds,
+    required this.toothIds,
+    this.notes = const [],
+  });
+
+  Map<String, dynamic> toJson() => {
+        if (description != null && description!.isNotEmpty)
+          'description': description,
+        'core_treatment_ids': coreTreatmentIds,
+        'tooth_ids': toothIds,
+        if (notes.isNotEmpty) 'notes': notes,
+      };
+
+  @override
+  List<Object?> get props => [description, coreTreatmentIds, toothIds, notes];
+}
+
 class AddTreatmentParams extends Equatable {
   final String patientId;
   final bool isInitial;
   final String? caseId;
   final DateTime visitDate;
+  final double totalCost;
+  final String? totalCostCurrencyId;
+  final double labFees;
+  final String? labFeesCurrencyId;
+  final List<String> attachments;
+  final List<TreatmentPlanItemParam> treatmentPlanItems;
+
+  // Legacy fields kept for non-initial (single item) usage
   final List<String> treatmentTypes;
   final List<String> selectedTeeth;
-  final String summary;
-  final double totalCost;
-  final double labFees;
-  final List<String> attachments;
+  final String? summary;
 
   const AddTreatmentParams({
     required this.patientId,
     required this.isInitial,
     this.caseId,
     required this.visitDate,
-    required this.treatmentTypes,
-    required this.selectedTeeth,
-    required this.summary,
+    this.treatmentTypes = const [],
+    this.selectedTeeth = const [],
+    this.summary,
     required this.totalCost,
+    this.totalCostCurrencyId,
     required this.labFees,
+    this.labFeesCurrencyId,
     required this.attachments,
+    this.treatmentPlanItems = const [],
   });
 
   @override
@@ -41,8 +75,11 @@ class AddTreatmentParams extends Equatable {
         selectedTeeth,
         summary,
         totalCost,
+        totalCostCurrencyId,
         labFees,
+        labFeesCurrencyId,
         attachments,
+        treatmentPlanItems,
       ];
 }
 

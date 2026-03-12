@@ -91,6 +91,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
   }
 
   Future<void> _selectDate() async {
+    FocusScope.of(context).unfocus();
     final l10n = AppLocalizations.of(context)!;
     DateTime tempDate = _dateOfBirth ?? DateTime(1990);
 

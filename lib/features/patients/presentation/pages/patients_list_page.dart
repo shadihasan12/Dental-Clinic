@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/features/patients/domain/entities/patient_enti
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,6 +56,28 @@ class _PatientsListContentState extends State<_PatientsListContent> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       context.read<PatientsListBloc>().add(const PatientsListEvent.loadMore());
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    context
+        .read<PatientsListBloc>()
+        .add(const PatientsListEvent.loadPatients());
+    // Wait for the bloc to emit a non-loading state
+    await context.read<PatientsListBloc>().stream.firstWhere(
+          (state) => state.maybeWhen(
+            loading: () => false,
+            orElse: () => true,
+          ),
+        );
+  }
+
+  Future<void> _navigateToAddPatient() async {
+    await context.pushNamed(AppRoutesNames.addPatient);
+    if (mounted) {
+      context
+          .read<PatientsListBloc>()
+          .add(const PatientsListEvent.loadPatients());
     }
   }
 
@@ -170,7 +193,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         PatientsListHeader(
           patientCount: allPatients.length,
           searchController: _searchController,
-          onAddTap: () => context.pushNamed(AppRoutesNames.addPatient),
+          onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) => setState(() {}),
         ),
         Divider(height: 1, color: Colors.grey.shade200),
@@ -186,42 +209,51 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         Expanded(
           child: filtered.isEmpty
               ? _buildEmptyState(l10n, allPatients.isEmpty)
-              : ListView.separated(
+              : CustomScrollView(
                   controller: _scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  itemCount:
-                      filtered.length + (isLoadingMore || hasMore ? 1 : 0),
-                  separatorBuilder: (_, __) =>
-                      Divider(height: 1, color: Colors.grey.shade100),
-                  itemBuilder: (context, index) {
-                    if (index == filtered.length) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        child: Center(
-                          child: SizedBox(
-                            width: 24.w,
-                            height: 24.w,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: ColorManager.primary,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
+                  slivers: [
+                    CupertinoSliverRefreshControl(
+                      onRefresh: _onRefresh,
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      sliver: SliverList.separated(
+                        itemCount: filtered.length +
+                            (isLoadingMore || hasMore ? 1 : 0),
+                        separatorBuilder: (_, __) =>
+                            Divider(height: 1, color: Colors.grey.shade100),
+                        itemBuilder: (context, index) {
+                          if (index == filtered.length) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16.h),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 24.w,
+                                  height: 24.w,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: ColorManager.primary,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
 
-                    final patient = filtered[index];
-                    return PatientCard(
-                      patient: patient,
-                      onTap: () => context.pushNamed(
-                        AppRoutesNames.patientDetails,
-                        extra: {
-                          "patientId": patient.id,
-                          "patientName": patient.name,
+                          final patient = filtered[index];
+                          return PatientCard(
+                            patient: patient,
+                            onTap: () => context.pushNamed(
+                              AppRoutesNames.patientDetails,
+                              extra: {
+                                "patientId": patient.id,
+                                "patientName": patient.name,
+                              },
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
         ),
       ],
@@ -256,9 +288,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
             ),
             SizedBox(height: 8.h),
             GestureDetector(
-              onTap: () {
-                context.pushNamed(AppRoutesNames.addPatient);
-              },
+              onTap: _navigateToAddPatient,
               child: Text(
                 isCompletelyEmpty
                     ? l10n.noPatientsYetDesc
@@ -289,7 +319,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         PatientsListHeader(
           patientCount: 0,
           searchController: _searchController,
-          onAddTap: () => context.pushNamed(AppRoutesNames.addPatient),
+          onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) {},
         ),
         Divider(height: 1, color: Colors.grey.shade200),

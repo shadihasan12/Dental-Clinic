@@ -57,6 +57,26 @@ abstract class PatientRepository {
     String? title,
   });
 
+  Future<Either<NetworkExceptions, void>> updateTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+    String? description,
+    required List<Map<String, String>> notes,
+  });
+
+  Future<Either<NetworkExceptions, void>> deleteTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  });
+
+  Future<Either<NetworkExceptions, void>> toggleTreatmentPlanItemStatus({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  });
+
   Future<Either<NetworkExceptions, List<Payment>>> getPayments(
     String patientId,
     String caseId,
@@ -67,5 +87,25 @@ abstract class PatientRepository {
     String caseId,
     double amount, {
     String? notes,
+  });
+
+  Future<Either<NetworkExceptions, void>> updateCaseCosts({
+    required String patientId,
+    required String caseId,
+    required double totalCost,
+    String? totalCostCurrencyId,
+    required double labFees,
+    String? labFeesCurrencyId,
+  });
+
+  Future<Either<NetworkExceptions, void>> updateCaseTitle({
+    required String patientId,
+    required String caseId,
+    required String? title,
+  });
+
+  Future<Either<NetworkExceptions, void>> reactivateCase({
+    required String patientId,
+    required String caseId,
   });
 }

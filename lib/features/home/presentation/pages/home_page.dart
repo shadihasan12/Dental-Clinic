@@ -185,51 +185,6 @@ class _HomePageState extends State<HomePage> {
 
               SizedBox(height: 24.h),
 
-              // — Treatment Plan Prototype (Test)
-              GestureDetector(
-                onTap: () =>
-                    context.pushNamed(AppRoutesNames.treatmentPrototype),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(14.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF0F9F9),
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: const Color(0xFF70B2B2).withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.science_outlined,
-                        size: 22.w,
-                        color: const Color(0xFF70B2B2),
-                      ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: Text(
-                          'Treatment Plan Prototype',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF70B2B2),
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14.w,
-                        color: const Color(0xFF70B2B2),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 24.h),
-
               // — Today's schedule
               TodaysSchedule(onViewAllTap: () {}),
 

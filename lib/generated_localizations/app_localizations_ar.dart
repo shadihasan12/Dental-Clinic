@@ -1539,4 +1539,154 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pleaseEnterCurrentPassword => 'يرجى إدخال كلمة المرور الحالية';
+
+  @override
+  String get editCosts => 'تعديل التكاليف';
+
+  @override
+  String get enterTotalCost => 'أدخل التكلفة الإجمالية';
+
+  @override
+  String get enterLabFees => 'أدخل رسوم المخبر';
+
+  @override
+  String get completedCase => 'حالة مكتملة';
+
+  @override
+  String get caseTitlePlaceholder => 'عنوان الحالة...';
+
+  @override
+  String get started => 'بدأت';
+
+  @override
+  String get reopenCase => 'إعادة فتح الحالة';
+
+  @override
+  String get tooth => 'السن';
+
+  @override
+  String get generalTreatment => 'معالجة عامة';
+
+  @override
+  String get visitNotes => 'ملاحظات الزيارة';
+
+  @override
+  String get manageNotes => 'إدارة الملاحظات';
+
+  @override
+  String get undoFinished => 'التراجع عن الإنهاء';
+
+  @override
+  String get markFinished => 'تمت المعالجة';
+
+  @override
+  String get addANote => 'أضف ملاحظة...';
+
+  @override
+  String get planned => 'مخطط';
+
+  @override
+  String get general => 'عام';
+
+  @override
+  String get noNotesYet => 'لا توجد ملاحظات بعد';
+
+  @override
+  String get deleteTreatment => 'حذف المعالجة';
+
+  @override
+  String get confirmDeleteTreatment =>
+      'هل أنت متأكد من رغبتك في إزالة هذه المعالجة؟';
+
+  @override
+  String get editNote => 'تعديل الملاحظة...';
+
+  @override
+  String get writeANote => 'اكتب ملاحظة...';
+
+  @override
+  String get costsUpdated => 'تم تحديث التكاليف';
+
+  @override
+  String get titleUpdated => 'تم تحديث العنوان';
+
+  @override
+  String get caseReopened => 'تم إعادة فتح الحالة';
+
+  @override
+  String get treatmentRemoved => 'تم إزالة المعالجة';
+
+  @override
+  String get notesUpdated => 'تم تحديث الملاحظات';
+
+  @override
+  String get treatmentAddedSuccessfully => 'تمت إضافة المعالجة بنجاح';
+
+  @override
+  String get saving => 'جاري الحفظ...';
+
+  @override
+  String get type => 'النوع';
+
+  @override
+  String get planTreatments => 'تخطيط المعالجات';
+
+  @override
+  String get tapToothToAddTreatments => 'اضغط على سن لإضافة معالجات';
+
+  @override
+  String get addedTreatments => 'المعالجات المضافة';
+
+  @override
+  String nTreatments(int count) {
+    return '$count معالجات';
+  }
+
+  @override
+  String get addToPlan => 'إضافة للخطة';
+
+  @override
+  String get hasPlannedTreatment => 'يوجد معالجة مخططة';
+
+  @override
+  String get treatmentPlan => 'خطة العلاج';
+
+  @override
+  String get newTreatmentPlan => 'خطة علاج جديدة';
+
+  @override
+  String get setCost => 'تحديد التكلفة';
+
+  @override
+  String get savingTreatmentPlan => 'جاري حفظ خطة العلاج...';
+
+  @override
+  String get treatmentPlanSavedSuccessfully => 'تم حفظ خطة العلاج بنجاح';
+
+  @override
+  String get noTreatmentsYetAddOne => 'لا توجد معالجات بعد — أضف معالجة!';
+
+  @override
+  String toothLabel(String number) {
+    return 'السن $number';
+  }
+
+  @override
+  String get selectTreatments => 'اختر المعالجات';
+
+  @override
+  String get selectATreatment => 'اختر معالجة';
+
+  @override
+  String addNTreatments(int count) {
+    return 'إضافة $count معالجات';
+  }
+
+  @override
+  String alreadyPlannedForTooth(int count) {
+    return '$count معالجة مخططة لهذا السن';
+  }
+
+  @override
+  String get pleaseSelectCurrency => 'يرجى اختيار العملة';
 }

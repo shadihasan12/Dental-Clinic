@@ -1548,4 +1548,155 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseEnterCurrentPassword => 'Please enter your current password';
+
+  @override
+  String get editCosts => 'Edit Costs';
+
+  @override
+  String get enterTotalCost => 'Enter total cost';
+
+  @override
+  String get enterLabFees => 'Enter lab fees';
+
+  @override
+  String get completedCase => 'Completed Case';
+
+  @override
+  String get caseTitlePlaceholder => 'Case title...';
+
+  @override
+  String get started => 'Started';
+
+  @override
+  String get reopenCase => 'Reopen Case';
+
+  @override
+  String get tooth => 'Tooth';
+
+  @override
+  String get generalTreatment => 'General Treatment';
+
+  @override
+  String get visitNotes => 'Visit Notes';
+
+  @override
+  String get manageNotes => 'Manage Notes';
+
+  @override
+  String get undoFinished => 'Undo Finished';
+
+  @override
+  String get markFinished => 'Mark Finished';
+
+  @override
+  String get addANote => 'Add a note...';
+
+  @override
+  String get planned => 'Planned';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get noNotesYet => 'No notes yet';
+
+  @override
+  String get deleteTreatment => 'Delete Treatment';
+
+  @override
+  String get confirmDeleteTreatment =>
+      'Are you sure you want to remove this treatment?';
+
+  @override
+  String get editNote => 'Edit note...';
+
+  @override
+  String get writeANote => 'Write a note...';
+
+  @override
+  String get costsUpdated => 'Costs updated';
+
+  @override
+  String get titleUpdated => 'Title updated';
+
+  @override
+  String get caseReopened => 'Case reopened';
+
+  @override
+  String get treatmentRemoved => 'Treatment removed';
+
+  @override
+  String get notesUpdated => 'Notes updated';
+
+  @override
+  String get treatmentAddedSuccessfully => 'Treatment added successfully';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get planTreatments => 'Plan Treatments';
+
+  @override
+  String get tapToothToAddTreatments => 'Tap a tooth to add treatments';
+
+  @override
+  String get addedTreatments => 'Added Treatments';
+
+  @override
+  String nTreatments(int count) {
+    return '$count treatments';
+  }
+
+  @override
+  String get addToPlan => 'Add to Plan';
+
+  @override
+  String get hasPlannedTreatment => 'Has planned treatment';
+
+  @override
+  String get treatmentPlan => 'Treatment Plan';
+
+  @override
+  String get newTreatmentPlan => 'New Treatment Plan';
+
+  @override
+  String get setCost => 'Set Cost';
+
+  @override
+  String get savingTreatmentPlan => 'Saving treatment plan...';
+
+  @override
+  String get treatmentPlanSavedSuccessfully =>
+      'Treatment plan saved successfully';
+
+  @override
+  String get noTreatmentsYetAddOne => 'No treatments yet — add one!';
+
+  @override
+  String toothLabel(String number) {
+    return 'Tooth $number';
+  }
+
+  @override
+  String get selectTreatments => 'Select Treatments';
+
+  @override
+  String get selectATreatment => 'Select a treatment';
+
+  @override
+  String addNTreatments(int count) {
+    return 'Add $count Treatments';
+  }
+
+  @override
+  String alreadyPlannedForTooth(int count) {
+    return '$count treatment(s) already planned for this tooth';
+  }
+
+  @override
+  String get pleaseSelectCurrency => 'Please select a currency';
 }

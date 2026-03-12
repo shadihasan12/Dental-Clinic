@@ -3,18 +3,20 @@ import 'package:dental_clinic_app/features/patients/data/models/core_treatment.d
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_detail_popup.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/add/treatment_item_card.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/confirm_delete_dialog.dart';
+import 'edit_costs_sheet.dart';
+import 'plan_summary_header.dart';
+import 'treatment_details_sheet.dart';
+import 'treatment_plan_card.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/payment_history_popup.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/record_payment_popup.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:intl/intl.dart';
 
-class CaseOverviewWidget extends StatelessWidget {
+
+class CaseOverviewWidget extends StatefulWidget {
   final DentalCase dentalCase;
   final List<Tooth> teeth;
   final List<CoreTreatment> coreTreatments;
@@ -22,6 +24,13 @@ class CaseOverviewWidget extends StatelessWidget {
   final Future<void> Function(double amount, String? notes)? onPaymentRecorded;
   final VoidCallback? onMarkAsFinished;
   final Future<List<Payment>> Function()? onLoadPayments;
+  final VoidCallback? onAddTreatment;
+  final void Function(PlannedTreatment treatment)? onMarkTreatmentFinished;
+  final void Function(PlannedTreatment treatment, List<VisitNote> notes)?
+      onNotesUpdated;
+  final void Function(PlannedTreatment treatment)? onRemoveTreatment;
+  final Future<void> Function(double totalCost, String? totalCostCurrencyId,
+      double labFees, String? labFeesCurrencyId)? onEditCosts;
 
   const CaseOverviewWidget({
     super.key,
@@ -32,17 +41,107 @@ class CaseOverviewWidget extends StatelessWidget {
     this.onPaymentRecorded,
     this.onMarkAsFinished,
     this.onLoadPayments,
+    this.onAddTreatment,
+    this.onMarkTreatmentFinished,
+    this.onNotesUpdated,
+    this.onRemoveTreatment,
+    this.onEditCosts,
   });
+
+  @override
+  State<CaseOverviewWidget> createState() => _CaseOverviewWidgetState();
+}
+
+class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
+  late List<PlannedTreatment> _planned;
+
+  @override
+  void initState() {
+    super.initState();
+    _planned = _mapToPlannedTreatments();
+  }
+
+  @override
+  void didUpdateWidget(covariant CaseOverviewWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dentalCase != widget.dentalCase) {
+      _planned = _mapToPlannedTreatments();
+    }
+  }
+
+  /// Maps API [TreatmentItem] list → prototype [PlannedTreatment] list
+  List<PlannedTreatment> _mapToPlannedTreatments() {
+    final result = <PlannedTreatment>[];
+
+    for (final item in widget.dentalCase.treatmentItems) {
+      final toothCodes = item.selectedTeeth.map((id) {
+        final match = widget.teeth.where((t) => t.id == id);
+        return match.isNotEmpty ? match.first.universalCode : null;
+      }).whereType<String>().toList();
+
+      for (final typeId in item.treatmentTypes) {
+        final ct = widget.coreTreatments.where((t) => t.id == typeId);
+        final typeInfo = ct.isNotEmpty
+            ? TreatmentTypeInfo(
+                id: ct.first.id,
+                name: ct.first.name,
+                icon: Icons.medical_services_outlined,
+                categoryId: ct.first.category.id,
+                categoryName: ct.first.category.name,
+              )
+            : TreatmentTypeInfo(
+                id: typeId,
+                name: typeId,
+                icon: Icons.medical_services_outlined,
+                categoryId: '',
+                categoryName: '',
+              );
+
+        final visitNotes = item.notes.map((n) {
+          final dateStr = n['date'] ?? '';
+          final date = dateStr.isNotEmpty
+              ? DateTime.tryParse(dateStr) ?? DateTime.now()
+              : DateTime.now();
+          return VisitNote(date: date, text: n['note'] ?? '');
+        }).toList();
+
+        result.add(PlannedTreatment(
+          id: '${item.id}_$typeId',
+          type: typeInfo,
+          toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
+          status: item.isDone
+              ? TreatmentPlanStatus.completed
+              : TreatmentPlanStatus.planned,
+          notes: item.description,
+          visitNotes: visitNotes,
+        ));
+      }
+    }
+
+    return result;
+  }
+
+  TreatmentPlan _buildTreatmentPlan() {
+    return TreatmentPlan(
+      id: widget.dentalCase.id,
+      patientName: widget.dentalCase.patientName,
+      treatments: _planned,
+      createdAt: widget.dentalCase.startDate,
+      totalCost: widget.dentalCase.totalCost,
+      labFees: widget.dentalCase.labFees,
+      paid: widget.dentalCase.paidAmount,
+    );
+  }
 
   void _showRecordPaymentPopup(BuildContext context) {
     RecordPaymentPopup.show(
       context,
-      patientName: dentalCase.patientName,
-      caseTitle: dentalCase.title,
-      totalCost: dentalCase.totalCost,
-      paidAmount: dentalCase.paidAmount,
+      patientName: widget.dentalCase.patientName,
+      caseTitle: widget.dentalCase.title,
+      totalCost: widget.dentalCase.totalCost,
+      paidAmount: widget.dentalCase.paidAmount,
       onSave: (amount, notes) async {
-        await onPaymentRecorded?.call(amount, notes);
+        await widget.onPaymentRecorded?.call(amount, notes);
       },
     );
   }
@@ -50,15 +149,62 @@ class CaseOverviewWidget extends StatelessWidget {
   void _showPaymentHistoryPopup(BuildContext context) {
     PaymentHistoryPopup.show(
       context,
-      caseTitle: dentalCase.title,
-      onLoadPayments: onLoadPayments ?? () async => [],
-      totalCost: dentalCase.totalCost,
-      paidAmount: dentalCase.paidAmount,
+      caseTitle: widget.dentalCase.title,
+      onLoadPayments: widget.onLoadPayments ?? () async => [],
+      totalCost: widget.dentalCase.totalCost,
+      paidAmount: widget.dentalCase.paidAmount,
+    );
+  }
+
+  void _toggleTreatmentStatus(PlannedTreatment treatment) {
+    setState(() {
+      if (treatment.status == TreatmentPlanStatus.completed) {
+        treatment.status = TreatmentPlanStatus.planned;
+        treatment.completedDate = null;
+      } else {
+        treatment.status = TreatmentPlanStatus.completed;
+        treatment.completedDate = DateTime.now();
+      }
+    });
+    widget.onMarkTreatmentFinished?.call(treatment);
+  }
+
+  void _showEditCostsSheet(BuildContext context) {
+    EditCostsSheet.show(
+      context,
+      initialTotalCost: widget.dentalCase.totalCost,
+      initialLabFees: widget.dentalCase.labFees,
+      initialTotalCostCurrencyId: widget.dentalCase.totalCostCurrencyId,
+      initialLabFeesCurrencyId: widget.dentalCase.labFeesCurrencyId,
+      onSave: (totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId) async {
+        await widget.onEditCosts?.call(
+          totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId,
+        );
+      },
+    );
+  }
+
+  void _showTreatmentDetailsSheet(PlannedTreatment treatment) {
+    TreatmentDetailsSheet.show(
+      context,
+      treatment: treatment,
+      teeth: widget.teeth,
+      onToggleStatus: (t) => _toggleTreatmentStatus(t),
+      onNotesUpdated: (t, updatedNotes) {
+        setState(() {
+          t.visitNotes
+            ..clear()
+            ..addAll(updatedNotes);
+        });
+        widget.onNotesUpdated?.call(t, updatedNotes);
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final plan = _buildTreatmentPlan();
+
     return Column(
       children: [
         Expanded(
@@ -67,13 +213,19 @@ class CaseOverviewWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Unified case card
-                _buildCaseCard(context),
+                // Plan summary header
+                PlanSummaryHeader(
+                  plan: plan,
+                  onTap: (!widget.isReadOnly && widget.onEditCosts != null)
+                      ? () => _showEditCostsSheet(context)
+                      : null,
+                  onViewPaymentHistory: () => _showPaymentHistoryPopup(context),
+                ),
 
                 SizedBox(height: 12.h),
 
                 // Action buttons (only for in-progress)
-                if (!isReadOnly) ...[
+                if (!widget.isReadOnly) ...[
                   _buildActionButtons(context),
                   SizedBox(height: 16.h),
                 ],
@@ -81,268 +233,60 @@ class CaseOverviewWidget extends StatelessWidget {
                 // Treatments section
                 _buildTreatmentsSection(context),
 
-                if (!isReadOnly) SizedBox(height: 80.h),
+                if (!widget.isReadOnly) SizedBox(height: 16.h),
               ],
             ),
           ),
         ),
-      ],
-    );
-  }
 
-  // ── Unified case card ────────────────────────────────
-
-  Widget _buildCaseCard(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final isInProgress = dentalCase.status.toUpperCase() != 'COMPLETED';
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Title + status badge ──
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  dentalCase.title,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
-                  ),
+        // Sticky "Mark Case as Finished" button at bottom
+        if (!widget.isReadOnly && widget.onMarkAsFinished != null)
+          Container(
+            padding: EdgeInsets.fromLTRB(
+              16.w,
+              12.h,
+              16.w,
+              MediaQuery.of(context).viewPadding.bottom + 12.h,
+            ),
+            decoration: BoxDecoration(
+              color: ColorManager.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+              ],
+            ),
+            child: GestureDetector(
+              onTap: widget.onMarkAsFinished,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
                 decoration: BoxDecoration(
-                  color: isInProgress
-                      ? ColorManager.warning.withValues(alpha: 0.1)
-                      : ColorManager.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                child: Text(
-                  isInProgress ? l10n.inProgress : l10n.completed,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: isInProgress
-                        ? ColorManager.warning
-                        : ColorManager.success,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 8.h),
-
-          // ── Case detail rows ──
-          _buildInfoRow(
-            icon: Icons.calendar_today_outlined,
-            label: l10n.startedLabel,
-            value: DateFormat('MMM d, yyyy').format(dentalCase.startDate),
-          ),
-          _buildInfoRow(
-            icon: Icons.event_note_outlined,
-            label: l10n.totalVisitsLabel,
-            value: '${dentalCase.treatmentItems.length}',
-          ),
-          // Mark as finished row (only in-progress, non-read-only)
-          if (!isReadOnly && isInProgress)
-            _buildActionRow(
-              icon: Icons.check_circle_outline,
-              label: l10n.markAsFinished,
-              onTap: onMarkAsFinished,
-              showDivider: false,
-            )
-          else
-            // End date for completed cases
-            if (dentalCase.endDate != null)
-              _buildInfoRow(
-                icon: Icons.event_available_outlined,
-                label: l10n.completed,
-                value: DateFormat('MMM d, yyyy').format(dentalCase.endDate!),
-                showDivider: false,
-              ),
-
-          SizedBox(height: 4.h),
-          Divider(color: ColorManager.borderLight),
-          SizedBox(height: 8.h),
-
-          // ── Payment section ──
-          Row(
-            children: [
-              _buildStatItem(
-                context,
-                l10n.totalLabel,
-                '\$${dentalCase.totalCost.toStringAsFixed(0)}',
-                ColorManager.textPrimary,
-              ),
-              _buildStatItem(
-                context,
-                l10n.paidLabel,
-                '\$${dentalCase.paidAmount.toStringAsFixed(0)}',
-                ColorManager.success,
-              ),
-              _buildStatItem(
-                context,
-                l10n.pendingLabel,
-                '\$${dentalCase.pendingAmount.toStringAsFixed(0)}',
-                ColorManager.warning,
-              ),
-            ],
-          ),
-
-          SizedBox(height: 10.h),
-
-          // View payment history
-          GestureDetector(
-            onTap: () => _showPaymentHistoryPopup(context),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.receipt_long_outlined,
-                  size: 14.w,
                   color: ColorManager.primary,
+                  borderRadius: BorderRadiusManager.lg,
                 ),
-                SizedBox(width: 4.w),
-                Text(
-                  l10n.viewPaymentHistory,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w500,
-                    color: ColorManager.primary,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_circle_outline, size: 18.w, color: ColorManager.white),
+                    SizedBox(width: 8.w),
+                    Text(
+                      AppLocalizations.of(context)!.markAsFinished,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  // ── Row helpers ──────────────────────────────────────
-
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    bool showDivider = true,
-  }) {
-    return Container(
-      decoration: showDivider
-          ? BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: ColorManager.borderLight, width: 1),
-              ),
-            )
-          : null,
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Row(
-        children: [
-          Icon(icon, size: 18.w, color: ColorManager.textTertiary),
-          SizedBox(width: 12.w),
-          Builder(builder: (context) {
-            return Text(
-              label,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w400,
-                color: ColorManager.textTertiary,
-              ),
-            );
-          }),
-          const Spacer(),
-          Builder(builder: (context) {
-            return Text(
-              value,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w400,
-                color: ColorManager.textPrimary,
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionRow({
-    required IconData icon,
-    required String label,
-    VoidCallback? onTap,
-    bool showDivider = true,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: showDivider
-            ? BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: ColorManager.borderLight, width: 1),
-                ),
-              )
-            : null,
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        child: Row(
-          children: [
-            Icon(icon, size: 18.w, color: ColorManager.success),
-            SizedBox(width: 12.w),
-            Builder(builder: (context) {
-              return Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.success,
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatItem(
-    BuildContext context,
-    String label,
-    String value,
-    Color valueColor,
-  ) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w700,
-              color: valueColor,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textSecondary,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -354,14 +298,7 @@ class CaseOverviewWidget extends StatelessWidget {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => context.pushNamed(
-              AppRoutesNames.addTreatment,
-              extra: {
-                'patientId': dentalCase.patientId,
-                'isInitial': false,
-                'caseId': dentalCase.id,
-              },
-            ),
+            onTap: widget.onAddTreatment,
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 13.h),
               decoration: BoxDecoration(
@@ -394,7 +331,7 @@ class CaseOverviewWidget extends StatelessWidget {
             onTap: () => _showRecordPaymentPopup(context),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 13.h),
-               decoration: BoxDecoration(
+              decoration: BoxDecoration(
                 color: ColorManager.white,
                 borderRadius: BorderRadiusManager.lg,
                 border: Border.all(color: ColorManager.primary),
@@ -426,12 +363,13 @@ class CaseOverviewWidget extends StatelessWidget {
 
   Widget _buildTreatmentsSection(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final treatments = isReadOnly
-        ? dentalCase.treatmentItems
-        : dentalCase.pendingTreatments.take(2).toList();
+    final sectionTitle = widget.isReadOnly ? l10n.treatments : l10n.previousTreatments;
 
-    final sectionTitle = isReadOnly ? l10n.treatments : l10n.previousTreatments;
-    final showSeeAll = !isReadOnly && dentalCase.pendingTreatments.length > 2;
+    // Sort: planned/inProgress first, completed last
+    final sorted = <PlannedTreatment>[
+      ..._planned.where((t) => t.status != TreatmentPlanStatus.completed),
+      ..._planned.where((t) => t.status == TreatmentPlanStatus.completed),
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,17 +386,19 @@ class CaseOverviewWidget extends StatelessWidget {
                 color: ColorManager.textPrimary,
               ),
             ),
-            if (showSeeAll)
-              GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to see all pending
-                },
+            if (sorted.isNotEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
                 child: Text(
-                  '${l10n.seeAll} (${dentalCase.pendingTreatments.length})',
+                  '${sorted.length}',
                   style: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: ColorManager.primary,
                   ),
                 ),
@@ -466,29 +406,69 @@ class CaseOverviewWidget extends StatelessWidget {
           ],
         ),
         SizedBox(height: 12.h),
-        if (treatments.isEmpty)
+        if (sorted.isEmpty)
           _buildEmptyTreatments(context)
         else
-          ...treatments.asMap().entries.map((entry) {
-            final item = entry.value;
-            final index = entry.key;
-            return Padding(
-              padding: EdgeInsets.only(bottom: 8.h),
-              child: TreatmentItemCard(
-                item: item,
-                index: index,
-                teeth: teeth,
-                coreTreatments: coreTreatments,
-                onTap: () => TreatmentDetailPopup.show(
-                  context,
-                  item,
-                  index,
-                  teeth: teeth,
-                  coreTreatments: coreTreatments,
-                ),
-              ),
-            );
-          }),
+          ...sorted.map((t) => Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: (!widget.isReadOnly && widget.onRemoveTreatment != null)
+                    ? Dismissible(
+                        key: ValueKey(t.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 20.w),
+                          decoration: BoxDecoration(
+                            color: ColorManager.errorLight,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(
+                            Icons.delete_outline,
+                            color: ColorManager.white,
+                            size: 22.w,
+                          ),
+                        ),
+                        confirmDismiss: (_) => ConfirmDeleteDialog.show(context),
+                        onDismissed: (_) {
+                          final removed = t;
+                          setState(() {
+                            _planned.removeWhere((p) => p.id == removed.id);
+                          });
+                          widget.onRemoveTreatment?.call(removed);
+                        },
+                        child: TreatmentPlanCard(
+                          treatment: t,
+                          onTap: () => _showTreatmentDetailsSheet(t),
+                          onAddNote: (treatment, note) {
+                            setState(() {
+                              treatment.visitNotes.add(VisitNote(
+                                date: DateTime.now(),
+                                text: note,
+                              ));
+                            });
+                            widget.onNotesUpdated
+                                ?.call(treatment, treatment.visitNotes);
+                          },
+                        ),
+                      )
+                    : TreatmentPlanCard(
+                        treatment: t,
+                        onTap: () => _showTreatmentDetailsSheet(t),
+                        readOnly: widget.isReadOnly,
+                        onAddNote: widget.isReadOnly
+                            ? null
+                            : (treatment, note) {
+                                setState(() {
+                                  treatment.visitNotes.add(VisitNote(
+                                    date: DateTime.now(),
+                                    text: note,
+                                  ));
+                                });
+                                widget.onNotesUpdated
+                                    ?.call(treatment, treatment.visitNotes);
+                              },
+                      ),
+              )),
       ],
     );
   }
@@ -503,7 +483,7 @@ class CaseOverviewWidget extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          isReadOnly ? l10n.noTreatmentsRecorded : l10n.allTreatmentsCompleted,
+          widget.isReadOnly ? l10n.noTreatmentsRecorded : l10n.allTreatmentsCompleted,
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),

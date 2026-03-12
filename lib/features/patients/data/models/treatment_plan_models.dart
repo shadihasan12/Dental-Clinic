@@ -1,26 +1,42 @@
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart'
+    as api;
 import 'package:flutter/material.dart';
 
 // ─── Treatment Status ───────────────────────────────────────────────
 enum TreatmentPlanStatus { planned, inProgress, completed }
 
-// ─── Treatment Category ─────────────────────────────────────────────
-enum TreatmentCategory { toothSpecific, general }
-
 // ─── Treatment Type Definition ──────────────────────────────────────
 class TreatmentTypeInfo {
   final String id;
-  final String nameEn;
-  final String nameAr;
+  final String name;
   final IconData icon;
-  final TreatmentCategory category;
+  final String categoryId;
+  final String categoryName;
 
   const TreatmentTypeInfo({
     required this.id,
-    required this.nameEn,
-    required this.nameAr,
+    required this.name,
     required this.icon,
-    required this.category,
+    required this.categoryId,
+    required this.categoryName,
   });
+}
+
+// ─── Category with its treatments ───────────────────────────────────
+class TreatmentCategoryGroup {
+  final String id;
+  final String slug;
+  final String name;
+  final List<TreatmentTypeInfo> treatments;
+
+  const TreatmentCategoryGroup({
+    required this.id,
+    this.slug = '',
+    required this.name,
+    required this.treatments,
+  });
+
+  bool get isGeneralCategory => slug.toLowerCase().contains('general');
 }
 
 // ─── Visit Note (a single note entry for a treatment) ───────────────
@@ -57,16 +73,9 @@ class PlannedTreatment {
 
   String get displayLabel {
     if (toothNumber != null) {
-      return 'Tooth $toothNumber → ${type.nameEn}';
+      return 'Tooth $toothNumber → ${type.name}';
     }
-    return type.nameEn;
-  }
-
-  String get displayLabelAr {
-    if (toothNumber != null) {
-      return 'سن $toothNumber → ${type.nameAr}';
-    }
-    return type.nameAr;
+    return type.name;
   }
 }
 
@@ -118,130 +127,184 @@ class TreatmentPlan {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// MAPPING: CoreTreatment → TreatmentTypeInfo
+// ═══════════════════════════════════════════════════════════════════
+
+/// Maps a [CoreTreatment] from the API to [TreatmentTypeInfo].
+TreatmentTypeInfo coreTreatmentToTypeInfo(api.CoreTreatment ct) {
+  return TreatmentTypeInfo(
+    id: ct.id,
+    name: ct.name,
+    icon: Icons.medical_services_outlined,
+    categoryId: ct.category.id,
+    categoryName: ct.category.name,
+  );
+}
+
+/// Groups a list of [CoreTreatment] by category into [TreatmentCategoryGroup]s.
+List<TreatmentCategoryGroup> mapCoreTreatments(
+    List<api.CoreTreatment> treatments) {
+  final grouped = <String, TreatmentCategoryGroup>{};
+
+  for (final ct in treatments) {
+    final info = coreTreatmentToTypeInfo(ct);
+    final group = grouped.putIfAbsent(
+      ct.category.id,
+      () => TreatmentCategoryGroup(
+        id: ct.category.id,
+        slug: ct.category.slug,
+        name: ct.category.name,
+        treatments: [],
+      ),
+    );
+    group.treatments.add(info);
+  }
+
+  return grouped.values.toList();
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // MOCK DATA
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── All Treatment Types ────────────────────────────────────────────
 class MockTreatmentTypes {
+  static const _toothCategoryId = 'mock_tooth';
+  static const _toothCategoryName = 'علاجات خاصة بالسن';
+  static const _generalCategoryId = 'mock_general';
+  static const _generalCategoryName = 'علاجات عامة';
+
   static const toothSpecific = [
     TreatmentTypeInfo(
       id: 'root_canal',
-      nameEn: 'Root Canal',
-      nameAr: 'علاج عصب',
+      name: 'علاج عصب',
       icon: Icons.healing,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'filling_composite',
-      nameEn: 'Filling (Composite)',
-      nameAr: 'حشوة (كومبوزيت)',
+      name: 'حشوة (كومبوزيت)',
       icon: Icons.circle,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'filling_amalgam',
-      nameEn: 'Filling (Amalgam)',
-      nameAr: 'حشوة (أملغم)',
+      name: 'حشوة (أملغم)',
       icon: Icons.circle_outlined,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'crown',
-      nameEn: 'Crown',
-      nameAr: 'تاج',
+      name: 'تاج',
       icon: Icons.shield,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'extraction',
-      nameEn: 'Extraction',
-      nameAr: 'خلع',
+      name: 'خلع',
       icon: Icons.arrow_upward,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'veneer',
-      nameEn: 'Veneer',
-      nameAr: 'فينير',
+      name: 'فينير',
       icon: Icons.auto_awesome,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'implant',
-      nameEn: 'Implant',
-      nameAr: 'زراعة',
+      name: 'زراعة',
       icon: Icons.push_pin,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'bridge',
-      nameEn: 'Bridge',
-      nameAr: 'جسر',
+      name: 'جسر',
       icon: Icons.join_full,
-      category: TreatmentCategory.toothSpecific,
+      categoryId: _toothCategoryId,
+      categoryName: _toothCategoryName,
     ),
   ];
 
   static const general = [
     TreatmentTypeInfo(
       id: 'cleaning',
-      nameEn: 'Cleaning',
-      nameAr: 'تنظيف',
+      name: 'تنظيف',
       icon: Icons.cleaning_services,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'checkup',
-      nameEn: 'Checkup',
-      nameAr: 'فحص',
+      name: 'فحص',
       icon: Icons.search,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'upper_braces',
-      nameEn: 'Upper Metal Braces',
-      nameAr: 'تقويم علوي معدني',
+      name: 'تقويم علوي معدني',
       icon: Icons.view_comfy_alt,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'lower_braces',
-      nameEn: 'Lower Metal Braces',
-      nameAr: 'تقويم سفلي معدني',
+      name: 'تقويم سفلي معدني',
       icon: Icons.view_comfy_alt_outlined,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'gum_cleaning',
-      nameEn: 'Gum Cleaning',
-      nameAr: 'تنظيف لثة',
+      name: 'تنظيف لثة',
       icon: Icons.water_drop_outlined,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'gum_trimming',
-      nameEn: 'Gum Trimming',
-      nameAr: 'قص لثة',
+      name: 'قص لثة',
       icon: Icons.content_cut,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'whitening',
-      nameEn: 'Whitening',
-      nameAr: 'تبييض',
+      name: 'تبييض',
       icon: Icons.light_mode,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
     TreatmentTypeInfo(
       id: 'xray',
-      nameEn: 'X-Ray',
-      nameAr: 'أشعة',
+      name: 'أشعة',
       icon: Icons.image,
-      category: TreatmentCategory.general,
+      categoryId: _generalCategoryId,
+      categoryName: _generalCategoryName,
     ),
   ];
 
   static List<TreatmentTypeInfo> get all => [...toothSpecific, ...general];
+
+  static List<TreatmentCategoryGroup> get categories => [
+        TreatmentCategoryGroup(
+          id: _toothCategoryId,
+          name: _toothCategoryName,
+          treatments: toothSpecific,
+        ),
+        TreatmentCategoryGroup(
+          id: _generalCategoryId,
+          name: _generalCategoryName,
+          treatments: general,
+        ),
+      ];
 }
 
 // ─── Mock Data ────────────────────────────────────────────────────────
@@ -254,7 +317,7 @@ class MockData {
       treatments: [
         PlannedTreatment(
           id: 't1',
-          type: MockTreatmentTypes.toothSpecific[0], // Root Canal
+          type: MockTreatmentTypes.toothSpecific[0],
           toothNumber: '16',
           status: TreatmentPlanStatus.completed,
           completedDate: DateTime.now().subtract(const Duration(days: 5)),
@@ -262,33 +325,33 @@ class MockData {
         ),
         PlannedTreatment(
           id: 't2',
-          type: MockTreatmentTypes.toothSpecific[3], // Crown
+          type: MockTreatmentTypes.toothSpecific[3],
           toothNumber: '16',
           status: TreatmentPlanStatus.inProgress,
           visitNumber: 2,
         ),
         PlannedTreatment(
           id: 't3',
-          type: MockTreatmentTypes.toothSpecific[1], // Filling Composite
+          type: MockTreatmentTypes.toothSpecific[1],
           toothNumber: '24',
           status: TreatmentPlanStatus.planned,
         ),
         PlannedTreatment(
           id: 't4',
-          type: MockTreatmentTypes.toothSpecific[4], // Extraction
+          type: MockTreatmentTypes.toothSpecific[4],
           toothNumber: '48',
           status: TreatmentPlanStatus.planned,
         ),
         PlannedTreatment(
           id: 't5',
-          type: MockTreatmentTypes.general[0], // Cleaning
+          type: MockTreatmentTypes.general[0],
           status: TreatmentPlanStatus.completed,
           completedDate: DateTime.now().subtract(const Duration(days: 5)),
           visitNumber: 1,
         ),
         PlannedTreatment(
           id: 't6',
-          type: MockTreatmentTypes.general[7], // X-Ray
+          type: MockTreatmentTypes.general[7],
           status: TreatmentPlanStatus.planned,
         ),
       ],

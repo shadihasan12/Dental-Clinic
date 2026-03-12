@@ -583,6 +583,74 @@
   "confirmChangeEmail": "تأكيد التغيير",
   "emailChangedSuccess": "تم تغيير البريد الإلكتروني بنجاح! يرجى تسجيل الدخول بالبريد الجديد.",
   "pleaseEnterNewEmail": "يرجى إدخال البريد الإلكتروني الجديد",
-  "pleaseEnterCurrentPassword": "يرجى إدخال كلمة المرور الحالية"
+  "pleaseEnterCurrentPassword": "يرجى إدخال كلمة المرور الحالية",
+
+  "editCosts": "تعديل التكاليف",
+  "enterTotalCost": "أدخل التكلفة الإجمالية",
+  "enterLabFees": "أدخل رسوم المخبر",
+  "completedCase": "حالة مكتملة",
+  "caseTitlePlaceholder": "عنوان الحالة...",
+  "started": "بدأت",
+  "reopenCase": "إعادة فتح الحالة",
+  "tooth": "السن",
+  "generalTreatment": "معالجة عامة",
+  "visitNotes": "ملاحظات الزيارة",
+  "manageNotes": "إدارة الملاحظات",
+  "undoFinished": "التراجع عن الإنهاء",
+  "markFinished": "تمت المعالجة",
+  "addANote": "أضف ملاحظة...",
+  "planned": "مخطط",
+  "general": "عام",
+  "noNotesYet": "لا توجد ملاحظات بعد",
+  "deleteTreatment": "حذف المعالجة",
+  "confirmDeleteTreatment": "هل أنت متأكد من رغبتك في إزالة هذه المعالجة؟",
+  "editNote": "تعديل الملاحظة...",
+  "writeANote": "اكتب ملاحظة...",
+  "costsUpdated": "تم تحديث التكاليف",
+  "titleUpdated": "تم تحديث العنوان",
+  "caseReopened": "تم إعادة فتح الحالة",
+  "treatmentRemoved": "تم إزالة المعالجة",
+  "notesUpdated": "تم تحديث الملاحظات",
+  "treatmentAddedSuccessfully": "تمت إضافة المعالجة بنجاح",
+  "saving": "جاري الحفظ...",
+  "type": "النوع",
+  "planTreatments": "تخطيط المعالجات",
+  "tapToothToAddTreatments": "اضغط على سن لإضافة معالجات",
+  "addedTreatments": "المعالجات المضافة",
+  "nTreatments": "{count} معالجات",
+  "@nTreatments": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "addToPlan": "إضافة للخطة",
+  "hasPlannedTreatment": "يوجد معالجة مخططة",
+  "treatmentPlan": "خطة العلاج",
+  "newTreatmentPlan": "خطة علاج جديدة",
+  "setCost": "تحديد التكلفة",
+  "savingTreatmentPlan": "جاري حفظ خطة العلاج...",
+  "treatmentPlanSavedSuccessfully": "تم حفظ خطة العلاج بنجاح",
+  "noTreatmentsYetAddOne": "لا توجد معالجات بعد — أضف معالجة!",
+  "toothLabel": "السن {number}",
+  "@toothLabel": {
+    "placeholders": {
+      "number": { "type": "String" }
+    }
+  },
+  "selectTreatments": "اختر المعالجات",
+  "selectATreatment": "اختر معالجة",
+  "addNTreatments": "إضافة {count} معالجات",
+  "@addNTreatments": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "alreadyPlannedForTooth": "{count} معالجة مخططة لهذا السن",
+  "@alreadyPlannedForTooth": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pleaseSelectCurrency": "يرجى اختيار العملة"
 }
 

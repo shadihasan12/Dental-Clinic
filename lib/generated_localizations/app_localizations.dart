@@ -3043,6 +3043,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter your current password'**
   String get pleaseEnterCurrentPassword;
+
+  /// No description provided for @editCosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Costs'**
+  String get editCosts;
+
+  /// No description provided for @enterTotalCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter total cost'**
+  String get enterTotalCost;
+
+  /// No description provided for @enterLabFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter lab fees'**
+  String get enterLabFees;
+
+  /// No description provided for @completedCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Case'**
+  String get completedCase;
+
+  /// No description provided for @caseTitlePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Case title...'**
+  String get caseTitlePlaceholder;
+
+  /// No description provided for @started.
+  ///
+  /// In en, this message translates to:
+  /// **'Started'**
+  String get started;
+
+  /// No description provided for @reopenCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen Case'**
+  String get reopenCase;
+
+  /// No description provided for @tooth.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth'**
+  String get tooth;
+
+  /// No description provided for @generalTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'General Treatment'**
+  String get generalTreatment;
+
+  /// No description provided for @visitNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Notes'**
+  String get visitNotes;
+
+  /// No description provided for @manageNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Notes'**
+  String get manageNotes;
+
+  /// No description provided for @undoFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo Finished'**
+  String get undoFinished;
+
+  /// No description provided for @markFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Finished'**
+  String get markFinished;
+
+  /// No description provided for @addANote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note...'**
+  String get addANote;
+
+  /// No description provided for @planned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get planned;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @noNotesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes yet'**
+  String get noNotesYet;
+
+  /// No description provided for @deleteTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Treatment'**
+  String get deleteTreatment;
+
+  /// No description provided for @confirmDeleteTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this treatment?'**
+  String get confirmDeleteTreatment;
+
+  /// No description provided for @editNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit note...'**
+  String get editNote;
+
+  /// No description provided for @writeANote.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a note...'**
+  String get writeANote;
+
+  /// No description provided for @costsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Costs updated'**
+  String get costsUpdated;
+
+  /// No description provided for @titleUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Title updated'**
+  String get titleUpdated;
+
+  /// No description provided for @caseReopened.
+  ///
+  /// In en, this message translates to:
+  /// **'Case reopened'**
+  String get caseReopened;
+
+  /// No description provided for @treatmentRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment removed'**
+  String get treatmentRemoved;
+
+  /// No description provided for @notesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes updated'**
+  String get notesUpdated;
+
+  /// No description provided for @treatmentAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment added successfully'**
+  String get treatmentAddedSuccessfully;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @planTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Treatments'**
+  String get planTreatments;
+
+  /// No description provided for @tapToothToAddTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a tooth to add treatments'**
+  String get tapToothToAddTreatments;
+
+  /// No description provided for @addedTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'Added Treatments'**
+  String get addedTreatments;
+
+  /// No description provided for @nTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} treatments'**
+  String nTreatments(int count);
+
+  /// No description provided for @addToPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Plan'**
+  String get addToPlan;
+
+  /// No description provided for @hasPlannedTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'Has planned treatment'**
+  String get hasPlannedTreatment;
+
+  /// No description provided for @treatmentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment Plan'**
+  String get treatmentPlan;
+
+  /// No description provided for @newTreatmentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'New Treatment Plan'**
+  String get newTreatmentPlan;
+
+  /// No description provided for @setCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Cost'**
+  String get setCost;
+
+  /// No description provided for @savingTreatmentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving treatment plan...'**
+  String get savingTreatmentPlan;
+
+  /// No description provided for @treatmentPlanSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment plan saved successfully'**
+  String get treatmentPlanSavedSuccessfully;
+
+  /// No description provided for @noTreatmentsYetAddOne.
+  ///
+  /// In en, this message translates to:
+  /// **'No treatments yet — add one!'**
+  String get noTreatmentsYetAddOne;
+
+  /// No description provided for @toothLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth {number}'**
+  String toothLabel(String number);
+
+  /// No description provided for @selectTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Treatments'**
+  String get selectTreatments;
+
+  /// No description provided for @selectATreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a treatment'**
+  String get selectATreatment;
+
+  /// No description provided for @addNTreatments.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {count} Treatments'**
+  String addNTreatments(int count);
+
+  /// No description provided for @alreadyPlannedForTooth.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} treatment(s) already planned for this tooth'**
+  String alreadyPlannedForTooth(int count);
+
+  /// No description provided for @pleaseSelectCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a currency'**
+  String get pleaseSelectCurrency;
 }
 
 class _AppLocalizationsDelegate

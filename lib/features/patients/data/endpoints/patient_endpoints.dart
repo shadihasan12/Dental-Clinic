@@ -23,6 +23,19 @@ class PatientEndpoints {
   static String completeCase(String patientId, String caseId) =>
       '/clinics/patients/$patientId/cases/$caseId/complete';
 
+  static String updateTreatmentPlanItem(
+          String patientId, String caseId, String itemId) =>
+      '/clinics/patients/$patientId/cases/$caseId/treatment-plan-items/$itemId';
+
   static String payments(String patientId, String caseId) =>
       '/clinics/patients/$patientId/cases/$caseId/payments';
+
+  static String updateCaseCosts(String patientId, String caseId) =>
+      '/clinics/patients/$patientId/cases/$caseId/costs';
+
+  static String updateCase(String patientId, String caseId) =>
+      '/clinics/patients/$patientId/cases/$caseId';
+
+  static String reactivateCase(String patientId, String caseId) =>
+      '/clinics/patients/$patientId/cases/$caseId/reactivate';
 }

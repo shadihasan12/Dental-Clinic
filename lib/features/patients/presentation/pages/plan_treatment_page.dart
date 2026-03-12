@@ -4,36 +4,40 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/tooth_treatment_sheet.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_type_grid.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/prototype_models.dart';
-import '../widgets/tooth_treatment_sheet.dart';
-import '../widgets/treatment_plan_card.dart';
-import '../widgets/treatment_type_grid.dart';
-
 /// Full-screen interactive tooth chart page.
 /// Tap a tooth → bottom sheet appears with tooth-specific treatments.
 /// Also has a tab/section for general treatments.
-class ToothTreatmentPickerPage extends StatefulWidget {
+class PlanTreatmentPage extends StatefulWidget {
   final List<PlannedTreatment> existingTreatments;
+  final List<TreatmentCategoryGroup> categories;
+  final List<Tooth> teeth;
 
-  const ToothTreatmentPickerPage({
+  const PlanTreatmentPage({
     super.key,
     this.existingTreatments = const [],
+    this.categories = const [],
+    this.teeth = const [],
   });
 
   @override
-  State<ToothTreatmentPickerPage> createState() =>
-      _ToothTreatmentPickerPageState();
+  State<PlanTreatmentPage> createState() =>
+      _PlanTreatmentPageState();
 }
 
-class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
+class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
   final List<PlannedTreatment> _newTreatments = [];
   int _idCounter = 0;
-  int _viewMode = 0; // 0 = chart, 1 = general treatments
+  int _viewMode = 0;
 
   // Track which teeth have treatments (existing + new)
   Set<String> get _teethWithTreatments {
@@ -62,6 +66,8 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       context,
       toothNumber: toothNumber,
       existingTreatmentIds: existingIds,
+      toothSpecificTypes:
+          widget.categories.isNotEmpty ? widget.categories[0].treatments : [],
     );
 
     if (selected != null && selected.isNotEmpty) {
@@ -102,7 +108,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       body: Column(
         children: [
           PageHeader(
-            title: 'Plan Treatments',
+            title: AppLocalizations.of(context)!.planTreatments,
             onBack: () => context.pop(),
           ),
           Expanded(
@@ -136,7 +142,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                             SizedBox(width: 10.w),
                             Expanded(
                               child: Text(
-                                'Tap a tooth to add treatments',
+                                AppLocalizations.of(context)!.tapToothToAddTreatments,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontFamily: FontHelper.fontFamily(context),
@@ -158,11 +164,13 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                         child: _InteractiveToothChart(
                           teethWithTreatments: _teethWithTreatments,
                           onToothTap: _handleToothTap,
+                          teeth: widget.teeth,
                         ),
                       ),
                     ),
-                  ] else ...[
-                    // General treatments grid
+                  ] else if (_viewMode > 0 &&
+                      _viewMode < widget.categories.length) ...[
+                    // Category treatments grid
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: CustomCard(
@@ -170,7 +178,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'General Treatments',
+                              widget.categories[_viewMode].name,
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontFamily: FontHelper.fontFamily(context),
@@ -178,18 +186,9 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                                 color: ColorManager.textPrimary,
                               ),
                             ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              'These treatments are not specific to a single tooth',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                color: ColorManager.textTertiary,
-                              ),
-                            ),
                             SizedBox(height: 14.h),
                             TreatmentTypeGrid(
-                              types: MockTreatmentTypes.general,
+                              types: widget.categories[_viewMode].treatments,
                               onSelect: _addGeneralTreatment,
                             ),
                           ],
@@ -206,7 +205,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                       child: Row(
                         children: [
                           Text(
-                            'Added Treatments',
+                            AppLocalizations.of(context)!.addedTreatments,
                             style: TextStyle(
                               fontSize: 15.sp,
                               fontFamily: FontHelper.fontFamily(context),
@@ -296,9 +295,17 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       ),
       child: Row(
         children: [
-          _modeTab(context, 0, Icons.grid_view_rounded, 'Tooth Chart'),
-          SizedBox(width: 4.w),
-          _modeTab(context, 1, Icons.medical_services_outlined, 'General'),
+          for (int i = 0; i < widget.categories.length; i++) ...[
+            if (i > 0) SizedBox(width: 4.w),
+            _modeTab(
+              context,
+              i,
+              i == 0
+                  ? Icons.grid_view_rounded
+                  : Icons.medical_services_outlined,
+              widget.categories[i].name,
+            ),
+          ],
         ],
       ),
     );
@@ -380,7 +387,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
       child: Row(
         children: [
           Text(
-            '${_newTreatments.length} treatments',
+            AppLocalizations.of(context)!.nTreatments(_newTreatments.length),
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
@@ -399,7 +406,7 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
                   borderRadius: BorderRadiusManager.lg,
                 ),
                 child: Text(
-                  'Add to Plan',
+                  AppLocalizations.of(context)!.addToPlan,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15.sp,
@@ -422,10 +429,12 @@ class _ToothTreatmentPickerPageState extends State<ToothTreatmentPickerPage> {
 class _InteractiveToothChart extends StatelessWidget {
   final Set<String> teethWithTreatments;
   final ValueChanged<String> onToothTap;
+  final List<Tooth> teeth;
 
   const _InteractiveToothChart({
     required this.teethWithTreatments,
     required this.onToothTap,
+    required this.teeth,
   });
 
   @override
@@ -434,12 +443,15 @@ class _InteractiveToothChart extends StatelessWidget {
       children: [
         // The tooth chart
         ToothChart(
-          teeth: _allTeeth(),
-          selectedTeeth: teethWithTreatments.toList(),
+          teeth: teeth.isNotEmpty ? teeth : _fallbackTeeth(),
+          selectedTeeth: _toSelectedIds(teethWithTreatments),
           onSelectionChanged: (toothIds) {
             // Find the last selected tooth (the one just tapped)
             if (toothIds.isNotEmpty) {
-              onToothTap(toothIds.last);
+              final tappedId = toothIds.last;
+              // Convert tooth ID back to universal code
+              final code = _idToCode(tappedId);
+              onToothTap(code);
             }
           },
           aspectRatio: 0.75,
@@ -465,7 +477,7 @@ class _InteractiveToothChart extends StatelessWidget {
               ),
               SizedBox(width: 6.w),
               Text(
-                'Has planned treatment',
+                AppLocalizations.of(context)!.hasPlannedTreatment,
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontFamily: FontHelper.fontFamily(context),
@@ -479,8 +491,25 @@ class _InteractiveToothChart extends StatelessWidget {
     );
   }
 
-  /// Generate all 32 teeth for the chart
-  List<Tooth> _allTeeth() {
+  /// Convert universal codes (used in treatments) to tooth IDs (used by chart)
+  List<String> _toSelectedIds(Set<String> universalCodes) {
+    if (teeth.isEmpty) return universalCodes.toList();
+    return teeth
+        .where((t) => universalCodes.contains(t.universalCode))
+        .map((t) => t.id)
+        .toList();
+  }
+
+  /// Convert a tooth ID back to its universal code
+  String _idToCode(String toothId) {
+    if (teeth.isEmpty) return toothId;
+    final tooth = teeth.where((t) => t.id == toothId);
+    if (tooth.isNotEmpty) return tooth.first.universalCode;
+    return toothId;
+  }
+
+  /// Fallback: generate all 32 teeth for the chart
+  List<Tooth> _fallbackTeeth() {
     final teeth = <Tooth>[];
     for (int q = 1; q <= 4; q++) {
       for (int t = 1; t <= 8; t++) {

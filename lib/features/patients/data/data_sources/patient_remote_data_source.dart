@@ -41,12 +41,46 @@ abstract class PatientRemoteDataSource {
     String caseId, {
     String? title,
   });
+  Future<void> updateTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+    String? description,
+    required List<Map<String, String>> notes,
+  });
+  Future<void> deleteTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  });
+  Future<void> toggleTreatmentPlanItemStatus({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  });
   Future<List<Payment>> getPayments(String patientId, String caseId);
   Future<void> addPayment(
     String patientId,
     String caseId,
     double amount, {
     String? notes,
+  });
+  Future<void> updateCaseCosts({
+    required String patientId,
+    required String caseId,
+    required double totalCost,
+    String? totalCostCurrencyId,
+    required double labFees,
+    String? labFeesCurrencyId,
+  });
+  Future<void> updateCaseTitle({
+    required String patientId,
+    required String caseId,
+    required String? title,
+  });
+  Future<void> reactivateCase({
+    required String patientId,
+    required String caseId,
   });
 }
 
@@ -219,19 +253,29 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
 
   @override
   Future<TreatmentItem> addTreatment(AddTreatmentParams params) async {
-    final treatmentPlanItem = {
-      'description': params.summary,
-      'core_treatment_ids': params.treatmentTypes,
-      'tooth_ids': params.selectedTeeth,
-    };
-
     if (params.isInitial) {
-      // Create a new case with the first treatment
+      // Build items list from treatmentPlanItems param
+      final items = params.treatmentPlanItems.isNotEmpty
+          ? params.treatmentPlanItems.map((item) => item.toJson()).toList()
+          : [
+              {
+                if (params.summary != null && params.summary!.isNotEmpty)
+                  'description': params.summary,
+                'core_treatment_ids': params.treatmentTypes,
+                'tooth_ids': params.selectedTeeth,
+              }
+            ];
+
+      // Create a new case with treatment plan items
       final body = {
-        'patient_id': params.patientId,
         'total_cost': params.totalCost,
+        if (params.totalCostCurrencyId != null)
+          'total_cost_currency_id': params.totalCostCurrencyId,
         'lab_fees': params.labFees,
-        'treatment_plan_item': treatmentPlanItem,
+        if (params.labFeesCurrencyId != null)
+          'lab_fees_currency_id': params.labFeesCurrencyId,
+        'treatment_plan_items': items,
+        if (params.attachments.isNotEmpty) 'attachments': params.attachments,
       };
 
       final response = await _apiConsumer.post(
@@ -242,7 +286,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       final data = response['data'] as Map<String, dynamic>;
       return TreatmentItem(
         id: data['id'] as String? ?? '',
-        description: params.summary,
+        description: params.summary ?? '',
         treatmentTypes: params.treatmentTypes,
         selectedTeeth: params.selectedTeeth,
         attachments: params.attachments,
@@ -250,18 +294,24 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       );
     } else {
       // Add treatment to existing case
+      final singleItem = {
+        if (params.summary != null && params.summary!.isNotEmpty)
+          'description': params.summary,
+        'core_treatment_ids': params.treatmentTypes,
+        'tooth_ids': params.selectedTeeth,
+      };
       final response = await _apiConsumer.post(
         PatientEndpoints.addTreatmentPlanItem(
           params.patientId,
           params.caseId!,
         ),
-        body: treatmentPlanItem,
+        body: singleItem,
       );
 
       final data = response['data'] as Map<String, dynamic>;
       return TreatmentItem(
         id: data['id'] as String? ?? '',
-        description: params.summary,
+        description: params.summary ?? '',
         treatmentTypes: params.treatmentTypes,
         selectedTeeth: params.selectedTeeth,
         attachments: params.attachments,
@@ -303,6 +353,15 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       final coreTreatments = item['core_treatments'] as List? ?? [];
       final teeth = item['teeth'] as List? ?? [];
 
+      final rawNotes = item['notes'] as List? ?? [];
+      final parsedNotes = rawNotes.map((n) {
+        final m = n as Map<String, dynamic>;
+        return {
+          'note': m['note'] as String? ?? '',
+          'date': m['date'] as String? ?? '',
+        };
+      }).toList();
+
       return TreatmentItem(
         id: item['id'] as String,
         description: item['description'] as String? ?? '',
@@ -313,6 +372,8 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
             .map((t) => (t as Map<String, dynamic>)['id'] as String)
             .toList(),
         createdAt: DateTime.parse(item['created_at'] as String),
+        isDone: item['is_done'] as bool? ?? false,
+        notes: parsedNotes,
       );
     }).toList();
   }
@@ -328,6 +389,45 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       body: {
         if (title != null && title.isNotEmpty) 'title': title,
       },
+    );
+  }
+
+  @override
+  Future<void> updateTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+    String? description,
+    required List<Map<String, String>> notes,
+  }) async {
+    await _apiConsumer.put(
+      PatientEndpoints.updateTreatmentPlanItem(patientId, caseId, itemId),
+      body: {
+        if (description != null) 'description': description,
+        'notes': notes,
+      },
+    );
+  }
+
+  @override
+  Future<void> deleteTreatmentPlanItem({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  }) async {
+    await _apiConsumer.delete(
+      PatientEndpoints.updateTreatmentPlanItem(patientId, caseId, itemId),
+    );
+  }
+
+  @override
+  Future<void> toggleTreatmentPlanItemStatus({
+    required String patientId,
+    required String caseId,
+    required String itemId,
+  }) async {
+    await _apiConsumer.patch(
+      PatientEndpoints.updateTreatmentPlanItem(patientId, caseId, itemId),
     );
   }
 
@@ -359,6 +459,50 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         'amount': amount,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       },
+    );
+  }
+
+  @override
+  Future<void> updateCaseCosts({
+    required String patientId,
+    required String caseId,
+    required double totalCost,
+    String? totalCostCurrencyId,
+    required double labFees,
+    String? labFeesCurrencyId,
+  }) async {
+    await _apiConsumer.put(
+      PatientEndpoints.updateCaseCosts(patientId, caseId),
+      body: {
+        'total_cost': totalCost,
+        if (totalCostCurrencyId != null)
+          'total_cost_currency_id': totalCostCurrencyId,
+        'lab_fees': labFees,
+        if (labFeesCurrencyId != null)
+          'lab_fees_currency_id': labFeesCurrencyId,
+      },
+    );
+  }
+
+  @override
+  Future<void> updateCaseTitle({
+    required String patientId,
+    required String caseId,
+    required String? title,
+  }) async {
+    await _apiConsumer.put(
+      PatientEndpoints.updateCase(patientId, caseId),
+      body: {'title': title},
+    );
+  }
+
+  @override
+  Future<void> reactivateCase({
+    required String patientId,
+    required String caseId,
+  }) async {
+    await _apiConsumer.patch(
+      PatientEndpoints.reactivateCase(patientId, caseId),
     );
   }
 }

@@ -581,6 +581,74 @@
   "confirmChangeEmail": "Confirm Change",
   "emailChangedSuccess": "Email changed successfully! Please login with your new email.",
   "pleaseEnterNewEmail": "Please enter your new email",
-  "pleaseEnterCurrentPassword": "Please enter your current password"
+  "pleaseEnterCurrentPassword": "Please enter your current password",
+
+  "editCosts": "Edit Costs",
+  "enterTotalCost": "Enter total cost",
+  "enterLabFees": "Enter lab fees",
+  "completedCase": "Completed Case",
+  "caseTitlePlaceholder": "Case title...",
+  "started": "Started",
+  "reopenCase": "Reopen Case",
+  "tooth": "Tooth",
+  "generalTreatment": "General Treatment",
+  "visitNotes": "Visit Notes",
+  "manageNotes": "Manage Notes",
+  "undoFinished": "Undo Finished",
+  "markFinished": "Mark Finished",
+  "addANote": "Add a note...",
+  "planned": "Planned",
+  "general": "General",
+  "noNotesYet": "No notes yet",
+  "deleteTreatment": "Delete Treatment",
+  "confirmDeleteTreatment": "Are you sure you want to remove this treatment?",
+  "editNote": "Edit note...",
+  "writeANote": "Write a note...",
+  "costsUpdated": "Costs updated",
+  "titleUpdated": "Title updated",
+  "caseReopened": "Case reopened",
+  "treatmentRemoved": "Treatment removed",
+  "notesUpdated": "Notes updated",
+  "treatmentAddedSuccessfully": "Treatment added successfully",
+  "saving": "Saving...",
+  "type": "Type",
+  "planTreatments": "Plan Treatments",
+  "tapToothToAddTreatments": "Tap a tooth to add treatments",
+  "addedTreatments": "Added Treatments",
+  "nTreatments": "{count} treatments",
+  "@nTreatments": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "addToPlan": "Add to Plan",
+  "hasPlannedTreatment": "Has planned treatment",
+  "treatmentPlan": "Treatment Plan",
+  "newTreatmentPlan": "New Treatment Plan",
+  "setCost": "Set Cost",
+  "savingTreatmentPlan": "Saving treatment plan...",
+  "treatmentPlanSavedSuccessfully": "Treatment plan saved successfully",
+  "noTreatmentsYetAddOne": "No treatments yet — add one!",
+  "toothLabel": "Tooth {number}",
+  "@toothLabel": {
+    "placeholders": {
+      "number": { "type": "String" }
+    }
+  },
+  "selectTreatments": "Select Treatments",
+  "selectATreatment": "Select a treatment",
+  "addNTreatments": "Add {count} Treatments",
+  "@addNTreatments": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "alreadyPlannedForTooth": "{count} treatment(s) already planned for this tooth",
+  "@alreadyPlannedForTooth": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pleaseSelectCurrency": "Please select a currency"
 }
 

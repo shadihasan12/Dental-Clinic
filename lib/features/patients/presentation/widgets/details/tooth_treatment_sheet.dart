@@ -1,10 +1,11 @@
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/prototype_models.dart';
 import 'treatment_type_grid.dart';
 
 /// Bottom sheet that appears when a tooth is tapped on the chart.
@@ -13,6 +14,7 @@ Future<List<TreatmentTypeInfo>?> showToothTreatmentSheet(
   BuildContext context, {
   required String toothNumber,
   List<String> existingTreatmentIds = const [],
+  List<TreatmentTypeInfo> toothSpecificTypes = const [],
 }) {
   return showModalBottomSheet<List<TreatmentTypeInfo>>(
     context: context,
@@ -22,6 +24,7 @@ Future<List<TreatmentTypeInfo>?> showToothTreatmentSheet(
       return _ToothTreatmentSheetContent(
         toothNumber: toothNumber,
         existingTreatmentIds: existingTreatmentIds,
+        toothSpecificTypes: toothSpecificTypes,
       );
     },
   );
@@ -30,10 +33,12 @@ Future<List<TreatmentTypeInfo>?> showToothTreatmentSheet(
 class _ToothTreatmentSheetContent extends StatefulWidget {
   final String toothNumber;
   final List<String> existingTreatmentIds;
+  final List<TreatmentTypeInfo> toothSpecificTypes;
 
   const _ToothTreatmentSheetContent({
     required this.toothNumber,
     required this.existingTreatmentIds,
+    required this.toothSpecificTypes,
   });
 
   @override
@@ -101,7 +106,7 @@ class _ToothTreatmentSheetContentState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tooth ${widget.toothNumber}',
+                      AppLocalizations.of(context)!.toothLabel(widget.toothNumber),
                       style: TextStyle(
                         fontSize: 17.sp,
                         fontFamily: FontHelper.fontFamily(context),
@@ -133,7 +138,7 @@ class _ToothTreatmentSheetContentState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Select Treatments',
+                    AppLocalizations.of(context)!.selectTreatments,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
@@ -143,7 +148,7 @@ class _ToothTreatmentSheetContentState
                   ),
                   SizedBox(height: 12.h),
                   TreatmentTypeGrid(
-                    types: MockTreatmentTypes.toothSpecific,
+                    types: widget.toothSpecificTypes,
                     selectedIds: _selectedIds,
                     onSelect: (type) {
                       setState(() {
@@ -178,7 +183,7 @@ class _ToothTreatmentSheetContentState
                           SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
-                              '${widget.existingTreatmentIds.length} treatment(s) already planned for this tooth',
+                              AppLocalizations.of(context)!.alreadyPlannedForTooth(widget.existingTreatmentIds.length),
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontFamily: FontHelper.fontFamily(context),
@@ -208,7 +213,7 @@ class _ToothTreatmentSheetContentState
               onTap: _selectedIds.isEmpty
                   ? null
                   : () {
-                      final selected = MockTreatmentTypes.toothSpecific
+                      final selected = widget.toothSpecificTypes
                           .where((t) => _selectedIds.contains(t.id))
                           .toList();
                       Navigator.pop(context, selected);
@@ -225,8 +230,8 @@ class _ToothTreatmentSheetContentState
                 ),
                 child: Text(
                   _selectedIds.isEmpty
-                      ? 'Select a treatment'
-                      : 'Add ${_selectedIds.length} Treatment${_selectedIds.length > 1 ? 's' : ''}',
+                      ? AppLocalizations.of(context)!.selectATreatment
+                      : AppLocalizations.of(context)!.addNTreatments(_selectedIds.length),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15.sp,
@@ -246,6 +251,8 @@ class _ToothTreatmentSheetContentState
   }
 
   String _toothName(String number) {
+    // Only parse if it looks like a 2-digit FDI code (e.g. "16", "48")
+    if (number.length > 2 || int.tryParse(number) == null) return '';
     final quadrant = int.parse(number[0]);
     final tooth = int.parse(number.substring(1));
 

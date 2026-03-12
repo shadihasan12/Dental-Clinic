@@ -1,19 +1,24 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/resources.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_payment_use_case.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_core_treatments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_payments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details/patient_details_bloc.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
-import 'package:dental_clinic_app/features/treatment_plan_prototype/models/prototype_models.dart';
-import 'package:dental_clinic_app/features/treatment_plan_prototype/pages/treatment_plan_view_page.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'completed_case_page.dart';
+import 'plan_treatment_page.dart';
+import 'treatment_plan_view_page.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -74,9 +79,6 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // UI-only state: which case is currently displayed in the Case tab
-  DentalCase? _displayedCase;
-  bool _isViewingHistoryCase = false;
   List<Tooth> _teeth = [];
   List<CoreTreatment> _coreTreatments = [];
 
@@ -88,7 +90,6 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
       vsync: this,
       initialIndex: widget.tabIndex ?? 0,
     );
-    _tabController.addListener(_onTabChanged);
     _loadTeeth();
     _loadCoreTreatments();
   }
@@ -109,24 +110,80 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     );
   }
 
-  void _onTabChanged() {
-    if (_tabController.index != 1 && _isViewingHistoryCase) {
-      final activeCase = context.read<PatientDetailsBloc>().state.mapOrNull(
-        loaded: (s) => s.activeCase,
-      );
-      setState(() {
-        _displayedCase = activeCase;
-        _isViewingHistoryCase = false;
-      });
-    }
-  }
-
   void _onHistoryCaseTap(DentalCase selectedCase) {
-    setState(() {
-      _displayedCase = selectedCase;
-      _isViewingHistoryCase = true;
-    });
-    _tabController.animateTo(1);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CompletedCasePage(
+          dentalCase: selectedCase,
+          teeth: _teeth,
+          coreTreatments: _coreTreatments,
+          onTitleChanged: (newTitle) async {
+            final result = await getIt<PatientRepository>().updateCaseTitle(
+              patientId: widget.patientId,
+              caseId: selectedCase.id,
+              title: newTitle,
+            );
+            result.fold(
+              (error) {
+                if (mounted) {
+                  AppSnackbar.showError(
+                    context,
+                    title: 'Error',
+                    message: NetworkExceptions.getErrorMessage(error),
+                  );
+                }
+              },
+              (_) {
+                if (mounted) {
+                  final l10n = AppLocalizations.of(context)!;
+                  AppSnackbar.showSuccess(
+                    context,
+                    title: l10n.success,
+                    message: l10n.titleUpdated,
+                  );
+                  context.read<PatientDetailsBloc>().add(
+                        PatientDetailsEvent.loadPatientDetails(widget.patientId),
+                      );
+                }
+              },
+            );
+          },
+          onReopenCase: () async {
+            final result = await getIt<PatientRepository>().reactivateCase(
+              patientId: widget.patientId,
+              caseId: selectedCase.id,
+            );
+            result.fold(
+              (error) {
+                if (mounted) {
+                  AppSnackbar.showError(
+                    context,
+                    title: 'Error',
+                    message: NetworkExceptions.getErrorMessage(error),
+                  );
+                }
+              },
+              (_) {
+                if (mounted) {
+                  Navigator.pop(context);
+                  _tabController.animateTo(1);
+                  context.read<PatientDetailsBloc>().add(
+                        PatientDetailsEvent.loadPatientDetails(widget.patientId),
+                      );
+                  final l10n = AppLocalizations.of(context)!;
+                  AppSnackbar.showSuccess(
+                    context,
+                    title: l10n.success,
+                    message: l10n.caseReopened,
+                  );
+                }
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 
   void _createNewCase() {
@@ -142,7 +199,6 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -151,14 +207,6 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   Widget build(BuildContext context) {
     return BlocConsumer<PatientDetailsBloc, PatientDetailsState>(
       listener: (context, state) {
-        // Sync _displayedCase whenever the loaded state arrives
-        state.mapOrNull(
-          loaded: (s) {
-            if (!_isViewingHistoryCase) {
-              setState(() => _displayedCase = s.activeCase);
-            }
-          },
-        );
       },
       builder: (context, state) {
         return state.when(
@@ -208,6 +256,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                   ),
                   Expanded(
                     child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: [
                         // Tab 1: Patient Info
@@ -256,16 +305,6 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   }
 
   Widget _buildCaseTab(DentalCase? activeCase) {
-    if (_isViewingHistoryCase && _displayedCase != null) {
-      return CaseOverviewWidget(
-        dentalCase: _displayedCase!,
-        teeth: _teeth,
-        coreTreatments: _coreTreatments,
-        isReadOnly: true,
-        onLoadPayments: () => _loadPayments(_displayedCase!.id),
-      );
-    }
-
     if (activeCase == null && widget.prototypePlan != null) {
       return TreatmentPlanViewPage(
         plan: widget.prototypePlan!,
@@ -306,6 +345,223 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
       },
       onLoadPayments: () => _loadPayments(activeCase.id),
       onMarkAsFinished: () => _showMarkAsFinishedDialog(),
+      onAddTreatment: () => _navigateToAddTreatment(activeCase),
+      onMarkTreatmentFinished: (treatment) async {
+        final itemId = treatment.id.split('_').first;
+        final result =
+            await getIt<PatientRepository>().toggleTreatmentPlanItemStatus(
+          patientId: widget.patientId,
+          caseId: activeCase.id,
+          itemId: itemId,
+        );
+
+        result.fold(
+          (error) {
+            if (mounted) {
+              AppSnackbar.showError(
+                context,
+                title: 'Error',
+                message: NetworkExceptions.getErrorMessage(error),
+              );
+              // Reload to revert the local toggle
+              context.read<PatientDetailsBloc>().add(
+                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
+                  );
+            }
+          },
+          (_) {},
+        );
+      },
+      onNotesUpdated: (treatment, updatedNotes) async {
+        // treatment.id is formatted as "${itemId}_${typeId}"
+        final itemId = treatment.id.split('_').first;
+        final noteMaps = updatedNotes
+            .map((n) => {
+                  'note': n.text,
+                  'date':
+                      '${n.date.year}-${n.date.month.toString().padLeft(2, '0')}-${n.date.day.toString().padLeft(2, '0')}',
+                })
+            .toList();
+
+        final result =
+            await getIt<PatientRepository>().updateTreatmentPlanItem(
+          patientId: widget.patientId,
+          caseId: activeCase.id,
+          itemId: itemId,
+          notes: noteMaps,
+        );
+
+        result.fold(
+          (error) {
+            if (mounted) {
+              AppSnackbar.showError(
+                context,
+                title: 'Error',
+                message: NetworkExceptions.getErrorMessage(error),
+              );
+            }
+          },
+          (_) {
+            if (mounted) {
+              final l10n = AppLocalizations.of(context)!;
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.success,
+                message: l10n.notesUpdated,
+              );
+            }
+          },
+        );
+      },
+      onRemoveTreatment: (treatment) async {
+        final itemId = treatment.id.split('_').first;
+        final result =
+            await getIt<PatientRepository>().deleteTreatmentPlanItem(
+          patientId: widget.patientId,
+          caseId: activeCase.id,
+          itemId: itemId,
+        );
+
+        result.fold(
+          (error) {
+            if (mounted) {
+              AppSnackbar.showError(
+                context,
+                title: 'Error',
+                message: NetworkExceptions.getErrorMessage(error),
+              );
+              // Reload to restore the item in the list
+              context.read<PatientDetailsBloc>().add(
+                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
+                  );
+            }
+          },
+          (_) {
+            if (mounted) {
+              final l10n = AppLocalizations.of(context)!;
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.success,
+                message: l10n.treatmentRemoved,
+              );
+            }
+          },
+        );
+      },
+      onEditCosts: (totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId) async {
+        final result = await getIt<PatientRepository>().updateCaseCosts(
+          patientId: widget.patientId,
+          caseId: activeCase.id,
+          totalCost: totalCost,
+          totalCostCurrencyId: totalCostCurrencyId,
+          labFees: labFees,
+          labFeesCurrencyId: labFeesCurrencyId,
+        );
+
+        result.fold(
+          (error) {
+            if (mounted) {
+              AppSnackbar.showError(
+                context,
+                title: 'Error',
+                message: NetworkExceptions.getErrorMessage(error),
+              );
+            }
+          },
+          (_) {
+            if (mounted) {
+              final l10n = AppLocalizations.of(context)!;
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.success,
+                message: l10n.costsUpdated,
+              );
+              context.read<PatientDetailsBloc>().add(
+                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
+                  );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _navigateToAddTreatment(DentalCase activeCase) async {
+    final categories = mapCoreTreatments(_coreTreatments);
+    // Sort: tooth-specific first, general last
+    categories.sort((a, b) {
+      final aIsGeneral = a.name.contains('عامة');
+      final bIsGeneral = b.name.contains('عامة');
+      if (aIsGeneral && !bIsGeneral) return 1;
+      if (!aIsGeneral && bIsGeneral) return -1;
+      return 0;
+    });
+
+    final result = await Navigator.push<List<PlannedTreatment>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PlanTreatmentPage(
+          categories: categories,
+          teeth: _teeth,
+        ),
+      ),
+    );
+
+    if (result == null || result.isEmpty || !mounted) return;
+
+    // Save via AddTreatmentUseCase with isInitial: false
+    final treatmentTypeIds = result.map((t) => t.type.id).toList();
+    final toothIds = result
+        .where((t) => t.toothNumber != null)
+        .map((t) {
+          final match = _teeth.where(
+            (tooth) => tooth.universalCode == t.toothNumber,
+          );
+          return match.isNotEmpty ? match.first.id : null;
+        })
+        .whereType<String>()
+        .toSet()
+        .toList();
+
+    final l10n = AppLocalizations.of(context)!;
+    AppLoadingDialog.show(context: context, message: l10n.saving);
+
+    final addResult = await getIt<AddTreatmentUseCase>()(
+      AddTreatmentParams(
+        patientId: widget.patientId,
+        isInitial: false,
+        caseId: activeCase.id,
+        visitDate: DateTime.now(),
+        treatmentTypes: treatmentTypeIds,
+        selectedTeeth: toothIds,
+        summary: null,
+        totalCost: 0,
+        labFees: 0,
+        attachments: [],
+      ),
+    );
+
+    if (!mounted) return;
+    AppLoadingDialog.dismiss(context);
+
+    addResult.fold(
+      (error) {
+        AppSnackbar.showError(
+          context,
+          title: 'Error',
+          message: NetworkExceptions.getErrorMessage(error),
+        );
+      },
+      (_) {
+        AppSnackbar.showSuccess(
+          context,
+          title: AppLocalizations.of(context)!.success,
+          message: AppLocalizations.of(context)!.treatmentAddedSuccessfully,
+        );
+        context.read<PatientDetailsBloc>().add(
+          PatientDetailsEvent.loadPatientDetails(widget.patientId),
+        );
+      },
     );
   }
 

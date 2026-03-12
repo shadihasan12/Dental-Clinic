@@ -1,27 +1,26 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../models/prototype_models.dart';
 
 class PlanSummaryHeader extends StatelessWidget {
   final TreatmentPlan plan;
   final bool isInitial;
   final VoidCallback? onTap;
+  final VoidCallback? onViewPaymentHistory;
 
   const PlanSummaryHeader({
     super.key,
     required this.plan,
     this.isInitial = false,
     this.onTap,
+    this.onViewPaymentHistory,
   });
 
   @override
   Widget build(BuildContext context) {
-    final total = plan.treatments.length;
-    final done = plan.completed.length;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -39,68 +38,42 @@ class PlanSummaryHeader extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Patient name row
-            Row(
-              children: [
-                Container(
-                  width: 44.w,
-                  height: 44.w,
+            if (isInitial) _buildInitialStats(context) else _buildSavedStats(context),
+
+            // View Payment History button
+            if (onViewPaymentHistory != null) ...[
+              SizedBox(height: 12.h),
+              GestureDetector(
+                onTap: onViewPaymentHistory,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12.r),
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Center(
-                    child: Text(
-                      plan.patientName.isNotEmpty
-                          ? plan.patientName[0].toUpperCase()
-                          : '?',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        plan.patientName,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                      Icon(
+                        Icons.receipt_long_outlined,
+                        size: 14.w,
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(width: 6.w),
                       Text(
-                        isInitial
-                            ? '$total treatments added'
-                            : '$done of $total treatments completed',
+                        AppLocalizations.of(context)!.viewPaymentHistory,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontHelper.fontFamily(context),
-                          color: Colors.white.withValues(alpha: 0.8),
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (onTap != null)
-                  Icon(
-                    Icons.edit_outlined,
-                    size: 18.w,
-                    color: Colors.white.withValues(alpha: 0.6),
-                  ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-
-            if (isInitial) _buildInitialStats(context) else _buildSavedStats(context),
+              ),
+            ],
           ],
         ),
       ),
@@ -119,7 +92,7 @@ class PlanSummaryHeader extends StatelessWidget {
           Expanded(
             child: _costItem(
               context,
-              label: 'Total Cost',
+              label: AppLocalizations.of(context)!.totalCost,
               value: plan.totalCost > 0
                   ? plan.totalCost.toStringAsFixed(0)
                   : '—',
@@ -133,7 +106,7 @@ class PlanSummaryHeader extends StatelessWidget {
           Expanded(
             child: _costItem(
               context,
-              label: 'Lab Fees',
+              label: AppLocalizations.of(context)!.labFees,
               value: plan.labFees > 0
                   ? plan.labFees.toStringAsFixed(0)
                   : '—',
@@ -171,48 +144,27 @@ class PlanSummaryHeader extends StatelessWidget {
   }
 
   Widget _buildSavedStats(BuildContext context) {
-    final total = plan.treatments.length;
-    final done = plan.completed.length;
-    final progress = total > 0 ? done / total : 0.0;
-
-    return Column(
+    return Row(
       children: [
-        // Progress bar
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4.r),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-            minHeight: 6.h,
-          ),
+        _buildStat(
+          context,
+          icon: Icons.account_balance_wallet_outlined,
+          value: plan.grandTotal.toStringAsFixed(0),
+          label: AppLocalizations.of(context)!.totalLabel,
         ),
-        SizedBox(height: 16.h),
-
-        // Financial stats row
-        Row(
-          children: [
-            _buildStat(
-              context,
-              icon: Icons.account_balance_wallet_outlined,
-              value: plan.grandTotal.toStringAsFixed(0),
-              label: 'Total',
-            ),
-            _divider(),
-            _buildStat(
-              context,
-              icon: Icons.check_circle_outline,
-              value: plan.paid.toStringAsFixed(0),
-              label: 'Paid',
-            ),
-            _divider(),
-            _buildStat(
-              context,
-              icon: Icons.schedule,
-              value: plan.pending.toStringAsFixed(0),
-              label: 'Pending',
-            ),
-          ],
+        _divider(),
+        _buildStat(
+          context,
+          icon: Icons.check_circle_outline,
+          value: plan.paid.toStringAsFixed(0),
+          label: AppLocalizations.of(context)!.paidLabel,
+        ),
+        _divider(),
+        _buildStat(
+          context,
+          icon: Icons.schedule,
+          value: plan.pending.toStringAsFixed(0),
+          label: AppLocalizations.of(context)!.pendingLabel,
         ),
       ],
     );

@@ -1,4 +1,6 @@
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/features/patients/presentation/pages/new_treatment_plan_page.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/finish_profile_page.dart';
@@ -15,9 +17,6 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
-import 'package:dental_clinic_app/features/treatment_plan_prototype/models/prototype_models.dart';
-import 'package:dental_clinic_app/features/treatment_plan_prototype/pages/treatment_dashboard_page.dart';
-import 'package:dental_clinic_app/features/treatment_plan_prototype/treatment_prototype_hub.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
@@ -266,7 +265,7 @@ class RoutesManager {
 
             if (isInitial && caseId == null) {
               return CupertinoPage(
-                child: TreatmentDashboardPage(
+                child: NewTreatmentPlanPage(
                   patientId: patientId,
                   patientName: patientName,
                 ),
@@ -464,13 +463,6 @@ class RoutesManager {
               key: state.pageKey,
               name: state.name,
             );
-          },
-        ),
-        GoRoute(
-          path: '/treatment-prototype',
-          name: AppRoutesNames.treatmentPrototype,
-          pageBuilder: (context, state) {
-            return CupertinoPage(child: const TreatmentPrototypeHub());
           },
         ),
         // Change Email
