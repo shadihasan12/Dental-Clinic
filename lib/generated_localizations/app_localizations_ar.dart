@@ -1689,4 +1689,45 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pleaseSelectCurrency => 'يرجى اختيار العملة';
+
+  @override
+  String get clinicUsers => 'مستخدمو العيادة';
+
+  @override
+  String get addUser => 'إضافة مستخدم';
+
+  @override
+  String get removeUser => 'إزالة';
+
+  @override
+  String get updateRoles => 'تحديث الأدوار';
+
+  @override
+  String get userAddedSuccess => 'تم إضافة المستخدم بنجاح';
+
+  @override
+  String get userRemovedSuccess => 'تم إزالة المستخدم بنجاح';
+
+  @override
+  String get rolesUpdatedSuccess => 'تم تحديث الأدوار بنجاح';
+
+  @override
+  String removeUserConfirmation(String name) {
+    return 'هل أنت متأكد من إزالة $name من العيادة؟';
+  }
+
+  @override
+  String get selectRoles => 'اختر الأدوار';
+
+  @override
+  String get roleSecretary => 'سكرتير';
+
+  @override
+  String get noUsersYet => 'لا يوجد مستخدمون بعد';
+
+  @override
+  String get manageRoles => 'إدارة الأدوار';
+
+  @override
+  String get selectSpecialization => 'اختر التخصص';
 }

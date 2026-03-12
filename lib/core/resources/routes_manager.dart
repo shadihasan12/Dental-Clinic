@@ -41,6 +41,7 @@ import 'package:dental_clinic_app/features/clinic/presentation/pages/invite_staf
 import 'package:dental_clinic_app/features/clinic/presentation/pages/pending_approvals_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/my_clinics_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/create_clinic_page.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/pages/clinic_users_page.dart';
 import 'package:dental_clinic_app/features/subscription/presentation/pages/pricing_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -358,6 +359,18 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const CreateClinicPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/clinic-users',
+          name: AppRoutesNames.clinicUsers,
+          pageBuilder: (context, state) {
+            final clinicId = state.extra as String? ?? '';
+            return CupertinoPage(
+              child: ClinicUsersPage(clinicId: clinicId),
               key: state.pageKey,
               name: state.name,
             );

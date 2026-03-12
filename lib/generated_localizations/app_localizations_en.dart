@@ -1699,4 +1699,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseSelectCurrency => 'Please select a currency';
+
+  @override
+  String get clinicUsers => 'Clinic Users';
+
+  @override
+  String get addUser => 'Add User';
+
+  @override
+  String get removeUser => 'Remove';
+
+  @override
+  String get updateRoles => 'Update Roles';
+
+  @override
+  String get userAddedSuccess => 'User added successfully';
+
+  @override
+  String get userRemovedSuccess => 'User removed successfully';
+
+  @override
+  String get rolesUpdatedSuccess => 'Roles updated successfully';
+
+  @override
+  String removeUserConfirmation(String name) {
+    return 'Are you sure you want to remove $name from the clinic?';
+  }
+
+  @override
+  String get selectRoles => 'Select Roles';
+
+  @override
+  String get roleSecretary => 'Secretary';
+
+  @override
+  String get noUsersYet => 'No users yet';
+
+  @override
+  String get manageRoles => 'Manage Roles';
+
+  @override
+  String get selectSpecialization => 'Select specialization';
 }

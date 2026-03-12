@@ -97,6 +97,8 @@ class PermissionHelper {
         return 'Dentist';
       case ClinicRole.receptionist:
         return 'Receptionist';
+      case ClinicRole.secretary:
+        return 'Secretary';
       case null:
         return 'Unknown';
     }
@@ -111,6 +113,8 @@ class PermissionHelper {
         return 'Can view and manage patients and appointments';
       case ClinicRole.receptionist:
         return 'Can add patients and manage appointments. Patient deletions require admin approval';
+      case ClinicRole.secretary:
+        return 'Can manage appointments and administrative tasks';
     }
   }
 

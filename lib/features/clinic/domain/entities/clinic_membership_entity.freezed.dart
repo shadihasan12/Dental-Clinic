@@ -20,14 +20,14 @@ mixin _$ClinicMembershipEntity {
   String get id => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
   String get clinicId => throw _privateConstructorUsedError;
-  String get clinicName =>
-      throw _privateConstructorUsedError; // Denormalized for display
+  String get clinicName => throw _privateConstructorUsedError;
   ClinicRole get role => throw _privateConstructorUsedError;
   MembershipStatus get status => throw _privateConstructorUsedError;
-  String? get userName =>
-      throw _privateConstructorUsedError; // Denormalized for display
-  String? get userEmail =>
-      throw _privateConstructorUsedError; // Denormalized for display
+  List<ClinicRole> get roles => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
+  String? get locationName => throw _privateConstructorUsedError;
+  String? get userName => throw _privateConstructorUsedError;
+  String? get userEmail => throw _privateConstructorUsedError;
   String? get userAvatarUrl => throw _privateConstructorUsedError;
   DateTime? get joinedAt => throw _privateConstructorUsedError;
   DateTime? get invitedAt => throw _privateConstructorUsedError;
@@ -54,6 +54,9 @@ abstract class $ClinicMembershipEntityCopyWith<$Res> {
     String clinicName,
     ClinicRole role,
     MembershipStatus status,
+    List<ClinicRole> roles,
+    String? address,
+    String? locationName,
     String? userName,
     String? userEmail,
     String? userAvatarUrl,
@@ -87,6 +90,9 @@ class _$ClinicMembershipEntityCopyWithImpl<
     Object? clinicName = null,
     Object? role = null,
     Object? status = null,
+    Object? roles = null,
+    Object? address = freezed,
+    Object? locationName = freezed,
     Object? userName = freezed,
     Object? userEmail = freezed,
     Object? userAvatarUrl = freezed,
@@ -120,6 +126,18 @@ class _$ClinicMembershipEntityCopyWithImpl<
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as MembershipStatus,
+            roles: null == roles
+                ? _value.roles
+                : roles // ignore: cast_nullable_to_non_nullable
+                      as List<ClinicRole>,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            locationName: freezed == locationName
+                ? _value.locationName
+                : locationName // ignore: cast_nullable_to_non_nullable
+                      as String?,
             userName: freezed == userName
                 ? _value.userName
                 : userName // ignore: cast_nullable_to_non_nullable
@@ -166,6 +184,9 @@ abstract class _$$ClinicMembershipEntityImplCopyWith<$Res>
     String clinicName,
     ClinicRole role,
     MembershipStatus status,
+    List<ClinicRole> roles,
+    String? address,
+    String? locationName,
     String? userName,
     String? userEmail,
     String? userAvatarUrl,
@@ -196,6 +217,9 @@ class __$$ClinicMembershipEntityImplCopyWithImpl<$Res>
     Object? clinicName = null,
     Object? role = null,
     Object? status = null,
+    Object? roles = null,
+    Object? address = freezed,
+    Object? locationName = freezed,
     Object? userName = freezed,
     Object? userEmail = freezed,
     Object? userAvatarUrl = freezed,
@@ -229,6 +253,18 @@ class __$$ClinicMembershipEntityImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as MembershipStatus,
+        roles: null == roles
+            ? _value._roles
+            : roles // ignore: cast_nullable_to_non_nullable
+                  as List<ClinicRole>,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        locationName: freezed == locationName
+            ? _value.locationName
+            : locationName // ignore: cast_nullable_to_non_nullable
+                  as String?,
         userName: freezed == userName
             ? _value.userName
             : userName // ignore: cast_nullable_to_non_nullable
@@ -268,13 +304,16 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
     required this.clinicName,
     required this.role,
     required this.status,
+    final List<ClinicRole> roles = const [],
+    this.address,
+    this.locationName,
     this.userName,
     this.userEmail,
     this.userAvatarUrl,
     this.joinedAt,
     this.invitedAt,
     this.invitedByUserId,
-  });
+  }) : _roles = roles;
 
   @override
   final String id;
@@ -284,17 +323,27 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
   final String clinicId;
   @override
   final String clinicName;
-  // Denormalized for display
   @override
   final ClinicRole role;
   @override
   final MembershipStatus status;
+  final List<ClinicRole> _roles;
+  @override
+  @JsonKey()
+  List<ClinicRole> get roles {
+    if (_roles is EqualUnmodifiableListView) return _roles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_roles);
+  }
+
+  @override
+  final String? address;
+  @override
+  final String? locationName;
   @override
   final String? userName;
-  // Denormalized for display
   @override
   final String? userEmail;
-  // Denormalized for display
   @override
   final String? userAvatarUrl;
   @override
@@ -306,7 +355,7 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
 
   @override
   String toString() {
-    return 'ClinicMembershipEntity(id: $id, userId: $userId, clinicId: $clinicId, clinicName: $clinicName, role: $role, status: $status, userName: $userName, userEmail: $userEmail, userAvatarUrl: $userAvatarUrl, joinedAt: $joinedAt, invitedAt: $invitedAt, invitedByUserId: $invitedByUserId)';
+    return 'ClinicMembershipEntity(id: $id, userId: $userId, clinicId: $clinicId, clinicName: $clinicName, role: $role, status: $status, roles: $roles, address: $address, locationName: $locationName, userName: $userName, userEmail: $userEmail, userAvatarUrl: $userAvatarUrl, joinedAt: $joinedAt, invitedAt: $invitedAt, invitedByUserId: $invitedByUserId)';
   }
 
   @override
@@ -322,6 +371,10 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
                 other.clinicName == clinicName) &&
             (identical(other.role, role) || other.role == role) &&
             (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.locationName, locationName) ||
+                other.locationName == locationName) &&
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.userEmail, userEmail) ||
@@ -345,6 +398,9 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
     clinicName,
     role,
     status,
+    const DeepCollectionEquality().hash(_roles),
+    address,
+    locationName,
     userName,
     userEmail,
     userAvatarUrl,
@@ -374,6 +430,9 @@ abstract class _ClinicMembershipEntity implements ClinicMembershipEntity {
     required final String clinicName,
     required final ClinicRole role,
     required final MembershipStatus status,
+    final List<ClinicRole> roles,
+    final String? address,
+    final String? locationName,
     final String? userName,
     final String? userEmail,
     final String? userAvatarUrl,
@@ -389,15 +448,21 @@ abstract class _ClinicMembershipEntity implements ClinicMembershipEntity {
   @override
   String get clinicId;
   @override
-  String get clinicName; // Denormalized for display
+  String get clinicName;
   @override
   ClinicRole get role;
   @override
   MembershipStatus get status;
   @override
-  String? get userName; // Denormalized for display
+  List<ClinicRole> get roles;
   @override
-  String? get userEmail; // Denormalized for display
+  String? get address;
+  @override
+  String? get locationName;
+  @override
+  String? get userName;
+  @override
+  String? get userEmail;
   @override
   String? get userAvatarUrl;
   @override

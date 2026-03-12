@@ -88,7 +88,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     _tabController = TabController(
       length: 3,
       vsync: this,
-      initialIndex: widget.tabIndex ?? 0,
+      initialIndex: widget.tabIndex ?? 1,
     );
     _loadTeeth();
     _loadCoreTreatments();
@@ -217,7 +217,8 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                   children: [
                     PatientHeader(
                       name: widget.patientName,
-                      onBackPressed: () => context.pop(),
+                      onBackPressed: () =>
+                        context.canPop() ? context.pop() : context.go('/'),
                       tabController: _tabController,
                     ),
                     const Expanded(
@@ -248,7 +249,8 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                 children: [
                   PatientHeader(
                     name: patient.name,
-                    onBackPressed: () => context.pop(),
+                    onBackPressed: () =>
+                        context.canPop() ? context.pop() : context.go('/'),
                     onEditPressed: () {
                       // TODO: Navigate to edit patient
                     },

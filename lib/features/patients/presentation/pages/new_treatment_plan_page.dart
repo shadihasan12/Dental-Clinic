@@ -220,7 +220,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
           title: l10nAfter.success,
           message: l10nAfter.treatmentPlanSavedSuccessfully,
         );
-        context.pushReplacementNamed(
+        context.goNamed(
           AppRoutesNames.patientDetails,
           extra: {
             'patientId': widget.patientId,

@@ -385,6 +385,8 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
         return Icons.medical_services_outlined;
       case ClinicRole.receptionist:
         return Icons.person_outline;
+      case ClinicRole.secretary:
+        return Icons.assignment_ind_outlined;
     }
   }
 
@@ -396,6 +398,8 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
         return 'Dentist';
       case ClinicRole.receptionist:
         return 'Receptionist';
+      case ClinicRole.secretary:
+        return 'Secretary';
     }
   }
 }

@@ -69,6 +69,7 @@ class AppRoutesNames {
   // Dentist Routes
   static const String myClinics = 'myClinics';
   static const String createClinic = 'createClinic';
+  static const String clinicUsers = 'clinicUsers';
 
   // Subscription Routes
   static const String pricing = 'pricing';

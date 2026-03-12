@@ -244,9 +244,10 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                             patient: patient,
                             onTap: () => context.pushNamed(
                               AppRoutesNames.patientDetails,
-                              extra: {
+                              extra: <String, dynamic>{
                                 "patientId": patient.id,
                                 "patientName": patient.name,
+                                "tabIndex": 1,
                               },
                             ),
                           );

@@ -45,6 +45,21 @@ import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
+import 'features/clinic/data/data_sources/clinic_remote_data_source.dart'
+    as _i190;
+import 'features/clinic/data/repositories/clinic_repository_impl.dart' as _i968;
+import 'features/clinic/domain/repositories/clinic_repository.dart' as _i818;
+import 'features/clinic/domain/use_cases/add_clinic_user_use_case.dart'
+    as _i166;
+import 'features/clinic/domain/use_cases/get_clinic_users_use_case.dart'
+    as _i398;
+import 'features/clinic/domain/use_cases/get_my_clinics_use_case.dart' as _i113;
+import 'features/clinic/domain/use_cases/remove_clinic_user_use_case.dart'
+    as _i223;
+import 'features/clinic/domain/use_cases/update_user_roles_use_case.dart'
+    as _i972;
+import 'features/clinic/presentation/bloc/clinic_users_bloc.dart' as _i475;
+import 'features/clinic/presentation/bloc/my_clinics_bloc.dart' as _i533;
 import 'features/expenses/data/data_sources/expense_remote_data_source.dart'
     as _i355;
 import 'features/expenses/data/repositories/expense_repository_impl.dart'
@@ -293,11 +308,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i806.NotificationSettingsRemoteDataSource>(),
       ),
     );
+    gh.lazySingleton<_i190.ClinicRemoteDataSource>(
+      () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
     gh.factory<_i151.SubscriptionRemoteDataSource>(
       () => _i151.SubscriptionRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.factory<_i348.SupportRemoteDataSource>(
       () => _i348.SupportRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i818.ClinicRepository>(
+      () => _i968.ClinicRepositoryImpl(gh<_i190.ClinicRemoteDataSource>()),
     );
     gh.factory<_i275.GetNotificationSettingsUseCase>(
       () => _i275.GetNotificationSettingsUseCase(
@@ -381,6 +402,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i315.UpdateExpenseUseCase>(
       () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
+    gh.factory<_i113.GetMyClinicsUseCase>(
+      () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i166.AddClinicUserUseCase>(
+      () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i398.GetClinicUsersUseCase>(
+      () => _i398.GetClinicUsersUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i223.RemoveClinicUserUseCase>(
+      () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i972.UpdateUserRolesUseCase>(
+      () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
+    );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
     );
@@ -450,6 +486,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1011.SubscriptionBloc>(
       () => _i1011.SubscriptionBloc(getPlans: gh<_i779.GetPlansUseCase>()),
     );
+    gh.factoryParam<_i475.ClinicUsersBloc, String, dynamic>(
+      (clinicId, _) => _i475.ClinicUsersBloc(
+        gh<_i398.GetClinicUsersUseCase>(),
+        gh<_i166.AddClinicUserUseCase>(),
+        gh<_i972.UpdateUserRolesUseCase>(),
+        gh<_i223.RemoveClinicUserUseCase>(),
+        clinicId,
+      ),
+    );
     gh.factory<_i833.PatientsListBloc>(
       () => _i833.PatientsListBloc(
         getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
@@ -490,6 +535,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i527.AddPatientBloc>(
       () => _i527.AddPatientBloc(addPatient: gh<_i594.AddPatientUseCase>()),
+    );
+    gh.factory<_i533.MyClinicsBloc>(
+      () => _i533.MyClinicsBloc(
+        gh<_i113.GetMyClinicsUseCase>(),
+        gh<_i663.UserStorage>(),
+      ),
     );
     gh.factory<_i766.SupportChatBloc>(
       () => _i766.SupportChatBloc(

@@ -77,6 +77,18 @@ class _MenuPageState extends State<MenuPage> {
                       },
                     ),
                     MenuItem(
+                      icon: Icons.people_outlined,
+                      title: l10n.clinicUsers,
+                      onTap: () {
+                        final clinicId =
+                            getIt<UserStorage>().getSelectedClinicId() ?? '';
+                        context.pushNamed(
+                          AppRoutesNames.clinicUsers,
+                          extra: clinicId,
+                        );
+                      },
+                    ),
+                    MenuItem(
                       icon: Icons.schedule_outlined,
                       title: l10n.workingHoursAndHolidays,
                       onTap: () {

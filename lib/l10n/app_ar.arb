@@ -651,6 +651,25 @@
       "count": { "type": "int" }
     }
   },
-  "pleaseSelectCurrency": "يرجى اختيار العملة"
+  "pleaseSelectCurrency": "يرجى اختيار العملة",
+  "clinicUsers": "مستخدمو العيادة",
+  "addUser": "إضافة مستخدم",
+  "removeUser": "إزالة",
+  "updateRoles": "تحديث الأدوار",
+  "userAddedSuccess": "تم إضافة المستخدم بنجاح",
+  "userRemovedSuccess": "تم إزالة المستخدم بنجاح",
+  "rolesUpdatedSuccess": "تم تحديث الأدوار بنجاح",
+  "removeUserConfirmation": "هل أنت متأكد من إزالة {name} من العيادة؟",
+  "@removeUserConfirmation": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "selectRoles": "اختر الأدوار",
+  "roleSecretary": "سكرتير",
+  "noUsersYet": "لا يوجد مستخدمون بعد",
+  "manageRoles": "إدارة الأدوار",
+  "specialization": "التخصص",
+  "selectSpecialization": "اختر التخصص"
 }
 

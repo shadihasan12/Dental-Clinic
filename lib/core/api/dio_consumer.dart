@@ -65,6 +65,7 @@ class DioConsumer implements ApiConsumer {
   Future get(
     String path, {
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
     CancelToken? cancelToken,
   }) async {
     try {
@@ -72,6 +73,7 @@ class DioConsumer implements ApiConsumer {
         path,
         queryParameters: queryParameters,
         cancelToken: cancelToken,
+        options: headers != null ? Options(headers: headers) : null,
       );
       return _handleOnlineResponseAsJson(response);
     } catch (error) {
@@ -85,6 +87,7 @@ class DioConsumer implements ApiConsumer {
     Map<String, dynamic>? body,
     String? token,
     FormData? formData,
+    Map<String, dynamic>? headers,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
@@ -94,6 +97,7 @@ class DioConsumer implements ApiConsumer {
         options: Options(
           contentType:
               formData == null ? StringsManager.jsonContentType : null,
+          headers: headers,
         ),
         data: formData ?? body,
       );
@@ -109,6 +113,7 @@ class DioConsumer implements ApiConsumer {
     Map<String, dynamic>? body,
     String? token,
     FormData? formData,
+    Map<String, dynamic>? headers,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
@@ -118,6 +123,7 @@ class DioConsumer implements ApiConsumer {
         options: Options(
           contentType:
               formData == null ? StringsManager.jsonContentType : null,
+          headers: headers,
         ),
         data: formData ?? body,
       );
@@ -131,6 +137,7 @@ class DioConsumer implements ApiConsumer {
   Future put(
     String path, {
     Map<String, dynamic>? body,
+    Map<String, dynamic>? headers,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
@@ -140,6 +147,7 @@ class DioConsumer implements ApiConsumer {
         data: body,
         options: Options(
           contentType: StringsManager.jsonContentType,
+          headers: headers,
         ),
       );
       return _handleOnlineResponseAsJson(response);
@@ -149,12 +157,16 @@ class DioConsumer implements ApiConsumer {
   }
 
   @override
-  Future delete(String path) async {
+  Future delete(
+    String path, {
+    Map<String, dynamic>? headers,
+  }) async {
     try {
       final Response response = await _client.delete(
         path,
         options: Options(
           contentType: StringsManager.jsonContentType,
+          headers: headers,
         ),
       );
       return _handleOnlineResponseAsJson(response);

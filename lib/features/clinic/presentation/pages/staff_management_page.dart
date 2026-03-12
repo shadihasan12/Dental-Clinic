@@ -361,6 +361,9 @@ class _MemberCard extends StatelessWidget {
         return ColorManager.info;
       case ClinicRole.receptionist:
         return ColorManager.secondary;
+      case ClinicRole.secretary:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 
@@ -372,6 +375,9 @@ class _MemberCard extends StatelessWidget {
         return 'Dentist';
       case ClinicRole.receptionist:
         return 'Receptionist';
+      case ClinicRole.secretary:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

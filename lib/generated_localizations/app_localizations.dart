@@ -3325,6 +3325,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please select a currency'**
   String get pleaseSelectCurrency;
+
+  /// No description provided for @clinicUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic Users'**
+  String get clinicUsers;
+
+  /// No description provided for @addUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Add User'**
+  String get addUser;
+
+  /// No description provided for @removeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeUser;
+
+  /// No description provided for @updateRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Roles'**
+  String get updateRoles;
+
+  /// No description provided for @userAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'User added successfully'**
+  String get userAddedSuccess;
+
+  /// No description provided for @userRemovedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'User removed successfully'**
+  String get userRemovedSuccess;
+
+  /// No description provided for @rolesUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Roles updated successfully'**
+  String get rolesUpdatedSuccess;
+
+  /// No description provided for @removeUserConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {name} from the clinic?'**
+  String removeUserConfirmation(String name);
+
+  /// No description provided for @selectRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Roles'**
+  String get selectRoles;
+
+  /// No description provided for @roleSecretary.
+  ///
+  /// In en, this message translates to:
+  /// **'Secretary'**
+  String get roleSecretary;
+
+  /// No description provided for @noUsersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No users yet'**
+  String get noUsersYet;
+
+  /// No description provided for @manageRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Roles'**
+  String get manageRoles;
+
+  /// No description provided for @selectSpecialization.
+  ///
+  /// In en, this message translates to:
+  /// **'Select specialization'**
+  String get selectSpecialization;
 }
 
 class _AppLocalizationsDelegate

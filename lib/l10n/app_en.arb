@@ -649,6 +649,25 @@
       "count": { "type": "int" }
     }
   },
-  "pleaseSelectCurrency": "Please select a currency"
+  "pleaseSelectCurrency": "Please select a currency",
+  "clinicUsers": "Clinic Users",
+  "addUser": "Add User",
+  "removeUser": "Remove",
+  "updateRoles": "Update Roles",
+  "userAddedSuccess": "User added successfully",
+  "userRemovedSuccess": "User removed successfully",
+  "rolesUpdatedSuccess": "Roles updated successfully",
+  "removeUserConfirmation": "Are you sure you want to remove {name} from the clinic?",
+  "@removeUserConfirmation": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "selectRoles": "Select Roles",
+  "roleSecretary": "Secretary",
+  "noUsersYet": "No users yet",
+  "manageRoles": "Manage Roles",
+  "specialization": "Specialization",
+  "selectSpecialization": "Select specialization"
 }
 
