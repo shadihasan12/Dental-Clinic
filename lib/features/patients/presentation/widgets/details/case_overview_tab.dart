@@ -257,76 +257,80 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
 
   Widget _buildActionButtons(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: widget.onAddTreatment,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 13.h),
-              decoration: BoxDecoration(
-                color: ColorManager.white,
-                borderRadius: BorderRadiusManager.lg,
-                border: Border.all(color: ColorManager.primary),
+    return Container(
+      decoration: BoxDecoration(
+        color: ColorManager.white,
+        borderRadius: BorderRadiusManager.lg,
+        border: Border.all(color: ColorManager.gray200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: widget.onAddTreatment,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.r),
+                bottomLeft: Radius.circular(12.r),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_circle_outline,
-                    size: 18.w,
-                    color: ColorManager.primary,
-                  ),
-                  SizedBox(width: 6.w),
-                  Text(
-                    l10n.addTreatmentButton,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontWeight: FontWeight.w600,
-                      color: ColorManager.primary,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 13.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_circle_outline, size: 17.w, color: ColorManager.primary),
+                    SizedBox(width: 6.w),
+                    Text(
+                      l10n.addTreatmentButton,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.primary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => _showRecordPaymentPopup(context),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 13.h),
-              decoration: BoxDecoration(
-                color: ColorManager.white,
-                borderRadius: BorderRadiusManager.lg,
-                border: Border.all(color: ColorManager.primary),
+          Container(width: 1, height: 36.h, color: ColorManager.gray200),
+          Expanded(
+            child: InkWell(
+              onTap: () => _showRecordPaymentPopup(context),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(12.r),
+                bottomRight: Radius.circular(12.r),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.payments_outlined,
-                    size: 18.w,
-                    color: ColorManager.primary,
-                  ),
-                  SizedBox(width: 6.w),
-                  Text(
-                    l10n.addPaymentButton,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontWeight: FontWeight.w600,
-                      color: ColorManager.primary,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 13.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.payments_outlined, size: 17.w, color: ColorManager.primary),
+                    SizedBox(width: 6.w),
+                    Text(
+                      l10n.addPaymentButton,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.primary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -334,9 +338,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
 
   Widget _buildTreatmentsSection(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final sectionTitle = widget.isReadOnly
-        ? l10n.treatments
-        : l10n.previousTreatments;
+    final sectionTitle = l10n.treatments;
 
     // Sort: planned/inProgress first, completed last
     final sorted = <PlannedTreatment>[

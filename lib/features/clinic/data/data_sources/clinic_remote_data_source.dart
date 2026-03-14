@@ -97,7 +97,7 @@ class ClinicRemoteDataSourceImpl implements ClinicRemoteDataSource {
     required String userId,
     required List<String> roles,
   }) async {
-    await _apiConsumer.put(
+    await _apiConsumer.post(
       ClinicEndpoints.clinicUserRoles(userId),
       headers: _clinicHeaders(clinicId),
       body: {'roles': roles},

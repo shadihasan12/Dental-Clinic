@@ -23,215 +23,120 @@ class PlanSummaryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              ColorManager.primary,
-              ColorManager.primaryDark,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Column(
-          children: [
-            if (isInitial) _buildInitialStats(context) else _buildSavedStats(context),
+    final l10n = AppLocalizations.of(context)!;
 
-            // View Payment History button
-            if (onViewPaymentHistory != null) ...[
-              SizedBox(height: 12.h),
-              GestureDetector(
-                onTap: onViewPaymentHistory,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.receipt_long_outlined,
-                        size: 14.w,
-                        color: Colors.white.withValues(alpha: 0.9),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        AppLocalizations.of(context)!.viewPaymentHistory,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            // Mark as Finished button
-            if (onMarkAsFinished != null) ...[
-              SizedBox(height: 8.h),
-              GestureDetector(
-                onTap: onMarkAsFinished,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        size: 14.w,
-                        color: Colors.white.withValues(alpha: 0.9),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        AppLocalizations.of(context)!.markAsFinished,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInitialStats(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _costItem(
-              context,
-              label: AppLocalizations.of(context)!.totalCost,
-              value: plan.totalCost > 0
-                  ? plan.totalCost.toStringAsFixed(0)
-                  : '—',
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 32.h,
-            color: Colors.white.withValues(alpha: 0.2),
-          ),
-          Expanded(
-            child: _costItem(
-              context,
-              label: AppLocalizations.of(context)!.labFees,
-              value: plan.labFees > 0
-                  ? plan.labFees.toStringAsFixed(0)
-                  : '—',
-            ),
+        color: ColorManager.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: ColorManager.gray200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-    );
-  }
+      child: Column(
+        children: [
+          // ── Stats row ──────────────────────────────────────────
+          GestureDetector(
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              child: isInitial
+                  ? _buildInitialStats(context)
+                  : _buildSavedStats(context),
+            ),
+          ),
 
-  Widget _costItem(BuildContext context,
-      {required String label, required String value}) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 2.h),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: Colors.white.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
+          // ── Action buttons ─────────────────────────────────────
+          if (onViewPaymentHistory != null || onMarkAsFinished != null) ...[
+            Divider(height: 1, color: ColorManager.gray200),
+            _buildActions(context, l10n),
+          ],
+        ],
+      ),
     );
   }
 
   Widget _buildSavedStats(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
-        _buildStat(
+        _stat(
           context,
-          icon: Icons.account_balance_wallet_outlined,
+          label: l10n.totalLabel,
           value: plan.grandTotal.toStringAsFixed(0),
-          label: AppLocalizations.of(context)!.totalLabel,
+          valueColor: ColorManager.textPrimary,
         ),
-        _divider(),
-        _buildStat(
+        _verticalDivider(),
+        _stat(
           context,
-          icon: Icons.check_circle_outline,
+          label: l10n.paidLabel,
           value: plan.paid.toStringAsFixed(0),
-          label: AppLocalizations.of(context)!.paidLabel,
+          valueColor: const Color(0xFF2E9E5B),
         ),
-        _divider(),
-        _buildStat(
+        _verticalDivider(),
+        _stat(
           context,
-          icon: Icons.schedule,
+          label: l10n.pendingLabel,
           value: plan.pending.toStringAsFixed(0),
-          label: AppLocalizations.of(context)!.pendingLabel,
+          valueColor: plan.pending > 0
+              ? const Color(0xFFE07B2A)
+              : const Color(0xFF2E9E5B),
         ),
       ],
     );
   }
 
-  Widget _buildStat(
+  Widget _buildInitialStats(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        _stat(
+          context,
+          label: l10n.totalCost,
+          value: plan.totalCost > 0 ? plan.totalCost.toStringAsFixed(0) : '—',
+          valueColor: ColorManager.textPrimary,
+        ),
+        _verticalDivider(),
+        _stat(
+          context,
+          label: l10n.labFees,
+          value: plan.labFees > 0 ? plan.labFees.toStringAsFixed(0) : '—',
+          valueColor: ColorManager.textSecondary,
+        ),
+      ],
+    );
+  }
+
+  Widget _stat(
     BuildContext context, {
-    required IconData icon,
-    required String value,
     required String label,
+    required String value,
+    required Color valueColor,
   }) {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, size: 18.w, color: Colors.white.withValues(alpha: 0.8)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              color: ColorManager.textSecondary,
+            ),
+          ),
           SizedBox(height: 4.h),
           Text(
             value,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 17.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: Colors.white.withValues(alpha: 0.7),
+              color: valueColor,
             ),
           ),
         ],
@@ -239,11 +144,70 @@ class PlanSummaryHeader extends StatelessWidget {
     );
   }
 
-  Widget _divider() {
-    return Container(
-      width: 1,
-      height: 36.h,
-      color: Colors.white.withValues(alpha: 0.2),
+  Widget _verticalDivider() {
+    return Container(width: 1, height: 36.h, color: ColorManager.gray200);
+  }
+
+  Widget _buildActions(BuildContext context, AppLocalizations l10n) {
+    final items = <({IconData icon, String label, VoidCallback? onTap})>[];
+
+    if (onViewPaymentHistory != null) {
+      items.add((
+        icon: Icons.receipt_long_outlined,
+        label: l10n.viewPaymentHistory,
+        onTap: onViewPaymentHistory,
+      ));
+    }
+    if (onMarkAsFinished != null) {
+      items.add((
+        icon: Icons.check_circle_outline,
+        label: l10n.markAsFinished,
+        onTap: onMarkAsFinished,
+      ));
+    }
+
+    return Row(
+      children: items.indexed.map((entry) {
+        final (i, item) = entry;
+        return Expanded(
+          child: InkWell(
+            onTap: item.onTap,
+            borderRadius: i == 0
+                ? BorderRadius.only(
+                    bottomLeft: Radius.circular(16.r),
+                  )
+                : BorderRadius.only(
+                    bottomRight: Radius.circular(16.r),
+                  ),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 11.h),
+              decoration: i == 0 && items.length > 1
+                  ? BoxDecoration(
+                      border: Border(
+                        right: BorderSide(color: ColorManager.gray200),
+                      ),
+                    )
+                  : null,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(item.icon, size: 14.w, color: ColorManager.primary),
+                  SizedBox(width: 5.w),
+                  Text(
+                    item.label,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w500,
+                      color: ColorManager.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
