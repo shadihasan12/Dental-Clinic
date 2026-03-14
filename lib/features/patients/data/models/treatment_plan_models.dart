@@ -88,6 +88,7 @@ class TreatmentPlan {
   double totalCost;
   double labFees;
   double paid;
+  double pendingAmount;
 
   TreatmentPlan({
     required this.id,
@@ -97,10 +98,11 @@ class TreatmentPlan {
     this.totalCost = 0,
     this.labFees = 0,
     this.paid = 0,
+    this.pendingAmount = 0,
   });
 
-  double get grandTotal => totalCost + labFees;
-  double get pending => grandTotal - paid;
+  double get grandTotal => totalCost;
+  double get pending => pendingAmount;
 
   List<PlannedTreatment> get planned =>
       treatments.where((t) => t.status == TreatmentPlanStatus.planned).toList();

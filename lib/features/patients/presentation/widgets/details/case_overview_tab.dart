@@ -15,7 +15,6 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class CaseOverviewWidget extends StatefulWidget {
   final DentalCase dentalCase;
   final List<Tooth> teeth;
@@ -27,10 +26,15 @@ class CaseOverviewWidget extends StatefulWidget {
   final VoidCallback? onAddTreatment;
   final void Function(PlannedTreatment treatment)? onMarkTreatmentFinished;
   final void Function(PlannedTreatment treatment, List<VisitNote> notes)?
-      onNotesUpdated;
+  onNotesUpdated;
   final void Function(PlannedTreatment treatment)? onRemoveTreatment;
-  final Future<void> Function(double totalCost, String? totalCostCurrencyId,
-      double labFees, String? labFeesCurrencyId)? onEditCosts;
+  final Future<void> Function(
+    double totalCost,
+    String? totalCostCurrencyId,
+    double labFees,
+    String? labFeesCurrencyId,
+  )?
+  onEditCosts;
 
   const CaseOverviewWidget({
     super.key,
@@ -74,10 +78,13 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
     final result = <PlannedTreatment>[];
 
     for (final item in widget.dentalCase.treatmentItems) {
-      final toothCodes = item.selectedTeeth.map((id) {
-        final match = widget.teeth.where((t) => t.id == id);
-        return match.isNotEmpty ? match.first.universalCode : null;
-      }).whereType<String>().toList();
+      final toothCodes = item.selectedTeeth
+          .map((id) {
+            final match = widget.teeth.where((t) => t.id == id);
+            return match.isNotEmpty ? match.first.universalCode : null;
+          })
+          .whereType<String>()
+          .toList();
 
       for (final typeId in item.treatmentTypes) {
         final ct = widget.coreTreatments.where((t) => t.id == typeId);
@@ -105,16 +112,18 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
           return VisitNote(date: date, text: n['note'] ?? '');
         }).toList();
 
-        result.add(PlannedTreatment(
-          id: '${item.id}_$typeId',
-          type: typeInfo,
-          toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
-          status: item.isDone
-              ? TreatmentPlanStatus.completed
-              : TreatmentPlanStatus.planned,
-          notes: item.description,
-          visitNotes: visitNotes,
-        ));
+        result.add(
+          PlannedTreatment(
+            id: '${item.id}_$typeId',
+            type: typeInfo,
+            toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
+            status: item.isDone
+                ? TreatmentPlanStatus.completed
+                : TreatmentPlanStatus.planned,
+            notes: item.description,
+            visitNotes: visitNotes,
+          ),
+        );
       }
     }
 
@@ -130,6 +139,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       totalCost: widget.dentalCase.totalCost,
       labFees: widget.dentalCase.labFees,
       paid: widget.dentalCase.paidAmount,
+      pendingAmount: widget.dentalCase.pendingAmount,
     );
   }
 
@@ -176,11 +186,15 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       initialLabFees: widget.dentalCase.labFees,
       initialTotalCostCurrencyId: widget.dentalCase.totalCostCurrencyId,
       initialLabFeesCurrencyId: widget.dentalCase.labFeesCurrencyId,
-      onSave: (totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId) async {
-        await widget.onEditCosts?.call(
-          totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId,
-        );
-      },
+      onSave:
+          (totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId) async {
+            await widget.onEditCosts?.call(
+              totalCost,
+              totalCostCurrencyId,
+              labFees,
+              labFeesCurrencyId,
+            );
+          },
     );
   }
 
@@ -205,88 +219,37 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
   Widget build(BuildContext context) {
     final plan = _buildTreatmentPlan();
 
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Plan summary header
-                PlanSummaryHeader(
-                  plan: plan,
-                  onTap: (!widget.isReadOnly && widget.onEditCosts != null)
-                      ? () => _showEditCostsSheet(context)
-                      : null,
-                  onViewPaymentHistory: () => _showPaymentHistoryPopup(context),
-                ),
-
-                SizedBox(height: 12.h),
-
-                // Action buttons (only for in-progress)
-                if (!widget.isReadOnly) ...[
-                  _buildActionButtons(context),
-                  SizedBox(height: 16.h),
-                ],
-
-                // Treatments section
-                _buildTreatmentsSection(context),
-
-                if (!widget.isReadOnly) SizedBox(height: 16.h),
-              ],
-            ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Plan summary header
+          PlanSummaryHeader(
+            plan: plan,
+            onTap: (!widget.isReadOnly && widget.onEditCosts != null)
+                ? () => _showEditCostsSheet(context)
+                : null,
+            onViewPaymentHistory: () => _showPaymentHistoryPopup(context),
+            onMarkAsFinished: (!widget.isReadOnly && widget.onMarkAsFinished != null)
+                ? widget.onMarkAsFinished
+                : null,
           ),
-        ),
 
-        // Sticky "Mark Case as Finished" button at bottom
-        if (!widget.isReadOnly && widget.onMarkAsFinished != null)
-          Container(
-            padding: EdgeInsets.fromLTRB(
-              16.w,
-              12.h,
-              16.w,
-              MediaQuery.of(context).viewPadding.bottom + 12.h,
-            ),
-            decoration: BoxDecoration(
-              color: ColorManager.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: GestureDetector(
-              onTap: widget.onMarkAsFinished,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: ColorManager.primary,
-                  borderRadius: BorderRadiusManager.lg,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.check_circle_outline, size: 18.w, color: ColorManager.white),
-                    SizedBox(width: 8.w),
-                    Text(
-                      AppLocalizations.of(context)!.markAsFinished,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-      ],
+          SizedBox(height: 12.h),
+
+          // Action buttons (only for in-progress)
+          if (!widget.isReadOnly) ...[
+            _buildActionButtons(context),
+            SizedBox(height: 16.h),
+          ],
+
+          // Treatments section
+          _buildTreatmentsSection(context),
+
+          if (!widget.isReadOnly) SizedBox(height: 16.h),
+        ],
+      ),
     );
   }
 
@@ -309,7 +272,11 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_circle_outline, size: 18.w, color: ColorManager.primary),
+                  Icon(
+                    Icons.add_circle_outline,
+                    size: 18.w,
+                    color: ColorManager.primary,
+                  ),
                   SizedBox(width: 6.w),
                   Text(
                     l10n.addTreatmentButton,
@@ -339,7 +306,11 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.payments_outlined, size: 18.w, color: ColorManager.primary),
+                  Icon(
+                    Icons.payments_outlined,
+                    size: 18.w,
+                    color: ColorManager.primary,
+                  ),
                   SizedBox(width: 6.w),
                   Text(
                     l10n.addPaymentButton,
@@ -363,7 +334,9 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
 
   Widget _buildTreatmentsSection(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final sectionTitle = widget.isReadOnly ? l10n.treatments : l10n.previousTreatments;
+    final sectionTitle = widget.isReadOnly
+        ? l10n.treatments
+        : l10n.previousTreatments;
 
     // Sort: planned/inProgress first, completed last
     final sorted = <PlannedTreatment>[
@@ -409,66 +382,70 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
         if (sorted.isEmpty)
           _buildEmptyTreatments(context)
         else
-          ...sorted.map((t) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: (!widget.isReadOnly && widget.onRemoveTreatment != null)
-                    ? Dismissible(
-                        key: ValueKey(t.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(right: 20.w),
-                          decoration: BoxDecoration(
-                            color: ColorManager.errorLight,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(
-                            Icons.delete_outline,
-                            color: ColorManager.white,
-                            size: 22.w,
-                          ),
+          ...sorted.map(
+            (t) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: (!widget.isReadOnly && widget.onRemoveTreatment != null)
+                  ? Dismissible(
+                      key: ValueKey(t.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.only(right: 20.w),
+                        decoration: BoxDecoration(
+                          color: ColorManager.errorLight,
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        confirmDismiss: (_) => ConfirmDeleteDialog.show(context),
-                        onDismissed: (_) {
-                          final removed = t;
-                          setState(() {
-                            _planned.removeWhere((p) => p.id == removed.id);
-                          });
-                          widget.onRemoveTreatment?.call(removed);
-                        },
-                        child: TreatmentPlanCard(
-                          treatment: t,
-                          onTap: () => _showTreatmentDetailsSheet(t),
-                          onAddNote: (treatment, note) {
-                            setState(() {
-                              treatment.visitNotes.add(VisitNote(
-                                date: DateTime.now(),
-                                text: note,
-                              ));
-                            });
-                            widget.onNotesUpdated
-                                ?.call(treatment, treatment.visitNotes);
-                          },
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: ColorManager.white,
+                          size: 22.w,
                         ),
-                      )
-                    : TreatmentPlanCard(
+                      ),
+                      confirmDismiss: (_) => ConfirmDeleteDialog.show(context),
+                      onDismissed: (_) {
+                        final removed = t;
+                        setState(() {
+                          _planned.removeWhere((p) => p.id == removed.id);
+                        });
+                        widget.onRemoveTreatment?.call(removed);
+                      },
+                      child: TreatmentPlanCard(
                         treatment: t,
                         onTap: () => _showTreatmentDetailsSheet(t),
-                        readOnly: widget.isReadOnly,
-                        onAddNote: widget.isReadOnly
-                            ? null
-                            : (treatment, note) {
-                                setState(() {
-                                  treatment.visitNotes.add(VisitNote(
-                                    date: DateTime.now(),
-                                    text: note,
-                                  ));
-                                });
-                                widget.onNotesUpdated
-                                    ?.call(treatment, treatment.visitNotes);
-                              },
+                        onAddNote: (treatment, note) {
+                          setState(() {
+                            treatment.visitNotes.add(
+                              VisitNote(date: DateTime.now(), text: note),
+                            );
+                          });
+                          widget.onNotesUpdated?.call(
+                            treatment,
+                            treatment.visitNotes,
+                          );
+                        },
                       ),
-              )),
+                    )
+                  : TreatmentPlanCard(
+                      treatment: t,
+                      onTap: () => _showTreatmentDetailsSheet(t),
+                      readOnly: widget.isReadOnly,
+                      onAddNote: widget.isReadOnly
+                          ? null
+                          : (treatment, note) {
+                              setState(() {
+                                treatment.visitNotes.add(
+                                  VisitNote(date: DateTime.now(), text: note),
+                                );
+                              });
+                              widget.onNotesUpdated?.call(
+                                treatment,
+                                treatment.visitNotes,
+                              );
+                            },
+                    ),
+            ),
+          ),
       ],
     );
   }
@@ -483,7 +460,9 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       ),
       child: Center(
         child: Text(
-          widget.isReadOnly ? l10n.noTreatmentsRecorded : l10n.allTreatmentsCompleted,
+          widget.isReadOnly
+              ? l10n.noTreatmentsRecorded
+              : l10n.allTreatmentsCompleted,
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),

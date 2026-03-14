@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 @injectable
 class TokenStorage {
   static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
   static const String _clinicIdKey = 'selected_clinic_id';
 
@@ -30,6 +31,20 @@ class TokenStorage {
   bool hasToken() {
     final token = getToken();
     return token != null && token.isNotEmpty;
+  }
+
+  /// Save refresh token
+  Future<void> saveRefreshToken(String token) async {
+    if (token.isEmpty) {
+      throw ArgumentError('Refresh token cannot be empty');
+    }
+    await _prefs.setString(_refreshTokenKey, token);
+  }
+
+  /// Get stored refresh token
+  String? getRefreshToken() {
+    final token = _prefs.getString(_refreshTokenKey);
+    return (token?.isEmpty ?? true) ? null : token;
   }
 
   /// Save user ID
@@ -62,6 +77,7 @@ class TokenStorage {
   /// Clear all stored authentication data
   Future<void> clearAuthData() async {
     await _prefs.remove(_tokenKey);
+    await _prefs.remove(_refreshTokenKey);
     await _prefs.remove(_userIdKey);
     await _prefs.remove(_clinicIdKey);
   }

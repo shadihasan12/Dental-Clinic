@@ -151,6 +151,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
         NetworkExceptions networkExceptions;
 
         if (error is DioException) {
+          // If ErrorInterceptor already wrapped it, use that directly
+          if (error.error is NetworkExceptions) {
+            return error.error as NetworkExceptions;
+          }
           switch (error.type) {
             case DioExceptionType.cancel:
               networkExceptions = const NetworkExceptions.requestCancelled();

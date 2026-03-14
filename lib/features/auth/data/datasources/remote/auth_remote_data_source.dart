@@ -149,6 +149,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('Registration failed: Invalid response data');
     }
 
+    // Save refresh token if present in response body
+    await _saveRefreshTokenFromResponse(response, data);
+
     // Save user ID for later use
     final userId = data['id'] as String?;
     if (userId != null && userId.isNotEmpty) {
@@ -187,6 +190,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw Exception('Login failed: Invalid response data');
     }
 
+    // Save refresh token if present in response body
+    await _saveRefreshTokenFromResponse(response, data);
+
     // Save user ID for later use
     final userId = data['id'] as String?;
     if (userId != null && userId.isNotEmpty) {
@@ -207,6 +213,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
 
     return LoginResponseModel.fromJson(data);
+  }
+
+  Future<void> _saveRefreshTokenFromResponse(
+      dynamic response, Map<String, dynamic> data) async {
+    final refreshToken = (response is Map ? response['refresh_token'] : null)
+            as String? ??
+        data['refresh_token'] as String?;
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await _tokenStorage.saveRefreshToken(refreshToken);
+    }
   }
 
   Future<void> _cacheUserData(Map<String, dynamic> data) async {

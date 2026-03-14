@@ -81,6 +81,7 @@ class DentalCase {
   final double totalCost;
   final double labFees;
   final double paidAmount;
+  final double pendingAmount;
   final String? totalCostCurrencyId;
   final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
@@ -96,12 +97,15 @@ class DentalCase {
     required this.totalCost,
     this.labFees = 0,
     required this.paidAmount,
+    required this.pendingAmount,
     this.totalCostCurrencyId,
     this.labFeesCurrencyId,
     this.treatmentItems = const [],
   });
 
   factory DentalCase.fromJson(Map<String, dynamic> json, {String patientName = ''}) {
+    final totalCost = (json['total_cost'] as num?)?.toDouble() ?? 0;
+    final paidAmount = (json['paid_amount'] as num?)?.toDouble() ?? 0;
     return DentalCase(
       id: json['id'] as String,
       patientId: json['patient_id'] as String? ?? '',
@@ -109,9 +113,10 @@ class DentalCase {
       title: json['title'] as String? ?? '',
       startDate: DateTime.parse(json['started_date'] as String),
       status: json['status'] as String,
-      totalCost: (json['total_cost'] as num?)?.toDouble() ?? 0,
+      totalCost: totalCost,
       labFees: (json['lab_fees'] as num?)?.toDouble() ?? 0,
-      paidAmount: (json['paid_amount'] as num?)?.toDouble() ?? 0,
+      paidAmount: paidAmount,
+      pendingAmount: (json['pending_amount'] as num?)?.toDouble() ?? (totalCost - paidAmount),
       totalCostCurrencyId: _parseCurrencyId(json, 'total_cost_currency'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
     );
@@ -123,8 +128,6 @@ class DentalCase {
     if (value is String) return value;
     return json['${key}_id'] as String?;
   }
-
-  double get pendingAmount => totalCost - paidAmount;
   
   List<TreatmentItem> get pendingTreatments => 
       treatmentItems.where((t) => !t.isDone).toList();
@@ -168,6 +171,7 @@ class DentalCase {
     double? totalCost,
     double? labFees,
     double? paidAmount,
+    double? pendingAmount,
     String? totalCostCurrencyId,
     String? labFeesCurrencyId,
     List<TreatmentItem>? treatmentItems,
@@ -183,6 +187,7 @@ class DentalCase {
       totalCost: totalCost ?? this.totalCost,
       labFees: labFees ?? this.labFees,
       paidAmount: paidAmount ?? this.paidAmount,
+      pendingAmount: pendingAmount ?? this.pendingAmount,
       totalCostCurrencyId: totalCostCurrencyId ?? this.totalCostCurrencyId,
       labFeesCurrencyId: labFeesCurrencyId ?? this.labFeesCurrencyId,
       treatmentItems: treatmentItems ?? this.treatmentItems,

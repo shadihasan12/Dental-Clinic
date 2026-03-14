@@ -24,6 +24,9 @@ class AuthEndpoints {
   /// POST /auth/login - Login with email or mobile number
   static const String login = '/auth/login';
 
+  /// POST /auth/refresh - Refresh expired access token
+  static const String refresh = '/auth/refresh';
+
   /// POST /auth/reset-password/request-otp - Request OTP for password reset
   static const String requestOtpForResetPassword = '/auth/reset-password/request-otp';
 

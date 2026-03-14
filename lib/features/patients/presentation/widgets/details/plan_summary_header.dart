@@ -10,6 +10,7 @@ class PlanSummaryHeader extends StatelessWidget {
   final bool isInitial;
   final VoidCallback? onTap;
   final VoidCallback? onViewPaymentHistory;
+  final VoidCallback? onMarkAsFinished;
 
   const PlanSummaryHeader({
     super.key,
@@ -17,6 +18,7 @@ class PlanSummaryHeader extends StatelessWidget {
     this.isInitial = false,
     this.onTap,
     this.onViewPaymentHistory,
+    this.onMarkAsFinished,
   });
 
   @override
@@ -62,6 +64,40 @@ class PlanSummaryHeader extends StatelessWidget {
                       SizedBox(width: 6.w),
                       Text(
                         AppLocalizations.of(context)!.viewPaymentHistory,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            // Mark as Finished button
+            if (onMarkAsFinished != null) ...[
+              SizedBox(height: 8.h),
+              GestureDetector(
+                onTap: onMarkAsFinished,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 14.w,
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        AppLocalizations.of(context)!.markAsFinished,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontHelper.fontFamily(context),

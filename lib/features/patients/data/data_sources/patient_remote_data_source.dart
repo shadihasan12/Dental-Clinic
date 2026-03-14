@@ -224,6 +224,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       status: 'In Progress',
       totalCost: 1500,
       paidAmount: 1000,
+      pendingAmount: 500,
       treatmentItems: [
         TreatmentItem(
           id: '3',
