@@ -203,6 +203,9 @@ abstract class AuthRepository {
   /// Request OTP for email verification (requires auth token)
   Future<Either<NetworkExceptions, OtpResponse>> requestOtpForVerifyEmail();
 
+  /// Verify email with OTP (requires auth token)
+  Future<Either<NetworkExceptions, void>> verifyEmailWithOtp(String otp);
+
   /// Request OTP for password reset
   Future<Either<NetworkExceptions, OtpResponse>> requestOtpForResetPassword({
     required RequestOtpParams params,

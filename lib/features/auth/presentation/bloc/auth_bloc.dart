@@ -423,25 +423,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(state.copyWith(isOtpVerifying: true, otpError: null));
 
-    final params = VerifyOtpParams(
-      email: state.signupEmail,
-      otp: state.otpCode,
-    );
-    final result = await _authRepository.verifyOtp(params: params);
-
-    result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpVerifying: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) {
-        // Store session ID and proceed to registration
-        emit(state.copyWith(
+    if (state.emailVerificationForLogin) {
+      // Email verification flow uses a dedicated endpoint
+      final result = await _authRepository.verifyEmailWithOtp(state.otpCode);
+      result.fold(
+        (failure) => emit(state.copyWith(
+          isOtpVerifying: false,
+          otpError: NetworkExceptions.getErrorMessage(failure),
+        )),
+        (_) => emit(state.copyWith(
+          isOtpVerifying: false,
+          status: AuthStatus.authenticated,
+          needsEmailVerification: false,
+          emailVerificationForLogin: false,
+        )),
+      );
+    } else {
+      // Signup / registration flow
+      final params = VerifyOtpParams(
+        email: state.signupEmail,
+        otp: state.otpCode,
+      );
+      final result = await _authRepository.verifyOtp(params: params);
+      result.fold(
+        (failure) => emit(state.copyWith(
+          isOtpVerifying: false,
+          otpError: NetworkExceptions.getErrorMessage(failure),
+        )),
+        (response) => emit(state.copyWith(
           isOtpVerifying: false,
           sessionId: response.sessionId,
-        ));
-      },
-    );
+        )),
+      );
+    }
   }
 
   Future<void> _onOtpResendRequested(_OtpResendRequested event, Emitter<AuthState> emit) async {

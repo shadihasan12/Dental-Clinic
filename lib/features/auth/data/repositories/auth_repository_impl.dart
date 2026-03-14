@@ -196,6 +196,21 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<NetworkExceptions, void>> verifyEmailWithOtp(String otp) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.verifyEmailWithOtp(otp);
+        return const Right(null);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    }
+    return const Left(NetworkExceptions.noInternetConnection());
+  }
+
+  @override
   Future<Either<NetworkExceptions, OtpResponse>> requestOtpForResetPassword({
     required RequestOtpParams params,
   }) async {

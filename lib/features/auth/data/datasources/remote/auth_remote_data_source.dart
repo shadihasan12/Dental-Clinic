@@ -39,6 +39,9 @@ abstract class AuthRemoteDataSource {
   /// Request OTP for email verification (requires auth token)
   Future<OtpResponse> requestOtpForVerifyEmail();
 
+  /// Verify email with OTP (requires auth token)
+  Future<void> verifyEmailWithOtp(String otp);
+
   /// Request OTP for password reset
   Future<OtpResponse> requestOtpForResetPassword(Map<String, dynamic> body);
 
@@ -274,6 +277,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         }
       }
     }
+  }
+
+  @override
+  Future<void> verifyEmailWithOtp(String otp) async {
+    await _apiConsumer.post(
+      AuthEndpoints.verifyEmail,
+      body: {'otp': otp},
+    );
   }
 
   @override

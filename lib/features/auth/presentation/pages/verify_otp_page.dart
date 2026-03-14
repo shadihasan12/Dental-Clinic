@@ -156,24 +156,28 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
           ),
           BlocListener<AuthBloc, AuthState>(
             listenWhen: (previous, current) =>
+                previous.status != current.status,
+            listener: (context, state) {
+              if (state.status == AuthStatus.authenticated) {
+                context.goNamed(AppRoutesNames.root);
+              }
+            },
+          ),
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
                 previous.sessionId != current.sessionId,
             listener: (context, state) {
               if (state.sessionId != null && state.sessionId!.isNotEmpty) {
-                if (state.emailVerificationForLogin) {
-                  // Login flow: mark authenticated and go to home
-                  context.read<AuthBloc>().add(const AuthEvent.emailVerificationCompleted());
-                } else {
-                  // Signup flow: proceed to registration
-                  AppSnackbar.showSuccess(
-                    context,
-                    title: l10n.emailVerified,
-                    message: l10n.completeYourRegistration,
-                  );
-                  context.pushNamed(
-                    AppRoutesNames.choosePlan,
-                    extra: context.read<AuthBloc>(),
-                  );
-                }
+                // Signup flow: proceed to registration
+                AppSnackbar.showSuccess(
+                  context,
+                  title: l10n.emailVerified,
+                  message: l10n.completeYourRegistration,
+                );
+                context.pushNamed(
+                  AppRoutesNames.choosePlan,
+                  extra: context.read<AuthBloc>(),
+                );
               }
             },
           ),
