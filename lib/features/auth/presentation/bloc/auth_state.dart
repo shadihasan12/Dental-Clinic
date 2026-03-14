@@ -78,6 +78,10 @@ class AuthState with _$AuthState {
 
     // Auth status
     @Default(AuthStatus.unauthenticated) AuthStatus status,
+
+    // Email verification from login flow
+    @Default(false) bool needsEmailVerification,
+    @Default(false) bool emailVerificationForLogin,
   }) = _AuthState;
 }
 

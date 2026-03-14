@@ -60,24 +60,21 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   }
 
   Future<void> _onRefresh() async {
-    context
-        .read<PatientsListBloc>()
-        .add(const PatientsListEvent.loadPatients());
+    context.read<PatientsListBloc>().add(
+      const PatientsListEvent.loadPatients(),
+    );
     // Wait for the bloc to emit a non-loading state
     await context.read<PatientsListBloc>().stream.firstWhere(
-          (state) => state.maybeWhen(
-            loading: () => false,
-            orElse: () => true,
-          ),
-        );
+      (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+    );
   }
 
   Future<void> _navigateToAddPatient() async {
     await context.pushNamed(AppRoutesNames.addPatient);
     if (mounted) {
-      context
-          .read<PatientsListBloc>()
-          .add(const PatientsListEvent.loadPatients());
+      context.read<PatientsListBloc>().add(
+        const PatientsListEvent.loadPatients(),
+      );
     }
   }
 
@@ -212,13 +209,12 @@ class _PatientsListContentState extends State<_PatientsListContent> {
               : CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    CupertinoSliverRefreshControl(
-                      onRefresh: _onRefresh,
-                    ),
+                    CupertinoSliverRefreshControl(onRefresh: _onRefresh),
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       sliver: SliverList.separated(
-                        itemCount: filtered.length +
+                        itemCount:
+                            filtered.length +
                             (isLoadingMore || hasMore ? 1 : 0),
                         separatorBuilder: (_, __) =>
                             Divider(height: 1, color: Colors.grey.shade100),
@@ -326,19 +322,24 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         Divider(height: 1, color: Colors.grey.shade200),
         Expanded(
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
-                SizedBox(height: 12.h),
-                Text(
-                  message,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.grey.shade500,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
+                  SizedBox(height: 12.h),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey.shade500,
+                      fontFamily: FontHelper.fontFamily(context),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

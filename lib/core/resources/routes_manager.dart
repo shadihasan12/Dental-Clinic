@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart
 import 'package:dental_clinic_app/features/auth/presentation/pages/finish_profile_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/email_entry_page.dart';
+import 'package:dental_clinic_app/features/auth/presentation/pages/verify_email_entry_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/verify_otp_page.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/notification_page.dart';
@@ -105,10 +106,31 @@ class RoutesManager {
           path: '/email-entry',
           name: AppRoutesNames.emailEntry,
           pageBuilder: (context, state) {
+            final authBloc = state.extra as AuthBloc?;
             return CupertinoPage(
-              child: BlocProvider(
-                create: (context) => getIt<AuthBloc>(),
-                child: const EmailEntryPage(),
+              child: authBloc != null
+                  ? BlocProvider<AuthBloc>.value(
+                      value: authBloc,
+                      child: const EmailEntryPage(),
+                    )
+                  : BlocProvider(
+                      create: (_) => getIt<AuthBloc>(),
+                      child: const EmailEntryPage(),
+                    ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/verify-email-entry',
+          name: AppRoutesNames.verifyEmailEntry,
+          pageBuilder: (context, state) {
+            final authBloc = state.extra as AuthBloc;
+            return CupertinoPage(
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
+                child: const VerifyEmailEntryPage(),
               ),
               key: state.pageKey,
               name: state.name,

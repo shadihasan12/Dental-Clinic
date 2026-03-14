@@ -22,8 +22,9 @@ class ClinicUsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ClinicUsersBloc>(param1: clinicId)
-        ..add(const ClinicUsersEvent.load()),
+      create: (_) =>
+          getIt<ClinicUsersBloc>(param1: clinicId)
+            ..add(const ClinicUsersEvent.load()),
       child: const _ClinicUsersContent(),
     );
   }
@@ -55,9 +56,9 @@ class _ClinicUsersContent extends StatelessWidget {
                 title: l10n.success,
                 message: text,
               );
-              context
-                  .read<ClinicUsersBloc>()
-                  .add(const ClinicUsersEvent.load());
+              context.read<ClinicUsersBloc>().add(
+                const ClinicUsersEvent.load(),
+              );
             },
             submitError: (_, message) {
               AppSnackbar.showError(
@@ -127,8 +128,7 @@ class _ClinicUsersContent extends StatelessWidget {
                               color: ColorManager.primary,
                               size: 22.w,
                             ),
-                            onPressed: () =>
-                                _showAddUserSheet(context, l10n),
+                            onPressed: () => _showAddUserSheet(context, l10n),
                           ),
                         if (isSubmitting)
                           Padding(
@@ -172,11 +172,7 @@ class _ClinicUsersContent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.people_outline,
-            size: 48.w,
-            color: ColorManager.gray300,
-          ),
+          Icon(Icons.people_outline, size: 48.w, color: ColorManager.gray300),
           SizedBox(height: 12.h),
           Text(
             l10n.noUsersYet,
@@ -188,10 +184,8 @@ class _ClinicUsersContent extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           TextButton(
-            onPressed: () => _showAddUserSheet(
-              context,
-              AppLocalizations.of(context)!,
-            ),
+            onPressed: () =>
+                _showAddUserSheet(context, AppLocalizations.of(context)!),
             child: Text(
               l10n.addUser,
               style: TextStyle(
@@ -207,8 +201,7 @@ class _ClinicUsersContent extends StatelessWidget {
     );
   }
 
-  Widget _buildError(
-      BuildContext context, AppLocalizations l10n, String msg) {
+  Widget _buildError(BuildContext context, AppLocalizations l10n, String msg) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -217,13 +210,18 @@ class _ClinicUsersContent extends StatelessWidget {
           SizedBox(height: 12.h),
           Text(
             msg,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade500,
+              fontFamily: FontHelper.fontFamily(context),
+            ),
           ),
           SizedBox(height: 12.h),
           TextButton(
-            onPressed: () => context
-                .read<ClinicUsersBloc>()
-                .add(const ClinicUsersEvent.load()),
+            onPressed: () => context.read<ClinicUsersBloc>().add(
+              const ClinicUsersEvent.load(),
+            ),
             child: Text(l10n.retry),
           ),
         ],
@@ -232,7 +230,10 @@ class _ClinicUsersContent extends StatelessWidget {
   }
 
   Widget _buildList(
-      BuildContext context, AppLocalizations l10n, List<ClinicUserEntity> users) {
+    BuildContext context,
+    AppLocalizations l10n,
+    List<ClinicUserEntity> users,
+  ) {
     final currentEmail = getIt<UserStorage>().getUserEmail();
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -263,7 +264,10 @@ class _ClinicUsersContent extends StatelessWidget {
   }
 
   void _showManageRolesSheet(
-      BuildContext context, AppLocalizations l10n, ClinicUserEntity user) {
+    BuildContext context,
+    AppLocalizations l10n,
+    ClinicUserEntity user,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -276,7 +280,10 @@ class _ClinicUsersContent extends StatelessWidget {
   }
 
   void _confirmRemove(
-      BuildContext context, AppLocalizations l10n, ClinicUserEntity user) {
+    BuildContext context,
+    AppLocalizations l10n,
+    ClinicUserEntity user,
+  ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -314,12 +321,11 @@ class _ClinicUsersContent extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context
-                  .read<ClinicUsersBloc>()
-                  .add(ClinicUsersEvent.removeUser(user.id));
+              context.read<ClinicUsersBloc>().add(
+                ClinicUsersEvent.removeUser(user.id),
+              );
             },
-            style: TextButton.styleFrom(
-                foregroundColor: ColorManager.error),
+            style: TextButton.styleFrom(foregroundColor: ColorManager.error),
             child: Text(
               l10n.removeUser,
               style: TextStyle(
@@ -375,8 +381,7 @@ class _UserCard extends StatelessWidget {
                 // Avatar
                 CircleAvatar(
                   radius: 22.r,
-                  backgroundColor:
-                      ColorManager.primary.withValues(alpha: 0.12),
+                  backgroundColor: ColorManager.primary.withValues(alpha: 0.12),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
                       : null,
@@ -448,8 +453,11 @@ class _UserCard extends StatelessWidget {
                         value: 'roles',
                         child: Row(
                           children: [
-                            Icon(Icons.manage_accounts_outlined,
-                                size: 18.w, color: ColorManager.primary),
+                            Icon(
+                              Icons.manage_accounts_outlined,
+                              size: 18.w,
+                              color: ColorManager.primary,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               l10n.manageRoles,
@@ -466,8 +474,11 @@ class _UserCard extends StatelessWidget {
                           value: 'remove',
                           child: Row(
                             children: [
-                              Icon(Icons.person_remove_outlined,
-                                  size: 18.w, color: ColorManager.error),
+                              Icon(
+                                Icons.person_remove_outlined,
+                                size: 18.w,
+                                color: ColorManager.error,
+                              ),
                               SizedBox(width: 8.w),
                               Text(
                                 l10n.removeUser,
@@ -589,10 +600,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
   Future<void> _loadSpecialties() async {
     setState(() => _loadingSpecialties = true);
     final result = await getIt<AuthRepository>().getSpecialties();
-    result.fold(
-      (_) {},
-      (list) => setState(() => _specialties = list),
-    );
+    result.fold((_) {}, (list) => setState(() => _specialties = list));
     setState(() => _loadingSpecialties = false);
   }
 
@@ -667,31 +675,48 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                   Row(
                     children: [
                       Expanded(
-                          child: _field(
-                              l10n.firstName, _firstNameCtrl, context)),
+                        child: _field(l10n.firstName, _firstNameCtrl, context),
+                      ),
                       SizedBox(width: 12.w),
                       Expanded(
-                          child:
-                              _field(l10n.lastName, _lastNameCtrl, context)),
+                        child: _field(l10n.lastName, _lastNameCtrl, context),
+                      ),
                     ],
                   ),
                   SizedBox(height: 12.h),
-                  _field(l10n.emailAddress, _emailCtrl, context,
-                      keyboardType: TextInputType.emailAddress),
+                  _field(
+                    l10n.emailAddress,
+                    _emailCtrl,
+                    context,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                   SizedBox(height: 12.h),
-                  _field(l10n.mobileNumber, _mobileCtrl, context,
-                      keyboardType: TextInputType.phone),
-                  SizedBox(height: 12.h),
-                  _passwordField(l10n.password, _passwordCtrl, context,
-                      _obscurePassword, () {
-                    setState(() => _obscurePassword = !_obscurePassword);
-                  }),
+                  _field(
+                    l10n.mobileNumber,
+                    _mobileCtrl,
+                    context,
+                    keyboardType: TextInputType.phone,
+                  ),
                   SizedBox(height: 12.h),
                   _passwordField(
-                      l10n.confirmPassword, _confirmCtrl, context,
-                      _obscureConfirm, () {
-                    setState(() => _obscureConfirm = !_obscureConfirm);
-                  }),
+                    l10n.password,
+                    _passwordCtrl,
+                    context,
+                    _obscurePassword,
+                    () {
+                      setState(() => _obscurePassword = !_obscurePassword);
+                    },
+                  ),
+                  SizedBox(height: 12.h),
+                  _passwordField(
+                    l10n.confirmPassword,
+                    _confirmCtrl,
+                    context,
+                    _obscureConfirm,
+                    () {
+                      setState(() => _obscureConfirm = !_obscureConfirm);
+                    },
+                  ),
                   SizedBox(height: 16.h),
                   Text(
                     l10n.selectRoles,
@@ -718,7 +743,9 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
                           padding: EdgeInsets.symmetric(
-                              horizontal: 14.w, vertical: 8.h),
+                            horizontal: 14.w,
+                            vertical: 8.h,
+                          ),
                           decoration: BoxDecoration(
                             color: selected
                                 ? ColorManager.primary
@@ -786,35 +813,38 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                                 value: _selectedSpecialty,
                                 isExpanded: true,
                                 hint: Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 12.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                  ),
                                   child: Text(
                                     l10n.selectSpecialization,
                                     style: TextStyle(
                                       fontSize: 14.sp,
-                                      fontFamily:
-                                          FontHelper.fontFamily(context),
+                                      fontFamily: FontHelper.fontFamily(
+                                        context,
+                                      ),
                                       color: ColorManager.textTertiary,
                                     ),
                                   ),
                                 ),
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 12.w),
+                                padding: EdgeInsets.symmetric(horizontal: 12.w),
                                 borderRadius: BorderRadius.circular(10.r),
                                 items: _specialties
-                                    .map((s) => DropdownMenuItem(
-                                          value: s,
-                                          child: Text(
-                                            s.name,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontFamily:
-                                                  FontHelper.fontFamily(
-                                                      context),
-                                              color: ColorManager.textPrimary,
+                                    .map(
+                                      (s) => DropdownMenuItem(
+                                        value: s,
+                                        child: Text(
+                                          s.name,
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontFamily: FontHelper.fontFamily(
+                                              context,
                                             ),
+                                            color: ColorManager.textPrimary,
                                           ),
-                                        ))
+                                        ),
+                                      ),
+                                    )
                                     .toList(),
                                 onChanged: (val) =>
                                     setState(() => _selectedSpecialty = val),
@@ -827,8 +857,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-                20.w, 8.h, 20.w, bottomInset + 20.h),
+            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, bottomInset + 20.h),
             child: GestureDetector(
               onTap: _canSubmit ? _submit : null,
               child: AnimatedContainer(
@@ -860,16 +889,18 @@ class _AddUserSheetState extends State<_AddUserSheet> {
   }
 
   void _submit() {
-    context.read<ClinicUsersBloc>().add(ClinicUsersEvent.addUser(
-          firstName: _firstNameCtrl.text.trim(),
-          lastName: _lastNameCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          mobileNumber: _mobileCtrl.text.trim(),
-          password: _passwordCtrl.text,
-          passwordConfirmation: _confirmCtrl.text,
-          roles: _selectedRoles.toList(),
-          specialtyId: _selectedSpecialty?.id,
-        ));
+    context.read<ClinicUsersBloc>().add(
+      ClinicUsersEvent.addUser(
+        firstName: _firstNameCtrl.text.trim(),
+        lastName: _lastNameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        mobileNumber: _mobileCtrl.text.trim(),
+        password: _passwordCtrl.text,
+        passwordConfirmation: _confirmCtrl.text,
+        roles: _selectedRoles.toList(),
+        specialtyId: _selectedSpecialty?.id,
+      ),
+    );
     Navigator.pop(context);
   }
 
@@ -955,8 +986,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
 
   InputDecoration _inputDecoration() {
     return InputDecoration(
-      contentPadding:
-          EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       filled: true,
       fillColor: ColorManager.gray50,
       border: OutlineInputBorder(
@@ -1095,11 +1125,11 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
             onTap: _selectedRoles.isNotEmpty
                 ? () {
                     context.read<ClinicUsersBloc>().add(
-                          ClinicUsersEvent.updateRoles(
-                            userId: widget.user.id,
-                            roles: _selectedRoles.toList(),
-                          ),
-                        );
+                      ClinicUsersEvent.updateRoles(
+                        userId: widget.user.id,
+                        roles: _selectedRoles.toList(),
+                      ),
+                    );
                     Navigator.pop(context);
                   }
                 : null,

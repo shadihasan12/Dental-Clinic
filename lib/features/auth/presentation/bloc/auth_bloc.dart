@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -90,6 +91,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Logout
     on<_LogoutRequested>(_onLogoutRequested);
+
+    // Email verification from login flow
+    on<_VerifyEmailOtpRequested>(_onVerifyEmailOtpRequested);
+    on<_EmailVerificationCompleted>(_onEmailVerificationCompleted);
+    on<_EmailVerificationCancelled>(_onEmailVerificationCancelled);
   }
 
   // Login handlers
@@ -142,16 +148,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
       },
       (loginResult) {
-        debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), memberships: ${loginResult.memberships.length}');
-        emit(state.copyWith(
-          isLoginLoading: false,
-          status: AuthStatus.authenticated,
-          currentUser: loginResult.user,
-          memberships: loginResult.memberships,
-          activeClinicId: loginResult.memberships.isNotEmpty
-              ? loginResult.memberships.first.clinicId
-              : null,
-        ));
+        debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
+        if (!loginResult.emailVerified) {
+          // User exists but hasn't verified email yet — redirect to email verification
+          emit(state.copyWith(
+            isLoginLoading: false,
+            needsEmailVerification: true,
+            emailVerificationForLogin: true,
+            signupEmail: state.loginEmail,
+            currentUser: loginResult.user,
+            memberships: loginResult.memberships,
+            activeClinicId: loginResult.memberships.isNotEmpty
+                ? loginResult.memberships.first.clinicId
+                : null,
+          ));
+        } else {
+          emit(state.copyWith(
+            isLoginLoading: false,
+            status: AuthStatus.authenticated,
+            currentUser: loginResult.user,
+            memberships: loginResult.memberships,
+            activeClinicId: loginResult.memberships.isNotEmpty
+                ? loginResult.memberships.first.clinicId
+                : null,
+          ));
+        }
       },
     );
   }
@@ -426,8 +447,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onOtpResendRequested(_OtpResendRequested event, Emitter<AuthState> emit) async {
     emit(state.copyWith(isOtpLoading: true, otpError: null));
 
-    final params = RequestOtpParams(email: state.signupEmail);
-    final result = await _authRepository.resendOtp(params: params);
+    final Either<NetworkExceptions, OtpResponse> result;
+    if (state.emailVerificationForLogin) {
+      result = await _authRepository.requestOtpForVerifyEmail();
+    } else {
+      final params = RequestOtpParams(email: state.signupEmail);
+      result = await _authRepository.resendOtp(params: params);
+    }
 
     result.fold(
       (failure) => emit(state.copyWith(
@@ -766,6 +792,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Reset to initial state (unauthenticated)
     emit(const AuthState());
+  }
+
+  Future<void> _onVerifyEmailOtpRequested(
+    _VerifyEmailOtpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(isOtpLoading: true, otpError: null));
+
+    final result = await _authRepository.requestOtpForVerifyEmail();
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpError: NetworkExceptions.getErrorMessage(failure),
+      )),
+      (response) => emit(state.copyWith(
+        isOtpLoading: false,
+        otpSecondsRemaining: response.secondsRemaining,
+        canResendOtp: false,
+      )),
+    );
+  }
+
+  void _onEmailVerificationCompleted(
+    _EmailVerificationCompleted event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      status: AuthStatus.authenticated,
+      needsEmailVerification: false,
+      emailVerificationForLogin: false,
+    ));
+  }
+
+  void _onEmailVerificationCancelled(
+    _EmailVerificationCancelled event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      needsEmailVerification: false,
+      emailVerificationForLogin: false,
+      otpCode: '',
+      otpError: null,
+      otpSecondsRemaining: 0,
+      sessionId: null,
+    ));
   }
 
   // Reset signup form

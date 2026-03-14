@@ -447,6 +447,8 @@
     }
   },
 
+  "verifyYourAccount": "Verify Your Account",
+  "verifyAccountSubtitle": "We'll send a verification code to your email",
   "verifyYourEmail": "Verify Your Email",
   "enterCodeSentToEmail": "Enter the code sent to your email",
   "sentVerificationCode": "We've sent a 6-digit verification code",

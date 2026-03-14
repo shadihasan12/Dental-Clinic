@@ -130,9 +130,20 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
-      backgroundColor: ColorManager.white,
-      body: MultiBlocListener(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          final bloc = context.read<AuthBloc>();
+          if (bloc.state.emailVerificationForLogin) {
+            bloc.add(const AuthEvent.emailVerificationCancelled());
+          }
+          context.pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: ColorManager.white,
+        body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listenWhen: (previous, current) =>
@@ -148,15 +159,21 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                 previous.sessionId != current.sessionId,
             listener: (context, state) {
               if (state.sessionId != null && state.sessionId!.isNotEmpty) {
-                AppSnackbar.showSuccess(
-                  context,
-                  title: l10n.emailVerified,
-                  message: l10n.completeYourRegistration,
-                );
-                context.pushNamed(
-                  AppRoutesNames.choosePlan,
-                  extra: context.read<AuthBloc>(),
-                );
+                if (state.emailVerificationForLogin) {
+                  // Login flow: mark authenticated and go to home
+                  context.read<AuthBloc>().add(const AuthEvent.emailVerificationCompleted());
+                } else {
+                  // Signup flow: proceed to registration
+                  AppSnackbar.showSuccess(
+                    context,
+                    title: l10n.emailVerified,
+                    message: l10n.completeYourRegistration,
+                  );
+                  context.pushNamed(
+                    AppRoutesNames.choosePlan,
+                    extra: context.read<AuthBloc>(),
+                  );
+                }
               }
             },
           ),
@@ -443,6 +460,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
           );
         },
         ),
+      ),
       ),
     );
   }

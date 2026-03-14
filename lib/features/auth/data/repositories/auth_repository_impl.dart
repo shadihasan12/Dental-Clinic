@@ -163,6 +163,7 @@ class AuthRepositoryImpl implements AuthRepository {
         final result = LoginResult(
           user: model.toUserEntity(),
           memberships: model.toMemberships(),
+          emailVerified: model.emailVerified,
         );
         debugPrint('[LoginRepo] ✓ Success — user: ${result.user.name}, memberships: ${result.memberships.length}');
         return Right(result);
@@ -177,6 +178,21 @@ class AuthRepositoryImpl implements AuthRepository {
       debugPrint('[LoginRepo] ✗ No internet connection');
       return const Left(NetworkExceptions.noInternetConnection());
     }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForVerifyEmail() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.requestOtpForVerifyEmail();
+        return Right(response);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    }
+    return const Left(NetworkExceptions.noInternetConnection());
   }
 
   @override

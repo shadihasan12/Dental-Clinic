@@ -449,6 +449,8 @@
     }
   },
 
+  "verifyYourAccount": "تحقق من حسابك",
+  "verifyAccountSubtitle": "سنرسل رمز التحقق إلى بريدك الإلكتروني",
   "verifyYourEmail": "تحقق من بريدك الإلكتروني",
   "enterCodeSentToEmail": "أدخل الرمز المرسل إلى بريدك الإلكتروني",
   "sentVerificationCode": "لقد أرسلنا رمز تحقق مكون من 6 أرقام",

@@ -2432,6 +2432,18 @@ abstract class AppLocalizations {
   /// **'Verification code sent to {email}'**
   String verificationCodeSentTo(String email);
 
+  /// No description provided for @verifyYourAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Account'**
+  String get verifyYourAccount;
+
+  /// No description provided for @verifyAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a verification code to your email'**
+  String get verifyAccountSubtitle;
+
   /// No description provided for @verifyYourEmail.
   ///
   /// In en, this message translates to:

@@ -33,6 +33,9 @@ class AuthEndpoints {
   /// POST /auth/reset-password - Reset password with session ID
   static const String resetPassword = '/auth/reset-password';
 
+  /// POST /auth/verify-email/request-otp - Request OTP to verify email (requires auth token)
+  static const String verifyEmailRequestOtp = '/auth/verify-email/request-otp';
+
   /// POST /auth/change-email/request-otp - Request OTP to change email
   static const String changeEmailRequestOtp = '/auth/change-email/request-otp';
 

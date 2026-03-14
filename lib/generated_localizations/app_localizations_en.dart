@@ -1223,6 +1223,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get verifyYourAccount => 'Verify Your Account';
+
+  @override
+  String get verifyAccountSubtitle =>
+      'We\'ll send a verification code to your email';
+
+  @override
   String get verifyYourEmail => 'Verify Your Email';
 
   @override

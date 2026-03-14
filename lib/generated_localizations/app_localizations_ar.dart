@@ -1217,6 +1217,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get verifyYourAccount => 'تحقق من حسابك';
+
+  @override
+  String get verifyAccountSubtitle => 'سنرسل رمز التحقق إلى بريدك الإلكتروني';
+
+  @override
   String get verifyYourEmail => 'تحقق من بريدك الإلكتروني';
 
   @override

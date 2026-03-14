@@ -46,19 +46,20 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Map<String, dynamic> _buildDateFilter() {
     final start =
         '${_currentMonth.year}-${_currentMonth.month.toString().padLeft(2, '0')}-01';
-    final lastDay =
-        DateTime(_currentMonth.year, _currentMonth.month + 1, 0).day;
+    final lastDay = DateTime(
+      _currentMonth.year,
+      _currentMonth.month + 1,
+      0,
+    ).day;
     final end =
         '${_currentMonth.year}-${_currentMonth.month.toString().padLeft(2, '0')}-${lastDay.toString().padLeft(2, '0')}';
-    return {
-      'filters[entry_date][between]': '$start,$end',
-    };
+    return {'filters[entry_date][between]': '$start,$end'};
   }
 
   void _loadMonth() {
     context.read<ExpenseBloc>().add(
-          ExpenseEvent.loadExpenses(queryParameters: _buildDateFilter()),
-        );
+      ExpenseEvent.loadExpenses(queryParameters: _buildDateFilter()),
+    );
   }
 
   void _goToPreviousMonth() {
@@ -104,10 +105,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     );
   }
 
-  void _showExpenseDetails(
-    BuildContext context,
-    ExpenseEntity expense,
-  ) {
+  void _showExpenseDetails(BuildContext context, ExpenseEntity expense) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -117,9 +115,9 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       builder: (_) => ExpenseDetailSheet(
         expense: expense,
         onDelete: () {
-          context
-              .read<ExpenseBloc>()
-              .add(ExpenseEvent.deleteExpense(expense.id));
+          context.read<ExpenseBloc>().add(
+            ExpenseEvent.deleteExpense(expense.id),
+          );
         },
         onEdit: () {
           Navigator.pop(context);
@@ -129,10 +127,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     );
   }
 
-  void _showEditExpense(
-    BuildContext context,
-    ExpenseEntity expense,
-  ) {
+  void _showEditExpense(BuildContext context, ExpenseEntity expense) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -143,9 +138,9 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       builder: (_) => AddExpenseSheet(
         expense: expense,
         onSave: (body) {
-          context
-              .read<ExpenseBloc>()
-              .add(ExpenseEvent.updateExpense(expense.id, body));
+          context.read<ExpenseBloc>().add(
+            ExpenseEvent.updateExpense(expense.id, body),
+          );
         },
       ),
     );
@@ -199,47 +194,63 @@ class _ExpensesContentState extends State<_ExpensesContent> {
               ),
               loaded: (expenses, totals, _) {
                 return Column(
+                  children: [
+                    _buildHeader(context, totals, expenses.length),
+                    _buildMonthSelector(context),
+                    Divider(height: 1, color: Colors.grey.shade200),
+                    Expanded(
+                      child: expenses.isEmpty
+                          ? _buildEmptyState(context)
+                          : ListView.separated(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              itemCount: expenses.length,
+                              separatorBuilder: (_, _) => Divider(
+                                height: 1,
+                                color: Colors.grey.shade100,
+                              ),
+                              itemBuilder: (_, index) => ExpenseRow(
+                                expense: expenses[index],
+                                onTap: () => _showExpenseDetails(
+                                  context,
+                                  expenses[index],
+                                ),
+                              ),
+                            ),
+                    ),
+                  ],
+                );
+              },
+              error: (message) => Column(
                 children: [
-                  _buildHeader(context, totals, expenses.length),
+                  _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
                   Divider(height: 1, color: Colors.grey.shade200),
                   Expanded(
-                    child: expenses.isEmpty
-                        ? _buildEmptyState(context)
-                        : ListView.separated(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            itemCount: expenses.length,
-                            separatorBuilder: (_, _) =>
-                                Divider(height: 1, color: Colors.grey.shade100),
-                            itemBuilder: (_, index) => ExpenseRow(
-                              expense: expenses[index],
-                              onTap: () => _showExpenseDetails(
-                                  context, expenses[index]),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48.w,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 12.h),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: FontHelper.fontFamily(context),
+                              fontSize: 14.sp,
+                              color: Colors.grey.shade500,
                             ),
                           ),
-                  ),
-                ],
-              );
-            },
-            error: (message) => Column(
-              children: [
-                _buildHeader(context, [], 0),
-                _buildMonthSelector(context),
-                Divider(height: 1, color: Colors.grey.shade200),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      message,
-                      style: TextStyle(
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 14.sp,
-                        color: Colors.red.shade400,
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             );
           },
         ),
@@ -371,10 +382,10 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   return Expanded(
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          vertical: 10.h, horizontal: 12.w),
-                      margin: EdgeInsetsDirectional.only(
-                        end: isLast ? 0 : 8.w,
+                        vertical: 10.h,
+                        horizontal: 12.w,
                       ),
+                      margin: EdgeInsetsDirectional.only(end: isLast ? 0 : 8.w),
                       decoration: BoxDecoration(
                         color: ColorManager.primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10.r),
@@ -420,8 +431,11 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined,
-              size: 48.w, color: Colors.grey.shade300),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 48.w,
+            color: Colors.grey.shade300,
+          ),
           SizedBox(height: 12.h),
           Text(
             l10n.noExpensesThisMonth,

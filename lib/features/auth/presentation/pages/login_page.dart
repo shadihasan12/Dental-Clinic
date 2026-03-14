@@ -82,9 +82,19 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     return Scaffold(
       backgroundColor: ColorManager.white,
       body: BlocConsumer<AuthBloc, AuthState>(
+        listenWhen: (previous, current) =>
+            previous.status != current.status ||
+            (!previous.needsEmailVerification && current.needsEmailVerification) ||
+            previous.loginError != current.loginError,
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
             context.goNamed(AppRoutesNames.root);
+          }
+          if (state.needsEmailVerification) {
+            context.pushNamed(
+              AppRoutesNames.verifyEmailEntry,
+              extra: context.read<AuthBloc>(),
+            );
           }
           if (state.loginError != null) {
             AppSnackbar.showError(

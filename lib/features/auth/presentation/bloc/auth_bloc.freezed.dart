@@ -67,6 +67,9 @@ mixin _$AuthEvent {
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -114,6 +117,9 @@ mixin _$AuthEvent {
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -160,6 +166,9 @@ mixin _$AuthEvent {
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -234,6 +243,12 @@ mixin _$AuthEvent {
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -298,6 +313,11 @@ mixin _$AuthEvent {
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -360,6 +380,11 @@ mixin _$AuthEvent {
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -515,6 +540,9 @@ class _$LoginEmailChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return loginEmailChanged(email);
   }
@@ -566,6 +594,9 @@ class _$LoginEmailChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return loginEmailChanged?.call(email);
   }
@@ -616,6 +647,9 @@ class _$LoginEmailChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginEmailChanged != null) {
@@ -697,6 +731,12 @@ class _$LoginEmailChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return loginEmailChanged(this);
   }
@@ -765,6 +805,11 @@ class _$LoginEmailChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return loginEmailChanged?.call(this);
   }
@@ -831,6 +876,11 @@ class _$LoginEmailChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginEmailChanged != null) {
@@ -986,6 +1036,9 @@ class _$LoginPasswordChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return loginPasswordChanged(password);
   }
@@ -1037,6 +1090,9 @@ class _$LoginPasswordChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return loginPasswordChanged?.call(password);
   }
@@ -1087,6 +1143,9 @@ class _$LoginPasswordChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginPasswordChanged != null) {
@@ -1168,6 +1227,12 @@ class _$LoginPasswordChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return loginPasswordChanged(this);
   }
@@ -1236,6 +1301,11 @@ class _$LoginPasswordChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return loginPasswordChanged?.call(this);
   }
@@ -1302,6 +1372,11 @@ class _$LoginPasswordChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginPasswordChanged != null) {
@@ -1426,6 +1501,9 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return loginPasswordVisibilityToggled();
   }
@@ -1477,6 +1555,9 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return loginPasswordVisibilityToggled?.call();
   }
@@ -1527,6 +1608,9 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginPasswordVisibilityToggled != null) {
@@ -1608,6 +1692,12 @@ class _$LoginPasswordVisibilityToggledImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return loginPasswordVisibilityToggled(this);
   }
@@ -1676,6 +1766,11 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return loginPasswordVisibilityToggled?.call(this);
   }
@@ -1742,6 +1837,11 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginPasswordVisibilityToggled != null) {
@@ -1855,6 +1955,9 @@ class _$LoginSubmittedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return loginSubmitted();
   }
@@ -1906,6 +2009,9 @@ class _$LoginSubmittedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return loginSubmitted?.call();
   }
@@ -1956,6 +2062,9 @@ class _$LoginSubmittedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginSubmitted != null) {
@@ -2037,6 +2146,12 @@ class _$LoginSubmittedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return loginSubmitted(this);
   }
@@ -2105,6 +2220,11 @@ class _$LoginSubmittedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return loginSubmitted?.call(this);
   }
@@ -2171,6 +2291,11 @@ class _$LoginSubmittedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (loginSubmitted != null) {
@@ -2317,6 +2442,9 @@ class _$SignupFirstNameChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupFirstNameChanged(firstName);
   }
@@ -2368,6 +2496,9 @@ class _$SignupFirstNameChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupFirstNameChanged?.call(firstName);
   }
@@ -2418,6 +2549,9 @@ class _$SignupFirstNameChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupFirstNameChanged != null) {
@@ -2499,6 +2633,12 @@ class _$SignupFirstNameChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupFirstNameChanged(this);
   }
@@ -2567,6 +2707,11 @@ class _$SignupFirstNameChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupFirstNameChanged?.call(this);
   }
@@ -2633,6 +2778,11 @@ class _$SignupFirstNameChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupFirstNameChanged != null) {
@@ -2788,6 +2938,9 @@ class _$SignupLastNameChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupLastNameChanged(lastName);
   }
@@ -2839,6 +2992,9 @@ class _$SignupLastNameChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupLastNameChanged?.call(lastName);
   }
@@ -2889,6 +3045,9 @@ class _$SignupLastNameChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLastNameChanged != null) {
@@ -2970,6 +3129,12 @@ class _$SignupLastNameChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupLastNameChanged(this);
   }
@@ -3038,6 +3203,11 @@ class _$SignupLastNameChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupLastNameChanged?.call(this);
   }
@@ -3104,6 +3274,11 @@ class _$SignupLastNameChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLastNameChanged != null) {
@@ -3257,6 +3432,9 @@ class _$SignupEmailChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupEmailChanged(email);
   }
@@ -3308,6 +3486,9 @@ class _$SignupEmailChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupEmailChanged?.call(email);
   }
@@ -3358,6 +3539,9 @@ class _$SignupEmailChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupEmailChanged != null) {
@@ -3439,6 +3623,12 @@ class _$SignupEmailChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupEmailChanged(this);
   }
@@ -3507,6 +3697,11 @@ class _$SignupEmailChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupEmailChanged?.call(this);
   }
@@ -3573,6 +3768,11 @@ class _$SignupEmailChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupEmailChanged != null) {
@@ -3728,6 +3928,9 @@ class _$SignupPasswordChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupPasswordChanged(password);
   }
@@ -3779,6 +3982,9 @@ class _$SignupPasswordChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupPasswordChanged?.call(password);
   }
@@ -3829,6 +4035,9 @@ class _$SignupPasswordChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPasswordChanged != null) {
@@ -3910,6 +4119,12 @@ class _$SignupPasswordChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupPasswordChanged(this);
   }
@@ -3978,6 +4193,11 @@ class _$SignupPasswordChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupPasswordChanged?.call(this);
   }
@@ -4044,6 +4264,11 @@ class _$SignupPasswordChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPasswordChanged != null) {
@@ -4202,6 +4427,9 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupConfirmPasswordChanged(confirmPassword);
   }
@@ -4253,6 +4481,9 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupConfirmPasswordChanged?.call(confirmPassword);
   }
@@ -4303,6 +4534,9 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupConfirmPasswordChanged != null) {
@@ -4384,6 +4618,12 @@ class _$SignupConfirmPasswordChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupConfirmPasswordChanged(this);
   }
@@ -4452,6 +4692,11 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupConfirmPasswordChanged?.call(this);
   }
@@ -4518,6 +4763,11 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupConfirmPasswordChanged != null) {
@@ -4644,6 +4894,9 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupPasswordVisibilityToggled();
   }
@@ -4695,6 +4948,9 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupPasswordVisibilityToggled?.call();
   }
@@ -4745,6 +5001,9 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPasswordVisibilityToggled != null) {
@@ -4826,6 +5085,12 @@ class _$SignupPasswordVisibilityToggledImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupPasswordVisibilityToggled(this);
   }
@@ -4894,6 +5159,11 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupPasswordVisibilityToggled?.call(this);
   }
@@ -4960,6 +5230,11 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPasswordVisibilityToggled != null) {
@@ -5083,6 +5358,9 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupConfirmPasswordVisibilityToggled();
   }
@@ -5134,6 +5412,9 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupConfirmPasswordVisibilityToggled?.call();
   }
@@ -5184,6 +5465,9 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupConfirmPasswordVisibilityToggled != null) {
@@ -5265,6 +5549,12 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupConfirmPasswordVisibilityToggled(this);
   }
@@ -5333,6 +5623,11 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupConfirmPasswordVisibilityToggled?.call(this);
   }
@@ -5399,6 +5694,11 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupConfirmPasswordVisibilityToggled != null) {
@@ -5512,6 +5812,9 @@ class _$SignupSubmittedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupSubmitted();
   }
@@ -5563,6 +5866,9 @@ class _$SignupSubmittedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupSubmitted?.call();
   }
@@ -5613,6 +5919,9 @@ class _$SignupSubmittedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSubmitted != null) {
@@ -5694,6 +6003,12 @@ class _$SignupSubmittedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupSubmitted(this);
   }
@@ -5762,6 +6077,11 @@ class _$SignupSubmittedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupSubmitted?.call(this);
   }
@@ -5828,6 +6148,11 @@ class _$SignupSubmittedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSubmitted != null) {
@@ -5940,6 +6265,9 @@ class _$SignupFormResetImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupFormReset();
   }
@@ -5991,6 +6319,9 @@ class _$SignupFormResetImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupFormReset?.call();
   }
@@ -6041,6 +6372,9 @@ class _$SignupFormResetImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupFormReset != null) {
@@ -6122,6 +6456,12 @@ class _$SignupFormResetImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupFormReset(this);
   }
@@ -6190,6 +6530,11 @@ class _$SignupFormResetImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupFormReset?.call(this);
   }
@@ -6256,6 +6601,11 @@ class _$SignupFormResetImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupFormReset != null) {
@@ -6401,6 +6751,9 @@ class _$SignupLicenseNumberChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupLicenseNumberChanged(licenseNumber);
   }
@@ -6452,6 +6805,9 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupLicenseNumberChanged?.call(licenseNumber);
   }
@@ -6502,6 +6858,9 @@ class _$SignupLicenseNumberChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLicenseNumberChanged != null) {
@@ -6583,6 +6942,12 @@ class _$SignupLicenseNumberChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupLicenseNumberChanged(this);
   }
@@ -6651,6 +7016,11 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupLicenseNumberChanged?.call(this);
   }
@@ -6717,6 +7087,11 @@ class _$SignupLicenseNumberChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLicenseNumberChanged != null) {
@@ -6873,6 +7248,9 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupSpecializationChanged(specialization);
   }
@@ -6924,6 +7302,9 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupSpecializationChanged?.call(specialization);
   }
@@ -6974,6 +7355,9 @@ class _$SignupSpecializationChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSpecializationChanged != null) {
@@ -7055,6 +7439,12 @@ class _$SignupSpecializationChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupSpecializationChanged(this);
   }
@@ -7123,6 +7513,11 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupSpecializationChanged?.call(this);
   }
@@ -7189,6 +7584,11 @@ class _$SignupSpecializationChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSpecializationChanged != null) {
@@ -7344,6 +7744,9 @@ class _$SignupLocationChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupLocationChanged(location);
   }
@@ -7395,6 +7798,9 @@ class _$SignupLocationChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupLocationChanged?.call(location);
   }
@@ -7445,6 +7851,9 @@ class _$SignupLocationChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLocationChanged != null) {
@@ -7526,6 +7935,12 @@ class _$SignupLocationChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupLocationChanged(this);
   }
@@ -7594,6 +8009,11 @@ class _$SignupLocationChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupLocationChanged?.call(this);
   }
@@ -7660,6 +8080,11 @@ class _$SignupLocationChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLocationChanged != null) {
@@ -7783,6 +8208,9 @@ class _$SpecialtiesRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return specialtiesRequested();
   }
@@ -7834,6 +8262,9 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return specialtiesRequested?.call();
   }
@@ -7884,6 +8315,9 @@ class _$SpecialtiesRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (specialtiesRequested != null) {
@@ -7965,6 +8399,12 @@ class _$SpecialtiesRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return specialtiesRequested(this);
   }
@@ -8033,6 +8473,11 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return specialtiesRequested?.call(this);
   }
@@ -8099,6 +8544,11 @@ class _$SpecialtiesRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (specialtiesRequested != null) {
@@ -8211,6 +8661,9 @@ class _$PlansRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return plansRequested();
   }
@@ -8262,6 +8715,9 @@ class _$PlansRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return plansRequested?.call();
   }
@@ -8312,6 +8768,9 @@ class _$PlansRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (plansRequested != null) {
@@ -8393,6 +8852,12 @@ class _$PlansRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return plansRequested(this);
   }
@@ -8461,6 +8926,11 @@ class _$PlansRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return plansRequested?.call(this);
   }
@@ -8527,6 +8997,11 @@ class _$PlansRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (plansRequested != null) {
@@ -8683,6 +9158,9 @@ class _$LocationSearchRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return locationSearchRequested(query, countryCode);
   }
@@ -8734,6 +9212,9 @@ class _$LocationSearchRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return locationSearchRequested?.call(query, countryCode);
   }
@@ -8784,6 +9265,9 @@ class _$LocationSearchRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (locationSearchRequested != null) {
@@ -8865,6 +9349,12 @@ class _$LocationSearchRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return locationSearchRequested(this);
   }
@@ -8933,6 +9423,11 @@ class _$LocationSearchRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return locationSearchRequested?.call(this);
   }
@@ -8999,6 +9494,11 @@ class _$LocationSearchRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (locationSearchRequested != null) {
@@ -9172,6 +9672,9 @@ class _$SignupSpecialtyEntitySelectedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupSpecialtyEntitySelected(specialty);
   }
@@ -9223,6 +9726,9 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupSpecialtyEntitySelected?.call(specialty);
   }
@@ -9273,6 +9779,9 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSpecialtyEntitySelected != null) {
@@ -9354,6 +9863,12 @@ class _$SignupSpecialtyEntitySelectedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupSpecialtyEntitySelected(this);
   }
@@ -9422,6 +9937,11 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupSpecialtyEntitySelected?.call(this);
   }
@@ -9488,6 +10008,11 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupSpecialtyEntitySelected != null) {
@@ -9661,6 +10186,9 @@ class _$SignupLocationEntitySelectedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupLocationEntitySelected(location);
   }
@@ -9712,6 +10240,9 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupLocationEntitySelected?.call(location);
   }
@@ -9762,6 +10293,9 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLocationEntitySelected != null) {
@@ -9843,6 +10377,12 @@ class _$SignupLocationEntitySelectedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupLocationEntitySelected(this);
   }
@@ -9911,6 +10451,11 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupLocationEntitySelected?.call(this);
   }
@@ -9977,6 +10522,11 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupLocationEntitySelected != null) {
@@ -10144,6 +10694,9 @@ class _$SignupPlanEntitySelectedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupPlanEntitySelected(plan);
   }
@@ -10195,6 +10748,9 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupPlanEntitySelected?.call(plan);
   }
@@ -10245,6 +10801,9 @@ class _$SignupPlanEntitySelectedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPlanEntitySelected != null) {
@@ -10326,6 +10885,12 @@ class _$SignupPlanEntitySelectedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupPlanEntitySelected(this);
   }
@@ -10394,6 +10959,11 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupPlanEntitySelected?.call(this);
   }
@@ -10460,6 +11030,11 @@ class _$SignupPlanEntitySelectedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupPlanEntitySelected != null) {
@@ -10613,6 +11188,9 @@ class _$SignupClinicNameChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupClinicNameChanged(name);
   }
@@ -10664,6 +11242,9 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupClinicNameChanged?.call(name);
   }
@@ -10714,6 +11295,9 @@ class _$SignupClinicNameChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupClinicNameChanged != null) {
@@ -10795,6 +11379,12 @@ class _$SignupClinicNameChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupClinicNameChanged(this);
   }
@@ -10863,6 +11453,11 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupClinicNameChanged?.call(this);
   }
@@ -10929,6 +11524,11 @@ class _$SignupClinicNameChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupClinicNameChanged != null) {
@@ -11082,6 +11682,9 @@ class _$SignupClinicAddressChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupClinicAddressChanged(address);
   }
@@ -11133,6 +11736,9 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupClinicAddressChanged?.call(address);
   }
@@ -11183,6 +11789,9 @@ class _$SignupClinicAddressChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupClinicAddressChanged != null) {
@@ -11264,6 +11873,12 @@ class _$SignupClinicAddressChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupClinicAddressChanged(this);
   }
@@ -11332,6 +11947,11 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupClinicAddressChanged?.call(this);
   }
@@ -11398,6 +12018,11 @@ class _$SignupClinicAddressChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupClinicAddressChanged != null) {
@@ -11551,6 +12176,9 @@ class _$SignupMobileNumberChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return signupMobileNumberChanged(mobile);
   }
@@ -11602,6 +12230,9 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return signupMobileNumberChanged?.call(mobile);
   }
@@ -11652,6 +12283,9 @@ class _$SignupMobileNumberChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupMobileNumberChanged != null) {
@@ -11733,6 +12367,12 @@ class _$SignupMobileNumberChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return signupMobileNumberChanged(this);
   }
@@ -11801,6 +12441,11 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return signupMobileNumberChanged?.call(this);
   }
@@ -11867,6 +12512,11 @@ class _$SignupMobileNumberChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (signupMobileNumberChanged != null) {
@@ -11986,6 +12636,9 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return otpRequested();
   }
@@ -12037,6 +12690,9 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return otpRequested?.call();
   }
@@ -12087,6 +12743,9 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpRequested != null) {
@@ -12168,6 +12827,12 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return otpRequested(this);
   }
@@ -12236,6 +12901,11 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return otpRequested?.call(this);
   }
@@ -12302,6 +12972,11 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpRequested != null) {
@@ -12446,6 +13121,9 @@ class _$OtpCodeChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return otpCodeChanged(code);
   }
@@ -12497,6 +13175,9 @@ class _$OtpCodeChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return otpCodeChanged?.call(code);
   }
@@ -12547,6 +13228,9 @@ class _$OtpCodeChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpCodeChanged != null) {
@@ -12628,6 +13312,12 @@ class _$OtpCodeChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return otpCodeChanged(this);
   }
@@ -12696,6 +13386,11 @@ class _$OtpCodeChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return otpCodeChanged?.call(this);
   }
@@ -12762,6 +13457,11 @@ class _$OtpCodeChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpCodeChanged != null) {
@@ -12880,6 +13580,9 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return otpVerified();
   }
@@ -12931,6 +13634,9 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return otpVerified?.call();
   }
@@ -12981,6 +13687,9 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpVerified != null) {
@@ -13062,6 +13771,12 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return otpVerified(this);
   }
@@ -13130,6 +13845,11 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return otpVerified?.call(this);
   }
@@ -13196,6 +13916,11 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpVerified != null) {
@@ -13309,6 +14034,9 @@ class _$OtpResendRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return otpResendRequested();
   }
@@ -13360,6 +14088,9 @@ class _$OtpResendRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return otpResendRequested?.call();
   }
@@ -13410,6 +14141,9 @@ class _$OtpResendRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpResendRequested != null) {
@@ -13491,6 +14225,12 @@ class _$OtpResendRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return otpResendRequested(this);
   }
@@ -13559,6 +14299,11 @@ class _$OtpResendRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return otpResendRequested?.call(this);
   }
@@ -13625,6 +14370,11 @@ class _$OtpResendRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (otpResendRequested != null) {
@@ -13769,6 +14519,9 @@ class _$ForgotPasswordEmailChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return forgotPasswordEmailChanged(email);
   }
@@ -13820,6 +14573,9 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return forgotPasswordEmailChanged?.call(email);
   }
@@ -13870,6 +14626,9 @@ class _$ForgotPasswordEmailChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordEmailChanged != null) {
@@ -13951,6 +14710,12 @@ class _$ForgotPasswordEmailChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return forgotPasswordEmailChanged(this);
   }
@@ -14019,6 +14784,11 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return forgotPasswordEmailChanged?.call(this);
   }
@@ -14085,6 +14855,11 @@ class _$ForgotPasswordEmailChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordEmailChanged != null) {
@@ -14208,6 +14983,9 @@ class _$ForgotPasswordSubmittedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return forgotPasswordSubmitted();
   }
@@ -14259,6 +15037,9 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return forgotPasswordSubmitted?.call();
   }
@@ -14309,6 +15090,9 @@ class _$ForgotPasswordSubmittedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordSubmitted != null) {
@@ -14390,6 +15174,12 @@ class _$ForgotPasswordSubmittedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return forgotPasswordSubmitted(this);
   }
@@ -14458,6 +15248,11 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return forgotPasswordSubmitted?.call(this);
   }
@@ -14524,6 +15319,11 @@ class _$ForgotPasswordSubmittedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordSubmitted != null) {
@@ -14638,6 +15438,9 @@ class _$ForgotPasswordResetImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return forgotPasswordReset();
   }
@@ -14689,6 +15492,9 @@ class _$ForgotPasswordResetImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return forgotPasswordReset?.call();
   }
@@ -14739,6 +15545,9 @@ class _$ForgotPasswordResetImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordReset != null) {
@@ -14820,6 +15629,12 @@ class _$ForgotPasswordResetImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return forgotPasswordReset(this);
   }
@@ -14888,6 +15703,11 @@ class _$ForgotPasswordResetImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return forgotPasswordReset?.call(this);
   }
@@ -14954,6 +15774,11 @@ class _$ForgotPasswordResetImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (forgotPasswordReset != null) {
@@ -15068,6 +15893,9 @@ class _$ResetPasswordOtpRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordOtpRequested();
   }
@@ -15119,6 +15947,9 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordOtpRequested?.call();
   }
@@ -15169,6 +16000,9 @@ class _$ResetPasswordOtpRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpRequested != null) {
@@ -15250,6 +16084,12 @@ class _$ResetPasswordOtpRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpRequested(this);
   }
@@ -15318,6 +16158,11 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpRequested?.call(this);
   }
@@ -15384,6 +16229,11 @@ class _$ResetPasswordOtpRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpRequested != null) {
@@ -15498,6 +16348,9 @@ class _$ResetPasswordOtpVerifiedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordOtpVerified();
   }
@@ -15549,6 +16402,9 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordOtpVerified?.call();
   }
@@ -15599,6 +16455,9 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpVerified != null) {
@@ -15680,6 +16539,12 @@ class _$ResetPasswordOtpVerifiedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpVerified(this);
   }
@@ -15748,6 +16613,11 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpVerified?.call(this);
   }
@@ -15814,6 +16684,11 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpVerified != null) {
@@ -15929,6 +16804,9 @@ class _$ResetPasswordOtpResendRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordOtpResendRequested();
   }
@@ -15980,6 +16858,9 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordOtpResendRequested?.call();
   }
@@ -16030,6 +16911,9 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpResendRequested != null) {
@@ -16111,6 +16995,12 @@ class _$ResetPasswordOtpResendRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpResendRequested(this);
   }
@@ -16179,6 +17069,11 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordOtpResendRequested?.call(this);
   }
@@ -16245,6 +17140,11 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordOtpResendRequested != null) {
@@ -16391,6 +17291,9 @@ class _$ResetPasswordNewChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordNewChanged(password);
   }
@@ -16442,6 +17345,9 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordNewChanged?.call(password);
   }
@@ -16492,6 +17398,9 @@ class _$ResetPasswordNewChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordNewChanged != null) {
@@ -16573,6 +17482,12 @@ class _$ResetPasswordNewChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordNewChanged(this);
   }
@@ -16641,6 +17556,11 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordNewChanged?.call(this);
   }
@@ -16707,6 +17627,11 @@ class _$ResetPasswordNewChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordNewChanged != null) {
@@ -16862,6 +17787,9 @@ class _$ResetPasswordConfirmChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordConfirmChanged(confirm);
   }
@@ -16913,6 +17841,9 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordConfirmChanged?.call(confirm);
   }
@@ -16963,6 +17894,9 @@ class _$ResetPasswordConfirmChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordConfirmChanged != null) {
@@ -17044,6 +17978,12 @@ class _$ResetPasswordConfirmChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordConfirmChanged(this);
   }
@@ -17112,6 +18052,11 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordConfirmChanged?.call(this);
   }
@@ -17178,6 +18123,11 @@ class _$ResetPasswordConfirmChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordConfirmChanged != null) {
@@ -17302,6 +18252,9 @@ class _$ResetPasswordVisibilityToggledImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordVisibilityToggled();
   }
@@ -17353,6 +18306,9 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordVisibilityToggled?.call();
   }
@@ -17403,6 +18359,9 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordVisibilityToggled != null) {
@@ -17484,6 +18443,12 @@ class _$ResetPasswordVisibilityToggledImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordVisibilityToggled(this);
   }
@@ -17552,6 +18517,11 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordVisibilityToggled?.call(this);
   }
@@ -17618,6 +18588,11 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordVisibilityToggled != null) {
@@ -17741,6 +18716,9 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordConfirmVisibilityToggled();
   }
@@ -17792,6 +18770,9 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordConfirmVisibilityToggled?.call();
   }
@@ -17842,6 +18823,9 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordConfirmVisibilityToggled != null) {
@@ -17923,6 +18907,12 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordConfirmVisibilityToggled(this);
   }
@@ -17991,6 +18981,11 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordConfirmVisibilityToggled?.call(this);
   }
@@ -18057,6 +19052,11 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordConfirmVisibilityToggled != null) {
@@ -18172,6 +19172,9 @@ class _$ResetPasswordSubmittedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return resetPasswordSubmitted();
   }
@@ -18223,6 +19226,9 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return resetPasswordSubmitted?.call();
   }
@@ -18273,6 +19279,9 @@ class _$ResetPasswordSubmittedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordSubmitted != null) {
@@ -18354,6 +19363,12 @@ class _$ResetPasswordSubmittedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return resetPasswordSubmitted(this);
   }
@@ -18422,6 +19437,11 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return resetPasswordSubmitted?.call(this);
   }
@@ -18488,6 +19508,11 @@ class _$ResetPasswordSubmittedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (resetPasswordSubmitted != null) {
@@ -18633,6 +19658,9 @@ class _$ActiveClinicChangedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return activeClinicChanged(clinicId);
   }
@@ -18684,6 +19712,9 @@ class _$ActiveClinicChangedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return activeClinicChanged?.call(clinicId);
   }
@@ -18734,6 +19765,9 @@ class _$ActiveClinicChangedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (activeClinicChanged != null) {
@@ -18815,6 +19849,12 @@ class _$ActiveClinicChangedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return activeClinicChanged(this);
   }
@@ -18883,6 +19923,11 @@ class _$ActiveClinicChangedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return activeClinicChanged?.call(this);
   }
@@ -18949,6 +19994,11 @@ class _$ActiveClinicChangedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (activeClinicChanged != null) {
@@ -19071,6 +20121,9 @@ class _$AuthCheckRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return authCheckRequested();
   }
@@ -19122,6 +20175,9 @@ class _$AuthCheckRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return authCheckRequested?.call();
   }
@@ -19172,6 +20228,9 @@ class _$AuthCheckRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (authCheckRequested != null) {
@@ -19253,6 +20312,12 @@ class _$AuthCheckRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return authCheckRequested(this);
   }
@@ -19321,6 +20386,11 @@ class _$AuthCheckRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return authCheckRequested?.call(this);
   }
@@ -19387,6 +20457,11 @@ class _$AuthCheckRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (authCheckRequested != null) {
@@ -19499,6 +20574,9 @@ class _$LogoutRequestedImpl
     required TResult Function(String? clinicId) activeClinicChanged,
     required TResult Function() authCheckRequested,
     required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
   }) {
     return logoutRequested();
   }
@@ -19550,6 +20628,9 @@ class _$LogoutRequestedImpl
     TResult? Function(String? clinicId)? activeClinicChanged,
     TResult? Function()? authCheckRequested,
     TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
   }) {
     return logoutRequested?.call();
   }
@@ -19600,6 +20681,9 @@ class _$LogoutRequestedImpl
     TResult Function(String? clinicId)? activeClinicChanged,
     TResult Function()? authCheckRequested,
     TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (logoutRequested != null) {
@@ -19681,6 +20765,12 @@ class _$LogoutRequestedImpl
     required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
     required TResult Function(_AuthCheckRequested value) authCheckRequested,
     required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
   }) {
     return logoutRequested(this);
   }
@@ -19749,6 +20839,11 @@ class _$LogoutRequestedImpl
     TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult? Function(_AuthCheckRequested value)? authCheckRequested,
     TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
   }) {
     return logoutRequested?.call(this);
   }
@@ -19815,6 +20910,11 @@ class _$LogoutRequestedImpl
     TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
     TResult Function(_AuthCheckRequested value)? authCheckRequested,
     TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
     required TResult orElse(),
   }) {
     if (logoutRequested != null) {
@@ -19826,6 +20926,1375 @@ class _$LogoutRequestedImpl
 
 abstract class _LogoutRequested implements AuthEvent {
   const factory _LogoutRequested() = _$LogoutRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$VerifyEmailOtpRequestedImplCopyWith<$Res> {
+  factory _$$VerifyEmailOtpRequestedImplCopyWith(
+    _$VerifyEmailOtpRequestedImpl value,
+    $Res Function(_$VerifyEmailOtpRequestedImpl) then,
+  ) = __$$VerifyEmailOtpRequestedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$VerifyEmailOtpRequestedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$VerifyEmailOtpRequestedImpl>
+    implements _$$VerifyEmailOtpRequestedImplCopyWith<$Res> {
+  __$$VerifyEmailOtpRequestedImplCopyWithImpl(
+    _$VerifyEmailOtpRequestedImpl _value,
+    $Res Function(_$VerifyEmailOtpRequestedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$VerifyEmailOtpRequestedImpl
+    with DiagnosticableTreeMixin
+    implements _VerifyEmailOtpRequested {
+  const _$VerifyEmailOtpRequestedImpl();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.verifyEmailOtpRequested()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.verifyEmailOtpRequested'));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VerifyEmailOtpRequestedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function() resetPasswordOtpRequested,
+    required TResult Function() resetPasswordOtpVerified,
+    required TResult Function() resetPasswordOtpResendRequested,
+    required TResult Function(String password) resetPasswordNewChanged,
+    required TResult Function(String confirm) resetPasswordConfirmChanged,
+    required TResult Function() resetPasswordVisibilityToggled,
+    required TResult Function() resetPasswordConfirmVisibilityToggled,
+    required TResult Function() resetPasswordSubmitted,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
+  }) {
+    return verifyEmailOtpRequested();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function()? resetPasswordOtpRequested,
+    TResult? Function()? resetPasswordOtpVerified,
+    TResult? Function()? resetPasswordOtpResendRequested,
+    TResult? Function(String password)? resetPasswordNewChanged,
+    TResult? Function(String confirm)? resetPasswordConfirmChanged,
+    TResult? Function()? resetPasswordVisibilityToggled,
+    TResult? Function()? resetPasswordConfirmVisibilityToggled,
+    TResult? Function()? resetPasswordSubmitted,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
+  }) {
+    return verifyEmailOtpRequested?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function()? resetPasswordOtpRequested,
+    TResult Function()? resetPasswordOtpVerified,
+    TResult Function()? resetPasswordOtpResendRequested,
+    TResult Function(String password)? resetPasswordNewChanged,
+    TResult Function(String confirm)? resetPasswordConfirmChanged,
+    TResult Function()? resetPasswordVisibilityToggled,
+    TResult Function()? resetPasswordConfirmVisibilityToggled,
+    TResult Function()? resetPasswordSubmitted,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (verifyEmailOtpRequested != null) {
+      return verifyEmailOtpRequested();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ResetPasswordOtpRequested value)
+    resetPasswordOtpRequested,
+    required TResult Function(_ResetPasswordOtpVerified value)
+    resetPasswordOtpVerified,
+    required TResult Function(_ResetPasswordOtpResendRequested value)
+    resetPasswordOtpResendRequested,
+    required TResult Function(_ResetPasswordNewChanged value)
+    resetPasswordNewChanged,
+    required TResult Function(_ResetPasswordConfirmChanged value)
+    resetPasswordConfirmChanged,
+    required TResult Function(_ResetPasswordVisibilityToggled value)
+    resetPasswordVisibilityToggled,
+    required TResult Function(_ResetPasswordConfirmVisibilityToggled value)
+    resetPasswordConfirmVisibilityToggled,
+    required TResult Function(_ResetPasswordSubmitted value)
+    resetPasswordSubmitted,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
+  }) {
+    return verifyEmailOtpRequested(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult? Function(_ResetPasswordOtpVerified value)?
+    resetPasswordOtpVerified,
+    TResult? Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult? Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult? Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult? Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult? Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult? Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+  }) {
+    return verifyEmailOtpRequested?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult Function(_ResetPasswordOtpVerified value)? resetPasswordOtpVerified,
+    TResult Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (verifyEmailOtpRequested != null) {
+      return verifyEmailOtpRequested(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _VerifyEmailOtpRequested implements AuthEvent {
+  const factory _VerifyEmailOtpRequested() = _$VerifyEmailOtpRequestedImpl;
+}
+
+/// @nodoc
+abstract class _$$EmailVerificationCompletedImplCopyWith<$Res> {
+  factory _$$EmailVerificationCompletedImplCopyWith(
+    _$EmailVerificationCompletedImpl value,
+    $Res Function(_$EmailVerificationCompletedImpl) then,
+  ) = __$$EmailVerificationCompletedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$EmailVerificationCompletedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$EmailVerificationCompletedImpl>
+    implements _$$EmailVerificationCompletedImplCopyWith<$Res> {
+  __$$EmailVerificationCompletedImplCopyWithImpl(
+    _$EmailVerificationCompletedImpl _value,
+    $Res Function(_$EmailVerificationCompletedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$EmailVerificationCompletedImpl
+    with DiagnosticableTreeMixin
+    implements _EmailVerificationCompleted {
+  const _$EmailVerificationCompletedImpl();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.emailVerificationCompleted()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(
+      DiagnosticsProperty('type', 'AuthEvent.emailVerificationCompleted'),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EmailVerificationCompletedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function() resetPasswordOtpRequested,
+    required TResult Function() resetPasswordOtpVerified,
+    required TResult Function() resetPasswordOtpResendRequested,
+    required TResult Function(String password) resetPasswordNewChanged,
+    required TResult Function(String confirm) resetPasswordConfirmChanged,
+    required TResult Function() resetPasswordVisibilityToggled,
+    required TResult Function() resetPasswordConfirmVisibilityToggled,
+    required TResult Function() resetPasswordSubmitted,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
+  }) {
+    return emailVerificationCompleted();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function()? resetPasswordOtpRequested,
+    TResult? Function()? resetPasswordOtpVerified,
+    TResult? Function()? resetPasswordOtpResendRequested,
+    TResult? Function(String password)? resetPasswordNewChanged,
+    TResult? Function(String confirm)? resetPasswordConfirmChanged,
+    TResult? Function()? resetPasswordVisibilityToggled,
+    TResult? Function()? resetPasswordConfirmVisibilityToggled,
+    TResult? Function()? resetPasswordSubmitted,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
+  }) {
+    return emailVerificationCompleted?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function()? resetPasswordOtpRequested,
+    TResult Function()? resetPasswordOtpVerified,
+    TResult Function()? resetPasswordOtpResendRequested,
+    TResult Function(String password)? resetPasswordNewChanged,
+    TResult Function(String confirm)? resetPasswordConfirmChanged,
+    TResult Function()? resetPasswordVisibilityToggled,
+    TResult Function()? resetPasswordConfirmVisibilityToggled,
+    TResult Function()? resetPasswordSubmitted,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationCompleted != null) {
+      return emailVerificationCompleted();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ResetPasswordOtpRequested value)
+    resetPasswordOtpRequested,
+    required TResult Function(_ResetPasswordOtpVerified value)
+    resetPasswordOtpVerified,
+    required TResult Function(_ResetPasswordOtpResendRequested value)
+    resetPasswordOtpResendRequested,
+    required TResult Function(_ResetPasswordNewChanged value)
+    resetPasswordNewChanged,
+    required TResult Function(_ResetPasswordConfirmChanged value)
+    resetPasswordConfirmChanged,
+    required TResult Function(_ResetPasswordVisibilityToggled value)
+    resetPasswordVisibilityToggled,
+    required TResult Function(_ResetPasswordConfirmVisibilityToggled value)
+    resetPasswordConfirmVisibilityToggled,
+    required TResult Function(_ResetPasswordSubmitted value)
+    resetPasswordSubmitted,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
+  }) {
+    return emailVerificationCompleted(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult? Function(_ResetPasswordOtpVerified value)?
+    resetPasswordOtpVerified,
+    TResult? Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult? Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult? Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult? Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult? Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult? Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+  }) {
+    return emailVerificationCompleted?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult Function(_ResetPasswordOtpVerified value)? resetPasswordOtpVerified,
+    TResult Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationCompleted != null) {
+      return emailVerificationCompleted(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _EmailVerificationCompleted implements AuthEvent {
+  const factory _EmailVerificationCompleted() =
+      _$EmailVerificationCompletedImpl;
+}
+
+/// @nodoc
+abstract class _$$EmailVerificationCancelledImplCopyWith<$Res> {
+  factory _$$EmailVerificationCancelledImplCopyWith(
+    _$EmailVerificationCancelledImpl value,
+    $Res Function(_$EmailVerificationCancelledImpl) then,
+  ) = __$$EmailVerificationCancelledImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$EmailVerificationCancelledImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$EmailVerificationCancelledImpl>
+    implements _$$EmailVerificationCancelledImplCopyWith<$Res> {
+  __$$EmailVerificationCancelledImplCopyWithImpl(
+    _$EmailVerificationCancelledImpl _value,
+    $Res Function(_$EmailVerificationCancelledImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$EmailVerificationCancelledImpl
+    with DiagnosticableTreeMixin
+    implements _EmailVerificationCancelled {
+  const _$EmailVerificationCancelledImpl();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.emailVerificationCancelled()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(
+      DiagnosticsProperty('type', 'AuthEvent.emailVerificationCancelled'),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EmailVerificationCancelledImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function() resetPasswordOtpRequested,
+    required TResult Function() resetPasswordOtpVerified,
+    required TResult Function() resetPasswordOtpResendRequested,
+    required TResult Function(String password) resetPasswordNewChanged,
+    required TResult Function(String confirm) resetPasswordConfirmChanged,
+    required TResult Function() resetPasswordVisibilityToggled,
+    required TResult Function() resetPasswordConfirmVisibilityToggled,
+    required TResult Function() resetPasswordSubmitted,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
+  }) {
+    return emailVerificationCancelled();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function()? resetPasswordOtpRequested,
+    TResult? Function()? resetPasswordOtpVerified,
+    TResult? Function()? resetPasswordOtpResendRequested,
+    TResult? Function(String password)? resetPasswordNewChanged,
+    TResult? Function(String confirm)? resetPasswordConfirmChanged,
+    TResult? Function()? resetPasswordVisibilityToggled,
+    TResult? Function()? resetPasswordConfirmVisibilityToggled,
+    TResult? Function()? resetPasswordSubmitted,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
+  }) {
+    return emailVerificationCancelled?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function()? resetPasswordOtpRequested,
+    TResult Function()? resetPasswordOtpVerified,
+    TResult Function()? resetPasswordOtpResendRequested,
+    TResult Function(String password)? resetPasswordNewChanged,
+    TResult Function(String confirm)? resetPasswordConfirmChanged,
+    TResult Function()? resetPasswordVisibilityToggled,
+    TResult Function()? resetPasswordConfirmVisibilityToggled,
+    TResult Function()? resetPasswordSubmitted,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationCancelled != null) {
+      return emailVerificationCancelled();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ResetPasswordOtpRequested value)
+    resetPasswordOtpRequested,
+    required TResult Function(_ResetPasswordOtpVerified value)
+    resetPasswordOtpVerified,
+    required TResult Function(_ResetPasswordOtpResendRequested value)
+    resetPasswordOtpResendRequested,
+    required TResult Function(_ResetPasswordNewChanged value)
+    resetPasswordNewChanged,
+    required TResult Function(_ResetPasswordConfirmChanged value)
+    resetPasswordConfirmChanged,
+    required TResult Function(_ResetPasswordVisibilityToggled value)
+    resetPasswordVisibilityToggled,
+    required TResult Function(_ResetPasswordConfirmVisibilityToggled value)
+    resetPasswordConfirmVisibilityToggled,
+    required TResult Function(_ResetPasswordSubmitted value)
+    resetPasswordSubmitted,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
+  }) {
+    return emailVerificationCancelled(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult? Function(_ResetPasswordOtpVerified value)?
+    resetPasswordOtpVerified,
+    TResult? Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult? Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult? Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult? Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult? Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult? Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+  }) {
+    return emailVerificationCancelled?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult Function(_ResetPasswordOtpVerified value)? resetPasswordOtpVerified,
+    TResult Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationCancelled != null) {
+      return emailVerificationCancelled(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _EmailVerificationCancelled implements AuthEvent {
+  const factory _EmailVerificationCancelled() =
+      _$EmailVerificationCancelledImpl;
 }
 
 /// @nodoc
@@ -19897,7 +22366,10 @@ mixin _$AuthState {
       throw _privateConstructorUsedError;
   String? get activeClinicId =>
       throw _privateConstructorUsedError; // Auth status
-  AuthStatus get status => throw _privateConstructorUsedError;
+  AuthStatus get status =>
+      throw _privateConstructorUsedError; // Email verification from login flow
+  bool get needsEmailVerification => throw _privateConstructorUsedError;
+  bool get emailVerificationForLogin => throw _privateConstructorUsedError;
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.
@@ -19965,6 +22437,8 @@ abstract class $AuthStateCopyWith<$Res> {
     List<InvitationEntity> pendingInvitations,
     String? activeClinicId,
     AuthStatus status,
+    bool needsEmailVerification,
+    bool emailVerificationForLogin,
   });
 
   $SpecialtyEntityCopyWith<$Res>? get selectedSpecialty;
@@ -20041,6 +22515,8 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? pendingInvitations = null,
     Object? activeClinicId = freezed,
     Object? status = null,
+    Object? needsEmailVerification = null,
+    Object? emailVerificationForLogin = null,
   }) {
     return _then(
       _value.copyWith(
@@ -20257,6 +22733,14 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as AuthStatus,
+            needsEmailVerification: null == needsEmailVerification
+                ? _value.needsEmailVerification
+                : needsEmailVerification // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            emailVerificationForLogin: null == emailVerificationForLogin
+                ? _value.emailVerificationForLogin
+                : emailVerificationForLogin // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -20382,6 +22866,8 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     List<InvitationEntity> pendingInvitations,
     String? activeClinicId,
     AuthStatus status,
+    bool needsEmailVerification,
+    bool emailVerificationForLogin,
   });
 
   @override
@@ -20461,6 +22947,8 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? pendingInvitations = null,
     Object? activeClinicId = freezed,
     Object? status = null,
+    Object? needsEmailVerification = null,
+    Object? emailVerificationForLogin = null,
   }) {
     return _then(
       _$AuthStateImpl(
@@ -20676,6 +23164,14 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as AuthStatus,
+        needsEmailVerification: null == needsEmailVerification
+            ? _value.needsEmailVerification
+            : needsEmailVerification // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        emailVerificationForLogin: null == emailVerificationForLogin
+            ? _value.emailVerificationForLogin
+            : emailVerificationForLogin // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -20738,6 +23234,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     final List<InvitationEntity> pendingInvitations = const [],
     this.activeClinicId = null,
     this.status = AuthStatus.unauthenticated,
+    this.needsEmailVerification = false,
+    this.emailVerificationForLogin = false,
   }) : _specialties = specialties,
        _searchedLocations = searchedLocations,
        _plans = plans,
@@ -20948,10 +23446,17 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   @override
   @JsonKey()
   final AuthStatus status;
+  // Email verification from login flow
+  @override
+  @JsonKey()
+  final bool needsEmailVerification;
+  @override
+  @JsonKey()
+  final bool emailVerificationForLogin;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
   }
 
   @override
@@ -21037,7 +23542,16 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       ..add(DiagnosticsProperty('memberships', memberships))
       ..add(DiagnosticsProperty('pendingInvitations', pendingInvitations))
       ..add(DiagnosticsProperty('activeClinicId', activeClinicId))
-      ..add(DiagnosticsProperty('status', status));
+      ..add(DiagnosticsProperty('status', status))
+      ..add(
+        DiagnosticsProperty('needsEmailVerification', needsEmailVerification),
+      )
+      ..add(
+        DiagnosticsProperty(
+          'emailVerificationForLogin',
+          emailVerificationForLogin,
+        ),
+      );
   }
 
   @override
@@ -21172,7 +23686,14 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
             ) &&
             (identical(other.activeClinicId, activeClinicId) ||
                 other.activeClinicId == activeClinicId) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.needsEmailVerification, needsEmailVerification) ||
+                other.needsEmailVerification == needsEmailVerification) &&
+            (identical(
+                  other.emailVerificationForLogin,
+                  emailVerificationForLogin,
+                ) ||
+                other.emailVerificationForLogin == emailVerificationForLogin));
   }
 
   @override
@@ -21231,6 +23752,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     const DeepCollectionEquality().hash(_pendingInvitations),
     activeClinicId,
     status,
+    needsEmailVerification,
+    emailVerificationForLogin,
   ]);
 
   /// Create a copy of AuthState
@@ -21297,6 +23820,8 @@ abstract class _AuthState implements AuthState {
     final List<InvitationEntity> pendingInvitations,
     final String? activeClinicId,
     final AuthStatus status,
+    final bool needsEmailVerification,
+    final bool emailVerificationForLogin,
   }) = _$AuthStateImpl;
 
   // Login fields
@@ -21405,7 +23930,11 @@ abstract class _AuthState implements AuthState {
   @override
   String? get activeClinicId; // Auth status
   @override
-  AuthStatus get status;
+  AuthStatus get status; // Email verification from login flow
+  @override
+  bool get needsEmailVerification;
+  @override
+  bool get emailVerificationForLogin;
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.

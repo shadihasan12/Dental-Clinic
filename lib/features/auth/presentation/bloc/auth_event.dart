@@ -71,4 +71,9 @@ class AuthEvent with _$AuthEvent {
 
   // Logout
   const factory AuthEvent.logoutRequested() = _LogoutRequested;
+
+  // Email verification from login flow
+  const factory AuthEvent.verifyEmailOtpRequested() = _VerifyEmailOtpRequested;
+  const factory AuthEvent.emailVerificationCompleted() = _EmailVerificationCompleted;
+  const factory AuthEvent.emailVerificationCancelled() = _EmailVerificationCancelled;
 }

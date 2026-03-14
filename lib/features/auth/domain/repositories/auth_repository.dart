@@ -83,10 +83,12 @@ class LoginParams {
 class LoginResult {
   final UserEntity user;
   final List<ClinicMembershipEntity> memberships;
+  final bool emailVerified;
 
   LoginResult({
     required this.user,
     required this.memberships,
+    this.emailVerified = true,
   });
 }
 
@@ -197,6 +199,9 @@ abstract class AuthRepository {
   Future<Either<NetworkExceptions, LoginResult>> login({
     required LoginParams params,
   });
+
+  /// Request OTP for email verification (requires auth token)
+  Future<Either<NetworkExceptions, OtpResponse>> requestOtpForVerifyEmail();
 
   /// Request OTP for password reset
   Future<Either<NetworkExceptions, OtpResponse>> requestOtpForResetPassword({
