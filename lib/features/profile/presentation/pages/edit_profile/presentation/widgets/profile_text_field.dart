@@ -14,6 +14,7 @@ class ProfileTextField extends StatelessWidget {
   final bool enabled;
   final Widget? suffixWidget;
   final TextDirection? textDirection;
+  final String? Function(String?)? validator;
 
   const ProfileTextField({
     super.key,
@@ -26,6 +27,7 @@ class ProfileTextField extends StatelessWidget {
     this.enabled = true,
     this.suffixWidget,
     this.textDirection,
+    this.validator,
   });
 
   @override
@@ -39,6 +41,7 @@ class ProfileTextField extends StatelessWidget {
       enabled: enabled,
       suffixIcon: !enabled && suffixWidget != null ? null : suffixWidget,
       textDirection: textDirection,
+      validator: validator,
       onChanged: (value) {},
     );
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dental_clinic_app/core/constants/validation_constants.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -47,6 +48,9 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
+
+  final _formKey = GlobalKey<FormState>();
+  bool _showValidationErrors = false;
 
   String? _selectedSpecialtyId;
   String? _selectedSpecialtyName;
@@ -143,6 +147,8 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   }
 
   void _onSave() {
+    setState(() => _showValidationErrors = true);
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     final entity = _buildEntity();
     context.read<EditProfileBloc>().add(EditProfileEvent.updateProfile(entity));
   }
@@ -589,84 +595,93 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     );
   }
 
+  String? _validateFirstName(String? value) {
+    if (!_showValidationErrors) return null;
+    if (value == null || value.trim().isEmpty) return l10n.pleaseEnterFirstName;
+    if (!ValidationConstants.isValidName(value.trim())) return l10n.nameTooShort;
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    if (!_showValidationErrors) return null;
+    if (value == null || value.trim().isEmpty) return l10n.pleaseEnterLastName;
+    if (!ValidationConstants.isValidName(value.trim())) return l10n.nameTooShort;
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (!_showValidationErrors) return null;
+    if (value == null || value.trim().isEmpty) return l10n.mobileRequired;
+    if (!ValidationConstants.isValidPhone(value.trim())) return l10n.mobileTooShort;
+    return null;
+  }
+
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
+
   Widget _buildForm(AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
-          _buildProfileImage(),
-          SizedBox(height: 20.h),
-          CustomCard(
-            child: Column(
-              children: [
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.firstName,
-                  controller: _firstNameController,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.lastName,
-                  controller: _lastNameController,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileDropdownField(
-                  icon: Icons.medical_services_outlined,
-                  label: l10n.specialization,
-                  value: _selectedSpecialtyName,
-                  onTap: _showSpecializationPicker,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    context.pushNamed(
-                      AppRoutesNames.changeEmail,
-                      extra: {'currentEmail': _emailController.text.trim()},
-                    );
-                  },
-                  child: ProfileTextField(
-                    icon: Icons.edit,
-                    label: l10n.email,
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          children: [
+            _buildProfileImage(),
+            SizedBox(height: 20.h),
+            CustomCard(
+              child: Column(
+                children: [
+                  ProfileTextField(
+                    icon: Icons.person_outline,
+                    label: l10n.firstName,
+                    controller: _firstNameController,
                     textInputAction: TextInputAction.next,
-                    enabled: false,
-                    textDirection: TextDirection.ltr,
-                    // suffixWidget: GestureDetector(
-                    //   onTap: () {
-                    //     context.pushNamed(
-                    //       AppRoutesNames.changeEmail,
-                    //       extra: {'currentEmail': _emailController.text.trim()},
-                    //     );
-                    //   },
-                    //   child: Padding(
-                    //     padding: EdgeInsetsDirectional.only(end: 12.w),
-                    //     child: Text(
-                    //       l10n.edit,
-                    //       style: TextStyle(
-                    //         fontSize: 13.sp,
-                    //         fontFamily: FontHelper.fontFamily(context),
-                    //         fontWeight: FontWeight.w600,
-                    //         color: ColorManager.primary,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    validator: _validateFirstName,
                   ),
-                ),
-                ProfileTextField(
-                  icon: Icons.phone_outlined,
-                  label: l10n.phone,
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.done,
-                  isLast: true,
-                ),
-              ],
+                  ProfileTextField(
+                    icon: Icons.person_outline,
+                    label: l10n.lastName,
+                    controller: _lastNameController,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateLastName,
+                  ),
+                  ProfileDropdownField(
+                    icon: Icons.medical_services_outlined,
+                    label: l10n.specialization,
+                    value: _selectedSpecialtyName,
+                    onTap: _showSpecializationPicker,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      context.pushNamed(
+                        AppRoutesNames.changeEmail,
+                        extra: {'currentEmail': _emailController.text.trim()},
+                      );
+                    },
+                    child: ProfileTextField(
+                      icon: Icons.edit,
+                      label: l10n.email,
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      enabled: false,
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ),
+                  ProfileTextField(
+                    icon: Icons.phone_outlined,
+                    label: l10n.phone,
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.done,
+                    isLast: true,
+                    validator: _validatePhone,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 24.h),
-        ],
+            SizedBox(height: 24.h),
+          ],
+        ),
       ),
     );
   }

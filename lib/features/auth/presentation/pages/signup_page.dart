@@ -417,19 +417,17 @@ class _SignupContentState extends State<_SignupContent> {
                       prefixIcon: Icons.lock_outline,
                       obscureText: !state.isSignupPasswordVisible,
                       validator: _validatePassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
+                      suffixIcon: GestureDetector(
+                        onTap: () => context.read<AuthBloc>().add(
+                          const AuthEvent.signupPasswordVisibilityToggled(),
+                        ),
+                        child: Icon(
                           state.isSignupPasswordVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                           color: ColorManager.textTertiary,
                           size: 20.w,
                         ),
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                            const AuthEvent.signupPasswordVisibilityToggled(),
-                          );
-                        },
                       ),
                       onChanged: (value) {
                         context.read<AuthBloc>().add(
@@ -447,19 +445,17 @@ class _SignupContentState extends State<_SignupContent> {
                       prefixIcon: Icons.lock_outline,
                       obscureText: !state.isSignupConfirmPasswordVisible,
                       validator: _validateConfirmPassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
+                      suffixIcon: GestureDetector(
+                        onTap: () => context.read<AuthBloc>().add(
+                          const AuthEvent.signupConfirmPasswordVisibilityToggled(),
+                        ),
+                        child: Icon(
                           state.isSignupConfirmPasswordVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                           color: ColorManager.textTertiary,
                           size: 20.w,
                         ),
-                        onPressed: () {
-                          context.read<AuthBloc>().add(
-                            const AuthEvent.signupConfirmPasswordVisibilityToggled(),
-                          );
-                        },
                       ),
                       onChanged: (value) {
                         context.read<AuthBloc>().add(
@@ -490,6 +486,7 @@ class _SignupContentState extends State<_SignupContent> {
   }
 
   Widget _buildSpecialtyPicker(AppLocalizations l10n, String fontFamily, AuthState state) {
+    final hasError = _showValidationErrors && _selectedSpecialty == null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -497,51 +494,66 @@ class _SignupContentState extends State<_SignupContent> {
           l10n.specializationRequired,
           style: TextStyle(
             color: ColorManager.textPrimary,
-            fontWeight: FontWeightManager.medium,
+            fontWeight: FontWeight.w500,
             fontFamily: fontFamily,
-            fontSize: FontSizesManager.s12,
+            fontSize: 12.sp,
           ),
         ),
         SizedBox(height: 8.h),
         GestureDetector(
           onTap: () => _showSpecialtySheet(l10n, fontFamily, state),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            decoration: BoxDecoration(
-              color: ColorManager.gray50,
-              borderRadius: BorderRadius.circular(12.r),
-              border: _showValidationErrors && _selectedSpecialty == null
-                  ? Border.all(color: ColorManager.error, width: 1)
-                  : null,
+          child: InputDecorator(
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                Icons.local_hospital_outlined,
+                color: ColorManager.textTertiary,
+                size: 20.w,
+              ),
+              suffixIcon: Icon(
+                Icons.keyboard_arrow_down,
+                color: ColorManager.textTertiary,
+                size: 20.w,
+              ),
+              filled: true,
+              fillColor: ColorManager.gray50,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: hasError
+                    ? const BorderSide(color: ColorManager.error, width: 1)
+                    : BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
             ),
-            child: Row(
-              children: [
-                Icon(Icons.local_hospital_outlined, color: ColorManager.textTertiary, size: 20.w),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    _selectedSpecialty?.name ?? l10n.selectYourSpecialization,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: FontSizesManager.s14,
-                      color: _selectedSpecialty != null
-                          ? ColorManager.textPrimary
-                          : ColorManager.textTertiary,
-                    ),
-                  ),
-                ),
-                Icon(Icons.keyboard_arrow_down, color: ColorManager.textTertiary),
-              ],
+            child: Text(
+              _selectedSpecialty?.name ?? l10n.selectYourSpecialization,
+              style: TextStyle(
+                fontFamily: fontFamily,
+                fontSize: 14.sp,
+                color: _selectedSpecialty != null
+                    ? ColorManager.textPrimary
+                    : ColorManager.textTertiary,
+              ),
             ),
           ),
         ),
-        if (_showValidationErrors && _selectedSpecialty == null)
+        if (hasError)
           Padding(
-            padding: EdgeInsets.only(top: 8.h, left: 12.w),
+            padding: EdgeInsets.only(top: 6.h, left: 12.w),
             child: Text(
               l10n.pleaseSelectSpecialty,
               style: TextStyle(
-                fontSize: FontSizesManager.s12,
+                fontSize: 10.sp,
                 fontFamily: fontFamily,
                 color: ColorManager.error,
               ),

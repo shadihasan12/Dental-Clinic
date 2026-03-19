@@ -23,8 +23,10 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
   final _clinicNameController = TextEditingController();
   final _addressController = TextEditingController();
   final _locationSearchController = TextEditingController();
+  final _locationFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   bool _showValidationErrors = false;
+  bool _isEditingLocation = false;
   Timer? _debounce;
   final String _selectedCountryCode = 'SY';
 
@@ -57,6 +59,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     _clinicNameController.dispose();
     _addressController.dispose();
     _locationSearchController.dispose();
+    _locationFocusNode.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -93,15 +96,28 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     });
   }
 
+  void _startEditingLocation() {
+    setState(() => _isEditingLocation = true);
+    _locationSearchController.clear();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _locationFocusNode.requestFocus(),
+    );
+  }
+
+  void _onLocationSelected(LocationEntity location) {
+    context.read<AuthBloc>().add(
+      AuthEvent.signupLocationEntitySelected(location),
+    );
+    _locationSearchController.clear();
+    setState(() => _isEditingLocation = false);
+  }
+
   void _handleCreate() {
     setState(() => _showValidationErrors = true);
     final l10n = AppLocalizations.of(context)!;
-
     final state = context.read<AuthBloc>().state;
 
-    if (!(_formKey.currentState?.validate() ?? false)) {
-      return;
-    }
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
     if (state.selectedLocation == null) {
       AppSnackbar.showError(
@@ -197,36 +213,41 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 28.h),
 
                     // Title
                     Text(
                       l10n.completeYourProfile,
                       style: TextStyle(
-                        fontSize: FontSizesManager.s28,
+                        fontSize: FontSizesManager.s24,
                         fontWeight: FontWeightManager.bold,
                         fontFamily: fontFamily,
                         color: ColorManager.textPrimary,
+                        height: 1.2,
                       ),
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 6.h),
                     Text(
                       l10n.setupClinicDetails,
                       style: TextStyle(
                         fontSize: FontSizesManager.s14,
                         fontFamily: fontFamily,
                         color: ColorManager.textSecondary,
+                        height: 1.4,
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: 20.h),
 
                     _buildInfoBox(l10n, fontFamily),
 
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 24.h),
 
+                    // Clinic name field
+                    _buildSectionLabel(l10n.clinicNameRequired, fontFamily),
+                    SizedBox(height: 8.h),
                     AuthTextField(
-                      label: l10n.clinicNameRequired,
+                      label: '',
                       hint: l10n.clinicNameHintExample,
                       controller: _clinicNameController,
                       prefixIcon: Icons.business_outlined,
@@ -239,27 +260,19 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                       },
                     ),
 
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 24.h),
 
-                    _buildLocationSearch(state, l10n, fontFamily),
+                    // Location field
+                    _buildSectionLabel(l10n.locationRequired, fontFamily),
+                    SizedBox(height: 8.h),
+                    _buildLocationSection(state, l10n, fontFamily),
 
-                    if (state.selectedLocation != null) ...[
-                      SizedBox(height: 12.h),
-                      _buildSelectedLocation(
-                        state.selectedLocation!,
-                        fontFamily,
-                      ),
-                    ],
+                    SizedBox(height: 24.h),
 
-                    SizedBox(height: 20.h),
-
-                    AuthTextField(
-                      label: l10n.detailedAddress,
-                      hint: l10n.detailedAddressHint,
-                      controller: _addressController,
-                      prefixIcon: Icons.location_on_outlined,
-                      keyboardType: TextInputType.streetAddress,
-                    ),
+                    // Detailed address — text area
+                    _buildSectionLabel(l10n.detailedAddress, fontFamily),
+                    SizedBox(height: 8.h),
+                    _buildAddressTextArea(fontFamily),
 
                     SizedBox(height: 100.h),
                   ],
@@ -273,32 +286,45 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     );
   }
 
+  Widget _buildSectionLabel(String text, String fontFamily) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: FontSizesManager.s14,
+        fontWeight: FontWeightManager.semiBold,
+        fontFamily: fontFamily,
+        color: ColorManager.textPrimary,
+      ),
+    );
+  }
+
   Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.infoLight.withValues(alpha: 0.1),
+        color: ColorManager.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: ColorManager.infoLight.withValues(alpha: 0.3),
+          color: ColorManager.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            Icons.info_outline,
-            size: 20.w,
-            color: ColorManager.infoExtraLight,
+            Icons.info_outline_rounded,
+            size: 18.w,
+            color: ColorManager.primaryDark,
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 10.w),
           Expanded(
             child: Text(
               l10n.clinicDetailsInfo,
               style: TextStyle(
-                color: ColorManager.infoExtraLight,
+                color: ColorManager.primaryDark,
                 fontFamily: fontFamily,
-                fontSize: FontSizesManager.s12,
+                fontSize: FontSizesManager.s13,
+                height: 1.5,
               ),
             ),
           ),
@@ -307,126 +333,226 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     );
   }
 
-  Widget _buildLocationSearch(
+  Widget _buildLocationSection(
     AuthState state,
     AppLocalizations l10n,
     String fontFamily,
   ) {
+    final hasSelection = state.selectedLocation != null;
+    final showSearch = !hasSelection || _isEditingLocation;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AuthTextField(
-          label: l10n.locationRequired,
-          hint: l10n.searchForLocation,
-          controller: _locationSearchController,
-          prefixIcon: Icons.search,
-          suffixIcon: state.isSearchingLocations
-              ? Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: SizedBox(
-                    width: 20.w,
-                    height: 20.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: ColorManager.primary,
-                    ),
-                  ),
-                )
-              : null,
-          onChanged: _onLocationSearchChanged,
-        ),
+        // Selected location card (only when selected and not actively editing)
+        if (hasSelection && !_isEditingLocation)
+          _buildSelectedLocationCard(state.selectedLocation!, fontFamily),
 
-        if (_locationSearchController.text.trim().length >= 2 &&
-            state.searchedLocations.isNotEmpty &&
-            state.selectedLocation == null)
-          Container(
-            margin: EdgeInsets.only(top: 8.h),
-            decoration: BoxDecoration(
-              color: ColorManager.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: ColorManager.gray300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        // Search field (when no selection OR when editing)
+        if (showSearch) ...[
+          TextFormField(
+            controller: _locationSearchController,
+            focusNode: _locationFocusNode,
+            onChanged: _onLocationSearchChanged,
+            style: TextStyle(
+              color: ColorManager.textPrimary,
+              fontFamily: fontFamily,
+              fontSize: 14.sp,
             ),
-            constraints: BoxConstraints(maxHeight: 200.h),
-            child: ListView.separated(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: state.searchedLocations.length,
-              separatorBuilder: (context, index) =>
-                  Divider(height: 1, color: ColorManager.gray300),
-              itemBuilder: (context, index) {
-                final location = state.searchedLocations[index];
-                return ListTile(
-                  dense: true,
-                  title: Text(
-                    location.name,
-                    style: TextStyle(
-                      fontSize: FontSizesManager.s14,
-                      fontFamily: fontFamily,
-                      fontWeight: FontWeightManager.medium,
-                    ),
+            decoration: InputDecoration(
+              hintText: l10n.searchForLocation,
+              hintStyle: TextStyle(
+                color: ColorManager.textTertiary,
+                fontFamily: fontFamily,
+                fontSize: 13.sp,
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: ColorManager.textTertiary,
+                size: 20.w,
+              ),
+              suffixIcon: state.isSearchingLocations
+                  ? Padding(
+                      padding: EdgeInsets.all(12.w),
+                      child: SizedBox(
+                        width: 18.w,
+                        height: 18.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    )
+                  : null,
+              filled: true,
+              fillColor: ColorManager.gray50,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: ColorManager.primary,
+                  width: 1.5,
+                ),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+            ),
+          ),
+
+          // Search results dropdown
+          if (_locationSearchController.text.trim().length >= 2 &&
+              state.searchedLocations.isNotEmpty)
+            Container(
+              margin: EdgeInsets.only(top: 6.h),
+              decoration: BoxDecoration(
+                color: ColorManager.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: ColorManager.gray200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                  subtitle: Text(
-                    location.fullName,
+                ],
+              ),
+              constraints: BoxConstraints(maxHeight: 220.h),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: state.searchedLocations.length,
+                  separatorBuilder: (context, i) =>
+                      Divider(height: 1, color: ColorManager.gray100),
+                  itemBuilder: (context, index) {
+                    final location = state.searchedLocations[index];
+                    return InkWell(
+                      onTap: () => _onLocationSelected(location),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 12.h,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 18.w,
+                              color: ColorManager.primary,
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    location.name,
+                                    style: TextStyle(
+                                      fontSize: FontSizesManager.s14,
+                                      fontFamily: fontFamily,
+                                      fontWeight: FontWeightManager.medium,
+                                      color: ColorManager.textPrimary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    location.fullName,
+                                    style: TextStyle(
+                                      fontSize: FontSizesManager.s12,
+                                      fontFamily: fontFamily,
+                                      color: ColorManager.textSecondary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+          // No results message
+          if (_locationSearchController.text.trim().length >= 2 &&
+              !state.isSearchingLocations &&
+              state.searchedLocations.isEmpty)
+            Container(
+              margin: EdgeInsets.only(top: 6.h),
+              padding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.h,
+              ),
+              decoration: BoxDecoration(
+                color: ColorManager.gray50,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: ColorManager.gray200),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.search_off_outlined,
+                    size: 16.w,
+                    color: ColorManager.textTertiary,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    l10n.noLocationsFound,
                     style: TextStyle(
-                      fontSize: FontSizesManager.s12,
+                      fontSize: FontSizesManager.s13,
                       fontFamily: fontFamily,
                       color: ColorManager.textSecondary,
                     ),
                   ),
-                  onTap: () {
-                    context.read<AuthBloc>().add(
-                      AuthEvent.signupLocationEntitySelected(location),
-                    );
-                    _locationSearchController.clear();
-                  },
-                );
-              },
-            ),
-          ),
-
-        if (_locationSearchController.text.trim().length >= 2 &&
-            !state.isSearchingLocations &&
-            state.searchedLocations.isEmpty &&
-            state.selectedLocation == null)
-          Container(
-            margin: EdgeInsets.only(top: 8.h),
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: ColorManager.gray100,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Text(
-              l10n.noLocationsFound,
-              style: TextStyle(
-                fontSize: FontSizesManager.s14,
-                fontFamily: fontFamily,
-                color: ColorManager.textSecondary,
+                ],
               ),
             ),
-          ),
+        ],
       ],
     );
   }
 
-  Widget _buildSelectedLocation(LocationEntity location, String fontFamily) {
+  Widget _buildSelectedLocationCard(
+    LocationEntity location,
+    String fontFamily,
+  ) {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: ColorManager.primary10,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.primary),
+        border: Border.all(color: ColorManager.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(Icons.location_on, color: ColorManager.primary, size: 20.w),
-          SizedBox(width: 8.w),
+          Container(
+            width: 34.w,
+            height: 34.w,
+            decoration: BoxDecoration(
+              color: ColorManager.primary20,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(
+              Icons.location_on,
+              color: ColorManager.primaryDark,
+              size: 18.w,
+            ),
+          ),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,21 +563,87 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                     fontSize: FontSizesManager.s14,
                     fontFamily: fontFamily,
                     fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.primary,
+                    color: ColorManager.primaryDark,
                   ),
                 ),
+                SizedBox(height: 2.h),
                 Text(
                   location.fullName,
                   style: TextStyle(
                     fontSize: FontSizesManager.s12,
                     fontFamily: fontFamily,
-                    color: ColorManager.primary,
+                    color: ColorManager.primaryDarker,
+                    height: 1.4,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
+          SizedBox(width: 8.w),
+          GestureDetector(
+            onTap: _startEditingLocation,
+            child: Container(
+              width: 30.w,
+              height: 30.w,
+              decoration: BoxDecoration(
+                color: ColorManager.primary20,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.edit_outlined,
+                size: 14.w,
+                color: ColorManager.primaryDark,
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddressTextArea(String fontFamily) {
+    return TextFormField(
+      controller: _addressController,
+      keyboardType: TextInputType.multiline,
+      maxLines: 4,
+      minLines: 3,
+      style: TextStyle(
+        color: ColorManager.textPrimary,
+        fontFamily: fontFamily,
+        fontSize: 14.sp,
+        height: 1.5,
+      ),
+      decoration: InputDecoration(
+        hintText: '...',
+        hintStyle: TextStyle(
+          color: ColorManager.textTertiary,
+          fontFamily: fontFamily,
+          fontSize: 13.sp,
+        ),
+        filled: true,
+        fillColor: ColorManager.gray50,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(
+            color: ColorManager.primary,
+            width: 1.5,
+          ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+          vertical: 14.h,
+        ),
+        alignLabelWithHint: true,
       ),
     );
   }
@@ -477,6 +669,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               isEnabled:
                   state.clinicName.trim().isNotEmpty &&
                   state.selectedLocation != null &&
+                  !_isEditingLocation &&
                   !state.isSignupLoading,
               isLoading: state.isSignupLoading,
               onPressed: _handleCreate,
