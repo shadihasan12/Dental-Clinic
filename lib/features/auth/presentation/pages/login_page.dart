@@ -308,7 +308,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
           ),
         ),
         TextButton(
-          onPressed: () => context.pushNamed(AppRoutesNames.emailEntry),
+          onPressed: () => context.pushNamed(AppRoutesNames.choosePlan),
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,

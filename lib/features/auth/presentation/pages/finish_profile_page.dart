@@ -41,6 +41,15 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
         AuthEvent.signupClinicAddressChanged(_addressController.text),
       );
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final state = context.read<AuthBloc>().state;
+      if (state.clinicName.isNotEmpty) {
+        _clinicNameController.text = state.clinicName;
+      }
+      if (state.clinicAddress.isNotEmpty) {
+        _addressController.text = state.clinicAddress;
+      }
+    });
   }
 
   @override
@@ -466,7 +475,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
             child: PrimaryButton(
               text: l10n.completeRegistration,
               isEnabled:
-                  _clinicNameController.text.trim().isNotEmpty &&
+                  state.clinicName.trim().isNotEmpty &&
                   state.selectedLocation != null &&
                   !state.isSignupLoading,
               isLoading: state.isSignupLoading,

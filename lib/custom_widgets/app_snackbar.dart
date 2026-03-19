@@ -160,8 +160,7 @@ class _SnackbarContent extends StatelessWidget {
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context)
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: null,
                   ),
                 ],
               ],

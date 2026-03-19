@@ -60,8 +60,26 @@ class _SignupContentState extends State<_SignupContent> {
       final bloc = context.read<AuthBloc>();
       final state = bloc.state;
 
+      if (state.signupFirstName.isNotEmpty) {
+        _firstNameController.text = state.signupFirstName;
+      }
+      if (state.signupLastName.isNotEmpty) {
+        _lastNameController.text = state.signupLastName;
+      }
       if (state.signupEmail.isNotEmpty) {
         _emailController.text = state.signupEmail;
+      }
+      if (state.mobileNumber.isNotEmpty) {
+        _mobileController.text = state.mobileNumber;
+      }
+      if (state.signupPassword.isNotEmpty) {
+        _passwordController.text = state.signupPassword;
+      }
+      if (state.signupConfirmPassword.isNotEmpty) {
+        _confirmPasswordController.text = state.signupConfirmPassword;
+      }
+      if (state.selectedSpecialty != null) {
+        setState(() => _selectedSpecialty = state.selectedSpecialty);
       }
 
       if (state.specialties.isEmpty && !state.isLoadingSpecialties) {

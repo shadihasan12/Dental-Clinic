@@ -26,6 +26,9 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = context.read<AuthBloc>().state;
+      if (state.selectedPlan != null) {
+        setState(() => _selectedPlanId = state.selectedPlan!.id);
+      }
       if (state.plans.isEmpty && !state.isLoadingPlans) {
         context.read<AuthBloc>().add(const AuthEvent.plansRequested());
       }
@@ -43,23 +46,32 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state.isLoadingPlans) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  children: [
-                    _buildTopBar(l10n, fontFamily),
-                    const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: _buildTopBar(l10n, fontFamily),
+                  ),
+                  SizedBox(height: 24.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: _buildBillingToggle(l10n, fontFamily),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: ColorManager.primary,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
 
             if (state.plans.isEmpty) {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -133,23 +145,23 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // GestureDetector(
-          //   onTap: () => context.goNamed(AppRoutesNames.login),
-          //   child: Container(
-          //     width: 40.w,
-          //     height: 40.w,
-          //     decoration: BoxDecoration(
-          //       color: ColorManager.gray100,
-          //       borderRadius: BorderRadius.circular(12.r),
-          //     ),
-          //     child: Icon(
-          //       Icons.arrow_back_ios_new,
-          //       color: ColorManager.textPrimary,
-          //       size: 18.w,
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(height: 24.h),
+          GestureDetector(
+            onTap: () => context.goNamed(AppRoutesNames.login),
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: ColorManager.gray100,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                color: ColorManager.textPrimary,
+                size: 18.w,
+              ),
+            ),
+          ),
+          SizedBox(height: 24.h),
           Text(
             l10n.chooseYourPlan,
             style: TextStyle(
@@ -544,6 +556,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
   }
 
   Widget _buildBottomButton(AppLocalizations l10n) {
+    final fontFamily = FontHelper.fontFamily(context);
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return Container(
@@ -559,26 +572,62 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
             ],
           ),
           child: SafeArea(
-            child: PrimaryButton(
-              text: l10n.next,
-              isEnabled: _selectedPlanId != null,
-              onPressed: _selectedPlanId != null
-                  ? () {
-                      final selectedPlan = state.plans.firstWhere(
-                        (plan) => plan.id == _selectedPlanId,
-                      );
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PrimaryButton(
+                  text: l10n.next,
+                  isEnabled: _selectedPlanId != null,
+                  onPressed: _selectedPlanId != null
+                      ? () {
+                          final selectedPlan = state.plans.firstWhere(
+                            (plan) => plan.id == _selectedPlanId,
+                          );
 
-                      final authBloc = context.read<AuthBloc>();
-                      authBloc.add(
-                        AuthEvent.signupPlanEntitySelected(selectedPlan),
-                      );
+                          final authBloc = context.read<AuthBloc>();
+                          authBloc.add(
+                            AuthEvent.signupPlanEntitySelected(selectedPlan),
+                          );
 
-                      context.pushNamed(
-                        AppRoutesNames.register,
-                        extra: authBloc,
-                      );
-                    }
-                  : null,
+                          context.pushNamed(
+                            AppRoutesNames.emailEntry,
+                            extra: authBloc,
+                          );
+                        }
+                      : null,
+                ),
+                SizedBox(height: 12.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      l10n.alreadyHaveAccount,
+                      style: TextStyle(
+                        fontSize: FontSizesManager.s14,
+                        fontFamily: fontFamily,
+                        color: ColorManager.textSecondary,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => context.goNamed(AppRoutesNames.login),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        l10n.logIn,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s14,
+                          fontFamily: fontFamily,
+                          color: ColorManager.primary,
+                          fontWeight: FontWeightManager.semiBold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );

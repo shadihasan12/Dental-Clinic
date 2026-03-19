@@ -175,7 +175,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   message: l10n.completeYourRegistration,
                 );
                 context.pushNamed(
-                  AppRoutesNames.choosePlan,
+                  AppRoutesNames.register,
                   extra: context.read<AuthBloc>(),
                 );
               }

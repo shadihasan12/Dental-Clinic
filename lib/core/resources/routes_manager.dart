@@ -183,13 +183,17 @@ class RoutesManager {
           path: '/choose-plan',
           name: AppRoutesNames.choosePlan,
           pageBuilder: (context, state) {
-            // Get the AuthBloc from extra parameter passed during navigation
-            final authBloc = state.extra as AuthBloc;
+            final authBloc = state.extra as AuthBloc?;
             return CupertinoPage(
-              child: BlocProvider<AuthBloc>.value(
-                value: authBloc,
-                child: const ChoosePlanPage(),
-              ),
+              child: authBloc != null
+                  ? BlocProvider<AuthBloc>.value(
+                      value: authBloc,
+                      child: const ChoosePlanPage(),
+                    )
+                  : BlocProvider(
+                      create: (_) => getIt<AuthBloc>(),
+                      child: const ChoosePlanPage(),
+                    ),
               key: state.pageKey,
               name: state.name,
             );
