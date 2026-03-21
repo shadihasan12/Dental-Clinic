@@ -72,14 +72,14 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
         AppFormField(
           label: '${l10n.phone} *',
           controller: widget.phoneController,
-          hintText: '0988026431',
+          hintText: l10n.phoneHint,
           keyboardType: TextInputType.phone,
         ),
 
         // — Divider —
         Padding(
           padding: EdgeInsets.symmetric(vertical: 20.h),
-          child: Divider(color: ColorManager.grey),
+          child: Divider(color: ColorManager.of(context).divider),
         ),
 
         // — Medical History —
@@ -100,7 +100,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
-                  color: ColorManager.black,
+                  color: ColorManager.of(context).textPrimary,
                   fontFamily: FontHelper.fontFamily(context),
                 ),
               ),
@@ -143,7 +143,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
       style: TextStyle(
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
-        color: ColorManager.gray400,
+        color: ColorManager.of(context).textSubtle,
         fontFamily: FontHelper.fontFamily(context),
       ),
     );

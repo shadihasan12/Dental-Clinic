@@ -90,7 +90,7 @@ class AppConfirmationDialog extends StatelessWidget {
               fontSize: 18.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w600,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -100,7 +100,7 @@ class AppConfirmationDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
         ],
@@ -110,8 +110,8 @@ class AppConfirmationDialog extends StatelessWidget {
           text: noText,
           onPressed: onNoPressed ?? () => Navigator.pop(context, false),
           filled: false,
-          fillColor: ColorManager.white,
-          textColor: ColorManager.textPrimary,
+          fillColor: ColorManager.of(context).cardBg,
+          textColor: ColorManager.of(context).textPrimary,
         ),
         SizedBox(height: 11.w),
         ActionButton(

@@ -59,7 +59,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<InvitationBloc, InvitationState>(
         listener: (context, state) {
           if (state.sendSuccess) {
@@ -107,7 +107,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                   child: Container(
                     padding: EdgeInsets.all(20.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.white,
+                      color: ColorManager.of(context).cardBg,
                       borderRadius: BorderRadius.circular(16.r),
                       boxShadow: [
                         BoxShadow(
@@ -153,16 +153,16 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
                           decoration: BoxDecoration(
-                            color: ColorManager.gray50,
+                            color: ColorManager.of(context).inputBg,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<ClinicRole>(
                               value: state.inviteeRole,
                               isExpanded: true,
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.keyboard_arrow_down,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                               ),
                               items: [ClinicRole.dentist, ClinicRole.receptionist]
                                   .map((role) {
@@ -172,7 +172,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                                     children: [
                                       Icon(
                                         _getRoleIcon(role),
-                                        color: ColorManager.textSecondary,
+                                        color: ColorManager.of(context).textSecondary,
                                         size: 20.w,
                                       ),
                                       SizedBox(width: 12.w),
@@ -233,7 +233,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorManager.primary,
-                              foregroundColor: ColorManager.white,
+                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
@@ -244,9 +244,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                                     height: 24.h,
                                     child: const CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        ColorManager.white,
-                                      ),
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                     ),
                                   )
                                 : const Text('Send Invitation'),
@@ -296,7 +294,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
                       child: Text(
                         'No pending invitations',
                         style: TextStyleManager.bodyMedium.copyWith(
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                     ),
@@ -337,7 +335,7 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
     return Text(
       text,
       style: TextStyleManager.titleSmall.copyWith(
-        color: ColorManager.textPrimary,
+        color: ColorManager.of(context).textPrimary,
         fontWeight: FontWeight.w600,
       ),
     );
@@ -350,11 +348,11 @@ class _InviteStaffContentState extends State<_InviteStaffContent> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.textTertiary,
+        color: ColorManager.of(context).textTertiary,
       ),
       prefixIcon: prefixIcon,
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).inputBg,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide.none,
@@ -419,7 +417,7 @@ class _InvitationCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -521,9 +519,9 @@ class _InvitationCard extends StatelessWidget {
                 ),
               );
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.close,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
         ],

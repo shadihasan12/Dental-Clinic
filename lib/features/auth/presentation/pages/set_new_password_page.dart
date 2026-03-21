@@ -40,7 +40,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -94,12 +94,12 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: ColorManager.gray100,
+                          color: ColorManager.of(context).cardBgSecondary,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                           size: 18.w,
                         ),
                       ),
@@ -114,7 +114,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                         fontSize: FontSizesManager.s28,
                         fontWeight: FontWeightManager.bold,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -123,7 +123,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                       style: TextStyle(
                         fontSize: FontSizesManager.s14,
                         fontFamily: fontFamily,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
 
@@ -160,7 +160,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                           state.isResetPasswordVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                           size: 20.w,
                         ),
                         onPressed: () {
@@ -202,7 +202,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                           state.isResetPasswordConfirmVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                           size: 20.w,
                         ),
                         onPressed: () {

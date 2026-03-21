@@ -18,11 +18,12 @@ class SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Container(
       width: double.infinity,
       padding: padding ?? EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: c.cardBg,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -39,7 +40,7 @@ class SectionCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: ColorManager.textPrimary,
+              color: c.textPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 16.sp,
               fontFamily: FontFamily.geist,

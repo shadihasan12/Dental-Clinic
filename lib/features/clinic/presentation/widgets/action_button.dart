@@ -27,8 +27,8 @@ class ActionButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: fillColor ?? ColorManager.white,
-          border: !filled ? Border.all(color: ColorManager.gray200, width: 1) : null,
+          color: fillColor ?? ColorManager.of(context).cardBg,
+          border: !filled ? Border.all(color: ColorManager.of(context).borderLight, width: 1) : null,
           borderRadius: BorderRadius.circular(15.r),
         ),
         child: Center(

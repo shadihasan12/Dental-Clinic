@@ -107,6 +107,8 @@
   "appSettings": "App Settings",
   "appearance": "Appearance",
   "lightMode": "Light mode",
+  "darkMode": "Dark mode",
+  "systemDefault": "System default",
   "privacySecurity": "Privacy & Security",
   "support": "Support",
   "helpCenter": "Help Center",
@@ -670,6 +672,24 @@
   "noUsersYet": "No users yet",
   "manageRoles": "Manage Roles",
   "specialization": "Specialization",
-  "selectSpecialization": "Select specialization"
+  "selectSpecialization": "Select specialization",
+
+  "patientInfo": "Patient Info",
+  "caseInfo": "Case Info",
+  "initialVisit": "Initial Visit",
+  "addNewPatient": "Add new patient",
+  "stepOfTotal": "Step {current} of {total}: {stepTitle}",
+  "@stepOfTotal": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" },
+      "stepTitle": { "type": "String" }
+    }
+  },
+  "caseInformationOptional": "Case Information (Optional)",
+  "caseAutoCreateDescription": "A case will be automatically created for this patient. You can add a title or skip this step.",
+  "caseTitle": "Case Title",
+  "caseTitleExampleHint": "e.g., Full Mouth Restoration, Orthodontic Treatment",
+  "phoneHint": "0988026431"
 }
 

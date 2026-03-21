@@ -106,7 +106,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     await showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -124,7 +124,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                     child: Text(
                       AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: ColorManager.of(context).textTertiary,
                         fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                       ),
@@ -149,7 +149,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                 ],
               ),
             ),
-            Divider(height: 1, color: Colors.grey.shade200),
+            Divider(height: 1, color: ColorManager.of(context).divider),
             Expanded(
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
@@ -248,7 +248,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: Column(
         children: [
           PageHeader(
@@ -418,7 +418,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         style: TextStyle(
           fontSize: 13.sp,
           fontFamily: FontHelper.fontFamily(context),
-          color: Colors.grey.shade400,
+          color: ColorManager.of(context).textSubtle,
         ),
       );
     }
@@ -450,7 +450,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         child: Row(
           children: [
             Icon(Icons.calendar_today_outlined,
-                size: 16.w, color: Colors.grey.shade500),
+                size: 16.w, color: ColorManager.of(context).textTertiary),
             SizedBox(width: 8.w),
             Text(
               isToday ? '${l10n.today}, $formatted' : formatted,
@@ -458,7 +458,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             const Spacer(),
@@ -485,7 +485,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       child: Row(
         children: [
           Icon(Icons.notifications_outlined,
-              size: 18.w, color: Colors.grey.shade500),
+              size: 18.w, color: ColorManager.of(context).textTertiary),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -494,7 +494,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),
@@ -503,12 +503,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             width: 22.w,
             height: 22.w,
             decoration: BoxDecoration(
-              color: _sendReminder ? ColorManager.primary : Colors.white,
+              color: _sendReminder ? ColorManager.primary : ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(6.r),
               border: Border.all(
                 color: _sendReminder
                     ? ColorManager.primary
-                    : Colors.grey.shade300,
+                    : ColorManager.of(context).border,
                 width: 1.5,
               ),
             ),
@@ -529,7 +529,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       style: TextStyle(
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
-        color: Colors.black54,
+        color: ColorManager.of(context).textSecondary,
         fontFamily: FontHelper.fontFamily(context),
       ),
     );
@@ -538,7 +538,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   Widget _divider() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 18.h),
-      child: Divider(color: Colors.grey.shade200),
+      child: Divider(color: ColorManager.of(context).divider),
     );
   }
 

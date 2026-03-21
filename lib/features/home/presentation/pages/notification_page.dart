@@ -31,7 +31,7 @@ class _NotificationContent extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: Column(
         children: [
           // Header is always visible
@@ -85,7 +85,7 @@ class _NotificationContent extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ),
@@ -98,7 +98,7 @@ class _NotificationContent extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 8.h),
                       itemCount: notifications.length,
                       separatorBuilder: (_, __) =>
-                          Divider(height: 1, color: Colors.grey.shade100),
+                          Divider(height: 1, color: ColorManager.of(context).divider),
                       itemBuilder: (context, index) {
                         final notification = notifications[index];
                         return NotificationCard(
@@ -149,7 +149,7 @@ class _NotificationContent extends StatelessWidget {
                 fontSize: 18.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -159,7 +159,7 @@ class _NotificationContent extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
           ],

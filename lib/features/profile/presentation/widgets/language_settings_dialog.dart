@@ -39,7 +39,7 @@ class LanguageSettingsModal extends StatelessWidget {
                   fontSize: 18.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
               IconButton(
@@ -66,7 +66,7 @@ class LanguageSettingsModal extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: ColorManager.gray50,
+              color: ColorManager.of(context).cardBgSecondary,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Text(
@@ -74,7 +74,7 @@ class LanguageSettingsModal extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
           ),

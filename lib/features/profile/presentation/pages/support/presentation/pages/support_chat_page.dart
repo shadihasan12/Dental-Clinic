@@ -70,7 +70,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<SupportChatBloc, SupportChatState>(
         listenWhen: (prev, curr) => curr.maybeMap(
           loaded: (_) => true,
@@ -133,7 +133,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
       children: [
         Container(
           width: double.infinity,
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           child: SafeArea(
             bottom: false,
             child: Padding(
@@ -143,7 +143,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                   IconButton(
                     icon: Icon(
                       Icons.arrow_back_ios_new,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                       size: 20.w,
                     ),
                     onPressed: () => Navigator.pop(context),
@@ -172,7 +172,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                             fontSize: 15.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                         Text(
@@ -180,7 +180,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -193,7 +193,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
             ),
           ),
         ),
-        Divider(height: 1, color: ColorManager.borderLight),
+        Divider(height: 1, color: ColorManager.of(context).borderLight),
       ],
     );
   }
@@ -223,7 +223,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
               fontSize: 16.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w600,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -235,7 +235,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ),
@@ -277,7 +277,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
       padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Row(
         children: [
-          Expanded(child: Divider(color: ColorManager.borderLight)),
+          Expanded(child: Divider(color: ColorManager.of(context).borderLight)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Text(
@@ -285,12 +285,12 @@ class _SupportChatContentState extends State<_SupportChatContent> {
               style: TextStyle(
                 fontSize: 11.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Expanded(child: Divider(color: ColorManager.borderLight)),
+          Expanded(child: Divider(color: ColorManager.of(context).borderLight)),
         ],
       ),
     );
@@ -336,7 +336,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                       vertical: 10.h,
                     ),
                     decoration: BoxDecoration(
-                      color: isUser ? ColorManager.primary : ColorManager.white,
+                      color: isUser ? ColorManager.primary : ColorManager.of(context).cardBg,
                       borderRadius: isUser
                           ? BorderRadius.only(
                               topLeft: Radius.circular(16.r),
@@ -365,8 +365,8 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w400,
                         color: isUser
-                            ? ColorManager.white
-                            : ColorManager.textPrimary,
+                            ? Colors.white
+                            : ColorManager.of(context).textPrimary,
                         height: 1.4,
                       ),
                     ),
@@ -380,7 +380,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontFamily: FontHelper.fontFamily(context),
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                       if (isUser) ...[
@@ -428,7 +428,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: ColorManager.white,
+                color: ColorManager.of(context).cardBg,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(4.r),
                   topRight: Radius.circular(16.r),
@@ -460,7 +460,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
   Widget _buildInputBar(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         boxShadow: [
           BoxShadow(
             color: ColorManager.black.withValues(alpha: 0.06),
@@ -481,9 +481,9 @@ class _SupportChatContentState extends State<_SupportChatContent> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: ColorManager.gray50,
+                color: ColorManager.of(context).inputBg,
                 borderRadius: BorderRadius.circular(22.r),
-                border: Border.all(color: ColorManager.borderLight),
+                border: Border.all(color: ColorManager.of(context).borderLight),
               ),
               child: TextField(
                 controller: _messageController,
@@ -493,13 +493,13 @@ class _SupportChatContentState extends State<_SupportChatContent> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: l10n.typeAMessage,
                   hintStyle: TextStyle(
                     fontSize: 14.sp,
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -523,7 +523,7 @@ class _SupportChatContentState extends State<_SupportChatContent> {
               ),
               child: Icon(
                 Icons.send_rounded,
-                color: ColorManager.white,
+                color: Colors.white,
                 size: 20.w,
               ),
             ),
@@ -625,7 +625,7 @@ class _TypingDotState extends State<_TypingDot>
             height: 7.w,
             margin: EdgeInsets.symmetric(horizontal: 2.w),
             decoration: BoxDecoration(
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
               shape: BoxShape.circle,
             ),
           ),

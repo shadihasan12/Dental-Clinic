@@ -27,9 +27,9 @@ class PlanSummaryHeader extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: ColorManager.gray200),
+        border: Border.all(color: ColorManager.of(context).borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -53,7 +53,7 @@ class PlanSummaryHeader extends StatelessWidget {
 
           // ── Action buttons ─────────────────────────────────────
           if (onViewPaymentHistory != null || onMarkAsFinished != null) ...[
-            Divider(height: 1, color: ColorManager.gray200),
+            Divider(height: 1, color: ColorManager.of(context).borderLight),
             _buildActions(context, l10n),
           ],
         ],
@@ -69,16 +69,16 @@ class PlanSummaryHeader extends StatelessWidget {
           context,
           label: l10n.totalLabel,
           value: plan.grandTotal.toStringAsFixed(0),
-          valueColor: ColorManager.textPrimary,
+          valueColor: ColorManager.of(context).textPrimary,
         ),
-        _verticalDivider(),
+        _verticalDivider(context),
         _stat(
           context,
           label: l10n.paidLabel,
           value: plan.paid.toStringAsFixed(0),
           valueColor: const Color(0xFF2E9E5B),
         ),
-        _verticalDivider(),
+        _verticalDivider(context),
         _stat(
           context,
           label: l10n.pendingLabel,
@@ -99,14 +99,14 @@ class PlanSummaryHeader extends StatelessWidget {
           context,
           label: l10n.totalCost,
           value: plan.totalCost > 0 ? plan.totalCost.toStringAsFixed(0) : '—',
-          valueColor: ColorManager.textPrimary,
+          valueColor: ColorManager.of(context).textPrimary,
         ),
-        _verticalDivider(),
+        _verticalDivider(context),
         _stat(
           context,
           label: l10n.labFees,
           value: plan.labFees > 0 ? plan.labFees.toStringAsFixed(0) : '—',
-          valueColor: ColorManager.textSecondary,
+          valueColor: ColorManager.of(context).textSecondary,
         ),
       ],
     );
@@ -126,7 +126,7 @@ class PlanSummaryHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -144,8 +144,8 @@ class PlanSummaryHeader extends StatelessWidget {
     );
   }
 
-  Widget _verticalDivider() {
-    return Container(width: 1, height: 36.h, color: ColorManager.gray200);
+  Widget _verticalDivider(BuildContext context) {
+    return Container(width: 1, height: 36.h, color: ColorManager.of(context).borderLight);
   }
 
   Widget _buildActions(BuildContext context, AppLocalizations l10n) {
@@ -184,7 +184,7 @@ class PlanSummaryHeader extends StatelessWidget {
               decoration: i == 0 && items.length > 1
                   ? BoxDecoration(
                       border: Border(
-                        right: BorderSide(color: ColorManager.gray200),
+                        right: BorderSide(color: ColorManager.of(context).borderLight),
                       ),
                     )
                   : null,

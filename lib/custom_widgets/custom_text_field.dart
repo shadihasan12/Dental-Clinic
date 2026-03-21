@@ -64,6 +64,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return TextFormField(
       textDirection: textDirection,
       controller: controller,
@@ -84,7 +85,7 @@ class CustomTextField extends StatelessWidget {
       onFieldSubmitted: onSubmitted,
       onTap: onTap,
       style: TextStyleManager.bodyLarge.copyWith(
-        color: ColorManager.textPrimary,
+        color: c.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hintText,
@@ -92,14 +93,14 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: fillColor ?? ColorManager.gray50,
+        fillColor: fillColor ?? c.inputBg,
         hintStyle: TextStyle(
-          color: ColorManager.textHint,
+          color: c.textHint,
           fontFamily: FontHelper.fontFamily(context),
           fontSize: 12.sp
         ),
         labelStyle: TextStyle(
-          color: ColorManager.textSecondary,
+          color: c.textSecondary,
           fontFamily: FontHelper.fontFamily(context),
         ),
         contentPadding:

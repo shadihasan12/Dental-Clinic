@@ -28,7 +28,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
         if (!didPop) _cancel(context);
       },
       child: Scaffold(
-        backgroundColor: ColorManager.white,
+        backgroundColor: ColorManager.of(context).scaffoldBg,
         body: MultiBlocListener(
           listeners: [
             BlocListener<AuthBloc, AuthState>(
@@ -83,12 +83,12 @@ class VerifyEmailEntryPage extends StatelessWidget {
                           width: 40.w,
                           height: 40.w,
                           decoration: BoxDecoration(
-                            color: ColorManager.gray100,
+                            color: ColorManager.of(context).cardBgSecondary,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Icon(
                             Icons.arrow_back_ios_new,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                             size: 18.w,
                           ),
                         ),
@@ -102,7 +102,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
                           fontSize: FontSizesManager.s28,
                           fontWeight: FontWeightManager.bold,
                           fontFamily: fontFamily,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                       SizedBox(height: 8.h),
@@ -111,7 +111,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: FontSizesManager.s14,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
 
@@ -142,7 +142,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
                             fontSize: FontSizesManager.s16,
                             fontWeight: FontWeightManager.semiBold,
                             fontFamily: fontFamily,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                       ),
@@ -155,7 +155,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: FontSizesManager.s14,
                             fontFamily: fontFamily,
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                             height: FontHeightsManager.normal,
                           ),
                           textAlign: TextAlign.center,

@@ -109,7 +109,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
         maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -121,7 +121,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
             width: 40.w,
             height: 4.h,
             decoration: BoxDecoration(
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
@@ -162,7 +162,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                   fontSize: 18.sp,
                                   fontFamily: FontHelper.fontFamily(context),
                                   fontWeight: FontWeight.w600,
-                                  color: ColorManager.textPrimary,
+                                  color: ColorManager.of(context).textPrimary,
                                 ),
                               ),
                               Text(
@@ -170,7 +170,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.textSecondary,
+                                  color: ColorManager.of(context).textSecondary,
                                 ),
                               ),
                             ],
@@ -180,7 +180,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                           onPressed: () => Navigator.pop(context),
                           icon: Icon(
                             Icons.close,
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                           ),
                         ),
                       ],
@@ -192,7 +192,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: ColorManager.gray50,
+                        color: ColorManager.of(context).cardBgSecondary,
                         borderRadius: BorderRadiusManager.lg,
                       ),
                       child: Column(
@@ -209,7 +209,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                             valueColor: ColorManager.success,
                           ),
                           SizedBox(height: 8.h),
-                          Divider(color: ColorManager.gray200),
+                          Divider(color: ColorManager.of(context).borderLight),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
                             AppLocalizations.of(context)!.remaining,
@@ -239,18 +239,18 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                       decoration: InputDecoration(
                         hintText: AppLocalizations.of(context)!.addNote,
                         hintStyle: TextStyle(
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                           fontFamily: FontHelper.fontFamily(context),
                         ),
                         filled: true,
                         fillColor: ColorManager.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.gray200),
+                          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.gray200),
+                          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
@@ -317,18 +317,18 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                   hintText: '0.00',
                   prefixText: '\$ ',
                   hintStyle: TextStyle(
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                     fontFamily: FontHelper.fontFamily(context),
                   ),
                   filled: true,
                   fillColor: ColorManager.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
-                    borderSide: BorderSide(color: ColorManager.gray200),
+                    borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
-                    borderSide: BorderSide(color: ColorManager.gray200),
+                    borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
@@ -382,7 +382,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
         fontSize: 14.sp,
         fontFamily: FontHelper.fontFamily(context),
         fontWeight: FontWeight.w500,
-        color: ColorManager.textPrimary,
+        color: ColorManager.of(context).textPrimary,
       ),
     );
   }
@@ -401,7 +401,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           style: TextStyle(
             fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         Text(
@@ -410,7 +410,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
             fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
-            color: valueColor ?? ColorManager.textPrimary,
+            color: valueColor ?? ColorManager.of(context).textPrimary,
           ),
         ),
       ],

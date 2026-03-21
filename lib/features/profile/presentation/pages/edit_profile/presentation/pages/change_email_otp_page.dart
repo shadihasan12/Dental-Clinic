@@ -258,7 +258,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                           fontSize: 15.sp,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.w600,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                     ),
@@ -272,7 +272,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ),
@@ -299,23 +299,23 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                                 fontSize: 24.sp,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding:
                                     EdgeInsets.symmetric(vertical: 14.h),
                                 filled: true,
-                                fillColor: ColorManager.gray100,
+                                fillColor: ColorManager.of(context).cardBgSecondary,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide:
-                                      BorderSide(color: ColorManager.gray300),
+                                      BorderSide(color: ColorManager.of(context).border),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide:
-                                      BorderSide(color: ColorManager.gray300),
+                                      BorderSide(color: ColorManager.of(context).border),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
@@ -327,7 +327,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide:
-                                      BorderSide(color: ColorManager.gray300),
+                                      BorderSide(color: ColorManager.of(context).border),
                                 ),
                               ),
                               inputFormatters: [
@@ -364,7 +364,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                               ),
                             ),
                           ],
@@ -381,7 +381,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   fontFamily: fontFamily,
-                                  color: ColorManager.textSecondary,
+                                  color: ColorManager.of(context).textSecondary,
                                 ),
                               ),
                             );
@@ -395,7 +395,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     fontFamily: fontFamily,
-                                    color: ColorManager.textSecondary,
+                                    color: ColorManager.of(context).textSecondary,
                                   ),
                                 ),
                                 TextButton(

@@ -18,6 +18,7 @@ class TimePickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -28,7 +29,7 @@ class TimePickerField extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textTertiary,
+              color: c.textTertiary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -36,16 +37,16 @@ class TimePickerField extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: ColorManager.gray50,
+              color: c.cardBgSecondary,
               borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(color: ColorManager.borderLight),
+              border: Border.all(color: c.borderLight),
             ),
             child: Text(
               formatTime(time),
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textPrimary,
+                color: c.textPrimary,
               ),
             ),
           ),

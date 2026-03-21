@@ -107,11 +107,11 @@ class _PatientPickerState extends State<PatientPicker> {
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
             ),
-            Icon(Icons.close, size: 18.w, color: Colors.grey.shade400),
+            Icon(Icons.close, size: 18.w, color: ColorManager.of(context).textSubtle),
           ],
         ),
       ),
@@ -123,9 +123,9 @@ class _PatientPickerState extends State<PatientPicker> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+            color: ColorManager.of(context).inputBg,
             borderRadius: BorderRadius.circular(10.r),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: ColorManager.of(context).borderLight),
           ),
           child: TextField(
             controller: _searchController,
@@ -141,12 +141,12 @@ class _PatientPickerState extends State<PatientPicker> {
               hintStyle: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: Colors.grey.shade400,
+                color: ColorManager.of(context).textSubtle,
               ),
               prefixIcon: Icon(
                 Icons.search,
                 size: 20.w,
-                color: Colors.grey.shade400,
+                color: ColorManager.of(context).textSubtle,
               ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
@@ -161,16 +161,16 @@ class _PatientPickerState extends State<PatientPicker> {
             margin: EdgeInsets.only(top: 4.h),
             constraints: BoxConstraints(maxHeight: 180.h),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: ColorManager.of(context).borderLight),
             ),
             child: ListView.separated(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _filtered.length,
               separatorBuilder: (context, index) =>
-                  Divider(height: 1, color: Colors.grey.shade100),
+                  Divider(height: 1, color: ColorManager.of(context).borderLight),
               itemBuilder: (context, index) {
                 final patient = _filtered[index];
                 return InkWell(
@@ -184,14 +184,14 @@ class _PatientPickerState extends State<PatientPicker> {
                       children: [
                         CircleAvatar(
                           radius: 14.r,
-                          backgroundColor: Colors.grey.shade100,
+                          backgroundColor: ColorManager.of(context).cardBgSecondary,
                           child: Text(
                             patient[0],
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontFamily: FontHelper.fontFamily(context),
                               fontWeight: FontWeight.w600,
-                              color: Colors.black54,
+                              color: ColorManager.of(context).textSecondary,
                             ),
                           ),
                         ),
@@ -201,7 +201,7 @@ class _PatientPickerState extends State<PatientPicker> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: Colors.black87,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                       ],
@@ -219,7 +219,7 @@ class _PatientPickerState extends State<PatientPicker> {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: Colors.grey.shade400,
+                color: ColorManager.of(context).textSubtle,
               ),
             ),
           ),

@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/core/resources/theme_manager.dart';
 import 'package:dental_clinic_app/core/constants/app_constants.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
@@ -31,13 +32,11 @@ Future<void> main() async {
     }
   }
 
-  // Set system UI overlay style
+  // System UI overlay style is handled by the theme's appBarTheme.systemOverlayStyle
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: ColorManager.transparent,
-      statusBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: ColorManager.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
@@ -66,8 +65,8 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
   @override
   void initState() {
     super.initState();
-    // Load the saved language preference
     getIt<LanguageBloc>().add(const LoadLanguageEvent());
+    getIt<ThemeBloc>().add(const LoadThemeEvent());
   }
 
   @override
@@ -77,6 +76,9 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
         BlocProvider<LanguageBloc>(
           create: (_) => getIt<LanguageBloc>()..add(const LoadLanguageEvent()),
         ),
+        BlocProvider<ThemeBloc>(
+          create: (_) => getIt<ThemeBloc>()..add(const LoadThemeEvent()),
+        ),
         BlocProvider<CurrencyBloc>(
           lazy: false,
           create: (_) => getIt<CurrencyBloc>()..add(const CurrencyEvent.load()),
@@ -85,24 +87,31 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
       child: BlocBuilder<LanguageBloc, LanguageState>(
         bloc: getIt<LanguageBloc>(),
         builder: (context, languageState) {
-          return ScreenUtilInit(
-            designSize: const Size(375, 812),
-            minTextAdapt: true,
-            splitScreenMode: true,
-            builder: (context, child) {
-              return MaterialApp.router(
-                title: AppConstants.appName,
-                debugShowCheckedModeBanner: false,
-                theme: getApplicationThemeData(),
-                locale: languageState.locale,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const [Locale('en'), Locale('ar')],
-                routerConfig: routesManager.router,
+          return BlocBuilder<ThemeBloc, ThemeState>(
+            bloc: getIt<ThemeBloc>(),
+            builder: (context, themeState) {
+              return ScreenUtilInit(
+                designSize: const Size(375, 812),
+                minTextAdapt: true,
+                splitScreenMode: true,
+                builder: (context, child) {
+                  return MaterialApp.router(
+                    title: AppConstants.appName,
+                    debugShowCheckedModeBanner: false,
+                    theme: getApplicationThemeData(),
+                    darkTheme: getDarkThemeData(),
+                    themeMode: themeState.themeMode,
+                    locale: languageState.locale,
+                    localizationsDelegates: const [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: const [Locale('en'), Locale('ar')],
+                    routerConfig: routesManager.router,
+                  );
+                },
               );
             },
           );

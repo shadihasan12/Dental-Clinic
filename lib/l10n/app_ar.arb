@@ -107,6 +107,8 @@
   "appSettings": "إعدادات التطبيق",
   "appearance": "المظهر",
   "lightMode": "الوضع الفاتح",
+  "darkMode": "الوضع الداكن",
+  "systemDefault": "إعدادات النظام",
   "privacySecurity": "الخصوصية والأمان",
   "support": "الدعم",
   "helpCenter": "مركز المساعدة",
@@ -672,6 +674,24 @@
   "noUsersYet": "لا يوجد مستخدمون بعد",
   "manageRoles": "إدارة الأدوار",
   "specialization": "التخصص",
-  "selectSpecialization": "اختر التخصص"
+  "selectSpecialization": "اختر التخصص",
+
+  "patientInfo": "معلومات المريض",
+  "caseInfo": "معلومات الحالة",
+  "initialVisit": "الزيارة الأولى",
+  "addNewPatient": "إضافة مريض جديد",
+  "stepOfTotal": "الخطوة {current} من {total}: {stepTitle}",
+  "@stepOfTotal": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" },
+      "stepTitle": { "type": "String" }
+    }
+  },
+  "caseInformationOptional": "معلومات الحالة (اختياري)",
+  "caseAutoCreateDescription": "سيتم إنشاء حالة تلقائياً لهذا المريض. يمكنك إضافة عنوان أو تخطي هذه الخطوة.",
+  "caseTitle": "عنوان الحالة",
+  "caseTitleExampleHint": "مثال: ترميم كامل للفم، علاج تقويمي",
+  "phoneHint": "0988026431"
 }
 

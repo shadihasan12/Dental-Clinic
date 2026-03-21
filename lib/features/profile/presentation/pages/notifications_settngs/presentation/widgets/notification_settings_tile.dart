@@ -25,6 +25,7 @@ class NotificationSettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       children: [
         Padding(
@@ -54,7 +55,7 @@ class NotificationSettingsTile extends StatelessWidget {
                         fontSize: 14.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w500,
-                        color: ColorManager.textPrimary,
+                        color: c.textPrimary,
                       ),
                     ),
                     SizedBox(height: 2.h),
@@ -63,7 +64,7 @@ class NotificationSettingsTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textTertiary,
+                        color: c.textTertiary,
                       ),
                     ),
                   ],
@@ -78,7 +79,7 @@ class NotificationSettingsTile extends StatelessWidget {
                 activeThumbColor: ColorManager.white,
                 activeTrackColor: ColorManager.primary,
                 inactiveThumbColor: ColorManager.white,
-                inactiveTrackColor: ColorManager.gray200,
+                inactiveTrackColor: c.divider,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ],
@@ -89,7 +90,7 @@ class NotificationSettingsTile extends StatelessWidget {
             height: 1,
             indent: 68.w,
             endIndent: 16.w,
-            color: ColorManager.borderLight,
+            color: c.borderLight,
           ),
       ],
     );

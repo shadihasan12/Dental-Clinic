@@ -57,7 +57,7 @@ class _ToothTreatmentSheetContentState
         maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -70,7 +70,7 @@ class _ToothTreatmentSheetContentState
               width: 36.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.borderLight,
+                color: ColorManager.of(context).borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -111,7 +111,7 @@ class _ToothTreatmentSheetContentState
                         fontSize: 17.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 2.h),
@@ -120,7 +120,7 @@ class _ToothTreatmentSheetContentState
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textTertiary,
+                        color: ColorManager.of(context).textTertiary,
                       ),
                     ),
                   ],
@@ -143,7 +143,7 @@ class _ToothTreatmentSheetContentState
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w500,
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -224,7 +224,7 @@ class _ToothTreatmentSheetContentState
                 padding: EdgeInsets.symmetric(vertical: 14.h),
                 decoration: BoxDecoration(
                   color: _selectedIds.isEmpty
-                      ? ColorManager.gray200
+                      ? ColorManager.of(context).borderLight
                       : ColorManager.primary,
                   borderRadius: BorderRadiusManager.lg,
                 ),
@@ -238,7 +238,7 @@ class _ToothTreatmentSheetContentState
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
                     color: _selectedIds.isEmpty
-                        ? ColorManager.textTertiary
+                        ? ColorManager.of(context).textTertiary
                         : ColorManager.white,
                   ),
                 ),

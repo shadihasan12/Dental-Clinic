@@ -145,7 +145,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                           fontSize: 15.sp,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.w600,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                     ),
@@ -159,7 +159,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ),
@@ -173,7 +173,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                         fontSize: 13.sp,
                         fontFamily: fontFamily,
                         fontWeight: FontWeight.w500,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
                     SizedBox(height: 6.h),
@@ -184,7 +184,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                       decoration: _inputDecoration(
                         hint: 'email@example.com',
@@ -201,7 +201,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                         fontSize: 13.sp,
                         fontFamily: fontFamily,
                         fontWeight: FontWeight.w500,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
                     SizedBox(height: 6.h),
@@ -213,7 +213,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                       decoration: _inputDecoration(
                         hint: '••••••••',
@@ -226,7 +226,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
                             size: 20.w,
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                         ),
                       ),
@@ -288,20 +288,20 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
       hintText: hint,
       hintStyle: TextStyle(
         fontSize: 15.sp,
-        color: ColorManager.textTertiary,
+        color: ColorManager.of(context).textTertiary,
       ),
-      prefixIcon: Icon(icon, size: 20.w, color: ColorManager.textTertiary),
+      prefixIcon: Icon(icon, size: 20.w, color: ColorManager.of(context).textTertiary),
       suffixIcon: suffix,
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).cardBgSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),

@@ -38,7 +38,7 @@ class _ClinicUsersContent extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
         listener: (context, state) {
           state.maybeWhen(
@@ -92,7 +92,7 @@ class _ClinicUsersContent extends StatelessWidget {
               // Header
               Container(
                 width: double.infinity,
-                color: ColorManager.white,
+                color: ColorManager.of(context).cardBg,
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
@@ -105,7 +105,7 @@ class _ClinicUsersContent extends StatelessWidget {
                         IconButton(
                           icon: Icon(
                             Icons.arrow_back_ios_new,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                             size: 20.w,
                           ),
                           onPressed: () => context.pop(),
@@ -117,7 +117,7 @@ class _ClinicUsersContent extends StatelessWidget {
                               fontSize: 18.sp,
                               fontFamily: FontHelper.fontFamily(context),
                               fontWeight: FontWeight.w600,
-                              color: ColorManager.textPrimary,
+                              color: ColorManager.of(context).textPrimary,
                             ),
                           ),
                         ),
@@ -147,7 +147,7 @@ class _ClinicUsersContent extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(height: 1, color: ColorManager.borderLight),
+              Divider(height: 1, color: ColorManager.of(context).borderLight),
 
               // Body
               Expanded(
@@ -172,14 +172,14 @@ class _ClinicUsersContent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.people_outline, size: 48.w, color: ColorManager.gray300),
+          Icon(Icons.people_outline, size: 48.w, color: ColorManager.of(context).border),
           SizedBox(height: 12.h),
           Text(
             l10n.noUsersYet,
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -206,14 +206,14 @@ class _ClinicUsersContent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
+          Icon(Icons.error_outline, size: 48.w, color: ColorManager.of(context).textTertiary),
           SizedBox(height: 12.h),
           Text(
             msg,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14.sp,
-              color: Colors.grey.shade500,
+              color: ColorManager.of(context).textTertiary,
               fontFamily: FontHelper.fontFamily(context),
             ),
           ),
@@ -287,7 +287,7 @@ class _ClinicUsersContent extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: ColorManager.of(context).cardBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -314,7 +314,7 @@ class _ClinicUsersContent extends StatelessWidget {
               l10n.cancel,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
           ),
@@ -359,7 +359,7 @@ class _UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -409,7 +409,7 @@ class _UserCard extends StatelessWidget {
                           fontSize: 14.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           fontWeight: FontWeight.w600,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -418,7 +418,7 @@ class _UserCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontHelper.fontFamily(context),
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                       if (user.roles.isNotEmpty) ...[
@@ -439,7 +439,7 @@ class _UserCard extends StatelessWidget {
                 PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert,
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                     size: 20.w,
                   ),
                   onSelected: (value) {
@@ -634,7 +634,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
     return Container(
       constraints: BoxConstraints(maxHeight: size.height * 0.92),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -648,7 +648,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.gray300,
+                  color: ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -662,7 +662,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                 fontSize: 17.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),
@@ -724,7 +724,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                       fontSize: 13.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                   SizedBox(height: 8.h),
@@ -749,12 +749,12 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                           decoration: BoxDecoration(
                             color: selected
                                 ? ColorManager.primary
-                                : ColorManager.gray50,
+                                : ColorManager.of(context).inputBg,
                             borderRadius: BorderRadius.circular(20.r),
                             border: Border.all(
                               color: selected
                                   ? ColorManager.primary
-                                  : ColorManager.borderLight,
+                                  : ColorManager.of(context).borderLight,
                             ),
                           ),
                           child: Text(
@@ -765,7 +765,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                               fontWeight: FontWeight.w500,
                               color: selected
                                   ? Colors.white
-                                  : ColorManager.textSecondary,
+                                  : ColorManager.of(context).textSecondary,
                             ),
                           ),
                         ),
@@ -780,7 +780,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                         fontSize: 13.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -800,12 +800,12 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                           )
                         : Container(
                             decoration: BoxDecoration(
-                              color: ColorManager.gray50,
+                              color: ColorManager.of(context).inputBg,
                               borderRadius: BorderRadius.circular(10.r),
                               border: Border.all(
                                 color: _selectedSpecialty != null
                                     ? ColorManager.primary
-                                    : ColorManager.borderLight,
+                                    : ColorManager.of(context).borderLight,
                               ),
                             ),
                             child: DropdownButtonHideUnderline(
@@ -823,7 +823,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                                       fontFamily: FontHelper.fontFamily(
                                         context,
                                       ),
-                                      color: ColorManager.textTertiary,
+                                      color: ColorManager.of(context).textTertiary,
                                     ),
                                   ),
                                 ),
@@ -840,7 +840,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                                             fontFamily: FontHelper.fontFamily(
                                               context,
                                             ),
-                                            color: ColorManager.textPrimary,
+                                            color: ColorManager.of(context).textPrimary,
                                           ),
                                         ),
                                       ),
@@ -867,7 +867,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                 decoration: BoxDecoration(
                   color: _canSubmit
                       ? ColorManager.primary
-                      : ColorManager.gray300,
+                      : ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Text(
@@ -919,7 +919,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 4.h),
@@ -930,7 +930,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
           decoration: _inputDecoration(),
         ),
@@ -954,7 +954,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 4.h),
@@ -965,7 +965,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
           decoration: _inputDecoration().copyWith(
             suffixIcon: IconButton(
@@ -974,7 +974,7 @@ class _AddUserSheetState extends State<_AddUserSheet> {
                     ? Icons.visibility_off_outlined
                     : Icons.visibility_outlined,
                 size: 18.w,
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
               onPressed: toggle,
             ),
@@ -988,14 +988,14 @@ class _AddUserSheetState extends State<_AddUserSheet> {
     return InputDecoration(
       contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).inputBg,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
@@ -1060,7 +1060,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
 
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, bottomInset + 24.h),
@@ -1073,7 +1073,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.gray300,
+                color: ColorManager.of(context).border,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -1085,7 +1085,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
               fontSize: 17.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w600,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -1094,7 +1094,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
             style: TextStyle(
               fontSize: 13.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
           SizedBox(height: 16.h),
@@ -1112,7 +1112,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
               activeColor: ColorManager.primary,
@@ -1139,7 +1139,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
               decoration: BoxDecoration(
                 color: _selectedRoles.isNotEmpty
                     ? ColorManager.primary
-                    : ColorManager.gray300,
+                    : ColorManager.of(context).border,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(

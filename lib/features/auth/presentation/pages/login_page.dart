@@ -80,7 +80,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (previous, current) =>
             previous.status != current.status ||
@@ -142,7 +142,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                           fontSize: FontSizesManager.s28,
                           fontWeight: FontWeightManager.bold,
                           fontFamily: fontFamily,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                     ),
@@ -153,7 +153,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                         style: TextStyle(
                           fontSize: FontSizesManager.s14,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ),
@@ -233,7 +233,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
           state.isLoginPasswordVisible
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
-          color: ColorManager.textTertiary,
+          color: ColorManager.of(context).textTertiary,
           size: 20.w,
         ),
       ),
@@ -278,19 +278,19 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   Widget _buildDivider(AppLocalizations l10n, String fontFamily) {
     return Row(
       children: [
-        Expanded(child: Divider(color: ColorManager.gray200, thickness: 1)),
+        Expanded(child: Divider(color: ColorManager.of(context).divider, thickness: 1)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
             l10n.orContinueWith,
             style: TextStyle(
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
               fontSize: FontSizesManager.s12,
               fontFamily: fontFamily,
             ),
           ),
         ),
-        Expanded(child: Divider(color: ColorManager.gray200, thickness: 1)),
+        Expanded(child: Divider(color: ColorManager.of(context).divider, thickness: 1)),
       ],
     );
   }
@@ -302,7 +302,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
         Text(
           l10n.dontHaveAccount,
           style: TextStyle(
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
             fontSize: FontSizesManager.s14,
             fontFamily: fontFamily,
           ),

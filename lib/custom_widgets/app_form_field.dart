@@ -34,6 +34,7 @@ class AppFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,14 +44,14 @@ class AppFormField extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(height: 8.h),
         Container(
           decoration: BoxDecoration(
-            color: ColorManager.gray50,
+            color: c.inputBg,
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: TextField(
@@ -65,7 +66,7 @@ class AppFormField extends StatelessWidget {
               hintStyle: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: c.textTertiary,
               ),
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
@@ -99,6 +100,7 @@ class AppDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,7 +109,7 @@ class AppDateField extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -117,7 +119,7 @@ class AppDateField extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: ColorManager.gray50,
+              color: c.inputBg,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(
@@ -127,15 +129,15 @@ class AppDateField extends StatelessWidget {
                   value != null ? _formatDate(value!) : placeholder,
                   style: TextStyle(
                     color: value != null
-                        ? ColorManager.textPrimary
-                        : ColorManager.textTertiary,
+                        ? c.textPrimary
+                        : c.textTertiary,
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
                   ),
                 ),
                 Icon(
                   Icons.calendar_today_outlined,
-                  color: ColorManager.textTertiary,
+                  color: c.textTertiary,
                   size: 20.w,
                 ),
               ],
@@ -170,6 +172,7 @@ class AppDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,7 +181,7 @@ class AppDropdownField extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -186,7 +189,7 @@ class AppDropdownField extends StatelessWidget {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
-            color: ColorManager.gray50,
+            color: c.inputBg,
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: DropdownButtonHideUnderline(
@@ -197,13 +200,13 @@ class AppDropdownField extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
               isExpanded: true,
               icon: Icon(
                 Icons.keyboard_arrow_down,
-                color: ColorManager.textTertiary,
+                color: c.textTertiary,
               ),
               items: items.map((item) {
                 return DropdownMenuItem<String>(
@@ -213,7 +216,7 @@ class AppDropdownField extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textPrimary,
+                      color: c.textPrimary,
                     ),
                   ),
                 );

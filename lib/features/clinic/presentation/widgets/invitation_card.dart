@@ -25,7 +25,7 @@ class InvitationCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: ColorManager.primary.withValues(alpha: 0.3),
@@ -100,7 +100,7 @@ class InvitationCard extends StatelessWidget {
                               fontSize: 12.sp,
                               fontFamily: FontFamily.geist,
                               fontWeight: FontWeight.w400,
-                              color: ColorManager.textSecondary,
+                              color: ColorManager.of(context).textSecondary,
                             ),
                           ),
                         ],
@@ -117,7 +117,7 @@ class InvitationCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: ColorManager.gray50,
+                color: ColorManager.of(context).cardBgSecondary,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Text(
@@ -126,7 +126,7 @@ class InvitationCard extends StatelessWidget {
                   fontSize: 13.sp,
                   fontFamily: FontFamily.geist,
                   fontWeight: FontWeight.w400,
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -142,7 +142,7 @@ class InvitationCard extends StatelessWidget {
                 child: ActionButton(
                   text: 'Decline',
                   onPressed: isUpdating ? null : onReject,
-                  fillColor: ColorManager.white,
+                  fillColor: ColorManager.of(context).cardBg,
                   filled: false,
                 ),
               ),

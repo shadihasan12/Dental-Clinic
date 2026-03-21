@@ -83,7 +83,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           MediaQuery.of(ctx).viewInsets.bottom + 16.h,
         ),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
         ),
         child: Column(
@@ -95,7 +95,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.gray300,
+                  color: ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -107,7 +107,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 16.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -117,7 +117,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
             SizedBox(height: 6.h),
@@ -131,7 +131,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 15.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
               decoration: _costInputDecoration('0.00'),
             ),
@@ -142,7 +142,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
             SizedBox(height: 6.h),
@@ -156,7 +156,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 15.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
               decoration: _costInputDecoration('0.00'),
             ),
@@ -185,7 +185,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(ctx),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.white,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -201,18 +201,18 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
       hintText: hint,
       hintStyle: TextStyle(
         fontSize: 15.sp,
-        color: ColorManager.textTertiary,
+        color: ColorManager.of(context).textTertiary,
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).inputBg,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
@@ -235,7 +235,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           MediaQuery.of(ctx).viewInsets.bottom + 16.h,
         ),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
         ),
         child: Column(
@@ -247,7 +247,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: ColorManager.gray300,
+                  color: ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -259,7 +259,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 16.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 4.h),
@@ -268,7 +268,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -278,7 +278,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
             SizedBox(height: 6.h),
@@ -293,7 +293,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 15.sp,
                 fontFamily: FontHelper.fontFamily(ctx),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
               decoration: _costInputDecoration('0.00'),
             ),
@@ -322,7 +322,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(ctx),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.white,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -379,7 +379,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
     }
 
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       floatingActionButton: _buildFab(context),
       body: Column(
         children: [
@@ -424,7 +424,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
             Icon(
               Icons.assignment_outlined,
               size: 48.w,
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
             ),
             SizedBox(height: 12.h),
             Text(
@@ -432,7 +432,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ],
@@ -507,7 +507,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(8.r),
               boxShadow: [
                 BoxShadow(
@@ -523,7 +523,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),

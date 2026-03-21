@@ -54,7 +54,7 @@ class _PricingContentState extends State<_PricingContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
         listener: (context, state) {
           if (state.subscribeSuccess) {
@@ -116,12 +116,12 @@ class _PricingContentState extends State<_PricingContent> {
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: ColorManager.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new,
-                    color: ColorManager.white,
+                    color: Colors.white,
                     size: 18.w,
                   ),
                 ),
@@ -134,12 +134,12 @@ class _PricingContentState extends State<_PricingContent> {
                       width: 56.w,
                       height: 56.w,
                       decoration: BoxDecoration(
-                        color: ColorManager.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Icon(
                         Icons.workspace_premium_rounded,
-                        color: ColorManager.white,
+                        color: Colors.white,
                         size: 30.w,
                       ),
                     ),
@@ -150,7 +150,7 @@ class _PricingContentState extends State<_PricingContent> {
                         fontSize: 24.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w700,
-                        color: ColorManager.white,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: 6.h),
@@ -160,7 +160,7 @@ class _PricingContentState extends State<_PricingContent> {
                         fontSize: 14.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w400,
-                        color: ColorManager.white.withValues(alpha: 0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                       ),
                     ),
                   ],
@@ -249,7 +249,7 @@ class _PricingContentState extends State<_PricingContent> {
                 decoration: BoxDecoration(
                   color: _currentPage == index
                       ? ColorManager.primary
-                      : ColorManager.gray300,
+                      : ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(4.r),
                 ),
               ),
@@ -314,7 +314,7 @@ class _BillingToggle extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 40.w),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray100,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(14.r),
       ),
       child: Row(
@@ -341,7 +341,7 @@ class _BillingToggle extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(vertical: 12.h),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.white : Colors.transparent,
+            color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
             borderRadius: BorderRadius.circular(10.r),
             boxShadow: isSelected
                 ? [
@@ -364,7 +364,7 @@ class _BillingToggle extends StatelessWidget {
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
                       ? ColorManager.primary
-                      : ColorManager.textSecondary,
+                      : ColorManager.of(context).textSecondary,
                 ),
               ),
               if (badge != null) ...[
@@ -382,7 +382,7 @@ class _BillingToggle extends StatelessWidget {
                       fontSize: 9.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.white,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -448,14 +448,14 @@ class _PlanCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: isSelected
                 ? _accentColor
                 : plan.isPopular
                     ? _accentColor.withValues(alpha: 0.3)
-                    : ColorManager.gray200,
+                    : ColorManager.of(context).divider,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -497,7 +497,7 @@ class _PlanCard extends StatelessWidget {
                       isCurrentPlan
                           ? Icons.check_circle_rounded
                           : Icons.star_rounded,
-                      color: ColorManager.white,
+                      color: Colors.white,
                       size: 14.w,
                     ),
                     SizedBox(width: 6.w),
@@ -507,7 +507,7 @@ class _PlanCard extends StatelessWidget {
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.white,
+                        color: Colors.white,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -547,7 +547,7 @@ class _PlanCard extends StatelessWidget {
                                 fontSize: 20.sp,
                                 fontFamily: FontHelper.fontFamily(context),
                                 fontWeight: FontWeight.w700,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                             ),
                             SizedBox(height: 2.h),
@@ -556,7 +556,7 @@ class _PlanCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontFamily: FontHelper.fontFamily(context),
-                                color: ColorManager.textTertiary,
+                                color: ColorManager.of(context).textTertiary,
                               ),
                             ),
                           ],
@@ -587,7 +587,7 @@ class _PlanCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontFamily: FontHelper.fontFamily(context),
-                              color: ColorManager.textTertiary,
+                              color: ColorManager.of(context).textTertiary,
                             ),
                           ),
                         ),
@@ -615,7 +615,7 @@ class _PlanCard extends StatelessWidget {
                     ],
 
                     SizedBox(height: 16.h),
-                    Divider(color: ColorManager.gray200, height: 1),
+                    Divider(color: ColorManager.of(context).divider, height: 1),
                     SizedBox(height: 12.h),
 
                     // Features
@@ -654,7 +654,7 @@ class _PlanCard extends StatelessWidget {
                                               fontFamily:
                                                   FontHelper.fontFamily(
                                                       context),
-                                              color: ColorManager.textPrimary,
+                                              color: ColorManager.of(context).textPrimary,
                                               height: 1.3,
                                             ),
                                           ),
@@ -693,7 +693,7 @@ class _PlanCard extends StatelessWidget {
                               ? _accentColor
                               : _accentColor.withValues(alpha: 0.1),
                           foregroundColor:
-                              isSelected ? ColorManager.white : _accentColor,
+                              isSelected ? Colors.white : _accentColor,
                           elevation: 0,
                           padding: EdgeInsets.symmetric(vertical: 14.h),
                           shape: RoundedRectangleBorder(
@@ -766,12 +766,12 @@ class _TrialBanner extends StatelessWidget {
             width: 48.w,
             height: 48.w,
             decoration: BoxDecoration(
-              color: ColorManager.white.withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14.r),
             ),
             child: Icon(
               Icons.rocket_launch_rounded,
-              color: ColorManager.white,
+              color: Colors.white,
               size: 24.w,
             ),
           ),
@@ -786,7 +786,7 @@ class _TrialBanner extends StatelessWidget {
                     fontSize: 16.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w700,
-                    color: ColorManager.white,
+                    color: Colors.white,
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -795,7 +795,7 @@ class _TrialBanner extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.white.withValues(alpha: 0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -807,7 +807,7 @@ class _TrialBanner extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: ColorManager.white,
+                color: ColorManager.of(context).cardBg,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(
@@ -855,7 +855,7 @@ class _SubscribeButton extends StatelessWidget {
             onPressed: isProcessing ? null : onSubscribe,
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManager.primary,
-              foregroundColor: ColorManager.white,
+              foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r),
@@ -867,9 +867,7 @@ class _SubscribeButton extends StatelessWidget {
                     height: 24.h,
                     child: const CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        ColorManager.white,
-                      ),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
                 : Text(
@@ -888,7 +886,7 @@ class _SubscribeButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textTertiary,
+            color: ColorManager.of(context).textTertiary,
           ),
         ),
       ],

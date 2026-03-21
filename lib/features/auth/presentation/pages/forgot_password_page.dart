@@ -49,7 +49,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -104,12 +104,12 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: ColorManager.gray100,
+                          color: ColorManager.of(context).cardBgSecondary,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                           size: 18.w,
                         ),
                       ),
@@ -124,7 +124,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                         fontSize: FontSizesManager.s28,
                         fontWeight: FontWeightManager.bold,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -133,7 +133,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                       style: TextStyle(
                         fontSize: FontSizesManager.s14,
                         fontFamily: fontFamily,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
 
@@ -164,7 +164,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                         style: TextStyle(
                           fontSize: FontSizesManager.s14,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                           height: FontHeightsManager.normal,
                         ),
                         textAlign: TextAlign.center,
@@ -212,7 +212,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                           style: TextStyle(
                             fontSize: FontSizesManager.s14,
                             fontFamily: fontFamily,
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                           ),
                         ),
                         TextButton(

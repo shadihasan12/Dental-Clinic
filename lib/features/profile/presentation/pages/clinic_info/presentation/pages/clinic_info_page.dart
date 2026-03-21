@@ -175,8 +175,9 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         );
       },
       builder: (context, state) {
+        final c = ColorManager.of(context);
         return Scaffold(
-          backgroundColor: ColorManager.scaffoldBackground,
+          backgroundColor: c.scaffoldBg,
           bottomNavigationBar:
               _formPopulated ? _buildSaveButton(l10n) : null,
           body: Column(
@@ -276,12 +277,13 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
 
   Widget _buildClinicNameField() {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return Row(
       children: [
         Icon(
           Icons.business_outlined,
           size: 18.w,
-          color: ColorManager.textTertiary,
+          color: c.textTertiary,
         ),
         SizedBox(width: 12.w),
         Expanded(
@@ -293,7 +295,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
               SizedBox(height: 2.h),
@@ -302,7 +304,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textPrimary,
+                  color: c.textPrimary,
                 ),
                 decoration: const InputDecoration(
                   isDense: true,
@@ -318,6 +320,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   }
 
   Widget _buildLocationSearch(AppLocalizations l10n, String fontFamily) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,7 +329,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: fontFamily,
-            color: ColorManager.textTertiary,
+            color: c.textTertiary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -336,16 +339,16 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: fontFamily,
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: l10n.searchForLocation,
             hintStyle: TextStyle(
               fontSize: 14.sp,
               fontFamily: fontFamily,
-              color: ColorManager.textTertiary,
+              color: c.textTertiary,
             ),
-            prefixIcon: Icon(Icons.search, size: 20.w, color: ColorManager.textTertiary),
+            prefixIcon: Icon(Icons.search, size: 20.w, color: c.textTertiary),
             suffixIcon: _isSearchingLocations
                 ? Padding(
                     padding: EdgeInsets.all(12.w),
@@ -362,7 +365,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
             isDense: true,
             contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
             filled: true,
-            fillColor: ColorManager.gray50,
+            fillColor: c.cardBgSecondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide.none,
@@ -375,9 +378,9 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
           Container(
             margin: EdgeInsets.only(top: 8.h),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: c.cardBg,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: ColorManager.gray300),
+              border: Border.all(color: c.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),
@@ -392,7 +395,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
               padding: EdgeInsets.zero,
               itemCount: _searchedLocations.length,
               separatorBuilder: (context, index) =>
-                  Divider(height: 1, color: ColorManager.gray300),
+                  Divider(height: 1, color: c.border),
               itemBuilder: (context, index) {
                 final location = _searchedLocations[index];
                 return ListTile(
@@ -410,7 +413,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                     style: TextStyle(
                       fontSize: FontSizesManager.s12,
                       fontFamily: fontFamily,
-                      color: ColorManager.textSecondary,
+                      color: c.textSecondary,
                     ),
                   ),
                   onTap: () {
@@ -432,7 +435,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
             margin: EdgeInsets.only(top: 8.h),
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: ColorManager.gray100,
+              color: c.cardBgSecondary,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Text(
@@ -440,7 +443,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
               style: TextStyle(
                 fontSize: FontSizesManager.s14,
                 fontFamily: fontFamily,
-                color: ColorManager.textSecondary,
+                color: c.textSecondary,
               ),
             ),
           ),
@@ -494,12 +497,13 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   }
 
   Widget _buildAddressField(AppLocalizations l10n, String fontFamily) {
+    final c = ColorManager.of(context);
     return Row(
       children: [
         Icon(
           Icons.location_on_outlined,
           size: 18.w,
-          color: ColorManager.textTertiary,
+          color: c.textTertiary,
         ),
         SizedBox(width: 12.w),
         Expanded(
@@ -511,7 +515,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: fontFamily,
-                  color: ColorManager.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
               SizedBox(height: 2.h),
@@ -520,7 +524,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: fontFamily,
-                  color: ColorManager.textPrimary,
+                  color: c.textPrimary,
                 ),
                 decoration: InputDecoration(
                   isDense: true,
@@ -530,7 +534,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                   hintStyle: TextStyle(
                     fontSize: 14.sp,
                     fontFamily: fontFamily,
-                    color: ColorManager.textTertiary,
+                    color: c.textTertiary,
                   ),
                 ),
               ),

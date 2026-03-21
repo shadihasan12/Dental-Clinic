@@ -32,8 +32,9 @@ class _NotificationsSettingsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final c = ColorManager.of(context);
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: c.scaffoldBg,
       body: Column(
         children: [
           PageHeader(
@@ -237,6 +238,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Padding(
       padding: EdgeInsets.only(left: 4.w),
       child: Text(
@@ -245,7 +247,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 11.sp,
           fontFamily: FontHelper.fontFamily(context),
           fontWeight: FontWeight.w600,
-          color: ColorManager.textTertiary,
+          color: c.textTertiary,
           letterSpacing: 0.8,
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -16,14 +17,14 @@ class AddPatientHeader extends StatelessWidget {
   final int totalSteps;
   final VoidCallback onBackPressed;
 
-  String get _stepTitle {
+  String _stepTitle(AppLocalizations l10n) {
     switch (currentStep) {
       case 1:
-        return 'Patient Info';
+        return l10n.patientInfo;
       case 2:
-        return 'Case Info';
+        return l10n.caseInfo;
       case 3:
-        return 'Initial Visit';
+        return l10n.initialVisit;
       default:
         return '';
     }
@@ -71,11 +72,15 @@ class AddPatientHeader extends StatelessWidget {
           // Content
           SafeArea(
             bottom: false,
-            child: Column(
-              children: [
-                _buildTitleBar(),
-                _buildProgressIndicator(),
-              ],
+            child: Builder(
+              builder: (context) {
+                return Column(
+                  children: [
+                    _buildTitleBar(context),
+                    _buildProgressIndicator(),
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -83,7 +88,7 @@ class AddPatientHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleBar() {
+  Widget _buildTitleBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(8.w, 12.h, 16.w, 0),
       child: Row(
@@ -97,24 +102,34 @@ class AddPatientHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Add New Patient',
-                  style: TextStyle(
-                    color: ColorManager.white,
-                    fontSize: 16.sp,
-                    fontFamily: FontFamily.geist,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  'Step $currentStep of $totalSteps: $_stepTitle',
-                  style: TextStyle(
-                    color: ColorManager.white.withValues(alpha: 0.8),
-                    fontSize: 14.sp,
-                    fontFamily: FontFamily.geist,
-                    fontWeight: FontWeight.w400,
-                  ),
+                Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.addNewPatient,
+                          style: TextStyle(
+                            color: ColorManager.white,
+                            fontSize: 16.sp,
+                            fontFamily: FontFamily.geist,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          l10n.stepOfTotal(currentStep, totalSteps, _stepTitle(l10n)),
+                          style: TextStyle(
+                            color: ColorManager.white.withValues(alpha: 0.8),
+                            fontSize: 14.sp,
+                            fontFamily: FontFamily.geist,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

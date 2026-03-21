@@ -190,7 +190,7 @@ class _SignupContentState extends State<_SignupContent> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
@@ -227,7 +227,7 @@ class _SignupContentState extends State<_SignupContent> {
                               style: TextStyle(
                                 fontSize: FontSizesManager.s16,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                               ),
                             ),
                           ],
@@ -267,7 +267,7 @@ class _SignupContentState extends State<_SignupContent> {
                                 fontSize: FontSizesManager.s18,
                                 fontWeight: FontWeightManager.semiBold,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -277,7 +277,7 @@ class _SignupContentState extends State<_SignupContent> {
                               style: TextStyle(
                                 fontSize: FontSizesManager.s14,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -404,7 +404,7 @@ class _SignupContentState extends State<_SignupContent> {
                           state.isSignupPasswordVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                           size: 20.w,
                         ),
                         onPressed: () {
@@ -434,7 +434,7 @@ class _SignupContentState extends State<_SignupContent> {
                           state.isSignupConfirmPasswordVisible
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                           size: 20.w,
                         ),
                         onPressed: () {
@@ -478,7 +478,7 @@ class _SignupContentState extends State<_SignupContent> {
         Text(
           l10n.specializationRequired,
           style: TextStyle(
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
             fontWeight: FontWeightManager.medium,
             fontFamily: fontFamily,
             fontSize: FontSizesManager.s12,
@@ -490,7 +490,7 @@ class _SignupContentState extends State<_SignupContent> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             decoration: BoxDecoration(
-              color: ColorManager.gray50,
+              color: ColorManager.of(context).inputBg,
               borderRadius: BorderRadius.circular(12.r),
               border: _showValidationErrors && _selectedSpecialty == null
                   ? Border.all(color: ColorManager.error, width: 1)
@@ -498,7 +498,7 @@ class _SignupContentState extends State<_SignupContent> {
             ),
             child: Row(
               children: [
-                Icon(Icons.local_hospital_outlined, color: ColorManager.textTertiary, size: 20.w),
+                Icon(Icons.local_hospital_outlined, color: ColorManager.of(context).textTertiary, size: 20.w),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
@@ -507,12 +507,12 @@ class _SignupContentState extends State<_SignupContent> {
                       fontFamily: fontFamily,
                       fontSize: FontSizesManager.s14,
                       color: _selectedSpecialty != null
-                          ? ColorManager.textPrimary
-                          : ColorManager.textTertiary,
+                          ? ColorManager.of(context).textPrimary
+                          : ColorManager.of(context).textTertiary,
                     ),
                   ),
                 ),
-                Icon(Icons.keyboard_arrow_down, color: ColorManager.textTertiary),
+                Icon(Icons.keyboard_arrow_down, color: ColorManager.of(context).textTertiary),
               ],
             ),
           ),
@@ -536,7 +536,7 @@ class _SignupContentState extends State<_SignupContent> {
   void _showSpecialtySheet(AppLocalizations l10n, String fontFamily, AuthState state) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -552,7 +552,7 @@ class _SignupContentState extends State<_SignupContent> {
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: ColorManager.borderLight,
+                    color: ColorManager.of(context).borderLight,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -565,7 +565,7 @@ class _SignupContentState extends State<_SignupContent> {
                     fontSize: 16.sp,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
               ),
@@ -594,7 +594,7 @@ class _SignupContentState extends State<_SignupContent> {
                             border: Border.all(
                               color: isSelected
                                   ? ColorManager.primary
-                                  : ColorManager.borderLight,
+                                  : ColorManager.of(context).borderLight,
                               width: 2,
                             ),
                           ),
@@ -622,7 +622,7 @@ class _SignupContentState extends State<_SignupContent> {
                                 : FontWeight.w400,
                             color: isSelected
                                 ? ColorManager.primary
-                                : ColorManager.textPrimary,
+                                : ColorManager.of(context).textPrimary,
                           ),
                         ),
                       ],
@@ -650,12 +650,12 @@ class _SignupContentState extends State<_SignupContent> {
               width: 40.w,
               height: 40.w,
               decoration: BoxDecoration(
-                color: ColorManager.gray100,
+                color: ColorManager.of(context).cardBgSecondary,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(
                 Icons.arrow_back_ios_new,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
                 size: 18.w,
               ),
             ),
@@ -667,7 +667,7 @@ class _SignupContentState extends State<_SignupContent> {
               fontSize: FontSizesManager.s28,
               fontWeight: FontWeightManager.bold,
               fontFamily: fontFamily,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -676,7 +676,7 @@ class _SignupContentState extends State<_SignupContent> {
             style: TextStyle(
               fontSize: FontSizesManager.s14,
               fontFamily: fontFamily,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
         ],
@@ -722,7 +722,7 @@ class _SignupContentState extends State<_SignupContent> {
           style: TextStyle(
             fontSize: FontSizesManager.s14,
             fontFamily: fontFamily,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         TextButton(

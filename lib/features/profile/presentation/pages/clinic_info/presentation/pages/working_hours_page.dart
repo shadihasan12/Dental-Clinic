@@ -311,8 +311,9 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
         );
       },
       builder: (context, state) {
+        final c = ColorManager.of(context);
         return Scaffold(
-          backgroundColor: ColorManager.scaffoldBackground,
+          backgroundColor: c.scaffoldBg,
           bottomNavigationBar:
               _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
           body: Column(
@@ -403,6 +404,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
 
   Widget _buildWorkingHoursSection() {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -412,7 +414,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -427,13 +429,14 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
   Widget _buildDayRow(WorkingDay day, {bool isLast = false}) {
     final isExpanded = _expandedDay == day.id;
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return Container(
       decoration: isLast
           ? null
           : BoxDecoration(
               border: Border(
                 bottom:
-                    BorderSide(color: ColorManager.borderLight, width: 1),
+                    BorderSide(color: c.borderLight, width: 1),
               ),
             ),
       child: Column(
@@ -466,8 +469,8 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                         fontSize: 14.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         color: day.enabled
-                            ? ColorManager.textPrimary
-                            : ColorManager.textTertiary,
+                            ? c.textPrimary
+                            : c.textTertiary,
                       ),
                     ),
                   ),
@@ -477,8 +480,8 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       color: day.enabled
-                          ? ColorManager.textSecondary
-                          : ColorManager.textTertiary,
+                          ? c.textSecondary
+                          : c.textTertiary,
                     ),
                   ),
                   if (day.enabled) ...[
@@ -489,7 +492,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                       child: Icon(
                         Icons.keyboard_arrow_down_rounded,
                         size: 20.w,
-                        color: ColorManager.textTertiary,
+                        color: c.textTertiary,
                       ),
                     ),
                   ],
@@ -512,6 +515,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
 
   Widget _buildShiftsPanel(WorkingDay day) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Column(
@@ -525,7 +529,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w500,
-                  color: ColorManager.textSecondary,
+                  color: c.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -567,7 +571,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                     '–',
                     style: TextStyle(
                       fontSize: 16.sp,
-                      color: ColorManager.textTertiary,
+                      color: c.textTertiary,
                     ),
                   ),
                 ),
@@ -589,6 +593,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
 
   Widget _buildHolidaysSection() {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,7 +606,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                   fontSize: 16.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w500,
-                  color: ColorManager.textPrimary,
+                  color: c.textPrimary,
                 ),
               ),
               const Spacer(),
@@ -647,7 +652,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
             ),

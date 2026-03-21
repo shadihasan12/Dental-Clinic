@@ -22,13 +22,14 @@ class HolidayItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Container(
       decoration: isLast
           ? null
           : BoxDecoration(
               border: Border(
                 bottom:
-                    BorderSide(color: ColorManager.borderLight, width: 1),
+                    BorderSide(color: c.borderLight, width: 1),
               ),
             ),
       child: Padding(
@@ -80,7 +81,7 @@ class HolidayItem extends StatelessWidget {
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w500,
-                      color: ColorManager.textPrimary,
+                      color: c.textPrimary,
                     ),
                   ),
                   if (holiday.recurring) ...[
@@ -90,7 +91,7 @@ class HolidayItem extends StatelessWidget {
                         Icon(
                           Icons.repeat_rounded,
                           size: 11.w,
-                          color: ColorManager.textTertiary,
+                          color: c.textTertiary,
                         ),
                         SizedBox(width: 3.w),
                         Text(
@@ -98,7 +99,7 @@ class HolidayItem extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textTertiary,
+                            color: c.textTertiary,
                           ),
                         ),
                       ],
@@ -115,7 +116,7 @@ class HolidayItem extends StatelessWidget {
                 child: Icon(
                   Icons.edit_outlined,
                   size: 18.w,
-                  color: ColorManager.textSecondary,
+                  color: c.textSecondary,
                 ),
               ),
             ),

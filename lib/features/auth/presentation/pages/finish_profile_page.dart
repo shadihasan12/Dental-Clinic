@@ -139,7 +139,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
@@ -177,12 +177,12 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: ColorManager.gray100,
+                          color: ColorManager.of(context).cardBgSecondary,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                           size: 18.w,
                         ),
                       ),
@@ -197,7 +197,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                         fontSize: FontSizesManager.s28,
                         fontWeight: FontWeightManager.bold,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -206,7 +206,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                       style: TextStyle(
                         fontSize: FontSizesManager.s14,
                         fontFamily: fontFamily,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
 
@@ -333,9 +333,9 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
           Container(
             margin: EdgeInsets.only(top: 8.h),
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: ColorManager.gray300),
+              border: Border.all(color: ColorManager.of(context).border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),
@@ -350,7 +350,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               padding: EdgeInsets.zero,
               itemCount: state.searchedLocations.length,
               separatorBuilder: (context, index) =>
-                  Divider(height: 1, color: ColorManager.gray300),
+                  Divider(height: 1, color: ColorManager.of(context).border),
               itemBuilder: (context, index) {
                 final location = state.searchedLocations[index];
                 return ListTile(
@@ -368,7 +368,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                     style: TextStyle(
                       fontSize: FontSizesManager.s12,
                       fontFamily: fontFamily,
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                   ),
                   onTap: () {
@@ -390,7 +390,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
             margin: EdgeInsets.only(top: 8.h),
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: ColorManager.gray100,
+              color: ColorManager.of(context).cardBgSecondary,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Text(
@@ -398,7 +398,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               style: TextStyle(
                 fontSize: FontSizesManager.s14,
                 fontFamily: fontFamily,
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
           ),
@@ -453,7 +453,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
         return Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: ColorManager.white,
+            color: ColorManager.of(context).cardBg,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),

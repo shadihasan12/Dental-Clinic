@@ -704,6 +704,18 @@ abstract class AppLocalizations {
   /// **'Light mode'**
   String get lightMode;
 
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark mode'**
+  String get darkMode;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get systemDefault;
+
   /// No description provided for @privacySecurity.
   ///
   /// In en, this message translates to:
@@ -3415,6 +3427,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select specialization'**
   String get selectSpecialization;
+
+  /// No description provided for @patientInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Info'**
+  String get patientInfo;
+
+  /// No description provided for @caseInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Info'**
+  String get caseInfo;
+
+  /// No description provided for @initialVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Visit'**
+  String get initialVisit;
+
+  /// No description provided for @stepOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}: {stepTitle}'**
+  String stepOfTotal(int current, int total, String stepTitle);
+
+  /// No description provided for @caseInformationOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Information (Optional)'**
+  String get caseInformationOptional;
+
+  /// No description provided for @caseAutoCreateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A case will be automatically created for this patient. You can add a title or skip this step.'**
+  String get caseAutoCreateDescription;
+
+  /// No description provided for @caseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Title'**
+  String get caseTitle;
+
+  /// No description provided for @caseTitleExampleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Full Mouth Restoration, Orthodontic Treatment'**
+  String get caseTitleExampleHint;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0988026431'**
+  String get phoneHint;
 }
 
 class _AppLocalizationsDelegate

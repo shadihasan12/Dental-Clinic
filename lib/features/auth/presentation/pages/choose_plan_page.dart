@@ -38,7 +38,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -81,7 +81,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             Text(
                               l10n.noPlansAvailable,
                               style: TextStyle(
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                                 fontSize: FontSizesManager.s18,
                                 fontWeight: FontWeightManager.semiBold,
                                 fontFamily: fontFamily,
@@ -139,12 +139,12 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
           //     width: 40.w,
           //     height: 40.w,
           //     decoration: BoxDecoration(
-          //       color: ColorManager.gray100,
+          //       color: ColorManager.of(context).cardBgSecondary,
           //       borderRadius: BorderRadius.circular(12.r),
           //     ),
           //     child: Icon(
           //       Icons.arrow_back_ios_new,
-          //       color: ColorManager.textPrimary,
+          //       color: ColorManager.of(context).textPrimary,
           //       size: 18.w,
           //     ),
           //   ),
@@ -156,7 +156,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               fontSize: FontSizesManager.s28,
               fontWeight: FontWeightManager.bold,
               fontFamily: fontFamily,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -165,7 +165,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
             style: TextStyle(
               fontSize: FontSizesManager.s14,
               fontFamily: fontFamily,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
         ],
@@ -188,7 +188,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: !_isYearly ? ColorManager.white : Colors.transparent,
+                  color: !_isYearly ? ColorManager.of(context).cardBg : Colors.transparent,
                   borderRadius: BorderRadius.circular(10.r),
                   boxShadow: !_isYearly
                       ? [
@@ -205,8 +205,8 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                     l10n.monthly,
                     style: TextStyle(
                       color: !_isYearly
-                          ? ColorManager.textPrimary
-                          : ColorManager.textSecondary,
+                          ? ColorManager.of(context).textPrimary
+                          : ColorManager.of(context).textSecondary,
                       fontWeight: !_isYearly
                           ? FontWeightManager.semiBold
                           : FontWeightManager.regular,
@@ -224,7 +224,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: _isYearly ? ColorManager.white : Colors.transparent,
+                  color: _isYearly ? ColorManager.of(context).cardBg : Colors.transparent,
                   borderRadius: BorderRadius.circular(10.r),
                   boxShadow: _isYearly
                       ? [
@@ -244,8 +244,8 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         l10n.yearly,
                         style: TextStyle(
                           color: _isYearly
-                              ? ColorManager.textPrimary
-                              : ColorManager.textSecondary,
+                              ? ColorManager.of(context).textPrimary
+                              : ColorManager.of(context).textSecondary,
                           fontWeight: _isYearly
                               ? FontWeightManager.semiBold
                               : FontWeightManager.regular,
@@ -266,7 +266,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         child: Text(
                           l10n.savePercent,
                           style: TextStyle(
-                            color: ColorManager.white,
+                            color: Colors.white,
                             fontWeight: FontWeightManager.semiBold,
                             fontSize: FontSizesManager.s10,
                             fontFamily: fontFamily,
@@ -338,10 +338,10 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
       child: Container(
         margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : ColorManager.gray300,
+            color: isSelected ? ColorManager.primary : ColorManager.of(context).border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -374,7 +374,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   child: Text(
                     l10n.mostPopular,
                     style: TextStyle(
-                      color: ColorManager.white,
+                      color: Colors.white,
                       fontWeight: FontWeightManager.bold,
                       letterSpacing: 1,
                       fontFamily: fontFamily,
@@ -398,7 +398,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             Text(
                               plan.name,
                               style: TextStyle(
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                                 fontWeight: FontWeightManager.bold,
                                 fontFamily: fontFamily,
                                 fontSize: FontSizesManager.s18,
@@ -408,7 +408,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             Text(
                               plan.description,
                               style: TextStyle(
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                                 fontFamily: fontFamily,
                                 fontSize: FontSizesManager.s13,
                               ),
@@ -427,7 +427,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                           border: Border.all(
                             color: isSelected
                                 ? ColorManager.primary
-                                : ColorManager.gray300,
+                                : ColorManager.of(context).border,
                             width: 2,
                           ),
                           color: isSelected
@@ -438,7 +438,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             ? Icon(
                                 Icons.check,
                                 size: 14.w,
-                                color: ColorManager.white,
+                                color: Colors.white,
                               )
                             : null,
                       ),
@@ -465,7 +465,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         child: Text(
                           period,
                           style: TextStyle(
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                             fontFamily: fontFamily,
                             fontSize: FontSizesManager.s14,
                           ),
@@ -498,7 +498,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   ],
 
                   SizedBox(height: 16.h),
-                  Divider(color: ColorManager.gray300, height: 1),
+                  Divider(color: ColorManager.of(context).border, height: 1),
                   SizedBox(height: 16.h),
 
                   ...features.map(
@@ -524,7 +524,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             child: Text(
                               feature,
                               style: TextStyle(
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                                 fontFamily: fontFamily,
                                 fontSize: FontSizesManager.s12,
                               ),
@@ -549,7 +549,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
         return Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: ColorManager.white,
+            color: ColorManager.of(context).cardBg,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),

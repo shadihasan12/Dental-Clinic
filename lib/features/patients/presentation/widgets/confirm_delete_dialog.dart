@@ -75,7 +75,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
                 fontSize: 16.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -85,7 +85,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
                 height: 1.4,
               ),
             ),
@@ -98,9 +98,9 @@ class ConfirmDeleteDialog extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       decoration: BoxDecoration(
-                        color: ColorManager.gray50,
+                        color: ColorManager.of(context).cardBgSecondary,
                         borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(color: ColorManager.borderLight),
+                        border: Border.all(color: ColorManager.of(context).borderLight),
                       ),
                       child: Text(
                         resolvedCancel,
@@ -109,7 +109,7 @@ class ConfirmDeleteDialog extends StatelessWidget {
                           fontSize: 14.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           fontWeight: FontWeight.w600,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                     ),

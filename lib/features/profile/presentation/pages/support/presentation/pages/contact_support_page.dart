@@ -34,7 +34,7 @@ class _ContactSupportContent extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: Column(
         children: [
           PageHeader(title: l10n.contactSupport),
@@ -190,7 +190,7 @@ class _ContactSupportContent extends StatelessWidget {
             ),
             child: Icon(
               Icons.headset_mic_rounded,
-              color: ColorManager.white,
+              color: Colors.white,
               size: 24.w,
             ),
           ),
@@ -205,7 +205,7 @@ class _ContactSupportContent extends StatelessWidget {
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 3.h),
@@ -214,7 +214,7 @@ class _ContactSupportContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -226,7 +226,7 @@ class _ContactSupportContent extends StatelessWidget {
           Icon(
             Icons.arrow_forward_ios_rounded,
             size: 14.w,
-            color: ColorManager.textTertiary,
+            color: ColorManager.of(context).textTertiary,
           ),
         ],
       ),
@@ -247,7 +247,7 @@ class _ContactSupportContent extends StatelessWidget {
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w600,
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
         SizedBox(height: 10.h),
@@ -260,7 +260,7 @@ class _ContactSupportContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: ColorManager.of(context).textTertiary,
                 ),
               ),
             ),
@@ -304,7 +304,7 @@ class _ContactSupportContent extends StatelessWidget {
             : BoxDecoration(
                 border: Border(
                   bottom:
-                      BorderSide(color: ColorManager.borderLight, width: 1),
+                      BorderSide(color: ColorManager.of(context).borderLight, width: 1),
                 ),
               ),
         child: Row(
@@ -336,7 +336,7 @@ class _ContactSupportContent extends StatelessWidget {
                         color: ColorManager.primary,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: ColorManager.white,
+                          color: ColorManager.of(context).cardBg,
                           width: 1.5,
                         ),
                       ),
@@ -361,7 +361,7 @@ class _ContactSupportContent extends StatelessWidget {
                             fontWeight: convo.isRead
                                 ? FontWeight.w500
                                 : FontWeight.w700,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -375,7 +375,7 @@ class _ContactSupportContent extends StatelessWidget {
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             color: convo.isRead
-                                ? ColorManager.textTertiary
+                                ? ColorManager.of(context).textTertiary
                                 : ColorManager.primary,
                             fontWeight: convo.isRead
                                 ? FontWeight.w400
@@ -392,7 +392,7 @@ class _ContactSupportContent extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textTertiary,
+                        color: ColorManager.of(context).textTertiary,
                         fontWeight: convo.isRead
                             ? FontWeight.w400
                             : FontWeight.w500,
@@ -408,7 +408,7 @@ class _ContactSupportContent extends StatelessWidget {
             Icon(
               Icons.chevron_right_rounded,
               size: 18.w,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ],
         ),

@@ -65,12 +65,12 @@ class LanguageSwitchWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? ColorManager.primary
-              : ColorManager.gray100,
+              : ColorManager.of(context).cardBgSecondary,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
             color: isSelected
                 ? ColorManager.primary
-                : ColorManager.gray300,
+                : ColorManager.of(context).border,
             width: 1.5,
           ),
         ),
@@ -80,7 +80,7 @@ class LanguageSwitchWidget extends StatelessWidget {
           style: TextStyle(
             color: isSelected
                 ? ColorManager.white
-                : ColorManager.textPrimary,
+                : ColorManager.of(context).textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             fontSize: 14.sp,
             fontFamily: language == 'ar'

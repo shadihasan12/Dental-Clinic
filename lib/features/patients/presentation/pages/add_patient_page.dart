@@ -97,7 +97,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
 
     await showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -115,7 +115,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: ColorManager.of(context).textTertiary,
                         fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                       ),
@@ -129,7 +129,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
                     child: Text(
                       l10n.close,
                       style: TextStyle(
-                        color: const Color(0xFF70B2B2),
+                        color: ColorManager.primary,
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
                         fontFamily: FontHelper.fontFamily(context),
@@ -139,7 +139,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
                 ],
               ),
             ),
-            Divider(height: 1, color: Colors.grey.shade200),
+            Divider(height: 1, color: ColorManager.of(context).divider),
             Expanded(
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
@@ -201,7 +201,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
         );
       },
       child: Scaffold(
-        backgroundColor: ColorManager.white,
+        backgroundColor: ColorManager.of(context).cardBg,
         body: Column(
           children: [
             PageHeader(title: l10n.addPatient, onBack: () => context.pop()),

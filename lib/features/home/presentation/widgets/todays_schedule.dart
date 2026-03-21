@@ -1,9 +1,7 @@
-import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/resources.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 
 class AppointmentData {
   final String initials;
@@ -78,7 +76,7 @@ class TodaysSchedule extends StatelessWidget {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.black54,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
             GestureDetector(
@@ -161,7 +159,7 @@ class _AppointmentRow extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 12.sp,
-                    color: Colors.black38,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
               ],

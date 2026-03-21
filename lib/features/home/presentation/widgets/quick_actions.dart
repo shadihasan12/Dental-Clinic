@@ -58,6 +58,7 @@ class _ActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -77,7 +78,7 @@ class _ActionItem extends StatelessWidget {
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black54,
+                  color: c.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),

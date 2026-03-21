@@ -107,7 +107,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -128,7 +128,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                       width: 40.w,
                       height: 4.h,
                       decoration: BoxDecoration(
-                        color: ColorManager.gray300,
+                        color: ColorManager.of(context).border,
                         borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
@@ -162,7 +162,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                                 fontSize: 16.sp,
                                 fontFamily: FontHelper.fontFamily(context),
                                 fontWeight: FontWeight.w600,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                             ),
                             SizedBox(height: 2.h),
@@ -171,7 +171,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontFamily: FontHelper.fontFamily(context),
-                                color: ColorManager.textTertiary,
+                                color: ColorManager.of(context).textTertiary,
                               ),
                             ),
                           ],
@@ -243,7 +243,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -273,10 +273,10 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                             width: double.infinity,
                             padding: EdgeInsets.all(12.w),
                             decoration: BoxDecoration(
-                              color: ColorManager.gray50,
+                              color: ColorManager.of(context).cardBgSecondary,
                               borderRadius: BorderRadius.circular(10.r),
                               border:
-                                  Border.all(color: ColorManager.borderLight),
+                                  Border.all(color: ColorManager.of(context).borderLight),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +305,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     fontFamily: FontHelper.fontFamily(context),
-                                    color: ColorManager.textPrimary,
+                                    color: ColorManager.of(context).textPrimary,
                                     height: 1.4,
                                   ),
                                 ),
@@ -338,7 +338,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       decoration: BoxDecoration(
-                        color: ColorManager.white,
+                        color: ColorManager.of(context).cardBg,
                         borderRadius: BorderRadius.circular(10.r),
                         border: Border.all(color: ColorManager.primary),
                       ),
@@ -423,13 +423,13 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16.w, color: ColorManager.textTertiary),
+          Icon(icon, size: 16.w, color: ColorManager.of(context).textTertiary),
           SizedBox(width: 8.w),
           Text('$label: ',
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               )),
           Expanded(
             child: Text(value,
@@ -437,7 +437,7 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w500,
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 )),
           ),
         ],

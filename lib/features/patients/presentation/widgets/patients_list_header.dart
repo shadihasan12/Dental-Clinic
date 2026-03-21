@@ -41,7 +41,7 @@ class PatientsListHeader extends StatelessWidget {
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -50,7 +50,7 @@ class PatientsListHeader extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 13.sp,
-                          color: Colors.black38,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                     ],
@@ -76,7 +76,7 @@ class PatientsListHeader extends StatelessWidget {
             // Search bar
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: ColorManager.of(context).inputBg,
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: TextField(
@@ -85,18 +85,19 @@ class PatientsListHeader extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 14.sp,
+                  color: ColorManager.of(context).textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: l10n.search + ' ' + l10n.patients.toLowerCase() + '...',
                   hintStyle: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 14.sp,
-                    color: Colors.grey.shade400,
+                    color: ColorManager.of(context).textSubtle,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
                     size: 20.w,
-                    color: Colors.grey.shade400,
+                    color: ColorManager.of(context).textSubtle,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(

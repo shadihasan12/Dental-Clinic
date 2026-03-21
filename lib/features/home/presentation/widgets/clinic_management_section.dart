@@ -27,7 +27,7 @@ class ClinicManagementSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -63,14 +63,14 @@ class ClinicManagementSection extends StatelessWidget {
                     Text(
                       'Clinic Management',
                       style: TextStyleManager.titleMedium.copyWith(
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       clinicName,
                       style: TextStyleManager.bodySmall.copyWith(
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
                   ],
@@ -208,14 +208,14 @@ class _ManagementCard extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyleManager.titleSmall.copyWith(
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: TextStyleManager.labelSmall.copyWith(
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                   ),
                 ],
@@ -223,7 +223,7 @@ class _ManagementCard extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
               size: 20.w,
             ),
           ],

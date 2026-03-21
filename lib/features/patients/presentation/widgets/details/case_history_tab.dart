@@ -47,7 +47,7 @@ class CaseHistoryTab extends StatelessWidget {
           Icon(
             Icons.history,
             size: 64.w,
-            color: ColorManager.textTertiary,
+            color: ColorManager.of(context).textTertiary,
           ),
           SizedBox(height: 16.h),
           Text(
@@ -56,7 +56,7 @@ class CaseHistoryTab extends StatelessWidget {
               fontSize: 16.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           SizedBox(height: 8.h),
@@ -65,7 +65,7 @@ class CaseHistoryTab extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
         ],

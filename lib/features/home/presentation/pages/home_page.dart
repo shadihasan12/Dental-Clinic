@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
@@ -126,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     final storage = _mockStorage[_subscriptionTypeIndex];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -170,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: Colors.black54,
+                  color: ColorManager.of(context).textSecondary,
                 ),
               ),
               SizedBox(height: 12.h),

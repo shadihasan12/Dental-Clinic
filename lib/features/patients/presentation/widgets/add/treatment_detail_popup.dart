@@ -51,7 +51,7 @@ class TreatmentDetailPopup extends StatelessWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -63,7 +63,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             width: 40.w,
             height: 4.h,
             decoration: BoxDecoration(
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
@@ -154,7 +154,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                   fontSize: 18.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
               Text(
@@ -162,7 +162,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                 ),
               ),
             ],
@@ -170,7 +170,7 @@ class TreatmentDetailPopup extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.close, color: ColorManager.textSecondary),
+          icon: Icon(Icons.close, color: ColorManager.of(context).textSecondary),
         ),
       ],
     );
@@ -186,7 +186,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 6.h),
@@ -195,7 +195,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
       ],
@@ -212,7 +212,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -258,7 +258,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -282,7 +282,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -293,9 +293,9 @@ class TreatmentDetailPopup extends StatelessWidget {
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: ColorManager.gray100,
+                color: ColorManager.of(context).cardBgSecondary,
                 borderRadius: BorderRadiusManager.lg,
-                border: Border.all(color: ColorManager.gray200),
+                border: Border.all(color: ColorManager.of(context).borderLight),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -303,7 +303,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                   Icon(
                     Icons.insert_drive_file,
                     size: 16.w,
-                    color: ColorManager.textSecondary,
+                    color: ColorManager.of(context).textSecondary,
                   ),
                   SizedBox(width: 6.w),
                   Text(
@@ -311,7 +311,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                   ),
                 ],
@@ -327,7 +327,7 @@ class TreatmentDetailPopup extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray50,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadiusManager.lg,
       ),
       child: Column(
@@ -351,7 +351,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         Text(
@@ -360,7 +360,7 @@ class TreatmentDetailPopup extends StatelessWidget {
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
       ],

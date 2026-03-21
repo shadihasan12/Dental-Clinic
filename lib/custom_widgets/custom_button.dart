@@ -135,10 +135,10 @@ class SecondaryButton extends StatelessWidget {
       width: width ?? double.infinity,
       height: height ?? 56.h,
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadiusManager.xl,
         border: Border.all(
-          color: isEnabled ? effectiveBorderColor : ColorManager.gray300,
+          color: isEnabled ? effectiveBorderColor : ColorManager.of(context).border,
           width: 1.5,
         ),
       ),

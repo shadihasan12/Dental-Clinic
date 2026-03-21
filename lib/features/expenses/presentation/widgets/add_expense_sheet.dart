@@ -197,7 +197,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
     final picked = await showModalBottomSheet<DateTime>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -215,7 +215,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: ColorManager.of(ctx).textSecondary,
                         fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(ctx),
                       ),
@@ -236,7 +236,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 ],
               ),
             ),
-            Divider(height: 1, color: Colors.grey.shade200),
+            Divider(height: 1, color: ColorManager.of(ctx).divider),
             Expanded(
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
@@ -259,6 +259,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     final bottomPadding =
         MediaQuery.of(context).viewInsets.bottom +
         MediaQuery.of(context).viewPadding.bottom;
@@ -278,7 +279,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 width: 36.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: c.border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -291,7 +292,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF2D2D2D),
+                color: c.textPrimary,
               ),
             ),
             SizedBox(height: 20.h),
@@ -307,7 +308,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 28.sp,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF2D2D2D),
+                color: c.textPrimary,
               ),
               decoration: InputDecoration(
                 hintText: '0',
@@ -315,7 +316,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 28.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade300,
+                  color: c.border,
                 ),
                 border: InputBorder.none,
               ),
@@ -330,7 +331,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                       vertical: 14.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: c.inputBg,
                       borderRadius: BorderRadius.circular(10.r),
                     ),
                     child: Row(
@@ -340,7 +341,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                           height: 16.w,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.grey.shade400,
+                            color: c.textSubtle,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -349,7 +350,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                           style: TextStyle(
                             fontFamily: FontHelper.fontFamily(context),
                             fontSize: 13.sp,
-                            color: Colors.grey.shade400,
+                            color: c.textSubtle,
                           ),
                         ),
                       ],
@@ -371,10 +372,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                   hintStyle: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 14.sp,
-                    color: Colors.grey.shade400,
+                    color: c.textSubtle,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.shade50,
+                  fillColor: c.inputBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.r),
                     borderSide: BorderSide.none,
@@ -400,10 +401,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 hintStyle: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 14.sp,
-                  color: Colors.grey.shade400,
+                  color: c.textSubtle,
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: c.inputBg,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.r),
                   borderSide: BorderSide.none,
@@ -447,7 +448,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: c.inputBg,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Row(
@@ -455,7 +456,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                     Icon(
                       Icons.calendar_today_outlined,
                       size: 14.w,
-                      color: Colors.grey.shade500,
+                      color: c.textSecondary,
                     ),
                     SizedBox(width: 6.w),
                     Text(
@@ -464,7 +465,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: c.textPrimary,
                       ),
                     ),
                   ],
@@ -520,10 +521,11 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Widget _buildCategoryDropdown(BuildContext context, AppLocalizations l10n) {
+    final c = ColorManager.of(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: c.inputBg,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: DropdownButtonHideUnderline(
@@ -535,29 +537,29 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 13.sp,
-              color: Colors.grey.shade400,
+              color: c.textSubtle,
             ),
           ),
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 13.sp,
-            color: Colors.black87,
+            color: c.textPrimary,
           ),
           icon: Icon(
             Icons.expand_more,
             size: 18.w,
-            color: Colors.grey.shade400,
+            color: c.textSubtle,
           ),
           items: _categories
               .map(
-                (c) => DropdownMenuItem(
-                  value: c,
+                (cat) => DropdownMenuItem(
+                  value: cat,
                   child: Text(
-                    c.name,
+                    cat.name,
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 13.sp,
-                      color: Colors.black87,
+                      color: c.textPrimary,
                     ),
                   ),
                 ),
@@ -579,6 +581,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Widget _buildAttachmentsSection(AppLocalizations l10n) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -606,14 +609,14 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                           : Container(
                               width: 70.w,
                               height: 70.w,
-                              color: Colors.grey.shade100,
+                              color: c.cardBgSecondary,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.insert_drive_file_outlined,
                                     size: 24.w,
-                                    color: Colors.grey.shade500,
+                                    color: c.textSecondary,
                                   ),
                                   SizedBox(height: 4.h),
                                   Padding(
@@ -626,7 +629,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 8.sp,
-                                        color: Colors.grey.shade600,
+                                        color: c.textSecondary,
                                       ),
                                     ),
                                   ),
@@ -667,10 +670,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: c.inputBg,
               borderRadius: BorderRadius.circular(10.r),
               border: Border.all(
-                color: Colors.grey.shade200,
+                color: c.divider,
                 style: BorderStyle.solid,
               ),
             ),
@@ -680,7 +683,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 Icon(
                   Icons.attach_file,
                   size: 16.w,
-                  color: Colors.grey.shade500,
+                  color: c.textSecondary,
                 ),
                 SizedBox(width: 6.w),
                 Text(
@@ -688,7 +691,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 13.sp,
-                    color: Colors.grey.shade600,
+                    color: c.textSecondary,
                   ),
                 ),
               ],

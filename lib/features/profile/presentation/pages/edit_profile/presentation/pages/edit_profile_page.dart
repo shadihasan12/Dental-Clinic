@@ -193,9 +193,10 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   void _showPermissionDeniedBottomSheet() {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorManager.white,
+      backgroundColor: c.cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -210,7 +211,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: ColorManager.borderLight,
+                    color: c.borderLight,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -227,7 +228,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     fontSize: 16.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: c.textPrimary,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -238,7 +239,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w400,
-                    color: ColorManager.textSecondary,
+                    color: c.textSecondary,
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -273,7 +274,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     width: double.infinity,
                     padding: EdgeInsets.all(14.h),
                     decoration: BoxDecoration(
-                      color: ColorManager.scaffoldBackground,
+                      color: c.scaffoldBg,
                       borderRadius: BorderRadiusManager.lg,
                     ),
                     child: Text(
@@ -283,7 +284,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                         fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                        color: c.textPrimary,
                       ),
                     ),
                   ),
@@ -319,9 +320,10 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
     if (!mounted) return;
 
+    final c = ColorManager.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorManager.white,
+      backgroundColor: c.cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -337,7 +339,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: ColorManager.borderLight,
+                    color: c.borderLight,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
@@ -350,7 +352,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     fontSize: 16.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: c.textPrimary,
                   ),
                 ),
               ),
@@ -379,7 +381,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                             border: Border.all(
                               color: isSelected
                                   ? ColorManager.primary
-                                  : ColorManager.borderLight,
+                                  : c.borderLight,
                               width: 2,
                             ),
                           ),
@@ -407,7 +409,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                                 : FontWeight.w400,
                             color: isSelected
                                 ? ColorManager.primary
-                                : ColorManager.textPrimary,
+                                : c.textPrimary,
                           ),
                         ),
                       ],
@@ -492,8 +494,9 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         );
       },
       builder: (context, state) {
+        final c = ColorManager.of(context);
         return Scaffold(
-          backgroundColor: ColorManager.scaffoldBackground,
+          backgroundColor: c.scaffoldBg,
           bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [

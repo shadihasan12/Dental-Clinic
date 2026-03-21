@@ -98,7 +98,7 @@ class _NoSubscriptionCard extends StatelessWidget {
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2D2D2D),
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -107,7 +107,7 @@ class _NoSubscriptionCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 12.sp,
-                    color: Colors.black38,
+                    color: ColorManager.of(context).textSubtle,
                   ),
                 ),
               ],
@@ -205,7 +205,7 @@ class _TrialCard extends StatelessWidget {
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2D2D2D),
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 1.h),
@@ -214,7 +214,7 @@ class _TrialCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 11.sp,
-                        color: Colors.black38,
+                        color: ColorManager.of(context).textSubtle,
                       ),
                     ),
                   ],
@@ -325,9 +325,9 @@ class _ActivePlanCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +359,7 @@ class _ActivePlanCard extends StatelessWidget {
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2D2D2D),
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 1.h),
@@ -368,7 +368,7 @@ class _ActivePlanCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 11.sp,
-                        color: Colors.black38,
+                        color: ColorManager.of(context).textSubtle,
                       ),
                     ),
                   ],
@@ -403,7 +403,7 @@ class _ActivePlanCard extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 12.sp,
-                  color: Colors.black45,
+                  color: ColorManager.of(context).textSubtle,
                 ),
               ),
               const Spacer(),
@@ -416,7 +416,7 @@ class _ActivePlanCard extends StatelessWidget {
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF2D2D2D),
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
             ],
@@ -426,7 +426,7 @@ class _ActivePlanCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4.r),
             child: LinearProgressIndicator(
               value: storageProgress,
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: ColorManager.of(context).borderLight,
               valueColor: AlwaysStoppedAnimation<Color>(
                 storageProgress > 0.85 ? const Color(0xFFF59E0B) : ColorManager.primary,
               ),
@@ -443,7 +443,7 @@ class _ActivePlanCard extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 10.h),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: ColorManager.of(context).cardBg,
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(color: ColorManager.primary),
               ),

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -15,26 +16,26 @@ class CaseInfoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         SectionCard(
-          title: 'Case Information (Optional)',
+          title: l10n.caseInformationOptional,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'A case will be automatically created for this patient. '
-                'You can add a title or skip this step.',
+                l10n.caseAutoCreateDescription,
                 style: TextStyleManager.bodyMedium.copyWith(
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                   height: 1.5,
                 ),
               ),
               SizedBox(height: 20.h),
               AppFormField(
-                label: 'Case Title',
+                label: l10n.caseTitle,
                 controller: caseTitleController,
-                hintText: 'e.g., Full Mouth Restoration, Orthodontic Treatment',
+                hintText: l10n.caseTitleExampleHint,
               ),
             ],
           ),

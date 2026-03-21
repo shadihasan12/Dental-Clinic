@@ -79,7 +79,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
     return Container(
       constraints: BoxConstraints(maxHeight: 0.75.sh),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -91,7 +91,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             width: 40.w,
             height: 4.h,
             decoration: BoxDecoration(
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
@@ -108,7 +108,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
                     fontSize: 18.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 GestureDetector(
@@ -116,7 +116,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
                   child: Icon(
                     Icons.close,
                     size: 24.w,
-                    color: ColorManager.textSecondary,
+                    color: ColorManager.of(context).textSecondary,
                   ),
                 ),
               ],
@@ -151,9 +151,9 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray50,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadiusManager.md,
-        border: Border.all(color: ColorManager.gray200),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: Row(
         children: [
@@ -162,7 +162,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             width: 40.w,
             height: 40.w,
             decoration: BoxDecoration(
-              color: ColorManager.gray200,
+              color: ColorManager.of(context).borderLight,
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -185,7 +185,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -196,7 +196,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
                     SizedBox(width: 8.w),
@@ -230,7 +230,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
           Icon(
             Icons.receipt_long_outlined,
             size: 48.w,
-            color: ColorManager.textTertiary,
+            color: ColorManager.of(context).textTertiary,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -238,7 +238,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             style: TextStyle(
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
         ],

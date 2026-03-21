@@ -21,6 +21,7 @@ class ProfileDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -29,13 +30,13 @@ class ProfileDropdownField extends StatelessWidget {
             ? null
             : BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+                  bottom: BorderSide(color: c.borderLight, width: 1),
                 ),
               ),
         padding: EdgeInsets.symmetric(vertical: 14.h),
         child: Row(
           children: [
-            Icon(icon, size: 18.w, color: ColorManager.textTertiary),
+            Icon(icon, size: 18.w, color: c.textTertiary),
             SizedBox(width: 12.w),
             Expanded(
               child: Column(
@@ -47,7 +48,7 @@ class ProfileDropdownField extends StatelessWidget {
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w400,
-                      color: ColorManager.textTertiary,
+                      color: c.textTertiary,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -57,7 +58,7 @@ class ProfileDropdownField extends StatelessWidget {
                       fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w400,
-                      color: ColorManager.textPrimary,
+                      color: c.textPrimary,
                     ),
                   ),
                 ],
@@ -66,7 +67,7 @@ class ProfileDropdownField extends StatelessWidget {
             Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 20.w,
-              color: ColorManager.textTertiary,
+              color: c.textTertiary,
             ),
           ],
         ),

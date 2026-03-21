@@ -127,7 +127,7 @@ class _ForgotPasswordVerifyOtpPageState
     final fontFamily = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -195,12 +195,12 @@ class _ForgotPasswordVerifyOtpPageState
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: ColorManager.gray100,
+                          color: ColorManager.of(context).cardBgSecondary,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                           size: 18.w,
                         ),
                       ),
@@ -215,7 +215,7 @@ class _ForgotPasswordVerifyOtpPageState
                         fontSize: FontSizesManager.s24,
                         fontWeight: FontWeightManager.bold,
                         fontFamily: fontFamily,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                     ),
                     SizedBox(height: 8.h),
@@ -224,7 +224,7 @@ class _ForgotPasswordVerifyOtpPageState
                       style: TextStyle(
                         fontSize: FontSizesManager.s14,
                         fontFamily: fontFamily,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
 
@@ -257,7 +257,7 @@ class _ForgotPasswordVerifyOtpPageState
                           fontSize: FontSizesManager.s16,
                           fontWeight: FontWeightManager.semiBold,
                           fontFamily: fontFamily,
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                     ),
@@ -270,7 +270,7 @@ class _ForgotPasswordVerifyOtpPageState
                         style: TextStyle(
                           fontSize: FontSizesManager.s14,
                           fontFamily: fontFamily,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -298,24 +298,24 @@ class _ForgotPasswordVerifyOtpPageState
                                 fontSize: FontSizesManager.s24,
                                 fontWeight: FontWeightManager.bold,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding:
                                     EdgeInsets.symmetric(vertical: 14.h),
                                 filled: true,
-                                fillColor: ColorManager.gray100,
+                                fillColor: ColorManager.of(context).cardBgSecondary,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide: BorderSide(
-                                    color: ColorManager.gray300,
+                                    color: ColorManager.of(context).border,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide: BorderSide(
-                                    color: ColorManager.gray300,
+                                    color: ColorManager.of(context).border,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
@@ -328,7 +328,7 @@ class _ForgotPasswordVerifyOtpPageState
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   borderSide: BorderSide(
-                                    color: ColorManager.gray300,
+                                    color: ColorManager.of(context).border,
                                   ),
                                 ),
                               ),
@@ -366,7 +366,7 @@ class _ForgotPasswordVerifyOtpPageState
                               style: TextStyle(
                                 fontSize: FontSizesManager.s14,
                                 fontFamily: fontFamily,
-                                color: ColorManager.textSecondary,
+                                color: ColorManager.of(context).textSecondary,
                               ),
                             ),
                           ],
@@ -383,7 +383,7 @@ class _ForgotPasswordVerifyOtpPageState
                                 style: TextStyle(
                                   fontSize: FontSizesManager.s14,
                                   fontFamily: fontFamily,
-                                  color: ColorManager.textSecondary,
+                                  color: ColorManager.of(context).textSecondary,
                                 ),
                               ),
                             );
@@ -397,7 +397,7 @@ class _ForgotPasswordVerifyOtpPageState
                                   style: TextStyle(
                                     fontSize: FontSizesManager.s12,
                                     fontFamily: fontFamily,
-                                    color: ColorManager.textSecondary,
+                                    color: ColorManager.of(context).textSecondary,
                                   ),
                                 ),
                                 TextButton(

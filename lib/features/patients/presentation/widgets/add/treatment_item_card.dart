@@ -34,9 +34,9 @@ class TreatmentItemCard extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 8.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadiusManager.lg,
-          border: Border.all(color: ColorManager.gray200),
+          border: Border.all(color: ColorManager.of(context).borderLight),
         ),
         child: Row(
           children: [
@@ -55,7 +55,7 @@ class TreatmentItemCard extends StatelessWidget {
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                       ),
@@ -65,7 +65,7 @@ class TreatmentItemCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                           ),
                         ),
                     ],
@@ -79,7 +79,7 @@ class TreatmentItemCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -106,7 +106,7 @@ class TreatmentItemCard extends StatelessWidget {
                         Icon(
                           Icons.call_to_action_sharp, // TODO : Replace with the correct icon
                           size: 14.w,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                         SizedBox(width: 4.w),
                         Text(
@@ -114,7 +114,7 @@ class TreatmentItemCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                         ),
                       ],
@@ -129,7 +129,7 @@ class TreatmentItemCard extends StatelessWidget {
                         Icon(
                           Icons.attach_file,
                           size: 14.w,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                         SizedBox(width: 4.w),
                         Text(
@@ -137,7 +137,7 @@ class TreatmentItemCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                         ),
                       ],
@@ -151,7 +151,7 @@ class TreatmentItemCard extends StatelessWidget {
             Icon(
               Icons.chevron_right,
               size: 20.w,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ],
         ),

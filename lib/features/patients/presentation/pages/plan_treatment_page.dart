@@ -101,7 +101,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       bottomNavigationBar: _newTreatments.isNotEmpty
           ? _buildBottomBar(context)
           : null,
@@ -183,12 +183,16 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                                 fontSize: 15.sp,
                                 fontFamily: FontHelper.fontFamily(context),
                                 fontWeight: FontWeight.w600,
-                                color: ColorManager.textPrimary,
+                                color: ColorManager.of(context).textPrimary,
                               ),
                             ),
                             SizedBox(height: 14.h),
                             TreatmentTypeGrid(
                               types: widget.categories[_viewMode].treatments,
+                              selectedIds: _newTreatments
+                                  .where((t) => t.toothNumber == null)
+                                  .map((t) => t.type.id)
+                                  .toSet(),
                               onSelect: _addGeneralTreatment,
                             ),
                           ],
@@ -210,7 +214,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                               fontSize: 15.sp,
                               fontFamily: FontHelper.fontFamily(context),
                               fontWeight: FontWeight.w600,
-                              color: ColorManager.textPrimary,
+                              color: ColorManager.of(context).textPrimary,
                             ),
                           ),
                           const Spacer(),
@@ -290,7 +294,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray100,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -325,7 +329,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.white : Colors.transparent,
+            color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
             borderRadius: BorderRadius.circular(10.r),
             boxShadow: isSelected
                 ? [
@@ -345,7 +349,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                 size: 16.w,
                 color: isSelected
                     ? ColorManager.primary
-                    : ColorManager.textTertiary,
+                    : ColorManager.of(context).textTertiary,
               ),
               SizedBox(width: 6.w),
               Text(
@@ -356,7 +360,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
                       ? ColorManager.primary
-                      : ColorManager.textTertiary,
+                      : ColorManager.of(context).textTertiary,
                 ),
               ),
             ],
@@ -375,7 +379,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
         MediaQuery.of(context).padding.bottom + 12.h,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -392,7 +396,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
               fontSize: 14.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           SizedBox(width: 20.w),
@@ -412,7 +416,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.white,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -481,7 +485,7 @@ class _InteractiveToothChart extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: ColorManager.of(context).textTertiary,
                 ),
               ),
             ],

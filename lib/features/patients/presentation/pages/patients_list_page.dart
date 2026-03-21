@@ -118,7 +118,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
     final filters = [l10n.allFilter, l10n.newFilter];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocBuilder<PatientsListBloc, PatientsListState>(
         builder: (context, state) {
           return state.when(
@@ -154,7 +154,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           onAddTap: () {},
           onSearchChanged: (_) {},
         ),
-        Divider(height: 1, color: Colors.grey.shade200),
+        Divider(height: 1, color: ColorManager.of(context).divider),
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
           child: PatientFilterChips(
@@ -193,7 +193,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) => setState(() {}),
         ),
-        Divider(height: 1, color: Colors.grey.shade200),
+        Divider(height: 1, color: ColorManager.of(context).divider),
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
           child: PatientFilterChips(
@@ -217,7 +217,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                             filtered.length +
                             (isLoadingMore || hasMore ? 1 : 0),
                         separatorBuilder: (_, __) =>
-                            Divider(height: 1, color: Colors.grey.shade100),
+                            Divider(height: 1, color: ColorManager.of(context).divider),
                         itemBuilder: (context, index) {
                           if (index == filtered.length) {
                             return Padding(
@@ -272,7 +272,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                   ? Icons.person_add_outlined
                   : Icons.search_off_outlined,
               size: 30.w,
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
             ),
             SizedBox(height: 16.h),
             Text(
@@ -280,7 +280,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
               style: TextStyle(
                 fontSize: FontSizesManager.s14,
                 fontFamily: fontFamily,
-                color: Colors.black38,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -319,7 +319,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) {},
         ),
-        Divider(height: 1, color: Colors.grey.shade200),
+        Divider(height: 1, color: ColorManager.of(context).divider),
         Expanded(
           child: Center(
             child: Padding(
@@ -327,14 +327,14 @@ class _PatientsListContentState extends State<_PatientsListContent> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
+                  Icon(Icons.error_outline, size: 48.w, color: ColorManager.of(context).textTertiary),
                   SizedBox(height: 12.h),
                   Text(
                     message,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14.sp,
-                      color: Colors.grey.shade500,
+                      color: ColorManager.of(context).textTertiary,
                       fontFamily: FontHelper.fontFamily(context),
                     ),
                   ),
@@ -357,7 +357,7 @@ class _ShimmerCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -369,17 +369,17 @@ class _ShimmerCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _shimmerBox(52.w, 52.w, isCircle: true),
+          _shimmerBox(context, 52.w, 52.w, isCircle: true),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _shimmerBox(140.w, 14.h),
+                _shimmerBox(context, 140.w, 14.h),
                 SizedBox(height: 8.h),
-                _shimmerBox(100.w, 10.h),
+                _shimmerBox(context, 100.w, 10.h),
                 SizedBox(height: 8.h),
-                _shimmerBox(120.w, 10.h),
+                _shimmerBox(context, 120.w, 10.h),
               ],
             ),
           ),
@@ -388,12 +388,12 @@ class _ShimmerCard extends StatelessWidget {
     );
   }
 
-  Widget _shimmerBox(double width, double height, {bool isCircle = false}) {
+  Widget _shimmerBox(BuildContext context, double width, double height, {bool isCircle = false}) {
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: ColorManager.of(context).divider,
         borderRadius: isCircle ? null : BorderRadius.circular(6.r),
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
       ),

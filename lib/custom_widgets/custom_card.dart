@@ -39,7 +39,7 @@ class CustomCard extends StatelessWidget {
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: color ?? ColorManager.white,
+        color: color ?? ColorManager.of(context).cardBg,
         borderRadius: borderRadius ?? BorderRadiusManager.xl,
         border: border,
         boxShadow: shadow ?? ShadowManager.cardShadow,
@@ -118,7 +118,7 @@ class StatsCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 28.sp,
               fontWeight: FontWeight.bold,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 4.h),
@@ -126,7 +126,7 @@ class StatsCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 14.sp,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           if (subtitle != null) ...[
@@ -135,7 +135,7 @@ class StatsCard extends StatelessWidget {
               subtitle!,
               style: TextStyle(
                 fontSize: 12.sp,
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ],

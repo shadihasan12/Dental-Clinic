@@ -314,6 +314,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lightMode => 'الوضع الفاتح';
 
   @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get systemDefault => 'إعدادات النظام';
+
+  @override
   String get privacySecurity => 'الخصوصية والأمان';
 
   @override
@@ -1736,4 +1742,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get selectSpecialization => 'اختر التخصص';
+
+  @override
+  String get patientInfo => 'معلومات المريض';
+
+  @override
+  String get caseInfo => 'معلومات الحالة';
+
+  @override
+  String get initialVisit => 'الزيارة الأولى';
+
+  @override
+  String stepOfTotal(int current, int total, String stepTitle) {
+    return 'الخطوة $current من $total: $stepTitle';
+  }
+
+  @override
+  String get caseInformationOptional => 'معلومات الحالة (اختياري)';
+
+  @override
+  String get caseAutoCreateDescription =>
+      'سيتم إنشاء حالة تلقائياً لهذا المريض. يمكنك إضافة عنوان أو تخطي هذه الخطوة.';
+
+  @override
+  String get caseTitle => 'عنوان الحالة';
+
+  @override
+  String get caseTitleExampleHint => 'مثال: ترميم كامل للفم، علاج تقويمي';
+
+  @override
+  String get phoneHint => '0988026431';
 }

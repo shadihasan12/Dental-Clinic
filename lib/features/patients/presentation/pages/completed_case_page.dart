@@ -120,7 +120,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     final treatments = _mapTreatments();
 
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: Column(
         children: [
           PageHeader(
@@ -163,7 +163,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                 MediaQuery.of(context).padding.bottom + 12.h,
               ),
               decoration: BoxDecoration(
-                color: ColorManager.white,
+                color: ColorManager.of(context).cardBg,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.06),
@@ -209,9 +209,9 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadiusManager.lg,
-        border: Border.all(color: ColorManager.borderLight),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: _isEditingTitle
           ? Column(
@@ -226,23 +226,23 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                     fontSize: 16.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.caseTitlePlaceholder,
                     hintStyle: TextStyle(
                       fontSize: 16.sp,
-                      color: ColorManager.textTertiary,
+                      color: ColorManager.of(context).textTertiary,
                     ),
                     filled: true,
-                    fillColor: ColorManager.gray50,
+                    fillColor: ColorManager.of(context).cardBgSecondary,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: ColorManager.borderLight),
+                      borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: ColorManager.borderLight),
+                      borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.r),
@@ -307,7 +307,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                       fontSize: 16.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                 ),
@@ -319,13 +319,13 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                   child: Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.gray50,
+                      color: ColorManager.of(context).cardBgSecondary,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Icon(
                       Icons.edit_outlined,
                       size: 16.w,
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                   ),
                 ),
@@ -338,9 +338,9 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadiusManager.lg,
-        border: Border.all(color: ColorManager.borderLight),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: Column(
         children: [
@@ -369,14 +369,14 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
           SizedBox(height: 10.h),
           Row(
             children: [
-              Icon(Icons.info_outline, size: 16.w, color: ColorManager.textTertiary),
+              Icon(Icons.info_outline, size: 16.w, color: ColorManager.of(context).textTertiary),
               SizedBox(width: 8.w),
               Text(
                 AppLocalizations.of(context)!.status,
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: ColorManager.of(context).textTertiary,
                 ),
               ),
               const Spacer(),
@@ -407,14 +407,14 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
       {required IconData icon, required String label, required String value}) {
     return Row(
       children: [
-        Icon(icon, size: 16.w, color: ColorManager.textTertiary),
+        Icon(icon, size: 16.w, color: ColorManager.of(context).textTertiary),
         SizedBox(width: 8.w),
         Text(
           label,
           style: TextStyle(
             fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textTertiary,
+            color: ColorManager.of(context).textTertiary,
           ),
         ),
         const Spacer(),
@@ -424,7 +424,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
             fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
       ],
@@ -506,7 +506,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                 fontSize: 16.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(width: 8.w),
@@ -534,7 +534,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
             width: double.infinity,
             padding: EdgeInsets.all(24.w),
             decoration: BoxDecoration(
-              color: ColorManager.gray50,
+              color: ColorManager.of(context).cardBgSecondary,
               borderRadius: BorderRadiusManager.lg,
             ),
             child: Center(
@@ -543,7 +543,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                 ),
               ),
             ),

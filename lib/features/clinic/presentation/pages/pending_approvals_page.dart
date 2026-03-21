@@ -34,7 +34,7 @@ class _PendingApprovalsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<ApprovalsBloc, ApprovalsState>(
         listener: (context, state) {
           if (state.approveSuccess) {
@@ -93,7 +93,7 @@ class _PendingApprovalsContent extends StatelessWidget {
                         Text(
                           'All caught up!',
                           style: TextStyleManager.titleMedium.copyWith(
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -101,7 +101,7 @@ class _PendingApprovalsContent extends StatelessWidget {
                         Text(
                           'No pending approval requests',
                           style: TextStyleManager.bodyMedium.copyWith(
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                           ),
                         ),
                       ],
@@ -215,7 +215,7 @@ class _ApprovalRequestCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -269,7 +269,7 @@ class _ApprovalRequestCard extends StatelessWidget {
                       Text(
                         'From ${request.requesterName}',
                         style: TextStyleManager.bodySmall.copyWith(
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ],
@@ -278,7 +278,7 @@ class _ApprovalRequestCard extends StatelessWidget {
                 Text(
                   _formatTimeAgo(request.createdAt),
                   style: TextStyleManager.labelSmall.copyWith(
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
               ],
@@ -297,13 +297,13 @@ class _ApprovalRequestCard extends StatelessWidget {
                     Icon(
                       Icons.person_outline,
                       size: 18.w,
-                      color: ColorManager.textSecondary,
+                      color: ColorManager.of(context).textSecondary,
                     ),
                     SizedBox(width: 8.w),
                     Text(
                       'Patient: ',
                       style: TextStyleManager.bodyMedium.copyWith(
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                       ),
                     ),
                     Text(
@@ -320,7 +320,7 @@ class _ApprovalRequestCard extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: ColorManager.gray50,
+                      color: ColorManager.of(context).inputBg,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Row(
@@ -329,14 +329,14 @@ class _ApprovalRequestCard extends StatelessWidget {
                         Icon(
                           Icons.notes,
                           size: 18.w,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
                             reason,
                             style: TextStyleManager.bodySmall.copyWith(
-                              color: ColorManager.textSecondary,
+                              color: ColorManager.of(context).textSecondary,
                             ),
                           ),
                         ),
@@ -370,7 +370,7 @@ class _ApprovalRequestCard extends StatelessWidget {
                         onPressed: isProcessing ? null : onApprove,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorManager.success,
-                          foregroundColor: ColorManager.white,
+                          foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),

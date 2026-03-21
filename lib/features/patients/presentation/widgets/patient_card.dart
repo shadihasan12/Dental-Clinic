@@ -42,7 +42,7 @@ class PatientCard extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -113,7 +113,7 @@ class PatientCard extends StatelessWidget {
           style: TextStyle(
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -123,7 +123,7 @@ class PatientCard extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
         SizedBox(height: 4.h),
@@ -132,7 +132,7 @@ class PatientCard extends StatelessWidget {
             Icon(
               Icons.phone_outlined,
               size: 14.w,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
             SizedBox(width: 4.w),
             Text(
@@ -140,7 +140,7 @@ class PatientCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
           ],
@@ -162,7 +162,7 @@ class PatientCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                 ),
               ),
               Text(

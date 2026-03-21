@@ -18,13 +18,14 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     final icon = _iconForType(notification.type);
     final iconColor = _colorForType(notification.type);
 
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: notification.isRead ? Colors.white : ColorManager.primary5,
+        color: notification.isRead ? c.cardBg : ColorManager.primary5,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +55,7 @@ class NotificationCard extends StatelessWidget {
                             fontWeight: notification.isRead
                                 ? FontWeight.w500
                                 : FontWeight.w600,
-                            color: ColorManager.textPrimary,
+                            color: c.textPrimary,
                           ),
                         ),
                       ),
@@ -77,7 +78,7 @@ class NotificationCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textSecondary,
+                      color: c.textSecondary,
                       height: 1.4,
                     ),
                   ),
@@ -87,7 +88,7 @@ class NotificationCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textSubtle,
+                      color: c.textSubtle,
                     ),
                   ),
                 ],

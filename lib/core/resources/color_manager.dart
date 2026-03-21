@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Color management class for the dental clinic application
 /// Based on the design system with teal theme
+///
+/// Static colors remain for use in non-context situations (theme definitions).
+/// Use [of(context)] for theme-aware colors in widgets.
 class ColorManager {
   ColorManager._();
 
@@ -11,7 +14,7 @@ class ColorManager {
   static const Color transparent = Colors.transparent;
 
   // ============================================
-  // PRIMARY COLORS - Teal Theme
+  // PRIMARY COLORS - Teal Theme (same in both themes)
   // ============================================
   static const Color primary = Color(0xFF70B2B2);
   static const Color primaryDark = Color(0xFF5A9999);
@@ -32,7 +35,7 @@ class ColorManager {
   static const Color secondaryLight = Color(0xFF80CBC4);
 
   // ============================================
-  // NEUTRAL COLORS
+  // NEUTRAL COLORS (light palette — used as base)
   // ============================================
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
@@ -57,7 +60,7 @@ class ColorManager {
   static const Color veryDarkGrey = gray700;
 
   // ============================================
-  // SEMANTIC / STATUS COLORS
+  // SEMANTIC / STATUS COLORS (same in both themes)
   // ============================================
 
   // Success - Green
@@ -99,25 +102,6 @@ class ColorManager {
   static const Color purpleBorder = Color(0xFFE9D5FF);
 
   // ============================================
-  // BACKGROUND COLORS
-  // ============================================
-  static const Color background = gray50;
-  static const Color backgroundSecondary = gray100;
-  static const Color surface = white;
-  static const Color scaffoldBackground = gray50;
-
-  // ============================================
-  // TEXT COLORS
-  // ============================================
-  static const Color textPrimary = gray900;
-  static const Color textSecondary = gray600;
-  static const Color textTertiary = gray500;
-  static const Color textSubtle = gray400;
-  static const Color textHint = gray400;
-  static const Color textOnPrimary = white;
-  static const Color textOnDark = white;
-
-  // ============================================
   // DENTAL SPECIFIC COLORS
   // ============================================
   static const Color toothWhite = Color(0xFFFFFDE7);
@@ -126,25 +110,34 @@ class ColorManager {
   static const Color medicalTeal = primary;
 
   // ============================================
-  // CARD & CONTAINER COLORS
+  // THEME-AWARE SEMANTIC COLORS
+  // These are light-mode defaults. Use [of(context)]
+  // in widgets for automatic dark-mode switching.
   // ============================================
+  static const Color background = gray50;
+  static const Color backgroundSecondary = gray100;
+  static const Color surface = white;
+  static const Color scaffoldBackground = gray50;
+
+  static const Color textPrimary = gray900;
+  static const Color textSecondary = gray600;
+  static const Color textTertiary = gray500;
+  static const Color textSubtle = gray400;
+  static const Color textHint = gray400;
+  static const Color textOnPrimary = white;
+  static const Color textOnDark = white;
+
   static const Color cardBackground = white;
   static const Color cardBackgroundSecondary = gray50;
   static const Color divider = gray200;
   static const Color border = gray300;
   static const Color borderLight = gray200;
 
-  // ============================================
-  // INPUT FIELD COLORS
-  // ============================================
   static const Color inputBackground = gray50;
   static const Color inputBorder = gray300;
   static const Color inputBorderFocused = primary;
   static const Color inputPlaceholder = gray400;
 
-  // ============================================
-  // SHIMMER / LOADING
-  // ============================================
   static const Color shimmerBase = gray200;
   static const Color shimmerHighlight = gray100;
 
@@ -154,4 +147,125 @@ class ColorManager {
   static Color get overlay => black.withValues(alpha: 0.5);
   static Color get overlayLight => black.withValues(alpha: 0.3);
   static Color get glassmorphism => white.withValues(alpha: 0.2);
+
+  // ============================================
+  // CONTEXT-AWARE COLOR RESOLVER
+  // ============================================
+
+  /// Returns a theme-aware color set based on the current brightness.
+  /// Usage: `final c = ColorManager.of(context);`
+  /// Then: `c.scaffoldBg`, `c.textPrimary`, `c.cardBg`, etc.
+  static AppColors of(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? _dark : _light;
+  }
+
+  static const _light = AppColors(
+    scaffoldBg: gray50,
+    surfaceBg: white,
+    cardBg: white,
+    cardBgSecondary: gray50,
+    textPrimary: gray900,
+    textSecondary: gray600,
+    textTertiary: gray500,
+    textSubtle: gray400,
+    textHint: gray400,
+    divider: gray200,
+    border: gray300,
+    borderLight: gray200,
+    inputBg: gray50,
+    inputBorder: gray300,
+    shimmerBase: gray200,
+    shimmerHighlight: gray100,
+    iconDefault: gray600,
+    menuGroupBg: gray50,
+    menuIconBg: white,
+    successBg: Color(0xFFDCFCE7),
+    warningBg: Color(0xFFFFEDD5),
+    errorBg: Color(0xFFFEE2E2),
+    infoBg: Color(0xFFDBEAFE),
+    purpleBg: Color(0xFFF3E8FF),
+  );
+
+  static const _dark = AppColors(
+    scaffoldBg: Color(0xFF121212),
+    surfaceBg: Color(0xFF1E1E1E),
+    cardBg: Color(0xFF1E1E1E),
+    cardBgSecondary: Color(0xFF252525),
+    textPrimary: Color(0xFFE8E8E8),
+    textSecondary: Color(0xFFB0B0B0),
+    textTertiary: Color(0xFF8A8A8A),
+    textSubtle: Color(0xFF6A6A6A),
+    textHint: Color(0xFF6A6A6A),
+    divider: Color(0xFF2E2E2E),
+    border: Color(0xFF3A3A3A),
+    borderLight: Color(0xFF2E2E2E),
+    inputBg: Color(0xFF2A2A2A),
+    inputBorder: Color(0xFF3A3A3A),
+    shimmerBase: Color(0xFF2A2A2A),
+    shimmerHighlight: Color(0xFF333333),
+    iconDefault: Color(0xFFB0B0B0),
+    menuGroupBg: Color(0xFF1E1E1E),
+    menuIconBg: Color(0xFF2A2A2A),
+    successBg: Color(0xFF1A3A2A),
+    warningBg: Color(0xFF3A2A1A),
+    errorBg: Color(0xFF3A1A1A),
+    infoBg: Color(0xFF1A2A3A),
+    purpleBg: Color(0xFF2A1A3A),
+  );
+}
+
+/// Immutable set of theme-aware colors resolved from context.
+class AppColors {
+  final Color scaffoldBg;
+  final Color surfaceBg;
+  final Color cardBg;
+  final Color cardBgSecondary;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textTertiary;
+  final Color textSubtle;
+  final Color textHint;
+  final Color divider;
+  final Color border;
+  final Color borderLight;
+  final Color inputBg;
+  final Color inputBorder;
+  final Color shimmerBase;
+  final Color shimmerHighlight;
+  final Color iconDefault;
+  final Color menuGroupBg;
+  final Color menuIconBg;
+  final Color successBg;
+  final Color warningBg;
+  final Color errorBg;
+  final Color infoBg;
+  final Color purpleBg;
+
+  const AppColors({
+    required this.scaffoldBg,
+    required this.surfaceBg,
+    required this.cardBg,
+    required this.cardBgSecondary,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textTertiary,
+    required this.textSubtle,
+    required this.textHint,
+    required this.divider,
+    required this.border,
+    required this.borderLight,
+    required this.inputBg,
+    required this.inputBorder,
+    required this.shimmerBase,
+    required this.shimmerHighlight,
+    required this.iconDefault,
+    required this.menuGroupBg,
+    required this.menuIconBg,
+    required this.successBg,
+    required this.warningBg,
+    required this.errorBg,
+    required this.infoBg,
+    required this.purpleBg,
+  });
 }

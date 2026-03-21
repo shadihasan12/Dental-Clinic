@@ -16,11 +16,12 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       children: [
         Container(
           width: double.infinity,
-          color: ColorManager.white,
+          color: c.surfaceBg,
           child: SafeArea(
             bottom: false,
             child: Padding(
@@ -30,7 +31,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                   IconButton(
                     icon: Icon(
                       Icons.arrow_back_ios_new,
-                      color: ColorManager.textPrimary,
+                      color: c.textPrimary,
                       size: 20.w,
                     ),
                     onPressed: () => context.pop(),
@@ -42,7 +43,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                         fontSize: 18.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                        color: c.textPrimary,
                       ),
                     ),
                   ),
@@ -53,7 +54,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        Divider(height: 1, color: ColorManager.borderLight),
+        Divider(height: 1, color: c.borderLight),
       ],
     );
   }

@@ -61,7 +61,7 @@ class SocialButton extends StatelessWidget {
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 14.h),
-        side: BorderSide(color: ColorManager.gray200),
+        side: BorderSide(color: ColorManager.of(context).borderLight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -74,7 +74,7 @@ class SocialButton extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
               fontWeight: FontWeightManager.regular,
               fontFamily: FontHelper.fontFamily(context),
               fontSize: FontSizesManager.s12,

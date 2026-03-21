@@ -212,7 +212,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
         return state.when(
           initial: () => const Scaffold(body: SizedBox.shrink()),
           loading: () => Scaffold(
-                backgroundColor: ColorManager.scaffoldBackground,
+                backgroundColor: ColorManager.of(context).scaffoldBg,
                 body: Column(
                   children: [
                     PatientHeader(
@@ -236,7 +236,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: ColorManager.textSecondary,
+                    color: ColorManager.of(context).textSecondary,
                   ),
                 ),
               ),
@@ -244,7 +244,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           ),
           loaded: (patient, activeCase, completedCases) {
             return Scaffold(
-              backgroundColor: ColorManager.scaffoldBackground,
+              backgroundColor: ColorManager.of(context).scaffoldBg,
               body: Column(
                 children: [
                   PatientHeader(
@@ -595,7 +595,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                 fontSize: 18.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -605,7 +605,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
             SizedBox(height: 32.h),
@@ -623,7 +623,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                     Icon(
                       Icons.add_circle_outline,
                       size: 20.w,
-                      color: ColorManager.white,
+                      color: Colors.white,
                     ),
                     SizedBox(width: 8.w),
                     Text(
@@ -632,7 +632,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                         fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.white,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -663,7 +663,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w600,
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
         content: Column(
@@ -676,7 +676,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w400,
-                color: ColorManager.textSecondary,
+                color: ColorManager.of(context).textSecondary,
               ),
             ),
             SizedBox(height: 16.h),
@@ -688,20 +688,20 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                 labelStyle: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textSecondary,
+                  color: ColorManager.of(context).textSecondary,
                 ),
                 hintStyle: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.textTertiary,
+                  color: ColorManager.of(context).textTertiary,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: ColorManager.borderLight),
+                  borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: ColorManager.borderLight),
+                  borderSide: BorderSide(color: ColorManager.of(context).borderLight),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -715,7 +715,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ],
@@ -729,7 +729,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),

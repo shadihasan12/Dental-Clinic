@@ -17,6 +17,7 @@ void showAddHolidaySheet(
   required void Function(HolidayEntry entry, int? index) onSave,
 }) {
   final l10n = AppLocalizations.of(context)!;
+  final c = ColorManager.of(context);
   final nameController = TextEditingController(text: existing?.name ?? '');
   DateTime selectedDate = existing?.date ?? DateTime.now();
   bool recurring = existing?.recurring ?? false;
@@ -30,7 +31,7 @@ void showAddHolidaySheet(
         builder: (ctx, setSheetState) {
           return Container(
             decoration: BoxDecoration(
-              color: ColorManager.white,
+              color: c.cardBg,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
             ),
             padding: EdgeInsets.fromLTRB(
@@ -49,7 +50,7 @@ void showAddHolidaySheet(
                     width: 36.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: ColorManager.borderLight,
+                      color: c.borderLight,
                       borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
@@ -61,7 +62,7 @@ void showAddHolidaySheet(
                     fontSize: 16.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: c.textPrimary,
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -71,7 +72,7 @@ void showAddHolidaySheet(
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textTertiary,
+                    color: c.textTertiary,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -80,13 +81,13 @@ void showAddHolidaySheet(
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textPrimary,
+                    color: c.textPrimary,
                   ),
                   decoration: InputDecoration(
                     hintText: l10n.holidayNameHint,
                     hintStyle: TextStyle(
                       fontSize: 14.sp,
-                      color: ColorManager.textTertiary,
+                      color: c.textTertiary,
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 12.w,
@@ -94,11 +95,11 @@ void showAddHolidaySheet(
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
-                      borderSide: BorderSide(color: ColorManager.borderLight),
+                      borderSide: BorderSide(color: c.borderLight),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
-                      borderSide: BorderSide(color: ColorManager.borderLight),
+                      borderSide: BorderSide(color: c.borderLight),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -113,7 +114,7 @@ void showAddHolidaySheet(
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textTertiary,
+                    color: c.textTertiary,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -136,16 +137,16 @@ void showAddHolidaySheet(
                       vertical: 10.h,
                     ),
                     decoration: BoxDecoration(
-                      color: ColorManager.gray50,
+                      color: c.cardBgSecondary,
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: ColorManager.borderLight),
+                      border: Border.all(color: c.borderLight),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.calendar_today_outlined,
                           size: 16.w,
-                          color: ColorManager.textSecondary,
+                          color: c.textSecondary,
                         ),
                         SizedBox(width: 8.w),
                         Text(
@@ -153,7 +154,7 @@ void showAddHolidaySheet(
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textPrimary,
+                            color: c.textPrimary,
                           ),
                         ),
                       ],
@@ -173,7 +174,7 @@ void showAddHolidaySheet(
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontFamily: FontHelper.fontFamily(context),
-                              color: ColorManager.textPrimary,
+                              color: c.textPrimary,
                             ),
                           ),
                           SizedBox(height: 2.h),
@@ -182,7 +183,7 @@ void showAddHolidaySheet(
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontFamily: FontHelper.fontFamily(context),
-                              color: ColorManager.textTertiary,
+                              color: c.textTertiary,
                             ),
                           ),
                         ],

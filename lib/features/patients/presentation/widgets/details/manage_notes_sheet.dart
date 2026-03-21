@@ -130,7 +130,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -151,7 +151,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                       width: 40.w,
                       height: 4.h,
                       decoration: BoxDecoration(
-                        color: ColorManager.gray300,
+                        color: ColorManager.of(context).border,
                         borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
@@ -165,7 +165,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                       fontSize: 16.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -174,7 +174,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textTertiary,
+                      color: ColorManager.of(context).textTertiary,
                     ),
                   ),
                   SizedBox(height: 16.h),
@@ -198,7 +198,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                         ),
                       ),
@@ -232,7 +232,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontFamily: FontHelper.fontFamily(context),
-                          color: ColorManager.textPrimary,
+                          color: ColorManager.of(context).textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: _editingIndex != null
@@ -240,21 +240,21 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                               : AppLocalizations.of(context)!.writeANote,
                           hintStyle: TextStyle(
                             fontSize: 14.sp,
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 14.w, vertical: 12.h),
                           filled: true,
-                          fillColor: ColorManager.gray50,
+                          fillColor: ColorManager.of(context).cardBgSecondary,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.r),
                             borderSide:
-                                BorderSide(color: ColorManager.borderLight),
+                                BorderSide(color: ColorManager.of(context).borderLight),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.r),
                             borderSide:
-                                BorderSide(color: ColorManager.borderLight),
+                                BorderSide(color: ColorManager.of(context).borderLight),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.r),
@@ -268,7 +268,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                               ? IconButton(
                                   icon: Icon(Icons.close,
                                       size: 18.w,
-                                      color: ColorManager.textTertiary),
+                                      color: ColorManager.of(context).textTertiary),
                                   onPressed: _cancelEditing,
                                 )
                               : null,
@@ -340,7 +340,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
       decoration: BoxDecoration(
         color: isEditing
             ? ColorManager.warning.withValues(alpha: 0.06)
-            : ColorManager.gray50,
+            : ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(10.r),
         border: isEditing
             ? Border.all(color: ColorManager.warning.withValues(alpha: 0.3))
@@ -369,7 +369,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                     height: 1.4,
                   ),
                 ),
@@ -386,7 +386,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
               child: Icon(
                 Icons.edit_outlined,
                 size: 16.w,
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ),

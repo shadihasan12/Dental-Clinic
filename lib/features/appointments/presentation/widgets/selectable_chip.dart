@@ -25,10 +25,10 @@ class SelectableChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primary : Colors.grey.shade100,
+          color: isSelected ? ColorManager.primary : ColorManager.of(context).cardBgSecondary,
           borderRadius: BorderRadius.circular(borderRadius.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : Colors.grey.shade300,
+            color: isSelected ? ColorManager.primary : ColorManager.of(context).border,
           ),
         ),
         child: Text(
@@ -37,7 +37,7 @@ class SelectableChip extends StatelessWidget {
             fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected ? Colors.white : ColorManager.of(context).textPrimary,
           ),
         ),
       ),

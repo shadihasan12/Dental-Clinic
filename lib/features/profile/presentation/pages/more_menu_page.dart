@@ -9,7 +9,9 @@ import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
+import 'package:dental_clinic_app/features/profile/presentation/widgets/theme_settings_dialog.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
 class MenuPage extends StatefulWidget {
@@ -34,6 +36,18 @@ class _MenuPageState extends State<MenuPage> {
 
   void _onProfileUpdated() => setState(() {});
 
+  String _getThemeLabel(AppLocalizations l10n) {
+    final mode = getIt<ThemeBloc>().state.themeMode;
+    switch (mode) {
+      case ThemeMode.dark:
+        return l10n.darkMode;
+      case ThemeMode.light:
+        return l10n.lightMode;
+      case ThemeMode.system:
+        return l10n.systemDefault;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -41,15 +55,16 @@ class _MenuPageState extends State<MenuPage> {
     final fullName = userStorage.getUserName() ?? '';
     final profileImageUrl = userStorage.getProfileImageUrl();
 
+    final c = ColorManager.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: c.scaffoldBg,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // — Profile header
             _buildProfileHeader(context, fullName, profileImageUrl),
-            Divider(height: 1, color: Colors.grey.shade200),
+            Divider(height: 1, color: c.divider),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -118,8 +133,8 @@ class _MenuPageState extends State<MenuPage> {
                     MenuItem(
                       icon: Icons.color_lens_outlined,
                       title: l10n.appearance,
-                      subtitle: l10n.lightMode,
-                      onTap: () {},
+                      subtitle: _getThemeLabel(l10n),
+                      onTap: () => showThemeSettingsDialog(context),
                     ),
                     MenuItem(
                       icon: Icons.language_outlined,
@@ -159,7 +174,6 @@ class _MenuPageState extends State<MenuPage> {
                       title: l10n.contactSupport,
                       onTap: () {
                         context.pushNamed(AppRoutesNames.contactSupport);
-
                       },
                     ),
                     MenuItem(
@@ -181,7 +195,7 @@ class _MenuPageState extends State<MenuPage> {
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 12.sp,
-                        color: Colors.black26,
+                        color: ColorManager.of(context).textSubtle,
                       ),
                     ),
                   ),
@@ -201,7 +215,7 @@ class _MenuPageState extends State<MenuPage> {
       style: TextStyle(
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
-        color: Colors.black54,
+        color: ColorManager.of(context).textSecondary,
         fontFamily: FontHelper.fontFamily(context),
       ),
     );
@@ -210,7 +224,10 @@ class _MenuPageState extends State<MenuPage> {
   // ─── Profile Header ─────────────────────────────────────────────────────
 
   Widget _buildProfileHeader(
-      BuildContext context, String fullName, String? profileImageUrl) {
+    BuildContext context,
+    String fullName,
+    String? profileImageUrl,
+  ) {
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -223,14 +240,10 @@ class _MenuPageState extends State<MenuPage> {
               backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
               backgroundImage:
                   profileImageUrl != null && profileImageUrl.isNotEmpty
-                      ? NetworkImage(profileImageUrl)
-                      : null,
+                  ? NetworkImage(profileImageUrl)
+                  : null,
               child: profileImageUrl == null || profileImageUrl.isEmpty
-                  ? Icon(
-                      Icons.person,
-                      size: 28.w,
-                      color: ColorManager.primary,
-                    )
+                  ? Icon(Icons.person, size: 28.w, color: ColorManager.primary)
                   : null,
             ),
             SizedBox(width: 14.w),
@@ -246,7 +259,7 @@ class _MenuPageState extends State<MenuPage> {
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2D2D2D),
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -255,7 +268,7 @@ class _MenuPageState extends State<MenuPage> {
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 13.sp,
-                      color: Colors.black38,
+                      color: ColorManager.of(context).textTertiary,
                     ),
                   ),
                 ],
@@ -270,9 +283,10 @@ class _MenuPageState extends State<MenuPage> {
   // ─── Menu Groups ────────────────────────────────────────────────────────
 
   Widget _buildMenuGroup(BuildContext context, List<MenuItem> items) {
+    final c = ColorManager.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: c.menuGroupBg,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -285,7 +299,7 @@ class _MenuPageState extends State<MenuPage> {
               if (index < items.length - 1)
                 Padding(
                   padding: EdgeInsets.only(left: 56.w),
-                  child: Divider(height: 1, color: Colors.grey.shade200),
+                  child: Divider(height: 1, color: c.divider),
                 ),
             ],
           );
@@ -295,6 +309,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget _buildMenuItem(BuildContext context, MenuItem item) {
+    final c = ColorManager.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -308,10 +323,10 @@ class _MenuPageState extends State<MenuPage> {
                 width: 34.w,
                 height: 34.w,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: c.menuIconBg,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(item.icon, size: 18.w, color: Colors.black45),
+                child: Icon(item.icon, size: 18.w, color: c.iconDefault),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -324,7 +339,7 @@ class _MenuPageState extends State<MenuPage> {
                         fontFamily: FontHelper.fontFamily(context),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: c.textPrimary,
                       ),
                     ),
                     if (item.subtitle != null) ...[
@@ -334,7 +349,7 @@ class _MenuPageState extends State<MenuPage> {
                         style: TextStyle(
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 12.sp,
-                          color: Colors.black38,
+                          color: c.textTertiary,
                         ),
                       ),
                     ],
@@ -344,11 +359,7 @@ class _MenuPageState extends State<MenuPage> {
               if (item.trailing != null)
                 item.trailing!
               else
-                Icon(
-                  Icons.chevron_right,
-                  size: 18.w,
-                  color: Colors.grey.shade400,
-                ),
+                Icon(Icons.chevron_right, size: 18.w, color: c.textSubtle),
             ],
           ),
         ),
@@ -380,12 +391,13 @@ class _MenuPageState extends State<MenuPage> {
   // ─── Logout ─────────────────────────────────────────────────────────────
 
   Widget _buildLogoutRow(BuildContext context, AppLocalizations l10n) {
+    final c = ColorManager.of(context);
     return GestureDetector(
       onTap: () => _showLogoutDialog(context, l10n),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
         decoration: BoxDecoration(
-          color: Colors.red.shade50,
+          color: c.errorBg,
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Row(
@@ -394,10 +406,10 @@ class _MenuPageState extends State<MenuPage> {
               width: 34.w,
               height: 34.w,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: c.menuIconBg,
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(Icons.logout, size: 18.w, color: Colors.red.shade400),
+              child: Icon(Icons.logout, size: 18.w, color: ColorManager.error),
             ),
             SizedBox(width: 12.w),
             Text(
@@ -406,7 +418,7 @@ class _MenuPageState extends State<MenuPage> {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
-                color: Colors.red.shade400,
+                color: ColorManager.error,
               ),
             ),
           ],
@@ -416,13 +428,14 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   void _showLogoutDialog(BuildContext context, AppLocalizations l10n) {
+    final c = ColorManager.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(
           l10n.logout,
           style: TextStyle(
-            color: Colors.red,
+            color: ColorManager.error,
             fontWeight: FontWeight.w600,
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),
@@ -431,7 +444,7 @@ class _MenuPageState extends State<MenuPage> {
         content: Text(
           l10n.areYouSureLogout,
           style: TextStyle(
-            color: Colors.black87,
+            color: c.textPrimary,
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
           ),
@@ -442,7 +455,7 @@ class _MenuPageState extends State<MenuPage> {
             child: Text(
               l10n.cancel,
               style: TextStyle(
-                color: Colors.black54,
+                color: c.textSecondary,
                 fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
@@ -461,7 +474,7 @@ class _MenuPageState extends State<MenuPage> {
             child: Text(
               l10n.logout,
               style: TextStyle(
-                color: Colors.red,
+                color: ColorManager.error,
                 fontWeight: FontWeight.w600,
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),

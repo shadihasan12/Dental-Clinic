@@ -68,7 +68,7 @@ class _NoSubscriptionCard extends StatelessWidget {
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2D2D2D),
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -77,7 +77,7 @@ class _NoSubscriptionCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 12.sp,
-                    color: Colors.black38,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
               ],
@@ -150,7 +150,7 @@ class _TrialStatusCard extends StatelessWidget {
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2D2D2D),
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
               const Spacer(),
@@ -238,7 +238,7 @@ class _ActiveSubscriptionCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -255,7 +255,7 @@ class _ActiveSubscriptionCard extends StatelessWidget {
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2D2D2D),
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
               const Spacer(),
@@ -287,7 +287,7 @@ class _ActiveSubscriptionCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 12.sp,
-              color: isCancelled ? const Color(0xFFF59E0B) : Colors.black38,
+              color: isCancelled ? const Color(0xFFF59E0B) : ColorManager.of(context).textTertiary,
             ),
           ),
           SizedBox(height: 14.h),
@@ -301,9 +301,9 @@ class _ActiveSubscriptionCard extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: ColorManager.of(context).cardBg,
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: ColorManager.of(context).border),
                     ),
                     child: Center(
                       child: Text(
@@ -312,7 +312,7 @@ class _ActiveSubscriptionCard extends StatelessWidget {
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black54,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ),

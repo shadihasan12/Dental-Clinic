@@ -235,8 +235,9 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
     return Scaffold(
-      backgroundColor: ColorManager.scaffoldBackground,
+      backgroundColor: c.scaffoldBg,
       floatingActionButton: _buildFab(context),
       body: Column(
         children: [
@@ -251,7 +252,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   decoration: BoxDecoration(
-                    color: ColorManager.white,
+                    color: ColorManager.of(context).cardBg,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Opacity(
@@ -381,7 +382,7 @@ class _EmptyTreatmentsState extends StatelessWidget {
             Icon(
               Icons.assignment_outlined,
               size: 48.w,
-              color: ColorManager.gray300,
+              color: ColorManager.of(context).border,
             ),
             SizedBox(height: 12.h),
             Text(
@@ -389,7 +390,7 @@ class _EmptyTreatmentsState extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.textTertiary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ],

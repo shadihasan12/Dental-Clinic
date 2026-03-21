@@ -30,7 +30,7 @@ class _AppointmentsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocBuilder<AppointmentBloc, AppointmentState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -54,7 +54,7 @@ class _AppointmentsContent extends StatelessWidget {
             children: [
               // — Header (matches patients list style)
               _buildHeader(context, state),
-              Divider(height: 1, color: Colors.grey.shade200),
+              Divider(height: 1, color: ColorManager.of(context).divider),
 
               // — Date selector
               Padding(
@@ -77,7 +77,7 @@ class _AppointmentsContent extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         itemCount: state.filteredAppointments.length,
                         separatorBuilder: (_, __) =>
-                            Divider(height: 1, color: Colors.grey.shade100),
+                            Divider(height: 1, color: ColorManager.of(context).divider),
                         itemBuilder: (context, index) {
                           return _buildAppointmentRow(
                             context,
@@ -112,7 +112,7 @@ class _AppointmentsContent extends StatelessWidget {
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -121,7 +121,7 @@ class _AppointmentsContent extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 13.sp,
-                      color: Colors.black38,
+                      color: ColorManager.of(context).textTertiary,
                     ),
                   ),
                 ],
@@ -139,7 +139,7 @@ class _AppointmentsContent extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: ColorManager.of(context).cardBgSecondary,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
@@ -214,7 +214,7 @@ class _AppointmentsContent extends StatelessWidget {
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w500,
-                    color: isSelected ? Colors.white70 : Colors.black38,
+                    color: isSelected ? Colors.white70 : ColorManager.of(context).textTertiary,
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -224,7 +224,7 @@ class _AppointmentsContent extends StatelessWidget {
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected ? Colors.white : ColorManager.of(context).textPrimary,
                   ),
                 ),
               ],
@@ -246,7 +246,7 @@ class _AppointmentsContent extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Row(
@@ -261,7 +261,7 @@ class _AppointmentsContent extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
+                  color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
@@ -271,7 +271,7 @@ class _AppointmentsContent extends StatelessWidget {
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? ColorManager.primary : Colors.black38,
+                      color: isSelected ? ColorManager.primary : ColorManager.of(context).textTertiary,
                     ),
                   ),
                 ),
@@ -305,7 +305,7 @@ class _AppointmentsContent extends StatelessWidget {
                     fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
-                    color: Colors.black45,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -314,7 +314,7 @@ class _AppointmentsContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: Colors.black26,
+                    color: ColorManager.of(context).textSubtle,
                   ),
                 ),
               ],
@@ -343,7 +343,7 @@ class _AppointmentsContent extends StatelessWidget {
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -352,7 +352,7 @@ class _AppointmentsContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: Colors.black38,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
               ],
@@ -373,7 +373,7 @@ class _AppointmentsContent extends StatelessWidget {
           Icon(
             Icons.calendar_today_outlined,
             size: 48.w,
-            color: Colors.grey.shade300,
+            color: ColorManager.of(context).border,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -381,7 +381,7 @@ class _AppointmentsContent extends StatelessWidget {
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 14.sp,
-              color: Colors.black38,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
         ],

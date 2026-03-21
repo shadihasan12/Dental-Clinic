@@ -23,7 +23,7 @@ class PatientHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
-      color: ColorManager.white,
+      color: ColorManager.of(context).cardBg,
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -36,7 +36,7 @@ class PatientHeader extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       Icons.arrow_back_ios_new,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                       size: 20.w,
                     ),
                     onPressed: onBackPressed,
@@ -48,7 +48,7 @@ class PatientHeader extends StatelessWidget {
                         fontSize: 18.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
-                        color: ColorManager.textPrimary,
+                        color: ColorManager.of(context).textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -57,7 +57,7 @@ class PatientHeader extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         Icons.edit_outlined,
-                        color: ColorManager.textSecondary,
+                        color: ColorManager.of(context).textSecondary,
                         size: 20.w,
                       ),
                       onPressed: onEditPressed,
@@ -70,11 +70,11 @@ class PatientHeader extends StatelessWidget {
             TabBar(
               controller: tabController,
               labelColor: ColorManager.primary,
-              unselectedLabelColor: ColorManager.textTertiary,
+              unselectedLabelColor: ColorManager.of(context).textTertiary,
               indicatorColor: ColorManager.primary,
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: ColorManager.borderLight,
+              dividerColor: ColorManager.of(context).borderLight,
               labelStyle: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),

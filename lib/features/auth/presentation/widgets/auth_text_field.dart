@@ -34,13 +34,14 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontWeight: FontWeight.w500,
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 12.sp
@@ -56,14 +57,14 @@ class AuthTextField extends StatelessWidget {
           enabled: enabled,
           textDirection: textDirection,
           style: TextStyle(
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 14.sp
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: ColorManager.textTertiary,
+              color: c.textTertiary,
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 12.sp
             ),
@@ -72,11 +73,11 @@ class AuthTextField extends StatelessWidget {
               fontFamily: FontHelper.fontFamily(context)
             ),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
+                ? Icon(prefixIcon, color: c.textTertiary, size: 20.w)
                 : null,
             suffix: suffixIcon,
             filled: true,
-            fillColor: ColorManager.gray50,
+            fillColor: c.inputBg,
             border: _buildBorder(BorderSide.none),
             enabledBorder: _buildBorder(BorderSide.none),
             focusedBorder: _buildBorder(

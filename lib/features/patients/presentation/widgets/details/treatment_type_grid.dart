@@ -33,6 +33,9 @@ class TreatmentTypeGrid extends StatelessWidget {
         final type = types[index];
         final isSelected = selectedIds?.contains(type.id) ?? false;
 
+        final c = ColorManager.of(context);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
         return GestureDetector(
           onTap: () => onSelect(type),
           child: AnimatedContainer(
@@ -40,12 +43,12 @@ class TreatmentTypeGrid extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? ColorManager.primary.withValues(alpha: 0.1)
-                  : ColorManager.gray50,
+                  : c.cardBg,
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: isSelected
                     ? ColorManager.primary
-                    : ColorManager.borderLight,
+                    : c.border,
                 width: isSelected ? 1.5 : 1,
               ),
             ),
@@ -58,7 +61,9 @@ class TreatmentTypeGrid extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? ColorManager.primary.withValues(alpha: 0.15)
-                        : ColorManager.white,
+                        : isDark
+                            ? c.cardBgSecondary
+                            : ColorManager.primary.withValues(alpha: 0.06),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -66,7 +71,7 @@ class TreatmentTypeGrid extends StatelessWidget {
                     size: 20.w,
                     color: isSelected
                         ? ColorManager.primary
-                        : ColorManager.textSecondary,
+                        : c.textSecondary,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -84,7 +89,7 @@ class TreatmentTypeGrid extends StatelessWidget {
                           isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected
                           ? ColorManager.primary
-                          : ColorManager.textSecondary,
+                          : c.textPrimary,
                     ),
                   ),
                 ),

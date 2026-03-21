@@ -21,12 +21,13 @@ class ShiftCountControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Container(
       height: 32.h,
       decoration: BoxDecoration(
-        color: ColorManager.gray50,
+        color: c.cardBgSecondary,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: ColorManager.borderLight),
+        border: Border.all(color: c.borderLight),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -41,12 +42,12 @@ class ShiftCountControl extends StatelessWidget {
                 Icons.remove,
                 size: 16.w,
                 color: canDecrement
-                    ? ColorManager.textPrimary
-                    : ColorManager.textTertiary,
+                    ? c.textPrimary
+                    : c.textTertiary,
               ),
             ),
           ),
-          Container(width: 1, height: 18.h, color: ColorManager.borderLight),
+          Container(width: 1, height: 18.h, color: c.borderLight),
           SizedBox(
             width: 32.w,
             child: Text(
@@ -56,11 +57,11 @@ class ShiftCountControl extends StatelessWidget {
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: c.textPrimary,
               ),
             ),
           ),
-          Container(width: 1, height: 18.h, color: ColorManager.borderLight),
+          Container(width: 1, height: 18.h, color: c.borderLight),
           GestureDetector(
             onTap: canIncrement ? onIncrement : null,
             child: Container(
@@ -72,7 +73,7 @@ class ShiftCountControl extends StatelessWidget {
                 size: 16.w,
                 color: canIncrement
                     ? ColorManager.primary
-                    : ColorManager.textTertiary,
+                    : c.textTertiary,
               ),
             ),
           ),

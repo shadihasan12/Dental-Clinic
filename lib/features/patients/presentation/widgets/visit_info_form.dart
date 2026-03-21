@@ -103,7 +103,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
             hintText: l10n.totalCostHint,
             prefixIcon: Icon(
               Icons.attach_money,
-              color: Colors.grey.shade400,
+              color: ColorManager.of(context).textSubtle,
               size: 20,
             ), label: l10n.totalCost,
           ),
@@ -115,7 +115,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
             hintText: l10n.labFeesHint,
             prefixIcon: Icon(
               Icons.science_outlined,
-              color: Colors.grey.shade400,
+              color: ColorManager.of(context).textSubtle,
               size: 20,
             ), label: l10n.labFees,
           ),
@@ -143,7 +143,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
         child: Row(
           children: [
             Icon(Icons.calendar_today_outlined,
-                size: 16.w, color: Colors.grey.shade500),
+                size: 16.w, color: ColorManager.of(context).textTertiary),
             SizedBox(width: 8.w),
             Text(
               isToday ? '${l10n.today}, $formatted' : formatted,
@@ -151,7 +151,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: ColorManager.black,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             const Spacer(),
@@ -213,7 +213,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
       style: TextStyle(
         fontSize: 15.sp,
         fontWeight: FontWeight.w600,
-        color: ColorManager.gray400,
+        color: ColorManager.of(context).textSubtle,
         fontFamily: FontHelper.fontFamily(context),
       ),
     );
@@ -222,7 +222,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
   Widget _divider() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 18.h),
-      child: Divider(color: ColorManager.gray200),
+      child: Divider(color: ColorManager.of(context).divider),
     );
   }
 }
@@ -255,12 +255,12 @@ class _TreatmentChips extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? ColorManager.primary
-                  : ColorManager.gray100,
+                  : ColorManager.of(context).inputBg,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: isSelected
                     ? ColorManager.primary
-                    : ColorManager.gray300,
+                    : ColorManager.of(context).border,
               ),
             ),
             child: Text(
@@ -269,7 +269,7 @@ class _TreatmentChips extends StatelessWidget {
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w500,
-                color: isSelected ? ColorManager.white : ColorManager.black,
+                color: isSelected ? ColorManager.white : ColorManager.of(context).textPrimary,
               ),
             ),
           ),
@@ -293,7 +293,7 @@ class _AttachmentItem extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
         children: [
-          Icon(Icons.attach_file, size: 16.w, color: ColorManager.gray400),
+          Icon(Icons.attach_file, size: 16.w, color: ColorManager.of(context).textSubtle),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -301,14 +301,14 @@ class _AttachmentItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.black,
+                color: ColorManager.of(context).textPrimary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           GestureDetector(
             onTap: onRemove,
-            child: Icon(Icons.close, size: 16.w, color: Colors.grey.shade400),
+            child: Icon(Icons.close, size: 16.w, color: ColorManager.of(context).textSubtle),
           ),
         ],
       ),

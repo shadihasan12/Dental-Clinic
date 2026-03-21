@@ -133,17 +133,17 @@ class _SetCostSheetState extends State<SetCostSheet> {
     return InputDecoration(
       hintText: '0.00',
       errorText: errorText,
-      hintStyle: TextStyle(fontSize: 15.sp, color: ColorManager.textTertiary),
+      hintStyle: TextStyle(fontSize: 15.sp, color: ColorManager.of(context).textTertiary),
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).cardBgSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.borderLight),
+        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.r),
@@ -171,7 +171,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
         MediaQuery.of(context).viewInsets.bottom + 16.h,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: Column(
@@ -183,7 +183,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.gray300,
+                color: ColorManager.of(context).border,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -195,7 +195,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               fontSize: 16.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w600,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
           SizedBox(height: 16.h),
@@ -207,7 +207,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               fontSize: 13.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           SizedBox(height: 6.h),
@@ -221,7 +221,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               fontSize: 15.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
             decoration: _inputDecoration(),
           ),
@@ -242,7 +242,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               fontSize: 13.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textSecondary,
+              color: ColorManager.of(context).textSecondary,
             ),
           ),
           SizedBox(height: 6.h),
@@ -256,7 +256,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               fontSize: 15.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
             decoration: _inputDecoration(),
           ),
@@ -288,7 +288,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 14.h),
               decoration: BoxDecoration(
-                color: _canSave ? ColorManager.primary : ColorManager.gray200,
+                color: _canSave ? ColorManager.primary : ColorManager.of(context).borderLight,
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Text(
@@ -300,7 +300,7 @@ class _SetCostSheetState extends State<SetCostSheet> {
                   fontWeight: FontWeight.w600,
                   color: _canSave
                       ? ColorManager.white
-                      : ColorManager.textTertiary,
+                      : ColorManager.of(context).textTertiary,
                 ),
               ),
             ),

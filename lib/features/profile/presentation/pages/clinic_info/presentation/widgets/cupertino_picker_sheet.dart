@@ -9,12 +9,13 @@ Future<void> showCupertinoPickerSheet({
   VoidCallback? onDone,
   required Widget picker,
 }) {
+  final c = ColorManager.of(context);
   return showCupertinoModalPopup<void>(
     context: context,
     builder: (ctx) => Container(
       height: 300.h,
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: c.cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       child: Column(
@@ -25,7 +26,7 @@ Future<void> showCupertinoPickerSheet({
               width: 36.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.borderLight,
+                color: c.borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -40,7 +41,7 @@ Future<void> showCupertinoPickerSheet({
                   cancelLabel,
                   style: TextStyle(
                     fontSize: 15.sp,
-                    color: ColorManager.textSecondary,
+                    color: c.textSecondary,
                   ),
                 ),
               ),

@@ -85,9 +85,9 @@ class _ToothChartState extends State<ToothChart> {
       textDirection: TextDirection.ltr,
       child: Container(
         decoration: BoxDecoration(
-          color: ColorManager.gray50,
+          color: ColorManager.of(context).cardBgSecondary,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: ColorManager.gray200),
+          border: Border.all(color: ColorManager.of(context).borderLight),
         ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(),
@@ -101,7 +101,7 @@ class _ToothChartState extends State<ToothChart> {
                   children: [
                     _buildUpperJaw(),
                     const SizedBox(height: 10),
-                    Divider(color: ColorManager.gray200, thickness: 2),
+                    Divider(color: ColorManager.of(context).borderLight, thickness: 2),
                     const SizedBox(height: 10),
                     _buildLowerJaw(),
                   ],
@@ -222,12 +222,12 @@ class _ToothChartState extends State<ToothChart> {
             width: size,
             height: size,
             fit: BoxFit.contain,
-            colorFilter: isSelected
-                ? ColorFilter.mode(
-                    ColorManager.primary,
+            colorFilter: ColorFilter.mode(
+                    isSelected
+                        ? ColorManager.primary
+                        : ColorManager.of(context).textPrimary,
                     BlendMode.srcIn,
-                  )
-                : null,
+                  ),
           ),
         ),
       ),

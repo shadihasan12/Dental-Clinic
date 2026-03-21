@@ -97,7 +97,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: CustomScrollView(
         slivers: [
           // Header
@@ -118,7 +118,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
               child: Container(
                 padding: EdgeInsets.all(20.w),
                 decoration: BoxDecoration(
-                  color: ColorManager.white,
+                  color: ColorManager.of(context).cardBg,
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -253,7 +253,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                           onPressed: _isLoading ? null : _handleCreate,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: ColorManager.primary,
-                            foregroundColor: ColorManager.white,
+                            foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
@@ -265,15 +265,13 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                                   height: 24.h,
                                   child: const CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      ColorManager.white,
-                                    ),
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
                               : Text(
                                   'Create Clinic',
                                   style: TextStyleManager.button.copyWith(
-                                    color: ColorManager.white,
+                                    color: Colors.white,
                                     fontSize: 16.sp,
                                   ),
                                 ),
@@ -298,7 +296,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
     return Text(
       text,
       style: TextStyleManager.titleSmall.copyWith(
-        color: ColorManager.textPrimary,
+        color: ColorManager.of(context).textPrimary,
         fontWeight: FontWeight.w600,
       ),
     );
@@ -311,11 +309,11 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.textTertiary,
+        color: ColorManager.of(context).textTertiary,
       ),
       prefixIcon: prefixIcon,
       filled: true,
-      fillColor: ColorManager.gray50,
+      fillColor: ColorManager.of(context).inputBg,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide.none,

@@ -153,7 +153,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
         MediaQuery.of(context).viewInsets.bottom + 16.h,
       ),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       child: BlocBuilder<CurrencyBloc, CurrencyState>(
@@ -179,7 +179,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
                     width: 40.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: ColorManager.gray300,
+                      color: ColorManager.of(context).border,
                       borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
@@ -193,7 +193,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
                     fontSize: 18.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -278,7 +278,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
         fontSize: 14.sp,
         fontFamily: FontHelper.fontFamily(context),
         fontWeight: FontWeight.w500,
-        color: ColorManager.textSecondary,
+        color: ColorManager.of(context).textSecondary,
       ),
     );
   }
@@ -290,25 +290,25 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
       style: TextStyle(
         fontSize: 15.sp,
         fontFamily: FontHelper.fontFamily(context),
-        color: ColorManager.textPrimary,
+        color: ColorManager.of(context).textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
           fontSize: 14.sp,
-          color: ColorManager.textTertiary,
+          color: ColorManager.of(context).textTertiary,
         ),
         contentPadding:
             EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         filled: true,
-        fillColor: ColorManager.gray50,
+        fillColor: ColorManager.of(context).cardBgSecondary,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
-          borderSide: BorderSide(color: ColorManager.borderLight),
+          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
-          borderSide: BorderSide(color: ColorManager.borderLight),
+          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),

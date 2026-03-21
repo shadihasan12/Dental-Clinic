@@ -25,6 +25,7 @@ class AuthDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,7 +33,7 @@ class AuthDropdownField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: ColorManager.textPrimary,
+            color: c.textPrimary,
             fontWeight: FontWeightManager.medium,
             fontFamily: FontHelper.fontFamily(context),
             fontSize: FontSizesManager.s12,
@@ -47,25 +48,25 @@ class AuthDropdownField extends StatelessWidget {
           validator: validator,
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: ColorManager.textTertiary,
+            color: c.textTertiary,
           ),
           style: TextStyle(
-            color: ColorManager.textTertiary,
+            color: c.textTertiary,
             fontFamily: FontHelper.fontFamily(context),
             fontSize: FontSizesManager.s12,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: ColorManager.textTertiary,
+              color: c.textTertiary,
               fontFamily: FontHelper.fontFamily(context),
               fontSize: FontSizesManager.s12,
             ),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: ColorManager.textTertiary, size: 20.w)
+                ? Icon(prefixIcon, color: c.textTertiary, size: 20.w)
                 : null,
             filled: true,
-            fillColor: ColorManager.gray50,
+            fillColor: c.inputBg,
             border: _buildBorder(BorderSide.none),
             enabledBorder: _buildBorder(BorderSide.none),
             focusedBorder: _buildBorder(
@@ -91,7 +92,7 @@ class AuthDropdownField extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: FontSizesManager.s14,
-                      color: ColorManager.textPrimary,
+                      color: c.textPrimary,
                     ),
                   ),
                 ),

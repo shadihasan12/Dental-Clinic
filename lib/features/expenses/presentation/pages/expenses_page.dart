@@ -93,7 +93,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -108,7 +108,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   void _showExpenseDetails(BuildContext context, ExpenseEntity expense) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -131,7 +131,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -149,7 +149,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocListener<ExpenseBloc, ExpenseState>(
         listenWhen: (prev, curr) {
           String? prevError;
@@ -186,7 +186,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 children: [
                   _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
-                  Divider(height: 1, color: Colors.grey.shade200),
+                  Divider(height: 1, color: ColorManager.of(context).divider),
                   const Expanded(
                     child: Center(child: CircularProgressIndicator()),
                   ),
@@ -197,7 +197,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   children: [
                     _buildHeader(context, totals, expenses.length),
                     _buildMonthSelector(context),
-                    Divider(height: 1, color: Colors.grey.shade200),
+                    Divider(height: 1, color: ColorManager.of(context).divider),
                     Expanded(
                       child: expenses.isEmpty
                           ? _buildEmptyState(context)
@@ -206,7 +206,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                               itemCount: expenses.length,
                               separatorBuilder: (_, _) => Divider(
                                 height: 1,
-                                color: Colors.grey.shade100,
+                                color: ColorManager.of(context).divider,
                               ),
                               itemBuilder: (_, index) => ExpenseRow(
                                 expense: expenses[index],
@@ -224,7 +224,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 children: [
                   _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
-                  Divider(height: 1, color: Colors.grey.shade200),
+                  Divider(height: 1, color: ColorManager.of(context).divider),
                   Expanded(
                     child: Center(
                       child: Column(
@@ -233,7 +233,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                           Icon(
                             Icons.error_outline,
                             size: 48.w,
-                            color: Colors.grey,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                           SizedBox(height: 12.h),
                           Text(
@@ -242,7 +242,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                             style: TextStyle(
                               fontFamily: FontHelper.fontFamily(context),
                               fontSize: 14.sp,
-                              color: Colors.grey.shade500,
+                              color: ColorManager.of(context).textTertiary,
                             ),
                           ),
                         ],
@@ -287,7 +287,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF2D2D2D),
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),
@@ -298,7 +298,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
               height: 32.w,
               decoration: BoxDecoration(
                 color: _isCurrentMonth
-                    ? Colors.grey.shade100
+                    ? ColorManager.of(context).divider
                     : ColorManager.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -306,7 +306,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 Icons.chevron_right,
                 size: 20.w,
                 color: _isCurrentMonth
-                    ? Colors.grey.shade400
+                    ? ColorManager.of(context).textSubtle
                     : ColorManager.primary,
               ),
             ),
@@ -342,7 +342,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF2D2D2D),
+                          color: ColorManager.of(context).textPrimary,
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -351,7 +351,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                         style: TextStyle(
                           fontFamily: FontHelper.fontFamily(context),
                           fontSize: 13.sp,
-                          color: Colors.black38,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                     ],
@@ -409,7 +409,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                               fontFamily: FontHelper.fontFamily(context),
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF2D2D2D),
+                              color: ColorManager.of(context).textPrimary,
                             ),
                           ),
                         ],
@@ -434,7 +434,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           Icon(
             Icons.receipt_long_outlined,
             size: 48.w,
-            color: Colors.grey.shade300,
+            color: ColorManager.of(context).border,
           ),
           SizedBox(height: 12.h),
           Text(
@@ -442,7 +442,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 14.sp,
-              color: Colors.black38,
+              color: ColorManager.of(context).textTertiary,
             ),
           ),
           SizedBox(height: 16.h),

@@ -314,6 +314,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lightMode => 'Light mode';
 
   @override
+  String get darkMode => 'Dark mode';
+
+  @override
+  String get systemDefault => 'System default';
+
+  @override
   String get privacySecurity => 'Privacy & Security';
 
   @override
@@ -1747,4 +1753,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectSpecialization => 'Select specialization';
+
+  @override
+  String get patientInfo => 'Patient Info';
+
+  @override
+  String get caseInfo => 'Case Info';
+
+  @override
+  String get initialVisit => 'Initial Visit';
+
+  @override
+  String stepOfTotal(int current, int total, String stepTitle) {
+    return 'Step $current of $total: $stepTitle';
+  }
+
+  @override
+  String get caseInformationOptional => 'Case Information (Optional)';
+
+  @override
+  String get caseAutoCreateDescription =>
+      'A case will be automatically created for this patient. You can add a title or skip this step.';
+
+  @override
+  String get caseTitle => 'Case Title';
+
+  @override
+  String get caseTitleExampleHint =>
+      'e.g., Full Mouth Restoration, Orthodontic Treatment';
+
+  @override
+  String get phoneHint => '0988026431';
 }

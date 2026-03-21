@@ -86,7 +86,7 @@ class _PatientInfoTabState extends State<PatientInfoTab>
               fontSize: 16.sp,
               fontFamily: FontHelper.fontFamily(context),
               fontWeight: FontWeight.w500,
-              color: ColorManager.textPrimary,
+              color: ColorManager.of(context).textPrimary,
             ),
           ),
 
@@ -105,7 +105,7 @@ class _PatientInfoTabState extends State<PatientInfoTab>
           }),
 
           SizedBox(height: 12.h),
-          Divider(color: ColorManager.borderLight),
+          Divider(color: ColorManager.of(context).borderLight),
           SizedBox(height: 12.h),
 
           // Medical History
@@ -115,7 +115,7 @@ class _PatientInfoTabState extends State<PatientInfoTab>
           ),
 
           SizedBox(height: 12.h),
-          Divider(color: ColorManager.borderLight),
+          Divider(color: ColorManager.of(context).borderLight),
           SizedBox(height: 12.h),
 
           // Allergies
@@ -139,7 +139,7 @@ class _PatientInfoTabState extends State<PatientInfoTab>
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w500,
-            color: ColorManager.textPrimary,
+            color: ColorManager.of(context).textPrimary,
           ),
         ),
         SizedBox(height: 8.h),
@@ -149,7 +149,7 @@ class _PatientInfoTabState extends State<PatientInfoTab>
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
             fontWeight: FontWeight.w400,
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
       ],
@@ -190,7 +190,7 @@ class _ContactRow extends StatelessWidget {
       decoration: showDivider
           ? BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+                bottom: BorderSide(color: ColorManager.of(context).borderLight, width: 1),
               ),
             )
           : null,
@@ -202,7 +202,7 @@ class _ContactRow extends StatelessWidget {
             width: 32.w,
             height: 32.w,
             decoration: BoxDecoration(
-              color: ColorManager.gray100,
+              color: ColorManager.of(context).cardBgSecondary,
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 16.w, color: ColorManager.darkGrey),
@@ -219,7 +219,7 @@ class _ContactRow extends StatelessWidget {
                     fontSize: 12.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w400,
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -229,7 +229,7 @@ class _ContactRow extends StatelessWidget {
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w400,
-                    color: ColorManager.textPrimary,
+                    color: ColorManager.of(context).textPrimary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -36,7 +36,7 @@ class _StaffManagementContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<ClinicBloc, ClinicState>(
         listener: (context, state) {
           if (state.removeSuccess) {
@@ -93,7 +93,7 @@ class _StaffManagementContent extends StatelessWidget {
                     label: const Text('Invite Staff Member'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.primary,
-                      foregroundColor: ColorManager.white,
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
@@ -117,20 +117,20 @@ class _StaffManagementContent extends StatelessWidget {
                         Icon(
                           Icons.group_outlined,
                           size: 64.w,
-                          color: ColorManager.textTertiary,
+                          color: ColorManager.of(context).textTertiary,
                         ),
                         SizedBox(height: 16.h),
                         Text(
                           'No staff members yet',
                           style: TextStyleManager.titleMedium.copyWith(
-                            color: ColorManager.textSecondary,
+                            color: ColorManager.of(context).textSecondary,
                           ),
                         ),
                         SizedBox(height: 8.h),
                         Text(
                           'Invite dentists and receptionists to join your clinic',
                           style: TextStyleManager.bodyMedium.copyWith(
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -228,7 +228,7 @@ class _MemberCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -278,7 +278,7 @@ class _MemberCard extends StatelessWidget {
                 Text(
                   member.userEmail ?? '',
                   style: TextStyleManager.bodySmall.copyWith(
-                    color: ColorManager.textSecondary,
+                    color: ColorManager.of(context).textSecondary,
                   ),
                 ),
                 SizedBox(height: 6.h),

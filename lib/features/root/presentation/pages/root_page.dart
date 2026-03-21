@@ -38,14 +38,17 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
 
-    final List<_BottomNavItem> _navItems = [
+    final inactiveColor = c.iconDefault;
+
+    final List<_BottomNavItem> navItems = [
       _BottomNavItem(
         icon: SvgPicture.asset(
           Assets.iconsRootHome,
           width: 24.w,
           height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
           Assets.iconsRootHome,
@@ -60,7 +63,7 @@ class _RootPageState extends State<RootPage> {
           Assets.iconsRootPatient,
           width: 24.w,
           height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
           Assets.iconsRootPatient,
@@ -75,7 +78,7 @@ class _RootPageState extends State<RootPage> {
           Assets.iconsRootAppointment,
           width: 24.w,
           height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
           Assets.iconsRootAppointment,
@@ -90,7 +93,7 @@ class _RootPageState extends State<RootPage> {
           Assets.iconsRootMoney,
           width: 24.w,
           height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
           Assets.iconsRootMoney,
@@ -105,7 +108,7 @@ class _RootPageState extends State<RootPage> {
           Assets.iconsRootMenu,
           width: 24.w,
           height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.darkGrey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
         ),
         activeIcon: SvgPicture.asset(
           Assets.iconsRootMenu,
@@ -121,7 +124,7 @@ class _RootPageState extends State<RootPage> {
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: c.surfaceBg,
           boxShadow: [
             BoxShadow(
               color: ColorManager.black.withValues(alpha: 0.08),
@@ -137,8 +140,8 @@ class _RootPageState extends State<RootPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(
-                _navItems.length,
-                (index) => _buildNavItem(index, _navItems),
+                navItems.length,
+                (index) => _buildNavItem(index, navItems),
               ),
             ),
           ),
@@ -150,6 +153,7 @@ class _RootPageState extends State<RootPage> {
   Widget _buildNavItem(int index, List<_BottomNavItem> navItems) {
     final item = navItems[index];
     final isSelected = _currentIndex == index;
+    final c = ColorManager.of(context);
 
     return Expanded(
       child: GestureDetector(
@@ -175,7 +179,7 @@ class _RootPageState extends State<RootPage> {
                   fontSize: 9.sp,
                   color: isSelected
                       ? ColorManager.primary
-                      : ColorManager.gray500,
+                      : c.textTertiary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),

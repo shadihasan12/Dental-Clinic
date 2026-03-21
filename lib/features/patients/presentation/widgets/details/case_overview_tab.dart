@@ -259,9 +259,9 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadiusManager.lg,
-        border: Border.all(color: ColorManager.gray200),
+        border: Border.all(color: ColorManager.of(context).borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -300,7 +300,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
               ),
             ),
           ),
-          Container(width: 1, height: 36.h, color: ColorManager.gray200),
+          Container(width: 1, height: 36.h, color: ColorManager.of(context).borderLight),
           Expanded(
             child: InkWell(
               onTap: () => _showRecordPaymentPopup(context),
@@ -358,7 +358,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
                 fontSize: 16.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: ColorManager.textPrimary,
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             if (sorted.isNotEmpty)
@@ -457,7 +457,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
     return Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        color: ColorManager.gray50,
+        color: ColorManager.of(context).cardBgSecondary,
         borderRadius: BorderRadiusManager.lg,
       ),
       child: Center(
@@ -468,7 +468,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
           style: TextStyle(
             fontSize: 14.sp,
             fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.textSecondary,
+            color: ColorManager.of(context).textSecondary,
           ),
         ),
       ),

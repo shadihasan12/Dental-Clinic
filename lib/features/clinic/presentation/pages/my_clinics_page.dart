@@ -41,7 +41,7 @@ class _MyClinicsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorManager.background,
+      backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<InvitationBloc, InvitationState>(
         listener: (context, state) {
           final l10n = AppLocalizations.of(context)!;
@@ -72,7 +72,7 @@ class _MyClinicsContent extends StatelessWidget {
             children: [
               Container(
                 width: double.infinity,
-                color: ColorManager.white,
+                color: ColorManager.of(context).cardBg,
                 child: SafeArea(
                   bottom: false,
                   child: Padding(
@@ -85,7 +85,7 @@ class _MyClinicsContent extends StatelessWidget {
                         IconButton(
                           icon: Icon(
                             Icons.arrow_back_ios_new,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                             size: 20.w,
                           ),
                           onPressed: () => context.pop(),
@@ -96,7 +96,7 @@ class _MyClinicsContent extends StatelessWidget {
                             fontSize: 18.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.textPrimary,
+                            color: ColorManager.of(context).textPrimary,
                           ),
                         ),
                       ],
@@ -104,7 +104,7 @@ class _MyClinicsContent extends StatelessWidget {
                   ),
                 ),
               ),
-              Divider(height: 1, color: ColorManager.borderLight),
+              Divider(height: 1, color: ColorManager.of(context).borderLight),
               Expanded(
                 child: BlocBuilder<MyClinicsBloc, MyClinicsState>(
                   builder: (context, clinicsState) {
@@ -151,14 +151,14 @@ class _MyClinicsContent extends StatelessWidget {
                             Icon(
                               Icons.error_outline,
                               size: 48.w,
-                              color: Colors.grey,
+                              color: ColorManager.of(context).textTertiary,
                             ),
                             SizedBox(height: 12.h),
                             Text(
                               message,
                               style: TextStyle(
                                 fontSize: 14.sp,
-                                color: Colors.grey.shade500,
+                                color: ColorManager.of(context).textTertiary,
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -196,7 +196,7 @@ class _MyClinicsContent extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: ColorManager.white,
+        backgroundColor: ColorManager.of(context).cardBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -264,7 +264,7 @@ class _ClinicMembershipCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
-        color: ColorManager.white,
+        color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -319,7 +319,7 @@ class _ClinicMembershipCard extends StatelessWidget {
                             Icon(
                               Icons.location_on_outlined,
                               size: 12.w,
-                              color: ColorManager.textTertiary,
+                              color: ColorManager.of(context).textTertiary,
                             ),
                             SizedBox(width: 3.w),
                             Expanded(
@@ -330,7 +330,7 @@ class _ClinicMembershipCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.textTertiary,
+                                  color: ColorManager.of(context).textTertiary,
                                 ),
                               ),
                             ),
@@ -373,15 +373,15 @@ class _ClinicMembershipCard extends StatelessWidget {
                   ),
                 ),
                 if (isAdmin)
-                  const Icon(
+                  Icon(
                     Icons.chevron_right,
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   )
                 else if (onLeave != null)
                   PopupMenuButton<String>(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.more_vert,
-                      color: ColorManager.textTertiary,
+                      color: ColorManager.of(context).textTertiary,
                     ),
                     onSelected: (value) {
                       if (value == 'leave') onLeave!();

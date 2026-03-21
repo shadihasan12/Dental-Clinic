@@ -27,7 +27,7 @@ class CaseHistoryCard extends StatelessWidget {
       case 'cancelled':
         return ColorManager.error;
       default:
-        return ColorManager.textSecondary;
+        return ColorManager.gray600;
     }
   }
 
@@ -39,9 +39,9 @@ class CaseHistoryCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: ColorManager.white,
+          color: ColorManager.of(context).cardBg,
           borderRadius: BorderRadiusManager.lg,
-          border: Border.all(color: ColorManager.gray200),
+          border: Border.all(color: ColorManager.of(context).borderLight),
         ),
         child: Row(
           children: [
@@ -57,7 +57,7 @@ class CaseHistoryCard extends StatelessWidget {
                       fontSize: 15.sp,
                       fontFamily: FontFamily.geist,
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
 
@@ -69,7 +69,7 @@ class CaseHistoryCard extends StatelessWidget {
                       Icon(
                         Icons.calendar_today_outlined,
                         size: 14.w,
-                        color: ColorManager.textTertiary,
+                        color: ColorManager.of(context).textTertiary,
                       ),
                       SizedBox(width: 4.w),
                       Text(
@@ -77,14 +77,14 @@ class CaseHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontFamily.geist,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                       SizedBox(width: 16.w),
                       Icon(
                         Icons.medical_services_outlined,
                         size: 14.w,
-                        color: ColorManager.textTertiary,
+                        color: ColorManager.of(context).textTertiary,
                       ),
                       SizedBox(width: 4.w),
                       Text(
@@ -92,7 +92,7 @@ class CaseHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontFamily.geist,
-                          color: ColorManager.textSecondary,
+                          color: ColorManager.of(context).textSecondary,
                         ),
                       ),
                     ],
@@ -125,7 +125,7 @@ class CaseHistoryCard extends StatelessWidget {
             Icon(
               Icons.chevron_right,
               size: 24.w,
-              color: ColorManager.textTertiary,
+              color: ColorManager.of(context).textTertiary,
             ),
           ],
         ),

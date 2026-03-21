@@ -58,7 +58,7 @@ class AppLoadingDialog extends StatelessWidget {
                   fontSize: 16.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
-                  color: ColorManager.textPrimary,
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
             ],

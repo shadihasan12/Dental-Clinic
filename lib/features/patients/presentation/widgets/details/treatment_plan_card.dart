@@ -86,12 +86,12 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
             : BoxDecoration(
                 color: isCompleted
                     ? ColorManager.success.withValues(alpha: 0.04)
-                    : ColorManager.white,
+                    : ColorManager.of(context).cardBg,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
                   color: isCompleted
                       ? ColorManager.success.withValues(alpha: 0.2)
-                      : ColorManager.borderLight,
+                      : ColorManager.of(context).borderLight,
                 ),
               ),
         child: Column(
@@ -117,7 +117,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                           border: Border.all(
                             color: isCompleted
                                 ? ColorManager.success
-                                : ColorManager.borderLight,
+                                : ColorManager.of(context).borderLight,
                             width: 2,
                           ),
                         ),
@@ -166,8 +166,8 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: FontWeight.w500,
                             color: isCompleted
-                                ? ColorManager.textTertiary
-                                : ColorManager.textPrimary,
+                                ? ColorManager.of(context).textTertiary
+                                : ColorManager.of(context).textPrimary,
                           ),
                         ),
                         SizedBox(height: 2.h),
@@ -177,7 +177,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                               Icon(
                                 Icons.location_on_outlined,
                                 size: 12.w,
-                                color: ColorManager.textTertiary,
+                                color: ColorManager.of(context).textTertiary,
                               ),
                               SizedBox(width: 3.w),
                               Text(
@@ -185,7 +185,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.textTertiary,
+                                  color: ColorManager.of(context).textTertiary,
                                 ),
                               ),
                             ] else
@@ -194,7 +194,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.textTertiary,
+                                  color: ColorManager.of(context).textTertiary,
                                 ),
                               ),
                             if (widget.treatment.visitNotes.isNotEmpty) ...[
@@ -246,7 +246,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                           child: Icon(
                             Icons.keyboard_arrow_down,
                             size: 24.w,
-                            color: ColorManager.textTertiary,
+                            color: ColorManager.of(context).textTertiary,
                           ),
                         ),
                       ),
@@ -279,7 +279,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(color: ColorManager.borderLight, height: 1),
+          Divider(color: ColorManager.of(context).borderLight, height: 1),
           SizedBox(height: 12.h),
 
           // Timeline
@@ -304,27 +304,27 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.addANote,
                       hintStyle: TextStyle(
                         fontSize: 13.sp,
-                        color: ColorManager.textTertiary,
+                        color: ColorManager.of(context).textTertiary,
                       ),
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: 12.w, vertical: 10.h),
                       filled: true,
-                      fillColor: ColorManager.gray50,
+                      fillColor: ColorManager.of(context).cardBgSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.r),
                         borderSide:
-                            BorderSide(color: ColorManager.borderLight),
+                            BorderSide(color: ColorManager.of(context).borderLight),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.r),
                         borderSide:
-                            BorderSide(color: ColorManager.borderLight),
+                            BorderSide(color: ColorManager.of(context).borderLight),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.r),
@@ -365,7 +365,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: ColorManager.textTertiary,
+                    color: ColorManager.of(context).textTertiary,
                   ),
                 ),
               ),
@@ -428,7 +428,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.textPrimary,
+                      color: ColorManager.of(context).textPrimary,
                       height: 1.4,
                     ),
                   ),

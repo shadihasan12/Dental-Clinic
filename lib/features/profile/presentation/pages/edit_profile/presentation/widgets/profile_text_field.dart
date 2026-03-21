@@ -30,6 +30,7 @@ class ProfileTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     final field = AuthTextField(
       label: label,
       hint: 'Enter $label',
@@ -47,7 +48,7 @@ class ProfileTextField extends StatelessWidget {
           ? null
           : BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: ColorManager.borderLight, width: 1),
+                bottom: BorderSide(color: c.borderLight, width: 1),
               ),
             ),
       padding: EdgeInsets.symmetric(vertical: 12.h),

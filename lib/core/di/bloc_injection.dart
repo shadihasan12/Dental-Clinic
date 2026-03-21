@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/localization/language_service.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/core/theme/theme_service.dart';
+import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 
 @module
 abstract class BlocInjection {
@@ -13,4 +15,12 @@ abstract class BlocInjection {
   @lazySingleton
   LanguageBloc languageBloc(LanguageService languageService, ApiConsumer apiConsumer) =>
       LanguageBloc(languageService: languageService, apiConsumer: apiConsumer);
+
+  @lazySingleton
+  ThemeService themeService(SharedPreferences sharedPreferences) =>
+      ThemeService(sharedPreferences);
+
+  @lazySingleton
+  ThemeBloc themeBloc(ThemeService themeService) =>
+      ThemeBloc(themeService: themeService);
 }

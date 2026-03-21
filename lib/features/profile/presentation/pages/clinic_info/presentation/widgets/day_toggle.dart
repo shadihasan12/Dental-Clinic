@@ -9,13 +9,14 @@ class DayToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: 40.w,
       height: 24.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
-        color: enabled ? ColorManager.primary : ColorManager.gray100,
+        color: enabled ? ColorManager.primary : c.cardBgSecondary,
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 200),

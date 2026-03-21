@@ -22,6 +22,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -35,7 +36,7 @@ class HomeHeader extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 14.sp,
-                  color: Colors.black45,
+                  color: c.textTertiary,
                 ),
               ),
               SizedBox(height: 2.h),
@@ -44,7 +45,7 @@ class HomeHeader extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 20.sp,
-                  color: Colors.black87,
+                  color: c.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -94,12 +95,12 @@ class HomeHeader extends StatelessWidget {
                 width: 40.w,
                 height: 40.w,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: c.cardBgSecondary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.notifications_outlined,
-                  color: Colors.black54,
+                  color: c.textSecondary,
                   size: 20.w,
                 ),
               ),

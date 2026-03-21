@@ -60,16 +60,16 @@ class FilterChip extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primary : ColorManager.white,
+          color: isSelected ? ColorManager.primary : ColorManager.of(context).cardBg,
           borderRadius: BorderRadius.circular(20.r),
-          border: isSelected ? null : Border.all(color: ColorManager.gray200),
+          border: isSelected ? null : Border.all(color: ColorManager.of(context).divider),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12,
             fontFamily: FontHelper.fontFamily(context),
-            color: isSelected ? ColorManager.white : ColorManager.textSecondary,
+            color: isSelected ? ColorManager.white : ColorManager.of(context).textSecondary,
             fontWeight: FontWeight.w500,
           ),
         ),
