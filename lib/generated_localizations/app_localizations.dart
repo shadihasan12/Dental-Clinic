@@ -1676,6 +1676,18 @@ abstract class AppLocalizations {
   /// **'Currency'**
   String get currency;
 
+  /// No description provided for @caseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Case Currency'**
+  String get caseCurrency;
+
+  /// No description provided for @exchangeRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange Rate'**
+  String get exchangeRate;
+
   /// No description provided for @holidays.
   ///
   /// In en, this message translates to:

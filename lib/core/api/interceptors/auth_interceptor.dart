@@ -119,16 +119,20 @@ class AuthInterceptor extends QueuedInterceptor {
       // Also check Authorization header (server might send token there)
       _extractAndSaveTokensFromHeaders(refreshResponse.headers);
 
-      // Retry the original request with the new token
+      // Retry the original request with new token and clinic ID
       final opts = err.requestOptions;
       final newToken = _tokenStorage.getToken();
       if (newToken != null) {
         opts.headers[StringsManager.authorization] =
             '${StringsManager.bearer}$newToken';
       }
+      final clinicId = _tokenStorage.getClinicId();
+      if (clinicId != null && clinicId.isNotEmpty) {
+        opts.headers['X-Selected-Clinic-id'] = clinicId;
+      }
+      opts.headers['Accept-Language'] = _languageService.currentLanguage;
 
-      // Use the same plain Dio to retry (the main Dio interceptors will
-      // re-attach headers on subsequent calls)
+      // Use a plain Dio to retry (avoids interceptor loops)
       final retryDio = Dio(BaseOptions(
         baseUrl: opts.baseUrl,
       ));

@@ -63,6 +63,10 @@ abstract class PatientRemoteDataSource {
     String patientId,
     String caseId,
     double amount, {
+    required String currencyId,
+    required String caseCurrencyId,
+    required double amountInCaseCurrency,
+    required double exchangeRate,
     String? notes,
   });
   Future<void> updateCaseCosts({
@@ -452,12 +456,20 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
     String patientId,
     String caseId,
     double amount, {
+    required String currencyId,
+    required String caseCurrencyId,
+    required double amountInCaseCurrency,
+    required double exchangeRate,
     String? notes,
   }) async {
     await _apiConsumer.post(
       PatientEndpoints.payments(patientId, caseId),
       body: {
         'amount': amount,
+        'currency_id': currencyId,
+        'case_currency_id': caseCurrencyId,
+        'amount_in_case_currency': amountInCaseCurrency,
+        'exchange_rate': exchangeRate,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       },
     );

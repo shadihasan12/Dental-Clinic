@@ -83,6 +83,8 @@ class DentalCase {
   final double paidAmount;
   final double pendingAmount;
   final String? totalCostCurrencyId;
+  final String? totalCostCurrencyCode;
+  final String? totalCostCurrencyName;
   final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
 
@@ -99,6 +101,8 @@ class DentalCase {
     required this.paidAmount,
     required this.pendingAmount,
     this.totalCostCurrencyId,
+    this.totalCostCurrencyCode,
+    this.totalCostCurrencyName,
     this.labFeesCurrencyId,
     this.treatmentItems = const [],
   });
@@ -118,6 +122,8 @@ class DentalCase {
       paidAmount: paidAmount,
       pendingAmount: (json['pending_amount'] as num?)?.toDouble() ?? (totalCost - paidAmount),
       totalCostCurrencyId: _parseCurrencyId(json, 'total_cost_currency'),
+      totalCostCurrencyCode: _parseCurrencyField(json, 'total_cost_currency', 'currency_code'),
+      totalCostCurrencyName: _parseCurrencyField(json, 'total_cost_currency', 'currency_name'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
     );
   }
@@ -127,6 +133,12 @@ class DentalCase {
     if (value is Map<String, dynamic>) return value['id'] as String?;
     if (value is String) return value;
     return json['${key}_id'] as String?;
+  }
+
+  static String? _parseCurrencyField(Map<String, dynamic> json, String key, String field) {
+    final value = json[key];
+    if (value is Map<String, dynamic>) return value[field] as String?;
+    return null;
   }
   
   List<TreatmentItem> get pendingTreatments => 

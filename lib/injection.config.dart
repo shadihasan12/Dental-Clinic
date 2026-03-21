@@ -402,14 +402,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i315.UpdateExpenseUseCase>(
       () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
-    gh.factory<_i113.GetMyClinicsUseCase>(
-      () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
-    );
     gh.factory<_i166.AddClinicUserUseCase>(
       () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i398.GetClinicUsersUseCase>(
       () => _i398.GetClinicUsersUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i113.GetMyClinicsUseCase>(
+      () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i223.RemoveClinicUserUseCase>(
       () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),

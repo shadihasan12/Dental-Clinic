@@ -323,12 +323,16 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
       teeth: _teeth,
       coreTreatments: _coreTreatments,
       isReadOnly: false,
-      onPaymentRecorded: (amount, notes) async {
+      onPaymentRecorded: (amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes) async {
         final result = await getIt<AddPaymentUseCase>()(
           AddPaymentParams(
             patientId: widget.patientId,
             caseId: activeCase.id,
             amount: amount,
+            currencyId: currencyId,
+            caseCurrencyId: caseCurrencyId,
+            amountInCaseCurrency: amountInCaseCurrency,
+            exchangeRate: exchangeRate,
             notes: notes,
           ),
         );

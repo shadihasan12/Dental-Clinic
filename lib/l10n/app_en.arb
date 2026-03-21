@@ -274,6 +274,8 @@
   "oralSurgery": "Oral Surgery",
   "expenses": "Expenses",
   "currency": "Currency",
+  "caseCurrency": "Case Currency",
+  "exchangeRate": "Exchange Rate",
   "holidays": "Holidays & Days Off",
   "addHoliday": "Add Holiday",
   "editHoliday": "Edit Holiday",

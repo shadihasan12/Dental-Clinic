@@ -20,7 +20,14 @@ class CaseOverviewWidget extends StatefulWidget {
   final List<Tooth> teeth;
   final List<CoreTreatment> coreTreatments;
   final bool isReadOnly;
-  final Future<void> Function(double amount, String? notes)? onPaymentRecorded;
+  final Future<void> Function(
+    double amount,
+    String currencyId,
+    String caseCurrencyId,
+    double amountInCaseCurrency,
+    double exchangeRate,
+    String? notes,
+  )? onPaymentRecorded;
   final VoidCallback? onMarkAsFinished;
   final Future<List<Payment>> Function()? onLoadPayments;
   final VoidCallback? onAddTreatment;
@@ -150,8 +157,10 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       caseTitle: widget.dentalCase.title,
       totalCost: widget.dentalCase.totalCost,
       paidAmount: widget.dentalCase.paidAmount,
-      onSave: (amount, notes) async {
-        await widget.onPaymentRecorded?.call(amount, notes);
+      caseCurrencyId: widget.dentalCase.totalCostCurrencyId,
+      caseCurrencyCode: widget.dentalCase.totalCostCurrencyCode,
+      onSave: (amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes) async {
+        await widget.onPaymentRecorded?.call(amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes);
       },
     );
   }

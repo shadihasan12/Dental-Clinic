@@ -83,6 +83,10 @@ class PatientDetailsBloc
         patientId: event.patientId,
         caseId: event.caseId,
         amount: event.amount,
+        currencyId: event.currencyId,
+        caseCurrencyId: event.caseCurrencyId,
+        amountInCaseCurrency: event.amountInCaseCurrency,
+        exchangeRate: event.exchangeRate,
         notes: event.notes,
       ),
     );
