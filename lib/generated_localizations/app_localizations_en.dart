@@ -820,6 +820,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currency => 'Currency';
 
   @override
+  String get caseCurrency => 'Case Currency';
+
+  @override
+  String get exchangeRate => 'Exchange Rate';
+
+  @override
   String get holidays => 'Holidays & Days Off';
 
   @override

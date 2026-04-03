@@ -277,6 +277,8 @@
   "noAppointments":"لا يوجد مواعيد",
   "expenses": "المدفوعات",
   "currency": "العملة",
+  "caseCurrency": "عملة الحالة",
+  "exchangeRate": "سعر الصرف",
   "holidays": "الإجازات وأيام العطل",
   "addHoliday": "إضافة إجازة",
   "editHoliday": "تعديل إجازة",

@@ -15,6 +15,10 @@ class PatientDetailsEvent with _$PatientDetailsEvent {
     required String patientId,
     required String caseId,
     required double amount,
+    required String currencyId,
+    required String caseCurrencyId,
+    required double amountInCaseCurrency,
+    required double exchangeRate,
     String? notes,
   }) = _AddPayment;
 }

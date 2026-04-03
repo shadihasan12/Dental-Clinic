@@ -86,6 +86,10 @@ abstract class PatientRepository {
     String patientId,
     String caseId,
     double amount, {
+    required String currencyId,
+    required String caseCurrencyId,
+    required double amountInCaseCurrency,
+    required double exchangeRate,
     String? notes,
   });
 

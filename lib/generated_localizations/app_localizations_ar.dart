@@ -817,6 +817,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currency => 'العملة';
 
   @override
+  String get caseCurrency => 'عملة الحالة';
+
+  @override
+  String get exchangeRate => 'سعر الصرف';
+
+  @override
   String get holidays => 'الإجازات وأيام العطل';
 
   @override

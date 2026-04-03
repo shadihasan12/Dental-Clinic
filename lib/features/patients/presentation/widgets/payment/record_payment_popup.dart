@@ -1,48 +1,33 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
+import 'package:dental_clinic_app/services/currency/currency_entity.dart';
+import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:go_router/go_router.dart';
-
-enum PaymentMethod {
-  cash('Cash', Icons.payments_outlined),
-  creditCard('Credit Card', Icons.credit_card),
-  debitCard('Debit Card', Icons.credit_card_outlined),
-  insurance('Insurance', Icons.health_and_safety_outlined),
-  bankTransfer('Bank Transfer', Icons.account_balance_outlined),
-  other('Other', Icons.more_horiz);
-
-  final String label;
-  final IconData icon;
-  const PaymentMethod(this.label, this.icon);
-}
-
-class PaymentRecord {
-  final String id;
-  final double amount;
-  final PaymentMethod method;
-  final String? note;
-  final DateTime date;
-
-  const PaymentRecord({
-    required this.id,
-    required this.amount,
-    required this.method,
-    this.note,
-    required this.date,
-  });
-}
 
 class RecordPaymentPopup extends StatefulWidget {
   final String patientName;
   final String caseTitle;
   final double totalCost;
   final double paidAmount;
-  final Future<void> Function(double amount, String? notes) onSave;
+  final String? caseCurrencyId;
+  final String? caseCurrencyCode;
+  final Future<void> Function(
+    double amount,
+    String currencyId,
+    String caseCurrencyId,
+    double amountInCaseCurrency,
+    double exchangeRate,
+    String? notes,
+  ) onSave;
 
   const RecordPaymentPopup({
     super.key,
@@ -50,6 +35,8 @@ class RecordPaymentPopup extends StatefulWidget {
     required this.caseTitle,
     required this.totalCost,
     required this.paidAmount,
+    this.caseCurrencyId,
+    this.caseCurrencyCode,
     required this.onSave,
   });
 
@@ -59,7 +46,16 @@ class RecordPaymentPopup extends StatefulWidget {
     required String caseTitle,
     required double totalCost,
     required double paidAmount,
-    required Future<void> Function(double amount, String? notes) onSave,
+    String? caseCurrencyId,
+    String? caseCurrencyCode,
+    required Future<void> Function(
+      double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
+      String? notes,
+    ) onSave,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -70,6 +66,8 @@ class RecordPaymentPopup extends StatefulWidget {
         caseTitle: caseTitle,
         totalCost: totalCost,
         paidAmount: paidAmount,
+        caseCurrencyId: caseCurrencyId,
+        caseCurrencyCode: caseCurrencyCode,
         onSave: onSave,
       ),
     );
@@ -81,19 +79,31 @@ class RecordPaymentPopup extends StatefulWidget {
 
 class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   final _amountController = TextEditingController();
-  final _labFeesController = TextEditingController();
+  final _exchangeRateController = TextEditingController(text: '1');
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  DateTime _selectedDate = DateTime.now();
+  late final CurrencyBloc _currencyBloc;
+  CurrencyEntity? _selectedCurrency;
   bool _isSubmitting = false;
 
   double get _remainingAmount => widget.totalCost - widget.paidAmount;
 
+  bool get _isCurrencyChanged =>
+      _selectedCurrency != null &&
+      widget.caseCurrencyId != null &&
+      _selectedCurrency!.id != widget.caseCurrencyId;
+
+  @override
+  void initState() {
+    super.initState();
+    _currencyBloc = getIt<CurrencyBloc>()..add(const CurrencyEvent.load());
+  }
+
   @override
   void dispose() {
     _amountController.dispose();
-    _labFeesController.dispose();
+    _exchangeRateController.dispose();
     _noteController.dispose();
     super.dispose();
   }
@@ -102,8 +112,23 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     _amountController.text = _remainingAmount.toStringAsFixed(2);
   }
 
+  void _initCurrencySelection(List<CurrencyEntity> currencies) {
+    if (_selectedCurrency != null) return;
+    if (widget.caseCurrencyId != null) {
+      _selectedCurrency = currencies.cast<CurrencyEntity?>().firstWhere(
+            (c) => c!.id == widget.caseCurrencyId,
+            orElse: () => currencies.isNotEmpty ? currencies.first : null,
+          );
+    } else if (currencies.isNotEmpty) {
+      _selectedCurrency = currencies.first;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.9,
@@ -142,7 +167,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                           width: 48.w,
                           height: 48.w,
                           decoration: BoxDecoration(
-                            color: ColorManager.success.withValues(alpha: 0.1),
+                            color:
+                                ColorManager.success.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -157,10 +183,10 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                AppLocalizations.of(context)!.recordPaymentTitle,
+                                l10n.recordPaymentTitle,
                                 style: TextStyle(
                                   fontSize: 18.sp,
-                                  fontFamily: FontHelper.fontFamily(context),
+                                  fontFamily: fontFamily,
                                   fontWeight: FontWeight.w600,
                                   color: ColorManager.of(context).textPrimary,
                                 ),
@@ -171,8 +197,17 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                   fontSize: 12.sp,
                                   fontFamily: FontHelper.fontFamily(context),
                                   color: ColorManager.of(context).textSecondary,
-                                ),
+                                )
                               ),
+                              if (widget.caseCurrencyCode != null)
+                                Text(
+                                  '${l10n.caseCurrency}: ${widget.caseCurrencyCode}',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily: fontFamily,
+                                    color: ColorManager.textSecondary,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -199,21 +234,21 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                         children: [
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            AppLocalizations.of(context)!.totalCost,
-                            '\$${widget.totalCost.toStringAsFixed(2)}',
+                            l10n.totalCost,
+                            '${widget.caseCurrencyCode ?? ''} ${widget.totalCost.toStringAsFixed(2)}',
                           ),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            AppLocalizations.of(context)!.alreadyPaid,
-                            '\$${widget.paidAmount.toStringAsFixed(2)}',
+                            l10n.alreadyPaid,
+                            '${widget.caseCurrencyCode ?? ''} ${widget.paidAmount.toStringAsFixed(2)}',
                             valueColor: ColorManager.success,
                           ),
                           SizedBox(height: 8.h),
                           Divider(color: ColorManager.of(context).borderLight),
                           SizedBox(height: 8.h),
                           _buildSummaryRow(
-                            AppLocalizations.of(context)!.remaining,
-                            '\$${_remainingAmount.toStringAsFixed(2)}',
+                            l10n.remaining,
+                            '${widget.caseCurrencyCode ?? ''} ${_remainingAmount.toStringAsFixed(2)}',
                             valueColor: _remainingAmount > 0
                                 ? ColorManager.warning
                                 : ColorManager.success,
@@ -225,19 +260,112 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
 
                     SizedBox(height: 20.h),
 
+                    // Currency selector
+                    _buildLabel(l10n.currency),
+                    SizedBox(height: 6.h),
+                    BlocBuilder<CurrencyBloc, CurrencyState>(
+                      bloc: _currencyBloc,
+                      builder: (context, state) {
+                        return state.when(
+                          initial: () => const SizedBox.shrink(),
+                          loading: () => SizedBox(
+                            height: 40.h,
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                          loaded: (currencies) {
+                            _initCurrencySelection(currencies);
+                            return CurrencyChips(
+                              currencies: currencies,
+                              selectedCurrency: _selectedCurrency,
+                              onSelected: (currency) {
+                                setState(() {
+                                  _selectedCurrency = currency;
+                                  if (!_isCurrencyChanged) {
+                                    _exchangeRateController.text = '1';
+                                  }
+                                });
+                              },
+                            );
+                          },
+                          error: (msg) => Text(
+                            msg,
+                            style: TextStyle(
+                              color: ColorManager.error,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    SizedBox(height: 16.h),
+
+                    // Exchange rate (only if currency changed)
+                    if (_isCurrencyChanged) ...[
+                      _buildLabel(l10n.exchangeRate),
+                      SizedBox(height: 6.h),
+                      TextFormField(
+                        controller: _exchangeRateController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,6}')),
+                        ],
+                        decoration: InputDecoration(
+                          hintText: '1.0',
+                          hintStyle: TextStyle(
+                            color: ColorManager.textTertiary,
+                            fontFamily: fontFamily,
+                          ),
+                          filled: true,
+                          fillColor: ColorManager.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadiusManager.lg,
+                            borderSide:
+                                BorderSide(color: ColorManager.gray200),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadiusManager.lg,
+                            borderSide:
+                                BorderSide(color: ColorManager.gray200),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadiusManager.lg,
+                            borderSide:
+                                BorderSide(color: ColorManager.primary),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return l10n.pleaseEnterAmount;
+                          }
+                          final rate = double.tryParse(value);
+                          if (rate == null || rate <= 0) {
+                            return l10n.pleaseEnterValidAmount;
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                    ],
+
                     // Amount field
                     _buildAmountField(),
 
                     SizedBox(height: 16.h),
 
                     // Note (optional)
-                    _buildLabel(AppLocalizations.of(context)!.noteOptional),
+                    _buildLabel(l10n.noteOptional),
                     SizedBox(height: 6.h),
                     TextFormField(
                       controller: _noteController,
                       maxLines: 2,
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)!.addNote,
+                        hintText: l10n.addNote,
                         hintStyle: TextStyle(
                           color: ColorManager.of(context).textTertiary,
                           fontFamily: FontHelper.fontFamily(context),
@@ -254,7 +382,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.primary),
+                          borderSide:
+                              BorderSide(color: ColorManager.primary),
                         ),
                       ),
                     ),
@@ -265,18 +394,40 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     _isSubmitting
                         ? const Center(child: CircularProgressIndicator())
                         : PrimaryButton(
-                            text: AppLocalizations.of(context)!.save,
+                            text: l10n.save,
                             onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
+                              if (_formKey.currentState!.validate() &&
+                                  _selectedCurrency != null) {
                                 final amount =
                                     double.parse(_amountController.text);
+                                final exchangeRate = double.parse(
+                                    _exchangeRateController.text);
+                                final caseCurrencyId =
+                                    widget.caseCurrencyId ??
+                                        _selectedCurrency!.id;
+
+                                // If same currency, amount_in_case_currency = amount
+                                // If different currency, convert using exchange rate
+                                final amountInCaseCurrency =
+                                    _isCurrencyChanged
+                                        ? amount * exchangeRate
+                                        : amount;
+
                                 final notes =
                                     _noteController.text.trim().isEmpty
                                         ? null
                                         : _noteController.text.trim();
+
                                 setState(() => _isSubmitting = true);
                                 try {
-                                  await widget.onSave(amount, notes);
+                                  await widget.onSave(
+                                    amount,
+                                    _selectedCurrency!.id,
+                                    caseCurrencyId,
+                                    amountInCaseCurrency,
+                                    exchangeRate,
+                                    notes,
+                                  );
                                   if (mounted) context.pop();
                                 } catch (_) {
                                   if (mounted) {
@@ -297,10 +448,13 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   }
 
   Column _buildAmountField() {
+    final l10n = AppLocalizations.of(context)!;
+    final currencyCode = _selectedCurrency?.currencyCode ?? '';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildLabel(AppLocalizations.of(context)!.amountRequired),
+        _buildLabel(l10n.amountRequired),
         SizedBox(height: 6.h),
         Row(
           children: [
@@ -311,11 +465,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                   decimal: true,
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+\.?\d{0,2}')),
                 ],
                 decoration: InputDecoration(
                   hintText: '0.00',
-                  prefixText: '\$ ',
+                  prefixText: '$currencyCode ',
                   hintStyle: TextStyle(
                     color: ColorManager.of(context).textTertiary,
                     fontFamily: FontHelper.fontFamily(context),
@@ -337,11 +492,11 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterAmount;
+                    return l10n.pleaseEnterAmount;
                   }
                   final amount = double.tryParse(value);
                   if (amount == null || amount <= 0) {
-                    return AppLocalizations.of(context)!.pleaseEnterValidAmount;
+                    return l10n.pleaseEnterValidAmount;
                   }
                   return null;
                 },
@@ -351,14 +506,15 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
             GestureDetector(
               onTap: _setFullAmount,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: ColorManager.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadiusManager.lg,
                   border: Border.all(color: ColorManager.primary),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.fullAmount,
+                  l10n.fullAmount,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontFamily: FontHelper.fontFamily(context),
@@ -373,7 +529,6 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
       ],
     );
   }
-
 
   Widget _buildLabel(String text) {
     return Text(
@@ -415,23 +570,5 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
         ),
       ],
     );
-  }
-
-  String _getLocalizedPaymentMethod(PaymentMethod method) {
-    final locale = AppLocalizations.of(context)!;
-    switch (method) {
-      case PaymentMethod.cash:
-        return locale.paymentMethodCash;
-      case PaymentMethod.creditCard:
-        return locale.paymentMethodCreditCard;
-      case PaymentMethod.debitCard:
-        return locale.paymentMethodDebitCard;
-      case PaymentMethod.insurance:
-        return locale.paymentMethodInsurance;
-      case PaymentMethod.bankTransfer:
-        return locale.paymentMethodBankTransfer;
-      case PaymentMethod.other:
-        return locale.paymentMethodOther;
-    }
   }
 }

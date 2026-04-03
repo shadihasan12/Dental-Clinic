@@ -27,6 +27,10 @@ mixin _$PatientDetailsEvent {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )
     addPayment,
@@ -40,6 +44,10 @@ mixin _$PatientDetailsEvent {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -53,6 +61,10 @@ mixin _$PatientDetailsEvent {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -205,6 +217,10 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )
     addPayment,
@@ -222,6 +238,10 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -239,6 +259,10 @@ class _$LoadPatientDetailsImpl implements _LoadPatientDetails {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -405,6 +429,10 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )
     addPayment,
@@ -422,6 +450,10 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -439,6 +471,10 @@ class _$MarkCaseAsFinishedImpl implements _MarkCaseAsFinished {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
@@ -514,7 +550,16 @@ abstract class _$$AddPaymentImplCopyWith<$Res>
   ) = __$$AddPaymentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String patientId, String caseId, double amount, String? notes});
+  $Res call({
+    String patientId,
+    String caseId,
+    double amount,
+    String currencyId,
+    String caseCurrencyId,
+    double amountInCaseCurrency,
+    double exchangeRate,
+    String? notes,
+  });
 }
 
 /// @nodoc
@@ -534,6 +579,10 @@ class __$$AddPaymentImplCopyWithImpl<$Res>
     Object? patientId = null,
     Object? caseId = null,
     Object? amount = null,
+    Object? currencyId = null,
+    Object? caseCurrencyId = null,
+    Object? amountInCaseCurrency = null,
+    Object? exchangeRate = null,
     Object? notes = freezed,
   }) {
     return _then(
@@ -549,6 +598,22 @@ class __$$AddPaymentImplCopyWithImpl<$Res>
         amount: null == amount
             ? _value.amount
             : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        currencyId: null == currencyId
+            ? _value.currencyId
+            : currencyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        caseCurrencyId: null == caseCurrencyId
+            ? _value.caseCurrencyId
+            : caseCurrencyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        amountInCaseCurrency: null == amountInCaseCurrency
+            ? _value.amountInCaseCurrency
+            : amountInCaseCurrency // ignore: cast_nullable_to_non_nullable
+                  as double,
+        exchangeRate: null == exchangeRate
+            ? _value.exchangeRate
+            : exchangeRate // ignore: cast_nullable_to_non_nullable
                   as double,
         notes: freezed == notes
             ? _value.notes
@@ -566,6 +631,10 @@ class _$AddPaymentImpl implements _AddPayment {
     required this.patientId,
     required this.caseId,
     required this.amount,
+    required this.currencyId,
+    required this.caseCurrencyId,
+    required this.amountInCaseCurrency,
+    required this.exchangeRate,
     this.notes,
   });
 
@@ -576,11 +645,19 @@ class _$AddPaymentImpl implements _AddPayment {
   @override
   final double amount;
   @override
+  final String currencyId;
+  @override
+  final String caseCurrencyId;
+  @override
+  final double amountInCaseCurrency;
+  @override
+  final double exchangeRate;
+  @override
   final String? notes;
 
   @override
   String toString() {
-    return 'PatientDetailsEvent.addPayment(patientId: $patientId, caseId: $caseId, amount: $amount, notes: $notes)';
+    return 'PatientDetailsEvent.addPayment(patientId: $patientId, caseId: $caseId, amount: $amount, currencyId: $currencyId, caseCurrencyId: $caseCurrencyId, amountInCaseCurrency: $amountInCaseCurrency, exchangeRate: $exchangeRate, notes: $notes)';
   }
 
   @override
@@ -592,12 +669,29 @@ class _$AddPaymentImpl implements _AddPayment {
                 other.patientId == patientId) &&
             (identical(other.caseId, caseId) || other.caseId == caseId) &&
             (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.currencyId, currencyId) ||
+                other.currencyId == currencyId) &&
+            (identical(other.caseCurrencyId, caseCurrencyId) ||
+                other.caseCurrencyId == caseCurrencyId) &&
+            (identical(other.amountInCaseCurrency, amountInCaseCurrency) ||
+                other.amountInCaseCurrency == amountInCaseCurrency) &&
+            (identical(other.exchangeRate, exchangeRate) ||
+                other.exchangeRate == exchangeRate) &&
             (identical(other.notes, notes) || other.notes == notes));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, patientId, caseId, amount, notes);
+  int get hashCode => Object.hash(
+    runtimeType,
+    patientId,
+    caseId,
+    amount,
+    currencyId,
+    caseCurrencyId,
+    amountInCaseCurrency,
+    exchangeRate,
+    notes,
+  );
 
   /// Create a copy of PatientDetailsEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -617,11 +711,24 @@ class _$AddPaymentImpl implements _AddPayment {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )
     addPayment,
   }) {
-    return addPayment(patientId, caseId, amount, notes);
+    return addPayment(
+      patientId,
+      caseId,
+      amount,
+      currencyId,
+      caseCurrencyId,
+      amountInCaseCurrency,
+      exchangeRate,
+      notes,
+    );
   }
 
   @override
@@ -634,11 +741,24 @@ class _$AddPaymentImpl implements _AddPayment {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
   }) {
-    return addPayment?.call(patientId, caseId, amount, notes);
+    return addPayment?.call(
+      patientId,
+      caseId,
+      amount,
+      currencyId,
+      caseCurrencyId,
+      amountInCaseCurrency,
+      exchangeRate,
+      notes,
+    );
   }
 
   @override
@@ -651,13 +771,26 @@ class _$AddPaymentImpl implements _AddPayment {
       String patientId,
       String caseId,
       double amount,
+      String currencyId,
+      String caseCurrencyId,
+      double amountInCaseCurrency,
+      double exchangeRate,
       String? notes,
     )?
     addPayment,
     required TResult orElse(),
   }) {
     if (addPayment != null) {
-      return addPayment(patientId, caseId, amount, notes);
+      return addPayment(
+        patientId,
+        caseId,
+        amount,
+        currencyId,
+        caseCurrencyId,
+        amountInCaseCurrency,
+        exchangeRate,
+        notes,
+      );
     }
     return orElse();
   }
@@ -702,6 +835,10 @@ abstract class _AddPayment implements PatientDetailsEvent {
     required final String patientId,
     required final String caseId,
     required final double amount,
+    required final String currencyId,
+    required final String caseCurrencyId,
+    required final double amountInCaseCurrency,
+    required final double exchangeRate,
     final String? notes,
   }) = _$AddPaymentImpl;
 
@@ -709,6 +846,10 @@ abstract class _AddPayment implements PatientDetailsEvent {
   String get patientId;
   String get caseId;
   double get amount;
+  String get currencyId;
+  String get caseCurrencyId;
+  double get amountInCaseCurrency;
+  double get exchangeRate;
   String? get notes;
 
   /// Create a copy of PatientDetailsEvent

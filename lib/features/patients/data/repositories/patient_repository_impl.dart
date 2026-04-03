@@ -226,6 +226,10 @@ class PatientRepositoryImpl implements PatientRepository {
     String patientId,
     String caseId,
     double amount, {
+    required String currencyId,
+    required String caseCurrencyId,
+    required double amountInCaseCurrency,
+    required double exchangeRate,
     String? notes,
   }) async {
     try {
@@ -233,6 +237,10 @@ class PatientRepositoryImpl implements PatientRepository {
         patientId,
         caseId,
         amount,
+        currencyId: currencyId,
+        caseCurrencyId: caseCurrencyId,
+        amountInCaseCurrency: amountInCaseCurrency,
+        exchangeRate: exchangeRate,
         notes: notes,
       );
       return const Right(null);
