@@ -89,6 +89,7 @@ class TreatmentPlan {
   double labFees;
   double paid;
   double pendingAmount;
+  String? currencyCode;
 
   TreatmentPlan({
     required this.id,
@@ -99,6 +100,7 @@ class TreatmentPlan {
     this.labFees = 0,
     this.paid = 0,
     this.pendingAmount = 0,
+    this.currencyCode,
   });
 
   double get grandTotal => totalCost;

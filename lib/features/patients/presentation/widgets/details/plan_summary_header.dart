@@ -61,6 +61,14 @@ class PlanSummaryHeader extends StatelessWidget {
     );
   }
 
+  String _formatAmount(double amount) {
+    final formatted = amount.toStringAsFixed(0);
+    if (plan.currencyCode != null && plan.currencyCode!.isNotEmpty) {
+      return '$formatted ${plan.currencyCode}';
+    }
+    return formatted;
+  }
+
   Widget _buildSavedStats(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Row(
@@ -68,21 +76,21 @@ class PlanSummaryHeader extends StatelessWidget {
         _stat(
           context,
           label: l10n.totalLabel,
-          value: plan.grandTotal.toStringAsFixed(0),
+          value: _formatAmount(plan.grandTotal),
           valueColor: ColorManager.of(context).textPrimary,
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.paidLabel,
-          value: plan.paid.toStringAsFixed(0),
+          value: _formatAmount(plan.paid),
           valueColor: const Color(0xFF2E9E5B),
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.pendingLabel,
-          value: plan.pending.toStringAsFixed(0),
+          value: _formatAmount(plan.pending),
           valueColor: plan.pending > 0
               ? const Color(0xFFE07B2A)
               : const Color(0xFF2E9E5B),
@@ -98,14 +106,14 @@ class PlanSummaryHeader extends StatelessWidget {
         _stat(
           context,
           label: l10n.totalCost,
-          value: plan.totalCost > 0 ? plan.totalCost.toStringAsFixed(0) : '—',
+          value: plan.totalCost > 0 ? _formatAmount(plan.totalCost) : '—',
           valueColor: ColorManager.of(context).textPrimary,
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.labFees,
-          value: plan.labFees > 0 ? plan.labFees.toStringAsFixed(0) : '—',
+          value: plan.labFees > 0 ? _formatAmount(plan.labFees) : '—',
           valueColor: ColorManager.of(context).textSecondary,
         ),
       ],

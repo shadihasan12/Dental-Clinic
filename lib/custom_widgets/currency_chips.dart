@@ -29,12 +29,12 @@ class CurrencyChips extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? ColorManager.primary.withValues(alpha: 0.12)
-                  : Colors.grey.shade50,
+                  : ColorManager.of(context).inputBg,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: isSelected
                     ? ColorManager.primary
-                    : Colors.grey.shade200,
+                    : ColorManager.of(context).borderLight,
               ),
             ),
             child: Text(
@@ -43,7 +43,7 @@ class CurrencyChips extends StatelessWidget {
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 13.sp,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? ColorManager.primary : Colors.black54,
+                color: isSelected ? ColorManager.primary : ColorManager.of(context).textSecondary,
               ),
             ),
           ),

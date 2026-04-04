@@ -195,6 +195,8 @@ import 'services/currency/currency_bloc.dart' as _i46;
 import 'services/currency/currency_service.dart' as _i315;
 import 'services/file_picker/file_picker_service.dart' as _i525;
 import 'services/media/media_service.dart' as _i977;
+import 'services/permissions/clinic_permissions_bloc.dart' as _i1052;
+import 'services/permissions/clinic_permissions_service.dart' as _i252;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -305,6 +307,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i977.MediaService>(
       () => _i977.MediaService(gh<_i962.ApiConsumer>()),
     );
+    gh.lazySingleton<_i252.ClinicPermissionsService>(
+      () => _i252.ClinicPermissionsService(gh<_i962.ApiConsumer>()),
+    );
     gh.lazySingleton<_i355.ExpenseRemoteDataSource>(
       () => _i355.ExpenseRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
@@ -315,6 +320,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i395.NotificationSettingsRepositoryImpl(
         gh<_i806.NotificationSettingsRemoteDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i1052.ClinicPermissionsBloc>(
+      () => _i1052.ClinicPermissionsBloc(gh<_i252.ClinicPermissionsService>()),
     );
     gh.lazySingleton<_i190.ClinicRemoteDataSource>(
       () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),

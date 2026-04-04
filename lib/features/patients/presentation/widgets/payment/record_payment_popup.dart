@@ -27,7 +27,8 @@ class RecordPaymentPopup extends StatefulWidget {
     double amountInCaseCurrency,
     double exchangeRate,
     String? notes,
-  ) onSave;
+  )
+  onSave;
 
   const RecordPaymentPopup({
     super.key,
@@ -55,7 +56,8 @@ class RecordPaymentPopup extends StatefulWidget {
       double amountInCaseCurrency,
       double exchangeRate,
       String? notes,
-    ) onSave,
+    )
+    onSave,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -79,13 +81,17 @@ class RecordPaymentPopup extends StatefulWidget {
 
 class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   final _amountController = TextEditingController();
-  final _exchangeRateController = TextEditingController(text: '1');
+  final _exchangeRateController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   late final CurrencyBloc _currencyBloc;
   CurrencyEntity? _selectedCurrency;
   bool _isSubmitting = false;
+
+  /// When false: 1 [caseCurrency] = X [selectedCurrency]
+  /// When true:  1 [selectedCurrency] = X [caseCurrency]
+  bool _isExchangeSwapped = false;
 
   double get _remainingAmount => widget.totalCost - widget.paidAmount;
 
@@ -109,16 +115,32 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   }
 
   void _setFullAmount() {
-    _amountController.text = _remainingAmount.toStringAsFixed(2);
+    final remaining = _remainingAmount;
+    if (!_isCurrencyChanged) {
+      _amountController.text = remaining.toStringAsFixed(2);
+      return;
+    }
+    final rate = double.tryParse(_exchangeRateController.text);
+    if (rate == null || rate <= 0) {
+      _amountController.text = remaining.toStringAsFixed(2);
+      return;
+    }
+    // Reverse of the save conversion:
+    //   Not swapped: 1 caseCurrency = X selectedCurrency → multiply
+    //   Swapped:     1 selectedCurrency = X caseCurrency → divide
+    final converted = _isExchangeSwapped
+        ? remaining / rate
+        : remaining * rate;
+    _amountController.text = converted.toStringAsFixed(2);
   }
 
   void _initCurrencySelection(List<CurrencyEntity> currencies) {
     if (_selectedCurrency != null) return;
     if (widget.caseCurrencyId != null) {
       _selectedCurrency = currencies.cast<CurrencyEntity?>().firstWhere(
-            (c) => c!.id == widget.caseCurrencyId,
-            orElse: () => currencies.isNotEmpty ? currencies.first : null,
-          );
+        (c) => c!.id == widget.caseCurrencyId,
+        orElse: () => currencies.isNotEmpty ? currencies.first : null,
+      );
     } else if (currencies.isNotEmpty) {
       _selectedCurrency = currencies.first;
     }
@@ -167,8 +189,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                           width: 48.w,
                           height: 48.w,
                           decoration: BoxDecoration(
-                            color:
-                                ColorManager.success.withValues(alpha: 0.1),
+                            color: ColorManager.success.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -192,12 +213,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                 ),
                               ),
                               Text(
-                                AppLocalizations.of(context)!.patientName,
+                                widget.patientName,
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontFamily: FontHelper.fontFamily(context),
                                   color: ColorManager.of(context).textSecondary,
-                                )
+                                ),
                               ),
                               if (widget.caseCurrencyCode != null)
                                 Text(
@@ -282,9 +303,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                               onSelected: (currency) {
                                 setState(() {
                                   _selectedCurrency = currency;
-                                  if (!_isCurrencyChanged) {
-                                    _exchangeRateController.text = '1';
-                                  }
+                                  _isExchangeSwapped = false;
+                                  _exchangeRateController.clear();
                                 });
                               },
                             );
@@ -306,50 +326,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     if (_isCurrencyChanged) ...[
                       _buildLabel(l10n.exchangeRate),
                       SizedBox(height: 6.h),
-                      TextFormField(
-                        controller: _exchangeRateController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d+\.?\d{0,6}')),
-                        ],
-                        decoration: InputDecoration(
-                          hintText: '1.0',
-                          hintStyle: TextStyle(
-                            color: ColorManager.textTertiary,
-                            fontFamily: fontFamily,
-                          ),
-                          filled: true,
-                          fillColor: ColorManager.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadiusManager.lg,
-                            borderSide:
-                                BorderSide(color: ColorManager.gray200),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadiusManager.lg,
-                            borderSide:
-                                BorderSide(color: ColorManager.gray200),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadiusManager.lg,
-                            borderSide:
-                                BorderSide(color: ColorManager.primary),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return l10n.pleaseEnterAmount;
-                          }
-                          final rate = double.tryParse(value);
-                          if (rate == null || rate <= 0) {
-                            return l10n.pleaseEnterValidAmount;
-                          }
-                          return null;
-                        },
-                      ),
+                      _buildExchangeRateFields(fontFamily),
                       SizedBox(height: 16.h),
                     ],
 
@@ -371,19 +348,22 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                           fontFamily: FontHelper.fontFamily(context),
                         ),
                         filled: true,
-                        fillColor: ColorManager.white,
+                        fillColor: ColorManager.of(context).inputBg,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
+                          borderSide: BorderSide(
+                            color: ColorManager.of(context).borderLight,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.of(context).borderLight),
+                          borderSide: BorderSide(
+                            color: ColorManager.of(context).borderLight,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadiusManager.lg,
-                          borderSide:
-                              BorderSide(color: ColorManager.primary),
+                          borderSide: BorderSide(color: ColorManager.primary),
                         ),
                       ),
                     ),
@@ -398,25 +378,35 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate() &&
                                   _selectedCurrency != null) {
-                                final amount =
-                                    double.parse(_amountController.text);
+                                final amount = double.parse(
+                                  _amountController.text,
+                                );
                                 final exchangeRate = double.parse(
-                                    _exchangeRateController.text);
+                                  _exchangeRateController.text,
+                                );
                                 final caseCurrencyId =
                                     widget.caseCurrencyId ??
-                                        _selectedCurrency!.id;
+                                    _selectedCurrency!.id;
 
-                                // If same currency, amount_in_case_currency = amount
-                                // If different currency, convert using exchange rate
-                                final amountInCaseCurrency =
-                                    _isCurrencyChanged
-                                        ? amount * exchangeRate
-                                        : amount;
+                                // If same currency, no conversion needed
+                                // If different currency, convert based on swap direction:
+                                //   Not swapped: 1 [caseCurrency] = X [selectedCurrency] → divide
+                                //   Swapped:     1 [selectedCurrency] = X [caseCurrency] → multiply
+                                double amountInCaseCurrency;
+                                if (!_isCurrencyChanged) {
+                                  amountInCaseCurrency = amount;
+                                } else if (_isExchangeSwapped) {
+                                  // 1 selectedCurrency = X caseCurrency → multiply
+                                  amountInCaseCurrency = amount * exchangeRate;
+                                } else {
+                                  // 1 caseCurrency = X selectedCurrency → divide
+                                  amountInCaseCurrency = amount / exchangeRate;
+                                }
 
                                 final notes =
                                     _noteController.text.trim().isEmpty
-                                        ? null
-                                        : _noteController.text.trim();
+                                    ? null
+                                    : _noteController.text.trim();
 
                                 setState(() => _isSubmitting = true);
                                 try {
@@ -447,6 +437,142 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     );
   }
 
+  Widget _buildExchangeRateFields(String fontFamily) {
+    final l10n = AppLocalizations.of(context)!;
+    final caseCurrencyCode = widget.caseCurrencyCode ?? '';
+    final selectedCurrencyCode = _selectedCurrency?.currencyCode ?? '';
+
+    // Determine which currency is on each side
+    final leftCurrency = _isExchangeSwapped
+        ? selectedCurrencyCode
+        : caseCurrencyCode;
+    final rightCurrency = _isExchangeSwapped
+        ? caseCurrencyCode
+        : selectedCurrencyCode;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Left field: always "1"
+        Expanded(
+          child: TextFormField(
+            initialValue: '1',
+            readOnly: true,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.w600,
+              color: ColorManager.of(context).textPrimary,
+            ),
+            decoration: InputDecoration(
+              prefixIcon: _buildCurrencyPrefix(leftCurrency, fontFamily),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+              filled: true,
+              fillColor: ColorManager.of(context).cardBgSecondary,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadiusManager.lg,
+                borderSide: BorderSide(
+                  color: ColorManager.of(context).borderLight,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadiusManager.lg,
+                borderSide: BorderSide(
+                  color: ColorManager.of(context).borderLight,
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // Swap button
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6.w),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _isExchangeSwapped = !_isExchangeSwapped;
+                _exchangeRateController.clear();
+              });
+            },
+            child: Container(
+              width: 36.w,
+              height: 48.h,
+              decoration: BoxDecoration(
+                color: ColorManager.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadiusManager.lg,
+                border: Border.all(color: ColorManager.primary),
+              ),
+              child: Icon(
+                Icons.swap_horiz,
+                color: ColorManager.primary,
+                size: 20.w,
+              ),
+            ),
+          ),
+        ),
+
+        // Right field: user enters value
+        Expanded(
+          child: TextFormField(
+            controller: _exchangeRateController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,6}')),
+            ],
+            style: TextStyle(
+              fontFamily: fontFamily,
+              color: ColorManager.of(context).textPrimary,
+            ),
+            decoration: InputDecoration(
+              hintText: '0.00',
+              prefixIcon: _buildCurrencyPrefix(rightCurrency, fontFamily),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+              hintStyle: TextStyle(
+                color: ColorManager.of(context).textTertiary,
+                fontFamily: fontFamily,
+              ),
+              filled: true,
+              fillColor: ColorManager.of(context).inputBg,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadiusManager.lg,
+                borderSide: BorderSide(
+                  color: ColorManager.of(context).borderLight,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadiusManager.lg,
+                borderSide: BorderSide(
+                  color: ColorManager.of(context).borderLight,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadiusManager.lg,
+                borderSide: BorderSide(color: ColorManager.primary),
+              ),
+            ),
+            validator: (value) {
+              if (!_isCurrencyChanged) return null;
+              if (value == null || value.isEmpty) {
+                return l10n.pleaseEnterAmount;
+              }
+              final rate = double.tryParse(value);
+              if (rate == null || rate <= 0) {
+                return l10n.pleaseEnterValidAmount;
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Column _buildAmountField() {
     final l10n = AppLocalizations.of(context)!;
     final currencyCode = _selectedCurrency?.currencyCode ?? '';
@@ -465,25 +591,35 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                   decimal: true,
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d+\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                 ],
                 decoration: InputDecoration(
                   hintText: '0.00',
-                  prefixText: '$currencyCode ',
+                  prefixIcon: _buildCurrencyPrefix(
+                    currencyCode,
+                    FontHelper.fontFamily(context),
+                  ),
+                  prefixIconConstraints: const BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
                   hintStyle: TextStyle(
                     color: ColorManager.of(context).textTertiary,
                     fontFamily: FontHelper.fontFamily(context),
                   ),
                   filled: true,
-                  fillColor: ColorManager.white,
+                  fillColor: ColorManager.of(context).inputBg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
-                    borderSide: BorderSide(color: ColorManager.of(context).borderLight),
+                    borderSide: BorderSide(
+                      color: ColorManager.of(context).borderLight,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
-                    borderSide: BorderSide(color: ColorManager.of(context).borderLight),
+                    borderSide: BorderSide(
+                      color: ColorManager.of(context).borderLight,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadiusManager.lg,
@@ -506,8 +642,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
             GestureDetector(
               onTap: _setFullAmount,
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
                 decoration: BoxDecoration(
                   color: ColorManager.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadiusManager.lg,
@@ -527,6 +662,21 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildCurrencyPrefix(String code, String fontFamily) {
+    return Padding(
+      padding: EdgeInsets.only(left: 12.w, right: 6.w),
+      child: Text(
+        code,
+        style: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 14.sp,
+          color: ColorManager.of(context).textSecondary,
+        ),
+      ),
     );
   }
 

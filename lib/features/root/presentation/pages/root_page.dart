@@ -10,6 +10,10 @@ import 'package:dental_clinic_app/features/appointments/presentation/pages/appoi
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/permission_gate.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -21,11 +25,24 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   int _currentIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    getIt<ClinicPermissionsBloc>()
+        .add(const ClinicPermissionsEvent.load());
+  }
+
   final List<Widget> _pages = [
     const HomePage(),
-    const PatientsListPage(),
+    const PermissionGate(
+      feature: PermissionSlugs.viewClinicPatients,
+      child: PatientsListPage(),
+    ),
     const AppointmentsPage(),
-    const ExpensesPage(),
+    const PermissionGate(
+      feature: PermissionSlugs.viewClinicExpenses,
+      child: ExpensesPage(),
+    ),
     MenuPage(),
   ];
 

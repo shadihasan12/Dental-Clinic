@@ -3493,6 +3493,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'0988026431'**
   String get phoneHint;
+
+  /// No description provided for @accessRestricted.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Restricted'**
+  String get accessRestricted;
+
+  /// No description provided for @accessRestrictedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.'**
+  String get accessRestrictedDescription;
 }
 
 class _AppLocalizationsDelegate

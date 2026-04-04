@@ -692,6 +692,8 @@
   "caseAutoCreateDescription": "A case will be automatically created for this patient. You can add a title or skip this step.",
   "caseTitle": "Case Title",
   "caseTitleExampleHint": "e.g., Full Mouth Restoration, Orthodontic Treatment",
-  "phoneHint": "0988026431"
+  "phoneHint": "0988026431",
+  "accessRestricted": "Access Restricted",
+  "accessRestrictedDescription": "Your role doesn't have permission to access this feature. Contact your clinic admin for more information."
 }
 

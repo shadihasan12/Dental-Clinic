@@ -147,6 +147,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       labFees: widget.dentalCase.labFees,
       paid: widget.dentalCase.paidAmount,
       pendingAmount: widget.dentalCase.pendingAmount,
+      currencyCode: widget.dentalCase.totalCostCurrencyCode,
     );
   }
 

@@ -1790,4 +1790,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneHint => '0988026431';
+
+  @override
+  String get accessRestricted => 'Access Restricted';
+
+  @override
+  String get accessRestrictedDescription =>
+      'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.';
 }

@@ -694,6 +694,8 @@
   "caseAutoCreateDescription": "سيتم إنشاء حالة تلقائياً لهذا المريض. يمكنك إضافة عنوان أو تخطي هذه الخطوة.",
   "caseTitle": "عنوان الحالة",
   "caseTitleExampleHint": "مثال: ترميم كامل للفم، علاج تقويمي",
-  "phoneHint": "0988026431"
+  "phoneHint": "0988026431",
+  "accessRestricted": "الوصول مقيّد",
+  "accessRestrictedDescription": "صلاحيات دورك لا تسمح بالوصول إلى هذه الميزة. تواصل مع مدير العيادة لمزيد من المعلومات."
 }
 

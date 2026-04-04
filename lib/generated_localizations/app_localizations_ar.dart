@@ -1778,4 +1778,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get phoneHint => '0988026431';
+
+  @override
+  String get accessRestricted => 'الوصول مقيّد';
+
+  @override
+  String get accessRestrictedDescription =>
+      'صلاحيات دورك لا تسمح بالوصول إلى هذه الميزة. تواصل مع مدير العيادة لمزيد من المعلومات.';
 }
