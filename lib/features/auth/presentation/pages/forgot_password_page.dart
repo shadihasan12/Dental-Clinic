@@ -10,6 +10,7 @@ import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
   const ForgotPasswordPage({super.key});
@@ -48,7 +49,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 0, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
@@ -243,6 +244,6 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
           },
         ),
       ),
-    );
+    ),);
   }
 }

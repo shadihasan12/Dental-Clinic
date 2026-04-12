@@ -1785,4 +1785,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accessRestrictedDescription =>
       'صلاحيات دورك لا تسمح بالوصول إلى هذه الميزة. تواصل مع مدير العيادة لمزيد من المعلومات.';
+
+  @override
+  String get todaysAppointments => 'مواعيد اليوم';
+
+  @override
+  String get revenue => 'الإيرادات';
 }

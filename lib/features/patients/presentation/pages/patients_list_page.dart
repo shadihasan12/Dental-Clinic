@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -206,52 +207,112 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         Expanded(
           child: filtered.isEmpty
               ? _buildEmptyState(l10n, allPatients.isEmpty)
-              : CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    CupertinoSliverRefreshControl(onRefresh: _onRefresh),
-                    SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      sliver: SliverList.separated(
-                        itemCount:
-                            filtered.length +
-                            (isLoadingMore || hasMore ? 1 : 0),
-                        separatorBuilder: (_, __) =>
-                            Divider(height: 1, color: ColorManager.of(context).divider),
-                        itemBuilder: (context, index) {
-                          if (index == filtered.length) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              child: Center(
-                                child: SizedBox(
-                                  width: 24.w,
-                                  height: 24.w,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: ColorManager.primary,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
+              : Responsive.isDesktop(context)
+                  ? _buildDesktopGrid(filtered, isLoadingMore || hasMore)
+                  : _buildMobileList(filtered, isLoadingMore || hasMore),
+        ),
+      ],
+    );
+  }
 
-                          final patient = filtered[index];
-                          return PatientCard(
-                            patient: patient,
-                            onTap: () => context.pushNamed(
-                              AppRoutesNames.patientDetails,
-                              extra: <String, dynamic>{
-                                "patientId": patient.id,
-                                "patientName": patient.name,
-                                "tabIndex": 1,
-                              },
-                            ),
-                          );
-                        },
+  // ─── Desktop grid ─────────────────────────────────────────────────────
+
+  Widget _buildDesktopGrid(List<Patient> filtered, bool showLoader) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 2.2,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final patient = filtered[index];
+                return PatientCard(
+                  patient: patient,
+                  onTap: () => context.pushNamed(
+                    AppRoutesNames.patientDetails,
+                    extra: <String, dynamic>{
+                      "patientId": patient.id,
+                      "patientName": patient.name,
+                      "tabIndex": 1,
+                    },
+                  ),
+                );
+              },
+              childCount: filtered.length,
+            ),
+          ),
+        ),
+        if (showLoader)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // ─── Mobile list ─────────────────────────────────────────────────────
+
+  Widget _buildMobileList(List<Patient> filtered, bool showLoader) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        CupertinoSliverRefreshControl(onRefresh: _onRefresh),
+        SliverPadding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          sliver: SliverList.separated(
+            itemCount: filtered.length + (showLoader ? 1 : 0),
+            separatorBuilder: (_, __) =>
+                Divider(height: 1, color: ColorManager.of(context).divider),
+            itemBuilder: (context, index) {
+              if (index == filtered.length) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorManager.primary,
                       ),
                     ),
-                  ],
+                  ),
+                );
+              }
+
+              final patient = filtered[index];
+              return PatientCard(
+                patient: patient,
+                onTap: () => context.pushNamed(
+                  AppRoutesNames.patientDetails,
+                  extra: <String, dynamic>{
+                    "patientId": patient.id,
+                    "patientName": patient.name,
+                    "tabIndex": 1,
+                  },
                 ),
+              );
+            },
+          ),
         ),
       ],
     );

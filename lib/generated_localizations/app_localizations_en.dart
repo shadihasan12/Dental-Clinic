@@ -1797,4 +1797,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accessRestrictedDescription =>
       'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.';
+
+  @override
+  String get todaysAppointments => 'Today\'s Appointments';
+
+  @override
+  String get revenue => 'Revenue';
 }

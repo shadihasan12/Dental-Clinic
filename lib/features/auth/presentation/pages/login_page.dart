@@ -9,6 +9,7 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
+import '../widgets/auth_desktop_shell.dart';
 import '../widgets/auth_text_field.dart';
 
 class LoginPage extends StatelessWidget {
@@ -79,124 +80,114 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listenWhen: (previous, current) =>
-            previous.status != current.status ||
-            (!previous.needsEmailVerification && current.needsEmailVerification) ||
-            previous.loginError != current.loginError,
-        listener: (context, state) {
-          if (state.status == AuthStatus.authenticated) {
-            context.goNamed(AppRoutesNames.root);
-          }
-          if (state.needsEmailVerification) {
-            context.pushNamed(
-              AppRoutesNames.verifyEmailEntry,
-              extra: context.read<AuthBloc>(),
-            );
-          }
-          if (state.loginError != null) {
-            AppSnackbar.showError(
-              context,
-              title: l10n.loginFailed,
-              message: state.loginError,
-            );
-          }
-        },
-        builder: (context, state) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 60.h),
+    return AuthDesktopShell(
+      child: Scaffold(
+        backgroundColor: ColorManager.of(context).scaffoldBg,
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status ||
+              (!previous.needsEmailVerification &&
+                  current.needsEmailVerification) ||
+              previous.loginError != current.loginError,
+          listener: (context, state) {
+            if (state.status == AuthStatus.authenticated) {
+              context.goNamed(AppRoutesNames.root);
+            }
+            if (state.needsEmailVerification) {
+              context.pushNamed(
+                AppRoutesNames.verifyEmailEntry,
+                extra: context.read<AuthBloc>(),
+              );
+            }
+            if (state.loginError != null) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.loginFailed,
+                message: state.loginError,
+              );
+            }
+          },
+          builder: (context, state) {
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 60.h),
 
-                    // Logo
-                    Center(
-                      child: Container(
-                        width: 64.w,
-                        height: 64.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.primary10,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Icon(
-                          Icons.medical_services_rounded,
-                          color: ColorManager.primary,
-                          size: 32.w,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 32.h),
-
-                    // Welcome text
-                    Center(
-                      child: Text(
-                        l10n.welcomeBack,
-                        style: TextStyle(
-                          fontSize: FontSizesManager.s28,
-                          fontWeight: FontWeightManager.bold,
-                          fontFamily: fontFamily,
-                          color: ColorManager.of(context).textPrimary,
+                      // Logo
+                      Center(
+                        child: Container(
+                          width: 64.w,
+                          height: 64.w,
+                          decoration: BoxDecoration(
+                            color: ColorManager.primary10,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Icon(
+                            Icons.medical_services_rounded,
+                            color: ColorManager.primary,
+                            size: 32.w,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Center(
-                      child: Text(
-                        l10n.signInToContinue,
-                        style: TextStyle(
-                          fontSize: FontSizesManager.s14,
-                          fontFamily: fontFamily,
-                          color: ColorManager.of(context).textSecondary,
+
+                      SizedBox(height: 32.h),
+
+                      // Welcome text
+                      Center(
+                        child: Text(
+                          l10n.welcomeBack,
+                          style: TextStyle(
+                            fontSize: FontSizesManager.s28,
+                            fontWeight: FontWeightManager.bold,
+                            fontFamily: fontFamily,
+                            color: ColorManager.of(context).textPrimary,
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(height: 8.h),
+                      Center(
+                        child: Text(
+                          l10n.signInToContinue,
+                          style: TextStyle(
+                            fontSize: FontSizesManager.s14,
+                            fontFamily: fontFamily,
+                            color: ColorManager.of(context).textSecondary,
+                          ),
+                        ),
+                      ),
 
-                    SizedBox(height: 40.h),
+                      SizedBox(height: 40.h),
 
-                    // Fields
-                    _buildEmailField(state, l10n),
-                    SizedBox(height: 16.h),
-                    _buildPasswordField(state, l10n),
-                    SizedBox(height: 12.h),
-                    _buildForgotPasswordLink(l10n, fontFamily),
+                      // Fields
+                      _buildEmailField(state, l10n),
+                      SizedBox(height: 16.h),
+                      _buildPasswordField(state, l10n),
+                      SizedBox(height: 12.h),
+                      _buildForgotPasswordLink(l10n, fontFamily),
 
-                    SizedBox(height: 28.h),
+                      SizedBox(height: 28.h),
 
-                    // Sign in button
-                    _buildSignInButton(state, l10n),
+                      // Sign in button
+                      _buildSignInButton(state, l10n),
 
-                    // SizedBox(height: 28.h),
+                      SizedBox(height: 40.h),
 
-                    // Divider
-                    // _buildDivider(l10n, fontFamily),
+                      // Sign up link
+                      _buildSignUpLink(l10n, fontFamily),
 
-                    // SizedBox(height: 28.h),
-
-                    // // Social buttons
-                    // SocialLoginButtons(
-                    //   onGooglePressed: () {},
-                    //   onFacebookPressed: () {},
-                    // ),
-
-                    SizedBox(height: 40.h),
-
-                    // Sign up link
-                    _buildSignUpLink(l10n, fontFamily),
-
-                    SizedBox(height: 24.h),
-                  ],
+                      SizedBox(height: 24.h),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 class SetNewPasswordPage extends StatefulWidget {
   const SetNewPasswordPage({super.key});
@@ -39,7 +40,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 2, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
@@ -248,6 +249,6 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
           },
         ),
       ),
-    );
+    ),);
   }
 }

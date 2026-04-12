@@ -3505,6 +3505,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.'**
   String get accessRestrictedDescription;
+
+  /// No description provided for @todaysAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Appointments'**
+  String get todaysAppointments;
+
+  /// No description provided for @revenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get revenue;
 }
 
 class _AppLocalizationsDelegate

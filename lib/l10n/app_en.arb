@@ -694,6 +694,8 @@
   "caseTitleExampleHint": "e.g., Full Mouth Restoration, Orthodontic Treatment",
   "phoneHint": "0988026431",
   "accessRestricted": "Access Restricted",
-  "accessRestrictedDescription": "Your role doesn't have permission to access this feature. Contact your clinic admin for more information."
+  "accessRestrictedDescription": "Your role doesn't have permission to access this feature. Contact your clinic admin for more information.",
+  "todaysAppointments": "Today's Appointments",
+  "revenue": "Revenue"
 }
 

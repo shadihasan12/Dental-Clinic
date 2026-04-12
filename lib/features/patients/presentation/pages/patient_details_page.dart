@@ -19,6 +19,8 @@ import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_m
 import 'completed_case_page.dart';
 import 'plan_treatment_page.dart';
 import 'treatment_plan_view_page.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/details/case_history_card.dart';
 import '../widgets/details/widgets.dart';
 
 class PatientDetailsPage extends StatelessWidget {
@@ -206,27 +209,27 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PatientDetailsBloc, PatientDetailsState>(
-      listener: (context, state) {
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return state.when(
           initial: () => const Scaffold(body: SizedBox.shrink()),
           loading: () => Scaffold(
-                backgroundColor: ColorManager.of(context).scaffoldBg,
-                body: Column(
-                  children: [
-                    PatientHeader(
-                      name: widget.patientName,
-                      onBackPressed: () =>
+            backgroundColor: ColorManager.of(context).scaffoldBg,
+            body: Column(
+              children: [
+                if (!Responsive.isDesktop(context))
+                  PatientHeader(
+                    name: widget.patientName,
+                    onBackPressed: () =>
                         context.canPop() ? context.pop() : context.go('/'),
-                      tabController: _tabController,
-                    ),
-                    const Expanded(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  ],
+                    tabController: _tabController,
+                  ),
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-              ),
+              ],
+            ),
+          ),
           error: (message) => Scaffold(
             body: Center(
               child: Padding(
@@ -243,59 +246,312 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
             ),
           ),
           loaded: (patient, activeCase, completedCases) {
-            return Scaffold(
-              backgroundColor: ColorManager.of(context).scaffoldBg,
-              body: Column(
-                children: [
-                  PatientHeader(
-                    name: patient.name,
-                    onBackPressed: () =>
-                        context.canPop() ? context.pop() : context.go('/'),
-                    onEditPressed: () {
-                      // TODO: Navigate to edit patient
-                    },
-                    tabController: _tabController,
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _tabController,
-                      children: [
-                        // Tab 1: Patient Info
-                        SingleChildScrollView(
-                          padding: PaddingManager.all16,
-                          child: PatientInfoTab(
-                            phone: patient.phone,
-                            email: patient.email,
-                            address: patient.address,
-                            medicalHistory: patient.medicalHistory ?? '',
-                            dateOfBirth: patient.dateOfBirth
-                                .toIso8601String()
-                                .substring(0, 10),
-                            allergies: 'None',
-                            age: patient.age,
-                            gender: patient.gender,
-                            initiallyExpanded: true,
-                          ),
-                        ),
-
-                        // Tab 2: Case
-                        _buildCaseTab(activeCase),
-
-                        // Tab 3: History
-                        CaseHistoryTab(
-                          completedCases: completedCases,
-                          onCaseTap: _onHistoryCaseTap,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+            if (Responsive.isDesktop(context)) {
+              return _buildDesktopLayout(
+                  patient, activeCase, completedCases);
+            }
+            return _buildMobileLayout(patient, activeCase, completedCases);
           },
         );
       },
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildDesktopLayout(
+    dynamic patient,
+    DentalCase? activeCase,
+    List<DentalCase> completedCases,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+    final c = ColorManager.of(context);
+
+    return DesktopShell(
+      title: patient.name,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Left: patient profile card ────────────────────
+            SizedBox(
+              width: 280,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Profile card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: c.cardBg,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: c.borderLight),
+                      ),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundColor:
+                                ColorManager.primary.withValues(alpha: 0.12),
+                            child: Text(
+                              patient.name
+                                  .split(' ')
+                                  .map((e) => e[0])
+                                  .take(2)
+                                  .join(),
+                              style: TextStyle(
+                                fontFamily: fontFamily,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: ColorManager.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            patient.name,
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: c.textPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${patient.age} ${l10n.years} • ${patient.gender}',
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 12,
+                              color: c.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Contact details card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: c.cardBg,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: c.borderLight),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _dInfoTile(Icons.phone_outlined, l10n.phone,
+                              patient.phone, fontFamily, c),
+                          if (patient.email.isNotEmpty) ...[
+                            Divider(height: 16, color: c.borderLight),
+                            _dInfoTile(Icons.email_outlined, l10n.email,
+                                patient.email, fontFamily, c),
+                          ],
+                          Divider(height: 16, color: c.borderLight),
+                          _dInfoTile(
+                              Icons.cake_outlined,
+                              l10n.dateOfBirth,
+                              patient.dateOfBirth
+                                  .toIso8601String()
+                                  .substring(0, 10),
+                              fontFamily,
+                              c),
+                          if (patient.address.isNotEmpty) ...[
+                            Divider(height: 16, color: c.borderLight),
+                            _dInfoTile(Icons.location_on_outlined,
+                                l10n.address, patient.address, fontFamily, c),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    // Medical history
+                    if ((patient.medicalHistory ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: c.cardBg,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: c.borderLight),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.medicalHistory,
+                              style: TextStyle(
+                                fontFamily: fontFamily,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: c.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              patient.medicalHistory!,
+                              style: TextStyle(
+                                fontFamily: fontFamily,
+                                fontSize: 13,
+                                color: c.textPrimary,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    // Case history
+                    if (completedCases.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: c.cardBg,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: c.borderLight),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.history,
+                              style: TextStyle(
+                                fontFamily: fontFamily,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: c.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ...completedCases.map(
+                              (dc) => CaseHistoryCard(
+                                dentalCase: dc,
+                                onTap: () => _onHistoryCaseTap(dc),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+
+            // ── Right: active case ───────────────────────────
+            Expanded(child: _buildCaseTab(activeCase)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dInfoTile(IconData icon, String label, String value,
+      String fontFamily, dynamic c) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: c.textTertiary),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 11,
+                  color: c.textTertiary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  color: c.textPrimary,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT (original)
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildMobileLayout(
+    dynamic patient,
+    DentalCase? activeCase,
+    List<DentalCase> completedCases,
+  ) {
+    return Scaffold(
+      backgroundColor: ColorManager.of(context).scaffoldBg,
+      body: Column(
+        children: [
+          PatientHeader(
+            name: patient.name,
+            onBackPressed: () =>
+                context.canPop() ? context.pop() : context.go('/'),
+            onEditPressed: () {},
+            tabController: _tabController,
+          ),
+          Expanded(
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                // Tab 1: Patient Info
+                SingleChildScrollView(
+                  padding: PaddingManager.all16,
+                  child: PatientInfoTab(
+                    phone: patient.phone,
+                    email: patient.email,
+                    address: patient.address,
+                    medicalHistory: patient.medicalHistory ?? '',
+                    dateOfBirth: patient.dateOfBirth
+                        .toIso8601String()
+                        .substring(0, 10),
+                    allergies: 'None',
+                    age: patient.age,
+                    gender: patient.gender,
+                    initiallyExpanded: true,
+                  ),
+                ),
+
+                // Tab 2: Case
+                _buildCaseTab(activeCase),
+
+                // Tab 3: History
+                CaseHistoryTab(
+                  completedCases: completedCases,
+                  onCaseTap: _onHistoryCaseTap,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
