@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
@@ -183,15 +184,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<LoginResponseModel> login(Map<String, dynamic> body) async {
+    debugPrint('[Login] Request body: $body');
+
     final response = await _apiConsumer.post(
       AuthEndpoints.login,
       body: body,
     );
 
+    debugPrint('[Login] Raw response: $response');
+
     // Token is extracted from Authorization response header by AuthInterceptor
 
     // Extract data object from response
     final data = response['data'] as Map<String, dynamic>?;
+    debugPrint('[Login] Response data: $data');
     if (data == null) {
       throw Exception('Login failed: Invalid response data');
     }

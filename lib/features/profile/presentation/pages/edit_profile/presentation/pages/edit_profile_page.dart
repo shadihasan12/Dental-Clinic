@@ -4,8 +4,10 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/data/data_sources/edit_profile_remote_data_source.dart';
@@ -495,37 +497,51 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
+        final isDesktop = Responsive.isDesktop(context);
+
+        final content = state.maybeWhen(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (message) {
+            if (_formPopulated) return _buildForm(l10n, isDesktop);
+            return Center(child: Text(message));
+          },
+          loaded: (profile) {
+            if (!_formPopulated) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() => _populateFromEntity(profile));
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
+            return _buildForm(l10n, isDesktop);
+          },
+          orElse: () {
+            if (!_formPopulated) {
+              return const SizedBox.shrink();
+            }
+            return _buildForm(l10n, isDesktop);
+          },
+        );
+
+        if (isDesktop) {
+          return DesktopShell(
+            title: l10n.editProfile,
+            body: Scaffold(
+              backgroundColor: c.scaffoldBg,
+              bottomNavigationBar:
+                  _formPopulated ? _buildSaveButton(l10n, isDesktop) : null,
+              body: content,
+            ),
+          );
+        }
+
         return Scaffold(
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
+          bottomNavigationBar:
+              _formPopulated ? _buildSaveButton(l10n, isDesktop) : null,
           body: Column(
             children: [
               PageHeader(title: l10n.editProfile, onBack: () => context.pop()),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (message) {
-                    if (_formPopulated) return _buildForm(l10n);
-                    return Center(child: Text(message));
-                  },
-                  loaded: (profile) {
-                    if (!_formPopulated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromEntity(profile));
-                      });
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_formPopulated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
-                ),
-              ),
+              Expanded(child: content),
             ],
           ),
         );
@@ -592,28 +608,26 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     );
   }
 
-  Widget _buildForm(AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
-          _buildProfileImage(),
-          SizedBox(height: 20.h),
-          CustomCard(
-            child: Column(
-              children: [
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.firstName,
-                  controller: _firstNameController,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.lastName,
-                  controller: _lastNameController,
-                  textInputAction: TextInputAction.next,
-                ),
+  Widget _buildForm(AppLocalizations l10n, bool isDesktop) {
+    final form = Column(
+      children: [
+        _buildProfileImage(),
+        SizedBox(height: isDesktop ? 24 : 20.h),
+        CustomCard(
+          child: Column(
+            children: [
+              ProfileTextField(
+                icon: Icons.person_outline,
+                label: l10n.firstName,
+                controller: _firstNameController,
+                textInputAction: TextInputAction.next,
+              ),
+              ProfileTextField(
+                icon: Icons.person_outline,
+                label: l10n.lastName,
+                controller: _lastNameController,
+                textInputAction: TextInputAction.next,
+              ),
                 ProfileDropdownField(
                   icon: Icons.medical_services_outlined,
                   label: l10n.specialization,
@@ -668,40 +682,76 @@ class _EditProfileContentState extends State<_EditProfileContent> {
               ],
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: isDesktop ? 24 : 24.h),
         ],
-      ),
+      );
+
+    if (isDesktop) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: form,
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: form,
     );
   }
 
-  Widget _buildSaveButton(AppLocalizations l10n) {
+  Widget _buildSaveButton(AppLocalizations l10n, bool isDesktop) {
     final enabled = _hasChanges;
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: enabled ? _onSave : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: EdgeInsets.all(14.h),
-          decoration: BoxDecoration(
-            color: enabled
-                ? ColorManager.primary
-                : ColorManager.primary.withValues(alpha: 0.35),
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.saveChanges,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
-            ),
+    final button = GestureDetector(
+      onTap: enabled ? _onSave : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: double.infinity,
+        padding: EdgeInsets.all(isDesktop ? 14 : 14.h),
+        decoration: BoxDecoration(
+          color: enabled
+              ? ColorManager.primary
+              : ColorManager.primary.withValues(alpha: 0.35),
+          borderRadius: BorderRadiusManager.lg,
+        ),
+        child: Text(
+          l10n.saveChanges,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: isDesktop ? 15 : 15.sp,
+            fontFamily: FontHelper.fontFamily(context),
+            fontWeight: FontWeight.w600,
+            color: ColorManager.white,
           ),
         ),
       ),
+    );
+
+    if (isDesktop) {
+      return Container(
+        padding: const EdgeInsets.fromLTRB(28, 14, 28, 20),
+        decoration: BoxDecoration(
+          color: ColorManager.of(context).cardBg,
+          border: Border(
+            top: BorderSide(color: ColorManager.of(context).borderLight),
+          ),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: button,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: button,
     );
   }
 }

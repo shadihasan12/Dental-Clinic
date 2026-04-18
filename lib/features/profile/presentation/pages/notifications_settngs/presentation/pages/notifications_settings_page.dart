@@ -1,6 +1,8 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/domain/entities/notification_settings_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/manager/notification_settings_bloc.dart';
@@ -31,8 +33,33 @@ class _NotificationsSettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     final c = ColorManager.of(context);
+    final isDesktop = Responsive.isDesktop(context);
+
+    final body = BlocBuilder<NotificationSettingsBloc,
+        NotificationSettingsState>(
+      builder: (context, state) {
+        return state.maybeWhen(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (message) => Center(child: Text(message)),
+          loaded: (settings) => _buildContent(context, l10n, settings, isDesktop),
+          orElse: () => const SizedBox.shrink(),
+        );
+      },
+    );
+
+    if (isDesktop) {
+      return DesktopShell(
+        title: l10n.notificationsSettings,
+        body: Scaffold(
+          backgroundColor: c.scaffoldBg,
+          body: body,
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       body: Column(
@@ -41,21 +68,7 @@ class _NotificationsSettingsContent extends StatelessWidget {
             title: l10n.notificationsSettings,
             onBack: () => context.pop(),
           ),
-          Expanded(
-            child: BlocBuilder<NotificationSettingsBloc,
-                NotificationSettingsState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  error: (message) => Center(child: Text(message)),
-                  loaded: (settings) => _buildContent(context, l10n, settings),
-                  orElse: () => const SizedBox.shrink(),
-                );
-              },
-            ),
-          ),
+          Expanded(child: body),
         ],
       ),
     );
@@ -74,12 +87,11 @@ class _NotificationsSettingsContent extends StatelessWidget {
     BuildContext context,
     AppLocalizations l10n,
     NotificationSettingsEntity settings,
+    bool isDesktop,
   ) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           // ── Reminders ─────────────────────────────────────────
           _SectionLabel(label: l10n.reminders),
           SizedBox(height: 8.h),
@@ -224,7 +236,23 @@ class _NotificationsSettingsContent extends StatelessWidget {
 
           SizedBox(height: 24.h),
         ],
-      ),
+      );
+
+    if (isDesktop) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: content,
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: content,
     );
   }
 }

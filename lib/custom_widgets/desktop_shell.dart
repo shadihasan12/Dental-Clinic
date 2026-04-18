@@ -1,14 +1,13 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_side_nav.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 /// Wraps a page with the desktop side menu + top bar.
@@ -16,17 +15,30 @@ import 'package:go_router/go_router.dart';
 ///
 /// Use this for pages that navigate away from the root (patient details,
 /// add patient, etc.) but should still show the shell on desktop.
+///
+/// [selectedTabIndex] highlights a nav item (e.g. 2 for appointments) so
+/// users keep their sense of place while on a sub-page. Pass null to leave
+/// all items unhighlighted.
+/// [breadcrumb] is shown as a small path above the page title in the top
+/// bar, e.g. "Appointments" for the New Appointment page.
 class DesktopShell extends StatelessWidget {
-  const DesktopShell({super.key, required this.body, this.title});
+  const DesktopShell({
+    super.key,
+    required this.body,
+    this.title,
+    this.selectedTabIndex,
+    this.breadcrumb,
+  });
 
   final Widget body;
   final String? title;
+  final int? selectedTabIndex;
+  final String? breadcrumb;
 
   @override
   Widget build(BuildContext context) {
     if (!Responsive.isDesktop(context)) return body;
 
-    // Reconfigure screenutil for desktop
     ScreenUtil.configure(
       data: MediaQuery.of(context).copyWith(
         size: const Size(375, 812),
@@ -38,135 +50,20 @@ class DesktopShell extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          // Side menu
-          _SideMenu(fontFamily: fontFamily),
-
-          // Main area
+          DesktopSideNav(
+            selectedIndex: selectedTabIndex,
+            onTabSelected: null,
+          ),
           Expanded(
             child: Column(
               children: [
-                _TopBar(fontFamily: fontFamily, title: title),
+                _SubpageTopBar(
+                  fontFamily: fontFamily,
+                  title: title,
+                  breadcrumb: breadcrumb,
+                ),
                 Expanded(child: body),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// SIDE MENU
-// ═══════════════════════════════════════════════════════════════════════
-
-class _SideMenu extends StatelessWidget {
-  const _SideMenu({required this.fontFamily});
-
-  final String fontFamily;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    final l10n = AppLocalizations.of(context)!;
-
-    final items = [
-      _NavItem(Assets.iconsRootHome, l10n.home),
-      _NavItem(Assets.iconsRootPatient, l10n.patients),
-      _NavItem(Assets.iconsRootAppointment, l10n.appointments),
-      _NavItem(Assets.iconsRootMoney, l10n.expenses),
-      _NavItem(Assets.iconsRootMenu, l10n.more),
-    ];
-
-    return Container(
-      width: 240,
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        border: Border(right: BorderSide(color: c.borderLight)),
-      ),
-      child: Column(
-        children: [
-          // Logo
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary10,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.medical_services_rounded,
-                    color: ColorManager.primary,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'SmylOS',
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 20,
-                    fontWeight: FontWeightManager.bold,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Nav items (no selection since we're on a sub-page)
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(10),
-                    child: InkWell(
-                      onTap: () => context.go('/'),
-                      borderRadius: BorderRadius.circular(10),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 12),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              item.svgPath,
-                              width: 20,
-                              height: 20,
-                              colorFilter: ColorFilter.mode(
-                                c.iconDefault,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                item.label,
-                                style: TextStyle(
-                                  fontFamily: fontFamily,
-                                  fontSize: 14,
-                                  fontWeight: FontWeightManager.medium,
-                                  color: c.textSecondary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
             ),
           ),
         ],
@@ -179,11 +76,16 @@ class _SideMenu extends StatelessWidget {
 // TOP BAR
 // ═══════════════════════════════════════════════════════════════════════
 
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.fontFamily, this.title});
+class _SubpageTopBar extends StatelessWidget {
+  const _SubpageTopBar({
+    required this.fontFamily,
+    this.title,
+    this.breadcrumb,
+  });
 
   final String fontFamily;
   final String? title;
+  final String? breadcrumb;
 
   @override
   Widget build(BuildContext context) {
@@ -193,92 +95,62 @@ class _TopBar extends StatelessWidget {
 
     return Container(
       height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: c.cardBg,
         border: Border(bottom: BorderSide(color: c.borderLight)),
       ),
       child: Row(
         children: [
-          // Back + title
-          IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, size: 18, color: c.textPrimary),
-            onPressed: () =>
-                context.canPop() ? context.pop() : context.go('/'),
-          ),
-          if (title != null) ...[
-            const SizedBox(width: 4),
-            Text(
-              title!,
-              style: TextStyle(
-                fontFamily: fontFamily,
-                fontSize: 16,
-                fontWeight: FontWeightManager.semiBold,
-                color: c.textPrimary,
-              ),
-            ),
-          ],
-
-          const Spacer(),
-
-          // Notification
-          IconButton(
-            onPressed: () => context.pushNamed(AppRoutesNames.notifications),
-            icon: Stack(
-              children: [
-                Icon(Icons.notifications_outlined, color: c.textSecondary, size: 22),
-                Positioned(
-                  right: 1,
-                  top: 1,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: 8),
-
-          // Profile
-          InkWell(
-            onTap: () => context.pushNamed(AppRoutesNames.profile),
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Row(
+          _BackButton(fontFamily: fontFamily),
+          const SizedBox(width: 6),
+          if (title != null)
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: ColorManager.primary10,
-                    child: Text(
-                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                  if (breadcrumb != null && breadcrumb!.isNotEmpty)
+                    Text(
+                      breadcrumb!,
                       style: TextStyle(
                         fontFamily: fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeightManager.semiBold,
-                        color: ColorManager.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeightManager.medium,
+                        color: c.textTertiary,
+                        letterSpacing: 0.3,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
                   Text(
-                    userName,
+                    title!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: fontFamily,
-                      fontSize: 14,
-                      fontWeight: FontWeightManager.medium,
+                      fontSize: 15,
+                      fontWeight: FontWeightManager.semiBold,
                       color: c.textPrimary,
+                      height: 1.2,
                     ),
                   ),
                 ],
               ),
             ),
+
+          const Spacer(),
+
+          _TopBarIconButton(
+            icon: Icons.notifications_outlined,
+            tooltip: AppLocalizations.of(context)!.notifications,
+            hasBadge: true,
+            onTap: () =>
+                context.pushNamed(AppRoutesNames.notifications),
+          ),
+          const SizedBox(width: 4),
+          _ProfilePill(
+            fontFamily: fontFamily,
+            userName: userName,
+            onTap: () => context.pushNamed(AppRoutesNames.editProfile),
           ),
         ],
       ),
@@ -286,8 +158,185 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _NavItem {
-  final String svgPath;
-  final String label;
-  const _NavItem(this.svgPath, this.label);
+class _BackButton extends StatefulWidget {
+  const _BackButton({required this.fontFamily});
+
+  final String fontFamily;
+
+  @override
+  State<_BackButton> createState() => _BackButtonState();
+}
+
+class _BackButtonState extends State<_BackButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Tooltip(
+      message: '\u2190  ${AppLocalizations.of(context)!.back}',
+      waitDuration: const Duration(milliseconds: 500),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: Material(
+          color: _hovered ? c.cardBgSecondary : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () =>
+                context.canPop() ? context.pop() : context.go('/'),
+            child: Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.arrow_back_rounded,
+                size: 20,
+                color: c.textPrimary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TopBarIconButton extends StatefulWidget {
+  const _TopBarIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.hasBadge = false,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final bool hasBadge;
+
+  @override
+  State<_TopBarIconButton> createState() => _TopBarIconButtonState();
+}
+
+class _TopBarIconButtonState extends State<_TopBarIconButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Tooltip(
+      message: widget.tooltip,
+      waitDuration: const Duration(milliseconds: 500),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: Material(
+          color: _hovered ? c.cardBgSecondary : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: widget.onTap,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(widget.icon, color: c.textSecondary, size: 20),
+                  if (widget.hasBadge)
+                    Positioned(
+                      right: 10,
+                      top: 10,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: c.cardBg, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfilePill extends StatefulWidget {
+  const _ProfilePill({
+    required this.fontFamily,
+    required this.userName,
+    required this.onTap,
+  });
+
+  final String fontFamily;
+  final String userName;
+  final VoidCallback onTap;
+
+  @override
+  State<_ProfilePill> createState() => _ProfilePillState();
+}
+
+class _ProfilePillState extends State<_ProfilePill> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: Material(
+        color: _hovered ? c.cardBgSecondary : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: widget.onTap,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: ColorManager.primary10,
+                  child: Text(
+                    widget.userName.isNotEmpty
+                        ? widget.userName[0].toUpperCase()
+                        : '?',
+                    style: TextStyle(
+                      fontFamily: widget.fontFamily,
+                      fontSize: 14,
+                      fontWeight: FontWeightManager.semiBold,
+                      color: ColorManager.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  widget.userName,
+                  style: TextStyle(
+                    fontFamily: widget.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeightManager.medium,
+                    color: c.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

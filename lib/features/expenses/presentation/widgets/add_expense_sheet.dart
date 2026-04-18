@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
@@ -59,10 +60,8 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
   void _initCurrency() {
     final bloc = getIt<CurrencyBloc>();
-    // Try current state first
     _trySelectCurrency(bloc.state);
 
-    // If not loaded yet, listen for future state changes
     if (_selectedCurrency == null) {
       bloc.stream.listen((state) {
         if (!mounted) return;
@@ -125,24 +124,47 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Future<void> _pickAttachment() async {
-    final picked = await getIt<FilePickerService>().pickFile();
+    PickedFileResult? picked;
+    try {
+      picked = await getIt<FilePickerService>().pickFile();
+    } catch (e, st) {
+      debugPrint('[AddExpense] pickFile threw: $e\n$st');
+      if (mounted) _showError('Could not open file picker: $e');
+      return;
+    }
     if (picked == null) return;
 
     setState(() {
-      _attachments.add(picked);
+      _attachments.add(picked!);
       _isUploading = true;
     });
 
     try {
       final uploadResult = await getIt<MediaService>().uploadFile(picked.file);
       _uploadedMediaIds.add(uploadResult.id);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('[AddExpense] upload failed: $e\n$st');
       if (mounted) {
         setState(() => _attachments.removeLast());
+        _showError('Upload failed: $e');
       }
     } finally {
       if (mounted) setState(() => _isUploading = false);
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(fontFamily: FontHelper.fontFamily(context)),
+        ),
+        backgroundColor: Colors.red.shade400,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 5),
+      ),
+    );
   }
 
   void _removeAttachment(int index) {
@@ -155,7 +177,6 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   void _save() {
-    // Required: amount, category, and currency
     if (_amountController.text.isEmpty) return;
     if (_selectedCategory == null) return;
     if (_isOtherCategory && _customCategoryController.text.trim().isEmpty) {
@@ -168,14 +189,12 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
       'currency_id': _selectedCurrency!.id,
     };
 
-    // Category (required)
     if (_isOtherCategory && _customCategoryController.text.trim().isNotEmpty) {
       body['new_category_name'] = _customCategoryController.text.trim();
     } else {
       body['expense_category_id'] = _selectedCategory!.id;
     }
 
-    // Optional fields
     final note = _noteController.text.trim();
     if (note.isNotEmpty) {
       body['notes'] = note;
@@ -192,6 +211,28 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Future<void> _selectDate() async {
+    if (Responsive.isDesktop(context)) {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: _date,
+        firstDate: DateTime(2020),
+        lastDate: DateTime.now(),
+        builder: (ctx, child) {
+          return Theme(
+            data: Theme.of(ctx).copyWith(
+              colorScheme: Theme.of(ctx).colorScheme.copyWith(
+                    primary: ColorManager.primary,
+                  ),
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (picked != null) setState(() => _date = picked);
+      return;
+    }
+
+    // Mobile: Cupertino-style bottom sheet
     DateTime tempDate = _date;
     final l10n = AppLocalizations.of(context)!;
 
@@ -258,6 +299,15 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) return _buildDesktop(context);
+    return _buildMobile(context);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT (unchanged)
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildMobile(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     final bottomPadding =
@@ -273,7 +323,6 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Handle
             Center(
               child: Container(
                 width: 36.w,
@@ -297,12 +346,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             ),
             SizedBox(height: 20.h),
 
-            // Amount
             TextField(
               controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               autofocus: !_isEditing,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
@@ -323,42 +370,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             ),
             SizedBox(height: 16.h),
 
-            // Category dropdown
             _categoriesLoading
-                ? Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 14.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: c.inputBg,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 16.w,
-                          height: 16.w,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: c.textSubtle,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          l10n.filter,
-                          style: TextStyle(
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontSize: 13.sp,
-                            color: c.textSubtle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : _buildCategoryDropdown(context, l10n),
+                ? _mobileLoadingBox(l10n)
+                : _buildCategoryDropdown(context, l10n, desktop: false),
 
-            // Custom category text field (shown when "Other" is selected)
             if (_isOtherCategory) ...[
               SizedBox(height: 10.h),
               TextField(
@@ -389,7 +404,6 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             ],
             SizedBox(height: 14.h),
 
-            // Notes
             TextField(
               controller: _noteController,
               style: TextStyle(
@@ -418,7 +432,6 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
             SizedBox(height: 10.h),
 
-            // Currency chips from root CurrencyBloc
             BlocBuilder<CurrencyBloc, CurrencyState>(
               bloc: getIt<CurrencyBloc>(),
               builder: (context, currencyState) {
@@ -442,11 +455,11 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               },
             ),
 
-            // Date selector
             GestureDetector(
               onTap: _selectDate,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   color: c.inputBg,
                   borderRadius: BorderRadius.circular(10.r),
@@ -475,12 +488,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
             SizedBox(height: 14.h),
 
-            // Attachments section
-            _buildAttachmentsSection(l10n),
+            _buildAttachmentsSection(l10n, desktop: false),
 
             SizedBox(height: 20.h),
 
-            // Save button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -520,13 +531,55 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
     );
   }
 
-  Widget _buildCategoryDropdown(BuildContext context, AppLocalizations l10n) {
+  Widget _mobileLoadingBox(AppLocalizations l10n) {
     final c = ColorManager.of(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: c.inputBg,
         borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 16.w,
+            height: 16.w,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: c.textSubtle,
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            l10n.filter,
+            style: TextStyle(
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 13.sp,
+              color: c.textSubtle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryDropdown(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool desktop,
+  }) {
+    final c = ColorManager.of(context);
+    final hPad = desktop ? 14.0 : 12.w;
+    final fontSize = desktop ? 14.0 : 13.sp;
+    final iconSize = desktop ? 20.0 : 18.w;
+    final radius = desktop ? 10.0 : 10.r;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: hPad),
+      decoration: BoxDecoration(
+        color: c.inputBg,
+        borderRadius: BorderRadius.circular(radius),
+        border: desktop ? Border.all(color: c.borderLight) : null,
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<ExpenseCategoryEntity>(
@@ -536,18 +589,18 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
             l10n.expenseType,
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
-              fontSize: 13.sp,
+              fontSize: fontSize,
               color: c.textSubtle,
             ),
           ),
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
-            fontSize: 13.sp,
+            fontSize: fontSize,
             color: c.textPrimary,
           ),
           icon: Icon(
             Icons.expand_more,
-            size: 18.w,
+            size: iconSize,
             color: c.textSubtle,
           ),
           items: _categories
@@ -558,7 +611,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                     cat.name,
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 13.sp,
+                      fontSize: fontSize,
                       color: c.textPrimary,
                     ),
                   ),
@@ -580,55 +633,65 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
     );
   }
 
-  Widget _buildAttachmentsSection(AppLocalizations l10n) {
+  Widget _buildAttachmentsSection(
+    AppLocalizations l10n, {
+    required bool desktop,
+  }) {
     final c = ColorManager.of(context);
+    final thumbSize = desktop ? 64.0 : 70.w;
+    final gap = desktop ? 8.0 : 8.w;
+    final vPad = desktop ? 12.0 : 10.h;
+    final hPad = desktop ? 14.0 : 12.w;
+    final radius = desktop ? 10.0 : 10.r;
+    final iconSize = desktop ? 16.0 : 16.w;
+    final fontSize = desktop ? 13.0 : 13.sp;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Attachment thumbnails
         if (_attachments.isNotEmpty) ...[
           SizedBox(
-            height: 70.w,
+            height: thumbSize,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _attachments.length,
-              separatorBuilder: (_, _) => SizedBox(width: 8.w),
+              separatorBuilder: (_, _) => SizedBox(width: gap),
               itemBuilder: (_, index) {
                 final picked = _attachments[index];
                 return Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(radius),
                       child: picked.isImage
                           ? Image.file(
                               picked.file,
-                              width: 70.w,
-                              height: 70.w,
+                              width: thumbSize,
+                              height: thumbSize,
                               fit: BoxFit.cover,
                             )
                           : Container(
-                              width: 70.w,
-                              height: 70.w,
+                              width: thumbSize,
+                              height: thumbSize,
                               color: c.cardBgSecondary,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.insert_drive_file_outlined,
-                                    size: 24.w,
+                                    size: desktop ? 22 : 24.w,
                                     color: c.textSecondary,
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: desktop ? 4 : 4.h),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 4.w,
+                                      horizontal: desktop ? 4 : 4.w,
                                     ),
                                     child: Text(
                                       picked.name,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 8.sp,
+                                        fontSize: desktop ? 8.5 : 8.sp,
                                         color: c.textSecondary,
                                       ),
                                     ),
@@ -650,7 +713,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                           ),
                           child: Icon(
                             Icons.close,
-                            size: 14.w,
+                            size: desktop ? 14 : 14.w,
                             color: Colors.white,
                           ),
                         ),
@@ -661,17 +724,16 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               },
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: desktop ? 10 : 10.h),
         ],
 
-        // Add attachment button
         GestureDetector(
           onTap: _isUploading ? null : _pickAttachment,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: hPad, vertical: vPad),
             decoration: BoxDecoration(
               color: c.inputBg,
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(radius),
               border: Border.all(
                 color: c.divider,
                 style: BorderStyle.solid,
@@ -682,15 +744,15 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               children: [
                 Icon(
                   Icons.attach_file,
-                  size: 16.w,
+                  size: iconSize,
                   color: c.textSecondary,
                 ),
-                SizedBox(width: 6.w),
+                SizedBox(width: desktop ? 6 : 6.w),
                 Text(
                   l10n.attachments,
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 13.sp,
+                    fontSize: fontSize,
                     color: c.textSecondary,
                   ),
                 ),
@@ -699,6 +761,553 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
           ),
         ),
       ],
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildDesktop(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // ── Header ────────────────────────────────────────────
+        Container(
+          padding: const EdgeInsets.fromLTRB(24, 20, 16, 20),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: c.borderLight)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _isEditing
+                      ? Icons.edit_outlined
+                      : Icons.receipt_long_outlined,
+                  color: ColorManager.primary,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _isEditing ? l10n.edit : l10n.addExpense,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 17,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.saveExpense,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 12,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close, size: 20, color: c.textSecondary),
+                splashRadius: 18,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        ),
+
+        // ── Scrollable body ───────────────────────────────────
+        Flexible(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Amount
+                _desktopFieldLabel(l10n.amount, fontFamily, c),
+                const SizedBox(height: 8),
+                _DesktopAmountField(
+                  controller: _amountController,
+                  currencyCode: _selectedCurrency?.currencyCode,
+                  fontFamily: fontFamily,
+                ),
+                const SizedBox(height: 18),
+
+                // Currency chips
+                BlocBuilder<CurrencyBloc, CurrencyState>(
+                  bloc: getIt<CurrencyBloc>(),
+                  builder: (context, currencyState) {
+                    return currencyState.maybeWhen(
+                      loaded: (currencies) {
+                        if (currencies.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _desktopFieldLabel(
+                                l10n.currency, fontFamily, c),
+                            const SizedBox(height: 8),
+                            _DesktopCurrencyChips(
+                              currencies: currencies,
+                              selected: _selectedCurrency,
+                              onSelected: (v) =>
+                                  setState(() => _selectedCurrency = v),
+                              fontFamily: fontFamily,
+                            ),
+                            const SizedBox(height: 18),
+                          ],
+                        );
+                      },
+                      orElse: () => const SizedBox.shrink(),
+                    );
+                  },
+                ),
+
+                // Category + Date row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _desktopFieldLabel(
+                              l10n.expenseType, fontFamily, c),
+                          const SizedBox(height: 8),
+                          _categoriesLoading
+                              ? _desktopLoadingField(c)
+                              : _buildCategoryDropdown(
+                                  context,
+                                  l10n,
+                                  desktop: true,
+                                ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _desktopFieldLabel(l10n.date, fontFamily, c),
+                          const SizedBox(height: 8),
+                          _DesktopDateField(
+                            date: _date,
+                            onTap: _selectDate,
+                            fontFamily: fontFamily,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                if (_isOtherCategory) ...[
+                  const SizedBox(height: 12),
+                  _DesktopTextField(
+                    controller: _customCategoryController,
+                    hint: l10n.whatWasThisFor,
+                    fontFamily: fontFamily,
+                  ),
+                ],
+                const SizedBox(height: 18),
+
+                // Notes
+                _desktopFieldLabel(l10n.notes, fontFamily, c),
+                const SizedBox(height: 8),
+                _DesktopTextField(
+                  controller: _noteController,
+                  hint: l10n.addNoteOptional,
+                  fontFamily: fontFamily,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 18),
+
+                // Attachments
+                _desktopFieldLabel(l10n.attachments, fontFamily, c),
+                const SizedBox(height: 8),
+                _buildAttachmentsSection(l10n, desktop: true),
+              ],
+            ),
+          ),
+        ),
+
+        // ── Footer ────────────────────────────────────────────
+        Container(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+          decoration: BoxDecoration(
+            color: c.cardBgSecondary,
+            border: Border(top: BorderSide(color: c.borderLight)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  l10n.cancel,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeightManager.medium,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: _isUploading ? null : _save,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManager.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: _isUploading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        _isEditing ? l10n.saveChanges : l10n.saveExpense,
+                        style: TextStyle(
+                          fontFamily: fontFamily,
+                          fontSize: 14,
+                          fontWeight: FontWeightManager.semiBold,
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _desktopFieldLabel(String label, String fontFamily, AppColors c) {
+    return Text(
+      label,
+      style: TextStyle(
+        fontFamily: fontFamily,
+        fontSize: 12,
+        fontWeight: FontWeightManager.semiBold,
+        color: c.textSecondary,
+        letterSpacing: 0.2,
+      ),
+    );
+  }
+
+  Widget _desktopLoadingField(AppColors c) {
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: c.inputBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: c.textSubtle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP WIDGETS
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopAmountField extends StatelessWidget {
+  const _DesktopAmountField({
+    required this.controller,
+    required this.currencyCode,
+    required this.fontFamily,
+  });
+
+  final TextEditingController controller;
+  final String? currencyCode;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.inputBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: c.borderLight),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(
+                fontFamily: fontFamily,
+                fontSize: 22,
+                fontWeight: FontWeightManager.bold,
+                color: c.textPrimary,
+              ),
+              decoration: InputDecoration(
+                hintText: '0',
+                hintStyle: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 22,
+                  fontWeight: FontWeightManager.bold,
+                  color: c.border,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                isCollapsed: true,
+              ),
+            ),
+          ),
+          if (currencyCode != null)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: ColorManager.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                currencyCode!,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 12,
+                  fontWeight: FontWeightManager.semiBold,
+                  color: ColorManager.primary,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopCurrencyChips extends StatelessWidget {
+  const _DesktopCurrencyChips({
+    required this.currencies,
+    required this.selected,
+    required this.onSelected,
+    required this.fontFamily,
+  });
+
+  final List<CurrencyEntity> currencies;
+  final CurrencyEntity? selected;
+  final ValueChanged<CurrencyEntity> onSelected;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: currencies.map((cur) {
+        final isSel = selected?.id == cur.id;
+        return Material(
+          color: isSel
+              ? ColorManager.primary.withValues(alpha: 0.12)
+              : c.inputBg,
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            onTap: () => onSelected(cur),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color:
+                      isSel ? ColorManager.primary : c.borderLight,
+                ),
+              ),
+              child: Text(
+                cur.currencyCode,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  fontWeight: isSel
+                      ? FontWeightManager.semiBold
+                      : FontWeightManager.medium,
+                  color: isSel
+                      ? ColorManager.primary
+                      : c.textSecondary,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _DesktopDateField extends StatelessWidget {
+  const _DesktopDateField({
+    required this.date,
+    required this.onTap,
+    required this.fontFamily,
+  });
+
+  final DateTime date;
+  final VoidCallback onTap;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final isToday = DateUtils.isSameDay(date, DateTime.now());
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
+    final formatted = DateFormat.yMMMd(locale).format(date);
+
+    return Material(
+      color: c.inputBg,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 16,
+                color: c.textSecondary,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                isToday ? l10n.today : formatted,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  fontWeight: FontWeightManager.medium,
+                  color: c.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopTextField extends StatelessWidget {
+  const _DesktopTextField({
+    required this.controller,
+    required this.hint,
+    required this.fontFamily,
+    this.maxLines = 1,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final String fontFamily;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      style: TextStyle(
+        fontFamily: fontFamily,
+        fontSize: 14,
+        color: c.textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 14,
+          color: c.textSubtle,
+        ),
+        filled: true,
+        fillColor: c.inputBg,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: c.borderLight),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: c.borderLight),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide:
+              const BorderSide(color: ColorManager.primary, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+      ),
     );
   }
 }

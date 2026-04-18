@@ -817,6 +817,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenses => 'Expenses';
 
   @override
+  String get expenseDetails => 'Expense Details';
+
+  @override
   String get currency => 'Currency';
 
   @override

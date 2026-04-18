@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/custom_widgets/permission_gate.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
@@ -178,43 +180,51 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
+        final isDesktop = Responsive.isDesktop(context);
+
+        final content = state.maybeWhen(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (message) => Center(child: Text(message)),
+          loaded: (clinicInfo) {
+            if (!_formPopulated) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() => _populateFromEntity(clinicInfo));
+              });
+              return const Center(child: CircularProgressIndicator());
+            }
+            return _buildForm(l10n, isDesktop);
+          },
+          orElse: () {
+            if (!_formPopulated) {
+              return const SizedBox.shrink();
+            }
+            return _buildForm(l10n, isDesktop);
+          },
+        );
+
+        if (isDesktop) {
+          return DesktopShell(
+            title: l10n.clinicInformation,
+            body: Scaffold(
+              backgroundColor: c.scaffoldBg,
+              bottomNavigationBar:
+                  _formPopulated ? _buildSaveButton(l10n, isDesktop) : null,
+              body: content,
+            ),
+          );
+        }
+
         return Scaffold(
           backgroundColor: c.scaffoldBg,
           bottomNavigationBar:
-              _formPopulated ? _buildSaveButton(l10n) : null,
+              _formPopulated ? _buildSaveButton(l10n, isDesktop) : null,
           body: Column(
             children: [
               PageHeader(
                 title: l10n.clinicInformation,
                 onBack: () => context.pop(),
               ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  error: (message) => Center(
-                    child: Text(message),
-                  ),
-                  loaded: (clinicInfo) {
-                    if (!_formPopulated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromEntity(clinicInfo));
-                      });
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_formPopulated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
-                ),
-              ),
+              Expanded(child: content),
             ],
           ),
         );
@@ -222,58 +232,92 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
     );
   }
 
-  Widget _buildForm(AppLocalizations l10n) {
+  Widget _buildForm(AppLocalizations l10n, bool isDesktop) {
     final fontFamily = FontHelper.fontFamily(context);
+    final form = Column(
+      children: [
+        CustomCard(child: _buildClinicNameField()),
+        SizedBox(height: isDesktop ? 16 : 16.h),
+        CustomCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLocationSearch(l10n, fontFamily),
+              if (_selectedLocation != null) ...[
+                SizedBox(height: 12.h),
+                _buildSelectedLocation(_selectedLocation!, fontFamily),
+              ],
+              SizedBox(height: 16.h),
+              _buildAddressField(l10n, fontFamily),
+            ],
+          ),
+        ),
+        SizedBox(height: isDesktop ? 24 : 24.h),
+      ],
+    );
+
+    if (isDesktop) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: form,
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
-          CustomCard(child: _buildClinicNameField()),
-          SizedBox(height: 16.h),
-          CustomCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLocationSearch(l10n, fontFamily),
-                if (_selectedLocation != null) ...[
-                  SizedBox(height: 12.h),
-                  _buildSelectedLocation(_selectedLocation!, fontFamily),
-                ],
-                SizedBox(height: 16.h),
-                _buildAddressField(l10n, fontFamily),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.h),
-        ],
-      ),
+      child: form,
     );
   }
 
-  Widget _buildSaveButton(AppLocalizations l10n) {
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: _onSave,
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 14.h),
-          decoration: BoxDecoration(
-            color: ColorManager.primary,
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.save,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
-            ),
+  Widget _buildSaveButton(AppLocalizations l10n, bool isDesktop) {
+    final button = GestureDetector(
+      onTap: _onSave,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: isDesktop ? 14 : 14.h),
+        decoration: BoxDecoration(
+          color: ColorManager.primary,
+          borderRadius: BorderRadiusManager.lg,
+        ),
+        child: Text(
+          l10n.save,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: isDesktop ? 15 : 15.sp,
+            fontFamily: FontHelper.fontFamily(context),
+            fontWeight: FontWeight.w600,
+            color: ColorManager.white,
           ),
         ),
       ),
+    );
+
+    if (isDesktop) {
+      return Container(
+        padding: const EdgeInsets.fromLTRB(28, 14, 28, 20),
+        decoration: BoxDecoration(
+          color: ColorManager.of(context).cardBg,
+          border: Border(
+            top: BorderSide(color: ColorManager.of(context).borderLight),
+          ),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: button,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: button,
     );
   }
 

@@ -2,7 +2,9 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/manager/support_conversations_bloc.dart';
@@ -32,70 +34,83 @@ class _ContactSupportContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = Responsive.isDesktop(context);
+
+    final body = BlocConsumer<SupportConversationsBloc,
+        SupportConversationsState>(
+      listenWhen: (prev, curr) => curr.maybeMap(
+        created: (_) => true,
+        error: (_) => true,
+        orElse: () => false,
+      ),
+      listener: (context, state) {
+        state.maybeWhen(
+          created: (newConvo, _) {
+            context
+                .pushNamed(
+              AppRoutesNames.supportChat,
+              extra: newConvo,
+            )
+                .then((_) {
+              context.read<SupportConversationsBloc>().add(
+                    const SupportConversationsEvent.loadConversations(),
+                  );
+            });
+          },
+          error: (message) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          },
+          orElse: () {},
+        );
+      },
+      buildWhen: (prev, curr) => curr.maybeMap(
+        loading: (_) => true,
+        loaded: (_) => true,
+        created: (_) => true,
+        error: (_) => true,
+        orElse: () => false,
+      ),
+      builder: (context, state) {
+        return state.maybeWhen(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          loaded: (conversations) => _buildBody(
+            context,
+            l10n,
+            conversations,
+            isDesktop,
+          ),
+          created: (_, conversations) => _buildBody(
+            context,
+            l10n,
+            conversations,
+            isDesktop,
+          ),
+          error: (message) => Center(child: Text(message)),
+          orElse: () => const SizedBox.shrink(),
+        );
+      },
+    );
+
+    if (isDesktop) {
+      return DesktopShell(
+        title: l10n.contactSupport,
+        body: Scaffold(
+          backgroundColor: ColorManager.of(context).scaffoldBg,
+          body: body,
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: Column(
         children: [
           PageHeader(title: l10n.contactSupport),
-          Expanded(
-            child: BlocConsumer<SupportConversationsBloc,
-                SupportConversationsState>(
-              listenWhen: (prev, curr) => curr.maybeMap(
-                created: (_) => true,
-                error: (_) => true,
-                orElse: () => false,
-              ),
-              listener: (context, state) {
-                state.maybeWhen(
-                  created: (newConvo, _) {
-                    context
-                        .pushNamed(
-                      AppRoutesNames.supportChat,
-                      extra: newConvo,
-                    )
-                        .then((_) {
-                      context.read<SupportConversationsBloc>().add(
-                            const SupportConversationsEvent.loadConversations(),
-                          );
-                    });
-                  },
-                  error: (message) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(message)),
-                    );
-                  },
-                  orElse: () {},
-                );
-              },
-              buildWhen: (prev, curr) => curr.maybeMap(
-                loading: (_) => true,
-                loaded: (_) => true,
-                created: (_) => true,
-                error: (_) => true,
-                orElse: () => false,
-              ),
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  loaded: (conversations) => _buildBody(
-                    context,
-                    l10n,
-                    conversations,
-                  ),
-                  created: (_, conversations) => _buildBody(
-                    context,
-                    l10n,
-                    conversations,
-                  ),
-                  error: (message) => Center(child: Text(message)),
-                  orElse: () => const SizedBox.shrink(),
-                );
-              },
-            ),
-          ),
+          Expanded(child: body),
         ],
       ),
     );
@@ -105,7 +120,42 @@ class _ContactSupportContent extends StatelessWidget {
     BuildContext context,
     AppLocalizations l10n,
     List<SupportConversationEntity> conversations,
+    bool isDesktop,
   ) {
+    if (isDesktop) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildResponseTimeBanner(context, l10n),
+                const SizedBox(height: 20),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: _buildNewConversationCard(context, l10n),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      flex: 3,
+                      child: _buildConversationsList(
+                          context, l10n, conversations),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return ListView(
       padding: EdgeInsets.all(16.w),
       children: [

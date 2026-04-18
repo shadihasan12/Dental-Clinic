@@ -1,11 +1,14 @@
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_form_widgets.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/tooth_treatment_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_type_grid.dart';
@@ -15,8 +18,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 /// Full-screen interactive tooth chart page.
-/// Tap a tooth → bottom sheet appears with tooth-specific treatments.
-/// Also has a tab/section for general treatments.
 class PlanTreatmentPage extends StatefulWidget {
   final List<PlannedTreatment> existingTreatments;
   final List<TreatmentCategoryGroup> categories;
@@ -30,8 +31,7 @@ class PlanTreatmentPage extends StatefulWidget {
   });
 
   @override
-  State<PlanTreatmentPage> createState() =>
-      _PlanTreatmentPageState();
+  State<PlanTreatmentPage> createState() => _PlanTreatmentPageState();
 }
 
 class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
@@ -39,7 +39,6 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
   int _idCounter = 0;
   int _viewMode = 0;
 
-  // Track which teeth have treatments (existing + new)
   Set<String> get _teethWithTreatments {
     final teeth = <String>{};
     for (final t in widget.existingTreatments) {
@@ -52,7 +51,6 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
   }
 
   void _handleToothTap(String toothNumber) async {
-    // Find existing treatment IDs for this tooth
     final existingIds = [
       ...widget.existingTreatments
           .where((t) => t.toothNumber == toothNumber)
@@ -100,11 +98,322 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktopLayout();
+    }
+    return _buildMobileLayout();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  // ═══════════════════════════════════════════════════════════════
+
+  Widget _buildDesktopLayout() {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return DesktopShell(
+      title: l10n.planTreatments,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1400),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  DesktopPageHeader(
+                    title: l10n.planTreatments,
+                    subtitle: l10n.tapToothToAddTreatments,
+                    trailing: _newTreatments.isNotEmpty
+                        ? DesktopPrimaryButton(
+                            label: '${l10n.addToPlan} '
+                                '(${_newTreatments.length})',
+                            icon: Icons.check,
+                            onPressed: () =>
+                                Navigator.pop(context, _newTreatments),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // LEFT: mode selector + chart / treatment list
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          children: [
+                            _desktopModeToggle(c, fontFamily),
+                            const SizedBox(height: 16),
+                            if (_viewMode == 0)
+                              _desktopToothView(c, fontFamily, l10n)
+                            else if (_viewMode > 0 &&
+                                _viewMode < widget.categories.length)
+                              _desktopCategoryView(c, fontFamily, l10n),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+
+                      // RIGHT: selection summary
+                      SizedBox(
+                        width: 340,
+                        child: _desktopSelectionSummary(c, fontFamily, l10n),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _desktopModeToggle(AppColors c, String fontFamily) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          for (int i = 0; i < widget.categories.length; i++)
+            Expanded(
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => setState(() => _viewMode = i),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      color: _viewMode == i
+                          ? ColorManager.primary
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          i == 0
+                              ? Icons.grid_view_rounded
+                              : Icons.medical_services_outlined,
+                          size: 16,
+                          color: _viewMode == i
+                              ? Colors.white
+                              : c.textTertiary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          widget.categories[i].name,
+                          style: TextStyle(
+                            fontFamily: fontFamily,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: _viewMode == i
+                                ? Colors.white
+                                : c.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _desktopToothView(
+      AppColors c, String fontFamily, AppLocalizations l10n) {
+    return DesktopSectionCard(
+      title: l10n.teeth,
+      subtitle: '${_teethWithTreatments.length} active',
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ColorManager.primary.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.touch_app,
+                    size: 18, color: ColorManager.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.tapToothToAddTreatments,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: ColorManager.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: _InteractiveToothChart(
+                teethWithTreatments: _teethWithTreatments,
+                onToothTap: _handleToothTap,
+                teeth: widget.teeth,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _desktopCategoryView(
+      AppColors c, String fontFamily, AppLocalizations l10n) {
+    return DesktopSectionCard(
+      title: widget.categories[_viewMode].name,
+      child: TreatmentTypeGrid(
+        types: widget.categories[_viewMode].treatments,
+        selectedIds: _newTreatments
+            .where((t) => t.toothNumber == null)
+            .map((t) => t.type.id)
+            .toSet(),
+        onSelect: _addGeneralTreatment,
+      ),
+    );
+  }
+
+  Widget _desktopSelectionSummary(
+      AppColors c, String fontFamily, AppLocalizations l10n) {
+    return DesktopSectionCard(
+      title: l10n.addedTreatments,
+      subtitle: '${_newTreatments.length} total',
+      padding: const EdgeInsets.all(12),
+      child: _newTreatments.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 40, horizontal: 16),
+              child: Column(
+                children: [
+                  Icon(Icons.inbox_outlined,
+                      size: 32, color: c.textSubtle),
+                  const SizedBox(height: 10),
+                  Text(
+                    l10n.noTreatmentsYetAddOne,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 12.5,
+                      color: c.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: _newTreatments
+                  .asMap()
+                  .entries
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: _desktopSelectedTreatmentRow(
+                          e.value, e.key, c, fontFamily, l10n),
+                    ),
+                  )
+                  .toList(),
+            ),
+    );
+  }
+
+  Widget _desktopSelectedTreatmentRow(PlannedTreatment t, int index,
+      AppColors c, String fontFamily, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: c.inputBg,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: ColorManager.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(Icons.medical_services_outlined,
+                size: 14, color: ColorManager.primary),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.type.name,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (t.toothNumber != null)
+                  Text(
+                    'Tooth #${t.toothNumber}',
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 11,
+                      color: c.textTertiary,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () => _removeTreatment(index),
+            icon: Icon(Icons.close, size: 16, color: c.textTertiary),
+            padding: EdgeInsets.zero,
+            constraints:
+                const BoxConstraints(minWidth: 28, minHeight: 28),
+            tooltip: l10n.delete,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT (unchanged)
+  // ═══════════════════════════════════════════════════════════════
+
+  Widget _buildMobileLayout() {
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      bottomNavigationBar: _newTreatments.isNotEmpty
-          ? _buildBottomBar(context)
-          : null,
+      bottomNavigationBar:
+          _newTreatments.isNotEmpty ? _buildBottomBar(context) : null,
       body: Column(
         children: [
           PageHeader(
@@ -115,15 +424,12 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Mode toggle
                   Padding(
                     padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
                     child: _buildModeToggle(context),
                   ),
                   SizedBox(height: 12.h),
-
                   if (_viewMode == 0) ...[
-                    // Instruction
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Container(
@@ -142,7 +448,8 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                             SizedBox(width: 10.w),
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context)!.tapToothToAddTreatments,
+                                AppLocalizations.of(context)!
+                                    .tapToothToAddTreatments,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontFamily: FontHelper.fontFamily(context),
@@ -156,8 +463,6 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-
-                    // Tooth chart
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: CustomCard(
@@ -170,7 +475,6 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                     ),
                   ] else if (_viewMode > 0 &&
                       _viewMode < widget.categories.length) ...[
-                    // Category treatments grid
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: CustomCard(
@@ -183,7 +487,8 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                                 fontSize: 15.sp,
                                 fontFamily: FontHelper.fontFamily(context),
                                 fontWeight: FontWeight.w600,
-                                color: ColorManager.of(context).textPrimary,
+                                color:
+                                    ColorManager.of(context).textPrimary,
                               ),
                             ),
                             SizedBox(height: 14.h),
@@ -201,8 +506,6 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                     ),
                   ],
                   SizedBox(height: 16.h),
-
-                  // New treatments list
                   if (_newTreatments.isNotEmpty) ...[
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -224,8 +527,8 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                               vertical: 4.h,
                             ),
                             decoration: BoxDecoration(
-                              color: ColorManager.primary
-                                  .withValues(alpha: 0.1),
+                              color:
+                                  ColorManager.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             child: Text(
@@ -329,7 +632,9 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
+            color: isSelected
+                ? ColorManager.of(context).cardBg
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(10.r),
             boxShadow: isSelected
                 ? [
@@ -357,7 +662,8 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight:
+                      isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
                       ? ColorManager.primary
                       : ColorManager.of(context).textTertiary,
@@ -445,23 +751,18 @@ class _InteractiveToothChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // The tooth chart
         ToothChart(
           teeth: teeth.isNotEmpty ? teeth : _fallbackTeeth(),
           selectedTeeth: _toSelectedIds(teethWithTreatments),
           onSelectionChanged: (toothIds) {
-            // Find the last selected tooth (the one just tapped)
             if (toothIds.isNotEmpty) {
               final tappedId = toothIds.last;
-              // Convert tooth ID back to universal code
               final code = _idToCode(tappedId);
               onToothTap(code);
             }
           },
           aspectRatio: 0.75,
         ),
-
-        // Legend
         if (teethWithTreatments.isNotEmpty) ...[
           SizedBox(height: 8.h),
           Row(
@@ -495,7 +796,6 @@ class _InteractiveToothChart extends StatelessWidget {
     );
   }
 
-  /// Convert universal codes (used in treatments) to tooth IDs (used by chart)
   List<String> _toSelectedIds(Set<String> universalCodes) {
     if (teeth.isEmpty) return universalCodes.toList();
     return teeth
@@ -504,7 +804,6 @@ class _InteractiveToothChart extends StatelessWidget {
         .toList();
   }
 
-  /// Convert a tooth ID back to its universal code
   String _idToCode(String toothId) {
     if (teeth.isEmpty) return toothId;
     final tooth = teeth.where((t) => t.id == toothId);
@@ -512,7 +811,6 @@ class _InteractiveToothChart extends StatelessWidget {
     return toothId;
   }
 
-  /// Fallback: generate all 32 teeth for the chart
   List<Tooth> _fallbackTeeth() {
     final teeth = <Tooth>[];
     for (int q = 1; q <= 4; q++) {

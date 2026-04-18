@@ -275,6 +275,7 @@
   "cosmeticDentistry": "Cosmetic Dentistry",
   "oralSurgery": "Oral Surgery",
   "expenses": "Expenses",
+  "expenseDetails": "Expense Details",
   "currency": "Currency",
   "caseCurrency": "Case Currency",
   "exchangeRate": "Exchange Rate",

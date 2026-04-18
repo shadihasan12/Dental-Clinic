@@ -814,6 +814,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expenses => 'المدفوعات';
 
   @override
+  String get expenseDetails => 'تفاصيل المصروف';
+
+  @override
   String get currency => 'العملة';
 
   @override

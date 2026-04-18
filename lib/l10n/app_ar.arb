@@ -276,6 +276,7 @@
   "oralSurgery": "جراحة الفم",
   "noAppointments":"لا يوجد مواعيد",
   "expenses": "المدفوعات",
+  "expenseDetails": "تفاصيل المصروف",
   "currency": "العملة",
   "caseCurrency": "عملة الحالة",
   "exchangeRate": "سعر الصرف",

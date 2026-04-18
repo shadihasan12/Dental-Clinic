@@ -1,7 +1,9 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
@@ -36,134 +38,159 @@ class _ClinicUsersContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDesktop = Responsive.isDesktop(context);
 
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            submitSuccess: (_, message) {
-              String text;
-              if (message == 'userAddedSuccess') {
-                text = l10n.userAddedSuccess;
-              } else if (message == 'userRemovedSuccess') {
-                text = l10n.userRemovedSuccess;
-              } else {
-                text = l10n.rolesUpdatedSuccess;
-              }
-              AppSnackbar.showSuccess(
-                context,
-                title: l10n.success,
-                message: text,
-              );
-              context.read<ClinicUsersBloc>().add(
-                const ClinicUsersEvent.load(),
-              );
-            },
-            submitError: (_, message) {
-              AppSnackbar.showError(
-                context,
-                title: l10n.error,
-                message: message,
-              );
-            },
-            orElse: () {},
-          );
-        },
-        builder: (context, state) {
-          final users = state.maybeWhen(
-            loaded: (u) => u,
-            submitting: (u) => u,
-            submitSuccess: (u, _) => u,
-            submitError: (u, _) => u,
-            orElse: () => <ClinicUserEntity>[],
-          );
-          final isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
-          final isSubmitting = state.maybeWhen(
-            submitting: (_) => true,
-            orElse: () => false,
-          );
+    final blocWidget = BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          submitSuccess: (_, message) {
+            String text;
+            if (message == 'userAddedSuccess') {
+              text = l10n.userAddedSuccess;
+            } else if (message == 'userRemovedSuccess') {
+              text = l10n.userRemovedSuccess;
+            } else {
+              text = l10n.rolesUpdatedSuccess;
+            }
+            AppSnackbar.showSuccess(
+              context,
+              title: l10n.success,
+              message: text,
+            );
+            context.read<ClinicUsersBloc>().add(
+              const ClinicUsersEvent.load(),
+            );
+          },
+          submitError: (_, message) {
+            AppSnackbar.showError(
+              context,
+              title: l10n.error,
+              message: message,
+            );
+          },
+          orElse: () {},
+        );
+      },
+      builder: (context, state) {
+        final users = state.maybeWhen(
+          loaded: (u) => u,
+          submitting: (u) => u,
+          submitSuccess: (u, _) => u,
+          submitError: (u, _) => u,
+          orElse: () => <ClinicUserEntity>[],
+        );
+        final isLoading = state.maybeWhen(
+          loading: () => true,
+          orElse: () => false,
+        );
+        final isSubmitting = state.maybeWhen(
+          submitting: (_) => true,
+          orElse: () => false,
+        );
 
+        final body = isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : state.maybeWhen(
+                error: (msg) => _buildError(context, l10n, msg),
+                orElse: () => users.isEmpty
+                    ? _buildEmpty(context, l10n)
+                    : _buildList(context, l10n, users, isDesktop),
+              );
+
+        if (isDesktop) {
           return Column(
             children: [
-              // Header
-              Container(
-                width: double.infinity,
-                color: ColorManager.of(context).cardBg,
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 8.h,
-                    ),
-                    child: Row(
-                      children: [
+              _DesktopUsersHeader(
+                l10n: l10n,
+                isSubmitting: isSubmitting,
+                onAdd: () => _showAddUserSheet(context, l10n),
+                userCount: users.length,
+              ),
+              Expanded(child: body),
+            ],
+          );
+        }
+
+        return Column(
+          children: [
+            // Header
+            Container(
+              width: double.infinity,
+              color: ColorManager.of(context).cardBg,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4.w,
+                    vertical: 8.h,
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new,
+                          color: ColorManager.of(context).textPrimary,
+                          size: 20.w,
+                        ),
+                        onPressed: () => context.pop(),
+                      ),
+                      Expanded(
+                        child: Text(
+                          l10n.clinicUsers,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            fontWeight: FontWeight.w600,
+                            color: ColorManager.of(context).textPrimary,
+                          ),
+                        ),
+                      ),
+                      if (!isLoading && !isSubmitting)
                         IconButton(
                           icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: ColorManager.of(context).textPrimary,
-                            size: 20.w,
+                            Icons.person_add_outlined,
+                            color: ColorManager.primary,
+                            size: 22.w,
                           ),
-                          onPressed: () => context.pop(),
+                          onPressed: () => _showAddUserSheet(context, l10n),
                         ),
-                        Expanded(
-                          child: Text(
-                            l10n.clinicUsers,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w600,
-                              color: ColorManager.of(context).textPrimary,
-                            ),
-                          ),
-                        ),
-                        if (!isLoading && !isSubmitting)
-                          IconButton(
-                            icon: Icon(
-                              Icons.person_add_outlined,
+                      if (isSubmitting)
+                        Padding(
+                          padding: EdgeInsets.only(right: 16.w),
+                          child: SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
                               color: ColorManager.primary,
-                              size: 22.w,
-                            ),
-                            onPressed: () => _showAddUserSheet(context, l10n),
-                          ),
-                        if (isSubmitting)
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.w),
-                            child: SizedBox(
-                              width: 20.w,
-                              height: 20.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ColorManager.primary,
-                              ),
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ),
               ),
-              Divider(height: 1, color: ColorManager.of(context).borderLight),
+            ),
+            Divider(height: 1, color: ColorManager.of(context).borderLight),
+            Expanded(child: body),
+          ],
+        );
+      },
+    );
 
-              // Body
-              Expanded(
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : state.maybeWhen(
-                        error: (msg) => _buildError(context, l10n, msg),
-                        orElse: () => users.isEmpty
-                            ? _buildEmpty(context, l10n)
-                            : _buildList(context, l10n, users),
-                      ),
-              ),
-            ],
-          );
-        },
-      ),
+    if (isDesktop) {
+      return DesktopShell(
+        title: l10n.clinicUsers,
+        body: Scaffold(
+          backgroundColor: ColorManager.of(context).scaffoldBg,
+          body: blocWidget,
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: ColorManager.of(context).scaffoldBg,
+      body: blocWidget,
     );
   }
 
@@ -233,8 +260,44 @@ class _ClinicUsersContent extends StatelessWidget {
     BuildContext context,
     AppLocalizations l10n,
     List<ClinicUserEntity> users,
+    bool isDesktop,
   ) {
     final currentEmail = getIt<UserStorage>().getUserEmail();
+
+    if (isDesktop) {
+      return Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1100),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final cols = constraints.maxWidth > 820 ? 2 : 1;
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: users.map((user) {
+                    final cardWidth =
+                        (constraints.maxWidth - (cols - 1) * 16) / cols;
+                    return SizedBox(
+                      width: cardWidth,
+                      child: _UserCard(
+                        user: user,
+                        isSelf: user.email == currentEmail,
+                        onManageRoles: () =>
+                            _showManageRolesSheet(context, l10n, user),
+                        onRemove: () => _confirmRemove(context, l10n, user),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       itemCount: users.length,
@@ -252,6 +315,18 @@ class _ClinicUsersContent extends StatelessWidget {
   }
 
   void _showAddUserSheet(BuildContext context, AppLocalizations l10n) {
+    if (Responsive.isDesktop(context)) {
+      showDialog(
+        context: context,
+        builder: (_) => _DesktopDialogWrapper(
+          child: BlocProvider.value(
+            value: context.read<ClinicUsersBloc>(),
+            child: _AddUserSheet(l10n: l10n),
+          ),
+        ),
+      );
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -268,6 +343,18 @@ class _ClinicUsersContent extends StatelessWidget {
     AppLocalizations l10n,
     ClinicUserEntity user,
   ) {
+    if (Responsive.isDesktop(context)) {
+      showDialog(
+        context: context,
+        builder: (_) => _DesktopDialogWrapper(
+          child: BlocProvider.value(
+            value: context.read<ClinicUsersBloc>(),
+            child: _ManageRolesSheet(user: user, l10n: l10n),
+          ),
+        ),
+      );
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -335,6 +422,158 @@ class _ClinicUsersContent extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Desktop Dialog Wrapper ───────────────────────────────────────────────────
+// Re-establishes a mobile-sized MediaQuery and reconfigures ScreenUtil so
+// that .sp/.h/.w scale correctly inside dialogs opened on desktop.
+
+class _DesktopDialogWrapper extends StatelessWidget {
+  const _DesktopDialogWrapper({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    const mobileSize = Size(375, 812);
+    return MediaQuery(
+      data: mediaQuery.copyWith(size: mobileSize),
+      child: Builder(
+        builder: (innerContext) {
+          ScreenUtil.configure(
+            data: MediaQuery.of(innerContext),
+            designSize: const Size(375, 812),
+          );
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ─── Desktop Users Header ─────────────────────────────────────────────────────
+
+class _DesktopUsersHeader extends StatelessWidget {
+  const _DesktopUsersHeader({
+    required this.l10n,
+    required this.isSubmitting,
+    required this.onAdd,
+    required this.userCount,
+  });
+
+  final AppLocalizations l10n;
+  final bool isSubmitting;
+  final VoidCallback onAdd;
+  final int userCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(28, 24, 28, 20),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.people_outline,
+                  color: ColorManager.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.clinicUsers,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: c.textPrimary,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      userCount == 1
+                          ? '1 ${l10n.clinicUsers.toLowerCase()}'
+                          : '$userCount ${l10n.clinicUsers.toLowerCase()}',
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 13,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (isSubmitting)
+                SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: ColorManager.primary,
+                  ),
+                )
+              else
+                Material(
+                  color: ColorManager.primary,
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    onTap: onAdd,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.person_add_outlined,
+                              size: 16, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.addUser,
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -3,9 +3,11 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_side_nav.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
@@ -69,9 +71,7 @@ class _RootPageState extends State<RootPage> {
   // ═══════════════════════════════════════════════════════════════════
 
   Widget _buildDesktopLayout(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
-    final navItems = _desktopNavItems(l10n);
 
     // Reconfigure screenutil so .sp/.w/.h scale as mobile
     ScreenUtil.configure(
@@ -80,25 +80,17 @@ class _RootPageState extends State<RootPage> {
       ),
     );
 
-    return Scaffold(
+    final scaffold = Scaffold(
       body: Row(
         children: [
-          // ── Side menu ───────────────────────────────────────
-          _DesktopSideMenu(
-            navItems: navItems,
-            currentIndex: _currentIndex,
+          DesktopSideNav(
+            selectedIndex: _currentIndex,
             onTabSelected: _onTabSelected,
-            fontFamily: fontFamily,
           ),
-
-          // ── Main content area ───────────────────────────────
           Expanded(
             child: Column(
               children: [
-                // Top header bar
                 _DesktopTopBar(fontFamily: fontFamily),
-
-                // Page content
                 Expanded(
                   child: IndexedStack(
                     index: _currentIndex,
@@ -111,31 +103,43 @@ class _RootPageState extends State<RootPage> {
         ],
       ),
     );
-  }
 
-  List<_NavItem> _desktopNavItems(AppLocalizations l10n) {
-    return [
-      _NavItem(
-        svgPath: Assets.iconsRootHome,
-        label: l10n.home,
+    // ⌘1–⌘5 (or Ctrl+1–5) to jump between tabs — classic desktop shortcut.
+    return Shortcuts(
+      shortcuts: <ShortcutActivator, Intent>{
+        const SingleActivator(LogicalKeyboardKey.digit1, meta: true):
+            const _SwitchTabIntent(0),
+        const SingleActivator(LogicalKeyboardKey.digit2, meta: true):
+            const _SwitchTabIntent(1),
+        const SingleActivator(LogicalKeyboardKey.digit3, meta: true):
+            const _SwitchTabIntent(2),
+        const SingleActivator(LogicalKeyboardKey.digit4, meta: true):
+            const _SwitchTabIntent(3),
+        const SingleActivator(LogicalKeyboardKey.digit5, meta: true):
+            const _SwitchTabIntent(4),
+        const SingleActivator(LogicalKeyboardKey.digit1, control: true):
+            const _SwitchTabIntent(0),
+        const SingleActivator(LogicalKeyboardKey.digit2, control: true):
+            const _SwitchTabIntent(1),
+        const SingleActivator(LogicalKeyboardKey.digit3, control: true):
+            const _SwitchTabIntent(2),
+        const SingleActivator(LogicalKeyboardKey.digit4, control: true):
+            const _SwitchTabIntent(3),
+        const SingleActivator(LogicalKeyboardKey.digit5, control: true):
+            const _SwitchTabIntent(4),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _SwitchTabIntent: CallbackAction<_SwitchTabIntent>(
+            onInvoke: (intent) {
+              _onTabSelected(intent.index);
+              return null;
+            },
+          ),
+        },
+        child: Focus(autofocus: true, child: scaffold),
       ),
-      _NavItem(
-        svgPath: Assets.iconsRootPatient,
-        label: l10n.patients,
-      ),
-      _NavItem(
-        svgPath: Assets.iconsRootAppointment,
-        label: l10n.appointments,
-      ),
-      _NavItem(
-        svgPath: Assets.iconsRootMoney,
-        label: l10n.expenses,
-      ),
-      _NavItem(
-        svgPath: Assets.iconsRootMenu,
-        label: l10n.more,
-      ),
-    ];
+    );
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -297,147 +301,6 @@ class _RootPageState extends State<RootPage> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// DESKTOP SIDE MENU
-// ═══════════════════════════════════════════════════════════════════════
-
-class _DesktopSideMenu extends StatelessWidget {
-  const _DesktopSideMenu({
-    required this.navItems,
-    required this.currentIndex,
-    required this.onTabSelected,
-    required this.fontFamily,
-  });
-
-  final List<_NavItem> navItems;
-  final int currentIndex;
-  final ValueChanged<int> onTabSelected;
-  final String fontFamily;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-
-    return Container(
-      width: 240,
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        border: Border(
-          right: BorderSide(color: c.borderLight),
-        ),
-      ),
-      child: Column(
-        children: [
-          // ── Logo + app name ──────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary10,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.medical_services_rounded,
-                    color: ColorManager.primary,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'SmylOS',
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 20,
-                    fontWeight: FontWeightManager.bold,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Nav items ────────────────────────────────────────
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: navItems.length,
-              itemBuilder: (context, index) {
-                final item = navItems[index];
-                final isSelected = currentIndex == index;
-                return _buildSideMenuItem(
-                  context,
-                  item: item,
-                  isSelected: isSelected,
-                  onTap: () => onTabSelected(index),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSideMenuItem(
-    BuildContext context, {
-    required _NavItem item,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final c = ColorManager.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Material(
-        color: isSelected
-            ? ColorManager.primary.withValues(alpha: 0.1)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  item.svgPath,
-                  width: 20,
-                  height: 20,
-                  colorFilter: ColorFilter.mode(
-                    isSelected ? ColorManager.primary : c.iconDefault,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    item.label,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 14,
-                      fontWeight: isSelected
-                          ? FontWeightManager.semiBold
-                          : FontWeightManager.medium,
-                      color: isSelected
-                          ? ColorManager.primary
-                          : c.textSecondary,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════
 // DESKTOP TOP BAR
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -551,7 +414,7 @@ class _DesktopTopBar extends StatelessWidget {
 
           // Profile avatar + name
           InkWell(
-            onTap: () => context.pushNamed(AppRoutesNames.profile),
+            onTap: () => context.pushNamed(AppRoutesNames.editProfile),
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -591,14 +454,12 @@ class _DesktopTopBar extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// DATA CLASSES
+// DATA CLASSES / INTENTS
 // ═══════════════════════════════════════════════════════════════════════
 
-class _NavItem {
-  final String svgPath;
-  final String label;
-
-  const _NavItem({required this.svgPath, required this.label});
+class _SwitchTabIntent extends Intent {
+  final int index;
+  const _SwitchTabIntent(this.index);
 }
 
 class _BottomNavItem {

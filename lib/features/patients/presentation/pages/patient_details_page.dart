@@ -270,6 +270,16 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     final fontFamily = FontHelper.fontFamily(context);
     final c = ColorManager.of(context);
 
+    final String patientName = patient.name as String;
+    final initials = patientName
+        .trim()
+        .split(' ')
+        .where((s) => s.isNotEmpty)
+        .map((e) => e[0])
+        .take(2)
+        .join()
+        .toUpperCase();
+
     return DesktopShell(
       title: patient.name,
       body: Scaffold(
@@ -279,12 +289,12 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           children: [
             // ── Left: patient profile card ────────────────────
             SizedBox(
-              width: 280,
+              width: 300,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Profile card
+                    // Profile card (hero)
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -295,42 +305,66 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                       ),
                       child: Column(
                         children: [
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundColor:
-                                ColorManager.primary.withValues(alpha: 0.12),
-                            child: Text(
-                              patient.name
-                                  .split(' ')
-                                  .map((e) => e[0])
-                                  .take(2)
-                                  .join(),
-                              style: TextStyle(
-                                fontFamily: fontFamily,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: ColorManager.primary,
+                          Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  ColorManager.primary.withValues(alpha: 0.25),
+                                  ColorManager.primary.withValues(alpha: 0.10),
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: ColorManager.primary
+                                    .withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                initials,
+                                style: TextStyle(
+                                  fontFamily: fontFamily,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: ColorManager.primary,
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 14),
                           Text(
                             patient.name,
                             style: TextStyle(
                               fontFamily: fontFamily,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
                               color: c.textPrimary,
+                              letterSpacing: -0.3,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${patient.age} ${l10n.years} • ${patient.gender}',
-                            style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: 12,
-                              color: c.textSecondary,
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: ColorManager.primary
+                                  .withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '${patient.age} ${l10n.years} • ${patient.gender}',
+                              style: TextStyle(
+                                fontFamily: fontFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: ColorManager.primary,
+                              ),
                             ),
                           ),
                         ],

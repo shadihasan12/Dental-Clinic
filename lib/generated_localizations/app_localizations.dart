@@ -1682,6 +1682,12 @@ abstract class AppLocalizations {
   /// **'Expenses'**
   String get expenses;
 
+  /// No description provided for @expenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Details'**
+  String get expenseDetails;
+
   /// No description provided for @currency.
   ///
   /// In en, this message translates to:

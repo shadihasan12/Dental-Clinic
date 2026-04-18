@@ -2,7 +2,9 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_appointment_use_case.dart';
@@ -29,7 +31,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
 
-  // Patient data from API
   List<PatientEntity> _patients = [];
   bool _isPatientsLoading = true;
   PatientEntity? _selectedPatientEntity;
@@ -102,8 +103,31 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Future<void> _selectDate() async {
-    DateTime tempDate = _selectedDate;
+    if (Responsive.isDesktop(context)) {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate,
+        firstDate: DateTime.now().subtract(const Duration(days: 1)),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: ColorManager.primary,
+                  ),
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (picked != null && mounted) {
+        setState(() => _selectedDate = picked);
+        _loadAvailableSlots();
+      }
+      return;
+    }
 
+    DateTime tempDate = _selectedDate;
     await showModalBottomSheet(
       context: context,
       backgroundColor: ColorManager.of(context).cardBg,
@@ -187,7 +211,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return;
     }
 
-    // Parse selected time slot into DateTime
     final slotTime = _parseSlotTime(_selectedSlot!);
     final appointmentDateTime = DateTime(
       _selectedDate.year,
@@ -243,8 +266,500 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     return DateTime(0, 1, 1, hour, minute);
   }
 
+  String _localizedTreatment(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'Checkup':      return l10n.checkup;
+      case 'Cleaning':     return l10n.cleaning;
+      case 'Filling':      return l10n.filling;
+      case 'Root Canal':   return l10n.rootCanal;
+      case 'Extraction':   return l10n.extraction;
+      case 'Crown':        return l10n.crown;
+      case 'Whitening':    return l10n.whitening;
+      case 'Consultation': return l10n.consultation;
+      case 'X-Ray':        return l10n.xray;
+      default:             return key;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktop(context);
+    }
+    return _buildMobile(context);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildDesktop(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return DesktopShell(
+      title: l10n.newAppointment,
+      breadcrumb: l10n.appointments,
+      selectedTabIndex: 2,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final stackSidebar = constraints.maxWidth < 1100;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1240),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _DesktopHeader(
+                        fontFamily: fontFamily,
+                        selectedDate: _selectedDate,
+                      ),
+                      const SizedBox(height: 22),
+                      stackSidebar
+                          ? Column(
+                              children: [
+                                _buildFormCard(l10n, c, fontFamily),
+                                const SizedBox(height: 20),
+                                _buildSummaryCard(l10n, c, fontFamily),
+                              ],
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: _buildFormCard(
+                                      l10n, c, fontFamily),
+                                ),
+                                const SizedBox(width: 20),
+                                SizedBox(
+                                  width: 360,
+                                  child: _buildSummaryCard(
+                                      l10n, c, fontFamily),
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormCard(
+    AppLocalizations l10n,
+    AppColors c,
+    String fontFamily,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(26, 22, 26, 26),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DesktopSectionHeader(
+                icon: Icons.person_outline_rounded,
+                title: l10n.patient,
+                subtitle: 'Who is this appointment for?',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 14),
+              if (_isPatientsLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else
+                PatientPicker(
+                  patients: _patients.map((p) => p.name).toList(),
+                  selectedPatient: _selectedPatientEntity?.name,
+                  onPatientChanged: (name) {
+                    final entity = name != null
+                        ? _patients.firstWhere((p) => p.name == name)
+                        : null;
+                    setState(() => _selectedPatientEntity = entity);
+                  },
+                  onAddNewPatient: () =>
+                      context.pushNamed(AppRoutesNames.addPatient),
+                ),
+
+              _DesktopSectionDivider(c: c),
+
+              _DesktopSectionHeader(
+                icon: Icons.medical_services_outlined,
+                title: l10n.treatment,
+                subtitle: 'Pick one or more treatments',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _treatmentKeys.map((key) {
+                  final isSelected = _selectedTreatments.contains(key);
+                  return SelectableChip(
+                    label: _localizedTreatment(l10n, key),
+                    isSelected: isSelected,
+                    onTap: () => setState(() {
+                      isSelected
+                          ? _selectedTreatments.remove(key)
+                          : _selectedTreatments.add(key);
+                    }),
+                  );
+                }).toList(),
+              ),
+
+              _DesktopSectionDivider(c: c),
+
+              _DesktopSectionHeader(
+                icon: Icons.timer_outlined,
+                title: l10n.duration,
+                subtitle: 'How long will the visit take?',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _durations.map((d) {
+                  return SelectableChip(
+                    label: d['label'],
+                    isSelected: _duration == d['value'],
+                    onTap: () {
+                      setState(() => _duration = d['value']);
+                      _loadAvailableSlots();
+                    },
+                  );
+                }).toList(),
+              ),
+
+              _DesktopSectionDivider(c: c),
+
+              _DesktopSectionHeader(
+                icon: Icons.notes_rounded,
+                title: l10n.notes,
+                subtitle: 'Optional details for the visit',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 12),
+              AppFormField(
+                controller: _notesController,
+                maxLines: 4,
+                hintText: l10n.addNotesForAppointment,
+                label: '',
+              ),
+
+              _DesktopSectionDivider(c: c),
+
+              _DesktopReminderTile(
+                value: _sendReminder,
+                onChanged: (v) => setState(() => _sendReminder = v),
+                fontFamily: fontFamily,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(
+    AppLocalizations l10n,
+    AppColors c,
+    String fontFamily,
+  ) {
+    final formattedDate = DateFormat('EEEE, MMM d').format(_selectedDate);
+    final patientName = _selectedPatientEntity?.name;
+    final treatments = _selectedTreatments.isEmpty
+        ? null
+        : _selectedTreatments
+            .map((t) => _localizedTreatment(l10n, t))
+            .join(', ');
+    final canSave = _selectedPatientEntity != null &&
+        _selectedTreatments.isNotEmpty &&
+        _selectedSlot != null;
+
+    return Column(
+      children: [
+        // Date & slots card
+        Container(
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary10,
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Icon(
+                        Icons.calendar_today_rounded,
+                        size: 17,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date',
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 11.5,
+                              letterSpacing: 0.5,
+                              fontWeight: FontWeight.w600,
+                              color: c.textTertiary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            formattedDate,
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: c.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Material(
+                      color: c.cardBgSecondary,
+                      borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: _selectDate,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          child: Text(
+                            l10n.change,
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: ColorManager.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(height: 1, color: c.borderLight),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.availableSlots,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 12.5,
+                        letterSpacing: 0.5,
+                        fontWeight: FontWeight.w600,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildDesktopSlots(l10n, c, fontFamily),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Summary card
+        Container(
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: c.borderLight),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Summary',
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 12.5,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w700,
+                  color: c.textTertiary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _SummaryRow(
+                icon: Icons.person_outline_rounded,
+                label: l10n.patient,
+                value: patientName,
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 10),
+              _SummaryRow(
+                icon: Icons.medical_services_outlined,
+                label: l10n.treatment,
+                value: treatments,
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 10),
+              _SummaryRow(
+                icon: Icons.schedule_rounded,
+                label: l10n.duration,
+                value: _durationLabel(_duration),
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 10),
+              _SummaryRow(
+                icon: Icons.access_time_rounded,
+                label: 'Time',
+                value: _selectedSlot,
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(height: 10),
+              _SummaryRow(
+                icon: Icons.notifications_outlined,
+                label: 'Reminder',
+                value: _sendReminder ? 'On' : 'Off',
+                fontFamily: fontFamily,
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Save button
+        SizedBox(
+          width: double.infinity,
+          child: Material(
+            color: canSave
+                ? ColorManager.primary
+                : ColorManager.primary.withValues(alpha: 0.45),
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: _saveAppointment,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: canSave
+                      ? [
+                          BoxShadow(
+                            color: ColorManager.primary
+                                .withValues(alpha: 0.25),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.check_circle_outline_rounded,
+                        color: Colors.white, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.save,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopSlots(
+    AppLocalizations l10n,
+    AppColors c,
+    String fontFamily,
+  ) {
+    if (_availableSlots.isEmpty) {
+      return Text(
+        l10n.noAvailableSlotsForThisDate,
+        style: TextStyle(
+          fontSize: 13,
+          fontFamily: fontFamily,
+          color: c.textSubtle,
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: _availableSlots.map((slot) {
+        return SelectableChip(
+          label: slot,
+          icon: Icons.access_time_rounded,
+          isSelected: _selectedSlot == slot,
+          borderRadius: 10,
+          onTap: () => setState(() => _selectedSlot = slot),
+        );
+      }).toList(),
+    );
+  }
+
+  String _durationLabel(int minutes) {
+    if (minutes < 60) return '$minutes min';
+    final hours = minutes ~/ 60;
+    final rem = minutes % 60;
+    if (rem == 0) return '$hours h';
+    return '$hours h ${rem}m';
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT (unchanged)
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildMobile(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -266,7 +781,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // — Patient
                       _sectionLabel(l10n.patient),
                       SizedBox(height: 10.h),
                       if (_isPatientsLoading)
@@ -294,33 +808,28 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
                       _divider(),
 
-                      // — Treatment types
                       _sectionLabel(l10n.treatment),
                       SizedBox(height: 10.h),
                       _buildTreatmentChips(l10n),
 
                       _divider(),
 
-                      // — Duration
                       _sectionLabel(l10n.duration),
                       SizedBox(height: 10.h),
                       _buildDurationChips(),
 
                       _divider(),
 
-                      // — Date
                       _buildDateRow(l10n),
 
                       _divider(),
 
-                      // — Available slots
                       _sectionLabel(l10n.availableSlots),
                       SizedBox(height: 10.h),
                       _buildSlots(l10n),
 
                       _divider(),
 
-                      // — Notes
                       _sectionLabel(l10n.notes),
                       SizedBox(height: 10.h),
                       AppFormField(
@@ -332,7 +841,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
                       _divider(),
 
-                      // — Reminder
                       _buildReminderRow(l10n),
 
                       SizedBox(height: 80.h),
@@ -372,8 +880,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       ),
     );
   }
-
-  // ─── Chips ──────────────────────────────────────────────────────────────
 
   Widget _buildTreatmentChips(AppLocalizations l10n) {
     return Wrap(
@@ -437,8 +943,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  // ─── Date row ───────────────────────────────────────────────────────────
-
   Widget _buildDateRow(AppLocalizations l10n) {
     final formatted = DateFormat('MMM d, yyyy').format(_selectedDate);
     final isToday = DateUtils.isSameDay(_selectedDate, DateTime.now());
@@ -477,8 +981,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  // ─── Reminder toggle ───────────────────────────────────────────────────
-
   Widget _buildReminderRow(AppLocalizations l10n) {
     return GestureDetector(
       onTap: () => setState(() => _sendReminder = !_sendReminder),
@@ -503,7 +1005,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             width: 22.w,
             height: 22.w,
             decoration: BoxDecoration(
-              color: _sendReminder ? ColorManager.primary : ColorManager.of(context).cardBg,
+              color: _sendReminder
+                  ? ColorManager.primary
+                  : ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(6.r),
               border: Border.all(
                 color: _sendReminder
@@ -520,8 +1024,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       ),
     );
   }
-
-  // ─── Helpers ────────────────────────────────────────────────────────────
 
   Widget _sectionLabel(String title) {
     return Text(
@@ -541,19 +1043,285 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       child: Divider(color: ColorManager.of(context).divider),
     );
   }
+}
 
-  String _localizedTreatment(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'Checkup':       return l10n.checkup;
-      case 'Cleaning':      return l10n.cleaning;
-      case 'Filling':       return l10n.filling;
-      case 'Root Canal':    return l10n.rootCanal;
-      case 'Extraction':    return l10n.extraction;
-      case 'Crown':         return l10n.crown;
-      case 'Whitening':     return l10n.whitening;
-      case 'Consultation':  return l10n.consultation;
-      case 'X-Ray':         return l10n.xray;
-      default:              return key;
-    }
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP SUB-WIDGETS
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopHeader extends StatelessWidget {
+  const _DesktopHeader({
+    required this.fontFamily,
+    required this.selectedDate,
+  });
+
+  final String fontFamily;
+  final DateTime selectedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: ColorManager.primary10,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.event_available_rounded,
+            size: 22,
+            color: ColorManager.primary,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.newAppointment,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: c.textPrimary,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                'Schedule a new visit and notify the patient.',
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  color: c.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DesktopSectionHeader extends StatelessWidget {
+  const _DesktopSectionHeader({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.fontFamily,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: ColorManager.primary10,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 15, color: ColorManager.primary),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w700,
+                  color: c.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 12,
+                  color: c.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DesktopSectionDivider extends StatelessWidget {
+  const _DesktopSectionDivider({required this.c});
+  final AppColors c;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 22),
+      child: Divider(height: 1, color: c.borderLight),
+    );
+  }
+}
+
+class _DesktopReminderTile extends StatelessWidget {
+  const _DesktopReminderTile({
+    required this.value,
+    required this.onChanged,
+    required this.fontFamily,
+  });
+
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Material(
+      color: value
+          ? ColorManager.primary.withValues(alpha: 0.06)
+          : c.cardBgSecondary,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => onChanged(!value),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary10,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Icon(
+                  Icons.notifications_active_outlined,
+                  size: 17,
+                  color: ColorManager.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.sendReminderToPatient,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'The patient will receive a notification before the appointment.',
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 12,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Switch(
+                value: value,
+                onChanged: onChanged,
+                activeThumbColor: ColorManager.primary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  const _SummaryRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.fontFamily,
+  });
+
+  final IconData icon;
+  final String label;
+  final String? value;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final hasValue = value != null && value!.isNotEmpty;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: c.cardBgSecondary,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Icon(icon, size: 14, color: c.textSecondary),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 11.5,
+                  letterSpacing: 0.3,
+                  fontWeight: FontWeight.w500,
+                  color: c.textTertiary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                hasValue ? value! : '—',
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: hasValue ? c.textPrimary : c.textSubtle,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

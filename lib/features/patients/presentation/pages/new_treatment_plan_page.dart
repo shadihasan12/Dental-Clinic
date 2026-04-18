@@ -2,8 +2,10 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
@@ -12,6 +14,7 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_cor
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/plan_treatment_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/treatment_plan_view_page.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_form_widgets.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/manage_notes_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/plan_summary_header.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/set_cost_sheet.dart';
@@ -34,8 +37,7 @@ class NewTreatmentPlanPage extends StatefulWidget {
   });
 
   @override
-  State<NewTreatmentPlanPage> createState() =>
-      _NewTreatmentPlanPageState();
+  State<NewTreatmentPlanPage> createState() => _NewTreatmentPlanPageState();
 }
 
 class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
@@ -47,8 +49,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
   CurrencyEntity? _totalCostCurrency;
   CurrencyEntity? _labFeesCurrency;
 
-  bool get _canSave =>
-      _plan.treatments.isNotEmpty && _plan.totalCost > 0;
+  bool get _canSave => _plan.treatments.isNotEmpty && _plan.totalCost > 0;
 
   @override
   void initState() {
@@ -80,7 +81,6 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
     if (_categories.isEmpty) {
       _categories = MockTreatmentTypes.categories;
     }
-    // Sort: tooth-specific first, general last (identified by slug)
     _categories.sort((a, b) {
       if (a.isGeneralCategory && !b.isGeneralCategory) return 1;
       if (!a.isGeneralCategory && b.isGeneralCategory) return -1;
@@ -141,7 +141,6 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
     );
   }
 
-  /// Maps a tooth universal code (e.g. "16") to its API tooth ID.
   String? _toothCodeToId(String universalCode) {
     final match = _teeth.where((t) => t.universalCode == universalCode);
     return match.isNotEmpty ? match.first.id : null;
@@ -232,8 +231,333 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
     );
   }
 
+  Future<void> _openPlanTreatment() async {
+    final result = await Navigator.push<List<PlannedTreatment>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PlanTreatmentPage(
+          existingTreatments: _plan.treatments,
+          categories: _categories,
+          teeth: _teeth,
+        ),
+      ),
+    );
+    if (result != null && result.isNotEmpty) {
+      _addTreatments(result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktopLayout();
+    }
+    return _buildMobileLayout();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  // ═══════════════════════════════════════════════════════════════
+
+  Widget _buildDesktopLayout() {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+
+    final sorted = [
+      ..._plan.planned,
+      ..._plan.inProgress,
+      ..._plan.completed,
+    ];
+
+    return DesktopShell(
+      title: l10n.newTreatmentPlan,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        body: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(color: ColorManager.primary),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        DesktopPageHeader(
+                          title: l10n.newTreatmentPlan,
+                          subtitle: l10n.treatmentPlan,
+                          trailing: DesktopPrimaryButton(
+                            label: l10n.save,
+                            icon: Icons.check,
+                            onPressed: _canSave ? _savePlan : null,
+                            isLoading: _isSaving,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _desktopCostCard(l10n, c),
+                        const SizedBox(height: 16),
+                        _desktopTreatmentsCard(l10n, c, sorted),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _desktopCostCard(AppLocalizations l10n, AppColors c) {
+    final fontFamily = FontHelper.fontFamily(context);
+    final paid = _plan.paid;
+    final total = _plan.totalCost;
+    final pending = (total - paid).clamp(0, double.infinity);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [ColorManager.primary, ColorManager.primaryDark],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.treatmentPlan,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '\$${total.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: -0.8,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: _showEditCostSheet,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.edit_outlined,
+                            color: Colors.white.withValues(alpha: 0.9),
+                            size: 14),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.editCosts,
+                          style: TextStyle(
+                            fontFamily: fontFamily,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _desktopCostPill(l10n.paidLabel, paid, fontFamily),
+          const SizedBox(width: 12),
+          _desktopCostPill(l10n.pendingLabel, pending.toDouble(), fontFamily),
+        ],
+      ),
+    );
+  }
+
+  Widget _desktopCostPill(String label, double value, String fontFamily) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 11,
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '\$${value.toStringAsFixed(0)}',
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _desktopTreatmentsCard(
+      AppLocalizations l10n, AppColors c, List<PlannedTreatment> sorted) {
+    return DesktopSectionCard(
+      title: l10n.treatments,
+      subtitle: '${sorted.length} total',
+      trailing: DesktopPrimaryButton(
+        label: l10n.addTreatmentButton,
+        icon: Icons.add,
+        compact: true,
+        onPressed: _openPlanTreatment,
+      ),
+      child: sorted.isEmpty
+          ? _desktopEmpty(l10n)
+          : Column(
+              children: sorted
+                  .map(
+                    (t) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _desktopTreatmentRow(t, l10n, c),
+                    ),
+                  )
+                  .toList(),
+            ),
+    );
+  }
+
+  Widget _desktopTreatmentRow(
+      PlannedTreatment t, AppLocalizations l10n, AppColors c) {
+    final fontFamily = FontHelper.fontFamily(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => _showManageNotesSheet(t),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: c.inputBg,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.medical_services_outlined,
+                  color: ColorManager.primary,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      t.type.name,
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    if (t.toothNumber != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Tooth #${t.toothNumber}',
+                        style: TextStyle(
+                          fontFamily: fontFamily,
+                          fontSize: 12,
+                          color: c.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () => _removeTreatment(t),
+                icon: Icon(Icons.delete_outline,
+                    size: 18, color: c.textTertiary),
+                tooltip: l10n.delete,
+                hoverColor: ColorManager.error.withValues(alpha: 0.1),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _desktopEmpty(AppLocalizations l10n) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: ColorManager.primary.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.assignment_outlined,
+                size: 28, color: ColorManager.primary),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            l10n.noTreatmentsYetAddOne,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 13.5,
+              color: c.textTertiary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          DesktopPrimaryButton(
+            label: l10n.addTreatmentButton,
+            icon: Icons.add,
+            onPressed: _openPlanTreatment,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT (unchanged)
+  // ═══════════════════════════════════════════════════════════════
+
+  Widget _buildMobileLayout() {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     return Scaffold(
@@ -346,21 +670,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
   Widget _buildFab(BuildContext context) {
     if (_isLoading) return const SizedBox.shrink();
     return FloatingActionButton(
-      onPressed: () async {
-        final result = await Navigator.push<List<PlannedTreatment>>(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PlanTreatmentPage(
-              existingTreatments: _plan.treatments,
-              categories: _categories,
-              teeth: _teeth,
-            ),
-          ),
-        );
-        if (result != null && result.isNotEmpty) {
-          _addTreatments(result);
-        }
-      },
+      onPressed: _openPlanTreatment,
       backgroundColor: ColorManager.primary,
       child: const Icon(Icons.add, color: Colors.white),
     );

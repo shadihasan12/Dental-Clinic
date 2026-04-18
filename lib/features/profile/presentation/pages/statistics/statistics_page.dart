@@ -1,12 +1,11 @@
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/padding_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class StatisticsPage extends StatelessWidget {
@@ -14,7 +13,14 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var l10n = AppLocalizations.of(context)!;
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktop(context);
+    }
+    return _buildMobile(context);
+  }
+
+  Widget _buildMobile(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     return Scaffold(
       backgroundColor: c.scaffoldBg,
@@ -23,50 +29,12 @@ class StatisticsPage extends StatelessWidget {
         children: [
           PageHeader(title: l10n.statistics, onBack: () => context.pop()),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                children: [
-                  // Stats Overview
-                  // Center(
-                  //   child: Text(
-                  //     "Coming Soon",
-                  //     style: TextStyleManager.bodyMedium.copyWith(
-                  //       color: c.textPrimary,
-                  //     ),
-                  //   ),
-                  // ),
-                  // _buildStatsOverview(),
-                  // SizedBox(height: 24.h),
-
-                  // // Revenue Chart Placeholder
-                  // _buildChartCard(
-                  //   title: 'Revenue Trend',
-                  //   subtitle: 'Last 6 months',
-                  //   child: _buildRevenueChart(),
-                  // ),
-                  // SizedBox(height: 24.h),
-
-                  // // Treatment Distribution
-                  // _buildChartCard(
-                  //   title: 'Treatment Distribution',
-                  //   subtitle: 'This month',
-                  //   child: _buildTreatmentDistribution(),
-                  // ),
-                  // SizedBox(height: 24.h),
-
-                  // // Weekly Visits
-                  // _buildChartCard(
-                  //   title: 'Weekly Visits',
-                  //   subtitle: 'This week',
-                  //   child: _buildWeeklyVisits(),
-                  // ),
-                  // SizedBox(height: 24.h),
-
-                  // // Top Treatments
-                  // _buildTopTreatments(),
-                  // SizedBox(height: 32.h),
-                ],
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32.w),
+                child: _ComingSoonCard(
+                  isDesktop: false,
+                ),
               ),
             ),
           ),
@@ -75,389 +43,168 @@ class StatisticsPage extends StatelessWidget {
     );
   }
 
-  // Widget _buildStatsOverview() {
-  //   return GridView.count(
-  //     crossAxisCount: 2,
-  //     shrinkWrap: true,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //     crossAxisSpacing: 12.w,
-  //     mainAxisSpacing: 12.h,
-  //     childAspectRatio: 1.4,
-  //     children: [
-  //       _buildStatCard(
-  //         title: 'Revenue',
-  //         value: '\$45,280',
-  //         trend: '+12.5%',
-  //         isPositive: true,
-  //         icon: Icons.attach_money,
-  //         color: ColorManager.success,
-  //       ),
-  //       _buildStatCard(
-  //         title: 'Patients',
-  //         value: '248',
-  //         trend: '+8.2%',
-  //         isPositive: true,
-  //         icon: Icons.people_outline,
-  //         color: ColorManager.primary,
-  //       ),
-  //       _buildStatCard(
-  //         title: 'Daily Visits',
-  //         value: '12.4',
-  //         trend: '-2.1%',
-  //         isPositive: false,
-  //         icon: Icons.calendar_today,
-  //         color: ColorManager.info,
-  //       ),
-  //       _buildStatCard(
-  //         title: 'Success Rate',
-  //         value: '98.5%',
-  //         trend: '+0.5%',
-  //         isPositive: true,
-  //         icon: Icons.check_circle_outline,
-  //         color: ColorManager.purple,
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildDesktop(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    return DesktopShell(
+      title: l10n.statistics,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Padding(
+              padding: const EdgeInsets.all(28),
+              child: _ComingSoonCard(isDesktop: true),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-  // Widget _buildStatCard({
-  //   required String title,
-  //   required String value,
-  //   required String trend,
-  //   required bool isPositive,
-  //   required IconData icon,
-  //   required Color color,
-  // }) {
-  //   return CustomCard(
-  //     // padding: EdgeInsets.all(12.w),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             Container(
-  //               padding: EdgeInsets.all(8.w),
-  //               decoration: BoxDecoration(
-  //                 color: color.withValues(alpha: 0.1),
-  //                 borderRadius: BorderRadiusManager.md,
-  //               ),
-  //               child: Icon(icon, size: 20.w, color: color),
-  //             ),
-  //             Container(
-  //               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-  //               decoration: BoxDecoration(
-  //                 color:
-  //                     (isPositive ? ColorManager.success : ColorManager.error)
-  //                         .withValues(alpha: 0.1),
-  //                 borderRadius: BorderRadiusManager.full,
-  //               ),
-  //               child: Row(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   Icon(
-  //                     isPositive ? Icons.trending_up : Icons.trending_down,
-  //                     size: 12.w,
-  //                     color: isPositive
-  //                         ? ColorManager.success
-  //                         : ColorManager.error,
-  //                   ),
-  //                   SizedBox(width: 2.w),
-  //                   Text(
-  //                     trend,
-  //                     style: TextStyleManager.labelSmall.copyWith(
-  //                       color: isPositive
-  //                           ? ColorManager.success
-  //                           : ColorManager.error,
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         const Spacer(),
-  //         Text(
-  //           value,
-  //           style: TextStyleManager.headlineMedium.copyWith(
-  //             color: c.textPrimary,
-  //           ),
-  //         ),
-  //         SizedBox(height: 2.h),
-  //         Text(
-  //           title,
-  //           style: TextStyleManager.bodySmall.copyWith(
-  //             color: c.textSecondary,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+class _ComingSoonCard extends StatelessWidget {
+  const _ComingSoonCard({required this.isDesktop});
 
-  // Widget _buildChartCard({
-  //   required String title,
-  //   required String subtitle,
-  //   required Widget child,
-  // }) {
-  //   return CustomCard(
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   title,
-  //                   style: TextStyleManager.titleMedium.copyWith(
-  //                     color: c.textPrimary,
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 2.h),
-  //                 Text(
-  //                   subtitle,
-  //                   style: TextStyleManager.bodySmall.copyWith(
-  //                     color: c.textSecondary,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //             IconButton(
-  //               icon: const Icon(Icons.more_horiz),
-  //               onPressed: () {},
-  //               color: c.textSecondary,
-  //             ),
-  //           ],
-  //         ),
-  //         SizedBox(height: 16.h),
-  //         child,
-  //       ],
-  //     ),
-  //   );
-  // }
+  final bool isDesktop;
 
-  // Widget _buildRevenueChart() {
-  //   // Placeholder for actual chart implementation
-  //   return Container(
-  //     height: 180.h,
-  //     decoration: BoxDecoration(
-  //       color: c.cardBgSecondary,
-  //       borderRadius: BorderRadiusManager.lg,
-  //     ),
-  //     child: Center(
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         children: [
-  //           Icon(
-  //             Icons.show_chart,
-  //             size: 48.w,
-  //             color: ColorManager.primary.withValues(alpha: 0.5),
-  //           ),
-  //           SizedBox(height: 8.h),
-  //           Text(
-  //             'Revenue Chart',
-  //             style: TextStyleManager.bodyMedium.copyWith(
-  //               color: c.textSecondary,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  // Widget _buildTreatmentDistribution() {
-  //   final treatments = [
-  //     {'name': 'Cleaning', 'percentage': 35, 'color': ColorManager.primary},
-  //     {'name': 'Filling', 'percentage': 25, 'color': ColorManager.info},
-  //     {'name': 'Root Canal', 'percentage': 20, 'color': ColorManager.warning},
-  //     {'name': 'Extraction', 'percentage': 12, 'color': ColorManager.error},
-  //     {'name': 'Other', 'percentage': 8, 'color': ColorManager.purple},
-  //   ];
+    return Container(
+      padding: EdgeInsets.all(isDesktop ? 36 : 28),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.borderLight),
+        boxShadow: isDesktop
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon with gradient circle
+          Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  ColorManager.primary.withValues(alpha: 0.25),
+                  ColorManager.primary.withValues(alpha: 0.08),
+                ],
+              ),
+            ),
+            child: Icon(
+              Icons.insights_rounded,
+              size: 44,
+              color: ColorManager.primary,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l10n.analytics,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: isDesktop ? 22 : 18.sp,
+              fontWeight: FontWeight.w700,
+              color: c.textPrimary,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Comprehensive insights and reporting are coming soon.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: isDesktop ? 14 : 13.sp,
+              color: c.textSecondary,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _FeaturePill(
+                icon: Icons.show_chart_rounded,
+                label: 'Revenue',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(width: 8),
+              _FeaturePill(
+                icon: Icons.people_outline,
+                label: 'Patients',
+                fontFamily: fontFamily,
+              ),
+              const SizedBox(width: 8),
+              _FeaturePill(
+                icon: Icons.event_available_outlined,
+                label: 'Visits',
+                fontFamily: fontFamily,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-  //   return Column(
-  //     children: treatments.map((treatment) {
-  //       return Padding(
-  //         padding: EdgeInsets.only(bottom: 12.h),
-  //         child: Row(
-  //           children: [
-  //             Container(
-  //               width: 12.w,
-  //               height: 12.h,
-  //               decoration: BoxDecoration(
-  //                 color: treatment['color'] as Color,
-  //                 shape: BoxShape.circle,
-  //               ),
-  //             ),
-  //             SizedBox(width: 12.w),
-  //             Expanded(
-  //               child: Text(
-  //                 treatment['name'] as String,
-  //                 style: TextStyleManager.bodyMedium.copyWith(
-  //                   color: c.textPrimary,
-  //                 ),
-  //               ),
-  //             ),
-  //             Text(
-  //               '${treatment['percentage']}%',
-  //               style: TextStyleManager.titleSmall.copyWith(
-  //                 color: c.textPrimary,
-  //               ),
-  //             ),
-  //             SizedBox(width: 12.w),
-  //             Expanded(
-  //               flex: 2,
-  //               child: ClipRRect(
-  //                 borderRadius: BorderRadiusManager.full,
-  //                 child: LinearProgressIndicator(
-  //                   value: (treatment['percentage'] as int) / 100,
-  //                   backgroundColor: c.borderLight,
-  //                   valueColor: AlwaysStoppedAnimation<Color>(
-  //                     treatment['color'] as Color,
-  //                   ),
-  //                   minHeight: 8.h,
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
+class _FeaturePill extends StatelessWidget {
+  const _FeaturePill({
+    required this.icon,
+    required this.label,
+    required this.fontFamily,
+  });
 
-  // Widget _buildWeeklyVisits() {
-  //   final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  //   final values = [12, 15, 10, 18, 14, 8, 5];
-  //   final maxValue = values.reduce((a, b) => a > b ? a : b);
+  final IconData icon;
+  final String label;
+  final String fontFamily;
 
-  //   return SizedBox(
-  //     height: 140.h,
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       children: List.generate(days.length, (index) {
-  //         final heightRatio = values[index] / maxValue;
-  //         return Expanded(
-  //           child: Padding(
-  //             padding: EdgeInsets.symmetric(horizontal: 4.w),
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.end,
-  //               children: [
-  //                 Text(
-  //                   values[index].toString(),
-  //                   style: TextStyleManager.labelSmall.copyWith(
-  //                     color: c.textSecondary,
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 4.h),
-  //                 Container(
-  //                   height: (100 * heightRatio).h,
-  //                   decoration: BoxDecoration(
-  //                     color: ColorManager.primary,
-  //                     borderRadius: BorderRadius.only(
-  //                       topLeft: Radius.circular(4.r),
-  //                       topRight: Radius.circular(4.r),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 4.h),
-  //                 Text(
-  //                   days[index],
-  //                   style: TextStyleManager.labelSmall.copyWith(
-  //                     color: c.textSecondary,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       }),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildTopTreatments() {
-  //   final treatments = [
-  //     {'name': 'Teeth Cleaning', 'count': 145, 'revenue': '\$4,350'},
-  //     {'name': 'Cavity Filling', 'count': 98, 'revenue': '\$7,840'},
-  //     {'name': 'Root Canal', 'count': 42, 'revenue': '\$12,600'},
-  //     {'name': 'Teeth Whitening', 'count': 67, 'revenue': '\$5,360'},
-  //     {'name': 'Dental Crown', 'count': 23, 'revenue': '\$9,200'},
-  //   ];
-
-  //   return CustomCard(
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           'Top Treatments',
-  //           style: TextStyleManager.titleMedium.copyWith(
-  //             color: c.textPrimary,
-  //           ),
-  //         ),
-  //         SizedBox(height: 16.h),
-  //         ...treatments.asMap().entries.map((entry) {
-  //           final index = entry.key;
-  //           final treatment = entry.value;
-  //           return Padding(
-  //             padding: EdgeInsets.only(
-  //               bottom: index < treatments.length - 1 ? 12.h : 0,
-  //             ),
-  //             child: Row(
-  //               children: [
-  //                 Container(
-  //                   width: 28.w,
-  //                   height: 28.h,
-  //                   decoration: BoxDecoration(
-  //                     color: c.cardBgSecondary,
-  //                     borderRadius: BorderRadiusManager.md,
-  //                   ),
-  //                   child: Center(
-  //                     child: Text(
-  //                       '${index + 1}',
-  //                       style: TextStyleManager.labelMedium.copyWith(
-  //                         color: c.textSecondary,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(width: 12.w),
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         treatment['name'] as String,
-  //                         style: TextStyleManager.bodyMedium.copyWith(
-  //                           color: c.textPrimary,
-  //                         ),
-  //                       ),
-  //                       Text(
-  //                         '${treatment['count']} procedures',
-  //                         style: TextStyleManager.bodySmall.copyWith(
-  //                           color: c.textSecondary,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 Text(
-  //                   treatment['revenue'] as String,
-  //                   style: TextStyleManager.titleSmall.copyWith(
-  //                     color: ColorManager.success,
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         }),
-  //       ],
-  //     ),
-  //   );
-  // }
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: c.cardBgSecondary,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: ColorManager.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: c.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
