@@ -23,7 +23,7 @@ mixin _$AppointmentEvent {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -34,7 +34,7 @@ mixin _$AppointmentEvent {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -45,7 +45,7 @@ mixin _$AppointmentEvent {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -154,7 +154,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -169,7 +169,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -184,7 +184,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -325,7 +325,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -340,7 +340,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -355,7 +355,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -502,7 +502,7 @@ class _$SelectDateImpl implements _SelectDate {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -517,7 +517,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -532,7 +532,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -651,7 +651,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -666,7 +666,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -681,7 +681,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -752,9 +752,7 @@ abstract class _$$CreateAppointmentImplCopyWith<$Res> {
     $Res Function(_$CreateAppointmentImpl) then,
   ) = __$$CreateAppointmentImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({AppointmentEntity appointment});
-
-  $AppointmentEntityCopyWith<$Res> get appointment;
+  $Res call({CreateAppointmentParams params});
 }
 
 /// @nodoc
@@ -770,39 +768,29 @@ class __$$CreateAppointmentImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? appointment = null}) {
+  $Res call({Object? params = null}) {
     return _then(
       _$CreateAppointmentImpl(
-        null == appointment
-            ? _value.appointment
-            : appointment // ignore: cast_nullable_to_non_nullable
-                  as AppointmentEntity,
+        null == params
+            ? _value.params
+            : params // ignore: cast_nullable_to_non_nullable
+                  as CreateAppointmentParams,
       ),
     );
-  }
-
-  /// Create a copy of AppointmentEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $AppointmentEntityCopyWith<$Res> get appointment {
-    return $AppointmentEntityCopyWith<$Res>(_value.appointment, (value) {
-      return _then(_value.copyWith(appointment: value));
-    });
   }
 }
 
 /// @nodoc
 
 class _$CreateAppointmentImpl implements _CreateAppointment {
-  const _$CreateAppointmentImpl(this.appointment);
+  const _$CreateAppointmentImpl(this.params);
 
   @override
-  final AppointmentEntity appointment;
+  final CreateAppointmentParams params;
 
   @override
   String toString() {
-    return 'AppointmentEvent.createAppointment(appointment: $appointment)';
+    return 'AppointmentEvent.createAppointment(params: $params)';
   }
 
   @override
@@ -810,12 +798,11 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreateAppointmentImpl &&
-            (identical(other.appointment, appointment) ||
-                other.appointment == appointment));
+            (identical(other.params, params) || other.params == params));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, appointment);
+  int get hashCode => Object.hash(runtimeType, params);
 
   /// Create a copy of AppointmentEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -835,12 +822,12 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
   }) {
-    return createAppointment(appointment);
+    return createAppointment(params);
   }
 
   @override
@@ -850,12 +837,12 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
   }) {
-    return createAppointment?.call(appointment);
+    return createAppointment?.call(params);
   }
 
   @override
@@ -865,14 +852,14 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
     required TResult orElse(),
   }) {
     if (createAppointment != null) {
-      return createAppointment(appointment);
+      return createAppointment(params);
     }
     return orElse();
   }
@@ -926,10 +913,10 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
 }
 
 abstract class _CreateAppointment implements AppointmentEvent {
-  const factory _CreateAppointment(final AppointmentEntity appointment) =
+  const factory _CreateAppointment(final CreateAppointmentParams params) =
       _$CreateAppointmentImpl;
 
-  AppointmentEntity get appointment;
+  CreateAppointmentParams get params;
 
   /// Create a copy of AppointmentEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1023,7 +1010,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -1038,7 +1025,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -1053,7 +1040,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
@@ -1207,7 +1194,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     required TResult Function(AppointmentViewMode mode) changeViewMode,
     required TResult Function(DateTime date) selectDate,
     required TResult Function() filterAppointments,
-    required TResult Function(AppointmentEntity appointment) createAppointment,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
@@ -1222,7 +1209,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult? Function(AppointmentViewMode mode)? changeViewMode,
     TResult? Function(DateTime date)? selectDate,
     TResult? Function()? filterAppointments,
-    TResult? Function(AppointmentEntity appointment)? createAppointment,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
@@ -1237,7 +1224,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult Function(AppointmentViewMode mode)? changeViewMode,
     TResult Function(DateTime date)? selectDate,
     TResult Function()? filterAppointments,
-    TResult Function(AppointmentEntity appointment)? createAppointment,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,

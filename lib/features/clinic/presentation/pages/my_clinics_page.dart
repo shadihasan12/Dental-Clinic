@@ -4,7 +4,8 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/my_clinics_bloc.dart';
-import 'package:dental_clinic_app/features/clinic/presentation/widgets/pending_invitations_section.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/widgets/pending_invitations_section.dart'
+    show InvitationsSection;
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +25,8 @@ class MyClinicsPage extends StatelessWidget {
               getIt<MyClinicsBloc>()..add(const MyClinicsEvent.load()),
         ),
         BlocProvider(
-          create: (_) => InvitationBloc()
-            ..add(
-              const InvitationEvent.loadReceivedInvitations('user@example.com'),
-            ),
+          create: (_) => getIt<InvitationBloc>()
+            ..add(const InvitationEvent.loadReceivedInvitations()),
         ),
       ],
       child: const _MyClinicsContent(),
@@ -115,11 +114,7 @@ class _MyClinicsContent extends StatelessWidget {
                       ),
                       loaded: (clinics) => CustomScrollView(
                         slivers: [
-                          PendingInvitationsSection(
-                            invitations: invitationState.receivedInvitations,
-                            isUpdating: invitationState.isUpdating,
-                          ),
-                          SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+                          SliverToBoxAdapter(child: SizedBox(height: 12.h)),
                           SliverPadding(
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             sliver: SliverList(
@@ -141,6 +136,14 @@ class _MyClinicsContent extends StatelessWidget {
                               ),
                             ),
                           ),
+                          SliverToBoxAdapter(child: SizedBox(height: 8.h)),
+                          SliverToBoxAdapter(
+                            child: Divider(
+                              height: 1,
+                              color: ColorManager.of(context).borderLight,
+                            ),
+                          ),
+                          InvitationsSection(state: invitationState),
                           SliverToBoxAdapter(child: SizedBox(height: 24.h)),
                         ],
                       ),

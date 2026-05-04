@@ -1,30 +1,30 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_hours_models.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_hours_repository.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:injectable/injectable.dart';
 
-part 'working_hours_bloc.freezed.dart';
-part 'working_hours_event.dart';
-part 'working_hours_state.dart';
+part 'working_days_bloc.freezed.dart';
+part 'working_days_event.dart';
+part 'working_days_state.dart';
 
 @injectable
-class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
-  final WorkingHoursRepository _repository;
+class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
+  final WorkingDaysRepository _repository;
 
-  WorkingHoursBloc({required WorkingHoursRepository repository})
+  WorkingDaysBloc({required WorkingDaysRepository repository})
       : _repository = repository,
-        super(const WorkingHoursState.initial()) {
+        super(const WorkingDaysState.initial()) {
     on<_Load>(_onLoad);
     on<_SaveAll>(_onSaveAll);
   }
 
   Future<void> _onLoad(
     _Load event,
-    Emitter<WorkingHoursState> emit,
+    Emitter<WorkingDaysState> emit,
   ) async {
-    emit(const WorkingHoursState.loading());
+    emit(const WorkingDaysState.loading());
 
     final workingDaysResult = await _repository.getWorkingDays();
 
@@ -38,7 +38,7 @@ class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
     );
 
     if (error != null) {
-      emit(WorkingHoursState.error(error));
+      emit(WorkingDaysState.error(error));
       return;
     }
 
@@ -46,10 +46,10 @@ class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
 
     holidaysResult.fold(
       (e) => emit(
-        WorkingHoursState.error(NetworkExceptions.getErrorMessage(e)),
+        WorkingDaysState.error(NetworkExceptions.getErrorMessage(e)),
       ),
       (holidays) => emit(
-        WorkingHoursState.loaded(
+        WorkingDaysState.loaded(
           workingDays: workingDays,
           holidays: holidays,
         ),
@@ -59,9 +59,9 @@ class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
 
   Future<void> _onSaveAll(
     _SaveAll event,
-    Emitter<WorkingHoursState> emit,
+    Emitter<WorkingDaysState> emit,
   ) async {
-    emit(const WorkingHoursState.saving());
+    emit(const WorkingDaysState.saving());
 
     final daysResult = await _repository.upsertWorkingDays(event.workingDays);
 
@@ -71,7 +71,7 @@ class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
     );
 
     if (daysError != null) {
-      emit(WorkingHoursState.error(daysError));
+      emit(WorkingDaysState.error(daysError));
       return;
     }
 
@@ -79,9 +79,9 @@ class WorkingHoursBloc extends Bloc<WorkingHoursEvent, WorkingHoursState> {
 
     holidaysResult.fold(
       (e) => emit(
-        WorkingHoursState.error(NetworkExceptions.getErrorMessage(e)),
+        WorkingDaysState.error(NetworkExceptions.getErrorMessage(e)),
       ),
-      (_) => emit(const WorkingHoursState.saved()),
+      (_) => emit(const WorkingDaysState.saved()),
     );
   }
 }

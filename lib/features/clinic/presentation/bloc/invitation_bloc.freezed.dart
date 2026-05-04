@@ -20,7 +20,8 @@ mixin _$InvitationEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -34,7 +35,8 @@ mixin _$InvitationEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -47,7 +49,8 @@ mixin _$InvitationEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -63,6 +66,8 @@ mixin _$InvitationEvent {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -76,6 +81,7 @@ mixin _$InvitationEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -89,6 +95,7 @@ mixin _$InvitationEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -198,7 +205,8 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -216,7 +224,8 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -233,7 +242,8 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -256,6 +266,8 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -273,6 +285,7 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -290,6 +303,7 @@ class _$LoadSentInvitationsImpl implements _LoadSentInvitations {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -326,8 +340,6 @@ abstract class _$$LoadReceivedInvitationsImplCopyWith<$Res> {
     _$LoadReceivedInvitationsImpl value,
     $Res Function(_$LoadReceivedInvitationsImpl) then,
   ) = __$$LoadReceivedInvitationsImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String userEmail});
 }
 
 /// @nodoc
@@ -341,61 +353,34 @@ class __$$LoadReceivedInvitationsImplCopyWithImpl<$Res>
 
   /// Create a copy of InvitationEvent
   /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? userEmail = null}) {
-    return _then(
-      _$LoadReceivedInvitationsImpl(
-        null == userEmail
-            ? _value.userEmail
-            : userEmail // ignore: cast_nullable_to_non_nullable
-                  as String,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
 class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
-  const _$LoadReceivedInvitationsImpl(this.userEmail);
-
-  @override
-  final String userEmail;
+  const _$LoadReceivedInvitationsImpl();
 
   @override
   String toString() {
-    return 'InvitationEvent.loadReceivedInvitations(userEmail: $userEmail)';
+    return 'InvitationEvent.loadReceivedInvitations()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LoadReceivedInvitationsImpl &&
-            (identical(other.userEmail, userEmail) ||
-                other.userEmail == userEmail));
+            other is _$LoadReceivedInvitationsImpl);
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userEmail);
-
-  /// Create a copy of InvitationEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LoadReceivedInvitationsImplCopyWith<_$LoadReceivedInvitationsImpl>
-  get copyWith =>
-      __$$LoadReceivedInvitationsImplCopyWithImpl<
-        _$LoadReceivedInvitationsImpl
-      >(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -406,14 +391,15 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
     required TResult Function(String message) updateInviteMessage,
     required TResult Function() resetInviteForm,
   }) {
-    return loadReceivedInvitations(userEmail);
+    return loadReceivedInvitations();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -423,14 +409,15 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
     TResult? Function(String message)? updateInviteMessage,
     TResult? Function()? resetInviteForm,
   }) {
-    return loadReceivedInvitations?.call(userEmail);
+    return loadReceivedInvitations?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -442,7 +429,7 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
     required TResult orElse(),
   }) {
     if (loadReceivedInvitations != null) {
-      return loadReceivedInvitations(userEmail);
+      return loadReceivedInvitations();
     }
     return orElse();
   }
@@ -453,6 +440,8 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -470,6 +459,7 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -487,6 +477,7 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -505,15 +496,210 @@ class _$LoadReceivedInvitationsImpl implements _LoadReceivedInvitations {
 }
 
 abstract class _LoadReceivedInvitations implements InvitationEvent {
-  const factory _LoadReceivedInvitations(final String userEmail) =
-      _$LoadReceivedInvitationsImpl;
+  const factory _LoadReceivedInvitations() = _$LoadReceivedInvitationsImpl;
+}
 
-  String get userEmail;
+/// @nodoc
+abstract class _$$FilterReceivedByStatusImplCopyWith<$Res> {
+  factory _$$FilterReceivedByStatusImplCopyWith(
+    _$FilterReceivedByStatusImpl value,
+    $Res Function(_$FilterReceivedByStatusImpl) then,
+  ) = __$$FilterReceivedByStatusImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({InvitationStatus status});
+}
+
+/// @nodoc
+class __$$FilterReceivedByStatusImplCopyWithImpl<$Res>
+    extends _$InvitationEventCopyWithImpl<$Res, _$FilterReceivedByStatusImpl>
+    implements _$$FilterReceivedByStatusImplCopyWith<$Res> {
+  __$$FilterReceivedByStatusImplCopyWithImpl(
+    _$FilterReceivedByStatusImpl _value,
+    $Res Function(_$FilterReceivedByStatusImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of InvitationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? status = null}) {
+    return _then(
+      _$FilterReceivedByStatusImpl(
+        null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as InvitationStatus,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$FilterReceivedByStatusImpl implements _FilterReceivedByStatus {
+  const _$FilterReceivedByStatusImpl(this.status);
+
+  @override
+  final InvitationStatus status;
+
+  @override
+  String toString() {
+    return 'InvitationEvent.filterReceivedByStatus(status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FilterReceivedByStatusImpl &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, status);
 
   /// Create a copy of InvitationEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LoadReceivedInvitationsImplCopyWith<_$LoadReceivedInvitationsImpl>
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FilterReceivedByStatusImplCopyWith<_$FilterReceivedByStatusImpl>
+  get copyWith =>
+      __$$FilterReceivedByStatusImplCopyWithImpl<_$FilterReceivedByStatusImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String clinicId) loadSentInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
+    required TResult Function(String clinicId, String clinicName)
+    sendInvitation,
+    required TResult Function(String invitationId) cancelInvitation,
+    required TResult Function(String invitationId) acceptInvitation,
+    required TResult Function(String invitationId) rejectInvitation,
+    required TResult Function(String email) updateInviteeEmail,
+    required TResult Function(ClinicRole role) updateInviteeRole,
+    required TResult Function(String message) updateInviteMessage,
+    required TResult Function() resetInviteForm,
+  }) {
+    return filterReceivedByStatus(status);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String clinicId)? loadSentInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
+    TResult? Function(String clinicId, String clinicName)? sendInvitation,
+    TResult? Function(String invitationId)? cancelInvitation,
+    TResult? Function(String invitationId)? acceptInvitation,
+    TResult? Function(String invitationId)? rejectInvitation,
+    TResult? Function(String email)? updateInviteeEmail,
+    TResult? Function(ClinicRole role)? updateInviteeRole,
+    TResult? Function(String message)? updateInviteMessage,
+    TResult? Function()? resetInviteForm,
+  }) {
+    return filterReceivedByStatus?.call(status);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String clinicId)? loadSentInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
+    TResult Function(String clinicId, String clinicName)? sendInvitation,
+    TResult Function(String invitationId)? cancelInvitation,
+    TResult Function(String invitationId)? acceptInvitation,
+    TResult Function(String invitationId)? rejectInvitation,
+    TResult Function(String email)? updateInviteeEmail,
+    TResult Function(ClinicRole role)? updateInviteeRole,
+    TResult Function(String message)? updateInviteMessage,
+    TResult Function()? resetInviteForm,
+    required TResult orElse(),
+  }) {
+    if (filterReceivedByStatus != null) {
+      return filterReceivedByStatus(status);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadSentInvitations value) loadSentInvitations,
+    required TResult Function(_LoadReceivedInvitations value)
+    loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
+    required TResult Function(_SendInvitation value) sendInvitation,
+    required TResult Function(_CancelInvitation value) cancelInvitation,
+    required TResult Function(_AcceptInvitation value) acceptInvitation,
+    required TResult Function(_RejectInvitation value) rejectInvitation,
+    required TResult Function(_UpdateInviteeEmail value) updateInviteeEmail,
+    required TResult Function(_UpdateInviteeRole value) updateInviteeRole,
+    required TResult Function(_UpdateInviteMessage value) updateInviteMessage,
+    required TResult Function(_ResetInviteForm value) resetInviteForm,
+  }) {
+    return filterReceivedByStatus(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
+    TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
+    TResult? Function(_SendInvitation value)? sendInvitation,
+    TResult? Function(_CancelInvitation value)? cancelInvitation,
+    TResult? Function(_AcceptInvitation value)? acceptInvitation,
+    TResult? Function(_RejectInvitation value)? rejectInvitation,
+    TResult? Function(_UpdateInviteeEmail value)? updateInviteeEmail,
+    TResult? Function(_UpdateInviteeRole value)? updateInviteeRole,
+    TResult? Function(_UpdateInviteMessage value)? updateInviteMessage,
+    TResult? Function(_ResetInviteForm value)? resetInviteForm,
+  }) {
+    return filterReceivedByStatus?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadSentInvitations value)? loadSentInvitations,
+    TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
+    TResult Function(_SendInvitation value)? sendInvitation,
+    TResult Function(_CancelInvitation value)? cancelInvitation,
+    TResult Function(_AcceptInvitation value)? acceptInvitation,
+    TResult Function(_RejectInvitation value)? rejectInvitation,
+    TResult Function(_UpdateInviteeEmail value)? updateInviteeEmail,
+    TResult Function(_UpdateInviteeRole value)? updateInviteeRole,
+    TResult Function(_UpdateInviteMessage value)? updateInviteMessage,
+    TResult Function(_ResetInviteForm value)? resetInviteForm,
+    required TResult orElse(),
+  }) {
+    if (filterReceivedByStatus != null) {
+      return filterReceivedByStatus(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _FilterReceivedByStatus implements InvitationEvent {
+  const factory _FilterReceivedByStatus(final InvitationStatus status) =
+      _$FilterReceivedByStatusImpl;
+
+  InvitationStatus get status;
+
+  /// Create a copy of InvitationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$FilterReceivedByStatusImplCopyWith<_$FilterReceivedByStatusImpl>
   get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -603,7 +789,8 @@ class _$SendInvitationImpl implements _SendInvitation {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -621,7 +808,8 @@ class _$SendInvitationImpl implements _SendInvitation {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -638,7 +826,8 @@ class _$SendInvitationImpl implements _SendInvitation {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -661,6 +850,8 @@ class _$SendInvitationImpl implements _SendInvitation {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -678,6 +869,7 @@ class _$SendInvitationImpl implements _SendInvitation {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -695,6 +887,7 @@ class _$SendInvitationImpl implements _SendInvitation {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -803,7 +996,8 @@ class _$CancelInvitationImpl implements _CancelInvitation {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -821,7 +1015,8 @@ class _$CancelInvitationImpl implements _CancelInvitation {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -838,7 +1033,8 @@ class _$CancelInvitationImpl implements _CancelInvitation {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -861,6 +1057,8 @@ class _$CancelInvitationImpl implements _CancelInvitation {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -878,6 +1076,7 @@ class _$CancelInvitationImpl implements _CancelInvitation {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -895,6 +1094,7 @@ class _$CancelInvitationImpl implements _CancelInvitation {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1000,7 +1200,8 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1018,7 +1219,8 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1035,7 +1237,8 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -1058,6 +1261,8 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -1075,6 +1280,7 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -1092,6 +1298,7 @@ class _$AcceptInvitationImpl implements _AcceptInvitation {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1197,7 +1404,8 @@ class _$RejectInvitationImpl implements _RejectInvitation {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1215,7 +1423,8 @@ class _$RejectInvitationImpl implements _RejectInvitation {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1232,7 +1441,8 @@ class _$RejectInvitationImpl implements _RejectInvitation {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -1255,6 +1465,8 @@ class _$RejectInvitationImpl implements _RejectInvitation {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -1272,6 +1484,7 @@ class _$RejectInvitationImpl implements _RejectInvitation {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -1289,6 +1502,7 @@ class _$RejectInvitationImpl implements _RejectInvitation {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1393,7 +1607,8 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1411,7 +1626,8 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1428,7 +1644,8 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -1451,6 +1668,8 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -1468,6 +1687,7 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -1485,6 +1705,7 @@ class _$UpdateInviteeEmailImpl implements _UpdateInviteeEmail {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1589,7 +1810,8 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1607,7 +1829,8 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1624,7 +1847,8 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -1647,6 +1871,8 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -1664,6 +1890,7 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -1681,6 +1908,7 @@ class _$UpdateInviteeRoleImpl implements _UpdateInviteeRole {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1785,7 +2013,8 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1803,7 +2032,8 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1820,7 +2050,8 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -1843,6 +2074,8 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -1860,6 +2093,7 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -1877,6 +2111,7 @@ class _$UpdateInviteMessageImpl implements _UpdateInviteMessage {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -1951,7 +2186,8 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String clinicId) loadSentInvitations,
-    required TResult Function(String userEmail) loadReceivedInvitations,
+    required TResult Function() loadReceivedInvitations,
+    required TResult Function(InvitationStatus status) filterReceivedByStatus,
     required TResult Function(String clinicId, String clinicName)
     sendInvitation,
     required TResult Function(String invitationId) cancelInvitation,
@@ -1969,7 +2205,8 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String clinicId)? loadSentInvitations,
-    TResult? Function(String userEmail)? loadReceivedInvitations,
+    TResult? Function()? loadReceivedInvitations,
+    TResult? Function(InvitationStatus status)? filterReceivedByStatus,
     TResult? Function(String clinicId, String clinicName)? sendInvitation,
     TResult? Function(String invitationId)? cancelInvitation,
     TResult? Function(String invitationId)? acceptInvitation,
@@ -1986,7 +2223,8 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String clinicId)? loadSentInvitations,
-    TResult Function(String userEmail)? loadReceivedInvitations,
+    TResult Function()? loadReceivedInvitations,
+    TResult Function(InvitationStatus status)? filterReceivedByStatus,
     TResult Function(String clinicId, String clinicName)? sendInvitation,
     TResult Function(String invitationId)? cancelInvitation,
     TResult Function(String invitationId)? acceptInvitation,
@@ -2009,6 +2247,8 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
     required TResult Function(_LoadSentInvitations value) loadSentInvitations,
     required TResult Function(_LoadReceivedInvitations value)
     loadReceivedInvitations,
+    required TResult Function(_FilterReceivedByStatus value)
+    filterReceivedByStatus,
     required TResult Function(_SendInvitation value) sendInvitation,
     required TResult Function(_CancelInvitation value) cancelInvitation,
     required TResult Function(_AcceptInvitation value) acceptInvitation,
@@ -2026,6 +2266,7 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult? Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult? Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult? Function(_SendInvitation value)? sendInvitation,
     TResult? Function(_CancelInvitation value)? cancelInvitation,
     TResult? Function(_AcceptInvitation value)? acceptInvitation,
@@ -2043,6 +2284,7 @@ class _$ResetInviteFormImpl implements _ResetInviteForm {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadSentInvitations value)? loadSentInvitations,
     TResult Function(_LoadReceivedInvitations value)? loadReceivedInvitations,
+    TResult Function(_FilterReceivedByStatus value)? filterReceivedByStatus,
     TResult Function(_SendInvitation value)? sendInvitation,
     TResult Function(_CancelInvitation value)? cancelInvitation,
     TResult Function(_AcceptInvitation value)? acceptInvitation,
@@ -2073,6 +2315,7 @@ mixin _$InvitationState {
       throw _privateConstructorUsedError;
   List<InvitationEntity> get receivedInvitations =>
       throw _privateConstructorUsedError;
+  InvitationStatus get receivedFilter => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError; // Invite form fields
   String get inviteeEmail => throw _privateConstructorUsedError;
   ClinicRole get inviteeRole => throw _privateConstructorUsedError;
@@ -2103,6 +2346,7 @@ abstract class $InvitationStateCopyWith<$Res> {
     bool isUpdating,
     List<InvitationEntity> sentInvitations,
     List<InvitationEntity> receivedInvitations,
+    InvitationStatus receivedFilter,
     String? error,
     String inviteeEmail,
     ClinicRole inviteeRole,
@@ -2134,6 +2378,7 @@ class _$InvitationStateCopyWithImpl<$Res, $Val extends InvitationState>
     Object? isUpdating = null,
     Object? sentInvitations = null,
     Object? receivedInvitations = null,
+    Object? receivedFilter = null,
     Object? error = freezed,
     Object? inviteeEmail = null,
     Object? inviteeRole = null,
@@ -2165,6 +2410,10 @@ class _$InvitationStateCopyWithImpl<$Res, $Val extends InvitationState>
                 ? _value.receivedInvitations
                 : receivedInvitations // ignore: cast_nullable_to_non_nullable
                       as List<InvitationEntity>,
+            receivedFilter: null == receivedFilter
+                ? _value.receivedFilter
+                : receivedFilter // ignore: cast_nullable_to_non_nullable
+                      as InvitationStatus,
             error: freezed == error
                 ? _value.error
                 : error // ignore: cast_nullable_to_non_nullable
@@ -2218,6 +2467,7 @@ abstract class _$$InvitationStateImplCopyWith<$Res>
     bool isUpdating,
     List<InvitationEntity> sentInvitations,
     List<InvitationEntity> receivedInvitations,
+    InvitationStatus receivedFilter,
     String? error,
     String inviteeEmail,
     ClinicRole inviteeRole,
@@ -2248,6 +2498,7 @@ class __$$InvitationStateImplCopyWithImpl<$Res>
     Object? isUpdating = null,
     Object? sentInvitations = null,
     Object? receivedInvitations = null,
+    Object? receivedFilter = null,
     Object? error = freezed,
     Object? inviteeEmail = null,
     Object? inviteeRole = null,
@@ -2279,6 +2530,10 @@ class __$$InvitationStateImplCopyWithImpl<$Res>
             ? _value._receivedInvitations
             : receivedInvitations // ignore: cast_nullable_to_non_nullable
                   as List<InvitationEntity>,
+        receivedFilter: null == receivedFilter
+            ? _value.receivedFilter
+            : receivedFilter // ignore: cast_nullable_to_non_nullable
+                  as InvitationStatus,
         error: freezed == error
             ? _value.error
             : error // ignore: cast_nullable_to_non_nullable
@@ -2325,6 +2580,7 @@ class _$InvitationStateImpl implements _InvitationState {
     this.isUpdating = false,
     final List<InvitationEntity> sentInvitations = const [],
     final List<InvitationEntity> receivedInvitations = const [],
+    this.receivedFilter = InvitationStatus.pending,
     this.error,
     this.inviteeEmail = '',
     this.inviteeRole = ClinicRole.dentist,
@@ -2365,6 +2621,9 @@ class _$InvitationStateImpl implements _InvitationState {
   }
 
   @override
+  @JsonKey()
+  final InvitationStatus receivedFilter;
+  @override
   final String? error;
   // Invite form fields
   @override
@@ -2392,7 +2651,7 @@ class _$InvitationStateImpl implements _InvitationState {
 
   @override
   String toString() {
-    return 'InvitationState(isLoading: $isLoading, isSending: $isSending, isUpdating: $isUpdating, sentInvitations: $sentInvitations, receivedInvitations: $receivedInvitations, error: $error, inviteeEmail: $inviteeEmail, inviteeRole: $inviteeRole, inviteMessage: $inviteMessage, sendSuccess: $sendSuccess, cancelSuccess: $cancelSuccess, acceptSuccess: $acceptSuccess, rejectSuccess: $rejectSuccess)';
+    return 'InvitationState(isLoading: $isLoading, isSending: $isSending, isUpdating: $isUpdating, sentInvitations: $sentInvitations, receivedInvitations: $receivedInvitations, receivedFilter: $receivedFilter, error: $error, inviteeEmail: $inviteeEmail, inviteeRole: $inviteeRole, inviteMessage: $inviteMessage, sendSuccess: $sendSuccess, cancelSuccess: $cancelSuccess, acceptSuccess: $acceptSuccess, rejectSuccess: $rejectSuccess)';
   }
 
   @override
@@ -2414,6 +2673,8 @@ class _$InvitationStateImpl implements _InvitationState {
               other._receivedInvitations,
               _receivedInvitations,
             ) &&
+            (identical(other.receivedFilter, receivedFilter) ||
+                other.receivedFilter == receivedFilter) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.inviteeEmail, inviteeEmail) ||
                 other.inviteeEmail == inviteeEmail) &&
@@ -2439,6 +2700,7 @@ class _$InvitationStateImpl implements _InvitationState {
     isUpdating,
     const DeepCollectionEquality().hash(_sentInvitations),
     const DeepCollectionEquality().hash(_receivedInvitations),
+    receivedFilter,
     error,
     inviteeEmail,
     inviteeRole,
@@ -2468,6 +2730,7 @@ abstract class _InvitationState implements InvitationState {
     final bool isUpdating,
     final List<InvitationEntity> sentInvitations,
     final List<InvitationEntity> receivedInvitations,
+    final InvitationStatus receivedFilter,
     final String? error,
     final String inviteeEmail,
     final ClinicRole inviteeRole,
@@ -2488,6 +2751,8 @@ abstract class _InvitationState implements InvitationState {
   List<InvitationEntity> get sentInvitations;
   @override
   List<InvitationEntity> get receivedInvitations;
+  @override
+  InvitationStatus get receivedFilter;
   @override
   String? get error; // Invite form fields
   @override

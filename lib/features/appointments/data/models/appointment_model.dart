@@ -28,19 +28,55 @@ class AppointmentModel {
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
+    final patient = json['patient'] as Map<String, dynamic>?;
+    final doctor = json['doctor'] as Map<String, dynamic>?;
+    final coreTreatments = json['core_treatments'] as List?;
+    final firstTreatment =
+        coreTreatments != null && coreTreatments.isNotEmpty
+            ? coreTreatments.first as Map<String, dynamic>
+            : null;
+
     return AppointmentModel(
-      id: json['id'] as String,
-      patientId: json['patient_id'] as String,
-      patientName: json['patient_name'] as String,
-      doctorId: json['doctor_id'] as String,
-      doctorName: json['doctor_name'] as String,
-      dateTime: DateTime.parse(json['date_time'] as String),
-      durationMinutes: json['duration_minutes'] as int,
-      treatmentType: json['treatment_type'] as String,
-      status: json['status'] as String,
+      id: (json['id'] ?? '').toString(),
+      patientId: (patient?['id'] ?? json['patient_id'] ?? '').toString(),
+      patientName: _composeName(patient) ??
+          (json['patient_name'] ?? '').toString(),
+      doctorId: (doctor?['id'] ?? json['doctor_id'] ?? '').toString(),
+      doctorName:
+          _composeName(doctor) ?? (json['doctor_name'] ?? '').toString(),
+      dateTime: _parseDateTime(json),
+      durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 0,
+      treatmentType:
+          (firstTreatment?['name'] ?? json['treatment_type'] ?? '').toString(),
+      status: (json['status'] ?? '').toString(),
       notes: json['notes'] as String?,
       clinicId: json['clinic_id'] as String?,
     );
+  }
+
+  static String? _composeName(Map<String, dynamic>? json) {
+    if (json == null) return null;
+    final full = json['name'] as String?;
+    if (full != null && full.isNotEmpty) return full;
+    final first = (json['first_name'] ?? '').toString();
+    final last = (json['last_name'] ?? '').toString();
+    final composed = '$first $last'.trim();
+    return composed.isEmpty ? null : composed;
+  }
+
+  /// Combines `date` + `start_time` if present (POST /clinics/appointments
+  /// returns them split), otherwise falls back to a single `date_time` field.
+  static DateTime _parseDateTime(Map<String, dynamic> json) {
+    final combined = json['date_time'] as String?;
+    if (combined != null) {
+      return DateTime.parse(combined);
+    }
+    final date = json['date'] as String?;
+    final startTime = (json['start_time'] ?? '00:00:00').toString();
+    if (date != null) {
+      return DateTime.parse('${date}T$startTime');
+    }
+    return DateTime.now();
   }
 
   factory AppointmentModel.fromEntity(AppointmentEntity entity) {
@@ -76,15 +112,18 @@ class AppointmentModel {
   }
 
   static AppointmentStatus _parseStatus(String status) {
-    switch (status) {
-      case 'confirmed':
+    switch (status.toUpperCase()) {
+      case 'CONFIRMED':
         return AppointmentStatus.confirmed;
-      case 'completed':
+      case 'COMPLETED':
         return AppointmentStatus.completed;
-      case 'cancelled':
+      case 'CANCELLED':
         return AppointmentStatus.cancelled;
-      case 'noShow':
+      case 'NO_SHOW':
+      case 'NOSHOW':
         return AppointmentStatus.noShow;
+      case 'SCHEDULED':
+      case 'PENDING':
       default:
         return AppointmentStatus.pending;
     }

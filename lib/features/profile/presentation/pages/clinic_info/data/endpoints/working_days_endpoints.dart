@@ -1,4 +1,4 @@
-class WorkingHoursEndpoints {
+class WorkingDaysEndpoints {
   static const String workingDays = '/clinics/working-days';
   static const String upsertWorkingDays = '/clinics/working-days/upsert';
   static const String holidays = '/clinics/holidays';

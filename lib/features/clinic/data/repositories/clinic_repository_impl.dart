@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/clinic/data/data_sources/clinic_remote_data_source.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/repositories/clinic_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -17,6 +18,19 @@ class ClinicRepositoryImpl implements ClinicRepository {
       getMyClinics() async {
     try {
       final models = await _remoteDataSource.getMyClinics();
+      return Right(models.map((m) => m.toEntity()).toList());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<InvitationEntity>>>
+      getReceivedInvitations({InvitationStatus? status}) async {
+    try {
+      final models = await _remoteDataSource.getReceivedInvitations(
+        status: status,
+      );
       return Right(models.map((m) => m.toEntity()).toList());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));

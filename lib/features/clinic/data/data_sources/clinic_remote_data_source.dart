@@ -2,10 +2,15 @@ import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/features/clinic/data/endpoints/clinic_endpoints.dart';
 import 'package:dental_clinic_app/features/clinic/data/models/clinic_membership_model.dart';
 import 'package:dental_clinic_app/features/clinic/data/models/clinic_user_model.dart';
+import 'package:dental_clinic_app/features/clinic/data/models/invitation_model.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class ClinicRemoteDataSource {
   Future<List<ClinicMembershipModel>> getMyClinics();
+  Future<List<InvitationModel>> getReceivedInvitations({
+    InvitationStatus? status,
+  });
   Future<List<ClinicUserModel>> getClinicUsers(String clinicId);
   Future<ClinicUserModel> addClinicUser({
     required String clinicId,
@@ -44,6 +49,22 @@ class ClinicRemoteDataSourceImpl implements ClinicRemoteDataSource {
     final dataList = response['data'] as List;
     return dataList
         .map((e) => ClinicMembershipModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<InvitationModel>> getReceivedInvitations({
+    InvitationStatus? status,
+  }) async {
+    final response = await _apiConsumer.get(
+      ClinicEndpoints.receivedInvitations,
+      queryParameters: status != null
+          ? {'filters[status][eq]': InvitationModel.apiValue(status)}
+          : null,
+    );
+    final dataList = response['data'] as List;
+    return dataList
+        .map((e) => InvitationModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 

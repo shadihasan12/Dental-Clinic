@@ -1,14 +1,14 @@
-part of 'working_hours_bloc.dart';
+part of 'working_days_bloc.dart';
 
 @freezed
-class WorkingHoursState with _$WorkingHoursState {
-  const factory WorkingHoursState.initial() = _WHInitial;
-  const factory WorkingHoursState.loading() = _WHLoading;
-  const factory WorkingHoursState.loaded({
+class WorkingDaysState with _$WorkingDaysState {
+  const factory WorkingDaysState.initial() = _WDInitial;
+  const factory WorkingDaysState.loading() = _WDLoading;
+  const factory WorkingDaysState.loaded({
     required List<WorkingDayApiModel> workingDays,
     required List<HolidayApiModel> holidays,
-  }) = _WHLoaded;
-  const factory WorkingHoursState.saving() = _WHSaving;
-  const factory WorkingHoursState.saved() = _WHSaved;
-  const factory WorkingHoursState.error(String message) = _WHError;
+  }) = _WDLoaded;
+  const factory WorkingDaysState.saving() = _WDSaving;
+  const factory WorkingDaysState.saved() = _WDSaved;
+  const factory WorkingDaysState.error(String message) = _WDError;
 }

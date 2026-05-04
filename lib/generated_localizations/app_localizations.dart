@@ -260,6 +260,12 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
+  /// No description provided for @unlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get unlimited;
+
   /// No description provided for @loading.
   ///
   /// In en, this message translates to:
@@ -421,6 +427,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get pending;
+
+  /// No description provided for @confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get confirmed;
+
+  /// No description provided for @scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get scheduled;
+
+  /// No description provided for @noShow.
+  ///
+  /// In en, this message translates to:
+  /// **'No show'**
+  String get noShow;
+
+  /// No description provided for @appointmentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment details'**
+  String get appointmentDetails;
+
+  /// No description provided for @doctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get doctor;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
+  /// No description provided for @week.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get week;
+
+  /// No description provided for @viewPatientDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View patient details'**
+  String get viewPatientDetails;
 
   /// No description provided for @completed.
   ///
@@ -638,11 +692,11 @@ abstract class AppLocalizations {
   /// **'Clinic Name'**
   String get clinicName;
 
-  /// No description provided for @workingHours.
+  /// No description provided for @workingDays.
   ///
   /// In en, this message translates to:
-  /// **'Working Hours'**
-  String get workingHours;
+  /// **'Working Days'**
+  String get workingDays;
 
   /// No description provided for @closed.
   ///
@@ -1513,6 +1567,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The invitation has been declined'**
   String get invitationDeclinedMessage;
+
+  /// No description provided for @invitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitations'**
+  String get invitations;
+
+  /// No description provided for @accepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get accepted;
+
+  /// No description provided for @declined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get declined;
+
+  /// No description provided for @noInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No invitations'**
+  String get noInvitations;
+
+  /// No description provided for @noPendingInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations'**
+  String get noPendingInvitations;
+
+  /// No description provided for @noAcceptedInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No accepted invitations'**
+  String get noAcceptedInvitations;
+
+  /// No description provided for @noDeclinedInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No declined invitations'**
+  String get noDeclinedInvitations;
 
   /// No description provided for @appLanguageWillChangeImmediately.
   ///
@@ -2996,11 +3092,11 @@ abstract class AppLocalizations {
   /// **'Please select your specialization'**
   String get pleaseSelectSpecialty;
 
-  /// No description provided for @workingHoursAndHolidays.
+  /// No description provided for @workingDaysAndHolidays.
   ///
   /// In en, this message translates to:
-  /// **'Working Hours & Holidays'**
-  String get workingHoursAndHolidays;
+  /// **'Working Days & Holidays'**
+  String get workingDaysAndHolidays;
 
   /// No description provided for @photoPermissionRequired.
   ///

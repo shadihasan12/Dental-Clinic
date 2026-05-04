@@ -105,9 +105,9 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     MenuItem(
                       icon: Icons.schedule_outlined,
-                      title: l10n.workingHoursAndHolidays,
+                      title: l10n.workingDaysAndHolidays,
                       onTap: () {
-                        context.pushNamed(AppRoutesNames.workingHours);
+                        context.pushNamed(AppRoutesNames.workingDays);
                       },
                     ),
                     MenuItem(

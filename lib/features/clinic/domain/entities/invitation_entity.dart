@@ -3,11 +3,11 @@ import 'clinic_membership_entity.dart';
 
 part 'invitation_entity.freezed.dart';
 
-/// Status of an invitation
+/// Status of an invitation. Mirrors the backend values.
 enum InvitationStatus {
   pending,
   accepted,
-  rejected,
+  declined,
   expired,
   cancelled,
 }

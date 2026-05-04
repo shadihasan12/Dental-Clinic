@@ -2,13 +2,17 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_appointment_use_case.dart';
+import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_available_slots_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/patient_picker.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
+import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_core_treatments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_patients_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -29,38 +33,42 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
 
-  // Patient data from API
+  // Patients
   List<PatientEntity> _patients = [];
   bool _isPatientsLoading = true;
   PatientEntity? _selectedPatientEntity;
 
-  final List<String> _selectedTreatments = [];
+  // Treatments
+  List<CoreTreatment> _treatments = [];
+  final List<String> _selectedTreatmentIds = [];
+  bool _isTreatmentsLoading = true;
+
+  // Date / duration / slots
   DateTime _selectedDate = DateTime.now();
   int _duration = 30;
   String? _selectedSlot;
-  bool _sendReminder = true;
+  List<String> _availableSlots = [];
+  bool _isSlotsLoading = false;
 
-  final List<String> _treatmentKeys = [
-    'Checkup', 'Cleaning', 'Filling', 'Root Canal',
-    'Extraction', 'Crown', 'Whitening', 'Consultation', 'X-Ray',
-  ];
+  bool _sendReminder = true;
 
   final List<Map<String, dynamic>> _durations = [
     {'label': '15m', 'value': 15},
     {'label': '30m', 'value': 30},
     {'label': '45m', 'value': 45},
     {'label': '1h', 'value': 60},
+    {'label': '1h 15m', 'value': 75},
     {'label': '1h 30m', 'value': 90},
+    {'label': '1h 45m', 'value': 105},
     {'label': '2h', 'value': 120},
   ];
-
-  List<String> _availableSlots = [];
 
   @override
   void initState() {
     super.initState();
-    _loadAvailableSlots();
     _loadPatients();
+    _loadTreatments();
+    _loadAvailableSlots();
   }
 
   @override
@@ -71,34 +79,71 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   Future<void> _loadPatients() async {
     final result = await getIt<GetAllPatientsUseCase>()(1);
+    if (!mounted) return;
     result.fold(
       (error) {
-        if (mounted) {
-          setState(() => _isPatientsLoading = false);
-          AppSnackbar.showError(context,
-              title: AppLocalizations.of(context)!.error,
-              message: NetworkExceptions.getErrorMessage(error));
-        }
+        setState(() => _isPatientsLoading = false);
+        AppSnackbar.showError(context,
+            title: AppLocalizations.of(context)!.error,
+            message: NetworkExceptions.getErrorMessage(error));
       },
       (response) {
-        if (mounted) {
-          setState(() {
-            _patients = response.data;
-            _isPatientsLoading = false;
-          });
-        }
+        setState(() {
+          _patients = response.data;
+          _isPatientsLoading = false;
+        });
       },
     );
   }
 
-  void _loadAvailableSlots() {
+  Future<void> _loadTreatments() async {
+    final result = await getIt<GetAllCoreTreatmentsUseCase>()(NoParams());
+    if (!mounted) return;
+    result.fold(
+      (error) {
+        setState(() => _isTreatmentsLoading = false);
+        AppSnackbar.showError(context,
+            title: AppLocalizations.of(context)!.error,
+            message: NetworkExceptions.getErrorMessage(error));
+      },
+      (treatments) {
+        setState(() {
+          _treatments = treatments;
+          _isTreatmentsLoading = false;
+        });
+      },
+    );
+  }
+
+  Future<void> _loadAvailableSlots() async {
     setState(() {
-      _availableSlots = [
-        '9:00 AM', '10:00 AM', '11:30 AM',
-        '2:00 PM', '3:00 PM', '4:30 PM',
-      ];
+      _isSlotsLoading = true;
       _selectedSlot = null;
+      _availableSlots = [];
     });
+
+    final result = await getIt<GetAvailableSlotsUseCase>()(
+      GetAvailableSlotsParams(
+        date: _selectedDate,
+        durationMinutes: _duration,
+      ),
+    );
+
+    if (!mounted) return;
+    result.fold(
+      (error) {
+        setState(() => _isSlotsLoading = false);
+        AppSnackbar.showError(context,
+            title: AppLocalizations.of(context)!.error,
+            message: NetworkExceptions.getErrorMessage(error));
+      },
+      (slots) {
+        setState(() {
+          _availableSlots = slots;
+          _isSlotsLoading = false;
+        });
+      },
+    );
   }
 
   Future<void> _selectDate() async {
@@ -174,7 +219,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           title: l10n.missingData, message: l10n.pleaseSelectAPatient);
       return;
     }
-    if (_selectedTreatments.isEmpty) {
+    if (_selectedTreatmentIds.isEmpty) {
       AppSnackbar.showWarning(context,
           title: l10n.missingData,
           message: l10n.pleaseSelectAtLeastOneTreatment);
@@ -187,32 +232,21 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return;
     }
 
-    // Parse selected time slot into DateTime
-    final slotTime = _parseSlotTime(_selectedSlot!);
-    final appointmentDateTime = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      slotTime.hour,
-      slotTime.minute,
-    );
+    final start = _slotToDateTime(_selectedSlot!);
+    final end = start.add(Duration(minutes: _duration));
 
-    final appointment = AppointmentEntity(
-      id: '',
+    final params = CreateAppointmentParams(
       patientId: _selectedPatientEntity!.id,
-      patientName: _selectedPatientEntity!.name,
-      doctorId: 'doctor_1',
-      doctorName: 'Dr. Ahmad',
-      dateTime: appointmentDateTime,
-      durationMinutes: _duration,
-      treatmentType: _selectedTreatments.join(', '),
-      status: AppointmentStatus.pending,
+      startTime: start,
+      endTime: end,
+      coreTreatmentIds: List<String>.from(_selectedTreatmentIds),
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
+      notifyPatient: _sendReminder,
     );
 
     AppLoadingDialog.show(context: context, message: l10n.savingAppointment);
 
-    final result = await getIt<CreateAppointmentUseCase>()(appointment);
+    final result = await getIt<CreateAppointmentUseCase>()(params);
 
     if (!mounted) return;
     AppLoadingDialog.dismiss(context);
@@ -232,15 +266,20 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  DateTime _parseSlotTime(String slot) {
-    final parts = slot.split(' ');
-    final timeParts = parts[0].split(':');
-    int hour = int.parse(timeParts[0]);
-    final minute = int.parse(timeParts[1]);
-    final isPm = parts[1].toUpperCase() == 'PM';
-    if (isPm && hour != 12) hour += 12;
-    if (!isPm && hour == 12) hour = 0;
-    return DateTime(0, 1, 1, hour, minute);
+  /// Combines `_selectedDate` with a slot string like `13:30` or `13:30:00`.
+  DateTime _slotToDateTime(String slot) {
+    final parts = slot.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = parts.length > 1 ? int.parse(parts[1]) : 0;
+    final second = parts.length > 2 ? int.parse(parts[2]) : 0;
+    return DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      hour,
+      minute,
+      second,
+    );
   }
 
   @override
@@ -266,7 +305,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // — Patient
                       _sectionLabel(l10n.patient),
                       SizedBox(height: 10.h),
                       if (_isPatientsLoading)
@@ -294,33 +332,28 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
                       _divider(),
 
-                      // — Treatment types
                       _sectionLabel(l10n.treatment),
                       SizedBox(height: 10.h),
                       _buildTreatmentChips(l10n),
 
                       _divider(),
 
-                      // — Duration
                       _sectionLabel(l10n.duration),
                       SizedBox(height: 10.h),
                       _buildDurationChips(),
 
                       _divider(),
 
-                      // — Date
                       _buildDateRow(l10n),
 
                       _divider(),
 
-                      // — Available slots
                       _sectionLabel(l10n.availableSlots),
                       SizedBox(height: 10.h),
                       _buildSlots(l10n),
 
                       _divider(),
 
-                      // — Notes
                       _sectionLabel(l10n.notes),
                       SizedBox(height: 10.h),
                       AppFormField(
@@ -332,7 +365,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
                       _divider(),
 
-                      // — Reminder
                       _buildReminderRow(l10n),
 
                       SizedBox(height: 80.h),
@@ -373,21 +405,35 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  // ─── Chips ──────────────────────────────────────────────────────────────
-
   Widget _buildTreatmentChips(AppLocalizations l10n) {
+    if (_isTreatmentsLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_treatments.isEmpty) {
+      return Text(
+        l10n.noData,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontFamily: FontHelper.fontFamily(context),
+          color: ColorManager.of(context).textSubtle,
+        ),
+      );
+    }
     return Wrap(
       spacing: 8.w,
       runSpacing: 8.h,
-      children: _treatmentKeys.map((key) {
-        final isSelected = _selectedTreatments.contains(key);
+      children: _treatments.map((t) {
+        final isSelected = _selectedTreatmentIds.contains(t.id);
         return SelectableChip(
-          label: _localizedTreatment(l10n, key),
+          label: t.name,
           isSelected: isSelected,
           onTap: () => setState(() {
             isSelected
-                ? _selectedTreatments.remove(key)
-                : _selectedTreatments.add(key);
+                ? _selectedTreatmentIds.remove(t.id)
+                : _selectedTreatmentIds.add(t.id);
           }),
         );
       }).toList(),
@@ -412,6 +458,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Widget _buildSlots(AppLocalizations l10n) {
+    if (_isSlotsLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
     if (_availableSlots.isEmpty) {
       return Text(
         l10n.noAvailableSlotsForThisDate,
@@ -436,8 +488,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       }).toList(),
     );
   }
-
-  // ─── Date row ───────────────────────────────────────────────────────────
 
   Widget _buildDateRow(AppLocalizations l10n) {
     final formatted = DateFormat('MMM d, yyyy').format(_selectedDate);
@@ -476,8 +526,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       ),
     );
   }
-
-  // ─── Reminder toggle ───────────────────────────────────────────────────
 
   Widget _buildReminderRow(AppLocalizations l10n) {
     return GestureDetector(
@@ -521,8 +569,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  // ─── Helpers ────────────────────────────────────────────────────────────
-
   Widget _sectionLabel(String title) {
     return Text(
       title,
@@ -540,20 +586,5 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       padding: EdgeInsets.symmetric(vertical: 18.h),
       child: Divider(color: ColorManager.of(context).divider),
     );
-  }
-
-  String _localizedTreatment(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'Checkup':       return l10n.checkup;
-      case 'Cleaning':      return l10n.cleaning;
-      case 'Filling':       return l10n.filling;
-      case 'Root Canal':    return l10n.rootCanal;
-      case 'Extraction':    return l10n.extraction;
-      case 'Crown':         return l10n.crown;
-      case 'Whitening':     return l10n.whitening;
-      case 'Consultation':  return l10n.consultation;
-      case 'X-Ray':         return l10n.xray;
-      default:              return key;
-    }
   }
 }

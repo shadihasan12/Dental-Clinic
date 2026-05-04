@@ -9,6 +9,8 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -33,64 +35,155 @@ class _AppointmentsContent extends StatelessWidget {
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocBuilder<AppointmentBloc, AppointmentState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state.error != null) {
-            return Center(
-              child: Text(
-                state.error!,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.error,
-                ),
-              ),
-            );
-          }
-
           return Column(
             children: [
-              // — Header (matches patients list style)
               _buildHeader(context, state),
               Divider(height: 1, color: ColorManager.of(context).divider),
-
-              // — Date selector
               Padding(
                 padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 10.h),
                 child: _buildDateSelector(context, state),
               ),
-
-              // — View toggle
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: _buildViewToggle(context, state),
               ),
               SizedBox(height: 12.h),
-
-              // — Appointments list
-              Expanded(
-                child: state.filteredAppointments.isEmpty
-                    ? _buildEmptyState(context)
-                    : ListView.separated(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        itemCount: state.filteredAppointments.length,
-                        separatorBuilder: (_, __) =>
-                            Divider(height: 1, color: ColorManager.of(context).divider),
-                        itemBuilder: (context, index) {
-                          return _buildAppointmentRow(
-                            context,
-                            state.filteredAppointments[index],
-                          );
-                        },
-                      ),
-              ),
+              Expanded(child: _buildBody(context, state)),
             ],
           );
         },
       ),
     );
+  }
+
+  Widget _buildBody(BuildContext context, AppointmentState state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.error != null) {
+      return Center(
+        child: Text(
+          state.error!,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: FontHelper.fontFamily(context),
+            color: ColorManager.error,
+          ),
+        ),
+      );
+    }
+    if (state.filteredAppointments.isEmpty) {
+      return _buildEmptyState(context);
+    }
+    if (state.viewMode == AppointmentViewMode.week) {
+      return _buildWeekList(context, state.filteredAppointments);
+    }
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      itemCount: state.filteredAppointments.length,
+      separatorBuilder: (_, _) =>
+          Divider(height: 1, color: ColorManager.of(context).divider),
+      itemBuilder: (context, index) {
+        return _buildAppointmentRow(
+          context,
+          state.filteredAppointments[index],
+        );
+      },
+    );
+  }
+
+  Widget _buildWeekList(
+    BuildContext context,
+    List<AppointmentEntity> appointments,
+  ) {
+    final groups = _groupByDay(appointments);
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      itemCount: groups.length,
+      itemBuilder: (context, index) {
+        final entry = groups[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDayHeader(context, entry.key),
+            for (var i = 0; i < entry.value.length; i++) ...[
+              _buildAppointmentRow(context, entry.value[i]),
+              if (i < entry.value.length - 1)
+                Divider(height: 1, color: ColorManager.of(context).divider),
+            ],
+            SizedBox(height: 8.h),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDayHeader(BuildContext context, DateTime day) {
+    final today = DateTime.now();
+    final isToday = day.year == today.year &&
+        day.month == today.month &&
+        day.day == today.day;
+    final label =
+        '${_getDayName(context, day)}, ${_getMonthName(context, day)} ${day.day}';
+
+    return Padding(
+      padding: EdgeInsets.only(top: 12.h, bottom: 6.h),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w600,
+              color: isToday
+                  ? ColorManager.primary
+                  : ColorManager.of(context).textSecondary,
+            ),
+          ),
+          if (isToday) ...[
+            SizedBox(width: 8.w),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+              decoration: BoxDecoration(
+                color: ColorManager.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.today,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.primary,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  List<MapEntry<DateTime, List<AppointmentEntity>>> _groupByDay(
+    List<AppointmentEntity> items,
+  ) {
+    final map = <DateTime, List<AppointmentEntity>>{};
+    for (final a in items) {
+      final day = DateTime(a.dateTime.year, a.dateTime.month, a.dateTime.day);
+      (map[day] ??= []).add(a);
+    }
+    final sorted = map.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    for (final entry in sorted) {
+      entry.value.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    }
+    return sorted;
+  }
+
+  String _getMonthName(BuildContext context, DateTime date) {
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat('MMM', locale).format(date);
   }
 
   // ─── Header ─────────────────────────────────────────────────────────────
@@ -156,7 +249,14 @@ class _AppointmentsContent extends StatelessWidget {
             SizedBox(width: 10.w),
             // Add button
             GestureDetector(
-              onTap: () => context.pushNamed(AppRoutesNames.newAppointment),
+              onTap: () async {
+                await context.pushNamed(AppRoutesNames.newAppointment);
+                if (context.mounted) {
+                  context.read<AppointmentBloc>().add(
+                        const AppointmentEvent.loadAppointments(),
+                      );
+                }
+              },
               child: Container(
                 width: 40.w,
                 height: 40.w,
@@ -179,9 +279,15 @@ class _AppointmentsContent extends StatelessWidget {
     final now = DateTime.now();
     final days = List.generate(7, (i) => now.add(Duration(days: i - 2)));
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: days.map((date) {
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: constraints.maxWidth),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: days.map((date) {
         final isSelected =
             date.day == state.selectedDate.day &&
             date.month == state.selectedDate.month &&
@@ -209,7 +315,7 @@ class _AppointmentsContent extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  _getDayName(date.weekday),
+                  _getDayName(context, date),
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 11.sp,
@@ -231,7 +337,10 @@ class _AppointmentsContent extends StatelessWidget {
             ),
           ),
         );
-      }).toList(),
+            }).toList(),
+          ),
+        ),
+      ),
     );
   }
 
@@ -239,8 +348,8 @@ class _AppointmentsContent extends StatelessWidget {
 
   Widget _buildViewToggle(BuildContext context, AppointmentState state) {
     final views = [
-      (AppointmentViewMode.day, 'Day'),
-      (AppointmentViewMode.week, 'Week'),
+      (AppointmentViewMode.day, AppLocalizations.of(context)!.day),
+      (AppointmentViewMode.week, AppLocalizations.of(context)!.week),
     ];
 
     return Container(
@@ -289,9 +398,11 @@ class _AppointmentsContent extends StatelessWidget {
     BuildContext context,
     AppointmentEntity appointment,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
+    return InkWell(
+      onTap: () => AppointmentDetailsSheet.show(context, appointment),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        child: Row(
         children: [
           // Time
           SizedBox(
@@ -359,6 +470,7 @@ class _AppointmentsContent extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -391,9 +503,9 @@ class _AppointmentsContent extends StatelessWidget {
 
   // ─── Helpers ────────────────────────────────────────────────────────────
 
-  String _getDayName(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[weekday - 1];
+  String _getDayName(BuildContext context, DateTime date) {
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat('EEE', locale).format(date);
   }
 
   Color _getStatusColor(AppointmentStatus status) {

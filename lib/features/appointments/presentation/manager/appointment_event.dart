@@ -15,7 +15,7 @@ class AppointmentEvent with _$AppointmentEvent {
   const factory AppointmentEvent.filterAppointments() = _FilterAppointments;
 
   /// Create a new appointment
-  const factory AppointmentEvent.createAppointment(AppointmentEntity appointment) = _CreateAppointment;
+  const factory AppointmentEvent.createAppointment(CreateAppointmentParams params) = _CreateAppointment;
 
   /// Update appointment status
   const factory AppointmentEvent.updateAppointmentStatus(

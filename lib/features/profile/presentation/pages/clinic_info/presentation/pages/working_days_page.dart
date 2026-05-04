@@ -3,8 +3,8 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_hours_models.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/working_hours_bloc.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/working_days_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/day_toggle.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/holiday_item.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/shift_count_control.dart';
@@ -22,27 +22,27 @@ import '../widgets/clinic_info_models.dart';
 import '../widgets/helpers.dart';
 import '../widgets/cupertino_picker_sheet.dart';
 
-class WorkingHoursPage extends StatelessWidget {
-  const WorkingHoursPage({super.key});
+class WorkingDaysPage extends StatelessWidget {
+  const WorkingDaysPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
-          getIt<WorkingHoursBloc>()..add(const WorkingHoursEvent.load()),
-      child: const _WorkingHoursContent(),
+          getIt<WorkingDaysBloc>()..add(const WorkingDaysEvent.load()),
+      child: const _WorkingDaysContent(),
     );
   }
 }
 
-class _WorkingHoursContent extends StatefulWidget {
-  const _WorkingHoursContent();
+class _WorkingDaysContent extends StatefulWidget {
+  const _WorkingDaysContent();
 
   @override
-  State<_WorkingHoursContent> createState() => _WorkingHoursContentState();
+  State<_WorkingDaysContent> createState() => _WorkingDaysContentState();
 }
 
-class _WorkingHoursContentState extends State<_WorkingHoursContent> {
+class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   String? _expandedDay;
   List<WorkingDay> _workingDays = [];
   final List<HolidayEntry> _holidays = [];
@@ -256,8 +256,8 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
   }
 
   void _onSave() {
-    context.read<WorkingHoursBloc>().add(
-          WorkingHoursEvent.saveAll(
+    context.read<WorkingDaysBloc>().add(
+          WorkingDaysEvent.saveAll(
             workingDays: _buildWorkingDaysPayload(),
             holidays: _buildHolidaysPayload(),
           ),
@@ -267,7 +267,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BlocConsumer<WorkingHoursBloc, WorkingHoursState>(
+    return BlocConsumer<WorkingDaysBloc, WorkingDaysState>(
       buildWhen: (prev, curr) => curr.maybeMap(
         loading: (_) => true,
         loaded: (_) => true,
@@ -319,7 +319,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
           body: Column(
             children: [
               PageHeader(
-                title: l10n.workingHoursAndHolidays,
+                title: l10n.workingDaysAndHolidays,
                 onBack: () => context.pop(),
               ),
               Expanded(
@@ -362,7 +362,7 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
-          CustomCard(child: _buildWorkingHoursSection()),
+          CustomCard(child: _buildWorkingDaysSection()),
           SizedBox(height: 16.h),
           _buildHolidaysSection(),
           SizedBox(height: 24.h),
@@ -402,14 +402,14 @@ class _WorkingHoursContentState extends State<_WorkingHoursContent> {
     );
   }
 
-  Widget _buildWorkingHoursSection() {
+  Widget _buildWorkingDaysSection() {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.workingHours,
+          l10n.workingDays,
           style: TextStyle(
             fontSize: 16.sp,
             fontFamily: FontHelper.fontFamily(context),

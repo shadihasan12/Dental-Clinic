@@ -40,6 +40,8 @@ import 'features/appointments/domain/use_cases/create_appointment_use_case.dart'
     as _i213;
 import 'features/appointments/domain/use_cases/get_all_appointments_use_case.dart'
     as _i791;
+import 'features/appointments/domain/use_cases/get_available_slots_use_case.dart'
+    as _i210;
 import 'features/appointments/presentation/manager/appointment_bloc.dart'
     as _i675;
 import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
@@ -56,11 +58,14 @@ import 'features/clinic/domain/use_cases/add_clinic_user_use_case.dart'
 import 'features/clinic/domain/use_cases/get_clinic_users_use_case.dart'
     as _i398;
 import 'features/clinic/domain/use_cases/get_my_clinics_use_case.dart' as _i113;
+import 'features/clinic/domain/use_cases/get_received_invitations_use_case.dart'
+    as _i860;
 import 'features/clinic/domain/use_cases/remove_clinic_user_use_case.dart'
     as _i223;
 import 'features/clinic/domain/use_cases/update_user_roles_use_case.dart'
     as _i972;
 import 'features/clinic/presentation/bloc/clinic_users_bloc.dart' as _i475;
+import 'features/clinic/presentation/bloc/invitation_bloc.dart' as _i932;
 import 'features/clinic/presentation/bloc/my_clinics_bloc.dart' as _i533;
 import 'features/expenses/data/data_sources/expense_remote_data_source.dart'
     as _i355;
@@ -121,24 +126,24 @@ import 'features/patients/presentation/manager/patient_details/patient_details_b
     as _i548;
 import 'features/profile/presentation/pages/clinic_info/data/data_sources/clinic_info_remote_data_source.dart'
     as _i485;
-import 'features/profile/presentation/pages/clinic_info/data/data_sources/working_hours_remote_data_source.dart'
-    as _i158;
+import 'features/profile/presentation/pages/clinic_info/data/data_sources/working_days_remote_data_source.dart'
+    as _i369;
 import 'features/profile/presentation/pages/clinic_info/data/repositories/clinic_info_repository_impl.dart'
     as _i841;
-import 'features/profile/presentation/pages/clinic_info/data/repositories/working_hours_repository_impl.dart'
-    as _i96;
+import 'features/profile/presentation/pages/clinic_info/data/repositories/working_days_repository_impl.dart'
+    as _i987;
 import 'features/profile/presentation/pages/clinic_info/domain/repositories/clinic_info_repository.dart'
     as _i1027;
-import 'features/profile/presentation/pages/clinic_info/domain/repositories/working_hours_repository.dart'
-    as _i61;
+import 'features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart'
+    as _i971;
 import 'features/profile/presentation/pages/clinic_info/domain/use_cases/get_clinic_info_use_case.dart'
     as _i127;
 import 'features/profile/presentation/pages/clinic_info/domain/use_cases/update_clinic_info_use_case.dart'
     as _i8;
 import 'features/profile/presentation/pages/clinic_info/presentation/manager/clinic_info_bloc.dart'
     as _i506;
-import 'features/profile/presentation/pages/clinic_info/presentation/manager/working_hours_bloc.dart'
-    as _i283;
+import 'features/profile/presentation/pages/clinic_info/presentation/manager/working_days_bloc.dart'
+    as _i526;
 import 'features/profile/presentation/pages/edit_profile/data/data_sources/edit_profile_remote_data_source.dart'
     as _i423;
 import 'features/profile/presentation/pages/edit_profile/data/repositories/edit_profile_repository_impl.dart'
@@ -189,6 +194,10 @@ import 'features/subscription/domain/repositories/subscription_repository.dart'
     as _i900;
 import 'features/subscription/domain/use_cases/get_plans_use_case.dart'
     as _i779;
+import 'features/subscription/domain/use_cases/get_subscription_status_use_case.dart'
+    as _i473;
+import 'features/subscription/domain/use_cases/get_subscription_usage_use_case.dart'
+    as _i989;
 import 'features/subscription/presentation/bloc/subscription_bloc.dart'
     as _i1011;
 import 'services/currency/currency_bloc.dart' as _i46;
@@ -259,9 +268,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i663.UserStorage>(),
       ),
     );
-    gh.factory<_i158.WorkingHoursRemoteDataSource>(
-      () => _i158.WorkingHoursRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
     gh.factory<_i573.NotificationRemoteDataSource>(
       () => _i573.NotificationRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
@@ -300,6 +306,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i41.AppointmentRemoteDataSource>(
       () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i369.WorkingDaysRemoteDataSource>(
+      () => _i369.WorkingDaysRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.lazySingleton<_i315.CurrencyService>(
       () => _i315.CurrencyService(gh<_i962.ApiConsumer>()),
@@ -351,11 +360,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i573.NotificationRemoteDataSource>(),
       ),
     );
-    gh.factory<_i61.WorkingHoursRepository>(
-      () => _i96.WorkingHoursRepositoryImpl(
-        gh<_i158.WorkingHoursRemoteDataSource>(),
-      ),
-    );
     gh.factory<_i493.NotificationSettingsBloc>(
       () => _i493.NotificationSettingsBloc(
         getSettings: gh<_i275.GetNotificationSettingsUseCase>(),
@@ -403,6 +407,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i41.AppointmentRemoteDataSource>(),
       ),
     );
+    gh.factory<_i971.WorkingDaysRepository>(
+      () => _i987.WorkingDaysRepositoryImpl(
+        gh<_i369.WorkingDaysRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i841.AddExpenseUseCase>(
       () => _i841.AddExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
@@ -433,8 +442,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i972.UpdateUserRolesUseCase>(
       () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
     );
+    gh.factory<_i860.GetReceivedInvitationsUseCase>(
+      () => _i860.GetReceivedInvitationsUseCase(gh<_i818.ClinicRepository>()),
+    );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
+    );
+    gh.factory<_i473.GetSubscriptionStatusUseCase>(
+      () => _i473.GetSubscriptionStatusUseCase(
+        gh<_i900.SubscriptionRepository>(),
+      ),
+    );
+    gh.factory<_i989.GetSubscriptionUsageUseCase>(
+      () =>
+          _i989.GetSubscriptionUsageUseCase(gh<_i900.SubscriptionRepository>()),
     );
     gh.factory<_i778.SupportRepository>(
       () => _i754.SupportRepositoryImpl(gh<_i348.SupportRemoteDataSource>()),
@@ -444,10 +465,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i8.UpdateClinicInfoUseCase>(
       () => _i8.UpdateClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
-    );
-    gh.factory<_i283.WorkingHoursBloc>(
-      () =>
-          _i283.WorkingHoursBloc(repository: gh<_i61.WorkingHoursRepository>()),
     );
     gh.factory<_i594.AddPatientUseCase>(
       () => _i594.AddPatientUseCase(gh<_i192.PatientRepository>()),
@@ -478,6 +495,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i920.MarkCaseAsFinishedUseCase>(
       () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i526.WorkingDaysBloc>(
+      () =>
+          _i526.WorkingDaysBloc(repository: gh<_i971.WorkingDaysRepository>()),
     );
     gh.factory<_i506.ClinicInfoBloc>(
       () => _i506.ClinicInfoBloc(
@@ -516,6 +537,9 @@ extension GetItInjectableX on _i174.GetIt {
         getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
       ),
     );
+    gh.factory<_i932.InvitationBloc>(
+      () => _i932.InvitationBloc(gh<_i860.GetReceivedInvitationsUseCase>()),
+    );
     gh.factory<_i134.CreateConversationUseCase>(
       () => _i134.CreateConversationUseCase(gh<_i778.SupportRepository>()),
     );
@@ -540,6 +564,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i791.GetAllAppointmentsUseCase>(
       () => _i791.GetAllAppointmentsUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i210.GetAvailableSlotsUseCase>(
+      () => _i210.GetAvailableSlotsUseCase(gh<_i675.AppointmentRepository>()),
     );
     gh.factory<_i763.ExpenseBloc>(
       () => _i763.ExpenseBloc(

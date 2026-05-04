@@ -4,5 +4,7 @@ class SubscriptionEndpoints {
   static const String plans = '/subscription/plans';
   static const String subscribe = '/subscription/subscribe';
   static const String cancel = '/subscription/cancel';
+  static const String status = '/subscriptions/status';
+  static const String usage = '/subscriptions/usage';
   static String subscription(String userId) => '/subscription/$userId';
 }

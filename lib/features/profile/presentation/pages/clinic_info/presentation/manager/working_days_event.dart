@@ -1,9 +1,9 @@
-part of 'working_hours_bloc.dart';
+part of 'working_days_bloc.dart';
 
 @freezed
-class WorkingHoursEvent with _$WorkingHoursEvent {
-  const factory WorkingHoursEvent.load() = _Load;
-  const factory WorkingHoursEvent.saveAll({
+class WorkingDaysEvent with _$WorkingDaysEvent {
+  const factory WorkingDaysEvent.load() = _Load;
+  const factory WorkingDaysEvent.saveAll({
     required List<WorkingDayApiModel> workingDays,
     required List<HolidayApiModel> holidays,
   }) = _SaveAll;

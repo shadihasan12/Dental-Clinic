@@ -5,8 +5,11 @@ class InvitationEvent with _$InvitationEvent {
   /// Load invitations sent by the clinic
   const factory InvitationEvent.loadSentInvitations(String clinicId) = _LoadSentInvitations;
 
-  /// Load invitations received by the user
-  const factory InvitationEvent.loadReceivedInvitations(String userEmail) = _LoadReceivedInvitations;
+  /// Load invitations received by the user (uses current state filter)
+  const factory InvitationEvent.loadReceivedInvitations() = _LoadReceivedInvitations;
+
+  /// Change the status filter for received invitations and refetch
+  const factory InvitationEvent.filterReceivedByStatus(InvitationStatus status) = _FilterReceivedByStatus;
 
   /// Send a new invitation
   const factory InvitationEvent.sendInvitation({

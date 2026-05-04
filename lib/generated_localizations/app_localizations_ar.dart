@@ -90,6 +90,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get close => 'إغلاق';
 
   @override
+  String get unlimited => 'غير محدود';
+
+  @override
   String get loading => 'جاري التحميل...';
 
   @override
@@ -169,6 +172,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pending => 'معلق';
+
+  @override
+  String get confirmed => 'مؤكد';
+
+  @override
+  String get scheduled => 'مجدول';
+
+  @override
+  String get noShow => 'لم يحضر';
+
+  @override
+  String get appointmentDetails => 'تفاصيل الموعد';
+
+  @override
+  String get doctor => 'الطبيب';
+
+  @override
+  String get day => 'يوم';
+
+  @override
+  String get week => 'أسبوع';
+
+  @override
+  String get viewPatientDetails => 'عرض تفاصيل المريض';
 
   @override
   String get completed => 'تم الانتهاء';
@@ -279,7 +306,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clinicName => 'اسم العيادة';
 
   @override
-  String get workingHours => 'ساعات العمل';
+  String get workingDays => 'أيام العمل';
 
   @override
   String get closed => 'مغلق';
@@ -726,6 +753,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invitationDeclinedMessage => 'تم رفض الدعوة';
+
+  @override
+  String get invitations => 'الدعوات';
+
+  @override
+  String get accepted => 'مقبولة';
+
+  @override
+  String get declined => 'مرفوضة';
+
+  @override
+  String get noInvitations => 'لا توجد دعوات';
+
+  @override
+  String get noPendingInvitations => 'لا توجد دعوات معلقة';
+
+  @override
+  String get noAcceptedInvitations => 'لا توجد دعوات مقبولة';
+
+  @override
+  String get noDeclinedInvitations => 'لا توجد دعوات مرفوضة';
 
   @override
   String get appLanguageWillChangeImmediately =>
@@ -1513,7 +1561,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectSpecialty => 'يرجى اختيار التخصص';
 
   @override
-  String get workingHoursAndHolidays => 'ساعات العمل والعطل';
+  String get workingDaysAndHolidays => 'أيام العمل والعطل';
 
   @override
   String get photoPermissionRequired => 'إذن الوصول للصور مطلوب';

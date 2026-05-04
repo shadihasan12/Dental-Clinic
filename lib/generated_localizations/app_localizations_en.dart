@@ -90,6 +90,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
+  String get unlimited => 'Unlimited';
+
+  @override
   String get loading => 'Loading...';
 
   @override
@@ -169,6 +172,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pending => 'Pending';
+
+  @override
+  String get confirmed => 'Confirmed';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get noShow => 'No show';
+
+  @override
+  String get appointmentDetails => 'Appointment details';
+
+  @override
+  String get doctor => 'Doctor';
+
+  @override
+  String get day => 'Day';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get viewPatientDetails => 'View patient details';
 
   @override
   String get completed => 'Completed';
@@ -279,7 +306,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clinicName => 'Clinic Name';
 
   @override
-  String get workingHours => 'Working Hours';
+  String get workingDays => 'Working Days';
 
   @override
   String get closed => 'Closed';
@@ -728,6 +755,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invitationDeclinedMessage => 'The invitation has been declined';
+
+  @override
+  String get invitations => 'Invitations';
+
+  @override
+  String get accepted => 'Accepted';
+
+  @override
+  String get declined => 'Declined';
+
+  @override
+  String get noInvitations => 'No invitations';
+
+  @override
+  String get noPendingInvitations => 'No pending invitations';
+
+  @override
+  String get noAcceptedInvitations => 'No accepted invitations';
+
+  @override
+  String get noDeclinedInvitations => 'No declined invitations';
 
   @override
   String get appLanguageWillChangeImmediately =>
@@ -1523,7 +1571,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectSpecialty => 'Please select your specialization';
 
   @override
-  String get workingHoursAndHolidays => 'Working Hours & Holidays';
+  String get workingDaysAndHolidays => 'Working Days & Holidays';
 
   @override
   String get photoPermissionRequired => 'Photo Permission Required';

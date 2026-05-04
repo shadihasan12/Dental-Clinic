@@ -8,6 +8,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
+import 'package:dental_clinic_app/injection.dart';
 
 class InviteStaffPage extends StatelessWidget {
   final String clinicId;
@@ -22,7 +23,7 @@ class InviteStaffPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => InvitationBloc()
+      create: (context) => getIt<InvitationBloc>()
         ..add(InvitationEvent.loadSentInvitations(clinicId)),
       child: _InviteStaffContent(
         clinicId: clinicId,

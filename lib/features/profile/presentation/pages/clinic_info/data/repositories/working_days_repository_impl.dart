@@ -1,15 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/data_sources/working_hours_remote_data_source.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_hours_models.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_hours_repository.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/data_sources/working_days_remote_data_source.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: WorkingHoursRepository)
-class WorkingHoursRepositoryImpl implements WorkingHoursRepository {
-  final WorkingHoursRemoteDataSource _remoteDataSource;
+@Injectable(as: WorkingDaysRepository)
+class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
+  final WorkingDaysRemoteDataSource _remoteDataSource;
 
-  WorkingHoursRepositoryImpl(this._remoteDataSource);
+  WorkingDaysRepositoryImpl(this._remoteDataSource);
 
   @override
   Future<Either<NetworkExceptions, List<WorkingDayApiModel>>>

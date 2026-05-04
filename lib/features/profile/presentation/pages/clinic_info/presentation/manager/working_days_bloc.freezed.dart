@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'working_hours_bloc.dart';
+part of 'working_days_bloc.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$WorkingHoursEvent {
+mixin _$WorkingDaysEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() load,
@@ -64,24 +64,24 @@ mixin _$WorkingHoursEvent {
 }
 
 /// @nodoc
-abstract class $WorkingHoursEventCopyWith<$Res> {
-  factory $WorkingHoursEventCopyWith(
-    WorkingHoursEvent value,
-    $Res Function(WorkingHoursEvent) then,
-  ) = _$WorkingHoursEventCopyWithImpl<$Res, WorkingHoursEvent>;
+abstract class $WorkingDaysEventCopyWith<$Res> {
+  factory $WorkingDaysEventCopyWith(
+    WorkingDaysEvent value,
+    $Res Function(WorkingDaysEvent) then,
+  ) = _$WorkingDaysEventCopyWithImpl<$Res, WorkingDaysEvent>;
 }
 
 /// @nodoc
-class _$WorkingHoursEventCopyWithImpl<$Res, $Val extends WorkingHoursEvent>
-    implements $WorkingHoursEventCopyWith<$Res> {
-  _$WorkingHoursEventCopyWithImpl(this._value, this._then);
+class _$WorkingDaysEventCopyWithImpl<$Res, $Val extends WorkingDaysEvent>
+    implements $WorkingDaysEventCopyWith<$Res> {
+  _$WorkingDaysEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of WorkingHoursEvent
+  /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -95,12 +95,12 @@ abstract class _$$LoadImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadImplCopyWithImpl<$Res>
-    extends _$WorkingHoursEventCopyWithImpl<$Res, _$LoadImpl>
+    extends _$WorkingDaysEventCopyWithImpl<$Res, _$LoadImpl>
     implements _$$LoadImplCopyWith<$Res> {
   __$$LoadImplCopyWithImpl(_$LoadImpl _value, $Res Function(_$LoadImpl) _then)
     : super(_value, _then);
 
-  /// Create a copy of WorkingHoursEvent
+  /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -111,7 +111,7 @@ class _$LoadImpl implements _Load {
 
   @override
   String toString() {
-    return 'WorkingHoursEvent.load()';
+    return 'WorkingDaysEvent.load()';
   }
 
   @override
@@ -198,7 +198,7 @@ class _$LoadImpl implements _Load {
   }
 }
 
-abstract class _Load implements WorkingHoursEvent {
+abstract class _Load implements WorkingDaysEvent {
   const factory _Load() = _$LoadImpl;
 }
 
@@ -217,14 +217,14 @@ abstract class _$$SaveAllImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SaveAllImplCopyWithImpl<$Res>
-    extends _$WorkingHoursEventCopyWithImpl<$Res, _$SaveAllImpl>
+    extends _$WorkingDaysEventCopyWithImpl<$Res, _$SaveAllImpl>
     implements _$$SaveAllImplCopyWith<$Res> {
   __$$SaveAllImplCopyWithImpl(
     _$SaveAllImpl _value,
     $Res Function(_$SaveAllImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursEvent
+  /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -271,7 +271,7 @@ class _$SaveAllImpl implements _SaveAll {
 
   @override
   String toString() {
-    return 'WorkingHoursEvent.saveAll(workingDays: $workingDays, holidays: $holidays)';
+    return 'WorkingDaysEvent.saveAll(workingDays: $workingDays, holidays: $holidays)';
   }
 
   @override
@@ -293,7 +293,7 @@ class _$SaveAllImpl implements _SaveAll {
     const DeepCollectionEquality().hash(_holidays),
   );
 
-  /// Create a copy of WorkingHoursEvent
+  /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -376,7 +376,7 @@ class _$SaveAllImpl implements _SaveAll {
   }
 }
 
-abstract class _SaveAll implements WorkingHoursEvent {
+abstract class _SaveAll implements WorkingDaysEvent {
   const factory _SaveAll({
     required final List<WorkingDayApiModel> workingDays,
     required final List<HolidayApiModel> holidays,
@@ -385,7 +385,7 @@ abstract class _SaveAll implements WorkingHoursEvent {
   List<WorkingDayApiModel> get workingDays;
   List<HolidayApiModel> get holidays;
 
-  /// Create a copy of WorkingHoursEvent
+  /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SaveAllImplCopyWith<_$SaveAllImpl> get copyWith =>
@@ -393,7 +393,7 @@ abstract class _SaveAll implements WorkingHoursEvent {
 }
 
 /// @nodoc
-mixin _$WorkingHoursState {
+mixin _$WorkingDaysState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
@@ -436,91 +436,91 @@ mixin _$WorkingHoursState {
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $WorkingHoursStateCopyWith<$Res> {
-  factory $WorkingHoursStateCopyWith(
-    WorkingHoursState value,
-    $Res Function(WorkingHoursState) then,
-  ) = _$WorkingHoursStateCopyWithImpl<$Res, WorkingHoursState>;
+abstract class $WorkingDaysStateCopyWith<$Res> {
+  factory $WorkingDaysStateCopyWith(
+    WorkingDaysState value,
+    $Res Function(WorkingDaysState) then,
+  ) = _$WorkingDaysStateCopyWithImpl<$Res, WorkingDaysState>;
 }
 
 /// @nodoc
-class _$WorkingHoursStateCopyWithImpl<$Res, $Val extends WorkingHoursState>
-    implements $WorkingHoursStateCopyWith<$Res> {
-  _$WorkingHoursStateCopyWithImpl(this._value, this._then);
+class _$WorkingDaysStateCopyWithImpl<$Res, $Val extends WorkingDaysState>
+    implements $WorkingDaysStateCopyWith<$Res> {
+  _$WorkingDaysStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
-abstract class _$$WHInitialImplCopyWith<$Res> {
-  factory _$$WHInitialImplCopyWith(
-    _$WHInitialImpl value,
-    $Res Function(_$WHInitialImpl) then,
-  ) = __$$WHInitialImplCopyWithImpl<$Res>;
+abstract class _$$WDInitialImplCopyWith<$Res> {
+  factory _$$WDInitialImplCopyWith(
+    _$WDInitialImpl value,
+    $Res Function(_$WDInitialImpl) then,
+  ) = __$$WDInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$WHInitialImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHInitialImpl>
-    implements _$$WHInitialImplCopyWith<$Res> {
-  __$$WHInitialImplCopyWithImpl(
-    _$WHInitialImpl _value,
-    $Res Function(_$WHInitialImpl) _then,
+class __$$WDInitialImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDInitialImpl>
+    implements _$$WDInitialImplCopyWith<$Res> {
+  __$$WDInitialImplCopyWithImpl(
+    _$WDInitialImpl _value,
+    $Res Function(_$WDInitialImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$WHInitialImpl implements _WHInitial {
-  const _$WHInitialImpl();
+class _$WDInitialImpl implements _WDInitial {
+  const _$WDInitialImpl();
 
   @override
   String toString() {
-    return 'WorkingHoursState.initial()';
+    return 'WorkingDaysState.initial()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$WHInitialImpl);
+        (other.runtimeType == runtimeType && other is _$WDInitialImpl);
   }
 
   @override
@@ -584,12 +584,12 @@ class _$WHInitialImpl implements _WHInitial {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return initial(this);
   }
@@ -597,12 +597,12 @@ class _$WHInitialImpl implements _WHInitial {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return initial?.call(this);
   }
@@ -610,12 +610,12 @@ class _$WHInitialImpl implements _WHInitial {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -625,45 +625,45 @@ class _$WHInitialImpl implements _WHInitial {
   }
 }
 
-abstract class _WHInitial implements WorkingHoursState {
-  const factory _WHInitial() = _$WHInitialImpl;
+abstract class _WDInitial implements WorkingDaysState {
+  const factory _WDInitial() = _$WDInitialImpl;
 }
 
 /// @nodoc
-abstract class _$$WHLoadingImplCopyWith<$Res> {
-  factory _$$WHLoadingImplCopyWith(
-    _$WHLoadingImpl value,
-    $Res Function(_$WHLoadingImpl) then,
-  ) = __$$WHLoadingImplCopyWithImpl<$Res>;
+abstract class _$$WDLoadingImplCopyWith<$Res> {
+  factory _$$WDLoadingImplCopyWith(
+    _$WDLoadingImpl value,
+    $Res Function(_$WDLoadingImpl) then,
+  ) = __$$WDLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$WHLoadingImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHLoadingImpl>
-    implements _$$WHLoadingImplCopyWith<$Res> {
-  __$$WHLoadingImplCopyWithImpl(
-    _$WHLoadingImpl _value,
-    $Res Function(_$WHLoadingImpl) _then,
+class __$$WDLoadingImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDLoadingImpl>
+    implements _$$WDLoadingImplCopyWith<$Res> {
+  __$$WDLoadingImplCopyWithImpl(
+    _$WDLoadingImpl _value,
+    $Res Function(_$WDLoadingImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$WHLoadingImpl implements _WHLoading {
-  const _$WHLoadingImpl();
+class _$WDLoadingImpl implements _WDLoading {
+  const _$WDLoadingImpl();
 
   @override
   String toString() {
-    return 'WorkingHoursState.loading()';
+    return 'WorkingDaysState.loading()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$WHLoadingImpl);
+        (other.runtimeType == runtimeType && other is _$WDLoadingImpl);
   }
 
   @override
@@ -727,12 +727,12 @@ class _$WHLoadingImpl implements _WHLoading {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return loading(this);
   }
@@ -740,12 +740,12 @@ class _$WHLoadingImpl implements _WHLoading {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return loading?.call(this);
   }
@@ -753,12 +753,12 @@ class _$WHLoadingImpl implements _WHLoading {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -768,16 +768,16 @@ class _$WHLoadingImpl implements _WHLoading {
   }
 }
 
-abstract class _WHLoading implements WorkingHoursState {
-  const factory _WHLoading() = _$WHLoadingImpl;
+abstract class _WDLoading implements WorkingDaysState {
+  const factory _WDLoading() = _$WDLoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$WHLoadedImplCopyWith<$Res> {
-  factory _$$WHLoadedImplCopyWith(
-    _$WHLoadedImpl value,
-    $Res Function(_$WHLoadedImpl) then,
-  ) = __$$WHLoadedImplCopyWithImpl<$Res>;
+abstract class _$$WDLoadedImplCopyWith<$Res> {
+  factory _$$WDLoadedImplCopyWith(
+    _$WDLoadedImpl value,
+    $Res Function(_$WDLoadedImpl) then,
+  ) = __$$WDLoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({
     List<WorkingDayApiModel> workingDays,
@@ -786,21 +786,21 @@ abstract class _$$WHLoadedImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$WHLoadedImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHLoadedImpl>
-    implements _$$WHLoadedImplCopyWith<$Res> {
-  __$$WHLoadedImplCopyWithImpl(
-    _$WHLoadedImpl _value,
-    $Res Function(_$WHLoadedImpl) _then,
+class __$$WDLoadedImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDLoadedImpl>
+    implements _$$WDLoadedImplCopyWith<$Res> {
+  __$$WDLoadedImplCopyWithImpl(
+    _$WDLoadedImpl _value,
+    $Res Function(_$WDLoadedImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({Object? workingDays = null, Object? holidays = null}) {
     return _then(
-      _$WHLoadedImpl(
+      _$WDLoadedImpl(
         workingDays: null == workingDays
             ? _value._workingDays
             : workingDays // ignore: cast_nullable_to_non_nullable
@@ -816,8 +816,8 @@ class __$$WHLoadedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WHLoadedImpl implements _WHLoaded {
-  const _$WHLoadedImpl({
+class _$WDLoadedImpl implements _WDLoaded {
+  const _$WDLoadedImpl({
     required final List<WorkingDayApiModel> workingDays,
     required final List<HolidayApiModel> holidays,
   }) : _workingDays = workingDays,
@@ -841,14 +841,14 @@ class _$WHLoadedImpl implements _WHLoaded {
 
   @override
   String toString() {
-    return 'WorkingHoursState.loaded(workingDays: $workingDays, holidays: $holidays)';
+    return 'WorkingDaysState.loaded(workingDays: $workingDays, holidays: $holidays)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WHLoadedImpl &&
+            other is _$WDLoadedImpl &&
             const DeepCollectionEquality().equals(
               other._workingDays,
               _workingDays,
@@ -863,13 +863,13 @@ class _$WHLoadedImpl implements _WHLoaded {
     const DeepCollectionEquality().hash(_holidays),
   );
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$WHLoadedImplCopyWith<_$WHLoadedImpl> get copyWith =>
-      __$$WHLoadedImplCopyWithImpl<_$WHLoadedImpl>(this, _$identity);
+  _$$WDLoadedImplCopyWith<_$WDLoadedImpl> get copyWith =>
+      __$$WDLoadedImplCopyWithImpl<_$WDLoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -929,12 +929,12 @@ class _$WHLoadedImpl implements _WHLoaded {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return loaded(this);
   }
@@ -942,12 +942,12 @@ class _$WHLoadedImpl implements _WHLoaded {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return loaded?.call(this);
   }
@@ -955,12 +955,12 @@ class _$WHLoadedImpl implements _WHLoaded {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -970,57 +970,57 @@ class _$WHLoadedImpl implements _WHLoaded {
   }
 }
 
-abstract class _WHLoaded implements WorkingHoursState {
-  const factory _WHLoaded({
+abstract class _WDLoaded implements WorkingDaysState {
+  const factory _WDLoaded({
     required final List<WorkingDayApiModel> workingDays,
     required final List<HolidayApiModel> holidays,
-  }) = _$WHLoadedImpl;
+  }) = _$WDLoadedImpl;
 
   List<WorkingDayApiModel> get workingDays;
   List<HolidayApiModel> get holidays;
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$WHLoadedImplCopyWith<_$WHLoadedImpl> get copyWith =>
+  _$$WDLoadedImplCopyWith<_$WDLoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$WHSavingImplCopyWith<$Res> {
-  factory _$$WHSavingImplCopyWith(
-    _$WHSavingImpl value,
-    $Res Function(_$WHSavingImpl) then,
-  ) = __$$WHSavingImplCopyWithImpl<$Res>;
+abstract class _$$WDSavingImplCopyWith<$Res> {
+  factory _$$WDSavingImplCopyWith(
+    _$WDSavingImpl value,
+    $Res Function(_$WDSavingImpl) then,
+  ) = __$$WDSavingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$WHSavingImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHSavingImpl>
-    implements _$$WHSavingImplCopyWith<$Res> {
-  __$$WHSavingImplCopyWithImpl(
-    _$WHSavingImpl _value,
-    $Res Function(_$WHSavingImpl) _then,
+class __$$WDSavingImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDSavingImpl>
+    implements _$$WDSavingImplCopyWith<$Res> {
+  __$$WDSavingImplCopyWithImpl(
+    _$WDSavingImpl _value,
+    $Res Function(_$WDSavingImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$WHSavingImpl implements _WHSaving {
-  const _$WHSavingImpl();
+class _$WDSavingImpl implements _WDSaving {
+  const _$WDSavingImpl();
 
   @override
   String toString() {
-    return 'WorkingHoursState.saving()';
+    return 'WorkingDaysState.saving()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$WHSavingImpl);
+        (other.runtimeType == runtimeType && other is _$WDSavingImpl);
   }
 
   @override
@@ -1084,12 +1084,12 @@ class _$WHSavingImpl implements _WHSaving {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return saving(this);
   }
@@ -1097,12 +1097,12 @@ class _$WHSavingImpl implements _WHSaving {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return saving?.call(this);
   }
@@ -1110,12 +1110,12 @@ class _$WHSavingImpl implements _WHSaving {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1125,45 +1125,45 @@ class _$WHSavingImpl implements _WHSaving {
   }
 }
 
-abstract class _WHSaving implements WorkingHoursState {
-  const factory _WHSaving() = _$WHSavingImpl;
+abstract class _WDSaving implements WorkingDaysState {
+  const factory _WDSaving() = _$WDSavingImpl;
 }
 
 /// @nodoc
-abstract class _$$WHSavedImplCopyWith<$Res> {
-  factory _$$WHSavedImplCopyWith(
-    _$WHSavedImpl value,
-    $Res Function(_$WHSavedImpl) then,
-  ) = __$$WHSavedImplCopyWithImpl<$Res>;
+abstract class _$$WDSavedImplCopyWith<$Res> {
+  factory _$$WDSavedImplCopyWith(
+    _$WDSavedImpl value,
+    $Res Function(_$WDSavedImpl) then,
+  ) = __$$WDSavedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$WHSavedImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHSavedImpl>
-    implements _$$WHSavedImplCopyWith<$Res> {
-  __$$WHSavedImplCopyWithImpl(
-    _$WHSavedImpl _value,
-    $Res Function(_$WHSavedImpl) _then,
+class __$$WDSavedImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDSavedImpl>
+    implements _$$WDSavedImplCopyWith<$Res> {
+  __$$WDSavedImplCopyWithImpl(
+    _$WDSavedImpl _value,
+    $Res Function(_$WDSavedImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$WHSavedImpl implements _WHSaved {
-  const _$WHSavedImpl();
+class _$WDSavedImpl implements _WDSaved {
+  const _$WDSavedImpl();
 
   @override
   String toString() {
-    return 'WorkingHoursState.saved()';
+    return 'WorkingDaysState.saved()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$WHSavedImpl);
+        (other.runtimeType == runtimeType && other is _$WDSavedImpl);
   }
 
   @override
@@ -1227,12 +1227,12 @@ class _$WHSavedImpl implements _WHSaved {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return saved(this);
   }
@@ -1240,12 +1240,12 @@ class _$WHSavedImpl implements _WHSaved {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return saved?.call(this);
   }
@@ -1253,12 +1253,12 @@ class _$WHSavedImpl implements _WHSaved {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1268,36 +1268,36 @@ class _$WHSavedImpl implements _WHSaved {
   }
 }
 
-abstract class _WHSaved implements WorkingHoursState {
-  const factory _WHSaved() = _$WHSavedImpl;
+abstract class _WDSaved implements WorkingDaysState {
+  const factory _WDSaved() = _$WDSavedImpl;
 }
 
 /// @nodoc
-abstract class _$$WHErrorImplCopyWith<$Res> {
-  factory _$$WHErrorImplCopyWith(
-    _$WHErrorImpl value,
-    $Res Function(_$WHErrorImpl) then,
-  ) = __$$WHErrorImplCopyWithImpl<$Res>;
+abstract class _$$WDErrorImplCopyWith<$Res> {
+  factory _$$WDErrorImplCopyWith(
+    _$WDErrorImpl value,
+    $Res Function(_$WDErrorImpl) then,
+  ) = __$$WDErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$WHErrorImplCopyWithImpl<$Res>
-    extends _$WorkingHoursStateCopyWithImpl<$Res, _$WHErrorImpl>
-    implements _$$WHErrorImplCopyWith<$Res> {
-  __$$WHErrorImplCopyWithImpl(
-    _$WHErrorImpl _value,
-    $Res Function(_$WHErrorImpl) _then,
+class __$$WDErrorImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDErrorImpl>
+    implements _$$WDErrorImplCopyWith<$Res> {
+  __$$WDErrorImplCopyWithImpl(
+    _$WDErrorImpl _value,
+    $Res Function(_$WDErrorImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({Object? message = null}) {
     return _then(
-      _$WHErrorImpl(
+      _$WDErrorImpl(
         null == message
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
@@ -1309,35 +1309,35 @@ class __$$WHErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WHErrorImpl implements _WHError {
-  const _$WHErrorImpl(this.message);
+class _$WDErrorImpl implements _WDError {
+  const _$WDErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
   String toString() {
-    return 'WorkingHoursState.error(message: $message)';
+    return 'WorkingDaysState.error(message: $message)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WHErrorImpl &&
+            other is _$WDErrorImpl &&
             (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$WHErrorImplCopyWith<_$WHErrorImpl> get copyWith =>
-      __$$WHErrorImplCopyWithImpl<_$WHErrorImpl>(this, _$identity);
+  _$$WDErrorImplCopyWith<_$WDErrorImpl> get copyWith =>
+      __$$WDErrorImplCopyWithImpl<_$WDErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1397,12 +1397,12 @@ class _$WHErrorImpl implements _WHError {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_WHInitial value) initial,
-    required TResult Function(_WHLoading value) loading,
-    required TResult Function(_WHLoaded value) loaded,
-    required TResult Function(_WHSaving value) saving,
-    required TResult Function(_WHSaved value) saved,
-    required TResult Function(_WHError value) error,
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
   }) {
     return error(this);
   }
@@ -1410,12 +1410,12 @@ class _$WHErrorImpl implements _WHError {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_WHInitial value)? initial,
-    TResult? Function(_WHLoading value)? loading,
-    TResult? Function(_WHLoaded value)? loaded,
-    TResult? Function(_WHSaving value)? saving,
-    TResult? Function(_WHSaved value)? saved,
-    TResult? Function(_WHError value)? error,
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
   }) {
     return error?.call(this);
   }
@@ -1423,12 +1423,12 @@ class _$WHErrorImpl implements _WHError {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_WHInitial value)? initial,
-    TResult Function(_WHLoading value)? loading,
-    TResult Function(_WHLoaded value)? loaded,
-    TResult Function(_WHSaving value)? saving,
-    TResult Function(_WHSaved value)? saved,
-    TResult Function(_WHError value)? error,
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1438,14 +1438,14 @@ class _$WHErrorImpl implements _WHError {
   }
 }
 
-abstract class _WHError implements WorkingHoursState {
-  const factory _WHError(final String message) = _$WHErrorImpl;
+abstract class _WDError implements WorkingDaysState {
+  const factory _WDError(final String message) = _$WDErrorImpl;
 
   String get message;
 
-  /// Create a copy of WorkingHoursState
+  /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$WHErrorImplCopyWith<_$WHErrorImpl> get copyWith =>
+  _$$WDErrorImplCopyWith<_$WDErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
