@@ -79,7 +79,7 @@ class _AppointmentsContent extends StatelessWidget {
       return _buildWeekList(context, state.filteredAppointments);
     }
     return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
       itemCount: state.filteredAppointments.length,
       separatorBuilder: (_, _) =>
           Divider(height: 1, color: ColorManager.of(context).divider),
@@ -98,7 +98,7 @@ class _AppointmentsContent extends StatelessWidget {
   ) {
     final groups = _groupByDay(appointments);
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
       itemCount: groups.length,
       itemBuilder: (context, index) {
         final entry = groups[index];

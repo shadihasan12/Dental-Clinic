@@ -59,6 +59,7 @@ class _MenuPageState extends State<MenuPage> {
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 24.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -202,7 +202,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                       child: expenses.isEmpty
                           ? _buildEmptyState(context)
                           : ListView.separated(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
                               itemCount: expenses.length,
                               separatorBuilder: (_, _) => Divider(
                                 height: 1,

@@ -1,14 +1,11 @@
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
+import 'package:dental_clinic_app/custom_widgets/glass_tab_bar.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/appointments_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/custom_widgets/permission_gate.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -47,6 +44,7 @@ class _RootPageState extends State<RootPage> {
   ];
 
   void _onTabSelected(int index) {
+    if (index == _currentIndex) return;
     setState(() {
       _currentIndex = index;
     });
@@ -55,167 +53,55 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final c = ColorManager.of(context);
 
-    final inactiveColor = c.iconDefault;
-
-    final List<_BottomNavItem> navItems = [
-      _BottomNavItem(
-        icon: SvgPicture.asset(
-          Assets.iconsRootHome,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-        ),
-        activeIcon: SvgPicture.asset(
-          Assets.iconsRootHome,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-        ),
-        label: l10n.home,
-      ),
-      _BottomNavItem(
-        icon: SvgPicture.asset(
-          Assets.iconsRootPatient,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-        ),
-        activeIcon: SvgPicture.asset(
-          Assets.iconsRootPatient,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-        ),
-        label: l10n.patients,
-      ),
-      _BottomNavItem(
-        icon: SvgPicture.asset(
-          Assets.iconsRootAppointment,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-        ),
-        activeIcon: SvgPicture.asset(
-          Assets.iconsRootAppointment,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-        ),
-        label: l10n.appointments,
-      ),
-      _BottomNavItem(
-        icon: SvgPicture.asset(
-          Assets.iconsRootMoney,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-        ),
-        activeIcon: SvgPicture.asset(
-          Assets.iconsRootMoney,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-        ),
-        label: l10n.expenses,
-      ),
-      _BottomNavItem(
-        icon: SvgPicture.asset(
-          Assets.iconsRootMenu,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(inactiveColor, BlendMode.srcIn),
-        ),
-        activeIcon: SvgPicture.asset(
-          Assets.iconsRootMenu,
-          width: 24.w,
-          height: 24.w,
-          colorFilter: ColorFilter.mode(ColorManager.primary, BlendMode.srcIn),
-        ),
-        label: l10n.more,
-      ),
+    // Single visual weight across all five tabs: SF Symbol outlines that
+    // share roughly the same stroke and bounding box. UITabBar's tint
+    // colour signals the active tab; no fill swap needed.
+    final tabs = <GlassTabItem>[
+      GlassTabItem(title: l10n.home, systemIcon: 'house'),
+      GlassTabItem(title: l10n.patients, systemIcon: 'person.2'),
+      GlassTabItem(title: l10n.appointments, systemIcon: 'calendar'),
+      GlassTabItem(title: l10n.expenses, systemIcon: 'dollarsign.circle'),
+      GlassTabItem(title: l10n.more, systemIcon: 'ellipsis'),
     ];
 
+    // Just the bar's own footprint reserved at the bottom — no extra
+    // margin. Static content will sit cleanly above the bar; pages that
+    // end with a scrollable list add their own bottom padding so the last
+    // item can be scrolled clear of the bar.
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final reservedBarHeight =
+        (isIOS ? 49.0 : 64.0) + MediaQuery.of(context).padding.bottom;
+    const reservedTop = 8.0;
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: c.surfaceBg,
-          boxShadow: [
-            BoxShadow(
-              color: ColorManager.black.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Container(
-            height: 70.h,
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                navItems.length,
-                (index) => _buildNavItem(index, navItems),
+      body: Stack(
+        children: [
+          // Pages fill everything above the bar — Padding pushes the
+          // IndexedStack up by the bar's height so no widget at the bottom
+          // of any page sits underneath the bar.
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: reservedTop,
+                bottom: reservedBarHeight,
               ),
+              child: IndexedStack(index: _currentIndex, children: _pages),
             ),
           ),
-        ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: GlassTabBar(
+              items: tabs,
+              selectedIndex: _currentIndex,
+              onTap: _onTabSelected,
+              tintColor: ColorManager.primary,
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  Widget _buildNavItem(int index, List<_BottomNavItem> navItems) {
-    final item = navItems[index];
-    final isSelected = _currentIndex == index;
-    final c = ColorManager.of(context);
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => _onTabSelected(index),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 24.w,
-                height: 24.w,
-                child: isSelected ? item.activeIcon : item.icon,
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                item.label,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 9.sp,
-                  color: isSelected
-                      ? ColorManager.primary
-                      : c.textTertiary,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomNavItem {
-  final Widget icon;
-  final Widget activeIcon;
-  final String label;
-
-  const _BottomNavItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-  });
 }

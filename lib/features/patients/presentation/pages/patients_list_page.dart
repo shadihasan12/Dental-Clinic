@@ -211,7 +211,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                   slivers: [
                     CupertinoSliverRefreshControl(onRefresh: _onRefresh),
                     SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
                       sliver: SliverList.separated(
                         itemCount:
                             filtered.length +

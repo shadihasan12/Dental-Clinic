@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
