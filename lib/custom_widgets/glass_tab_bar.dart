@@ -167,7 +167,7 @@ class _MaterialFallback extends StatelessWidget {
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             color: selected ? activeColor : inactiveColor,
           );

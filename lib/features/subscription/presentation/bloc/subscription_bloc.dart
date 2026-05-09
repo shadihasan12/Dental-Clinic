@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_plans_use_case.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 import 'package:injectable/injectable.dart';
 
 part 'subscription_event.dart';
@@ -14,10 +15,13 @@ part 'subscription_bloc.freezed.dart';
 @injectable
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   final GetPlansUseCase _getPlans;
+  final SubscriptionGuard _guard;
 
   SubscriptionBloc({
     required GetPlansUseCase getPlans,
+    required SubscriptionGuard guard,
   })  : _getPlans = getPlans,
+        _guard = guard,
         super(const SubscriptionState()) {
     on<_LoadSubscription>(_onLoadSubscription);
     on<_LoadPlans>(_onLoadPlans);
@@ -44,6 +48,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
       // Mock subscription - in trial
       final subscription = TrialConfig.createTrial(userId: event.userId);
 
+      _guard.update(subscription);
       emit(state.copyWith(
         isLoading: false,
         currentSubscription: subscription,
@@ -102,6 +107,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
 
       final trial = TrialConfig.createTrial(userId: event.userId);
 
+      _guard.update(trial);
       emit(state.copyWith(
         isProcessing: false,
         currentSubscription: trial,
@@ -148,6 +154,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
         lastPaymentAmount: state.selectedPlan!.getPrice(state.selectedBillingCycle),
       );
 
+      _guard.update(subscription);
       emit(state.copyWith(
         isProcessing: false,
         currentSubscription: subscription,
@@ -179,6 +186,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
         autoRenew: false,
       );
 
+      _guard.update(cancelled);
       emit(state.copyWith(
         isProcessing: false,
         currentSubscription: cancelled,
@@ -210,6 +218,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
         autoRenew: true,
       );
 
+      _guard.update(reactivated);
       emit(state.copyWith(
         isProcessing: false,
         currentSubscription: reactivated,
@@ -237,6 +246,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
         planTier: event.newPlan.tier,
       );
 
+      _guard.update(upgraded);
       emit(state.copyWith(
         isProcessing: false,
         currentSubscription: upgraded,

@@ -22,6 +22,10 @@ class PermissionSlugs {
   // Clinic Payments
   static const viewClinicPayments = 'view-clinic-payments';
 
+  // Billing & Invoices
+  static const viewBillingInvoices = 'view-billing-invoices';
+  static const manageBillingInvoices = 'manage-billing-invoices';
+
   // Clinic Patients
   static const viewClinicPatients = 'view-clinic-patients';
   static const manageClinicPatients = 'clinic-manage-patients';

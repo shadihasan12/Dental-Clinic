@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_sub
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -115,10 +116,22 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 12.h),
               QuickActions(
-                onAddPatient: () =>
-                    context.pushNamed(AppRoutesNames.addPatient),
-                onScheduleVisit: () =>
-                    context.pushNamed(AppRoutesNames.newAppointment),
+                onAddPatient: () async {
+                  if (!await SubscriptionGuardHelper
+                      .requireActive(context)) {
+                    return;
+                  }
+                  if (!context.mounted) return;
+                  context.pushNamed(AppRoutesNames.addPatient);
+                },
+                onScheduleVisit: () async {
+                  if (!await SubscriptionGuardHelper
+                      .requireActive(context)) {
+                    return;
+                  }
+                  if (!context.mounted) return;
+                  context.pushNamed(AppRoutesNames.newAppointment);
+                },
                 onNewCase: () {},
                 onRecordPayment: () {},
               ),

@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/features/patients/domain/entities/patient_enti
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +71,8 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   }
 
   Future<void> _navigateToAddPatient() async {
+    if (!await SubscriptionGuardHelper.requireActive(context)) return;
+    if (!mounted) return;
     await context.pushNamed(AppRoutesNames.addPatient);
     if (mounted) {
       context.read<PatientsListBloc>().add(

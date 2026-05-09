@@ -117,6 +117,11 @@ class _MenuPageState extends State<MenuPage> {
                       onTap: () => context.pushNamed(AppRoutesNames.statistics),
                     ),
                     MenuItem(
+                      icon: Icons.receipt_long_outlined,
+                      title: l10n.billingAndInvoices,
+                      onTap: () => context.pushNamed(AppRoutesNames.billing),
+                    ),
+                    MenuItem(
                       icon: Icons.notifications_outlined,
                       title: l10n.notifications,
                       trailing: _buildNotificationBadge(context),

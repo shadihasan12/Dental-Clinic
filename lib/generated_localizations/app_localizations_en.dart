@@ -1845,4 +1845,444 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accessRestrictedDescription =>
       'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.';
+
+  @override
+  String get billingAndInvoices => 'Billing & Invoices';
+
+  @override
+  String get billingPageTitle => 'Billing';
+
+  @override
+  String get selectPlanTitle => 'Choose a Plan';
+
+  @override
+  String get invoiceDetailsTitle => 'Invoice';
+
+  @override
+  String get submitProofTitle => 'Submit Payment Proof';
+
+  @override
+  String get errorTitle => 'Error';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get currentPlan => 'Current Plan';
+
+  @override
+  String get noActiveSubscription => 'No active subscription';
+
+  @override
+  String trialDaysRemaining(int days) {
+    return '$days days remaining in trial';
+  }
+
+  @override
+  String daysUntilRenewal(int days) {
+    return '$days days until renewal';
+  }
+
+  @override
+  String get buyOrRenewPlan => 'Buy or Renew Plan';
+
+  @override
+  String get continueOpenInvoice => 'Continue Open Invoice';
+
+  @override
+  String get invoicesHistoryTitle => 'Invoices';
+
+  @override
+  String get noInvoicesYet => 'No invoices yet';
+
+  @override
+  String get invoiceLineSubscription => 'Subscription';
+
+  @override
+  String get invoiceIssuedOn => 'Issued on';
+
+  @override
+  String get invoiceDueOn => 'Due on';
+
+  @override
+  String get activatesUntil => 'Activates until';
+
+  @override
+  String get invoiceType => 'Type';
+
+  @override
+  String get renewal => 'Renewal';
+
+  @override
+  String get invoiceStatusPending => 'Pending';
+
+  @override
+  String get invoiceStatusUnderReview => 'Under Review';
+
+  @override
+  String get invoiceStatusPaid => 'Paid';
+
+  @override
+  String get invoiceStatusRejected => 'Rejected';
+
+  @override
+  String get invoiceStatusCancelled => 'Cancelled';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Yearly';
+
+  @override
+  String get selectBillingCycle => 'Billing cycle';
+
+  @override
+  String get choosePlan => 'Plan';
+
+  @override
+  String get popular => 'Popular';
+
+  @override
+  String get generateInvoice => 'Generate Invoice';
+
+  @override
+  String get howToPayTitle => 'How to pay';
+
+  @override
+  String get howToPaySubtitle =>
+      'Use any of the channels below, then upload your receipt.';
+
+  @override
+  String get referenceNumber => 'Reference Number';
+
+  @override
+  String get payOutsideAppNotice =>
+      'Payments are processed outside the app. After paying, return here and upload your receipt.';
+
+  @override
+  String get paymentMethodSyriatelCash => 'Syriatel Cash';
+
+  @override
+  String get paymentMethodShamCash => 'Sham Cash';
+
+  @override
+  String get uploadPaymentProof => 'Upload Payment Proof';
+
+  @override
+  String get uploadReceipt => 'Upload receipt';
+
+  @override
+  String get uploadReceiptHint => 'JPG, PNG, or PDF';
+
+  @override
+  String get methodUsed => 'Method used';
+
+  @override
+  String get transactionReferenceLabel => 'Transaction / Reference Number';
+
+  @override
+  String get transactionReferenceHint =>
+      'e.g. last 4 digits of the transfer ID';
+
+  @override
+  String get transactionRefShort => 'Ref';
+
+  @override
+  String get submittedAt => 'Submitted';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get notesHint => 'Anything we should know about this payment';
+
+  @override
+  String get fieldRequired => 'Required';
+
+  @override
+  String get receiptRequired => 'Please attach a receipt before submitting.';
+
+  @override
+  String get submitForReview => 'Submit for Review';
+
+  @override
+  String invoiceNumberLabel(String number) {
+    return 'Invoice $number';
+  }
+
+  @override
+  String get proofSubmittedTitle => 'Sent for review';
+
+  @override
+  String get proofSubmittedMessage => 'Admin will verify your payment shortly.';
+
+  @override
+  String get underReviewTitle => 'Under Review';
+
+  @override
+  String get underReviewMessage =>
+      'Our team is verifying your payment. You will be notified once it is approved.';
+
+  @override
+  String get invoicePaidTitle => 'Invoice Paid';
+
+  @override
+  String get invoicePaidOn => 'Paid on';
+
+  @override
+  String get invoiceRejectedTitle => 'Invoice Rejected';
+
+  @override
+  String get subscriptionExpiredTitle => 'Subscription Expired';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'Your clinic is in read-only mode. Renew now to keep adding patients, appointments, and expenses.';
+
+  @override
+  String get subscriptionExpiredBlocksAction =>
+      'Your subscription has expired. Renew to continue using premium features.';
+
+  @override
+  String get subscriptionExpiresSoonTitle => 'Subscription Ending Soon';
+
+  @override
+  String subscriptionExpiresInDays(int days) {
+    return 'Renews in $days days. Generate an invoice now to avoid downtime.';
+  }
+
+  @override
+  String get renewNow => 'Renew Now';
+
+  @override
+  String get notNow => 'Not Now';
+
+  @override
+  String get pricingTitle => 'Choose Your Plan';
+
+  @override
+  String get pricingSubtitle => 'Simple pricing that grows with your practice';
+
+  @override
+  String get pricingPopularBadge => 'Popular';
+
+  @override
+  String get pricingCurrentBadge => 'Current';
+
+  @override
+  String get pricingCurrentPlanLabel => 'Current Plan';
+
+  @override
+  String get pricingSelectedLabel => 'Selected';
+
+  @override
+  String pricingChooseAction(String plan) {
+    return 'Choose $plan';
+  }
+
+  @override
+  String get pricingContactUs => 'Contact Us';
+
+  @override
+  String get pricingCustomPricing => 'Custom pricing';
+
+  @override
+  String get pricingMonthSuffix => '/month';
+
+  @override
+  String get pricingYearSuffix => '/year';
+
+  @override
+  String get pricingMoSuffix => '/mo';
+
+  @override
+  String get pricingYrSuffix => '/yr';
+
+  @override
+  String pricingSaveAmount(String amount) {
+    return 'Save \$$amount';
+  }
+
+  @override
+  String pricingSubscribeAction(String plan, String priceText) {
+    return 'Subscribe to $plan · $priceText';
+  }
+
+  @override
+  String get pricingStartFreeTrial => 'Start Free Trial';
+
+  @override
+  String get pricingStartShort => 'Start';
+
+  @override
+  String get pricingSubscriptionActiveTitle => 'Subscription Active';
+
+  @override
+  String get pricingSubscriptionActiveMessage => 'Welcome to your new plan!';
+
+  @override
+  String get pricingTrialStartedTitle => 'Trial Started';
+
+  @override
+  String get pricingTrialStartedMessage => 'Enjoy 30 days of full access!';
+
+  @override
+  String planEverythingInPlus(String plan) {
+    return 'Everything in $plan, plus:';
+  }
+
+  @override
+  String get planSoloName => 'Solo';
+
+  @override
+  String get planSoloDescription => 'For a single dentist starting out';
+
+  @override
+  String get planSoloFeature1 => '1 dentist';
+
+  @override
+  String get planSoloFeature2 => '1 assistant';
+
+  @override
+  String get planSoloFeature3 => 'Unlimited patients';
+
+  @override
+  String get planSoloFeature4 => 'Appointment scheduling';
+
+  @override
+  String get planSoloFeature5 => 'Treatment plans & records';
+
+  @override
+  String get planSoloFeature6 => 'Invoice generation';
+
+  @override
+  String get planSoloFeature7 => 'X-ray & photo storage';
+
+  @override
+  String get planSoloFeature8 => 'Cloud sync & backup';
+
+  @override
+  String get planSoloFeature9 => 'Email support';
+
+  @override
+  String get planDuoName => 'Duo';
+
+  @override
+  String get planDuoDescription => 'For two dentists working together';
+
+  @override
+  String get planDuoFeature1 => 'Up to 2 dentists';
+
+  @override
+  String get planDuoFeature2 => 'Up to 2 assistants';
+
+  @override
+  String get planDuoFeature3 => 'Statistics & analytics dashboard';
+
+  @override
+  String get planDuoFeature4 => 'Email & SMS reminders';
+
+  @override
+  String get planDuoFeature5 => 'Priority email support';
+
+  @override
+  String get planClinicName => 'Clinic';
+
+  @override
+  String get planClinicDescription => 'For mid-size centers';
+
+  @override
+  String get planClinicFeature1 => 'Up to 4 dentists';
+
+  @override
+  String get planClinicFeature2 => 'Up to 6 staff members';
+
+  @override
+  String get planClinicFeature3 => '1 branch location';
+
+  @override
+  String get planClinicFeature4 => 'Statistics & analytics dashboard';
+
+  @override
+  String get planClinicFeature5 => 'Advanced reports';
+
+  @override
+  String get planClinicFeature6 => 'Unlimited patients';
+
+  @override
+  String get planClinicFeature7 => 'Appointment scheduling';
+
+  @override
+  String get planClinicFeature8 => 'Treatment plans & records';
+
+  @override
+  String get planClinicFeature9 => 'Invoice generation & branding';
+
+  @override
+  String get planClinicFeature10 => 'X-ray & photo storage';
+
+  @override
+  String get planClinicFeature11 => 'Email & SMS reminders';
+
+  @override
+  String get planClinicFeature12 => 'Cloud sync & backup';
+
+  @override
+  String get planClinicFeature13 => 'Live chat support';
+
+  @override
+  String get planPracticeName => 'Practice';
+
+  @override
+  String get planPracticeDescription =>
+      'For big centers and multi-branch practices';
+
+  @override
+  String get planPracticeFeature1 => 'Up to 8 dentists';
+
+  @override
+  String get planPracticeFeature2 => 'Unlimited staff members';
+
+  @override
+  String get planPracticeFeature3 => 'Up to 3 branch locations';
+
+  @override
+  String get planPracticeFeature4 => 'Cross-location analytics';
+
+  @override
+  String get planPracticeFeature5 => 'Phone & chat support';
+
+  @override
+  String get planPracticeFeature6 => 'Priority training sessions';
+
+  @override
+  String get planCustomName => 'Custom';
+
+  @override
+  String get planCustomDescription => 'Tailored to your organization';
+
+  @override
+  String get planCustomFeature1 => '10+ dentists';
+
+  @override
+  String get planCustomFeature2 => 'Unlimited staff & branches';
+
+  @override
+  String get planCustomFeature3 => 'Custom integrations';
+
+  @override
+  String get planCustomFeature4 => 'Dedicated account manager';
+
+  @override
+  String get planCustomFeature5 => 'On-site training';
+
+  @override
+  String get planCustomFeature6 => 'SLA & uptime guarantees';
+
+  @override
+  String get planCustomFeature7 => 'Volume discounts';
+
+  @override
+  String get planCustomFeature8 => 'Tailored to your needs';
 }

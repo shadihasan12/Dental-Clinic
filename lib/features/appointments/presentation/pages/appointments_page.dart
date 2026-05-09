@@ -10,6 +10,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:intl/intl.dart';
 
 class AppointmentsPage extends StatelessWidget {
@@ -250,6 +251,10 @@ class _AppointmentsContent extends StatelessWidget {
             // Add button
             GestureDetector(
               onTap: () async {
+                if (!await SubscriptionGuardHelper.requireActive(context)) {
+                  return;
+                }
+                if (!context.mounted) return;
                 await context.pushNamed(AppRoutesNames.newAppointment);
                 if (context.mounted) {
                   context.read<AppointmentBloc>().add(

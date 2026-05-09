@@ -101,8 +101,8 @@ class TrialConfig {
   /// Trial duration in days
   static const int trialDays = 30;
 
-  /// Features available during trial (same as Growing plan)
-  static const PlanTier trialTier = PlanTier.growing;
+  /// Features available during trial (same as Clinic plan).
+  static const PlanTier trialTier = PlanTier.clinic;
 
   /// Create a new trial subscription
   static UserSubscriptionEntity createTrial({

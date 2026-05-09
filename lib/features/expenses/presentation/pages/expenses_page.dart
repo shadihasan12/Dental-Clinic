@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/features/expenses/domain/entities/expense_enti
 import 'package:dental_clinic_app/features/expenses/presentation/manager/expense_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,7 +90,9 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     return DateFormat.yMMMM(locale).format(_currentMonth);
   }
 
-  void _showAddExpense(BuildContext context) {
+  Future<void> _showAddExpense(BuildContext context) async {
+    if (!await SubscriptionGuardHelper.requireActive(context)) return;
+    if (!context.mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

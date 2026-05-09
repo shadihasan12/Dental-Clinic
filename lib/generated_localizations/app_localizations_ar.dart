@@ -625,7 +625,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fullAmount => 'المبلغ الكامل';
 
   @override
-  String get paymentMethodCash => 'نقدي';
+  String get paymentMethodCash => 'نقداً';
 
   @override
   String get paymentMethodCreditCard => 'بطاقة ائتمان';
@@ -1051,7 +1051,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewAllPlans => 'عرض جميع الباقات';
 
   @override
-  String get plan => 'باقة';
+  String get plan => 'الباقة';
 
   @override
   String renewsOn(String date) {
@@ -1833,4 +1833,444 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accessRestrictedDescription =>
       'صلاحيات دورك لا تسمح بالوصول إلى هذه الميزة. تواصل مع مدير العيادة لمزيد من المعلومات.';
+
+  @override
+  String get billingAndInvoices => 'الفواتير والاشتراكات';
+
+  @override
+  String get billingPageTitle => 'الفواتير';
+
+  @override
+  String get selectPlanTitle => 'اختر باقة';
+
+  @override
+  String get invoiceDetailsTitle => 'الفاتورة';
+
+  @override
+  String get submitProofTitle => 'إرسال إثبات الدفع';
+
+  @override
+  String get errorTitle => 'خطأ';
+
+  @override
+  String get copied => 'تم النسخ';
+
+  @override
+  String get currentPlan => 'الباقة الحالية';
+
+  @override
+  String get noActiveSubscription => 'لا يوجد اشتراك نشط';
+
+  @override
+  String trialDaysRemaining(int days) {
+    return 'متبقي $days يوم في الفترة التجريبية';
+  }
+
+  @override
+  String daysUntilRenewal(int days) {
+    return '$days يوم حتى التجديد';
+  }
+
+  @override
+  String get buyOrRenewPlan => 'شراء أو تجديد الباقة';
+
+  @override
+  String get continueOpenInvoice => 'متابعة الفاتورة المفتوحة';
+
+  @override
+  String get invoicesHistoryTitle => 'الفواتير';
+
+  @override
+  String get noInvoicesYet => 'لا توجد فواتير بعد';
+
+  @override
+  String get invoiceLineSubscription => 'اشتراك';
+
+  @override
+  String get invoiceIssuedOn => 'تاريخ الإصدار';
+
+  @override
+  String get invoiceDueOn => 'تاريخ الاستحقاق';
+
+  @override
+  String get activatesUntil => 'ينشّط الاشتراك حتى';
+
+  @override
+  String get invoiceType => 'النوع';
+
+  @override
+  String get renewal => 'تجديد';
+
+  @override
+  String get invoiceStatusPending => 'بانتظار الدفع';
+
+  @override
+  String get invoiceStatusUnderReview => 'قيد المراجعة';
+
+  @override
+  String get invoiceStatusPaid => 'مدفوعة';
+
+  @override
+  String get invoiceStatusRejected => 'مرفوضة';
+
+  @override
+  String get invoiceStatusCancelled => 'ملغاة';
+
+  @override
+  String get billingMonthly => 'شهري';
+
+  @override
+  String get billingYearly => 'سنوي';
+
+  @override
+  String get selectBillingCycle => 'دورة الفوترة';
+
+  @override
+  String get choosePlan => 'الباقة';
+
+  @override
+  String get popular => 'الأكثر شيوعاً';
+
+  @override
+  String get generateInvoice => 'إنشاء الفاتورة';
+
+  @override
+  String get howToPayTitle => 'طريقة الدفع';
+
+  @override
+  String get howToPaySubtitle =>
+      'ادفع باستخدام إحدى الطرق التالية، ثم ارفع إيصال الدفع.';
+
+  @override
+  String get referenceNumber => 'الرقم المرجعي';
+
+  @override
+  String get payOutsideAppNotice =>
+      'تتم عمليات الدفع خارج التطبيق. بعد الدفع، عُد إلى هنا لرفع الإيصال.';
+
+  @override
+  String get paymentMethodSyriatelCash => 'سيرياتيل كاش';
+
+  @override
+  String get paymentMethodShamCash => 'شام كاش';
+
+  @override
+  String get uploadPaymentProof => 'رفع إثبات الدفع';
+
+  @override
+  String get uploadReceipt => 'ارفع الإيصال';
+
+  @override
+  String get uploadReceiptHint => 'JPG أو PNG أو PDF';
+
+  @override
+  String get methodUsed => 'طريقة الدفع المستخدمة';
+
+  @override
+  String get transactionReferenceLabel => 'رقم العملية / المرجع';
+
+  @override
+  String get transactionReferenceHint => 'مثال: آخر 4 أرقام من رقم الحوالة';
+
+  @override
+  String get transactionRefShort => 'المرجع';
+
+  @override
+  String get submittedAt => 'تاريخ الإرسال';
+
+  @override
+  String get notesOptional => 'ملاحظات (اختياري)';
+
+  @override
+  String get notesHint => 'أي تفاصيل إضافية عن الدفع';
+
+  @override
+  String get fieldRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get receiptRequired => 'يرجى إرفاق الإيصال قبل الإرسال.';
+
+  @override
+  String get submitForReview => 'إرسال للمراجعة';
+
+  @override
+  String invoiceNumberLabel(String number) {
+    return 'الفاتورة $number';
+  }
+
+  @override
+  String get proofSubmittedTitle => 'أُرسلت للمراجعة';
+
+  @override
+  String get proofSubmittedMessage => 'سيقوم الإدارة بمراجعة الدفع قريباً.';
+
+  @override
+  String get underReviewTitle => 'قيد المراجعة';
+
+  @override
+  String get underReviewMessage =>
+      'فريقنا يتحقق من الدفع. سيتم إعلامك عند الموافقة.';
+
+  @override
+  String get invoicePaidTitle => 'تم الدفع';
+
+  @override
+  String get invoicePaidOn => 'تاريخ الدفع';
+
+  @override
+  String get invoiceRejectedTitle => 'الفاتورة مرفوضة';
+
+  @override
+  String get subscriptionExpiredTitle => 'انتهى الاشتراك';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'العيادة في وضع القراءة فقط. جدّد الاشتراك للاستمرار في إضافة المرضى والمواعيد والمصاريف.';
+
+  @override
+  String get subscriptionExpiredBlocksAction =>
+      'انتهى اشتراكك. جدّد الاشتراك لمتابعة استخدام الميزات المدفوعة.';
+
+  @override
+  String get subscriptionExpiresSoonTitle => 'اقترب انتهاء الاشتراك';
+
+  @override
+  String subscriptionExpiresInDays(int days) {
+    return 'ينتهي خلال $days يوم. أنشئ فاتورة الآن لتجنب انقطاع الخدمة.';
+  }
+
+  @override
+  String get renewNow => 'جدّد الآن';
+
+  @override
+  String get notNow => 'ليس الآن';
+
+  @override
+  String get pricingTitle => 'اختر باقتك';
+
+  @override
+  String get pricingSubtitle => 'تسعير بسيط ينمو مع عيادتك';
+
+  @override
+  String get pricingPopularBadge => 'الأكثر شيوعاً';
+
+  @override
+  String get pricingCurrentBadge => 'الحالية';
+
+  @override
+  String get pricingCurrentPlanLabel => 'الباقة الحالية';
+
+  @override
+  String get pricingSelectedLabel => 'محددة';
+
+  @override
+  String pricingChooseAction(String plan) {
+    return 'اختر باقة $plan';
+  }
+
+  @override
+  String get pricingContactUs => 'تواصل معنا';
+
+  @override
+  String get pricingCustomPricing => 'تسعير مخصص';
+
+  @override
+  String get pricingMonthSuffix => '/شهر';
+
+  @override
+  String get pricingYearSuffix => '/سنة';
+
+  @override
+  String get pricingMoSuffix => '/شهر';
+
+  @override
+  String get pricingYrSuffix => '/سنة';
+
+  @override
+  String pricingSaveAmount(String amount) {
+    return 'وفّر \$$amount';
+  }
+
+  @override
+  String pricingSubscribeAction(String plan, String priceText) {
+    return 'اشترك في باقة $plan · $priceText';
+  }
+
+  @override
+  String get pricingStartFreeTrial => 'ابدأ التجربة المجانية';
+
+  @override
+  String get pricingStartShort => 'ابدأ';
+
+  @override
+  String get pricingSubscriptionActiveTitle => 'تم تفعيل الاشتراك';
+
+  @override
+  String get pricingSubscriptionActiveMessage => 'أهلاً بك في باقتك الجديدة!';
+
+  @override
+  String get pricingTrialStartedTitle => 'بدأت التجربة';
+
+  @override
+  String get pricingTrialStartedMessage =>
+      'استمتع بثلاثين يوماً من الوصول الكامل!';
+
+  @override
+  String planEverythingInPlus(String plan) {
+    return 'جميع مزايا باقة $plan، بالإضافة إلى:';
+  }
+
+  @override
+  String get planSoloName => 'فردي';
+
+  @override
+  String get planSoloDescription => 'لطبيب أسنان واحد يبدأ مشواره';
+
+  @override
+  String get planSoloFeature1 => 'طبيب أسنان واحد';
+
+  @override
+  String get planSoloFeature2 => 'مساعد واحد';
+
+  @override
+  String get planSoloFeature3 => 'عدد غير محدود من المرضى';
+
+  @override
+  String get planSoloFeature4 => 'جدولة المواعيد';
+
+  @override
+  String get planSoloFeature5 => 'خطط العلاج والسجلات';
+
+  @override
+  String get planSoloFeature6 => 'إنشاء الفواتير';
+
+  @override
+  String get planSoloFeature7 => 'تخزين الأشعة والصور';
+
+  @override
+  String get planSoloFeature8 => 'مزامنة سحابية ونسخ احتياطي';
+
+  @override
+  String get planSoloFeature9 => 'دعم عبر البريد الإلكتروني';
+
+  @override
+  String get planDuoName => 'ثنائي';
+
+  @override
+  String get planDuoDescription => 'لطبيبَي أسنان يعملان معاً';
+
+  @override
+  String get planDuoFeature1 => 'حتى طبيبَي أسنان';
+
+  @override
+  String get planDuoFeature2 => 'حتى مساعدَين';
+
+  @override
+  String get planDuoFeature3 => 'لوحة الإحصائيات والتحليلات';
+
+  @override
+  String get planDuoFeature4 => 'تذكيرات بالبريد والرسائل القصيرة';
+
+  @override
+  String get planDuoFeature5 => 'دعم بريدي بأولوية';
+
+  @override
+  String get planClinicName => 'مركز';
+
+  @override
+  String get planClinicDescription => 'للمراكز متوسطة الحجم';
+
+  @override
+  String get planClinicFeature1 => 'حتى أربعة أطباء أسنان';
+
+  @override
+  String get planClinicFeature2 => 'حتى ستة أعضاء طاقم';
+
+  @override
+  String get planClinicFeature3 => 'فرع واحد';
+
+  @override
+  String get planClinicFeature4 => 'لوحة الإحصائيات والتحليلات';
+
+  @override
+  String get planClinicFeature5 => 'تقارير متقدمة';
+
+  @override
+  String get planClinicFeature6 => 'عدد غير محدود من المرضى';
+
+  @override
+  String get planClinicFeature7 => 'جدولة المواعيد';
+
+  @override
+  String get planClinicFeature8 => 'خطط العلاج والسجلات';
+
+  @override
+  String get planClinicFeature9 => 'فواتير بهوية مخصصة';
+
+  @override
+  String get planClinicFeature10 => 'تخزين الأشعة والصور';
+
+  @override
+  String get planClinicFeature11 => 'تذكيرات بالبريد والرسائل القصيرة';
+
+  @override
+  String get planClinicFeature12 => 'مزامنة سحابية ونسخ احتياطي';
+
+  @override
+  String get planClinicFeature13 => 'دعم عبر الدردشة المباشرة';
+
+  @override
+  String get planPracticeName => 'مركز كبير';
+
+  @override
+  String get planPracticeDescription =>
+      'للمراكز الكبيرة والعيادات متعددة الفروع';
+
+  @override
+  String get planPracticeFeature1 => 'حتى ثمانية أطباء أسنان';
+
+  @override
+  String get planPracticeFeature2 => 'عدد غير محدود من الطاقم';
+
+  @override
+  String get planPracticeFeature3 => 'حتى ثلاثة فروع';
+
+  @override
+  String get planPracticeFeature4 => 'تحليلات بين الفروع';
+
+  @override
+  String get planPracticeFeature5 => 'دعم عبر الهاتف والدردشة';
+
+  @override
+  String get planPracticeFeature6 => 'جلسات تدريب بأولوية';
+
+  @override
+  String get planCustomName => 'مخصصة';
+
+  @override
+  String get planCustomDescription => 'مصممة خصيصاً لمؤسستك';
+
+  @override
+  String get planCustomFeature1 => 'أكثر من 10 أطباء أسنان';
+
+  @override
+  String get planCustomFeature2 => 'طاقم وفروع غير محدودة';
+
+  @override
+  String get planCustomFeature3 => 'تكاملات مخصصة';
+
+  @override
+  String get planCustomFeature4 => 'مدير حساب مخصص';
+
+  @override
+  String get planCustomFeature5 => 'تدريب في الموقع';
+
+  @override
+  String get planCustomFeature6 => 'ضمانات اتفاقية مستوى الخدمة';
+
+  @override
+  String get planCustomFeature7 => 'خصومات الكميات الكبيرة';
+
+  @override
+  String get planCustomFeature8 => 'مصممة وفق احتياجاتك';
 }

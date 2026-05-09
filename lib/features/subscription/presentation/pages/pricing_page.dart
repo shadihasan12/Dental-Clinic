@@ -1,15 +1,19 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/config/app_config.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/billing/presentation/bloc/billing_bloc.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/presentation/bloc/subscription_bloc.dart';
+import 'package:dental_clinic_app/features/subscription/presentation/utils/pricing_l10n.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 
 class PricingPage extends StatelessWidget {
@@ -17,96 +21,202 @@ class PricingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<SubscriptionBloc>()
-        ..add(const SubscriptionEvent.loadPlans()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<SubscriptionBloc>()
+            ..add(const SubscriptionEvent.loadPlans()),
+        ),
+        // BillingBloc lives alongside SubscriptionBloc so the Subscribe
+        // CTA can create an invoice and let the listener navigate to the
+        // payment-instructions page once the new invoice is in state.
+        BlocProvider(create: (_) => getIt<BillingBloc>()),
+      ],
       child: const _PricingContent(),
     );
   }
 }
 
-class _PricingContent extends StatefulWidget {
+class _PricingContent extends StatelessWidget {
   const _PricingContent();
 
   @override
-  State<_PricingContent> createState() => _PricingContentState();
-}
-
-class _PricingContentState extends State<_PricingContent> {
-  late PageController _pageController;
-  int _currentPage = 1; // Start on "Growing" (popular)
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(
-      viewportFraction: 0.82,
-      initialPage: _currentPage,
-    );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // The page scrolls as one piece — header included — so the user can
+    // see the full plan list, the trial banner, and the subscribe CTA in
+    // one continuous flow. Bottom padding accounts for the Android system
+    // nav bar (edge-to-edge is enabled globally in main.dart).
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
-        listener: (context, state) {
-          if (state.subscribeSuccess) {
-            AppSnackbar.showSuccess(
-              context,
-              title: 'Subscription Active',
-              message: 'Welcome to your new plan!',
-            );
-            context.pop();
+      // The body fills the screen including under the status bar so the
+      // gradient header reaches edge-to-edge. We wrap the scrollable in a
+      // SafeArea(top: false, bottom: false) so we can manage insets per
+      // section ourselves.
+      extendBodyBehindAppBar: true,
+      body: MultiBlocListener(
+        listeners: [
+          // Subscription bloc only handles the trial flow on this page —
+          // the paid subscribe path goes through the invoice flow below.
+          BlocListener<SubscriptionBloc, SubscriptionState>(
+            listener: (context, state) {
+              final l10n = AppLocalizations.of(context)!;
+              if (state.trialStarted) {
+                AppSnackbar.showSuccess(
+                  context,
+                  title: l10n.pricingTrialStartedTitle,
+                  message: l10n.pricingTrialStartedMessage,
+                );
+                context.pop();
+              }
+              if (state.error != null) {
+                AppSnackbar.showError(
+                  context,
+                  title: l10n.errorTitle,
+                  message: state.error,
+                );
+              }
+            },
+          ),
+          // When the dentist taps Subscribe we create an invoice and route
+          // them to the invoice details page so they can see payment
+          // instructions and upload proof. Activation only happens once
+          // an admin approves the invoice.
+          BlocListener<BillingBloc, BillingState>(
+            listener: (context, state) {
+              final l10n = AppLocalizations.of(context)!;
+              if (state.error != null) {
+                AppSnackbar.showError(
+                  context,
+                  title: l10n.errorTitle,
+                  message: state.error!,
+                );
+                context.read<BillingBloc>().add(
+                      const BillingEvent.clearFlags(),
+                    );
+              }
+              if (state.createdInvoice != null) {
+                final invoice = state.createdInvoice!;
+                context.read<BillingBloc>().add(
+                      const BillingEvent.clearFlags(),
+                    );
+                context.pushReplacementNamed(
+                  AppRoutesNames.invoiceDetails,
+                  extra: invoice,
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<SubscriptionBloc, SubscriptionState>(
+          builder: (context, state) {
+          if (state.isLoadingPlans) {
+            return const Center(child: CircularProgressIndicator());
           }
-          if (state.trialStarted) {
-            AppSnackbar.showSuccess(
-              context,
-              title: 'Trial Started',
-              message: 'Enjoy 30 days of full access!',
-            );
-            context.pop();
-          }
-          if (state.error != null) {
-            AppSnackbar.showError(
-              context,
-              title: 'Error',
-              message: state.error,
-            );
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: state.isLoadingPlans
-                    ? const Center(child: CircularProgressIndicator())
-                    : _buildContent(context, state),
-              ),
-            ],
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _Header(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                  child: _BillingToggle(
+                    selectedCycle: state.selectedBillingCycle,
+                    onChanged: (cycle) {
+                      context.read<SubscriptionBloc>().add(
+                            SubscriptionEvent.changeBillingCycle(cycle),
+                          );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                ...state.availablePlans.map(
+                  (plan) => Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
+                    child: _PlanCard(
+                      plan: plan,
+                      billingCycle: state.selectedBillingCycle,
+                      isSelected: state.selectedPlan?.id == plan.id,
+                      isCurrentPlan:
+                          state.currentSubscription?.planTier == plan.tier,
+                      onSelect: () {
+                        context.read<SubscriptionBloc>().add(
+                              SubscriptionEvent.selectPlan(plan),
+                            );
+                      },
+                    ),
+                  ),
+                ),
+                if (!state.hasActiveSubscription)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+                    child: _TrialBanner(
+                      onStartTrial: () {
+                        context.read<SubscriptionBloc>().add(
+                              const SubscriptionEvent.startTrial('user_id'),
+                            );
+                      },
+                    ),
+                  ),
+                // Subscribe CTA only for paid tiers — Custom uses its own
+                // in-card "Contact Us" button instead.
+                if (state.selectedPlan != null &&
+                    !state.selectedPlan!.isCustom)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                    child: BlocBuilder<BillingBloc, BillingState>(
+                      builder: (context, billingState) {
+                        return _SubscribeButton(
+                          plan: state.selectedPlan!,
+                          billingCycle: state.selectedBillingCycle,
+                          // Show the spinner while the invoice is being
+                          // created — this is what blocks the user from
+                          // double-tapping into two pending invoices.
+                          isProcessing: billingState.isProcessing,
+                          onSubscribe: () {
+                            final clinicId = getIt<UserStorage>()
+                                    .getSelectedClinicId() ??
+                                '';
+                            context.read<BillingBloc>().add(
+                                  BillingEvent.createInvoice(
+                                    clinicId: clinicId,
+                                    plan: state.selectedPlan!,
+                                    cycle: state.selectedBillingCycle,
+                                  ),
+                                );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                // Bottom inset = system nav bar on Android + breathing room.
+                SizedBox(height: 24.h + bottomInset),
+              ],
+            ),
           );
-        },
+          },
+        ),
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context) {
+// ─── Header ────────────────────────────────────
+
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: GradientManager.primaryHeader,
-      ),
+      decoration: BoxDecoration(gradient: GradientManager.primaryHeader),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
+          padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 24.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -120,178 +230,37 @@ class _PricingContentState extends State<_PricingContent> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Icons.arrow_back_ios_new,
+                    isRtl
+                        ? Icons.arrow_forward_ios
+                        : Icons.arrow_back_ios_new,
                     color: Colors.white,
                     size: 18.w,
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 56.w,
-                      height: 56.w,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Icon(
-                        Icons.workspace_premium_rounded,
-                        color: Colors.white,
-                        size: 30.w,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Choose Your Plan',
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      'Simple pricing that grows with your practice',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
-                    ),
-                  ],
+              SizedBox(height: 16.h),
+              Text(
+                l10n.pricingTitle,
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                l10n.pricingSubtitle,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white.withValues(alpha: 0.85),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, SubscriptionState state) {
-    final plans = state.availablePlans;
-    if (plans.isEmpty) return const SizedBox.shrink();
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 20.h),
-
-          // Billing toggle
-          _BillingToggle(
-            selectedCycle: state.selectedBillingCycle,
-            onChanged: (cycle) {
-              context.read<SubscriptionBloc>().add(
-                    SubscriptionEvent.changeBillingCycle(cycle),
-                  );
-            },
-          ),
-
-          SizedBox(height: 24.h),
-
-          // Horizontal sliding plan cards
-          SizedBox(
-            height: 460.h,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: plans.length,
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
-              },
-              itemBuilder: (context, index) {
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    double scale = 1.0;
-                    if (_pageController.position.haveDimensions) {
-                      final page = _pageController.page ??
-                          _pageController.initialPage.toDouble();
-                      scale = math.max(0.88, 1 - (page - index).abs() * 0.12);
-                    }
-                    return Transform.scale(
-                      scale: scale,
-                      child: child,
-                    );
-                  },
-                  child: _PlanCard(
-                    plan: plans[index],
-                    billingCycle: state.selectedBillingCycle,
-                    isSelected: state.selectedPlan?.id == plans[index].id,
-                    isCurrentPlan:
-                        state.currentSubscription?.planTier == plans[index].tier,
-                    onSelect: () {
-                      context.read<SubscriptionBloc>().add(
-                            SubscriptionEvent.selectPlan(plans[index]),
-                          );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // Page indicator dots
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              plans.length,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                width: _currentPage == index ? 24.w : 8.w,
-                height: 8.w,
-                decoration: BoxDecoration(
-                  color: _currentPage == index
-                      ? ColorManager.primary
-                      : ColorManager.of(context).border,
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20.h),
-
-          // Free trial banner
-          if (!state.hasActiveSubscription)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: _TrialBanner(
-                onStartTrial: () {
-                  context.read<SubscriptionBloc>().add(
-                        const SubscriptionEvent.startTrial('user_id'),
-                      );
-                },
-              ),
-            ),
-
-          // Subscribe button
-          if (state.selectedPlan != null)
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
-              child: _SubscribeButton(
-                plan: state.selectedPlan!,
-                billingCycle: state.selectedBillingCycle,
-                isProcessing: state.isProcessing,
-                onSubscribe: () {
-                  context.read<SubscriptionBloc>().add(
-                        const SubscriptionEvent.subscribe(
-                          userId: 'user_id',
-                          paymentMethodId: 'payment_method_id',
-                        ),
-                      );
-                },
-              ),
-            ),
-
-          SizedBox(height: 32.h),
-        ],
       ),
     );
   }
@@ -310,18 +279,22 @@ class _BillingToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 40.w),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBgSecondary,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
         children: [
-          _buildOption(context, 'Monthly', BillingCycle.monthly),
-          _buildOption(context, 'Yearly', BillingCycle.yearly,
-              badge: AppConfig.yearlyBadgeText),
+          _buildOption(context, l10n.billingMonthly, BillingCycle.monthly),
+          _buildOption(
+            context,
+            l10n.billingYearly,
+            BillingCycle.yearly,
+            badge: AppConfig.yearlyBadgeText,
+          ),
         ],
       ),
     );
@@ -339,10 +312,11 @@ class _BillingToggle extends StatelessWidget {
         onTap: () => onChanged(cycle),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(vertical: 12.h),
+          padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(10.r),
+            color:
+                isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(8.r),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
@@ -359,9 +333,9 @@ class _BillingToggle extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
                       ? ColorManager.primary
                       : ColorManager.of(context).textSecondary,
@@ -395,7 +369,7 @@ class _BillingToggle extends StatelessWidget {
   }
 }
 
-// ─── Plan Card ────────────────────────────────
+// ─── Plan Card (vertical, compact) ────────────────
 
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlanEntity plan;
@@ -414,12 +388,16 @@ class _PlanCard extends StatelessWidget {
 
   IconData get _planIcon {
     switch (plan.tier) {
-      case PlanTier.starter:
-        return Icons.rocket_launch_rounded;
-      case PlanTier.growing:
-        return Icons.trending_up_rounded;
-      case PlanTier.advanced:
-        return Icons.diamond_rounded;
+      case PlanTier.solo:
+        return Icons.person_rounded;
+      case PlanTier.duo:
+        return Icons.people_alt_rounded;
+      case PlanTier.clinic:
+        return Icons.local_hospital_rounded;
+      case PlanTier.practice:
+        return Icons.business_rounded;
+      case PlanTier.custom:
+        return Icons.handshake_rounded;
       default:
         return Icons.star_rounded;
     }
@@ -427,12 +405,16 @@ class _PlanCard extends StatelessWidget {
 
   Color get _accentColor {
     switch (plan.tier) {
-      case PlanTier.starter:
+      case PlanTier.solo:
         return ColorManager.info;
-      case PlanTier.growing:
+      case PlanTier.duo:
         return ColorManager.primary;
-      case PlanTier.advanced:
+      case PlanTier.clinic:
+        return ColorManager.primary;
+      case PlanTier.practice:
         return ColorManager.purple;
+      case PlanTier.custom:
+        return ColorManager.warning;
       default:
         return ColorManager.primary;
     }
@@ -440,294 +422,287 @@ class _PlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    final l10n = AppLocalizations.of(context)!;
     final price = plan.getPrice(billingCycle);
     final isYearly = billingCycle == BillingCycle.yearly;
+    final localizedName = PricingL10n.name(l10n, plan.tier);
+    final localizedDescription = PricingL10n.description(l10n, plan.tier);
+    final localizedFeatures = PricingL10n.features(l10n, plan.tier);
 
     return GestureDetector(
       onTap: isCurrentPlan ? null : onSelect,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
         decoration: BoxDecoration(
-          color: ColorManager.of(context).cardBg,
-          borderRadius: BorderRadius.circular(24.r),
+          color: c.cardBg,
+          borderRadius: BorderRadius.circular(18.r),
           border: Border.all(
             color: isSelected
                 ? _accentColor
                 : plan.isPopular
-                    ? _accentColor.withValues(alpha: 0.3)
-                    : ColorManager.of(context).divider,
+                    ? _accentColor.withValues(alpha: 0.35)
+                    : c.borderLight,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? _accentColor.withValues(alpha: 0.2)
-                  : ColorManager.black.withValues(alpha: 0.06),
-              blurRadius: isSelected ? 20 : 12,
-              offset: const Offset(0, 6),
+                  ? _accentColor.withValues(alpha: 0.18)
+                  : ColorManager.black.withValues(alpha: 0.05),
+              blurRadius: isSelected ? 16 : 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top badge
-            if (plan.isPopular || isCurrentPlan)
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                decoration: BoxDecoration(
-                  gradient: isCurrentPlan
-                      ? GradientManager.success
-                      : LinearGradient(
-                          colors: [
-                            _accentColor,
-                            _accentColor.withValues(alpha: 0.8),
-                          ],
-                        ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(22.r),
-                    topRight: Radius.circular(22.r),
+            // Top row: icon, name + description, price
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: _accentColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(_planIcon,
+                        color: _accentColor, size: 22.w),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      isCurrentPlan
-                          ? Icons.check_circle_rounded
-                          : Icons.star_rounded,
-                      color: Colors.white,
-                      size: 14.w,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      isCurrentPlan ? 'Current Plan' : 'Most Popular',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Plan icon + name
-                    Row(
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 44.w,
-                          height: 44.w,
-                          decoration: BoxDecoration(
-                            color: _accentColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(
-                            _planIcon,
-                            color: _accentColor,
-                            size: 22.w,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
-                            Text(
-                              plan.name,
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontWeight: FontWeight.w700,
-                                color: ColorManager.of(context).textPrimary,
+                            Flexible(
+                              child: Text(
+                                localizedName,
+                                style: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontFamily: fontFamily,
+                                  fontWeight: FontWeight.w700,
+                                  color: c.textPrimary,
+                                ),
                               ),
                             ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              plan.description,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                color: ColorManager.of(context).textTertiary,
+                            if (plan.isPopular || isCurrentPlan) ...[
+                              SizedBox(width: 8.w),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 2.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isCurrentPlan
+                                      ? ColorManager.success
+                                      : _accentColor,
+                                  borderRadius: BorderRadius.circular(6.r),
+                                ),
+                                child: Text(
+                                  isCurrentPlan
+                                      ? l10n.pricingCurrentBadge
+                                      : l10n.pricingPopularBadge,
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontFamily: fontFamily,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ],
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          localizedDescription,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontFamily: fontFamily,
+                            color: c.textTertiary,
+                          ),
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 20.h),
-
-                    // Price
-                    Row(
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Divider(color: c.divider, height: 1),
+            ),
+            // Price block — Custom plan shows "Contact us" copy instead.
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+              child: plan.isCustom
+                  ? Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '\$${price.toStringAsFixed(2)}',
+                          l10n.pricingCustomPricing,
                           style: TextStyle(
-                            fontSize: 32.sp,
-                            fontFamily: FontHelper.fontFamily(context),
+                            fontSize: 20.sp,
+                            fontFamily: fontFamily,
                             fontWeight: FontWeight.w800,
                             color: _accentColor,
                             height: 1,
                           ),
                         ),
+                      ],
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '\$${price.toStringAsFixed(price % 1 == 0 ? 0 : 2)}',
+                          style: TextStyle(
+                            fontSize: 26.sp,
+                            fontFamily: fontFamily,
+                            fontWeight: FontWeight.w800,
+                            color: _accentColor,
+                            height: 1,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 4.h, left: 4.w),
+                          padding: EdgeInsets.only(bottom: 4.h),
                           child: Text(
-                            isYearly ? '/year' : '/month',
+                            isYearly
+                                ? l10n.pricingYearSuffix
+                                : l10n.pricingMonthSuffix,
                             style: TextStyle(
-                              fontSize: 14.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              color: ColorManager.of(context).textTertiary,
+                              fontSize: 13.sp,
+                              fontFamily: fontFamily,
+                              color: c.textTertiary,
                             ),
                           ),
                         ),
+                        const Spacer(),
+                        if (isYearly && plan.yearlySavings > 0)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8.w, vertical: 4.h),
+                            decoration: BoxDecoration(
+                              color: ColorManager.successBackground,
+                              borderRadius: BorderRadius.circular(6.r),
+                            ),
+                            child: Text(
+                              l10n.pricingSaveAmount(
+                                plan.yearlySavings.toStringAsFixed(0),
+                              ),
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontFamily: fontFamily,
+                                fontWeight: FontWeight.w600,
+                                color: ColorManager.success,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    if (isYearly) ...[
-                      SizedBox(height: 4.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 3.h),
-                        decoration: BoxDecoration(
-                          color: ColorManager.successBackground,
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                        child: Text(
-                          '\$${plan.yearlyMonthlyEquivalent.toStringAsFixed(2)}/mo · Save \$${plan.yearlySavings.toStringAsFixed(0)}',
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: ColorManager.success,
+            ),
+            // Full feature list — every feature the plan offers, no
+            // truncation, so the dentist can compare plans top-to-bottom.
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...localizedFeatures.map(
+                    (feature) => Padding(
+                      padding: EdgeInsets.only(bottom: 6.h),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 16.w,
+                            height: 16.w,
+                            decoration: BoxDecoration(
+                              color: _accentColor.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.check_rounded,
+                                color: _accentColor, size: 11.w),
                           ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: Text(
+                              feature,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontFamily: fontFamily,
+                                color: c.textPrimary,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Footer pill button. Custom plan routes to contact-sales
+            // instead of selecting; Subscribe flow doesn't apply.
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isCurrentPlan
+                      ? null
+                      : plan.isCustom
+                          ? () => context.pushNamed(
+                                AppRoutesNames.contactSupport,
+                              )
+                          : onSelect,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isSelected
+                        ? _accentColor
+                        : _accentColor.withValues(alpha: 0.1),
+                    foregroundColor:
+                        isSelected ? Colors.white : _accentColor,
+                    elevation: 0,
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (plan.isCustom) ...[
+                        Icon(Icons.mail_outline_rounded, size: 16.w),
+                        SizedBox(width: 6.w),
+                      ] else if (isSelected) ...[
+                        Icon(Icons.check_circle_rounded, size: 16.w),
+                        SizedBox(width: 6.w),
+                      ],
+                      Text(
+                        plan.isCustom
+                            ? l10n.pricingContactUs
+                            : isCurrentPlan
+                                ? l10n.pricingCurrentPlanLabel
+                                : isSelected
+                                    ? l10n.pricingSelectedLabel
+                                    : l10n.pricingChooseAction(localizedName),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontFamily: fontFamily,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
-
-                    SizedBox(height: 16.h),
-                    Divider(color: ColorManager.of(context).divider, height: 1),
-                    SizedBox(height: 12.h),
-
-                    // Features
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        child: Column(
-                          children: [
-                            ...plan.features.take(5).map(
-                                  (feature) => Padding(
-                                    padding: EdgeInsets.only(bottom: 8.h),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 18.w,
-                                          height: 18.w,
-                                          decoration: BoxDecoration(
-                                            color: _accentColor
-                                                .withValues(alpha: 0.1),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_rounded,
-                                            color: _accentColor,
-                                            size: 12.w,
-                                          ),
-                                        ),
-                                        SizedBox(width: 10.w),
-                                        Expanded(
-                                          child: Text(
-                                            feature,
-                                            style: TextStyle(
-                                              fontSize: 13.sp,
-                                              fontFamily:
-                                                  FontHelper.fontFamily(
-                                                      context),
-                                              color: ColorManager.of(context).textPrimary,
-                                              height: 1.3,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                            if (plan.features.length > 5)
-                              Padding(
-                                padding: EdgeInsets.only(top: 4.h),
-                                child: Text(
-                                  '+ ${plan.features.length - 5} more features',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontFamily:
-                                        FontHelper.fontFamily(context),
-                                    fontWeight: FontWeight.w500,
-                                    color: _accentColor,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Choose button
-                    SizedBox(height: 8.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: isCurrentPlan ? null : onSelect,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isSelected
-                              ? _accentColor
-                              : _accentColor.withValues(alpha: 0.1),
-                          foregroundColor:
-                              isSelected ? Colors.white : _accentColor,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (isSelected)
-                              Padding(
-                                padding: EdgeInsets.only(right: 6.w),
-                                child: Icon(
-                                  Icons.check_circle_rounded,
-                                  size: 18.w,
-                                ),
-                              ),
-                            Text(
-                              isCurrentPlan
-                                  ? 'Current Plan'
-                                  : isSelected
-                                      ? 'Selected'
-                                      : 'Choose ${plan.name}',
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -747,53 +722,54 @@ class _TrialBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         gradient: GradientManager.primaryButton,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: ColorManager.primary.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: ColorManager.primary.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            width: 48.w,
-            height: 48.w,
+            width: 44.w,
+            height: 44.w,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14.r),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               Icons.rocket_launch_rounded,
               color: Colors.white,
-              size: 24.w,
+              size: 22.w,
             ),
           ),
-          SizedBox(width: 14.w),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Start Free Trial',
+                  l10n.pricingStartFreeTrial,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 2.h),
                 Text(
                   '${AppConfig.freeTrialText} · ${AppConfig.noCreditCardText}',
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 11.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     color: Colors.white.withValues(alpha: 0.9),
                   ),
@@ -801,19 +777,19 @@ class _TrialBanner extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: 10.w),
+          SizedBox(width: 8.w),
           GestureDetector(
             onTap: onStartTrial,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: ColorManager.of(context).cardBg,
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(10.r),
               ),
               child: Text(
-                'Start',
+                l10n.pricingStartShort,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: FontWeight.w600,
                   color: ColorManager.primary,
@@ -844,13 +820,19 @@ class _SubscribeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final price = plan.getPrice(billingCycle);
+    final isYearly = billingCycle == BillingCycle.yearly;
+    final priceText =
+        '\$${price.toStringAsFixed(price % 1 == 0 ? 0 : 2)}'
+        '${isYearly ? l10n.pricingYrSuffix : l10n.pricingMoSuffix}';
+    final localizedPlanName = PricingL10n.name(l10n, plan.tier);
 
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
-          height: 56.h,
+          height: 54.h,
           child: ElevatedButton(
             onPressed: isProcessing ? null : onSubscribe,
             style: ElevatedButton.styleFrom(
@@ -858,33 +840,33 @@ class _SubscribeButton extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(14.r),
               ),
             ),
             child: isProcessing
                 ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
+                    width: 22.w,
+                    height: 22.h,
                     child: const CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
                 : Text(
-                    'Subscribe to ${plan.name} - \$${price.toStringAsFixed(2)}${billingCycle == BillingCycle.yearly ? '/yr' : '/mo'}',
+                    l10n.pricingSubscribeAction(localizedPlanName, priceText),
                     style: TextStyle(
-                      fontSize: 15.sp,
+                      fontSize: 14.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
           ),
         ),
-        SizedBox(height: 10.h),
+        SizedBox(height: 8.h),
         Text(
           AppConfig.cancelAnytimeText,
           style: TextStyle(
-            fontSize: 12.sp,
+            fontSize: 11.sp,
             fontFamily: FontHelper.fontFamily(context),
             color: ColorManager.of(context).textTertiary,
           ),

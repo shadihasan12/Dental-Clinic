@@ -44,6 +44,11 @@ import 'package:dental_clinic_app/features/clinic/presentation/pages/my_clinics_
 import 'package:dental_clinic_app/features/clinic/presentation/pages/create_clinic_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/clinic_users_page.dart';
 import 'package:dental_clinic_app/features/subscription/presentation/pages/pricing_page.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/billing_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/invoice_details_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/submit_payment_proof_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -406,6 +411,55 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const PricingPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+
+        // Billing Routes
+        GoRoute(
+          path: '/billing',
+          name: AppRoutesNames.billing,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const BillingPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/select-plan',
+          name: AppRoutesNames.selectBillingPlan,
+          pageBuilder: (context, state) {
+            final isRenewal = (state.extra as bool?) ?? false;
+            return CupertinoPage(
+              child: SelectBillingPlanPage(isRenewal: isRenewal),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/invoice',
+          name: AppRoutesNames.invoiceDetails,
+          pageBuilder: (context, state) {
+            final invoice = state.extra as InvoiceEntity;
+            return CupertinoPage(
+              child: InvoiceDetailsPage(invoice: invoice),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/submit-proof',
+          name: AppRoutesNames.submitPaymentProof,
+          pageBuilder: (context, state) {
+            final invoice = state.extra as InvoiceEntity;
+            return CupertinoPage(
+              child: SubmitPaymentProofPage(invoice: invoice),
               key: state.pageKey,
               name: state.name,
             );

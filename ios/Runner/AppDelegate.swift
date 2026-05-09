@@ -77,6 +77,23 @@ final class GlassTabBarPlatformView: NSObject, FlutterPlatformView, UITabBarDele
     let appearance = UITabBarAppearance()
     appearance.configureWithDefaultBackground()
     appearance.backgroundColor = nil
+
+    // Slightly smaller tab titles than the iOS default (10pt) — feels
+    // less heavy under the SF Symbol icons. Selected stays semibold so
+    // the active state is still readable.
+    let normalTitleAttrs: [NSAttributedString.Key: Any] = [
+      .font: UIFont.systemFont(ofSize: 9, weight: .regular)
+    ]
+    let selectedTitleAttrs: [NSAttributedString.Key: Any] = [
+      .font: UIFont.systemFont(ofSize: 9, weight: .semibold)
+    ]
+    appearance.stackedLayoutAppearance.normal.titleTextAttributes = normalTitleAttrs
+    appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedTitleAttrs
+    appearance.inlineLayoutAppearance.normal.titleTextAttributes = normalTitleAttrs
+    appearance.inlineLayoutAppearance.selected.titleTextAttributes = selectedTitleAttrs
+    appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = normalTitleAttrs
+    appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = selectedTitleAttrs
+
     tabBar.standardAppearance = appearance
     if #available(iOS 15.0, *) {
       tabBar.scrollEdgeAppearance = appearance

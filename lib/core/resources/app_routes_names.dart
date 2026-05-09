@@ -77,6 +77,12 @@ class AppRoutesNames {
   static const String subscription = 'subscription';
   static const String manageSubscription = 'manageSubscription';
 
+  // Billing Routes
+  static const String billing = 'billing';
+  static const String selectBillingPlan = 'selectBillingPlan';
+  static const String invoiceDetails = 'invoiceDetails';
+  static const String submitPaymentProof = 'submitPaymentProof';
+
   // Other Routes
   static const String medicalHistory = 'medicalHistory';
 }
