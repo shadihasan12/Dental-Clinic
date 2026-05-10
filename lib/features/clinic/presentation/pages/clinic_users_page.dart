@@ -600,8 +600,11 @@ class _AddUserSheetState extends State<_AddUserSheet> {
   Future<void> _loadSpecialties() async {
     setState(() => _loadingSpecialties = true);
     final result = await getIt<AuthRepository>().getSpecialties();
-    result.fold((_) {}, (list) => setState(() => _specialties = list));
-    setState(() => _loadingSpecialties = false);
+    if (!mounted) return;
+    setState(() {
+      result.fold((_) {}, (list) => _specialties = list);
+      _loadingSpecialties = false;
+    });
   }
 
   @override
