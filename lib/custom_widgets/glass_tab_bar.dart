@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -158,44 +160,63 @@ class _MaterialFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = tintColor ?? Theme.of(context).colorScheme.primary;
-    final inactiveColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final c = ColorManager.of(context);
+    final activeColor = tintColor ?? ColorManager.primary;
+    final inactiveColor = c.textTertiary;
+    final fontFamily = FontHelper.fontFamily(context);
 
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        indicatorColor: activeColor.withValues(alpha: 0.18),
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return TextStyle(
-            fontSize: 10,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? activeColor : inactiveColor,
-          );
-        }),
-        iconTheme: WidgetStateProperty.resolveWith((states) {
-          final selected = states.contains(WidgetState.selected);
-          return IconThemeData(
-            color: selected ? activeColor : inactiveColor,
-          );
-        }),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(
+          top: BorderSide(color: c.borderLight, width: 0.5),
+        ),
       ),
-      child: NavigationBar(
-        height: 64,
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onTap,
-        destinations: items
-            .map(
-              (item) => NavigationDestination(
-                icon: Icon(_iconForSymbol(item.systemIcon)),
-                selectedIcon: Icon(
-                  _iconForSymbol(
-                    item.selectedSystemIcon ?? item.systemIcon,
+      child: NavigationBarTheme(
+        data: NavigationBarThemeData(
+          backgroundColor: c.cardBg,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          indicatorColor: activeColor.withValues(alpha: 0.12),
+          indicatorShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            final selected = states.contains(WidgetState.selected);
+            return TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 11,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              color: selected ? activeColor : inactiveColor,
+            );
+          }),
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            final selected = states.contains(WidgetState.selected);
+            return IconThemeData(
+              size: 22,
+              color: selected ? activeColor : inactiveColor,
+            );
+          }),
+        ),
+        child: NavigationBar(
+          height: 68,
+          selectedIndex: selectedIndex,
+          onDestinationSelected: onTap,
+          destinations: items
+              .map(
+                (item) => NavigationDestination(
+                  icon: Icon(_iconForSymbol(item.systemIcon)),
+                  selectedIcon: Icon(
+                    _iconForSymbol(
+                      item.selectedSystemIcon ?? item.systemIcon,
+                    ),
                   ),
+                  label: item.title,
                 ),
-                label: item.title,
-              ),
-            )
-            .toList(),
+              )
+              .toList(),
+        ),
       ),
     );
   }
