@@ -17,6 +17,11 @@ import '../widgets/expense_row.dart';
 class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
 
+  /// Bump this notifier to open the "add expense" sheet on the active
+  /// expenses page (e.g. from the home screen's quick action).
+  static final ValueNotifier<int> openAddExpenseRequest =
+      ValueNotifier<int>(0);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -42,6 +47,18 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     final now = DateTime.now();
     _currentMonth = DateTime(now.year, now.month);
     _loadMonth();
+    ExpensesPage.openAddExpenseRequest.addListener(_onExternalAddRequest);
+  }
+
+  @override
+  void dispose() {
+    ExpensesPage.openAddExpenseRequest.removeListener(_onExternalAddRequest);
+    super.dispose();
+  }
+
+  void _onExternalAddRequest() {
+    if (!mounted) return;
+    _showAddExpense(context);
   }
 
   Map<String, dynamic> _buildDateFilter() {

@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/features/appointments/domain/entities/create_a
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_appointment_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
+import 'package:dental_clinic_app/features/appointments/domain/use_cases/update_appointment_status_use_case.dart';
 
 part 'appointment_event.dart';
 part 'appointment_state.dart';
@@ -16,12 +17,15 @@ part 'appointment_bloc.freezed.dart';
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final GetAllAppointmentsUseCase _getAllAppointments;
   final CreateAppointmentUseCase _createAppointment;
+  final UpdateAppointmentStatusUseCase _updateStatus;
 
   AppointmentBloc({
     required GetAllAppointmentsUseCase getAllAppointments,
     required CreateAppointmentUseCase createAppointment,
+    required UpdateAppointmentStatusUseCase updateStatus,
   })  : _getAllAppointments = getAllAppointments,
         _createAppointment = createAppointment,
+        _updateStatus = updateStatus,
         super(AppointmentState.initial()) {
     on<_LoadAppointments>(_onLoadAppointments);
     on<_ChangeViewMode>(_onChangeViewMode);
@@ -116,43 +120,47 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     _UpdateAppointmentStatus event,
     Emitter<AppointmentState> emit,
   ) async {
-    emit(state.copyWith(isUpdating: true, error: null));
-
-    // TODO: Replace with repository call when backend is ready
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    final updated = state.appointments.map((a) {
-      return a.id == event.appointmentId
-          ? a.copyWith(status: event.status)
-          : a;
-    }).toList();
-
-    emit(state.copyWith(
-      isUpdating: false,
-      appointments: updated,
-      filteredAppointments: updated,
-    ));
+    await _patchStatus(event.appointmentId, event.status, emit);
   }
 
   Future<void> _onCancelAppointment(
     _CancelAppointment event,
     Emitter<AppointmentState> emit,
   ) async {
+    // Cancellation is just a status change with the clinic-side variant.
+    await _patchStatus(
+      event.appointmentId,
+      AppointmentStatus.cancelledByClinic,
+      emit,
+    );
+  }
+
+  Future<void> _patchStatus(
+    String id,
+    AppointmentStatus status,
+    Emitter<AppointmentState> emit,
+  ) async {
     emit(state.copyWith(isUpdating: true, error: null));
 
-    // TODO: Replace with repository call when backend is ready
-    await Future.delayed(const Duration(milliseconds: 500));
+    final result = await _updateStatus(
+      UpdateAppointmentStatusParams(id: id, status: status),
+    );
 
-    final updated = state.appointments.map((a) {
-      return a.id == event.appointmentId
-          ? a.copyWith(status: AppointmentStatus.cancelled)
-          : a;
-    }).toList();
-
-    emit(state.copyWith(
-      isUpdating: false,
-      appointments: updated,
-      filteredAppointments: updated,
-    ));
+    result.fold(
+      (error) => emit(state.copyWith(
+        isUpdating: false,
+        error: NetworkExceptions.getErrorMessage(error),
+      )),
+      (updatedEntity) {
+        final updated = state.appointments
+            .map((a) => a.id == id ? updatedEntity : a)
+            .toList();
+        emit(state.copyWith(
+          isUpdating: false,
+          appointments: updated,
+          filteredAppointments: updated,
+        ));
+      },
+    );
   }
 }

@@ -77,59 +77,14 @@ class _MenuPageState extends State<MenuPage> {
                   // — Account Settings
                   _sectionLabel(context, l10n.accountSettings),
                   SizedBox(height: 10.h),
-                  _buildMenuGroup(context, [
-                    MenuItem(
-                      icon: Icons.person_outline,
-                      title: l10n.editProfile,
-                      onTap: () {
-                        context.pushNamed(AppRoutesNames.editProfile);
-                      },
+                  _buildMenuGroup(
+                    context,
+                    _buildAccountItems(
+                      context,
+                      l10n,
+                      isAdmin: getIt<UserStorage>().isAdmin,
                     ),
-                    MenuItem(
-                      icon: Icons.business_outlined,
-                      title: l10n.clinicInformation,
-                      onTap: () {
-                        context.pushNamed(AppRoutesNames.clinicInfo);
-                      },
-                    ),
-                    MenuItem(
-                      icon: Icons.people_outlined,
-                      title: l10n.clinicUsers,
-                      onTap: () {
-                        final clinicId =
-                            getIt<UserStorage>().getSelectedClinicId() ?? '';
-                        context.pushNamed(
-                          AppRoutesNames.clinicUsers,
-                          extra: clinicId,
-                        );
-                      },
-                    ),
-                    MenuItem(
-                      icon: Icons.schedule_outlined,
-                      title: l10n.workingDaysAndHolidays,
-                      onTap: () {
-                        context.pushNamed(AppRoutesNames.workingDays);
-                      },
-                    ),
-                    MenuItem(
-                      icon: Icons.bar_chart_rounded,
-                      title: l10n.analytics,
-                      onTap: () => context.pushNamed(AppRoutesNames.statistics),
-                    ),
-                    MenuItem(
-                      icon: Icons.receipt_long_outlined,
-                      title: l10n.billingAndInvoices,
-                      onTap: () => context.pushNamed(AppRoutesNames.billing),
-                    ),
-                    MenuItem(
-                      icon: Icons.notifications_outlined,
-                      title: l10n.notifications,
-                      trailing: _buildNotificationBadge(context),
-                      onTap: () {
-                        context.pushNamed(AppRoutesNames.notificationsSettings);
-                      },
-                    ),
-                  ]),
+                  ),
                   SizedBox(height: 24.h),
 
                   // — App Settings
@@ -213,6 +168,64 @@ class _MenuPageState extends State<MenuPage> {
         ),
       ),
     );
+  }
+
+  /// Builds the Account-Settings group, hiding the admin-only items
+  /// (Clinic Info, Clinic Users, Working Days & Holidays) when the current
+  /// user's role doesn't include them. The role is cached on login.
+  List<MenuItem> _buildAccountItems(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isAdmin,
+  }) {
+    return [
+      MenuItem(
+        icon: Icons.person_outline,
+        title: l10n.editProfile,
+        onTap: () => context.pushNamed(AppRoutesNames.editProfile),
+      ),
+      if (isAdmin) ...[
+        MenuItem(
+          icon: Icons.business_outlined,
+          title: l10n.clinicInformation,
+          onTap: () => context.pushNamed(AppRoutesNames.clinicInfo),
+        ),
+        MenuItem(
+          icon: Icons.people_outlined,
+          title: l10n.clinicUsers,
+          onTap: () {
+            final clinicId =
+                getIt<UserStorage>().getSelectedClinicId() ?? '';
+            context.pushNamed(
+              AppRoutesNames.clinicUsers,
+              extra: clinicId,
+            );
+          },
+        ),
+        MenuItem(
+          icon: Icons.schedule_outlined,
+          title: l10n.workingDaysAndHolidays,
+          onTap: () => context.pushNamed(AppRoutesNames.workingDays),
+        ),
+      ],
+      MenuItem(
+        icon: Icons.bar_chart_rounded,
+        title: l10n.analytics,
+        onTap: () => context.pushNamed(AppRoutesNames.statistics),
+      ),
+      MenuItem(
+        icon: Icons.receipt_long_outlined,
+        title: l10n.billingAndInvoices,
+        onTap: () => context.pushNamed(AppRoutesNames.billing),
+      ),
+      MenuItem(
+        icon: Icons.notifications_outlined,
+        title: l10n.notifications,
+        trailing: _buildNotificationBadge(context),
+        onTap: () =>
+            context.pushNamed(AppRoutesNames.notificationsSettings),
+      ),
+    ];
   }
 
   Widget _sectionLabel(BuildContext context, String title) {

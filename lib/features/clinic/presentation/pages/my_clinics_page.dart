@@ -69,41 +69,10 @@ class _MyClinicsContent extends StatelessWidget {
         builder: (context, invitationState) {
           return Column(
             children: [
-              Container(
-                width: double.infinity,
-                color: ColorManager.of(context).cardBg,
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 8.h,
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: ColorManager.of(context).textPrimary,
-                            size: 20.w,
-                          ),
-                          onPressed: () => context.pop(),
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.myClinics,
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: ColorManager.of(context).textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              PageHeader(
+                title: AppLocalizations.of(context)!.myClinics,
+                onBack: () => context.pop(),
               ),
-              Divider(height: 1, color: ColorManager.of(context).borderLight),
               Expanded(
                 child: BlocBuilder<MyClinicsBloc, MyClinicsState>(
                   builder: (context, clinicsState) {

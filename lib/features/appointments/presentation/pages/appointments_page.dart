@@ -10,6 +10,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:intl/intl.dart';
 
@@ -514,17 +515,6 @@ class _AppointmentsContent extends StatelessWidget {
   }
 
   Color _getStatusColor(AppointmentStatus status) {
-    switch (status) {
-      case AppointmentStatus.confirmed:
-        return ColorManager.success;
-      case AppointmentStatus.pending:
-        return ColorManager.warning;
-      case AppointmentStatus.completed:
-        return ColorManager.info;
-      case AppointmentStatus.cancelled:
-        return ColorManager.error;
-      case AppointmentStatus.noShow:
-        return ColorManager.gray400;
-    }
+    return AppointmentStatusStyles.color(status);
   }
 }

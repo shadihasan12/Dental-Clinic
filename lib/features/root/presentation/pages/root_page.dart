@@ -15,6 +15,11 @@ import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
 
+  /// Drives the active bottom-nav tab. Children call
+  /// `RootPage.selectedTab.value = <index>` to switch tabs (e.g. the home
+  /// page's "View all" button jumping to Appointments).
+  static final ValueNotifier<int> selectedTab = ValueNotifier<int>(0);
+
   @override
   State<RootPage> createState() => _RootPageState();
 }
@@ -27,6 +32,20 @@ class _RootPageState extends State<RootPage> {
     super.initState();
     getIt<ClinicPermissionsBloc>()
         .add(const ClinicPermissionsEvent.load());
+    RootPage.selectedTab.addListener(_onExternalTabChange);
+  }
+
+  @override
+  void dispose() {
+    RootPage.selectedTab.removeListener(_onExternalTabChange);
+    super.dispose();
+  }
+
+  void _onExternalTabChange() {
+    final next = RootPage.selectedTab.value;
+    if (next != _currentIndex) {
+      setState(() => _currentIndex = next);
+    }
   }
 
   final List<Widget> _pages = [
@@ -45,9 +64,8 @@ class _RootPageState extends State<RootPage> {
 
   void _onTabSelected(int index) {
     if (index == _currentIndex) return;
-    setState(() {
-      _currentIndex = index;
-    });
+    setState(() => _currentIndex = index);
+    RootPage.selectedTab.value = index;
   }
 
   @override

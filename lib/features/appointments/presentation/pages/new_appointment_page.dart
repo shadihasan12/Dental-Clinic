@@ -4,10 +4,11 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_appointment_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_available_slots_use_case.dart';
+import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_clinic_doctors_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/patient_picker.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
@@ -38,6 +39,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   bool _isPatientsLoading = true;
   PatientEntity? _selectedPatientEntity;
 
+  // Doctors
+  List<ClinicDoctorEntity> _doctors = [];
+  ClinicDoctorEntity? _selectedDoctor;
+  bool _isDoctorsLoading = true;
+
   // Treatments
   List<CoreTreatment> _treatments = [];
   final List<String> _selectedTreatmentIds = [];
@@ -49,6 +55,10 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   String? _selectedSlot;
   List<String> _availableSlots = [];
   bool _isSlotsLoading = false;
+
+  // VIP appointments bypass the doctor's schedule and surface every slot
+  // returned by the server.
+  bool _isVip = false;
 
   bool _sendReminder = true;
 
@@ -68,7 +78,37 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     super.initState();
     _loadPatients();
     _loadTreatments();
-    _loadAvailableSlots();
+    _loadDoctors();
+    // Slots can't be fetched yet — they need a doctor — so we wait until
+    // the user picks one (or until the doctors load and we auto-select
+    // the only available doctor).
+  }
+
+  Future<void> _loadDoctors() async {
+    final result = await getIt<GetClinicDoctorsUseCase>()(NoParams());
+    if (!mounted) return;
+    result.fold(
+      (error) {
+        setState(() => _isDoctorsLoading = false);
+        AppSnackbar.showError(context,
+            title: AppLocalizations.of(context)!.error,
+            message: NetworkExceptions.getErrorMessage(error));
+      },
+      (doctors) {
+        setState(() {
+          _doctors = doctors;
+          _isDoctorsLoading = false;
+          // If there's only one doctor, auto-select them so the user can
+          // immediately see slots without an extra tap.
+          if (doctors.length == 1) {
+            _selectedDoctor = doctors.first;
+          }
+        });
+        if (_selectedDoctor != null) {
+          _loadAvailableSlots();
+        }
+      },
+    );
   }
 
   @override
@@ -116,6 +156,16 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Future<void> _loadAvailableSlots() async {
+    // Slots depend on the doctor — bail until one is picked.
+    if (_selectedDoctor == null) {
+      setState(() {
+        _isSlotsLoading = false;
+        _selectedSlot = null;
+        _availableSlots = [];
+      });
+      return;
+    }
+
     setState(() {
       _isSlotsLoading = true;
       _selectedSlot = null;
@@ -126,6 +176,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       GetAvailableSlotsParams(
         date: _selectedDate,
         durationMinutes: _duration,
+        doctorId: _selectedDoctor!.id,
+        isVip: _isVip,
       ),
     );
 
@@ -219,6 +271,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           title: l10n.missingData, message: l10n.pleaseSelectAPatient);
       return;
     }
+    if (_selectedDoctor == null) {
+      AppSnackbar.showWarning(context,
+          title: l10n.missingData, message: l10n.pleaseSelectADoctor);
+      return;
+    }
     if (_selectedTreatmentIds.isEmpty) {
       AppSnackbar.showWarning(context,
           title: l10n.missingData,
@@ -237,6 +294,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     final params = CreateAppointmentParams(
       patientId: _selectedPatientEntity!.id,
+      doctorId: _selectedDoctor!.id,
       startTime: start,
       endTime: end,
       coreTreatmentIds: List<String>.from(_selectedTreatmentIds),
@@ -332,6 +390,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
                       _divider(),
 
+                      _sectionLabel(l10n.doctor),
+                      SizedBox(height: 10.h),
+                      _buildDoctorChips(l10n),
+
+                      _divider(),
+
                       _sectionLabel(l10n.treatment),
                       SizedBox(height: 10.h),
                       _buildTreatmentChips(l10n),
@@ -345,6 +409,10 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                       _divider(),
 
                       _buildDateRow(l10n),
+
+                      _divider(),
+
+                      _buildVipSwitch(l10n),
 
                       _divider(),
 
@@ -405,6 +473,97 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
+  Widget _buildDoctorChips(AppLocalizations l10n) {
+    if (_isDoctorsLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_doctors.isEmpty) {
+      return Text(
+        l10n.noData,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontFamily: FontHelper.fontFamily(context),
+          color: ColorManager.of(context).textSubtle,
+        ),
+      );
+    }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < _doctors.length; i++) ...[
+            if (i > 0) SizedBox(width: 8.w),
+            SelectableChip(
+              label: _doctors[i].name.isNotEmpty ? _doctors[i].name : '—',
+              isSelected: _selectedDoctor?.id == _doctors[i].id,
+              onTap: () {
+                setState(() => _selectedDoctor = _doctors[i]);
+                _loadAvailableSlots();
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVipSwitch(AppLocalizations l10n) {
+    final c = ColorManager.of(context);
+    return GestureDetector(
+      onTap: () {
+        setState(() => _isVip = !_isVip);
+        _loadAvailableSlots();
+      },
+      child: Row(
+        children: [
+          Icon(Icons.workspace_premium_outlined,
+              size: 18.w, color: c.textTertiary),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.vipAppointment,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w500,
+                    color: c.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  l10n.vipAppointmentSubtitle,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: c.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: _isVip,
+            onChanged: (val) {
+              setState(() => _isVip = val);
+              _loadAvailableSlots();
+            },
+            activeThumbColor: ColorManager.primary,
+            activeTrackColor: ColorManager.primary.withValues(alpha: 0.4),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTreatmentChips(AppLocalizations l10n) {
     if (_isTreatmentsLoading) {
       return Padding(
@@ -422,21 +581,50 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         ),
       );
     }
-    return Wrap(
-      spacing: 8.w,
-      runSpacing: 8.h,
-      children: _treatments.map((t) {
-        final isSelected = _selectedTreatmentIds.contains(t.id);
-        return SelectableChip(
-          label: t.name,
-          isSelected: isSelected,
-          onTap: () => setState(() {
-            isSelected
-                ? _selectedTreatmentIds.remove(t.id)
-                : _selectedTreatmentIds.add(t.id);
-          }),
-        );
-      }).toList(),
+    // Distribute chips column-first into 3 rows so the visual reading order
+    // (top-to-bottom, then scroll right for more) feels natural.
+    const rowCount = 3;
+    final rows = List<List<CoreTreatment>>.generate(
+      rowCount,
+      (_) => <CoreTreatment>[],
+    );
+    for (var i = 0; i < _treatments.length; i++) {
+      rows[i % rowCount].add(_treatments[i]);
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var r = 0; r < rows.length; r++) ...[
+            if (r > 0) SizedBox(height: 8.h),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < rows[r].length; i++) ...[
+                  if (i > 0) SizedBox(width: 8.w),
+                  Builder(builder: (context) {
+                    final t = rows[r][i];
+                    final isSelected = _selectedTreatmentIds.contains(t.id);
+                    return SelectableChip(
+                      label: t.name,
+                      isSelected: isSelected,
+                      onTap: () => setState(() {
+                        isSelected
+                            ? _selectedTreatmentIds.remove(t.id)
+                            : _selectedTreatmentIds.add(t.id);
+                      }),
+                    );
+                  }),
+                ],
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -475,17 +663,24 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       );
     }
 
-    return Wrap(
-      spacing: 8.w,
-      runSpacing: 8.h,
-      children: _availableSlots.map((slot) {
-        return SelectableChip(
-          label: slot,
-          isSelected: _selectedSlot == slot,
-          onTap: () => setState(() => _selectedSlot = slot),
-          borderRadius: 10,
-        );
-      }).toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < _availableSlots.length; i++) ...[
+            if (i > 0) SizedBox(width: 8.w),
+            SelectableChip(
+              label: _availableSlots[i],
+              isSelected: _selectedSlot == _availableSlots[i],
+              onTap: () =>
+                  setState(() => _selectedSlot = _availableSlots[i]),
+              borderRadius: 10,
+            ),
+          ],
+        ],
+      ),
     );
   }
 

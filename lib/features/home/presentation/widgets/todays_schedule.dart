@@ -1,77 +1,35 @@
 import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppointmentData {
-  final String initials;
-  final String name;
-  final String treatment;
-  final String time;
-  final String status;
-  final Color statusColor;
-
-  const AppointmentData({
-    required this.initials,
-    required this.name,
-    required this.treatment,
-    required this.time,
-    required this.status,
-    required this.statusColor,
-  });
-}
-
 class TodaysSchedule extends StatelessWidget {
-  const TodaysSchedule({super.key, this.onViewAllTap});
+  const TodaysSchedule({
+    super.key,
+    required this.appointments,
+    this.isLoading = false,
+    this.error,
+    this.onViewAllTap,
+  });
 
+  final List<AppointmentEntity> appointments;
+  final bool isLoading;
+  final String? error;
   final VoidCallback? onViewAllTap;
-
-  List<AppointmentData> get _appointments => const [
-        AppointmentData(
-          initials: 'SJ',
-          name: 'Sarah Johnson',
-          treatment: 'Cleaning',
-          time: '09:00 AM',
-          status: 'Done',
-          statusColor: Color(0xFF22C55E),
-        ),
-        AppointmentData(
-          initials: 'MC',
-          name: 'Michael Chen',
-          treatment: 'Root Canal',
-          time: '10:30 AM',
-          status: 'Done',
-          statusColor: Color(0xFF22C55E),
-        ),
-        AppointmentData(
-          initials: 'ED',
-          name: 'Emily Davis',
-          treatment: 'Check-up',
-          time: '11:45 AM',
-          status: 'Now',
-          statusColor: Color(0xFF3B82F6),
-        ),
-        AppointmentData(
-          initials: 'JW',
-          name: 'James Wilson',
-          treatment: 'Filling',
-          time: '02:00 PM',
-          status: 'Next',
-          statusColor: Color(0xFFF97316),
-        ),
-      ];
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              localizations.todaysSchedule,
+              l10n.todaysSchedule,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 15.sp,
@@ -82,7 +40,7 @@ class TodaysSchedule extends StatelessWidget {
             GestureDetector(
               onTap: onViewAllTap,
               child: Text(
-                localizations.viewAll,
+                l10n.viewAll,
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
                   fontSize: 13.sp,
@@ -94,96 +52,164 @@ class TodaysSchedule extends StatelessWidget {
           ],
         ),
         SizedBox(height: 12.h),
+        _buildBody(context, l10n),
+      ],
+    );
+  }
 
-        // Appointments list
-        ..._appointments.asMap().entries.map((entry) {
-          final data = entry.value;
-          final isLast = entry.key == _appointments.length - 1;
-          return Column(
-            children: [
-              _AppointmentRow(data: data),
-              if (!isLast) Divider(height: 1, color: Colors.grey.shade100),
-            ],
-          );
-        }),
+  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
+    if (isLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 24.h),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (error != null) {
+      return _Hint(
+        icon: Icons.error_outline,
+        message: error!,
+      );
+    }
+    if (appointments.isEmpty) {
+      return _Hint(
+        icon: Icons.event_available_outlined,
+        message: l10n.noAppointments,
+      );
+    }
+    return Column(
+      children: [
+        for (var i = 0; i < appointments.length; i++) ...[
+          _AppointmentRow(appointment: appointments[i]),
+          if (i < appointments.length - 1)
+            Divider(
+              height: 1,
+              color: ColorManager.of(context).borderLight,
+            ),
+        ],
       ],
     );
   }
 }
 
 class _AppointmentRow extends StatelessWidget {
-  const _AppointmentRow({required this.data});
+  const _AppointmentRow({required this.appointment});
 
-  final AppointmentData data;
+  final AppointmentEntity appointment;
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
-          // Time
           SizedBox(
             width: 65.w,
             child: Text(
-              data.time,
+              appointment.formattedTime,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w500,
-                color: Colors.black45,
+                color: c.textTertiary,
               ),
             ),
           ),
-
-          
           SizedBox(width: 10.w),
-
-          // Name + treatment
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.name,
+                  appointment.patientName.isNotEmpty
+                      ? appointment.patientName
+                      : '—',
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: c.textPrimary,
                   ),
                 ),
-                SizedBox(height: 2.h),
-                Text(
-                  data.treatment,
-                  style: TextStyle(
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 12.sp,
-                    color: ColorManager.of(context).textTertiary,
+                if (appointment.treatmentType.isNotEmpty) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    appointment.treatmentType,
+                    style: TextStyle(
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 12.sp,
+                      color: c.textTertiary,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
+          _StatusBadge(status: appointment.status),
+        ],
+      ),
+    );
+  }
+}
 
-          // Status badge
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: data.statusColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8.r),
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.status});
+
+  final AppointmentStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppointmentStatusStyles.color(status);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Text(
+        AppointmentStatusStyles.label(context, status),
+        style: TextStyle(
+          fontFamily: FontHelper.fontFamily(context),
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _Hint extends StatelessWidget {
+  const _Hint({required this.icon, required this.message});
+
+  final IconData icon;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 24.h),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 32.w,
+              color: ColorManager.of(context).textTertiary,
             ),
-            child: Text(
-              data.status,
+            SizedBox(height: 8.h),
+            Text(
+              message,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w600,
-                color: data.statusColor,
+                fontSize: 13.sp,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/manager/support_chat_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -131,69 +132,38 @@ class _SupportChatContentState extends State<_SupportChatContent> {
       AppLocalizations l10n, SupportConversationEntity conversation) {
     return Column(
       children: [
-        Container(
-          width: double.infinity,
-          color: ColorManager.of(context).cardBg,
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: ColorManager.of(context).textPrimary,
-                      size: 20.w,
+        PageHeader(
+          title: l10n.supportTeam,
+          onBack: () => Navigator.pop(context),
+        ),
+        if (conversation.subject.isNotEmpty)
+          Container(
+            width: double.infinity,
+            color: ColorManager.of(context).cardBg,
+            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 12.h),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.subject_rounded,
+                  size: 14.w,
+                  color: ColorManager.of(context).textTertiary,
+                ),
+                SizedBox(width: 6.w),
+                Expanded(
+                  child: Text(
+                    conversation.subject,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      color: ColorManager.of(context).textTertiary,
                     ),
-                    onPressed: () => Navigator.pop(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Container(
-                    width: 36.w,
-                    height: 36.w,
-                    decoration: BoxDecoration(
-                      color: ColorManager.primary10,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.support_agent_rounded,
-                      size: 18.w,
-                      color: ColorManager.primary,
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.supportTeam,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: ColorManager.of(context).textPrimary,
-                          ),
-                        ),
-                        Text(
-                          conversation.subject,
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            color: ColorManager.of(context).textTertiary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ),
-        Divider(height: 1, color: ColorManager.of(context).borderLight),
       ],
     );
   }

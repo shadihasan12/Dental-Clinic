@@ -2,8 +2,11 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,18 +16,22 @@ class AppointmentDetailsSheet extends StatelessWidget {
   const AppointmentDetailsSheet({super.key, required this.appointment});
 
   static void show(BuildContext context, AppointmentEntity appointment) {
+    final bloc = context.read<AppointmentBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => AppointmentDetailsSheet(appointment: appointment),
+      builder: (_) => BlocProvider.value(
+        value: bloc,
+        child: AppointmentDetailsSheet(appointment: appointment),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final statusColor = _statusColor(appointment.status);
+    final statusColor = AppointmentStatusStyles.color(appointment.status);
     final endTime = appointment.dateTime
         .add(Duration(minutes: appointment.durationMinutes));
 
@@ -50,7 +57,9 @@ class AppointmentDetailsSheet extends StatelessWidget {
               _Header(
                 appointment: appointment,
                 statusColor: statusColor,
-                statusLabel: _statusLabel(context, appointment.status),
+                statusLabel:
+                    AppointmentStatusStyles.label(context, appointment.status),
+                onStatusTap: () => _openStatusPicker(context, appointment),
               ),
               SizedBox(height: 20.h),
 
@@ -132,35 +141,34 @@ class AppointmentDetailsSheet extends StatelessWidget {
     );
   }
 
-  static Color _statusColor(AppointmentStatus status) {
-    switch (status) {
-      case AppointmentStatus.confirmed:
-        return ColorManager.success;
-      case AppointmentStatus.pending:
-        return ColorManager.warning;
-      case AppointmentStatus.completed:
-        return ColorManager.info;
-      case AppointmentStatus.cancelled:
-        return ColorManager.error;
-      case AppointmentStatus.noShow:
-        return ColorManager.gray400;
-    }
-  }
-
-  static String _statusLabel(BuildContext context, AppointmentStatus status) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (status) {
-      case AppointmentStatus.confirmed:
-        return l10n.confirmed;
-      case AppointmentStatus.pending:
-        return l10n.scheduled;
-      case AppointmentStatus.completed:
-        return l10n.completed;
-      case AppointmentStatus.cancelled:
-        return l10n.cancelled;
-      case AppointmentStatus.noShow:
-        return l10n.noShow;
-    }
+  void _openStatusPicker(
+    BuildContext context,
+    AppointmentEntity appointment,
+  ) {
+    final bloc = context.read<AppointmentBloc>();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (sheetContext) => _StatusPickerSheet(
+        current: appointment.status,
+        onSelected: (status) {
+          if (status == appointment.status) {
+            Navigator.pop(sheetContext);
+            return;
+          }
+          bloc.add(
+            AppointmentEvent.updateAppointmentStatus(appointment.id, status),
+          );
+          // Close the picker first, then the details sheet so the user lands
+          // back on the list and sees the updated row when it reloads.
+          Navigator.pop(sheetContext);
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 
   static String _formatTime(DateTime d) {
@@ -196,11 +204,13 @@ class _Header extends StatelessWidget {
   final AppointmentEntity appointment;
   final Color statusColor;
   final String statusLabel;
+  final VoidCallback onStatusTap;
 
   const _Header({
     required this.appointment,
     required this.statusColor,
     required this.statusLabel,
+    required this.onStatusTap,
   });
 
   @override
@@ -257,19 +267,34 @@ class _Header extends StatelessWidget {
           ),
         ),
         SizedBox(width: 8.w),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-          decoration: BoxDecoration(
-            color: statusColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Text(
-            statusLabel,
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: statusColor,
+        InkWell(
+          onTap: onStatusTap,
+          borderRadius: BorderRadius.circular(20.r),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  statusLabel,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: statusColor,
+                  ),
+                ),
+                SizedBox(width: 4.w),
+                Icon(
+                  Icons.edit_outlined,
+                  size: 12.w,
+                  color: statusColor,
+                ),
+              ],
             ),
           ),
         ),
@@ -501,6 +526,131 @@ class _ViewPatientButton extends StatelessWidget {
                 color: ColorManager.white,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusPickerSheet extends StatelessWidget {
+  final AppointmentStatus current;
+  final ValueChanged<AppointmentStatus> onSelected;
+
+  const _StatusPickerSheet({
+    required this.current,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: ColorManager.of(context).border,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 14.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  l10n.changeStatus,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF111111),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Divider(height: 1, color: ColorManager.of(context).borderLight),
+            for (var i = 0; i < AppointmentStatusStyles.all.length; i++) ...[
+              _StatusRow(
+                status: AppointmentStatusStyles.all[i],
+                selected: AppointmentStatusStyles.all[i] == current,
+                onTap: () => onSelected(AppointmentStatusStyles.all[i]),
+              ),
+              if (i < AppointmentStatusStyles.all.length - 1)
+                Divider(
+                  height: 1,
+                  indent: 16.w,
+                  color: ColorManager.of(context).borderLight,
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusRow extends StatelessWidget {
+  final AppointmentStatus status;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _StatusRow({
+    required this.status,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppointmentStatusStyles.color(status);
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        child: Row(
+          children: [
+            Container(
+              width: 28.w,
+              height: 28.w,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                AppointmentStatusStyles.icon(status),
+                size: 16.w,
+                color: color,
+              ),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Text(
+                AppointmentStatusStyles.label(context, status),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: const Color(0xFF111111),
+                ),
+              ),
+            ),
+            if (selected)
+              Icon(
+                Icons.check_rounded,
+                size: 18.w,
+                color: ColorManager.primary,
+              ),
           ],
         ),
       ),

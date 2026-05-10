@@ -180,6 +180,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scheduled => 'Scheduled';
 
   @override
+  String get cancelledByClinic => 'Cancelled by clinic';
+
+  @override
+  String get cancelledByPatient => 'Cancelled by patient';
+
+  @override
+  String get changeStatus => 'Change status';
+
+  @override
   String get noShow => 'No show';
 
   @override
@@ -291,6 +300,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeSubscription => 'Upgrade Subscription';
 
   @override
+  String get subscriptionLimitTitle => 'Subscription limit reached';
+
+  @override
+  String get dentistLimitMessage =>
+      'Your current plan doesn\'t allow adding more dentists. Upgrade your subscription to add more clinic users.';
+
+  @override
+  String roleLimitInfo(String roles) {
+    return 'Your current plan is at its limit for: $roles. Upgrade to add users with this role.';
+  }
+
+  @override
   String get daysRemaining => 'Days Remaining';
 
   @override
@@ -307,6 +328,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workingDays => 'Working Days';
+
+  @override
+  String get workingHours => 'Working Hours';
+
+  @override
+  String get fullClinicHours => 'Full clinic hours';
+
+  @override
+  String get manageWorkingHours => 'Manage working hours';
 
   @override
   String get closed => 'Closed';
@@ -783,6 +813,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseSelectAPatient => 'Please select a patient';
+
+  @override
+  String get pleaseSelectADoctor => 'Please select a doctor';
+
+  @override
+  String get selectDoctor => 'Select doctor';
+
+  @override
+  String get selectDoctorFirst => 'Select a doctor to see available slots';
+
+  @override
+  String get vipAppointment => 'VIP appointment';
+
+  @override
+  String get vipAppointmentSubtitle =>
+      'Bypass the doctor\'s schedule and show every slot';
 
   @override
   String get missingData => 'Missing Data';

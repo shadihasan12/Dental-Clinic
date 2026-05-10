@@ -58,6 +58,7 @@ class AppRoutesNames {
   static const String moreMenu = 'moreMenu';
   static const String clinicInfo = 'clinicInfo';
   static const String workingDays = 'workingDays';
+  static const String userHours = 'userHours';
   static const String notificationsSettings = 'notificationsSettings';
 
   // Clinic Management Routes

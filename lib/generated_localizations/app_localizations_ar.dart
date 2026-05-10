@@ -180,6 +180,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get scheduled => 'مجدول';
 
   @override
+  String get cancelledByClinic => 'ألغى من قبل العيادة';
+
+  @override
+  String get cancelledByPatient => 'ألغى من قبل المريض';
+
+  @override
+  String get changeStatus => 'تغيير الحالة';
+
+  @override
   String get noShow => 'لم يحضر';
 
   @override
@@ -291,6 +300,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upgradeSubscription => 'ترقية الاشتراك';
 
   @override
+  String get subscriptionLimitTitle => 'تم بلوغ حد الاشتراك';
+
+  @override
+  String get dentistLimitMessage =>
+      'خطتك الحالية لا تسمح بإضافة المزيد من الأطباء. قم بترقية اشتراكك لإضافة المزيد من المستخدمين.';
+
+  @override
+  String roleLimitInfo(String roles) {
+    return 'خطتك الحالية بلغت الحد الأقصى لـ: $roles. قم بترقية اشتراكك لإضافة مستخدمين بهذا الدور.';
+  }
+
+  @override
   String get daysRemaining => 'الأيام المتبقية';
 
   @override
@@ -307,6 +328,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workingDays => 'أيام العمل';
+
+  @override
+  String get workingHours => 'ساعات العمل';
+
+  @override
+  String get fullClinicHours => 'ساعات العيادة الكاملة';
+
+  @override
+  String get manageWorkingHours => 'إدارة ساعات العمل';
 
   @override
   String get closed => 'مغلق';
@@ -781,6 +811,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pleaseSelectAPatient => 'يرجى تحديد مريض';
+
+  @override
+  String get pleaseSelectADoctor => 'يرجى تحديد طبيب';
+
+  @override
+  String get selectDoctor => 'اختر الطبيب';
+
+  @override
+  String get selectDoctorFirst => 'اختر طبيبًا لعرض المواعيد المتاحة';
+
+  @override
+  String get vipAppointment => 'موعد VIP';
+
+  @override
+  String get vipAppointmentSubtitle =>
+      'تجاوز جدول الطبيب وعرض جميع الفترات المتاحة';
 
   @override
   String get missingData => 'بيانات غير كاملة';

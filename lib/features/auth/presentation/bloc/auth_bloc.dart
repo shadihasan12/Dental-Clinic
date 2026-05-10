@@ -122,6 +122,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
+  /// Picks the membership we treat as "active" right after auth — admin
+  /// clinic if the user has one, otherwise the first membership.
+  ClinicMembershipEntity? _pickActiveMembership(
+    List<ClinicMembershipEntity> memberships,
+  ) {
+    if (memberships.isEmpty) return null;
+    for (final m in memberships) {
+      if (m.role == ClinicRole.admin) return m;
+    }
+    return memberships.first;
+  }
+
   Future<void> _onLoginSubmitted(_LoginSubmitted event, Emitter<AuthState> emit) async {
     if (!state.isLoginFormValid) {
       debugPrint('[AuthBloc] Login validation failed — identifier: "${state.loginEmail}"');
@@ -149,6 +161,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       (loginResult) {
         debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
+        // Cache the role of the active membership so the UI can hide
+        // admin-only sections without waiting for the permissions API.
+        final active = _pickActiveMembership(loginResult.memberships);
+        if (active != null) {
+          _userStorage.saveUserRole(active.role.name);
+        }
         if (!loginResult.emailVerified) {
           // User exists but hasn't verified email yet — redirect to email verification
           emit(state.copyWith(
@@ -158,9 +176,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             signupEmail: state.loginEmail,
             currentUser: loginResult.user,
             memberships: loginResult.memberships,
-            activeClinicId: loginResult.memberships.isNotEmpty
-                ? loginResult.memberships.first.clinicId
-                : null,
+            activeClinicId: active?.clinicId,
           ));
         } else {
           emit(state.copyWith(
@@ -168,9 +184,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             status: AuthStatus.authenticated,
             currentUser: loginResult.user,
             memberships: loginResult.memberships,
-            activeClinicId: loginResult.memberships.isNotEmpty
-                ? loginResult.memberships.first.clinicId
-                : null,
+            activeClinicId: active?.clinicId,
           ));
         }
       },

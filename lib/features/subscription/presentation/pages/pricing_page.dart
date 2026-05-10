@@ -209,59 +209,26 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(gradient: GradientManager.primaryHeader),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(12.w, 4.h, 16.w, 24.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => context.pop(),
-                child: Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isRtl
-                        ? Icons.arrow_forward_ios
-                        : Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                    size: 18.w,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                l10n.pricingTitle,
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                l10n.pricingSubtitle,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withValues(alpha: 0.85),
-                ),
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PageHeader(
+          title: l10n.pricingTitle,
+          onBack: () => context.pop(),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 4.h),
+          child: Text(
+            l10n.pricingSubtitle,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              fontWeight: FontWeight.w400,
+              color: ColorManager.of(context).textTertiary,
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

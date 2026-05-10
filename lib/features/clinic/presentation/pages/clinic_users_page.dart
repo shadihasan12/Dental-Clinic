@@ -1,12 +1,15 @@
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
-import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
+import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +33,38 @@ class ClinicUsersPage extends StatelessWidget {
   }
 }
 
-class _ClinicUsersContent extends StatelessWidget {
+class _ClinicUsersContent extends StatefulWidget {
   const _ClinicUsersContent();
+
+  @override
+  State<_ClinicUsersContent> createState() => _ClinicUsersContentState();
+}
+
+class _ClinicUsersContentState extends State<_ClinicUsersContent> {
+  SubscriptionUsageEntity? _usage;
+
+  bool _isMetricReached(String key) {
+    final m = _usage?.metric(key);
+    if (m == null || m.isUnlimited) return false;
+    return m.used >= m.limit!;
+  }
+
+  bool get _dentistsReached => _isMetricReached('dentists');
+  bool get _secretariesReached => _isMetricReached('secretaries');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsage();
+  }
+
+  Future<void> _loadUsage() async {
+    final result = await getIt<GetSubscriptionUsageUseCase>()(NoParams());
+    if (!mounted) return;
+    setState(() {
+      result.fold((_) => _usage = null, (u) => _usage = u);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +79,11 @@ class _ClinicUsersContent extends StatelessWidget {
               String text;
               if (message == 'userAddedSuccess') {
                 text = l10n.userAddedSuccess;
+                // Refetch usage so the limit reflects the new count
+                _loadUsage();
               } else if (message == 'userRemovedSuccess') {
                 text = l10n.userRemovedSuccess;
+                _loadUsage();
               } else {
                 text = l10n.rolesUpdatedSuccess;
               }
@@ -89,67 +125,33 @@ class _ClinicUsersContent extends StatelessWidget {
 
           return Column(
             children: [
-              // Header
-              Container(
-                width: double.infinity,
-                color: ColorManager.of(context).cardBg,
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 4.w,
-                      vertical: 8.h,
+              PageHeader(
+                title: l10n.clinicUsers,
+                onBack: () => context.pop(),
+                actions: [
+                  if (!isLoading && !isSubmitting)
+                    IconButton(
+                      icon: Icon(
+                        Icons.person_add_outlined,
+                        color: ColorManager.primary,
+                        size: 22.w,
+                      ),
+                      onPressed: () => _onAddUser(context, l10n),
                     ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: ColorManager.of(context).textPrimary,
-                            size: 20.w,
-                          ),
-                          onPressed: () => context.pop(),
+                  if (isSubmitting)
+                    Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorManager.primary,
                         ),
-                        Expanded(
-                          child: Text(
-                            l10n.clinicUsers,
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w600,
-                              color: ColorManager.of(context).textPrimary,
-                            ),
-                          ),
-                        ),
-                        if (!isLoading && !isSubmitting)
-                          IconButton(
-                            icon: Icon(
-                              Icons.person_add_outlined,
-                              color: ColorManager.primary,
-                              size: 22.w,
-                            ),
-                            onPressed: () => _showAddUserSheet(context, l10n),
-                          ),
-                        if (isSubmitting)
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.w),
-                            child: SizedBox(
-                              width: 20.w,
-                              height: 20.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ColorManager.primary,
-                              ),
-                            ),
-                          ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                ],
               ),
-              Divider(height: 1, color: ColorManager.of(context).borderLight),
-
-              // Body
               Expanded(
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -172,7 +174,8 @@ class _ClinicUsersContent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.people_outline, size: 48.w, color: ColorManager.of(context).border),
+          Icon(Icons.people_outline,
+              size: 48.w, color: ColorManager.of(context).border),
           SizedBox(height: 12.h),
           Text(
             l10n.noUsersYet,
@@ -184,8 +187,7 @@ class _ClinicUsersContent extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           TextButton(
-            onPressed: () =>
-                _showAddUserSheet(context, AppLocalizations.of(context)!),
+            onPressed: () => _onAddUser(context, l10n),
             child: Text(
               l10n.addUser,
               style: TextStyle(
@@ -206,7 +208,8 @@ class _ClinicUsersContent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 48.w, color: ColorManager.of(context).textTertiary),
+          Icon(Icons.error_outline,
+              size: 48.w, color: ColorManager.of(context).textTertiary),
           SizedBox(height: 12.h),
           Text(
             msg,
@@ -222,7 +225,14 @@ class _ClinicUsersContent extends StatelessWidget {
             onPressed: () => context.read<ClinicUsersBloc>().add(
               const ClinicUsersEvent.load(),
             ),
-            child: Text(l10n.retry),
+            child: Text(
+              l10n.retry,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.of(context).textTertiary,
+              ),
+            ),
           ),
         ],
       ),
@@ -238,27 +248,122 @@ class _ClinicUsersContent extends StatelessWidget {
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       itemCount: users.length,
-      separatorBuilder: (_, __) => SizedBox(height: 10.h),
+      separatorBuilder: (_, _) => SizedBox(height: 10.h),
       itemBuilder: (_, index) {
         final user = users[index];
         return _UserCard(
           user: user,
           isSelf: user.email == currentEmail,
-          onManageRoles: () => _showManageRolesSheet(context, l10n, user),
-          onRemove: () => _confirmRemove(context, l10n, user),
+          onMore: () => _showUserActionsSheet(context, l10n, user),
         );
       },
     );
   }
 
-  void _showAddUserSheet(BuildContext context, AppLocalizations l10n) {
+  void _onAddUser(BuildContext context, AppLocalizations l10n) {
+    // Block entirely only when every limited role is full. If at least one
+    // role still has capacity, let the user enter the form — the disabled
+    // chips on that page will steer them to a role they can actually pick.
+    if (_dentistsReached && _secretariesReached) {
+      InfoPopup.show(
+        context: context,
+        icon: Icons.lock_outline_rounded,
+        title: l10n.subscriptionLimitTitle,
+        body: l10n.dentistLimitMessage,
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<ClinicUsersBloc>(),
+          child: AddClinicUserPage(
+            dentistsReached: _dentistsReached,
+            secretariesReached: _secretariesReached,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showUserActionsSheet(
+    BuildContext context,
+    AppLocalizations l10n,
+    ClinicUserEntity user,
+  ) {
+    final isSelf = user.email == getIt<UserStorage>().getUserEmail();
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: context.read<ClinicUsersBloc>(),
-        child: _AddUserSheet(l10n: l10n),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: ColorManager.of(context).border,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 14.h),
+              _ActionsHeader(user: user),
+              SizedBox(height: 8.h),
+              Divider(height: 1, color: ColorManager.of(context).borderLight),
+              _ActionRow(
+                icon: Icons.manage_accounts_outlined,
+                label: l10n.manageRoles,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showManageRolesSheet(context, l10n, user);
+                },
+              ),
+              Divider(
+                height: 1,
+                indent: 16.w,
+                color: ColorManager.of(context).borderLight,
+              ),
+              _ActionRow(
+                icon: Icons.schedule_outlined,
+                label: l10n.manageWorkingHours,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  context.pushNamed(
+                    AppRoutesNames.userHours,
+                    pathParameters: {'userId': user.id},
+                    extra: <String, dynamic>{'userName': user.fullName},
+                  );
+                },
+              ),
+              if (!isSelf) ...[
+                Divider(
+                  height: 1,
+                  indent: 16.w,
+                  color: ColorManager.of(context).borderLight,
+                ),
+                _ActionRow(
+                  icon: Icons.person_remove_outlined,
+                  label: l10n.removeUser,
+                  destructive: true,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _confirmRemove(context, l10n, user);
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -345,14 +450,12 @@ class _ClinicUsersContent extends StatelessWidget {
 class _UserCard extends StatelessWidget {
   final ClinicUserEntity user;
   final bool isSelf;
-  final VoidCallback onManageRoles;
-  final VoidCallback onRemove;
+  final VoidCallback onMore;
 
   const _UserCard({
     required this.user,
     required this.isSelf,
-    required this.onManageRoles,
-    required this.onRemove,
+    required this.onMore,
   });
 
   @override
@@ -372,16 +475,16 @@ class _UserCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onManageRoles,
+          onTap: onMore,
           borderRadius: BorderRadius.circular(12.r),
           child: Padding(
             padding: EdgeInsets.all(14.w),
             child: Row(
               children: [
-                // Avatar
                 CircleAvatar(
                   radius: 22.r,
-                  backgroundColor: ColorManager.primary.withValues(alpha: 0.12),
+                  backgroundColor:
+                      ColorManager.primary.withValues(alpha: 0.12),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
                       : null,
@@ -397,8 +500,6 @@ class _UserCard extends StatelessWidget {
                       : null,
                 ),
                 SizedBox(width: 12.w),
-
-                // Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,65 +535,13 @@ class _UserCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Actions
-                PopupMenuButton<String>(
+                IconButton(
+                  onPressed: onMore,
                   icon: Icon(
                     Icons.more_vert,
                     color: ColorManager.of(context).textTertiary,
                     size: 20.w,
                   ),
-                  onSelected: (value) {
-                    if (value == 'roles') onManageRoles();
-                    if (value == 'remove') onRemove();
-                  },
-                  itemBuilder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return [
-                      PopupMenuItem(
-                        value: 'roles',
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.manage_accounts_outlined,
-                              size: 18.w,
-                              color: ColorManager.primary,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              l10n.manageRoles,
-                              style: TextStyle(
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (!isSelf)
-                        PopupMenuItem(
-                          value: 'remove',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.person_remove_outlined,
-                                size: 18.w,
-                                color: ColorManager.error,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                l10n.removeUser,
-                                style: TextStyle(
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  fontSize: 13.sp,
-                                  color: ColorManager.error,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ];
-                  },
                 ),
               ],
             ),
@@ -562,328 +611,60 @@ class _RoleChip extends StatelessWidget {
   }
 }
 
-// ─── Add User Bottom Sheet ────────────────────────────────────────────────────
+// ─── Actions Bottom Sheet helpers ─────────────────────────────────────────────
 
-class _AddUserSheet extends StatefulWidget {
-  final AppLocalizations l10n;
-  const _AddUserSheet({required this.l10n});
-
-  @override
-  State<_AddUserSheet> createState() => _AddUserSheetState();
-}
-
-class _AddUserSheetState extends State<_AddUserSheet> {
-  final _firstNameCtrl = TextEditingController();
-  final _lastNameCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
-  final _mobileCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
-  final _selectedRoles = <String>{};
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-
-  List<SpecialtyEntity> _specialties = [];
-  SpecialtyEntity? _selectedSpecialty;
-  bool _loadingSpecialties = false;
-
-  bool get _isDentistSelected => _selectedRoles.contains('DENTIST');
-
-  static const _allRoles = ['ADMIN', 'DENTIST', 'SECRETARY'];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSpecialties();
-  }
-
-  Future<void> _loadSpecialties() async {
-    setState(() => _loadingSpecialties = true);
-    final result = await getIt<AuthRepository>().getSpecialties();
-    if (!mounted) return;
-    setState(() {
-      result.fold((_) {}, (list) => _specialties = list);
-      _loadingSpecialties = false;
-    });
-  }
-
-  @override
-  void dispose() {
-    _firstNameCtrl.dispose();
-    _lastNameCtrl.dispose();
-    _emailCtrl.dispose();
-    _mobileCtrl.dispose();
-    _passwordCtrl.dispose();
-    _confirmCtrl.dispose();
-    super.dispose();
-  }
-
-  bool get _canSubmit =>
-      _firstNameCtrl.text.trim().isNotEmpty &&
-      _lastNameCtrl.text.trim().isNotEmpty &&
-      _emailCtrl.text.trim().isNotEmpty &&
-      _mobileCtrl.text.trim().isNotEmpty &&
-      _passwordCtrl.text.length >= 8 &&
-      _passwordCtrl.text == _confirmCtrl.text &&
-      _selectedRoles.isNotEmpty &&
-      (!_isDentistSelected || _selectedSpecialty != null);
+class _ActionsHeader extends StatelessWidget {
+  final ClinicUserEntity user;
+  const _ActionsHeader({required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = widget.l10n;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      constraints: BoxConstraints(maxHeight: size.height * 0.92),
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      child: Row(
         children: [
-          // Handle
-          Padding(
-            padding: EdgeInsets.only(top: 12.h),
-            child: Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: ColorManager.of(context).border,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
-            child: Text(
-              l10n.addUser,
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-          ),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 8.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _field(l10n.firstName, _firstNameCtrl, context),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _field(l10n.lastName, _lastNameCtrl, context),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  _field(
-                    l10n.emailAddress,
-                    _emailCtrl,
-                    context,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  SizedBox(height: 12.h),
-                  _field(
-                    l10n.mobileNumber,
-                    _mobileCtrl,
-                    context,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  SizedBox(height: 12.h),
-                  _passwordField(
-                    l10n.password,
-                    _passwordCtrl,
-                    context,
-                    _obscurePassword,
-                    () {
-                      setState(() => _obscurePassword = !_obscurePassword);
-                    },
-                  ),
-                  SizedBox(height: 12.h),
-                  _passwordField(
-                    l10n.confirmPassword,
-                    _confirmCtrl,
-                    context,
-                    _obscureConfirm,
-                    () {
-                      setState(() => _obscureConfirm = !_obscureConfirm);
-                    },
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    l10n.selectRoles,
+          CircleAvatar(
+            radius: 20.r,
+            backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
+            backgroundImage: user.imageUrl != null
+                ? NetworkImage(user.imageUrl!)
+                : null,
+            child: user.imageUrl == null
+                ? Text(
+                    _initials(user.fullName),
                     style: TextStyle(
-                      fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.of(context).textPrimary,
+                      color: ColorManager.primary,
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Wrap(
-                    spacing: 8.w,
-                    runSpacing: 8.h,
-                    children: _allRoles.map((role) {
-                      final selected = _selectedRoles.contains(role);
-                      return GestureDetector(
-                        onTap: () => setState(() {
-                          selected
-                              ? _selectedRoles.remove(role)
-                              : _selectedRoles.add(role);
-                          if (!_isDentistSelected) _selectedSpecialty = null;
-                        }),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? ColorManager.primary
-                                : ColorManager.of(context).inputBg,
-                            borderRadius: BorderRadius.circular(20.r),
-                            border: Border.all(
-                              color: selected
-                                  ? ColorManager.primary
-                                  : ColorManager.of(context).borderLight,
-                            ),
-                          ),
-                          child: Text(
-                            _roleLabel(context, role),
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w500,
-                              color: selected
-                                  ? Colors.white
-                                  : ColorManager.of(context).textSecondary,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  if (_isDentistSelected) ...[
-                    SizedBox(height: 16.h),
-                    Text(
-                      l10n.specialization,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.of(context).textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    _loadingSpecialties
-                        ? SizedBox(
-                            height: 48.h,
-                            child: Center(
-                              child: SizedBox(
-                                width: 20.w,
-                                height: 20.w,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: ColorManager.primary,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: ColorManager.of(context).inputBg,
-                              borderRadius: BorderRadius.circular(10.r),
-                              border: Border.all(
-                                color: _selectedSpecialty != null
-                                    ? ColorManager.primary
-                                    : ColorManager.of(context).borderLight,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<SpecialtyEntity>(
-                                value: _selectedSpecialty,
-                                isExpanded: true,
-                                hint: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                  ),
-                                  child: Text(
-                                    l10n.selectSpecialization,
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontFamily: FontHelper.fontFamily(
-                                        context,
-                                      ),
-                                      color: ColorManager.of(context).textTertiary,
-                                    ),
-                                  ),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                borderRadius: BorderRadius.circular(10.r),
-                                items: _specialties
-                                    .map(
-                                      (s) => DropdownMenuItem(
-                                        value: s,
-                                        child: Text(
-                                          s.name,
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontFamily: FontHelper.fontFamily(
-                                              context,
-                                            ),
-                                            color: ColorManager.of(context).textPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (val) =>
-                                    setState(() => _selectedSpecialty = val),
-                              ),
-                            ),
-                          ),
-                  ],
-                ],
-              ),
-            ),
+                  )
+                : null,
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, bottomInset + 20.h),
-            child: GestureDetector(
-              onTap: _canSubmit ? _submit : null,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: _canSubmit
-                      ? ColorManager.primary
-                      : ColorManager.of(context).border,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  l10n.addUser,
-                  textAlign: TextAlign.center,
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  user.fullName,
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: const Color(0xFF111111),
                   ),
                 ),
-              ),
+                SizedBox(height: 2.h),
+                Text(
+                  user.email,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: const Color(0xFF666666),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -891,134 +672,61 @@ class _AddUserSheetState extends State<_AddUserSheet> {
     );
   }
 
-  void _submit() {
-    context.read<ClinicUsersBloc>().add(
-      ClinicUsersEvent.addUser(
-        firstName: _firstNameCtrl.text.trim(),
-        lastName: _lastNameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-        mobileNumber: _mobileCtrl.text.trim(),
-        password: _passwordCtrl.text,
-        passwordConfirmation: _confirmCtrl.text,
-        roles: _selectedRoles.toList(),
-        specialtyId: _selectedSpecialty?.id,
-      ),
-    );
-    Navigator.pop(context);
-  }
-
-  Widget _field(
-    String label,
-    TextEditingController ctrl,
-    BuildContext context, {
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          keyboardType: keyboardType,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration(),
-        ),
-      ],
-    );
-  }
-
-  Widget _passwordField(
-    String label,
-    TextEditingController ctrl,
-    BuildContext context,
-    bool obscure,
-    VoidCallback toggle,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          obscureText: obscure,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration().copyWith(
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscure
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-                size: 18.w,
-                color: ColorManager.of(context).textTertiary,
-              ),
-              onPressed: toggle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  InputDecoration _inputDecoration() {
-    return InputDecoration(
-      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      filled: true,
-      fillColor: ColorManager.of(context).inputBg,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.primary),
-      ),
-    );
-  }
-
-  String _roleLabel(BuildContext context, String role) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (role) {
-      case 'ADMIN':
-        return l10n.roleAdmin;
-      case 'DENTIST':
-        return l10n.roleDentist;
-      case 'SECRETARY':
-        return l10n.roleSecretary;
-      default:
-        return role;
+  String _initials(String name) {
+    final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
+    return parts.isNotEmpty ? parts.first[0].toUpperCase() : '?';
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool destructive;
+
+  const _ActionRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.destructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = destructive ? ColorManager.error : ColorManager.primary;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        child: Row(
+          children: [
+            Icon(icon, size: 20.w, color: color),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w500,
+                  color: destructive
+                      ? ColorManager.error
+                      : const Color(0xFF111111),
+                ),
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 18.w,
+              color: const Color(0xFFB5B5B5),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

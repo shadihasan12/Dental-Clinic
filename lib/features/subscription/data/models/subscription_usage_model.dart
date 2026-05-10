@@ -21,7 +21,9 @@ class SubscriptionUsageModel {
       final rawResource = entry.key.substring(4);
       final (key, unit) = _splitUnit(rawResource);
       final used = (json['current_$rawResource'] as num?) ?? 0;
-      final limit = entry.value as num?;
+      final raw = entry.value as num?;
+      // API uses -1 to mean "unlimited" (in addition to null).
+      final limit = (raw == null || raw < 0) ? null : raw;
 
       metrics.add(UsageMetric(key: key, used: used, limit: limit, unit: unit));
     }

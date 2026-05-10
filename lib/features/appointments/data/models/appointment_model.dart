@@ -117,15 +117,35 @@ class AppointmentModel {
         return AppointmentStatus.confirmed;
       case 'COMPLETED':
         return AppointmentStatus.completed;
-      case 'CANCELLED':
-        return AppointmentStatus.cancelled;
+      case 'CANCELLED_BY_CLINIC':
+        return AppointmentStatus.cancelledByClinic;
+      case 'CANCELLED_BY_PATIENT':
+        return AppointmentStatus.cancelledByPatient;
       case 'NO_SHOW':
       case 'NOSHOW':
         return AppointmentStatus.noShow;
       case 'SCHEDULED':
-      case 'PENDING':
       default:
-        return AppointmentStatus.pending;
+        return AppointmentStatus.scheduled;
+    }
+  }
+
+  /// API value for an [AppointmentStatus]. Used as the body for
+  /// PATCH /clinics/appointments/{id}/status.
+  static String apiValue(AppointmentStatus status) {
+    switch (status) {
+      case AppointmentStatus.scheduled:
+        return 'SCHEDULED';
+      case AppointmentStatus.confirmed:
+        return 'CONFIRMED';
+      case AppointmentStatus.cancelledByClinic:
+        return 'CANCELLED_BY_CLINIC';
+      case AppointmentStatus.cancelledByPatient:
+        return 'CANCELLED_BY_PATIENT';
+      case AppointmentStatus.noShow:
+        return 'NO_SHOW';
+      case AppointmentStatus.completed:
+        return 'COMPLETED';
     }
   }
 }

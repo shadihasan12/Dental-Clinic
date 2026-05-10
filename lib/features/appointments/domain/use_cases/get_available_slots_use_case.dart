@@ -7,10 +7,14 @@ import 'package:injectable/injectable.dart';
 class GetAvailableSlotsParams {
   final DateTime date;
   final int durationMinutes;
+  final String? doctorId;
+  final bool isVip;
 
   const GetAvailableSlotsParams({
     required this.date,
     required this.durationMinutes,
+    this.doctorId,
+    this.isVip = false,
   });
 }
 
@@ -25,6 +29,11 @@ class GetAvailableSlotsUseCase
   Future<Either<NetworkExceptions, List<String>>> call(
     GetAvailableSlotsParams params,
   ) {
-    return _repository.getAvailableSlots(params.date, params.durationMinutes);
+    return _repository.getAvailableSlots(
+      params.date,
+      params.durationMinutes,
+      doctorId: params.doctorId,
+      isVip: params.isVip,
+    );
   }
 }

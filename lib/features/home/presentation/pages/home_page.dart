@@ -1,10 +1,16 @@
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
+import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
+import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/quick_actions.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/todays_schedule.dart';
+import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_status_use_case.dart';
@@ -30,6 +36,12 @@ class _HomePageState extends State<HomePage> {
   SubscriptionUsageEntity? _usage;
   bool _isSubscriptionCardHidden = false;
 
+  List<AppointmentEntity> _todayAppointments = const [];
+  bool _scheduleLoading = true;
+  String? _scheduleError;
+
+  static const int _maxScheduleRows = 5;
+
   String get _firstName {
     final s = getIt<UserStorage>();
     return s.getFirstName() ?? s.getUserName() ?? '';
@@ -43,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
     _loadSubscription();
+    _loadTodaysSchedule();
   }
 
   @override
@@ -64,6 +77,30 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       statusResult.fold((_) => _status = null, (s) => _status = s);
       usageResult.fold((_) => _usage = null, (u) => _usage = u);
+    });
+  }
+
+  Future<void> _loadTodaysSchedule() async {
+    final today = DateTime.now();
+    final result = await getIt<GetAllAppointmentsUseCase>()(
+      GetAppointmentsParams.day(today),
+    );
+    if (!mounted) return;
+
+    setState(() {
+      result.fold(
+        (e) {
+          _scheduleError = NetworkExceptions.getErrorMessage(e);
+          _todayAppointments = const [];
+        },
+        (list) {
+          final sorted = [...list]
+            ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+          _todayAppointments = sorted;
+          _scheduleError = null;
+        },
+      );
+      _scheduleLoading = false;
     });
   }
 
@@ -133,12 +170,20 @@ class _HomePageState extends State<HomePage> {
                   context.pushNamed(AppRoutesNames.newAppointment);
                 },
                 onNewCase: () {},
-                onRecordPayment: () {},
+                onRecordPayment: () {
+                  RootPage.selectedTab.value = 3;
+                  ExpensesPage.openAddExpenseRequest.value++;
+                },
               ),
 
               SizedBox(height: 24.h),
 
-              TodaysSchedule(onViewAllTap: () {}),
+              TodaysSchedule(
+                appointments: _todayAppointments.take(_maxScheduleRows).toList(),
+                isLoading: _scheduleLoading,
+                error: _scheduleError,
+                onViewAllTap: () => RootPage.selectedTab.value = 2,
+              ),
 
               SizedBox(height: 24.h),
             ],

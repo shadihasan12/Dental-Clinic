@@ -13,6 +13,8 @@ import 'package:dental_clinic_app/features/home/presentation/pages/notification_
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart'
     show ClinicInfoPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/user_hours_page.dart'
+    show UserHoursPage;
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/working_days_page.dart'
     show WorkingDaysPage;
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
@@ -504,6 +506,21 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const WorkingDaysPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/clinic-users/:userId/hours',
+          name: AppRoutesNames.userHours,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return CupertinoPage(
+              child: UserHoursPage(
+                userId: state.pathParameters['userId']!,
+                userName: extra?['userName'] as String?,
+              ),
               key: state.pageKey,
               name: state.name,
             );

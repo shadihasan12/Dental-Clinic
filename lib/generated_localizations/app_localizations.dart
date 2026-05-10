@@ -440,6 +440,24 @@ abstract class AppLocalizations {
   /// **'Scheduled'**
   String get scheduled;
 
+  /// No description provided for @cancelledByClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by clinic'**
+  String get cancelledByClinic;
+
+  /// No description provided for @cancelledByPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by patient'**
+  String get cancelledByPatient;
+
+  /// No description provided for @changeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Change status'**
+  String get changeStatus;
+
   /// No description provided for @noShow.
   ///
   /// In en, this message translates to:
@@ -662,6 +680,24 @@ abstract class AppLocalizations {
   /// **'Upgrade Subscription'**
   String get upgradeSubscription;
 
+  /// No description provided for @subscriptionLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription limit reached'**
+  String get subscriptionLimitTitle;
+
+  /// No description provided for @dentistLimitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current plan doesn\'t allow adding more dentists. Upgrade your subscription to add more clinic users.'**
+  String get dentistLimitMessage;
+
+  /// No description provided for @roleLimitInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current plan is at its limit for: {roles}. Upgrade to add users with this role.'**
+  String roleLimitInfo(String roles);
+
   /// No description provided for @daysRemaining.
   ///
   /// In en, this message translates to:
@@ -697,6 +733,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working Days'**
   String get workingDays;
+
+  /// No description provided for @workingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours'**
+  String get workingHours;
+
+  /// No description provided for @fullClinicHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Full clinic hours'**
+  String get fullClinicHours;
+
+  /// No description provided for @manageWorkingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage working hours'**
+  String get manageWorkingHours;
 
   /// No description provided for @closed.
   ///
@@ -1621,6 +1675,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please select a patient'**
   String get pleaseSelectAPatient;
+
+  /// No description provided for @pleaseSelectADoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a doctor'**
+  String get pleaseSelectADoctor;
+
+  /// No description provided for @selectDoctor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select doctor'**
+  String get selectDoctor;
+
+  /// No description provided for @selectDoctorFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a doctor to see available slots'**
+  String get selectDoctorFirst;
+
+  /// No description provided for @vipAppointment.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP appointment'**
+  String get vipAppointment;
+
+  /// No description provided for @vipAppointmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bypass the doctor\'s schedule and show every slot'**
+  String get vipAppointmentSubtitle;
 
   /// No description provided for @missingData.
   ///

@@ -25,6 +25,7 @@ class UserStorage {
   static const String _detailedAddressKey = 'detailed_address';
   static const String _profileImageUrlKey = 'profile_image_url';
   static const String _selectedClinicIdKey = 'selected_clinic_id';
+  static const String _userRoleKey = 'user_role';
 
   final SharedPreferences _prefs;
 
@@ -74,6 +75,14 @@ class UserStorage {
       _prefs.setString(_selectedClinicIdKey, id);
   String? getSelectedClinicId() => _prefs.getString(_selectedClinicIdKey);
 
+  /// Cache the current user's role in the active clinic (e.g. "admin",
+  /// "dentist"). Used by the menu to gate admin-only sections without a
+  /// permissions round-trip.
+  Future<void> saveUserRole(String role) async =>
+      _prefs.setString(_userRoleKey, role);
+  String? getUserRole() => _prefs.getString(_userRoleKey);
+  bool get isAdmin => getUserRole() == 'admin';
+
   Future<void> clear() async {
     await _prefs.remove(_userNameKey);
     await _prefs.remove(_firstNameKey);
@@ -86,5 +95,6 @@ class UserStorage {
     await _prefs.remove(_detailedAddressKey);
     await _prefs.remove(_profileImageUrlKey);
     await _prefs.remove(_selectedClinicIdKey);
+    await _prefs.remove(_userRoleKey);
   }
 }

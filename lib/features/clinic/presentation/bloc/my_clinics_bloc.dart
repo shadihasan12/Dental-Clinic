@@ -28,13 +28,16 @@ class MyClinicsBloc extends Bloc<MyClinicsEvent, MyClinicsState> {
         MyClinicsState.error(NetworkExceptions.getErrorMessage(error)),
       ),
       (clinics) {
-        // Save admin clinic ID for use in users management
+        // Save admin clinic ID for use in users management, plus the
+        // user's role for that clinic so the menu can hide admin-only
+        // items without an extra round-trip.
         final adminClinic = clinics.cast<ClinicMembershipEntity?>().firstWhere(
               (c) => c!.role == ClinicRole.admin,
               orElse: () => clinics.isNotEmpty ? clinics.first : null,
             );
         if (adminClinic != null) {
           _userStorage.saveSelectedClinicId(adminClinic.clinicId);
+          _userStorage.saveUserRole(adminClinic.role.name);
         }
         emit(MyClinicsState.loaded(clinics));
       },
