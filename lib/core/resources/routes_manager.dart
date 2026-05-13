@@ -21,7 +21,7 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/support/pr
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/statistics/statistics_page.dart';
+import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/support_chat_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
