@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dar
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/appointments_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
@@ -26,6 +27,11 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int _currentIndex = 0;
+  // Bumped whenever the active clinic changes. Used as part of each tab's
+  // ValueKey so Flutter discards the existing State and re-mounts the
+  // subtree, which forces every per-tab initState (and therefore every
+  // clinic-scoped API fetch) to run again against the new clinic.
+  int _clinicVersion = 0;
 
   @override
   void initState() {
@@ -33,11 +39,13 @@ class _RootPageState extends State<RootPage> {
     getIt<ClinicPermissionsBloc>()
         .add(const ClinicPermissionsEvent.load());
     RootPage.selectedTab.addListener(_onExternalTabChange);
+    UserStorage.clinicChangedNotifier.addListener(_onClinicChanged);
   }
 
   @override
   void dispose() {
     RootPage.selectedTab.removeListener(_onExternalTabChange);
+    UserStorage.clinicChangedNotifier.removeListener(_onClinicChanged);
     super.dispose();
   }
 
@@ -48,22 +56,35 @@ class _RootPageState extends State<RootPage> {
     }
   }
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const PermissionGate(
-      feature: PermissionSlugs.viewClinicPatients,
-      child: PatientsListPage(),
-    ),
-    const PermissionGate(
-      feature: PermissionSlugs.viewClinicAppointments,
-      child: AppointmentsPage(),
-    ),
-    const PermissionGate(
-      feature: PermissionSlugs.viewClinicExpenses,
-      child: ExpensesPage(),
-    ),
-    MenuPage(),
-  ];
+  void _onClinicChanged() {
+    if (!mounted) return;
+    getIt<ClinicPermissionsBloc>()
+        .add(const ClinicPermissionsEvent.load());
+    setState(() => _clinicVersion++);
+  }
+
+  List<Widget> _buildPages() {
+    final v = _clinicVersion;
+    return [
+      HomePage(key: ValueKey('home-$v')),
+      PermissionGate(
+        key: ValueKey('patients-$v'),
+        feature: PermissionSlugs.viewClinicPatients,
+        child: const PatientsListPage(),
+      ),
+      PermissionGate(
+        key: ValueKey('appointments-$v'),
+        feature: PermissionSlugs.viewClinicAppointments,
+        child: const AppointmentsPage(),
+      ),
+      PermissionGate(
+        key: ValueKey('expenses-$v'),
+        feature: PermissionSlugs.viewClinicExpenses,
+        child: const ExpensesPage(),
+      ),
+      MenuPage(key: ValueKey('menu-$v')),
+    ];
+  }
 
   void _onTabSelected(int index) {
     if (index == _currentIndex) return;
@@ -107,7 +128,7 @@ class _RootPageState extends State<RootPage> {
                 top: reservedTop,
                 bottom: reservedBarHeight,
               ),
-              child: IndexedStack(index: _currentIndex, children: _pages),
+              child: IndexedStack(index: _currentIndex, children: _buildPages()),
             ),
           ),
           Positioned(

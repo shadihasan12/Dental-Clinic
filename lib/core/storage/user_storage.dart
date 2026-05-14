@@ -14,6 +14,15 @@ class UserStorage {
     profileUpdateNotifier.value++;
   }
 
+  /// Notifier that increments whenever the active clinic is switched. The
+  /// root page listens to this to refetch permissions and remount each tab
+  /// so every clinic-scoped API reloads against the new clinic.
+  static final ValueNotifier<int> clinicChangedNotifier = ValueNotifier<int>(0);
+
+  static void notifyClinicChanged() {
+    clinicChangedNotifier.value++;
+  }
+
   static const String _userNameKey = 'user_name';
   static const String _firstNameKey = 'first_name';
   static const String _lastNameKey = 'last_name';

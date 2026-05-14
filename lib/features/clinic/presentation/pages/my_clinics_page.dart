@@ -388,7 +388,12 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
     // header. profileUpdateNotifier rebuilds the home page.
     await getIt<TokenStorage>().saveClinicId(membership.clinicId);
     await getIt<UserStorage>().saveClinicName(membership.clinicName);
+    await getIt<UserStorage>().saveUserRole(membership.role.name);
+    // profileUpdated rebuilds widgets that read the cached clinic/role
+    // (e.g. the home header); clinicChanged tells the root page to refetch
+    // permissions and remount every tab so each clinic-scoped API reloads.
     UserStorage.notifyProfileUpdated();
+    UserStorage.notifyClinicChanged();
 
     if (!context.mounted) return;
 
