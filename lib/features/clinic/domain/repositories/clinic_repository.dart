@@ -10,6 +10,22 @@ abstract class ClinicRepository {
   Future<Either<NetworkExceptions, List<InvitationEntity>>>
       getReceivedInvitations({InvitationStatus? status});
 
+  Future<Either<NetworkExceptions, List<InvitationEntity>>>
+      getSentInvitations({InvitationStatus? status});
+
+  Future<Either<NetworkExceptions, InvitationEntity>> sendInvitation({
+    required String email,
+    required List<String> roles,
+  });
+
+  Future<Either<NetworkExceptions, InvitationEntity>> acceptInvitation(
+    String id,
+  );
+
+  Future<Either<NetworkExceptions, InvitationEntity>> declineInvitation(
+    String id,
+  );
+
   Future<Either<NetworkExceptions, List<ClinicUserEntity>>> getClinicUsers(
       String clinicId);
 

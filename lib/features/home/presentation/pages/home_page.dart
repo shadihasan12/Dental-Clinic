@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
@@ -54,13 +55,20 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
+    NewAppointmentPage.created.addListener(_onAppointmentCreated);
     _loadSubscription();
+    _loadTodaysSchedule();
+  }
+
+  void _onAppointmentCreated() {
+    if (!mounted) return;
     _loadTodaysSchedule();
   }
 
   @override
   void dispose() {
     UserStorage.profileUpdateNotifier.removeListener(_onProfileUpdated);
+    NewAppointmentPage.created.removeListener(_onAppointmentCreated);
     super.dispose();
   }
 

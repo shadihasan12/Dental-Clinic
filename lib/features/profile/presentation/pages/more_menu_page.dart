@@ -207,7 +207,19 @@ class _MenuPageState extends State<MenuPage> {
           title: l10n.workingDaysAndHolidays,
           onTap: () => context.pushNamed(AppRoutesNames.workingDays),
         ),
-      ],
+      ] else
+        MenuItem(
+          icon: Icons.schedule_outlined,
+          title: l10n.myWorkingHours,
+          onTap: () {
+            final userId = getIt<TokenStorage>().getUserId() ?? '';
+            if (userId.isEmpty) return;
+            context.pushNamed(
+              AppRoutesNames.userHours,
+              pathParameters: {'userId': userId},
+            );
+          },
+        ),
       MenuItem(
         icon: Icons.bar_chart_rounded,
         title: l10n.analytics,

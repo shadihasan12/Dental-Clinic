@@ -59,7 +59,8 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         'date': _formatDate(date),
         'duration': durationMinutes,
         if (doctorId != null && doctorId.isNotEmpty) 'doctor_id': doctorId,
-        if (isVip) 'is_vip': true,
+        // Server accepts 0/1 — send as int to dodge string/bool coercion.
+        'is_vip': isVip ? 1 : 0,
       },
     );
 
@@ -82,7 +83,6 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         'doctor_id': params.doctorId,
         'start_time': _formatDateTime(params.startTime),
         'end_time': _formatDateTime(params.endTime),
-        'core_treatment_ids': params.coreTreatmentIds,
         if (params.notes != null && params.notes!.isNotEmpty)
           'notes': params.notes,
         'notify_patient': params.notifyPatient,

@@ -79,8 +79,13 @@ import 'features/clinic/domain/use_cases/get_clinic_users_use_case.dart'
 import 'features/clinic/domain/use_cases/get_my_clinics_use_case.dart' as _i113;
 import 'features/clinic/domain/use_cases/get_received_invitations_use_case.dart'
     as _i860;
+import 'features/clinic/domain/use_cases/get_sent_invitations_use_case.dart'
+    as _i675;
 import 'features/clinic/domain/use_cases/remove_clinic_user_use_case.dart'
     as _i223;
+import 'features/clinic/domain/use_cases/respond_to_invitation_use_case.dart'
+    as _i945;
+import 'features/clinic/domain/use_cases/send_invitation_use_case.dart' as _i21;
 import 'features/clinic/domain/use_cases/update_user_roles_use_case.dart'
     as _i972;
 import 'features/clinic/presentation/bloc/clinic_users_bloc.dart' as _i475;
@@ -502,6 +507,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i860.GetReceivedInvitationsUseCase>(
       () => _i860.GetReceivedInvitationsUseCase(gh<_i818.ClinicRepository>()),
     );
+    gh.factory<_i675.GetSentInvitationsUseCase>(
+      () => _i675.GetSentInvitationsUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i945.AcceptInvitationUseCase>(
+      () => _i945.AcceptInvitationUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i945.DeclineInvitationUseCase>(
+      () => _i945.DeclineInvitationUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i21.SendInvitationUseCase>(
+      () => _i21.SendInvitationUseCase(gh<_i818.ClinicRepository>()),
+    );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
     );
@@ -591,9 +608,6 @@ extension GetItInjectableX on _i174.GetIt {
         getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
       ),
     );
-    gh.factory<_i932.InvitationBloc>(
-      () => _i932.InvitationBloc(gh<_i860.GetReceivedInvitationsUseCase>()),
-    );
     gh.factory<_i1011.SubscriptionBloc>(
       () => _i1011.SubscriptionBloc(
         getPlans: gh<_i779.GetPlansUseCase>(),
@@ -646,6 +660,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i527.AddPatientBloc>(
       () => _i527.AddPatientBloc(addPatient: gh<_i594.AddPatientUseCase>()),
+    );
+    gh.factory<_i932.InvitationBloc>(
+      () => _i932.InvitationBloc(
+        gh<_i860.GetReceivedInvitationsUseCase>(),
+        gh<_i675.GetSentInvitationsUseCase>(),
+        gh<_i21.SendInvitationUseCase>(),
+        gh<_i945.AcceptInvitationUseCase>(),
+        gh<_i945.DeclineInvitationUseCase>(),
+      ),
     );
     gh.factory<_i533.MyClinicsBloc>(
       () => _i533.MyClinicsBloc(

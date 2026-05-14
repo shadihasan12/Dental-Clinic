@@ -11,9 +11,7 @@ import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_ava
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_clinic_doctors_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/patient_picker.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
-import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
-import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_core_treatments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_patients_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -25,6 +23,10 @@ import 'package:intl/intl.dart';
 
 class NewAppointmentPage extends StatefulWidget {
   const NewAppointmentPage({super.key});
+
+  /// Bumped after a successful POST so other screens (home's today's
+  /// schedule, etc.) can refresh without owning the create flow.
+  static final ValueNotifier<int> created = ValueNotifier<int>(0);
 
   @override
   State<NewAppointmentPage> createState() => _NewAppointmentPageState();
@@ -43,11 +45,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   List<ClinicDoctorEntity> _doctors = [];
   ClinicDoctorEntity? _selectedDoctor;
   bool _isDoctorsLoading = true;
-
-  // Treatments
-  List<CoreTreatment> _treatments = [];
-  final List<String> _selectedTreatmentIds = [];
-  bool _isTreatmentsLoading = true;
 
   // Date / duration / slots
   DateTime _selectedDate = DateTime.now();
@@ -77,7 +74,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   void initState() {
     super.initState();
     _loadPatients();
-    _loadTreatments();
     _loadDoctors();
     // Slots can't be fetched yet — they need a doctor — so we wait until
     // the user picks one (or until the doctors load and we auto-select
@@ -131,25 +127,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         setState(() {
           _patients = response.data;
           _isPatientsLoading = false;
-        });
-      },
-    );
-  }
-
-  Future<void> _loadTreatments() async {
-    final result = await getIt<GetAllCoreTreatmentsUseCase>()(NoParams());
-    if (!mounted) return;
-    result.fold(
-      (error) {
-        setState(() => _isTreatmentsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
-      },
-      (treatments) {
-        setState(() {
-          _treatments = treatments;
-          _isTreatmentsLoading = false;
         });
       },
     );
@@ -276,12 +253,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           title: l10n.missingData, message: l10n.pleaseSelectADoctor);
       return;
     }
-    if (_selectedTreatmentIds.isEmpty) {
-      AppSnackbar.showWarning(context,
-          title: l10n.missingData,
-          message: l10n.pleaseSelectAtLeastOneTreatment);
-      return;
-    }
     if (_selectedSlot == null) {
       AppSnackbar.showWarning(context,
           title: l10n.missingData,
@@ -297,7 +268,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       doctorId: _selectedDoctor!.id,
       startTime: start,
       endTime: end,
-      coreTreatmentIds: List<String>.from(_selectedTreatmentIds),
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
       notifyPatient: _sendReminder,
     );
@@ -319,6 +289,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         AppSnackbar.showSuccess(context,
             title: l10n.appointmentScheduled,
             message: l10n.successfullyAddedToCalendar);
+        NewAppointmentPage.created.value++;
         context.pop();
       },
     );
@@ -393,12 +364,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                       _sectionLabel(l10n.doctor),
                       SizedBox(height: 10.h),
                       _buildDoctorChips(l10n),
-
-                      _divider(),
-
-                      _sectionLabel(l10n.treatment),
-                      SizedBox(height: 10.h),
-                      _buildTreatmentChips(l10n),
 
                       _divider(),
 
@@ -559,70 +524,6 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             activeThumbColor: ColorManager.primary,
             activeTrackColor: ColorManager.primary.withValues(alpha: 0.4),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTreatmentChips(AppLocalizations l10n) {
-    if (_isTreatmentsLoading) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: const Center(child: CircularProgressIndicator()),
-      );
-    }
-    if (_treatments.isEmpty) {
-      return Text(
-        l10n.noData,
-        style: TextStyle(
-          fontSize: 13.sp,
-          fontFamily: FontHelper.fontFamily(context),
-          color: ColorManager.of(context).textSubtle,
-        ),
-      );
-    }
-    // Distribute chips column-first into 3 rows so the visual reading order
-    // (top-to-bottom, then scroll right for more) feels natural.
-    const rowCount = 3;
-    final rows = List<List<CoreTreatment>>.generate(
-      rowCount,
-      (_) => <CoreTreatment>[],
-    );
-    for (var i = 0; i < _treatments.length; i++) {
-      rows[i % rowCount].add(_treatments[i]);
-    }
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var r = 0; r < rows.length; r++) ...[
-            if (r > 0) SizedBox(height: 8.h),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var i = 0; i < rows[r].length; i++) ...[
-                  if (i > 0) SizedBox(width: 8.w),
-                  Builder(builder: (context) {
-                    final t = rows[r][i];
-                    final isSelected = _selectedTreatmentIds.contains(t.id);
-                    return SelectableChip(
-                      label: t.name,
-                      isSelected: isSelected,
-                      onTap: () => setState(() {
-                        isSelected
-                            ? _selectedTreatmentIds.remove(t.id)
-                            : _selectedTreatmentIds.add(t.id);
-                      }),
-                    );
-                  }),
-                ],
-              ],
-            ),
-          ],
         ],
       ),
     );

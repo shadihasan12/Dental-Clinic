@@ -38,6 +38,59 @@ class ClinicRepositoryImpl implements ClinicRepository {
   }
 
   @override
+  Future<Either<NetworkExceptions, List<InvitationEntity>>>
+      getSentInvitations({InvitationStatus? status}) async {
+    try {
+      final models = await _remoteDataSource.getSentInvitations(
+        status: status,
+      );
+      return Right(models.map((m) => m.toEntity()).toList());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, InvitationEntity>> sendInvitation({
+    required String email,
+    required List<String> roles,
+  }) async {
+    try {
+      final model = await _remoteDataSource.sendInvitation(
+        email: email,
+        roles: roles,
+      );
+      return Right(model.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, InvitationEntity>> acceptInvitation(
+    String id,
+  ) async {
+    try {
+      final model = await _remoteDataSource.acceptInvitation(id);
+      return Right(model.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, InvitationEntity>> declineInvitation(
+    String id,
+  ) async {
+    try {
+      final model = await _remoteDataSource.declineInvitation(id);
+      return Right(model.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
   Future<Either<NetworkExceptions, List<ClinicUserEntity>>> getClinicUsers(
       String clinicId) async {
     try {

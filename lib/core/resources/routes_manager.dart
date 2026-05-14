@@ -39,8 +39,6 @@ import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dar
 import 'package:dental_clinic_app/features/patients/presentation/pages/patient_details_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_patient_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
-import 'package:dental_clinic_app/features/clinic/presentation/pages/staff_management_page.dart';
-import 'package:dental_clinic_app/features/clinic/presentation/pages/invite_staff_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/pending_approvals_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/my_clinics_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/create_clinic_page.dart';
@@ -329,34 +327,6 @@ class RoutesManager {
           },
         ),
 
-        // Clinic Management Routes
-        GoRoute(
-          path: '/clinic/:clinicId/staff',
-          name: AppRoutesNames.staffManagement,
-          pageBuilder: (context, state) {
-            final clinicId = state.pathParameters['clinicId'] ?? '';
-            return CupertinoPage(
-              child: StaffManagementPage(clinicId: clinicId),
-              key: state.pageKey,
-              name: state.name,
-            );
-          },
-        ),
-        GoRoute(
-          path: '/clinic/invite-staff',
-          name: AppRoutesNames.inviteStaff,
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>? ?? {};
-            return CupertinoPage(
-              child: InviteStaffPage(
-                clinicId: extra['clinicId'] ?? '',
-                clinicName: extra['clinicName'] ?? '',
-              ),
-              key: state.pageKey,
-              name: state.name,
-            );
-          },
-        ),
         GoRoute(
           path: '/clinic/:clinicId/approvals',
           name: AppRoutesNames.pendingApprovals,

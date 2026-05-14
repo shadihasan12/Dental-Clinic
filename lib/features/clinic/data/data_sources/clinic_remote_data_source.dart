@@ -11,6 +11,15 @@ abstract class ClinicRemoteDataSource {
   Future<List<InvitationModel>> getReceivedInvitations({
     InvitationStatus? status,
   });
+  Future<List<InvitationModel>> getSentInvitations({
+    InvitationStatus? status,
+  });
+  Future<InvitationModel> sendInvitation({
+    required String email,
+    required List<String> roles,
+  });
+  Future<InvitationModel> acceptInvitation(String id);
+  Future<InvitationModel> declineInvitation(String id);
   Future<List<ClinicUserModel>> getClinicUsers(String clinicId);
   Future<ClinicUserModel> addClinicUser({
     required String clinicId,
@@ -66,6 +75,53 @@ class ClinicRemoteDataSourceImpl implements ClinicRemoteDataSource {
     return dataList
         .map((e) => InvitationModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  @override
+  Future<List<InvitationModel>> getSentInvitations({
+    InvitationStatus? status,
+  }) async {
+    final response = await _apiConsumer.get(
+      ClinicEndpoints.sentInvitations,
+      queryParameters: status != null
+          ? {'filters[status][eq]': InvitationModel.apiValue(status)}
+          : null,
+    );
+    final dataList = response['data'] as List;
+    return dataList
+        .map((e) => InvitationModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<InvitationModel> sendInvitation({
+    required String email,
+    required List<String> roles,
+  }) async {
+    final response = await _apiConsumer.post(
+      ClinicEndpoints.sendInvitation,
+      body: {'email': email, 'roles': roles},
+    );
+    final data = response['data'] as Map<String, dynamic>;
+    return InvitationModel.fromJson(data);
+  }
+
+  @override
+  Future<InvitationModel> acceptInvitation(String id) async {
+    final response = await _apiConsumer.put(
+      ClinicEndpoints.acceptInvitation(id),
+    );
+    final data = response['data'] as Map<String, dynamic>;
+    return InvitationModel.fromJson(data);
+  }
+
+  @override
+  Future<InvitationModel> declineInvitation(String id) async {
+    final response = await _apiConsumer.put(
+      ClinicEndpoints.declineInvitation(id),
+    );
+    final data = response['data'] as Map<String, dynamic>;
+    return InvitationModel.fromJson(data);
   }
 
   @override

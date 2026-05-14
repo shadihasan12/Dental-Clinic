@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/resources.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,9 @@ class _AppointmentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    return Padding(
+    return InkWell(
+      onTap: () => AppointmentDetailsSheet.show(context, appointment),
+      child: Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -147,6 +150,7 @@ class _AppointmentRow extends StatelessWidget {
           ),
           _StatusBadge(status: appointment.status),
         ],
+      ),
       ),
     );
   }

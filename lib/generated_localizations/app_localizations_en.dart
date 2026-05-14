@@ -753,6 +753,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myClinics => 'My Clinics';
 
   @override
+  String get useThisClinic => 'Use this clinic';
+
+  @override
+  String get currentlyActive => 'Currently active';
+
+  @override
+  String clinicSelectedMessage(String name) {
+    return 'Now working on $name';
+  }
+
+  @override
   String get leaveClinic => 'Leave Clinic';
 
   @override
@@ -796,6 +807,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get declined => 'Declined';
 
   @override
+  String get expired => 'Expired';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get sent => 'Sent';
+
+  @override
+  String get received => 'Received';
+
+  @override
+  String get sendInvite => 'Send invite';
+
+  @override
+  String get sendInviteSubtitle => 'Invite a colleague to join this clinic.';
+
+  @override
+  String get inviteSentSuccess => 'Invitation sent';
+
+  @override
+  String invitedBy(String name) {
+    return 'by $name';
+  }
+
+  @override
   String get noInvitations => 'No invitations';
 
   @override
@@ -806,6 +846,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noDeclinedInvitations => 'No declined invitations';
+
+  @override
+  String get noPendingSentInvitations => 'No pending invitations sent';
+
+  @override
+  String get noAcceptedSentInvitations => 'No accepted invitations sent';
+
+  @override
+  String get noDeclinedSentInvitations => 'No declined invitations sent';
 
   @override
   String get appLanguageWillChangeImmediately =>
@@ -1618,6 +1667,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workingDaysAndHolidays => 'Working Days & Holidays';
+
+  @override
+  String get myWorkingHours => 'My Working Hours';
 
   @override
   String get photoPermissionRequired => 'Photo Permission Required';

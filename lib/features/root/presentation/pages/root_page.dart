@@ -54,7 +54,10 @@ class _RootPageState extends State<RootPage> {
       feature: PermissionSlugs.viewClinicPatients,
       child: PatientsListPage(),
     ),
-    const AppointmentsPage(),
+    const PermissionGate(
+      feature: PermissionSlugs.viewClinicAppointments,
+      child: AppointmentsPage(),
+    ),
     const PermissionGate(
       feature: PermissionSlugs.viewClinicExpenses,
       child: ExpensesPage(),

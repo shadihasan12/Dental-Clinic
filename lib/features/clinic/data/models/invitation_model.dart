@@ -7,6 +7,10 @@ class InvitationModel {
   final String clinicName;
   final String? clinicLogoUrl;
   final String inviteeEmail;
+  final String? inviteeName;
+  final String? inviteeImageUrl;
+  final String? inviteeSpecialty;
+  final List<ClinicRole> roles;
   final ClinicRole role;
   final InvitationStatus status;
   final String invitedByUserId;
@@ -21,10 +25,14 @@ class InvitationModel {
     required this.clinicId,
     required this.clinicName,
     required this.inviteeEmail,
+    required this.roles,
     required this.role,
     required this.status,
     required this.invitedByUserId,
     this.clinicLogoUrl,
+    this.inviteeName,
+    this.inviteeImageUrl,
+    this.inviteeSpecialty,
     this.invitedByName,
     this.message,
     this.createdAt,
@@ -34,14 +42,24 @@ class InvitationModel {
 
   factory InvitationModel.fromJson(Map<String, dynamic> json) {
     final clinic = json['clinic'] as Map<String, dynamic>? ?? const {};
+    // `user` block appears on /sent (the invitee). For /received, fall back
+    // to the older invited_by / inviter shapes.
+    final user = json['user'] as Map<String, dynamic>?;
     final invitedBy = json['invited_by'] as Map<String, dynamic>? ??
         json['inviter'] as Map<String, dynamic>? ??
         const {};
 
     final rawRoles = json['roles'];
-    final firstRole = rawRoles is List && rawRoles.isNotEmpty
-        ? rawRoles.first
-        : json['role'];
+    final parsedRoles = rawRoles is List
+        ? rawRoles.map((r) => _parseRole(r?.toString())).toList()
+        : <ClinicRole>[];
+    final firstRole = parsedRoles.isNotEmpty
+        ? parsedRoles.first
+        : _parseRole(json['role']?.toString());
+
+    final specialty = user?['specialty'] is Map<String, dynamic>
+        ? (user!['specialty'] as Map<String, dynamic>)['name'] as String?
+        : null;
 
     return InvitationModel(
       id: (json['id'] ?? '').toString(),
@@ -49,12 +67,17 @@ class InvitationModel {
       clinicName: (clinic['name'] ?? json['clinic_name'] ?? '').toString(),
       clinicLogoUrl: clinic['logo_url'] as String? ??
           clinic['logo'] as String?,
-      inviteeEmail: (json['invited_email'] ??
+      inviteeEmail: (user?['email'] ??
+              json['invited_email'] ??
               json['email'] ??
               json['invitee_email'] ??
               '')
           .toString(),
-      role: _parseRole(firstRole?.toString()),
+      inviteeName: _composeName(user),
+      inviteeImageUrl: user?['image'] as String?,
+      inviteeSpecialty: specialty,
+      roles: parsedRoles,
+      role: firstRole,
       status: _parseStatus(json['status']?.toString()),
       invitedByUserId: (invitedBy['id'] ?? json['invited_by_id'] ?? '')
           .toString(),
@@ -71,6 +94,10 @@ class InvitationModel {
         clinicId: clinicId,
         clinicName: clinicName,
         inviteeEmail: inviteeEmail,
+        inviteeName: inviteeName,
+        inviteeImageUrl: inviteeImageUrl,
+        inviteeSpecialty: inviteeSpecialty,
+        roles: roles,
         role: role,
         status: status,
         invitedByUserId: invitedByUserId,
@@ -111,7 +138,8 @@ class InvitationModel {
     }
   }
 
-  static String? _composeName(Map<String, dynamic> json) {
+  static String? _composeName(Map<String, dynamic>? json) {
+    if (json == null || json.isEmpty) return null;
     final full = json['name'] as String?;
     if (full != null && full.isNotEmpty) return full;
     final first = json['first_name'] as String? ?? '';

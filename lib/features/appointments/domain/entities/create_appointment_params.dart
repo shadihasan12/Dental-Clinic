@@ -3,7 +3,6 @@ class CreateAppointmentParams {
   final String doctorId;
   final DateTime startTime;
   final DateTime endTime;
-  final List<String> coreTreatmentIds;
   final String? notes;
   final bool notifyPatient;
 
@@ -12,7 +11,6 @@ class CreateAppointmentParams {
     required this.doctorId,
     required this.startTime,
     required this.endTime,
-    required this.coreTreatmentIds,
     this.notes,
     this.notifyPatient = true,
   });

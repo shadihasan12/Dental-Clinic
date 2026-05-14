@@ -29,7 +29,14 @@ class AppointmentModel {
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     final patient = json['patient'] as Map<String, dynamic>?;
-    final doctor = json['doctor'] as Map<String, dynamic>?;
+    // Tolerate a few aliases — backend may return any of these.
+    final doctor = (json['doctor'] ??
+            json['dentist'] ??
+            json['clinic_doctor'] ??
+            json['assigned_doctor']) as Map<String, dynamic>?;
+    // Doctor block may itself nest a `user` (matches the
+    // /clinics/clinic-doctors response shape). Try that level too.
+    final doctorUser = doctor?['user'] as Map<String, dynamic>?;
     final coreTreatments = json['core_treatments'] as List?;
     final firstTreatment =
         coreTreatments != null && coreTreatments.isNotEmpty
@@ -42,8 +49,9 @@ class AppointmentModel {
       patientName: _composeName(patient) ??
           (json['patient_name'] ?? '').toString(),
       doctorId: (doctor?['id'] ?? json['doctor_id'] ?? '').toString(),
-      doctorName:
-          _composeName(doctor) ?? (json['doctor_name'] ?? '').toString(),
+      doctorName: _composeName(doctor) ??
+          _composeName(doctorUser) ??
+          (json['doctor_name'] ?? '').toString(),
       dateTime: _parseDateTime(json),
       durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 0,
       treatmentType:

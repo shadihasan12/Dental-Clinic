@@ -34,6 +34,10 @@ class PermissionSlugs {
   static const viewClinicExpenses = 'view-clinic-expenses';
   static const manageClinicExpenses = 'manage-clinic-expenses';
 
+  // Clinic Appointments
+  static const viewClinicAppointments = 'view-clinic-appointments';
+  static const manageClinicAppointments = 'manage-clinic-appointments';
+
   // Clinic Management
   static const updateClinicInfo = 'update-clinic-info';
   static const manageStaff = 'clinic-manage-staff';

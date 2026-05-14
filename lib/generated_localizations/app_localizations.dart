@@ -1562,6 +1562,24 @@ abstract class AppLocalizations {
   /// **'My Clinics'**
   String get myClinics;
 
+  /// No description provided for @useThisClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this clinic'**
+  String get useThisClinic;
+
+  /// No description provided for @currentlyActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently active'**
+  String get currentlyActive;
+
+  /// No description provided for @clinicSelectedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Now working on {name}'**
+  String clinicSelectedMessage(String name);
+
   /// No description provided for @leaveClinic.
   ///
   /// In en, this message translates to:
@@ -1640,6 +1658,60 @@ abstract class AppLocalizations {
   /// **'Declined'**
   String get declined;
 
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get sent;
+
+  /// No description provided for @received.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get received;
+
+  /// No description provided for @sendInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Send invite'**
+  String get sendInvite;
+
+  /// No description provided for @sendInviteSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a colleague to join this clinic.'**
+  String get sendInviteSubtitle;
+
+  /// No description provided for @inviteSentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation sent'**
+  String get inviteSentSuccess;
+
+  /// No description provided for @invitedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'by {name}'**
+  String invitedBy(String name);
+
   /// No description provided for @noInvitations.
   ///
   /// In en, this message translates to:
@@ -1663,6 +1735,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No declined invitations'**
   String get noDeclinedInvitations;
+
+  /// No description provided for @noPendingSentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations sent'**
+  String get noPendingSentInvitations;
+
+  /// No description provided for @noAcceptedSentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No accepted invitations sent'**
+  String get noAcceptedSentInvitations;
+
+  /// No description provided for @noDeclinedSentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No declined invitations sent'**
+  String get noDeclinedSentInvitations;
 
   /// No description provided for @appLanguageWillChangeImmediately.
   ///
@@ -3181,6 +3271,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working Days & Holidays'**
   String get workingDaysAndHolidays;
+
+  /// No description provided for @myWorkingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'My Working Hours'**
+  String get myWorkingHours;
 
   /// No description provided for @photoPermissionRequired.
   ///

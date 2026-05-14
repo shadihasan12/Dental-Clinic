@@ -62,8 +62,6 @@ class AppRoutesNames {
   static const String notificationsSettings = 'notificationsSettings';
 
   // Clinic Management Routes
-  static const String staffManagement = 'staffManagement';
-  static const String inviteStaff = 'inviteStaff';
   static const String pendingApprovals = 'pendingApprovals';
   static const String contactSupport = 'contactSupport';
   static const String supportChat = 'supportChat';

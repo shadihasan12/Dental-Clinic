@@ -751,6 +751,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get myClinics => 'عياداتي';
 
   @override
+  String get useThisClinic => 'استخدام هذه العيادة';
+
+  @override
+  String get currentlyActive => 'نشطة حاليًا';
+
+  @override
+  String clinicSelectedMessage(String name) {
+    return 'أنت الآن تعمل على $name';
+  }
+
+  @override
   String get leaveClinic => 'مغادرة العيادة';
 
   @override
@@ -794,6 +805,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get declined => 'مرفوضة';
 
   @override
+  String get expired => 'منتهية';
+
+  @override
+  String get accept => 'قبول';
+
+  @override
+  String get decline => 'رفض';
+
+  @override
+  String get sent => 'المرسلة';
+
+  @override
+  String get received => 'الواردة';
+
+  @override
+  String get sendInvite => 'إرسال دعوة';
+
+  @override
+  String get sendInviteSubtitle => 'ادعُ زميلاً للانضمام إلى هذه العيادة.';
+
+  @override
+  String get inviteSentSuccess => 'تم إرسال الدعوة';
+
+  @override
+  String invitedBy(String name) {
+    return 'من $name';
+  }
+
+  @override
   String get noInvitations => 'لا توجد دعوات';
 
   @override
@@ -804,6 +844,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noDeclinedInvitations => 'لا توجد دعوات مرفوضة';
+
+  @override
+  String get noPendingSentInvitations => 'لا توجد دعوات معلقة مرسلة';
+
+  @override
+  String get noAcceptedSentInvitations => 'لا توجد دعوات مقبولة مرسلة';
+
+  @override
+  String get noDeclinedSentInvitations => 'لا توجد دعوات مرفوضة مرسلة';
 
   @override
   String get appLanguageWillChangeImmediately =>
@@ -1608,6 +1657,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get workingDaysAndHolidays => 'أيام العمل والعطل';
+
+  @override
+  String get myWorkingHours => 'ساعات عملي';
 
   @override
   String get photoPermissionRequired => 'إذن الوصول للصور مطلوب';

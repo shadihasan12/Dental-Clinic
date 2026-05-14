@@ -23,6 +23,10 @@ class InvitationEntity with _$InvitationEntity {
     required ClinicRole role,
     required InvitationStatus status,
     required String invitedByUserId,
+    @Default(<ClinicRole>[]) List<ClinicRole> roles,
+    String? inviteeName, // Set on /sent — the invitee's full name
+    String? inviteeImageUrl,
+    String? inviteeSpecialty,
     String? invitedByName, // Denormalized for display
     String? message, // Optional personal message
     String? clinicLogoUrl,

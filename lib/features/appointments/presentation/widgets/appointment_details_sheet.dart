@@ -16,16 +16,28 @@ class AppointmentDetailsSheet extends StatelessWidget {
   const AppointmentDetailsSheet({super.key, required this.appointment});
 
   static void show(BuildContext context, AppointmentEntity appointment) {
-    final bloc = context.read<AppointmentBloc>();
+    // Some entry points (home today's schedule) don't provide
+    // AppointmentBloc — in that case we show details read-only and the
+    // status pill becomes non-interactive.
+    final AppointmentBloc? bloc = _tryReadBloc(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: bloc,
-        child: AppointmentDetailsSheet(appointment: appointment),
-      ),
+      builder: (_) {
+        final sheet = AppointmentDetailsSheet(appointment: appointment);
+        if (bloc == null) return sheet;
+        return BlocProvider.value(value: bloc, child: sheet);
+      },
     );
+  }
+
+  static AppointmentBloc? _tryReadBloc(BuildContext context) {
+    try {
+      return context.read<AppointmentBloc>();
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -145,7 +157,9 @@ class AppointmentDetailsSheet extends StatelessWidget {
     BuildContext context,
     AppointmentEntity appointment,
   ) {
-    final bloc = context.read<AppointmentBloc>();
+    final bloc = _tryReadBloc(context);
+    if (bloc == null) return; // entry point doesn't support editing
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
