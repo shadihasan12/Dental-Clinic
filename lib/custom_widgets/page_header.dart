@@ -35,9 +35,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   IconButton(
                     icon: Icon(
-                      isRtl
-                          ? Icons.arrow_forward_ios
-                          : Icons.arrow_back_ios_new,
+                      Icons.arrow_back_ios_new,
                       color: c.textPrimary,
                       size: 20.w,
                     ),

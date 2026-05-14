@@ -45,10 +45,58 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
   final GlobalKey _boundaryKey = GlobalKey();
   bool _sharing = false;
 
+  /// Builds the doctor's display name from cached profile data. Falls
+  /// back through first+last → username → a locale-specific generic
+  /// so the card never shows an empty title. Prefix is locale-aware:
+  /// "Dr." in English, "د." in Arabic.
+  static String _composeDoctorName(UserStorage s, {required bool isArabic}) {
+    final prefix = isArabic ? 'د. ' : 'Dr. ';
+    final fallbackName = isArabic ? 'طبيب' : 'Doctor';
+
+    final first = (s.getFirstName() ?? '').trim();
+    final last = (s.getLastName() ?? '').trim();
+    final full = [first, last].where((p) => p.isNotEmpty).join(' ');
+    final fallback = (s.getUserName() ?? '').trim();
+    final base = full.isNotEmpty ? full : fallback;
+    if (base.isEmpty) return fallbackName;
+    // Already prefixed (in either language)? leave as-is.
+    final lower = base.toLowerCase();
+    if (lower.startsWith('dr') || base.startsWith('د.') || base.startsWith('د ')) {
+      return base;
+    }
+    return '$prefix$base';
+  }
+
+  /// Precache the avatar so it's rasterized before [_capture] runs.
+  /// Network images decode async; without this the first share-press
+  /// can snapshot the card while the avatar is still a placeholder.
+  Future<void> _precacheAvatar(String? url) async {
+    if (url == null || url.isEmpty) return;
+    try {
+      await precacheImage(NetworkImage(url), context);
+    } catch (_) {
+      // The card has an [errorBuilder] that renders initials — a
+      // failed precache just means the captured image will use that
+      // fallback, which is fine.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final clinicName = getIt<UserStorage>().getClinicName() ?? '';
+    final storage = getIt<UserStorage>();
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final clinicName = storage.getClinicName() ?? '';
+    final doctorName = _composeDoctorName(storage, isArabic: isArabic);
+    final avatarUrl = storage.getProfileImageUrl();
+    final fontFamily = FontHelper.fontFamily(context);
+    // Synchronous reads — both values were seeded in UserStorage on
+    // login. clinicCount defaults to 1 for legacy installs that
+    // logged in before the count was cached.
+    final clinicCount = storage.getClinicCount() ?? 1;
+    final firstSeen = storage.getFirstSeenAt() ?? DateTime.now();
+    final daysOnPlatform =
+        DateTime.now().difference(firstSeen).inDays.clamp(1, 100000);
 
     // Pick a 9:16 preview size that fits the screen with room to spare
     // for the header and buttons. Deterministic — no Flexible needed,
@@ -87,14 +135,19 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
             _Preview(
               boundaryKey: _boundaryKey,
               snapshot: widget.snapshot,
+              doctorName: doctorName,
               clinicName: clinicName,
+              avatarUrl: avatarUrl,
+              fontFamily: fontFamily,
+              clinicCount: clinicCount,
+              daysOnPlatform: daysOnPlatform,
               width: pw,
               height: ph,
             ),
             SizedBox(height: 20.h),
             _ShareButton(
               loading: _sharing,
-              onPressed: _sharing ? null : _onShare,
+              onPressed: _sharing ? null : () => _onShare(avatarUrl),
             ),
             SizedBox(height: 8.h),
             _CancelButton(onPressed: () => Navigator.of(context).pop()),
@@ -104,7 +157,7 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     );
   }
 
-  Future<void> _onShare() async {
+  Future<void> _onShare(String? avatarUrl) async {
     // Grab the anchor rect *before* any async gaps. iPad needs this for
     // UIActivityViewController; on phones it's harmless to pass.
     final box = context.findRenderObject() as RenderBox?;
@@ -114,6 +167,9 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
 
     setState(() => _sharing = true);
     try {
+      // Make sure the avatar is decoded before we snapshot — otherwise
+      // the captured PNG can show the initials fallback on first share.
+      await _precacheAvatar(avatarUrl);
       final bytes = await _capture();
       final file = await _writeToTemp(bytes);
       await Share.shareXFiles(
@@ -224,14 +280,24 @@ class _Preview extends StatelessWidget {
   const _Preview({
     required this.boundaryKey,
     required this.snapshot,
+    required this.doctorName,
     required this.clinicName,
+    required this.avatarUrl,
+    required this.fontFamily,
+    required this.clinicCount,
+    required this.daysOnPlatform,
     required this.width,
     required this.height,
   });
 
   final GlobalKey boundaryKey;
   final StatisticsSnapshot snapshot;
+  final String doctorName;
   final String clinicName;
+  final String? avatarUrl;
+  final String fontFamily;
+  final int clinicCount;
+  final int daysOnPlatform;
   final double width;
   final double height;
 
@@ -245,9 +311,9 @@ class _Preview extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         // Solid fallback color so the preview is never just void if the
-        // child somehow fails to paint — turns the cream gradient into
-        // a sensible base while it warms up.
-        color: const Color(0xFFFFF7ED),
+        // child somehow fails to paint — matches the card's teal-black
+        // bg so there's no color flash while it warms up.
+        color: const Color(0xFF0B2424),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: c.borderLight, width: 1),
         boxShadow: [
@@ -275,7 +341,12 @@ class _Preview extends StatelessWidget {
               height: StatisticsShareCard.canvasHeight,
               child: StatisticsShareCard(
                 snapshot: snapshot,
+                doctorName: doctorName,
                 clinicName: clinicName,
+                doctorAvatarUrl: avatarUrl,
+                fontFamily: fontFamily,
+                clinicCount: clinicCount,
+                daysOnPlatform: daysOnPlatform,
               ),
             ),
           ),

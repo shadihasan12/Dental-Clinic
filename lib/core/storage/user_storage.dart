@@ -35,6 +35,14 @@ class UserStorage {
   static const String _profileImageUrlKey = 'profile_image_url';
   static const String _selectedClinicIdKey = 'selected_clinic_id';
   static const String _userRoleKey = 'user_role';
+  // Snapshot of the user's clinic membership count, persisted on login
+  // so the share card can read it synchronously without an extra
+  // network round-trip when the share sheet opens.
+  static const String _clinicCountKey = 'clinic_count';
+  // First time the app saw this account on this device. Used as the
+  // "days on platform" anchor for the share card — we can't rely on
+  // the backend's created_at being populated for every user.
+  static const String _firstSeenAtKey = 'first_seen_at';
 
   final SharedPreferences _prefs;
 
@@ -92,6 +100,32 @@ class UserStorage {
   String? getUserRole() => _prefs.getString(_userRoleKey);
   bool get isAdmin => getUserRole() == 'admin';
 
+  Future<void> saveClinicCount(int count) async =>
+      _prefs.setInt(_clinicCountKey, count);
+  int? getClinicCount() => _prefs.getInt(_clinicCountKey);
+
+  /// Returns the first-seen timestamp for this account on this device.
+  /// Stamps "now" on the very first call so the value is sticky for
+  /// the lifetime of the install — the share card uses the delta to
+  /// show "X days providing care" without depending on a backend
+  /// `created_at` we can't always trust.
+  Future<DateTime> getOrInitFirstSeenAt() async {
+    final iso = _prefs.getString(_firstSeenAtKey);
+    if (iso != null && iso.isNotEmpty) {
+      final parsed = DateTime.tryParse(iso);
+      if (parsed != null) return parsed;
+    }
+    final now = DateTime.now();
+    await _prefs.setString(_firstSeenAtKey, now.toIso8601String());
+    return now;
+  }
+
+  DateTime? getFirstSeenAt() {
+    final iso = _prefs.getString(_firstSeenAtKey);
+    if (iso == null || iso.isEmpty) return null;
+    return DateTime.tryParse(iso);
+  }
+
   Future<void> clear() async {
     await _prefs.remove(_userNameKey);
     await _prefs.remove(_firstNameKey);
@@ -105,5 +139,9 @@ class UserStorage {
     await _prefs.remove(_profileImageUrlKey);
     await _prefs.remove(_selectedClinicIdKey);
     await _prefs.remove(_userRoleKey);
+    await _prefs.remove(_clinicCountKey);
+    // Deliberately *not* clearing _firstSeenAtKey on logout — the
+    // "days on platform" metric should reflect the install age, not
+    // the current session age.
   }
 }
