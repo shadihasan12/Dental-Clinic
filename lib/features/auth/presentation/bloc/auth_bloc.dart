@@ -151,44 +151,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final result = await _authRepository.login(params: params);
 
-    result.fold(
-      (failure) {
-        debugPrint('[AuthBloc] ✗ Login failed — ${NetworkExceptions.getErrorMessage(failure)}');
-        emit(state.copyWith(
-          isLoginLoading: false,
-          loginError: NetworkExceptions.getErrorMessage(failure),
-        ));
-      },
-      (loginResult) {
-        debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
-        // Cache the role of the active membership so the UI can hide
-        // admin-only sections without waiting for the permissions API.
-        final active = _pickActiveMembership(loginResult.memberships);
-        if (active != null) {
-          _userStorage.saveUserRole(active.role.name);
-        }
-        if (!loginResult.emailVerified) {
-          // User exists but hasn't verified email yet — redirect to email verification
-          emit(state.copyWith(
-            isLoginLoading: false,
-            needsEmailVerification: true,
-            emailVerificationForLogin: true,
-            signupEmail: state.loginEmail,
-            currentUser: loginResult.user,
-            memberships: loginResult.memberships,
-            activeClinicId: active?.clinicId,
-          ));
-        } else {
-          emit(state.copyWith(
-            isLoginLoading: false,
-            status: AuthStatus.authenticated,
-            currentUser: loginResult.user,
-            memberships: loginResult.memberships,
-            activeClinicId: active?.clinicId,
-          ));
-        }
-      },
+    // Early-return pattern (instead of fold) so we can `await` the
+    // storage writes before emitting `authenticated`. The menu page
+    // reads `UserStorage.isAdmin` synchronously at build time — if
+    // the write hasn't flushed, the admin-only items are hidden.
+    final failure = result.fold((l) => l, (_) => null);
+    if (failure != null) {
+      debugPrint('[AuthBloc] ✗ Login failed — ${NetworkExceptions.getErrorMessage(failure)}');
+      emit(state.copyWith(
+        isLoginLoading: false,
+        loginError: NetworkExceptions.getErrorMessage(failure),
+      ));
+      return;
+    }
+
+    final loginResult = result.getOrElse(
+      () => throw StateError('unreachable: failure already returned'),
     );
+    debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
+
+    // Cache the role + selected clinic id of the active membership
+    // so admin gates and the auth interceptor's X-Selected-Clinic-id
+    // header are correct on the very first request after login.
+    final active = _pickActiveMembership(loginResult.memberships);
+    if (active != null) {
+      await _userStorage.saveUserRole(active.role.name);
+      await _userStorage.saveSelectedClinicId(active.clinicId);
+      await _tokenStorage.saveClinicId(active.clinicId);
+    }
+
+    if (!loginResult.emailVerified) {
+      // User exists but hasn't verified email yet — redirect to email verification
+      emit(state.copyWith(
+        isLoginLoading: false,
+        needsEmailVerification: true,
+        emailVerificationForLogin: true,
+        signupEmail: state.loginEmail,
+        currentUser: loginResult.user,
+        memberships: loginResult.memberships,
+        activeClinicId: active?.clinicId,
+      ));
+    } else {
+      emit(state.copyWith(
+        isLoginLoading: false,
+        status: AuthStatus.authenticated,
+        currentUser: loginResult.user,
+        memberships: loginResult.memberships,
+        activeClinicId: active?.clinicId,
+      ));
+    }
   }
 
   // Signup handlers
@@ -570,25 +581,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Call register API
     final result = await _authRepository.register(params: params);
 
-    result.fold(
-      (failure) => emit(state.copyWith(
+    // Early-return pattern (instead of fold) so the storage writes
+    // can be awaited before emitting `authenticated`. Without this,
+    // the menu page rebuilds and reads `UserStorage.isAdmin` while
+    // the role write is still pending — hiding admin-only items
+    // even though the new account is the clinic admin.
+    final failure = result.fold((l) => l, (_) => null);
+    if (failure != null) {
+      emit(state.copyWith(
         isSignupLoading: false,
         signupError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) {
-        // Convert response to user entity and clinic membership
-        final user = response.toUserEntity();
-        final membership = response.toClinicMembership();
+      ));
+      return;
+    }
 
-        emit(state.copyWith(
-          isSignupLoading: false,
-          status: AuthStatus.authenticated,
-          currentUser: user,
-          memberships: [membership],
-          activeClinicId: membership.clinicId,
-        ));
-      },
+    final response = result.getOrElse(
+      () => throw StateError('unreachable: failure already returned'),
     );
+    final user = response.toUserEntity();
+    final membership = response.toClinicMembership();
+
+    // A fresh signup always owns the clinic they just created, so
+    // we cache role + clinic id the same way login does.
+    await _userStorage.saveUserRole(membership.role.name);
+    await _userStorage.saveSelectedClinicId(membership.clinicId);
+    await _tokenStorage.saveClinicId(membership.clinicId);
+
+    emit(state.copyWith(
+      isSignupLoading: false,
+      status: AuthStatus.authenticated,
+      currentUser: user,
+      memberships: [membership],
+      activeClinicId: membership.clinicId,
+    ));
   }
 
   // Forgot password handlers

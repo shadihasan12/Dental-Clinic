@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/user_hours_models.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -27,7 +26,7 @@ class UserHoursBloc extends Bloc<UserHoursEvent, UserHoursState> {
   Future<void> _onLoad(_Load event, Emitter<UserHoursState> emit) async {
     emit(const UserHoursState.loading());
 
-    final userResult = await _repository.getUserHours(_userId);
+    final userResult = await _repository.getMyHours();
 
     final userError = userResult.fold(
       (e) => NetworkExceptions.getErrorMessage(e),
@@ -44,29 +43,31 @@ class UserHoursBloc extends Bloc<UserHoursEvent, UserHoursState> {
       return;
     }
 
-    // No hours saved for this user yet — seed from the clinic's working
-    // days so the form has something for the user to edit and save.
-    final clinicResult = await _repository.getWorkingDays();
-    clinicResult.fold(
-      (e) => emit(UserHoursState.error(NetworkExceptions.getErrorMessage(e))),
-      (clinicDays) => emit(UserHoursState.loaded(_seedFromClinic(clinicDays))),
-    );
+    // No hours saved for this user yet — seed with static defaults so
+    // the form has something for the user to edit and submit. We
+    // intentionally don't fetch the clinic's working days here: that
+    // endpoint is admin-only and 403s for non-admin doctors, who are
+    // the primary users of this page.
+    emit(UserHoursState.loaded(_staticSeed()));
   }
 
-  List<UserWorkingDayApiModel> _seedFromClinic(List<WorkingDayApiModel> days) {
-    // Seed every clinic working day as enabled and full-time so the user
-    // can immediately save sensible defaults and customise from there.
-    return days
-        .map(
-          (c) => UserWorkingDayApiModel(
-            clinicWorkingDayId: c.id,
-            dayOfWeek: c.dayOfWeek,
-            isWorking: true,
-            isFullTime: true,
-            ranges: const [],
-          ),
-        )
-        .toList();
+  /// Static 7-day defaults: Mon–Fri working full-time, Sat & Sun off.
+  /// Matches the clinic-working-days page's own initial defaults so a
+  /// doctor's first save lines up with what their clinic typically
+  /// expects. `clinicWorkingDayId` is left blank — the server links
+  /// the user-day to the clinic-day by `day_of_week` on upsert.
+  List<UserWorkingDayApiModel> _staticSeed() {
+    return List.generate(7, (i) {
+      final dayOfWeek = i + 1; // 1=Mon … 7=Sun
+      final isWeekend = dayOfWeek == 6 || dayOfWeek == 7;
+      return UserWorkingDayApiModel(
+        clinicWorkingDayId: '',
+        dayOfWeek: dayOfWeek,
+        isWorking: !isWeekend,
+        isFullTime: true,
+        ranges: const [],
+      );
+    });
   }
 
   Future<void> _onSave(_Save event, Emitter<UserHoursState> emit) async {

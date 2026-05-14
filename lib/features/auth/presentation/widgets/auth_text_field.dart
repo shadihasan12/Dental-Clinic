@@ -75,7 +75,15 @@ class AuthTextField extends StatelessWidget {
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: c.textTertiary, size: 20.w)
                 : null,
-            suffix: suffixIcon,
+            // Use `suffixIcon` (not `suffix`) so the widget sits in its
+            // own slot, and tighten `suffixIconConstraints` so the
+            // default 48 dp `kMinInteractiveDimension` doesn't inflate
+            // the row past the height of fields without a suffix.
+            suffixIcon: suffixIcon,
+            suffixIconConstraints: BoxConstraints(
+              minWidth: 32.w,
+              minHeight: 32.w,
+            ),
             filled: true,
             fillColor: c.inputBg,
             border: _buildBorder(BorderSide.none),

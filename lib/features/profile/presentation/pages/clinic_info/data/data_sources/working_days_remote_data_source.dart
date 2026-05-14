@@ -9,7 +9,12 @@ abstract class WorkingDaysRemoteDataSource {
   Future<void> upsertWorkingDays(List<WorkingDayApiModel> days);
   Future<List<HolidayApiModel>> getHolidays();
   Future<void> upsertHolidays(List<HolidayApiModel> holidays);
-  Future<List<UserWorkingDayApiModel>> getUserHours(String userId);
+  /// Reads the *current* user's working hours via the token-derived
+  /// `/clinics/users/my-hours` endpoint. The server picks the user
+  /// from the bearer token and the selected clinic from the
+  /// X-Selected-Clinic-id header — both auto-injected by the auth
+  /// interceptor — so no path params are required.
+  Future<List<UserWorkingDayApiModel>> getMyHours();
   Future<void> upsertUserHours(
     String userId,
     List<UserWorkingDayApiModel> days,
@@ -70,9 +75,9 @@ class WorkingDaysRemoteDataSourceImpl implements WorkingDaysRemoteDataSource {
   }
 
   @override
-  Future<List<UserWorkingDayApiModel>> getUserHours(String userId) async {
+  Future<List<UserWorkingDayApiModel>> getMyHours() async {
     final response = await _apiConsumer.get(
-      WorkingDaysEndpoints.userHours(userId),
+      WorkingDaysEndpoints.myHours,
     );
     final data = response['data'] as Map<String, dynamic>;
     final days = data['days'] as List? ?? const [];
