@@ -198,6 +198,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
     final picked = await showModalBottomSheet<DateTime>(
       context: context,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
@@ -261,9 +262,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
-    final bottomPadding =
-        MediaQuery.of(context).viewInsets.bottom +
-        MediaQuery.of(context).viewPadding.bottom;
+    final bottomPadding = MediaQuery.viewInsetsOf(context).bottom;
     final formatted = DateFormat('MMM d, yyyy').format(_date);
     final isToday = DateUtils.isSameDay(_date, DateTime.now());
 

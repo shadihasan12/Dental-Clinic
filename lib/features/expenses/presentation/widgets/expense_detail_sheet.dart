@@ -20,10 +20,9 @@ class ExpenseDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h + bottomPadding),
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

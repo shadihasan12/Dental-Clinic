@@ -114,6 +114,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
@@ -129,6 +130,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   void _showExpenseDetails(BuildContext context, ExpenseEntity expense) {
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
@@ -152,6 +154,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
