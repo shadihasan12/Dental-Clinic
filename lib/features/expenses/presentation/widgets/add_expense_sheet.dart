@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/get_categories_use_case.dart';
@@ -325,36 +326,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
             // Category dropdown
             _categoriesLoading
-                ? Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 14.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: c.inputBg,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 16.w,
-                          height: 16.w,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: c.textSubtle,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          l10n.filter,
-                          style: TextStyle(
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontSize: 13.sp,
-                            color: c.textSubtle,
-                          ),
-                        ),
-                      ],
-                    ),
+                ? ShimmerBox(
+                    width: double.infinity,
+                    height: 48.h,
+                    radius: BorderRadius.circular(10.r),
                   )
                 : _buildCategoryDropdown(context, l10n),
 

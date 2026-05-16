@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/manager/expense_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -207,9 +208,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
                   Divider(height: 1, color: ColorManager.of(context).divider),
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
+                  Expanded(child: _buildSkeletonList(context)),
                 ],
               ),
               loaded: (expenses, totals, _) {
@@ -445,6 +444,16 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     );
   }
 
+  Widget _buildSkeletonList(BuildContext context) {
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+      itemCount: 6,
+      separatorBuilder: (_, _) =>
+          Divider(height: 1, color: ColorManager.of(context).divider),
+      itemBuilder: (_, _) => const _ExpenseRowSkeleton(),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Center(
@@ -477,6 +486,61 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                 color: ColorManager.primary,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExpenseRowSkeleton extends StatelessWidget {
+  const _ExpenseRowSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 14.h),
+      child: Row(
+        children: [
+          ShimmerBox(
+            width: 36.w,
+            height: 36.w,
+            radius: BorderRadius.circular(10.r),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerBox(
+                  width: 120.w,
+                  height: 12.h,
+                  radius: BorderRadius.circular(4.r),
+                ),
+                SizedBox(height: 8.h),
+                ShimmerBox(
+                  width: 80.w,
+                  height: 10.h,
+                  radius: BorderRadius.circular(4.r),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ShimmerBox(
+                width: 70.w,
+                height: 12.h,
+                radius: BorderRadius.circular(4.r),
+              ),
+              SizedBox(height: 8.h),
+              ShimmerBox(
+                width: 50.w,
+                height: 10.h,
+                radius: BorderRadius.circular(4.r),
+              ),
+            ],
           ),
         ],
       ),
