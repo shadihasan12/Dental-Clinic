@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/resources.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
@@ -213,18 +214,19 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           initial: () => const Scaffold(body: SizedBox.shrink()),
           loading: () => Scaffold(
                 backgroundColor: ColorManager.of(context).scaffoldBg,
-                body: Column(
-                  children: [
-                    PatientHeader(
-                      name: widget.patientName,
-                      onBackPressed: () =>
-                        context.canPop() ? context.pop() : context.go('/'),
-                      tabController: _tabController,
-                    ),
-                    const Expanded(
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                  ],
+                body: SafeArea(
+                  top: false,
+                  child: Column(
+                    children: [
+                      PatientHeader(
+                        name: widget.patientName,
+                        onBackPressed: () =>
+                          context.canPop() ? context.pop() : context.go('/'),
+                        tabController: _tabController,
+                      ),
+                      const Expanded(child: _PatientDetailsSkeleton()),
+                    ],
+                  ),
                 ),
               ),
           error: (message) => Scaffold(
@@ -245,14 +247,26 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           loaded: (patient, activeCase, completedCases) {
             return Scaffold(
               backgroundColor: ColorManager.of(context).scaffoldBg,
-              body: Column(
+              body: SafeArea(
+                top: false,
+                child: Column(
                 children: [
                   PatientHeader(
                     name: patient.name,
                     onBackPressed: () =>
                         context.canPop() ? context.pop() : context.go('/'),
-                    onEditPressed: () {
-                      // TODO: Navigate to edit patient
+                    onEditPressed: () async {
+                      await context.pushNamed(
+                        AppRoutesNames.editPatient,
+                        extra: <String, dynamic>{'patient': patient},
+                      );
+                      if (mounted) {
+                        context.read<PatientDetailsBloc>().add(
+                              PatientDetailsEvent.loadPatientDetails(
+                                widget.patientId,
+                              ),
+                            );
+                      }
                     },
                     tabController: _tabController,
                   ),
@@ -291,6 +305,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                     ),
                   ),
                 ],
+                ),
               ),
             );
           },
@@ -761,6 +776,77 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── Shimmer skeleton for the details body ────────────────────────────────
+
+class _PatientDetailsSkeleton extends StatelessWidget {
+  const _PatientDetailsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: PaddingManager.all16,
+      physics: const NeverScrollableScrollPhysics(),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section header
+            ShimmerBox(width: 160.w, height: 16.h),
+            SizedBox(height: 16.h),
+            // 4 info rows (icon + 2 lines)
+            for (var i = 0; i < 4; i++) ...[
+              _SkeletonInfoRow(),
+              SizedBox(height: 12.h),
+            ],
+            SizedBox(height: 12.h),
+            // Secondary section header
+            ShimmerBox(width: 120.w, height: 16.h),
+            SizedBox(height: 16.h),
+            // Block card
+            ShimmerBox(
+              width: double.infinity,
+              height: 96.h,
+              radius: BorderRadius.circular(12.r),
+            ),
+            SizedBox(height: 12.h),
+            ShimmerBox(
+              width: double.infinity,
+              height: 96.h,
+              radius: BorderRadius.circular(12.r),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SkeletonInfoRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ShimmerBox(
+          width: 36.w,
+          height: 36.w,
+          radius: BorderRadius.circular(36.w),
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerBox(width: 80.w, height: 10.h),
+              SizedBox(height: 6.h),
+              ShimmerBox(width: 200.w, height: 12.h),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
