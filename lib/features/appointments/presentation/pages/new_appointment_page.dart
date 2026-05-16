@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
@@ -337,12 +338,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                       _sectionLabel(l10n.patient),
                       SizedBox(height: 10.h),
                       if (_isPatientsLoading)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
+                        _buildPatientPickerSkeleton()
                       else
                         PatientPicker(
                           patients:
@@ -440,10 +436,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   Widget _buildDoctorChips(AppLocalizations l10n) {
     if (_isDoctorsLoading) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: const Center(child: CircularProgressIndicator()),
-      );
+      return _buildChipRowSkeleton(count: 3, chipWidth: 90.w);
     }
     if (_doctors.isEmpty) {
       return Text(
@@ -548,10 +541,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   Widget _buildSlots(AppLocalizations l10n) {
     if (_isSlotsLoading) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: const Center(child: CircularProgressIndicator()),
-      );
+      return _buildChipRowSkeleton(count: 6, chipWidth: 64.w, radius: 10);
     }
     if (_availableSlots.isEmpty) {
       return Text(
@@ -681,6 +671,67 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 18.h),
       child: Divider(color: ColorManager.of(context).divider),
+    );
+  }
+
+  // ─── Loading skeletons ──────────────────────────────────────────────────
+
+  Widget _buildPatientPickerSkeleton() {
+    final fill = ColorManager.of(context).shimmerBase;
+    return AppShimmer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search field placeholder
+          Container(
+            height: 48.h,
+            decoration: BoxDecoration(
+              color: fill,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          // "Add new patient" link placeholder
+          Container(
+            width: 160.w,
+            height: 14.h,
+            decoration: BoxDecoration(
+              color: fill,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChipRowSkeleton({
+    required int count,
+    required double chipWidth,
+    double radius = 20,
+  }) {
+    final fill = ColorManager.of(context).shimmerBase;
+    return AppShimmer(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < count; i++) ...[
+              if (i > 0) SizedBox(width: 8.w),
+              Container(
+                width: chipWidth,
+                height: 36.h,
+                decoration: BoxDecoration(
+                  color: fill,
+                  borderRadius: BorderRadius.circular(radius.r),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
