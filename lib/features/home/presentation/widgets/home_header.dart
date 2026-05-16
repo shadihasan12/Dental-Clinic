@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,13 +13,17 @@ class HomeHeader extends StatelessWidget {
     required this.userName,
     required this.clinicName,
     this.profileImageUrl,
+    this.isLoading = false,
     this.onNotificationTap,
+    this.onMoreTap,
   });
 
   final String userName;
   final String clinicName;
   final String? profileImageUrl;
+  final bool isLoading;
   final VoidCallback? onNotificationTap;
+  final VoidCallback? onMoreTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,62 +33,64 @@ class HomeHeader extends StatelessWidget {
       children: [
         // Left: greeting + clinic
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.welcomeBack,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  color: c.textTertiary,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                userName,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 20.sp,
-                  color: c.textPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 6.h),
-              GestureDetector(
-                onTap: () => context.pushNamed(AppRoutesNames.myClinics),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+          child: isLoading
+              ? _HeaderTextSkeleton()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 7.w,
-                      height: 7.w,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4ADE80),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 6.w),
                     Text(
-                      clinicName,
+                      AppLocalizations.of(context)!.welcomeBack,
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 13.sp,
-                        color: ColorManager.primary,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                        color: c.textTertiary,
                       ),
                     ),
-                    SizedBox(width: 4.w),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 16.w,
-                      color: ColorManager.primary,
+                    SizedBox(height: 2.h),
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontSize: 20.sp,
+                        color: c.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    GestureDetector(
+                      onTap: () => context.pushNamed(AppRoutesNames.myClinics),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 7.w,
+                            height: 7.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF4ADE80),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          Text(
+                            clinicName,
+                            style: TextStyle(
+                              fontFamily: FontHelper.fontFamily(context),
+                              fontSize: 13.sp,
+                              color: ColorManager.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Icon(
+                            Icons.chevron_right,
+                            size: 16.w,
+                            color: ColorManager.primary,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
         ),
 
         // Right: notification bell
@@ -119,6 +126,42 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
+
+        SizedBox(width: 8.w),
+
+        // Right: more menu
+        GestureDetector(
+          onTap: onMoreTap,
+          child: Container(
+            width: 40.w,
+            height: 40.w,
+            decoration: BoxDecoration(
+              color: c.cardBgSecondary,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.settings_outlined,
+              color: c.textSecondary,
+              size: 20.w,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeaderTextSkeleton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShimmerBox(width: 110.w, height: 14.h),
+        SizedBox(height: 6.h),
+        ShimmerBox(width: 180.w, height: 22.h),
+        SizedBox(height: 8.h),
+        ShimmerBox(width: 140.w, height: 13.h),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -12,6 +13,7 @@ class HomeSubscriptionCard extends StatelessWidget {
     super.key,
     required this.status,
     this.usage,
+    this.isLoading = false,
     required this.onViewPlans,
     required this.onUpgrade,
     required this.onClose,
@@ -19,12 +21,17 @@ class HomeSubscriptionCard extends StatelessWidget {
 
   final SubscriptionStatusEntity? status;
   final SubscriptionUsageEntity? usage;
+  final bool isLoading;
   final VoidCallback onViewPlans;
   final VoidCallback onUpgrade;
   final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const _SubscriptionCardSkeleton();
+    }
+
     if (status == null) {
       return _CardShell(
         onClose: onClose,
@@ -346,13 +353,79 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final clamped = value.clamp(0.0, 1.0);
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.r),
-      child: LinearProgressIndicator(
-        value: value,
-        backgroundColor: color.withValues(alpha: 0.1),
-        valueColor: AlwaysStoppedAnimation<Color>(color),
-        minHeight: 6.h,
+      child: Container(
+        height: 6.h,
+        color: color.withValues(alpha: 0.1),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: FractionallySizedBox(
+            widthFactor: clamped,
+            child: Container(color: color),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Loading skeleton ──────────────────────────────────────────────────────
+
+class _SubscriptionCardSkeleton extends StatelessWidget {
+  const _SubscriptionCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+      decoration: BoxDecoration(
+        color: ColorManager.of(context).cardBgSecondary,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: ColorManager.of(context).borderLight),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              ShimmerBox(
+                width: 36.w,
+                height: 36.w,
+                radius: BorderRadius.circular(10.r),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(width: 120.w, height: 14.h),
+                    SizedBox(height: 6.h),
+                    ShimmerBox(width: 160.w, height: 11.h),
+                  ],
+                ),
+              ),
+              SizedBox(width: 28.w),
+              ShimmerBox(
+                width: 56.w,
+                height: 22.h,
+                radius: BorderRadius.circular(8.r),
+              ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          ShimmerBox(
+            height: 6.h,
+            radius: BorderRadius.circular(4.r),
+          ),
+          SizedBox(height: 14.h),
+          ShimmerBox(
+            width: double.infinity,
+            height: 36.h,
+            radius: BorderRadius.circular(10.r),
+          ),
+        ],
       ),
     );
   }

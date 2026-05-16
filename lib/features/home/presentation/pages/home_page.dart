@@ -35,6 +35,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   SubscriptionStatusEntity? _status;
   SubscriptionUsageEntity? _usage;
+  bool _subscriptionLoading = true;
   bool _isSubscriptionCardHidden = false;
 
   List<AppointmentEntity> _todayAppointments = const [];
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       statusResult.fold((_) => _status = null, (s) => _status = s);
       usageResult.fold((_) => _usage = null, (u) => _usage = u);
+      _subscriptionLoading = false;
     });
   }
 
@@ -131,8 +133,12 @@ class _HomePageState extends State<HomePage> {
                 userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
                 clinicName: _clinicName,
                 profileImageUrl: _profileImageUrl,
+                isLoading: _firstName.isEmpty,
                 onNotificationTap: () {
                   context.pushNamed(AppRoutesNames.notifications);
+                },
+                onMoreTap: () {
+                  context.pushNamed(AppRoutesNames.moreMenu);
                 },
               ),
 
@@ -141,6 +147,7 @@ class _HomePageState extends State<HomePage> {
                 HomeSubscriptionCard(
                   status: _status,
                   usage: _usage,
+                  isLoading: _subscriptionLoading,
                   onViewPlans: () =>
                       context.pushNamed(AppRoutesNames.pricing),
                   onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),

@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
@@ -60,10 +61,7 @@ class TodaysSchedule extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, AppLocalizations l10n) {
     if (isLoading) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.h),
-        child: const Center(child: CircularProgressIndicator()),
-      );
+      return const _ScheduleSkeleton();
     }
     if (error != null) {
       return _Hint(
@@ -179,6 +177,49 @@ class _StatusBadge extends StatelessWidget {
           color: color,
         ),
       ),
+    );
+  }
+}
+
+class _ScheduleSkeleton extends StatelessWidget {
+  const _ScheduleSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final divider = ColorManager.of(context).borderLight;
+    return Column(
+      children: [
+        for (var i = 0; i < 3; i++) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.h),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 65.w,
+                  child: ShimmerBox(width: 50.w, height: 12.h),
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShimmerBox(width: 140.w, height: 14.h),
+                      SizedBox(height: 6.h),
+                      ShimmerBox(width: 90.w, height: 12.h),
+                    ],
+                  ),
+                ),
+                ShimmerBox(
+                  width: 60.w,
+                  height: 22.h,
+                  radius: BorderRadius.circular(8.r),
+                ),
+              ],
+            ),
+          ),
+          if (i < 2) Divider(height: 1, color: divider),
+        ],
+      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/manager/notification_bloc.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/notification_card.dart';
@@ -75,8 +76,7 @@ class _NotificationContent extends StatelessWidget {
               builder: (context, state) {
                 return state.when(
                   initial: () => const SizedBox.shrink(),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const _NotificationListSkeleton(),
                   error: (message) => Center(
                     child: Padding(
                       padding: EdgeInsets.all(24.w),
@@ -178,3 +178,46 @@ class _NotificationContent extends StatelessWidget {
     return l10n.daysAgo(diff.inDays);
   }
 }
+
+class _NotificationListSkeleton extends StatelessWidget {
+  const _NotificationListSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      itemCount: 6,
+      separatorBuilder: (_, __) => Divider(height: 1, color: c.divider),
+      itemBuilder: (_, __) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ShimmerBox(
+              width: 40.w,
+              height: 40.w,
+              radius: BorderRadius.circular(10.r),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShimmerBox(width: 180.w, height: 14.h),
+                  SizedBox(height: 8.h),
+                  ShimmerBox(width: double.infinity, height: 12.h),
+                  SizedBox(height: 6.h),
+                  ShimmerBox(width: 220.w, height: 12.h),
+                  SizedBox(height: 8.h),
+                  ShimmerBox(width: 60.w, height: 10.h),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
