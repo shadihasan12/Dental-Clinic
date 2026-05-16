@@ -23,6 +23,7 @@ class AppointmentDetailsSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
         final sheet = AppointmentDetailsSheet(appointment: appointment);
@@ -162,6 +163,7 @@ class AppointmentDetailsSheet extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),

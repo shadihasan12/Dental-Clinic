@@ -181,6 +181,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     await showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
