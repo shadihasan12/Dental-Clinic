@@ -122,6 +122,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
           child: Column(

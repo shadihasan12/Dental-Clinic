@@ -94,8 +94,10 @@ class _NotificationContent extends StatelessWidget {
                     if (notifications.isEmpty) {
                       return _buildEmptyState(context, l10n);
                     }
+                    final bottomInset =
+                        MediaQuery.viewPaddingOf(context).bottom;
                     return ListView.separated(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      padding: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h + bottomInset),
                       itemCount: notifications.length,
                       separatorBuilder: (_, __) =>
                           Divider(height: 1, color: ColorManager.of(context).divider),
@@ -185,8 +187,9 @@ class _NotificationListSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     return ListView.separated(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h + bottomInset),
       itemCount: 6,
       separatorBuilder: (_, __) => Divider(height: 1, color: c.divider),
       itemBuilder: (_, __) => Padding(
