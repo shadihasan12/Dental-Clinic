@@ -62,6 +62,7 @@ class RecordPaymentPopup extends StatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => RecordPaymentPopup(
         patientName: patientName,
@@ -151,7 +152,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Container(
+    return Padding(
+      // Keyboard inset — keeps the Save button above the on-screen keyboard.
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
@@ -433,6 +439,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

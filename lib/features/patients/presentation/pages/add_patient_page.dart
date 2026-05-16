@@ -98,6 +98,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
     await showModalBottomSheet(
       context: context,
       backgroundColor: ColorManager.of(context).cardBg,
+      useSafeArea: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
