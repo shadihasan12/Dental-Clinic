@@ -6,6 +6,7 @@ class ClinicMembershipModel {
   final String? address;
   final ClinicRole role;
   final List<ClinicRole> roles;
+  final bool isOwner;
 
   const ClinicMembershipModel({
     required this.clinicId,
@@ -13,6 +14,7 @@ class ClinicMembershipModel {
     this.address,
     required this.role,
     required this.roles,
+    this.isOwner = false,
   });
 
   factory ClinicMembershipModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class ClinicMembershipModel {
           clinic['detailed_address'] as String?,
       role: _pickHighestRole(parsedRoles),
       roles: parsedRoles,
+      isOwner: json['is_owner'] as bool? ?? false,
     );
   }
 
@@ -41,6 +44,7 @@ class ClinicMembershipModel {
       roles: roles,
       address: address,
       status: MembershipStatus.active,
+      isOwner: isOwner,
     );
   }
 

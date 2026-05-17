@@ -630,7 +630,10 @@ abstract class _RegisterClinicEntity implements RegisterClinicEntity {
 /// @nodoc
 mixin _$RegisterClinicMembershipEntity {
   RegisterClinicEntity get clinic => throw _privateConstructorUsedError;
-  List<String> get roles => throw _privateConstructorUsedError;
+  List<String> get roles =>
+      throw _privateConstructorUsedError; // True when the user is the original owner of the clinic — drives
+  // the "cannot be removed by other admins" rule downstream.
+  bool get isOwner => throw _privateConstructorUsedError;
 
   /// Create a copy of RegisterClinicMembershipEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -650,7 +653,7 @@ abstract class $RegisterClinicMembershipEntityCopyWith<$Res> {
         RegisterClinicMembershipEntity
       >;
   @useResult
-  $Res call({RegisterClinicEntity clinic, List<String> roles});
+  $Res call({RegisterClinicEntity clinic, List<String> roles, bool isOwner});
 
   $RegisterClinicEntityCopyWith<$Res> get clinic;
 }
@@ -672,7 +675,11 @@ class _$RegisterClinicMembershipEntityCopyWithImpl<
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? clinic = null, Object? roles = null}) {
+  $Res call({
+    Object? clinic = null,
+    Object? roles = null,
+    Object? isOwner = null,
+  }) {
     return _then(
       _value.copyWith(
             clinic: null == clinic
@@ -683,6 +690,10 @@ class _$RegisterClinicMembershipEntityCopyWithImpl<
                 ? _value.roles
                 : roles // ignore: cast_nullable_to_non_nullable
                       as List<String>,
+            isOwner: null == isOwner
+                ? _value.isOwner
+                : isOwner // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -708,7 +719,7 @@ abstract class _$$RegisterClinicMembershipEntityImplCopyWith<$Res>
   ) = __$$RegisterClinicMembershipEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({RegisterClinicEntity clinic, List<String> roles});
+  $Res call({RegisterClinicEntity clinic, List<String> roles, bool isOwner});
 
   @override
   $RegisterClinicEntityCopyWith<$Res> get clinic;
@@ -731,7 +742,11 @@ class __$$RegisterClinicMembershipEntityImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? clinic = null, Object? roles = null}) {
+  $Res call({
+    Object? clinic = null,
+    Object? roles = null,
+    Object? isOwner = null,
+  }) {
     return _then(
       _$RegisterClinicMembershipEntityImpl(
         clinic: null == clinic
@@ -742,6 +757,10 @@ class __$$RegisterClinicMembershipEntityImplCopyWithImpl<$Res>
             ? _value._roles
             : roles // ignore: cast_nullable_to_non_nullable
                   as List<String>,
+        isOwner: null == isOwner
+            ? _value.isOwner
+            : isOwner // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -754,6 +773,7 @@ class _$RegisterClinicMembershipEntityImpl
   const _$RegisterClinicMembershipEntityImpl({
     required this.clinic,
     required final List<String> roles,
+    this.isOwner = false,
   }) : _roles = roles;
 
   @override
@@ -766,9 +786,15 @@ class _$RegisterClinicMembershipEntityImpl
     return EqualUnmodifiableListView(_roles);
   }
 
+  // True when the user is the original owner of the clinic — drives
+  // the "cannot be removed by other admins" rule downstream.
+  @override
+  @JsonKey()
+  final bool isOwner;
+
   @override
   String toString() {
-    return 'RegisterClinicMembershipEntity(clinic: $clinic, roles: $roles)';
+    return 'RegisterClinicMembershipEntity(clinic: $clinic, roles: $roles, isOwner: $isOwner)';
   }
 
   @override
@@ -777,7 +803,8 @@ class _$RegisterClinicMembershipEntityImpl
         (other.runtimeType == runtimeType &&
             other is _$RegisterClinicMembershipEntityImpl &&
             (identical(other.clinic, clinic) || other.clinic == clinic) &&
-            const DeepCollectionEquality().equals(other._roles, _roles));
+            const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.isOwner, isOwner) || other.isOwner == isOwner));
   }
 
   @override
@@ -785,6 +812,7 @@ class _$RegisterClinicMembershipEntityImpl
     runtimeType,
     clinic,
     const DeepCollectionEquality().hash(_roles),
+    isOwner,
   );
 
   /// Create a copy of RegisterClinicMembershipEntity
@@ -806,12 +834,16 @@ abstract class _RegisterClinicMembershipEntity
   const factory _RegisterClinicMembershipEntity({
     required final RegisterClinicEntity clinic,
     required final List<String> roles,
+    final bool isOwner,
   }) = _$RegisterClinicMembershipEntityImpl;
 
   @override
   RegisterClinicEntity get clinic;
   @override
-  List<String> get roles;
+  List<String> get roles; // True when the user is the original owner of the clinic — drives
+  // the "cannot be removed by other admins" rule downstream.
+  @override
+  bool get isOwner;
 
   /// Create a copy of RegisterClinicMembershipEntity
   /// with the given fields replaced by the non-null parameter values.

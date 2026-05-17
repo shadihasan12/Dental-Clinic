@@ -10,6 +10,7 @@ class ClinicUserModel {
   final String? specialtyName;
   final String? imageUrl;
   final List<ClinicRole> roles;
+  final bool isOwner;
   final DateTime? createdAt;
   final List<AuditEntry> audits;
 
@@ -22,6 +23,7 @@ class ClinicUserModel {
     this.specialtyName,
     this.imageUrl,
     required this.roles,
+    this.isOwner = false,
     this.createdAt,
     this.audits = const [],
   });
@@ -40,6 +42,12 @@ class ClinicUserModel {
       specialtyName: specialty?['name'] as String?,
       imageUrl: user['image'] as String?,
       roles: rawRoles.map(_parseRole).toList(),
+      // `is_owner` can arrive on either the outer membership object
+      // or the inner user object depending on the endpoint — accept
+      // both shapes.
+      isOwner: (json['is_owner'] as bool?) ??
+          (user['is_owner'] as bool?) ??
+          false,
       createdAt: _parseNullableDate(json['created_at']),
       audits: AuditEntry.listFromJson(json['audits']),
     );
@@ -60,6 +68,7 @@ class ClinicUserModel {
       specialtyName: specialtyName,
       imageUrl: imageUrl,
       roles: roles,
+      isOwner: isOwner,
       createdAt: createdAt,
       audits: audits,
     );

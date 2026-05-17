@@ -23,7 +23,10 @@ mixin _$ClinicMembershipEntity {
   String get clinicName => throw _privateConstructorUsedError;
   ClinicRole get role => throw _privateConstructorUsedError;
   MembershipStatus get status => throw _privateConstructorUsedError;
-  List<ClinicRole> get roles => throw _privateConstructorUsedError;
+  List<ClinicRole> get roles =>
+      throw _privateConstructorUsedError; // True when the user is the original owner of this clinic. Owners
+  // cannot be deleted from the staff list by other admins.
+  bool get isOwner => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get locationName => throw _privateConstructorUsedError;
   String? get userName => throw _privateConstructorUsedError;
@@ -55,6 +58,7 @@ abstract class $ClinicMembershipEntityCopyWith<$Res> {
     ClinicRole role,
     MembershipStatus status,
     List<ClinicRole> roles,
+    bool isOwner,
     String? address,
     String? locationName,
     String? userName,
@@ -91,6 +95,7 @@ class _$ClinicMembershipEntityCopyWithImpl<
     Object? role = null,
     Object? status = null,
     Object? roles = null,
+    Object? isOwner = null,
     Object? address = freezed,
     Object? locationName = freezed,
     Object? userName = freezed,
@@ -130,6 +135,10 @@ class _$ClinicMembershipEntityCopyWithImpl<
                 ? _value.roles
                 : roles // ignore: cast_nullable_to_non_nullable
                       as List<ClinicRole>,
+            isOwner: null == isOwner
+                ? _value.isOwner
+                : isOwner // ignore: cast_nullable_to_non_nullable
+                      as bool,
             address: freezed == address
                 ? _value.address
                 : address // ignore: cast_nullable_to_non_nullable
@@ -185,6 +194,7 @@ abstract class _$$ClinicMembershipEntityImplCopyWith<$Res>
     ClinicRole role,
     MembershipStatus status,
     List<ClinicRole> roles,
+    bool isOwner,
     String? address,
     String? locationName,
     String? userName,
@@ -218,6 +228,7 @@ class __$$ClinicMembershipEntityImplCopyWithImpl<$Res>
     Object? role = null,
     Object? status = null,
     Object? roles = null,
+    Object? isOwner = null,
     Object? address = freezed,
     Object? locationName = freezed,
     Object? userName = freezed,
@@ -257,6 +268,10 @@ class __$$ClinicMembershipEntityImplCopyWithImpl<$Res>
             ? _value._roles
             : roles // ignore: cast_nullable_to_non_nullable
                   as List<ClinicRole>,
+        isOwner: null == isOwner
+            ? _value.isOwner
+            : isOwner // ignore: cast_nullable_to_non_nullable
+                  as bool,
         address: freezed == address
             ? _value.address
             : address // ignore: cast_nullable_to_non_nullable
@@ -305,6 +320,7 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
     required this.role,
     required this.status,
     final List<ClinicRole> roles = const [],
+    this.isOwner = false,
     this.address,
     this.locationName,
     this.userName,
@@ -336,6 +352,11 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
     return EqualUnmodifiableListView(_roles);
   }
 
+  // True when the user is the original owner of this clinic. Owners
+  // cannot be deleted from the staff list by other admins.
+  @override
+  @JsonKey()
+  final bool isOwner;
   @override
   final String? address;
   @override
@@ -355,7 +376,7 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
 
   @override
   String toString() {
-    return 'ClinicMembershipEntity(id: $id, userId: $userId, clinicId: $clinicId, clinicName: $clinicName, role: $role, status: $status, roles: $roles, address: $address, locationName: $locationName, userName: $userName, userEmail: $userEmail, userAvatarUrl: $userAvatarUrl, joinedAt: $joinedAt, invitedAt: $invitedAt, invitedByUserId: $invitedByUserId)';
+    return 'ClinicMembershipEntity(id: $id, userId: $userId, clinicId: $clinicId, clinicName: $clinicName, role: $role, status: $status, roles: $roles, isOwner: $isOwner, address: $address, locationName: $locationName, userName: $userName, userEmail: $userEmail, userAvatarUrl: $userAvatarUrl, joinedAt: $joinedAt, invitedAt: $invitedAt, invitedByUserId: $invitedByUserId)';
   }
 
   @override
@@ -372,6 +393,7 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.status, status) || other.status == status) &&
             const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.isOwner, isOwner) || other.isOwner == isOwner) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.locationName, locationName) ||
                 other.locationName == locationName) &&
@@ -399,6 +421,7 @@ class _$ClinicMembershipEntityImpl implements _ClinicMembershipEntity {
     role,
     status,
     const DeepCollectionEquality().hash(_roles),
+    isOwner,
     address,
     locationName,
     userName,
@@ -431,6 +454,7 @@ abstract class _ClinicMembershipEntity implements ClinicMembershipEntity {
     required final ClinicRole role,
     required final MembershipStatus status,
     final List<ClinicRole> roles,
+    final bool isOwner,
     final String? address,
     final String? locationName,
     final String? userName,
@@ -454,7 +478,10 @@ abstract class _ClinicMembershipEntity implements ClinicMembershipEntity {
   @override
   MembershipStatus get status;
   @override
-  List<ClinicRole> get roles;
+  List<ClinicRole> get roles; // True when the user is the original owner of this clinic. Owners
+  // cannot be deleted from the staff list by other admins.
+  @override
+  bool get isOwner;
   @override
   String? get address;
   @override

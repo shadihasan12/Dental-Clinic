@@ -293,6 +293,12 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     ClinicUserEntity user,
   ) {
     final isSelf = user.email == getIt<UserStorage>().getUserEmail();
+    // Three-way gate on the destructive "Remove" action:
+    //   • only an admin may delete (the page itself is admin-only, but
+    //     we double-check at the action level)
+    //   • users can't remove themselves
+    //   • the clinic owner can't be removed by anyone, even other admins
+    final canRemove = getIt<UserStorage>().isAdmin && !isSelf && !user.isOwner;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -345,7 +351,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
                   );
                 },
               ),
-              if (!isSelf) ...[
+              if (canRemove) ...[
                 Divider(
                   height: 1,
                   indent: 16.w,

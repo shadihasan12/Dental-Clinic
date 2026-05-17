@@ -19,6 +19,10 @@ class ClinicUserEntity with _$ClinicUserEntity {
     String? specialtyName,
     String? imageUrl,
     @Default([]) List<ClinicRole> roles,
+    // True when this user is the original owner of the clinic.
+    // Drives the "can't be removed by another admin" rule on the
+    // clinic users page.
+    @Default(false) bool isOwner,
     DateTime? createdAt,
     @Default([]) List<AuditEntry> audits,
   }) = _ClinicUserEntity;

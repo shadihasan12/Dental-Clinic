@@ -84,6 +84,7 @@ class LoginResponseModel {
         clinicName: membership.clinic.name,
         role: role,
         status: MembershipStatus.active,
+        isOwner: membership.isOwner,
         userName: fullName,
         userEmail: email,
         userAvatarUrl: image,

@@ -24,7 +24,11 @@ mixin _$ClinicUserEntity {
   String? get mobileNumber => throw _privateConstructorUsedError;
   String? get specialtyName => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
-  List<ClinicRole> get roles => throw _privateConstructorUsedError;
+  List<ClinicRole> get roles =>
+      throw _privateConstructorUsedError; // True when this user is the original owner of the clinic.
+  // Drives the "can't be removed by another admin" rule on the
+  // clinic users page.
+  bool get isOwner => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
@@ -51,6 +55,7 @@ abstract class $ClinicUserEntityCopyWith<$Res> {
     String? specialtyName,
     String? imageUrl,
     List<ClinicRole> roles,
+    bool isOwner,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -79,6 +84,7 @@ class _$ClinicUserEntityCopyWithImpl<$Res, $Val extends ClinicUserEntity>
     Object? specialtyName = freezed,
     Object? imageUrl = freezed,
     Object? roles = null,
+    Object? isOwner = null,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -116,6 +122,10 @@ class _$ClinicUserEntityCopyWithImpl<$Res, $Val extends ClinicUserEntity>
                 ? _value.roles
                 : roles // ignore: cast_nullable_to_non_nullable
                       as List<ClinicRole>,
+            isOwner: null == isOwner
+                ? _value.isOwner
+                : isOwner // ignore: cast_nullable_to_non_nullable
+                      as bool,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -148,6 +158,7 @@ abstract class _$$ClinicUserEntityImplCopyWith<$Res>
     String? specialtyName,
     String? imageUrl,
     List<ClinicRole> roles,
+    bool isOwner,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -175,6 +186,7 @@ class __$$ClinicUserEntityImplCopyWithImpl<$Res>
     Object? specialtyName = freezed,
     Object? imageUrl = freezed,
     Object? roles = null,
+    Object? isOwner = null,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -212,6 +224,10 @@ class __$$ClinicUserEntityImplCopyWithImpl<$Res>
             ? _value._roles
             : roles // ignore: cast_nullable_to_non_nullable
                   as List<ClinicRole>,
+        isOwner: null == isOwner
+            ? _value.isOwner
+            : isOwner // ignore: cast_nullable_to_non_nullable
+                  as bool,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -237,6 +253,7 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
     this.specialtyName,
     this.imageUrl,
     final List<ClinicRole> roles = const [],
+    this.isOwner = false,
     this.createdAt,
     final List<AuditEntry> audits = const [],
   }) : _roles = roles,
@@ -266,6 +283,12 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
     return EqualUnmodifiableListView(_roles);
   }
 
+  // True when this user is the original owner of the clinic.
+  // Drives the "can't be removed by another admin" rule on the
+  // clinic users page.
+  @override
+  @JsonKey()
+  final bool isOwner;
   @override
   final DateTime? createdAt;
   final List<AuditEntry> _audits;
@@ -279,7 +302,7 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
 
   @override
   String toString() {
-    return 'ClinicUserEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, mobileNumber: $mobileNumber, specialtyName: $specialtyName, imageUrl: $imageUrl, roles: $roles, createdAt: $createdAt, audits: $audits)';
+    return 'ClinicUserEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, mobileNumber: $mobileNumber, specialtyName: $specialtyName, imageUrl: $imageUrl, roles: $roles, isOwner: $isOwner, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -300,6 +323,7 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.isOwner, isOwner) || other.isOwner == isOwner) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             const DeepCollectionEquality().equals(other._audits, _audits));
@@ -316,6 +340,7 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
     specialtyName,
     imageUrl,
     const DeepCollectionEquality().hash(_roles),
+    isOwner,
     createdAt,
     const DeepCollectionEquality().hash(_audits),
   );
@@ -342,6 +367,7 @@ abstract class _ClinicUserEntity extends ClinicUserEntity {
     final String? specialtyName,
     final String? imageUrl,
     final List<ClinicRole> roles,
+    final bool isOwner,
     final DateTime? createdAt,
     final List<AuditEntry> audits,
   }) = _$ClinicUserEntityImpl;
@@ -362,7 +388,11 @@ abstract class _ClinicUserEntity extends ClinicUserEntity {
   @override
   String? get imageUrl;
   @override
-  List<ClinicRole> get roles;
+  List<ClinicRole> get roles; // True when this user is the original owner of the clinic.
+  // Drives the "can't be removed by another admin" rule on the
+  // clinic users page.
+  @override
+  bool get isOwner;
   @override
   DateTime? get createdAt;
   @override

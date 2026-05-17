@@ -27,6 +27,9 @@ class ClinicMembershipEntity with _$ClinicMembershipEntity {
     required ClinicRole role,
     required MembershipStatus status,
     @Default([]) List<ClinicRole> roles,
+    // True when the user is the original owner of this clinic. Owners
+    // cannot be deleted from the staff list by other admins.
+    @Default(false) bool isOwner,
     String? address,
     String? locationName,
     String? userName,
