@@ -379,6 +379,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         createdAt: DateTime.parse(item['created_at'] as String),
         isDone: item['is_done'] as bool? ?? false,
         notes: parsedNotes,
+        audits: AuditEntry.listFromJson(item['audits']),
       );
     }).toList();
   }

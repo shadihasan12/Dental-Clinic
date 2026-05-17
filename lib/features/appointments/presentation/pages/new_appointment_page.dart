@@ -2,6 +2,8 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
@@ -13,6 +15,7 @@ import 'package:dental_clinic_app/features/appointments/presentation/widgets/pat
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_patients_use_case.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,6 +55,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   String? _selectedSlot;
   List<String> _availableSlots = [];
   bool _isSlotsLoading = false;
+  // Working-hours fallback flags — only meaningful when [_availableSlots]
+  // came back empty. Distinguish "no hours saved at all" (needs setup)
+  // from "user just doesn't work on the selected weekday" so the UI can
+  // offer the right CTA.
+  bool _hasNoWorkingHours = false;
+  bool _doesNotWorkSelectedDay = false;
 
   // VIP appointments bypass the doctor's schedule and surface every slot
   // returned by the server.
@@ -139,6 +148,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         _isSlotsLoading = false;
         _selectedSlot = null;
         _availableSlots = [];
+        _hasNoWorkingHours = false;
+        _doesNotWorkSelectedDay = false;
       });
       return;
     }
@@ -147,6 +158,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       _isSlotsLoading = true;
       _selectedSlot = null;
       _availableSlots = [];
+      _hasNoWorkingHours = false;
+      _doesNotWorkSelectedDay = false;
     });
 
     final result = await getIt<GetAvailableSlotsUseCase>()(
@@ -159,19 +172,77 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
 
     if (!mounted) return;
-    result.fold(
-      (error) {
-        setState(() => _isSlotsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
-      },
-      (slots) {
+
+    // Early-return pattern so we can `await` the working-hours fallback
+    // when slots are empty — fold's sync callbacks can't await.
+    final failure = result.fold((l) => l, (_) => null);
+    if (failure != null) {
+      setState(() => _isSlotsLoading = false);
+      AppSnackbar.showError(context,
+          title: AppLocalizations.of(context)!.error,
+          message: NetworkExceptions.getErrorMessage(failure));
+      return;
+    }
+
+    final slots = result.getOrElse(() => const []);
+    if (slots.isNotEmpty) {
+      setState(() {
+        _availableSlots = slots;
+        _isSlotsLoading = false;
+      });
+      return;
+    }
+
+    // Slots are empty — diagnose why. We can only check the *current*
+    // user's hours (the `my-hours` endpoint is token-scoped); if the
+    // appointment is being booked for another doctor we fall back to
+    // the generic "no slots" message without the CTA.
+    final currentUserId = getIt<TokenStorage>().getUserId();
+    final isSelf = currentUserId != null &&
+        currentUserId.isNotEmpty &&
+        _selectedDoctor!.id == currentUserId;
+    if (!isSelf) {
+      setState(() => _isSlotsLoading = false);
+      return;
+    }
+
+    final hoursResult = await getIt<WorkingDaysRepository>().getMyHours();
+    if (!mounted) return;
+    hoursResult.fold(
+      (_) => setState(() => _isSlotsLoading = false),
+      (hours) {
+        // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
+        // working-days API uses, so we can compare directly.
+        final selectedDow = _selectedDate.weekday;
+        final hasAnyWorkingHours = hours.any((h) => h.isWorking);
+        final worksOnDay = hours.any(
+          (h) => h.dayOfWeek == selectedDow && h.isWorking,
+        );
         setState(() {
-          _availableSlots = slots;
           _isSlotsLoading = false;
+          _hasNoWorkingHours = !hasAnyWorkingHours;
+          _doesNotWorkSelectedDay = hasAnyWorkingHours && !worksOnDay;
         });
       },
+    );
+  }
+
+  /// Routes the user to the page that actually fixes the empty-slots
+  /// situation for their role: admins manage clinic-wide working days
+  /// (every doctor's personal hours live on top of that schedule), so
+  /// they go to the clinic working-days page; dentists / other roles
+  /// can only edit their own hours, so they go to the user-hours page.
+  void _navigateToHoursPage() {
+    final isAdmin = getIt<UserStorage>().isAdmin;
+    if (isAdmin) {
+      context.pushNamed(AppRoutesNames.workingDays);
+      return;
+    }
+    final userId = getIt<TokenStorage>().getUserId() ?? '';
+    if (userId.isEmpty) return;
+    context.pushNamed(
+      AppRoutesNames.userHours,
+      pathParameters: {'userId': userId},
     );
   }
 
@@ -554,6 +625,37 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       );
     }
     if (_availableSlots.isEmpty) {
+      // Three empty states, most specific first:
+      //   1. Doctor hasn't set up any working hours → strong CTA.
+      //   2. Working hours exist but not for the selected weekday →
+      //      hint + lighter CTA.
+      //   3. Hours exist for the day but no slots are free → original
+      //      generic message.
+      // Admins route to the clinic working-days page (their fix lives
+      // there); everyone else goes to their personal user-hours page.
+      final isAdmin = getIt<UserStorage>().isAdmin;
+      if (_hasNoWorkingHours) {
+        return _SlotsEmptyHoursCta(
+          title: isAdmin
+              ? l10n.clinicWorkingDaysMissingTitle
+              : l10n.noWorkingHoursTitle,
+          message: isAdmin
+              ? l10n.clinicWorkingDaysMissingAdminMessage
+              : l10n.noWorkingHoursMessage,
+          buttonLabel:
+              isAdmin ? l10n.setClinicWorkingDays : l10n.setWorkingHours,
+          onPressed: _navigateToHoursPage,
+        );
+      }
+      if (_doesNotWorkSelectedDay) {
+        return _SlotsEmptyHoursCta(
+          title: l10n.notWorkingOnThisDayTitle,
+          message: l10n.notWorkingOnThisDayMessage,
+          buttonLabel:
+              isAdmin ? l10n.setClinicWorkingDays : l10n.updateWorkingHours,
+          onPressed: _navigateToHoursPage,
+        );
+      }
       return Text(
         l10n.noAvailableSlotsForThisDate,
         style: TextStyle(
@@ -681,6 +783,101 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 18.h),
       child: Divider(color: ColorManager.of(context).divider),
+    );
+  }
+}
+
+/// Empty-state block shown in place of the slot chips when the user has
+/// no usable working hours for the picked date. Renders a title + body
+/// + a primary button that routes to the user-hours page.
+class _SlotsEmptyHoursCta extends StatelessWidget {
+  const _SlotsEmptyHoursCta({
+    required this.title,
+    required this.message,
+    required this.buttonLabel,
+    required this.onPressed,
+  });
+
+  final String title;
+  final String message;
+  final String buttonLabel;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: ColorManager.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: ColorManager.primary.withValues(alpha: 0.20),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.schedule_outlined,
+                size: 18.w,
+                color: ColorManager.primary,
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontFamily: fontFamily,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontFamily: fontFamily,
+              color: c.textSecondary,
+              height: 1.35,
+            ),
+          ),
+          SizedBox(height: 14.h),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: onPressed,
+              style: FilledButton.styleFrom(
+                backgroundColor: ColorManager.primary,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+              ),
+              icon: Icon(Icons.arrow_forward_rounded, size: 16.w),
+              label: Text(
+                buttonLabel,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: fontFamily,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

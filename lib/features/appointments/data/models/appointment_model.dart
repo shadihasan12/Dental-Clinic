@@ -12,6 +12,8 @@ class AppointmentModel {
   final String status;
   final String? notes;
   final String? clinicId;
+  final DateTime? createdAt;
+  final List<AuditEntry> audits;
 
   const AppointmentModel({
     required this.id,
@@ -25,6 +27,8 @@ class AppointmentModel {
     required this.status,
     this.notes,
     this.clinicId,
+    this.createdAt,
+    this.audits = const [],
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -59,7 +63,14 @@ class AppointmentModel {
       status: (json['status'] ?? '').toString(),
       notes: json['notes'] as String?,
       clinicId: json['clinic_id'] as String?,
+      createdAt: _parseNullableDate(json['created_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  static DateTime? _parseNullableDate(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 
   static String? _composeName(Map<String, dynamic>? json) {
@@ -116,6 +127,8 @@ class AppointmentModel {
       status: _parseStatus(status),
       notes: notes,
       clinicId: clinicId,
+      createdAt: createdAt,
+      audits: audits,
     );
   }
 

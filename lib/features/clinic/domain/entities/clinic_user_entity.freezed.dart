@@ -25,6 +25,8 @@ mixin _$ClinicUserEntity {
   String? get specialtyName => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   List<ClinicRole> get roles => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of ClinicUserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -49,6 +51,8 @@ abstract class $ClinicUserEntityCopyWith<$Res> {
     String? specialtyName,
     String? imageUrl,
     List<ClinicRole> roles,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -75,6 +79,8 @@ class _$ClinicUserEntityCopyWithImpl<$Res, $Val extends ClinicUserEntity>
     Object? specialtyName = freezed,
     Object? imageUrl = freezed,
     Object? roles = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -110,6 +116,14 @@ class _$ClinicUserEntityCopyWithImpl<$Res, $Val extends ClinicUserEntity>
                 ? _value.roles
                 : roles // ignore: cast_nullable_to_non_nullable
                       as List<ClinicRole>,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -134,6 +148,8 @@ abstract class _$$ClinicUserEntityImplCopyWith<$Res>
     String? specialtyName,
     String? imageUrl,
     List<ClinicRole> roles,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -159,6 +175,8 @@ class __$$ClinicUserEntityImplCopyWithImpl<$Res>
     Object? specialtyName = freezed,
     Object? imageUrl = freezed,
     Object? roles = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$ClinicUserEntityImpl(
@@ -194,6 +212,14 @@ class __$$ClinicUserEntityImplCopyWithImpl<$Res>
             ? _value._roles
             : roles // ignore: cast_nullable_to_non_nullable
                   as List<ClinicRole>,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -211,7 +237,10 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
     this.specialtyName,
     this.imageUrl,
     final List<ClinicRole> roles = const [],
+    this.createdAt,
+    final List<AuditEntry> audits = const [],
   }) : _roles = roles,
+       _audits = audits,
        super._();
 
   @override
@@ -238,8 +267,19 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
   }
 
   @override
+  final DateTime? createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
+
+  @override
   String toString() {
-    return 'ClinicUserEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, mobileNumber: $mobileNumber, specialtyName: $specialtyName, imageUrl: $imageUrl, roles: $roles)';
+    return 'ClinicUserEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, mobileNumber: $mobileNumber, specialtyName: $specialtyName, imageUrl: $imageUrl, roles: $roles, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -259,7 +299,10 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
                 other.specialtyName == specialtyName) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
-            const DeepCollectionEquality().equals(other._roles, _roles));
+            const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -273,6 +316,8 @@ class _$ClinicUserEntityImpl extends _ClinicUserEntity {
     specialtyName,
     imageUrl,
     const DeepCollectionEquality().hash(_roles),
+    createdAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of ClinicUserEntity
@@ -297,6 +342,8 @@ abstract class _ClinicUserEntity extends ClinicUserEntity {
     final String? specialtyName,
     final String? imageUrl,
     final List<ClinicRole> roles,
+    final DateTime? createdAt,
+    final List<AuditEntry> audits,
   }) = _$ClinicUserEntityImpl;
   const _ClinicUserEntity._() : super._();
 
@@ -316,6 +363,10 @@ abstract class _ClinicUserEntity extends ClinicUserEntity {
   String? get imageUrl;
   @override
   List<ClinicRole> get roles;
+  @override
+  DateTime? get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of ClinicUserEntity
   /// with the given fields replaced by the non-null parameter values.

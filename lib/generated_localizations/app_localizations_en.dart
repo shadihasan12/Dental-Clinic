@@ -915,6 +915,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAvailableSlotsForThisDate => 'No available slots for this date';
 
   @override
+  String get noWorkingHoursTitle => 'Set up your working hours';
+
+  @override
+  String get noWorkingHoursMessage =>
+      'You haven\'t added your working hours yet, so we can\'t show available slots. Add them once and you\'ll be able to schedule appointments right away.';
+
+  @override
+  String get setWorkingHours => 'Set working hours';
+
+  @override
+  String get notWorkingOnThisDayTitle => 'You don\'t work on this day';
+
+  @override
+  String get notWorkingOnThisDayMessage =>
+      'Your working hours don\'t cover this day. Pick another date or update your hours to add it.';
+
+  @override
+  String get updateWorkingHours => 'Update working hours';
+
+  @override
+  String get clinicWorkingDaysMissingTitle =>
+      'Set up clinic working days first';
+
+  @override
+  String get clinicWorkingDaysMissingAdminMessage =>
+      'Your clinic doesn\'t have working days yet. Add them once and you\'ll be able to set your own hours on top of them.';
+
+  @override
+  String get clinicWorkingDaysMissingNonAdminMessage =>
+      'Your clinic\'s admin hasn\'t set up working days yet. Ask them to add them before you can save your hours.';
+
+  @override
+  String get setClinicWorkingDays => 'Set clinic working days';
+
+  @override
   String get sendReminderToPatient => 'Send reminder to patient';
 
   @override

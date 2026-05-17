@@ -65,21 +65,33 @@ class _RootPageState extends State<RootPage> {
 
   List<Widget> _buildPages() {
     final v = _clinicVersion;
+    // Each gate accepts either the `view-` or `manage-` slug — the
+    // backend doesn't always emit the view counterpart for users who
+    // have manage rights, and manage trivially implies view.
     return [
       HomePage(key: ValueKey('home-$v')),
       PermissionGate(
         key: ValueKey('patients-$v'),
-        feature: PermissionSlugs.viewClinicPatients,
+        anyOf: const [
+          PermissionSlugs.viewClinicPatients,
+          PermissionSlugs.manageClinicPatients,
+        ],
         child: const PatientsListPage(),
       ),
       PermissionGate(
         key: ValueKey('appointments-$v'),
-        feature: PermissionSlugs.viewClinicAppointments,
+        anyOf: const [
+          PermissionSlugs.viewClinicAppointments,
+          PermissionSlugs.manageClinicAppointments,
+        ],
         child: const AppointmentsPage(),
       ),
       PermissionGate(
         key: ValueKey('expenses-$v'),
-        feature: PermissionSlugs.viewClinicExpenses,
+        anyOf: const [
+          PermissionSlugs.viewClinicExpenses,
+          PermissionSlugs.manageClinicExpenses,
+        ],
         child: const ExpensesPage(),
       ),
       MenuPage(key: ValueKey('menu-$v')),

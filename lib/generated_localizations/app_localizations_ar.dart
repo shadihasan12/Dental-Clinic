@@ -912,6 +912,40 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noAvailableSlotsForThisDate => 'لا توجد أوقات متاحة لهذا التاريخ';
 
   @override
+  String get noWorkingHoursTitle => 'حدّد ساعات عملك';
+
+  @override
+  String get noWorkingHoursMessage =>
+      'لم تقم بإضافة ساعات عملك بعد، لذلك لا يمكننا عرض الأوقات المتاحة. أضفها مرة واحدة لتتمكن من جدولة المواعيد فورًا.';
+
+  @override
+  String get setWorkingHours => 'تحديد ساعات العمل';
+
+  @override
+  String get notWorkingOnThisDayTitle => 'أنت لا تعمل في هذا اليوم';
+
+  @override
+  String get notWorkingOnThisDayMessage =>
+      'ساعات عملك لا تشمل هذا اليوم. اختر تاريخًا آخر أو حدّث ساعات عملك لإضافته.';
+
+  @override
+  String get updateWorkingHours => 'تحديث ساعات العمل';
+
+  @override
+  String get clinicWorkingDaysMissingTitle => 'حدّد أيام عمل العيادة أولًا';
+
+  @override
+  String get clinicWorkingDaysMissingAdminMessage =>
+      'لم تقم بإضافة أيام عمل العيادة بعد. أضفها مرة واحدة لتتمكن من تحديد ساعات عملك الخاصة.';
+
+  @override
+  String get clinicWorkingDaysMissingNonAdminMessage =>
+      'لم يقم مسؤول العيادة بإضافة أيام العمل بعد. اطلب منه إضافتها قبل أن تتمكن من حفظ ساعات عملك.';
+
+  @override
+  String get setClinicWorkingDays => 'تحديد أيام عمل العيادة';
+
+  @override
   String get sendReminderToPatient => 'إرسال تذكير للمريض';
 
   @override

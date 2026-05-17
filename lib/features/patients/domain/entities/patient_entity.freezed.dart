@@ -34,6 +34,8 @@ mixin _$PatientEntity {
   String? get avatarUrl => throw _privateConstructorUsedError;
   String? get nextVisit => throw _privateConstructorUsedError;
   double get balance => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of PatientEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -67,6 +69,8 @@ abstract class $PatientEntityCopyWith<$Res> {
     String? avatarUrl,
     String? nextVisit,
     double balance,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -102,6 +106,8 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
     Object? avatarUrl = freezed,
     Object? nextVisit = freezed,
     Object? balance = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -173,6 +179,14 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.balance
                 : balance // ignore: cast_nullable_to_non_nullable
                       as double,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -206,6 +220,8 @@ abstract class _$$PatientEntityImplCopyWith<$Res>
     String? avatarUrl,
     String? nextVisit,
     double balance,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -240,6 +256,8 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
     Object? avatarUrl = freezed,
     Object? nextVisit = freezed,
     Object? balance = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$PatientEntityImpl(
@@ -311,6 +329,14 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.balance
             : balance // ignore: cast_nullable_to_non_nullable
                   as double,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -337,7 +363,9 @@ class _$PatientEntityImpl implements _PatientEntity {
     this.avatarUrl,
     this.nextVisit,
     this.balance = 0,
-  });
+    this.createdAt,
+    final List<AuditEntry> audits = const [],
+  }) : _audits = audits;
 
   @override
   final String id;
@@ -375,10 +403,20 @@ class _$PatientEntityImpl implements _PatientEntity {
   @override
   @JsonKey()
   final double balance;
+  @override
+  final DateTime? createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
 
   @override
   String toString() {
-    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance)';
+    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -410,11 +448,14 @@ class _$PatientEntityImpl implements _PatientEntity {
                 other.avatarUrl == avatarUrl) &&
             (identical(other.nextVisit, nextVisit) ||
                 other.nextVisit == nextVisit) &&
-            (identical(other.balance, balance) || other.balance == balance));
+            (identical(other.balance, balance) || other.balance == balance) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     id,
     name,
@@ -433,7 +474,9 @@ class _$PatientEntityImpl implements _PatientEntity {
     avatarUrl,
     nextVisit,
     balance,
-  );
+    createdAt,
+    const DeepCollectionEquality().hash(_audits),
+  ]);
 
   /// Create a copy of PatientEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -463,6 +506,8 @@ abstract class _PatientEntity implements PatientEntity {
     final String? avatarUrl,
     final String? nextVisit,
     final double balance,
+    final DateTime? createdAt,
+    final List<AuditEntry> audits,
   }) = _$PatientEntityImpl;
 
   @override
@@ -499,6 +544,10 @@ abstract class _PatientEntity implements PatientEntity {
   String? get nextVisit;
   @override
   double get balance;
+  @override
+  DateTime? get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of PatientEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -519,6 +568,8 @@ mixin _$CaseEntity {
   double get paidAmount => throw _privateConstructorUsedError;
   double get pendingAmount => throw _privateConstructorUsedError;
   List<VisitEntity> get visits => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of CaseEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -544,6 +595,8 @@ abstract class $CaseEntityCopyWith<$Res> {
     double paidAmount,
     double pendingAmount,
     List<VisitEntity> visits,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -571,6 +624,8 @@ class _$CaseEntityCopyWithImpl<$Res, $Val extends CaseEntity>
     Object? paidAmount = null,
     Object? pendingAmount = null,
     Object? visits = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -610,6 +665,14 @@ class _$CaseEntityCopyWithImpl<$Res, $Val extends CaseEntity>
                 ? _value.visits
                 : visits // ignore: cast_nullable_to_non_nullable
                       as List<VisitEntity>,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -635,6 +698,8 @@ abstract class _$$CaseEntityImplCopyWith<$Res>
     double paidAmount,
     double pendingAmount,
     List<VisitEntity> visits,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -661,6 +726,8 @@ class __$$CaseEntityImplCopyWithImpl<$Res>
     Object? paidAmount = null,
     Object? pendingAmount = null,
     Object? visits = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$CaseEntityImpl(
@@ -700,6 +767,14 @@ class __$$CaseEntityImplCopyWithImpl<$Res>
             ? _value._visits
             : visits // ignore: cast_nullable_to_non_nullable
                   as List<VisitEntity>,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -718,7 +793,10 @@ class _$CaseEntityImpl implements _CaseEntity {
     required this.paidAmount,
     required this.pendingAmount,
     final List<VisitEntity> visits = const [],
-  }) : _visits = visits;
+    this.createdAt,
+    final List<AuditEntry> audits = const [],
+  }) : _visits = visits,
+       _audits = audits;
 
   @override
   final String id;
@@ -746,8 +824,19 @@ class _$CaseEntityImpl implements _CaseEntity {
   }
 
   @override
+  final DateTime? createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
+
+  @override
   String toString() {
-    return 'CaseEntity(id: $id, title: $title, startDate: $startDate, endDate: $endDate, status: $status, totalCost: $totalCost, paidAmount: $paidAmount, pendingAmount: $pendingAmount, visits: $visits)';
+    return 'CaseEntity(id: $id, title: $title, startDate: $startDate, endDate: $endDate, status: $status, totalCost: $totalCost, paidAmount: $paidAmount, pendingAmount: $pendingAmount, visits: $visits, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -767,7 +856,10 @@ class _$CaseEntityImpl implements _CaseEntity {
                 other.paidAmount == paidAmount) &&
             (identical(other.pendingAmount, pendingAmount) ||
                 other.pendingAmount == pendingAmount) &&
-            const DeepCollectionEquality().equals(other._visits, _visits));
+            const DeepCollectionEquality().equals(other._visits, _visits) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -782,6 +874,8 @@ class _$CaseEntityImpl implements _CaseEntity {
     paidAmount,
     pendingAmount,
     const DeepCollectionEquality().hash(_visits),
+    createdAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of CaseEntity
@@ -804,6 +898,8 @@ abstract class _CaseEntity implements CaseEntity {
     required final double paidAmount,
     required final double pendingAmount,
     final List<VisitEntity> visits,
+    final DateTime? createdAt,
+    final List<AuditEntry> audits,
   }) = _$CaseEntityImpl;
 
   @override
@@ -824,6 +920,10 @@ abstract class _CaseEntity implements CaseEntity {
   double get pendingAmount;
   @override
   List<VisitEntity> get visits;
+  @override
+  DateTime? get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of CaseEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -841,6 +941,8 @@ mixin _$VisitEntity {
   List<int> get teethTreated => throw _privateConstructorUsedError;
   String get summary => throw _privateConstructorUsedError;
   List<String> get attachments => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of VisitEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -863,6 +965,8 @@ abstract class $VisitEntityCopyWith<$Res> {
     List<int> teethTreated,
     String summary,
     List<String> attachments,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -887,6 +991,8 @@ class _$VisitEntityCopyWithImpl<$Res, $Val extends VisitEntity>
     Object? teethTreated = null,
     Object? summary = null,
     Object? attachments = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -914,6 +1020,14 @@ class _$VisitEntityCopyWithImpl<$Res, $Val extends VisitEntity>
                 ? _value.attachments
                 : attachments // ignore: cast_nullable_to_non_nullable
                       as List<String>,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -936,6 +1050,8 @@ abstract class _$$VisitEntityImplCopyWith<$Res>
     List<int> teethTreated,
     String summary,
     List<String> attachments,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -959,6 +1075,8 @@ class __$$VisitEntityImplCopyWithImpl<$Res>
     Object? teethTreated = null,
     Object? summary = null,
     Object? attachments = null,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$VisitEntityImpl(
@@ -986,6 +1104,14 @@ class __$$VisitEntityImplCopyWithImpl<$Res>
             ? _value._attachments
             : attachments // ignore: cast_nullable_to_non_nullable
                   as List<String>,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -1001,9 +1127,12 @@ class _$VisitEntityImpl implements _VisitEntity {
     final List<int> teethTreated = const [],
     required this.summary,
     final List<String> attachments = const [],
+    this.createdAt,
+    final List<AuditEntry> audits = const [],
   }) : _treatmentTypes = treatmentTypes,
        _teethTreated = teethTreated,
-       _attachments = attachments;
+       _attachments = attachments,
+       _audits = audits;
 
   @override
   final String id;
@@ -1038,8 +1167,19 @@ class _$VisitEntityImpl implements _VisitEntity {
   }
 
   @override
+  final DateTime? createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
+
+  @override
   String toString() {
-    return 'VisitEntity(id: $id, date: $date, treatmentTypes: $treatmentTypes, teethTreated: $teethTreated, summary: $summary, attachments: $attachments)';
+    return 'VisitEntity(id: $id, date: $date, treatmentTypes: $treatmentTypes, teethTreated: $teethTreated, summary: $summary, attachments: $attachments, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -1061,7 +1201,10 @@ class _$VisitEntityImpl implements _VisitEntity {
             const DeepCollectionEquality().equals(
               other._attachments,
               _attachments,
-            ));
+            ) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -1073,6 +1216,8 @@ class _$VisitEntityImpl implements _VisitEntity {
     const DeepCollectionEquality().hash(_teethTreated),
     summary,
     const DeepCollectionEquality().hash(_attachments),
+    createdAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of VisitEntity
@@ -1092,6 +1237,8 @@ abstract class _VisitEntity implements VisitEntity {
     final List<int> teethTreated,
     required final String summary,
     final List<String> attachments,
+    final DateTime? createdAt,
+    final List<AuditEntry> audits,
   }) = _$VisitEntityImpl;
 
   @override
@@ -1106,6 +1253,10 @@ abstract class _VisitEntity implements VisitEntity {
   String get summary;
   @override
   List<String> get attachments;
+  @override
+  DateTime? get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of VisitEntity
   /// with the given fields replaced by the non-null parameter values.

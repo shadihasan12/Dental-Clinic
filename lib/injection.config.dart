@@ -470,10 +470,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i369.WorkingDaysRemoteDataSource>(),
       ),
     );
-    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
-      (userId, _) =>
-          _i13.UserHoursBloc(gh<_i971.WorkingDaysRepository>(), userId: userId),
-    );
     gh.factory<_i841.AddExpenseUseCase>(
       () => _i841.AddExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
@@ -498,17 +494,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i113.GetMyClinicsUseCase>(
       () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i223.RemoveClinicUserUseCase>(
-      () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i972.UpdateUserRolesUseCase>(
-      () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
-    );
     gh.factory<_i860.GetReceivedInvitationsUseCase>(
       () => _i860.GetReceivedInvitationsUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i675.GetSentInvitationsUseCase>(
       () => _i675.GetSentInvitationsUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i223.RemoveClinicUserUseCase>(
+      () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i945.AcceptInvitationUseCase>(
       () => _i945.AcceptInvitationUseCase(gh<_i818.ClinicRepository>()),
@@ -518,6 +511,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i21.SendInvitationUseCase>(
       () => _i21.SendInvitationUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i972.UpdateUserRolesUseCase>(
+      () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
@@ -626,6 +622,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i166.SendMessageUseCase>(
       () => _i166.SendMessageUseCase(gh<_i778.SupportRepository>()),
     );
+    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
+      (userId, _) => _i13.UserHoursBloc(
+        gh<_i971.WorkingDaysRepository>(),
+        gh<_i663.UserStorage>(),
+        userId: userId,
+      ),
+    );
     gh.factory<_i890.EditProfileBloc>(
       () => _i890.EditProfileBloc(
         getUserProfile: gh<_i527.GetUserProfileUseCase>(),
@@ -642,13 +645,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i210.GetAvailableSlotsUseCase>(
       () => _i210.GetAvailableSlotsUseCase(gh<_i675.AppointmentRepository>()),
     );
+    gh.factory<_i827.GetClinicDoctorsUseCase>(
+      () => _i827.GetClinicDoctorsUseCase(gh<_i675.AppointmentRepository>()),
+    );
     gh.factory<_i942.UpdateAppointmentStatusUseCase>(
       () => _i942.UpdateAppointmentStatusUseCase(
         gh<_i675.AppointmentRepository>(),
       ),
-    );
-    gh.factory<_i827.GetClinicDoctorsUseCase>(
-      () => _i827.GetClinicDoctorsUseCase(gh<_i675.AppointmentRepository>()),
     );
     gh.factory<_i763.ExpenseBloc>(
       () => _i763.ExpenseBloc(

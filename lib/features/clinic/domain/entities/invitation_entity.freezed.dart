@@ -38,6 +38,7 @@ mixin _$InvitationEntity {
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get expiresAt => throw _privateConstructorUsedError;
   DateTime? get respondedAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of InvitationEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -71,6 +72,7 @@ abstract class $InvitationEntityCopyWith<$Res> {
     DateTime? createdAt,
     DateTime? expiresAt,
     DateTime? respondedAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -106,6 +108,7 @@ class _$InvitationEntityCopyWithImpl<$Res, $Val extends InvitationEntity>
     Object? createdAt = freezed,
     Object? expiresAt = freezed,
     Object? respondedAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -177,6 +180,10 @@ class _$InvitationEntityCopyWithImpl<$Res, $Val extends InvitationEntity>
                 ? _value.respondedAt
                 : respondedAt // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -210,6 +217,7 @@ abstract class _$$InvitationEntityImplCopyWith<$Res>
     DateTime? createdAt,
     DateTime? expiresAt,
     DateTime? respondedAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -244,6 +252,7 @@ class __$$InvitationEntityImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? expiresAt = freezed,
     Object? respondedAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$InvitationEntityImpl(
@@ -315,6 +324,10 @@ class __$$InvitationEntityImplCopyWithImpl<$Res>
             ? _value.respondedAt
             : respondedAt // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -341,7 +354,9 @@ class _$InvitationEntityImpl implements _InvitationEntity {
     this.createdAt,
     this.expiresAt,
     this.respondedAt,
-  }) : _roles = roles;
+    final List<AuditEntry> audits = const [],
+  }) : _roles = roles,
+       _audits = audits;
 
   @override
   final String id;
@@ -388,10 +403,18 @@ class _$InvitationEntityImpl implements _InvitationEntity {
   final DateTime? expiresAt;
   @override
   final DateTime? respondedAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
 
   @override
   String toString() {
-    return 'InvitationEntity(id: $id, clinicId: $clinicId, clinicName: $clinicName, inviteeEmail: $inviteeEmail, role: $role, status: $status, invitedByUserId: $invitedByUserId, roles: $roles, inviteeName: $inviteeName, inviteeImageUrl: $inviteeImageUrl, inviteeSpecialty: $inviteeSpecialty, invitedByName: $invitedByName, message: $message, clinicLogoUrl: $clinicLogoUrl, createdAt: $createdAt, expiresAt: $expiresAt, respondedAt: $respondedAt)';
+    return 'InvitationEntity(id: $id, clinicId: $clinicId, clinicName: $clinicName, inviteeEmail: $inviteeEmail, role: $role, status: $status, invitedByUserId: $invitedByUserId, roles: $roles, inviteeName: $inviteeName, inviteeImageUrl: $inviteeImageUrl, inviteeSpecialty: $inviteeSpecialty, invitedByName: $invitedByName, message: $message, clinicLogoUrl: $clinicLogoUrl, createdAt: $createdAt, expiresAt: $expiresAt, respondedAt: $respondedAt, audits: $audits)';
   }
 
   @override
@@ -427,7 +450,8 @@ class _$InvitationEntityImpl implements _InvitationEntity {
             (identical(other.expiresAt, expiresAt) ||
                 other.expiresAt == expiresAt) &&
             (identical(other.respondedAt, respondedAt) ||
-                other.respondedAt == respondedAt));
+                other.respondedAt == respondedAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -450,6 +474,7 @@ class _$InvitationEntityImpl implements _InvitationEntity {
     createdAt,
     expiresAt,
     respondedAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of InvitationEntity
@@ -483,6 +508,7 @@ abstract class _InvitationEntity implements InvitationEntity {
     final DateTime? createdAt,
     final DateTime? expiresAt,
     final DateTime? respondedAt,
+    final List<AuditEntry> audits,
   }) = _$InvitationEntityImpl;
 
   @override
@@ -519,6 +545,8 @@ abstract class _InvitationEntity implements InvitationEntity {
   DateTime? get expiresAt;
   @override
   DateTime? get respondedAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of InvitationEntity
   /// with the given fields replaced by the non-null parameter values.

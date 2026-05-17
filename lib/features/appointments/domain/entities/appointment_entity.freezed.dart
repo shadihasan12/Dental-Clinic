@@ -28,6 +28,8 @@ mixin _$AppointmentEntity {
   AppointmentStatus get status => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
   String? get clinicId => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of AppointmentEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -55,6 +57,8 @@ abstract class $AppointmentEntityCopyWith<$Res> {
     AppointmentStatus status,
     String? notes,
     String? clinicId,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -84,6 +88,8 @@ class _$AppointmentEntityCopyWithImpl<$Res, $Val extends AppointmentEntity>
     Object? status = null,
     Object? notes = freezed,
     Object? clinicId = freezed,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -131,6 +137,14 @@ class _$AppointmentEntityCopyWithImpl<$Res, $Val extends AppointmentEntity>
                 ? _value.clinicId
                 : clinicId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -158,6 +172,8 @@ abstract class _$$AppointmentEntityImplCopyWith<$Res>
     AppointmentStatus status,
     String? notes,
     String? clinicId,
+    DateTime? createdAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -186,6 +202,8 @@ class __$$AppointmentEntityImplCopyWithImpl<$Res>
     Object? status = null,
     Object? notes = freezed,
     Object? clinicId = freezed,
+    Object? createdAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$AppointmentEntityImpl(
@@ -233,6 +251,14 @@ class __$$AppointmentEntityImplCopyWithImpl<$Res>
             ? _value.clinicId
             : clinicId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -253,7 +279,10 @@ class _$AppointmentEntityImpl extends _AppointmentEntity {
     required this.status,
     this.notes,
     this.clinicId,
-  }) : super._();
+    this.createdAt,
+    final List<AuditEntry> audits = const [],
+  }) : _audits = audits,
+       super._();
 
   @override
   final String id;
@@ -277,10 +306,20 @@ class _$AppointmentEntityImpl extends _AppointmentEntity {
   final String? notes;
   @override
   final String? clinicId;
+  @override
+  final DateTime? createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
 
   @override
   String toString() {
-    return 'AppointmentEntity(id: $id, patientId: $patientId, patientName: $patientName, doctorId: $doctorId, doctorName: $doctorName, dateTime: $dateTime, durationMinutes: $durationMinutes, treatmentType: $treatmentType, status: $status, notes: $notes, clinicId: $clinicId)';
+    return 'AppointmentEntity(id: $id, patientId: $patientId, patientName: $patientName, doctorId: $doctorId, doctorName: $doctorName, dateTime: $dateTime, durationMinutes: $durationMinutes, treatmentType: $treatmentType, status: $status, notes: $notes, clinicId: $clinicId, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -306,7 +345,10 @@ class _$AppointmentEntityImpl extends _AppointmentEntity {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.notes, notes) || other.notes == notes) &&
             (identical(other.clinicId, clinicId) ||
-                other.clinicId == clinicId));
+                other.clinicId == clinicId) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -323,6 +365,8 @@ class _$AppointmentEntityImpl extends _AppointmentEntity {
     status,
     notes,
     clinicId,
+    createdAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of AppointmentEntity
@@ -350,6 +394,8 @@ abstract class _AppointmentEntity extends AppointmentEntity {
     required final AppointmentStatus status,
     final String? notes,
     final String? clinicId,
+    final DateTime? createdAt,
+    final List<AuditEntry> audits,
   }) = _$AppointmentEntityImpl;
   const _AppointmentEntity._() : super._();
 
@@ -375,6 +421,10 @@ abstract class _AppointmentEntity extends AppointmentEntity {
   String? get notes;
   @override
   String? get clinicId;
+  @override
+  DateTime? get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of AppointmentEntity
   /// with the given fields replaced by the non-null parameter values.

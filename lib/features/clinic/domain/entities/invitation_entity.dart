@@ -1,5 +1,8 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'clinic_membership_entity.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 part 'invitation_entity.freezed.dart';
 
@@ -33,5 +36,6 @@ class InvitationEntity with _$InvitationEntity {
     DateTime? createdAt,
     DateTime? expiresAt,
     DateTime? respondedAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _InvitationEntity;
 }

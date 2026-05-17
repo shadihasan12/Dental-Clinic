@@ -52,6 +52,12 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   List<_DaySnapshot> _initialDays = [];
   List<_HolidaySnapshot> _initialHolidays = [];
 
+  /// True when the form was filled from local defaults because the
+  /// server has nothing saved yet. There's nothing on the server to
+  /// match against, so the seed itself counts as the change the user
+  /// wants to commit — keeps the Save button enabled on first open.
+  bool _isSeed = false;
+
   static const int _maxShifts = 3;
 
   List<_DaySnapshot> _snapshotDays(List<WorkingDay> days) {
@@ -75,6 +81,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   }
 
   bool get _hasChanges {
+    // Fresh-from-defaults always counts as a change — there's nothing
+    // on the server yet, so saving the seed is itself a valid commit.
+    if (_isSeed) return true;
     final currentDays = _snapshotDays(_workingDays);
     final currentHolidays = _snapshotHolidays(_holidays);
     if (currentDays.length != _initialDays.length) return true;
@@ -110,6 +119,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
     List<WorkingDayApiModel> apiDays,
     List<HolidayApiModel> apiHolidays,
   ) {
+    _isSeed = apiDays.isEmpty;
     if (apiDays.isEmpty) {
       _workingDays = _buildDefaultWorkingDays();
     } else {
@@ -292,6 +302,10 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
             setState(() {
               _initialDays = _snapshotDays(_workingDays);
               _initialHolidays = _snapshotHolidays(_holidays);
+              // The seed has now been persisted — subsequent diffs
+              // should compare against the saved snapshot, not stay
+              // permanently "dirty".
+              _isSeed = false;
             });
             AppSnackbar.showSuccess(
               context,

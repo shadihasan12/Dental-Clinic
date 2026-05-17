@@ -10,6 +10,8 @@ class ClinicUserModel {
   final String? specialtyName;
   final String? imageUrl;
   final List<ClinicRole> roles;
+  final DateTime? createdAt;
+  final List<AuditEntry> audits;
 
   const ClinicUserModel({
     required this.id,
@@ -20,6 +22,8 @@ class ClinicUserModel {
     this.specialtyName,
     this.imageUrl,
     required this.roles,
+    this.createdAt,
+    this.audits = const [],
   });
 
   factory ClinicUserModel.fromJson(Map<String, dynamic> json) {
@@ -36,7 +40,14 @@ class ClinicUserModel {
       specialtyName: specialty?['name'] as String?,
       imageUrl: user['image'] as String?,
       roles: rawRoles.map(_parseRole).toList(),
+      createdAt: _parseNullableDate(json['created_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  static DateTime? _parseNullableDate(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 
   ClinicUserEntity toEntity() {
@@ -49,6 +60,8 @@ class ClinicUserModel {
       specialtyName: specialtyName,
       imageUrl: imageUrl,
       roles: roles,
+      createdAt: createdAt,
+      audits: audits,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
@@ -73,7 +74,12 @@ class AppointmentDetailsSheet extends StatelessWidget {
                     AppointmentStatusStyles.label(context, appointment.status),
                 onStatusTap: () => _openStatusPicker(context, appointment),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
+              AddedByLabel(
+                audits: appointment.audits,
+                createdAt: appointment.createdAt,
+              ),
+              SizedBox(height: 16.h),
 
               Row(
                 children: [

@@ -1862,6 +1862,66 @@ abstract class AppLocalizations {
   /// **'No available slots for this date'**
   String get noAvailableSlotsForThisDate;
 
+  /// No description provided for @noWorkingHoursTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your working hours'**
+  String get noWorkingHoursTitle;
+
+  /// No description provided for @noWorkingHoursMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t added your working hours yet, so we can\'t show available slots. Add them once and you\'ll be able to schedule appointments right away.'**
+  String get noWorkingHoursMessage;
+
+  /// No description provided for @setWorkingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Set working hours'**
+  String get setWorkingHours;
+
+  /// No description provided for @notWorkingOnThisDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t work on this day'**
+  String get notWorkingOnThisDayTitle;
+
+  /// No description provided for @notWorkingOnThisDayMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your working hours don\'t cover this day. Pick another date or update your hours to add it.'**
+  String get notWorkingOnThisDayMessage;
+
+  /// No description provided for @updateWorkingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Update working hours'**
+  String get updateWorkingHours;
+
+  /// No description provided for @clinicWorkingDaysMissingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up clinic working days first'**
+  String get clinicWorkingDaysMissingTitle;
+
+  /// No description provided for @clinicWorkingDaysMissingAdminMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic doesn\'t have working days yet. Add them once and you\'ll be able to set your own hours on top of them.'**
+  String get clinicWorkingDaysMissingAdminMessage;
+
+  /// No description provided for @clinicWorkingDaysMissingNonAdminMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic\'s admin hasn\'t set up working days yet. Ask them to add them before you can save your hours.'**
+  String get clinicWorkingDaysMissingNonAdminMessage;
+
+  /// No description provided for @setClinicWorkingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Set clinic working days'**
+  String get setClinicWorkingDays;
+
   /// No description provided for @sendReminderToPatient.
   ///
   /// In en, this message translates to:

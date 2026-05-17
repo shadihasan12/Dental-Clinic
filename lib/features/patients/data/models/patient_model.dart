@@ -18,6 +18,8 @@ class PatientModel {
   final String? avatarUrl;
   final String? nextVisit;
   final double balance;
+  final DateTime? createdAt;
+  final List<AuditEntry> audits;
 
   const PatientModel({
     required this.id,
@@ -37,6 +39,8 @@ class PatientModel {
     this.avatarUrl,
     this.nextVisit,
     this.balance = 0,
+    this.createdAt,
+    this.audits = const [],
   });
 
   factory PatientModel.fromJson(Map<String, dynamic> json) {
@@ -82,7 +86,14 @@ class PatientModel {
       balance: (json['outstanding_balance'] as num?)?.toDouble() ??
           (json['balance'] as num?)?.toDouble() ??
           0,
+      createdAt: _parseNullableDate(json['created_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  static DateTime? _parseNullableDate(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 
   PatientEntity toEntity() {
@@ -104,6 +115,8 @@ class PatientModel {
       avatarUrl: avatarUrl,
       nextVisit: nextVisit,
       balance: balance,
+      createdAt: createdAt,
+      audits: audits,
     );
   }
 

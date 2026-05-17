@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -122,7 +123,10 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     return false;
   }
 
-  void _populateFromApi(List<UserWorkingDayApiModel> apiDays) {
+  void _populateFromApi(
+    List<UserWorkingDayApiModel> apiDays, {
+    bool isSeed = false,
+  }) {
     final sorted = [...apiDays]..sort((a, b) => a.dayOfWeek.compareTo(b.dayOfWeek));
     _days = sorted.map((d) {
       return _UserDay(
@@ -155,7 +159,12 @@ class _UserHoursContentState extends State<_UserHoursContent> {
       );
     }).toList();
     _populated = true;
-    _initialSnapshot = _snapshot(_days);
+    // For a seeded form (no hours on the server yet), leave the
+    // baseline empty so `_hasChanges` is true from the start — the
+    // user hasn't edited anything, but committing the defaults *is*
+    // the change. After a successful save the [saved] listener
+    // replaces this with the current snapshot.
+    _initialSnapshot = isSeed ? const [] : _snapshot(_days);
   }
 
   List<UserWorkingDayApiModel> _buildPayload() {
@@ -288,9 +297,16 @@ class _UserHoursContentState extends State<_UserHoursContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
+        // Hide the bottom save bar on the "no clinic hours yet" empty
+        // state — the CTA inside the body is the only action there.
+        final showSaveBar = _days.isNotEmpty &&
+            state.maybeWhen(
+              needsClinicHours: (_) => false,
+              orElse: () => true,
+            );
         return Scaffold(
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: _days.isNotEmpty ? _buildSaveButton(l10n) : null,
+          bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [
               PageHeader(
@@ -304,10 +320,14 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (msg) => _buildError(msg, l10n),
-                  loaded: (days) {
+                  needsClinicHours: (isAdmin) =>
+                      _buildNeedsClinicHours(isAdmin, l10n),
+                  loaded: (days, isSeed) {
                     if (!_populated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromApi(days));
+                        setState(
+                          () => _populateFromApi(days, isSeed: isSeed),
+                        );
                       });
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -324,6 +344,84 @@ class _UserHoursContentState extends State<_UserHoursContent> {
           ),
         );
       },
+    );
+  }
+
+  /// Empty state shown when the clinic itself has no working days yet.
+  /// Admins get a CTA that routes to the clinic-working-days page —
+  /// non-admins get a "ask your admin" message because the user-hours
+  /// upsert requires `clinic_working_day_id`s only the admin can
+  /// create.
+  Widget _buildNeedsClinicHours(bool isAdmin, AppLocalizations l10n) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    final message = isAdmin
+        ? l10n.clinicWorkingDaysMissingAdminMessage
+        : l10n.clinicWorkingDaysMissingNonAdminMessage;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.schedule_outlined,
+              size: 48.w,
+              color: ColorManager.primary,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              l10n.clinicWorkingDaysMissingTitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.w600,
+                color: c.textPrimary,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: fontFamily,
+                color: c.textSecondary,
+                height: 1.4,
+              ),
+            ),
+            if (isAdmin) ...[
+              SizedBox(height: 20.h),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () =>
+                      context.pushNamed(AppRoutesNames.workingDays),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: ColorManager.primary,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  icon: Icon(Icons.arrow_forward_rounded, size: 16.w),
+                  label: Text(
+                    l10n.setClinicWorkingDays,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontFamily: fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 

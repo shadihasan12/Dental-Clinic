@@ -1,4 +1,7 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:flutter/material.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 /// Treatment types available in the clinic
 enum TreatmentType {
@@ -31,6 +34,7 @@ class TreatmentItem {
   final bool isDone;
   /// Raw notes from the API: [{note: '...', date: '2026-03-12'}, ...]
   final List<Map<String, String>> notes;
+  final List<AuditEntry> audits;
 
   const TreatmentItem({
     required this.id,
@@ -42,6 +46,7 @@ class TreatmentItem {
     this.completedAt,
     this.isDone = false,
     this.notes = const [],
+    this.audits = const [],
   });
 
   TreatmentItem copyWith({
@@ -54,6 +59,7 @@ class TreatmentItem {
     DateTime? completedAt,
     bool? isDone,
     List<Map<String, String>>? notes,
+    List<AuditEntry>? audits,
   }) {
     return TreatmentItem(
       id: id ?? this.id,
@@ -65,6 +71,7 @@ class TreatmentItem {
       completedAt: completedAt ?? this.completedAt,
       isDone: isDone ?? this.isDone,
       notes: notes ?? this.notes,
+      audits: audits ?? this.audits,
     );
   }
 }
@@ -87,6 +94,8 @@ class DentalCase {
   final String? totalCostCurrencyName;
   final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
+  final DateTime? createdAt;
+  final List<AuditEntry> audits;
 
   const DentalCase({
     required this.id,
@@ -105,6 +114,8 @@ class DentalCase {
     this.totalCostCurrencyName,
     this.labFeesCurrencyId,
     this.treatmentItems = const [],
+    this.createdAt,
+    this.audits = const [],
   });
 
   factory DentalCase.fromJson(Map<String, dynamic> json, {String patientName = ''}) {
@@ -125,7 +136,14 @@ class DentalCase {
       totalCostCurrencyCode: _parseCurrencyField(json, 'total_cost_currency', 'currency_code'),
       totalCostCurrencyName: _parseCurrencyField(json, 'total_cost_currency', 'currency_name'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
+      createdAt: _parseNullableDate(json['created_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  static DateTime? _parseNullableDate(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 
   static String? _parseCurrencyId(Map<String, dynamic> json, String key) {

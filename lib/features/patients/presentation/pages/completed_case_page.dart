@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
@@ -135,6 +136,11 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                 children: [
                   // Title card (editable)
                   _buildTitleCard(context),
+                  SizedBox(height: 8.h),
+                  AddedByLabel(
+                    audits: dc.audits,
+                    createdAt: dc.createdAt,
+                  ),
                   SizedBox(height: 12.h),
 
                   // Info card

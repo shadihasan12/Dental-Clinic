@@ -1,4 +1,7 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 part 'appointment_entity.freezed.dart';
 
@@ -29,6 +32,8 @@ class AppointmentEntity with _$AppointmentEntity {
     required AppointmentStatus status,
     String? notes,
     String? clinicId,
+    DateTime? createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _AppointmentEntity;
 
   const AppointmentEntity._();

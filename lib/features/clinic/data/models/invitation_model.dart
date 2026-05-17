@@ -19,6 +19,7 @@ class InvitationModel {
   final DateTime? createdAt;
   final DateTime? expiresAt;
   final DateTime? respondedAt;
+  final List<AuditEntry> audits;
 
   const InvitationModel({
     required this.id,
@@ -38,6 +39,7 @@ class InvitationModel {
     this.createdAt,
     this.expiresAt,
     this.respondedAt,
+    this.audits = const [],
   });
 
   factory InvitationModel.fromJson(Map<String, dynamic> json) {
@@ -86,6 +88,7 @@ class InvitationModel {
       createdAt: _parseDate(json['created_at']),
       expiresAt: _parseDate(json['expires_at']),
       respondedAt: _parseDate(json['responded_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
   }
 
@@ -107,6 +110,7 @@ class InvitationModel {
         createdAt: createdAt,
         expiresAt: expiresAt,
         respondedAt: respondedAt,
+        audits: audits,
       );
 
   static InvitationStatus _parseStatus(String? raw) {

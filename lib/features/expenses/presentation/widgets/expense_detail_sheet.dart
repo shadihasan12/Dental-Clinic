@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,11 @@ class ExpenseDetailSheet extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Colors.black87,
             ),
+          ),
+          SizedBox(height: 6.h),
+          AddedByLabel(
+            audits: expense.audits,
+            createdAt: DateTime.tryParse(expense.createdAt),
           ),
           SizedBox(height: 20.h),
 

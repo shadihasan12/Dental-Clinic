@@ -264,18 +264,28 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
                         // Tab 1: Patient Info
                         SingleChildScrollView(
                           padding: PaddingManager.all16,
-                          child: PatientInfoTab(
-                            phone: patient.phone,
-                            email: patient.email,
-                            address: patient.address,
-                            medicalHistory: patient.medicalHistory ?? '',
-                            dateOfBirth: patient.dateOfBirth
-                                .toIso8601String()
-                                .substring(0, 10),
-                            allergies: 'None',
-                            age: patient.age,
-                            gender: patient.gender,
-                            initiallyExpanded: true,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AddedByLabel(
+                                audits: patient.audits,
+                                createdAt: patient.createdAt,
+                              ),
+                              SizedBox(height: 12.h),
+                              PatientInfoTab(
+                                phone: patient.phone,
+                                email: patient.email,
+                                address: patient.address,
+                                medicalHistory: patient.medicalHistory ?? '',
+                                dateOfBirth: patient.dateOfBirth
+                                    .toIso8601String()
+                                    .substring(0, 10),
+                                allergies: 'None',
+                                age: patient.age,
+                                gender: patient.gender,
+                                initiallyExpanded: true,
+                              ),
+                            ],
                           ),
                         ),
 
