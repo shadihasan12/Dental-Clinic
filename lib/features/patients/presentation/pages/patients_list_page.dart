@@ -1,8 +1,15 @@
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
+import 'package:dental_clinic_app/features/patients/domain/use_cases/detach_patient_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/confirm_delete_dialog.dart';
+import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
@@ -44,13 +51,47 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    RootPage.selectedTab.addListener(_onTabChanged);
+    UserStorage.patientsChangedNotifier.addListener(_onPatientsChanged);
   }
 
   @override
   void dispose() {
+    RootPage.selectedTab.removeListener(_onTabChanged);
+    UserStorage.patientsChangedNotifier.removeListener(_onPatientsChanged);
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onPatientsChanged() {
+    // Fires after add / edit / delete from anywhere. Guard against duplicate
+    // calls while a load is already in flight.
+    if (!mounted) return;
+    final bloc = context.read<PatientsListBloc>();
+    final isBusy = bloc.state.maybeWhen(
+      loading: () => true,
+      loadingMore: (_) => true,
+      orElse: () => false,
+    );
+    if (isBusy) return;
+    bloc.add(const PatientsListEvent.loadPatients());
+  }
+
+  void _onTabChanged() {
+    // Refresh the list each time the user lands on the Patients tab so new /
+    // edited / deleted patients show up without a manual pull-to-refresh.
+    // Guarded so we don't fire while a load is already in flight.
+    if (RootPage.selectedTab.value != 1) return;
+    if (!mounted) return;
+    final bloc = context.read<PatientsListBloc>();
+    final isBusy = bloc.state.maybeWhen(
+      loading: () => true,
+      loadingMore: (_) => true,
+      orElse: () => false,
+    );
+    if (isBusy) return;
+    bloc.add(const PatientsListEvent.loadPatients());
   }
 
   void _onScroll() {
@@ -79,6 +120,68 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         const PatientsListEvent.loadPatients(),
       );
     }
+  }
+
+  Future<void> _onEditPatient(Patient patient) async {
+    final entity = context
+        .read<PatientsListBloc>()
+        .state
+        .maybeWhen(
+          loaded: (entities, _) => entities,
+          loadingMore: (entities) => entities,
+          orElse: () => const <PatientEntity>[],
+        )
+        .firstWhere(
+          (e) => e.id == patient.id,
+          orElse: () => PatientEntity(
+            id: patient.id,
+            name: patient.name,
+            age: patient.age,
+            gender: patient.gender,
+            phone: patient.phone,
+            email: '',
+            address: '',
+            dateOfBirth: DateTime.now(),
+          ),
+        );
+    await context.pushNamed(
+      AppRoutesNames.editPatient,
+      extra: <String, dynamic>{'patient': entity},
+    );
+    if (mounted) {
+      context.read<PatientsListBloc>().add(
+        const PatientsListEvent.loadPatients(),
+      );
+    }
+  }
+
+  Future<void> _onDeletePatient(Patient patient) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await ConfirmDeleteDialog.show(
+      context,
+      title: l10n.deletePatient,
+      message: l10n.deletePatientConfirmation(patient.name),
+    );
+    if (!confirmed || !mounted) return;
+
+    final result = await getIt<DetachPatientUseCase>()(patient.id);
+    if (!mounted) return;
+
+    result.fold(
+      (error) => AppSnackbar.showError(
+        context,
+        title: l10n.error,
+        message: NetworkExceptions.getErrorMessage(error),
+      ),
+      (_) {
+        UserStorage.notifyPatientsChanged();
+        AppSnackbar.showSuccess(
+          context,
+          title: l10n.success,
+          message: l10n.patientDeleted,
+        );
+      },
+    );
   }
 
   List<Patient> _mapToDisplayModel(List<PatientEntity> entities) {
@@ -169,8 +272,8 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         Expanded(
           child: ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: 5,
-            itemBuilder: (_, __) => _ShimmerCard(),
+            itemCount: 6,
+            itemBuilder: (_, __) => const _PatientCardSkeleton(),
           ),
         ),
       ],
@@ -223,18 +326,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                             Divider(height: 1, color: ColorManager.of(context).divider),
                         itemBuilder: (context, index) {
                           if (index == filtered.length) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              child: Center(
-                                child: SizedBox(
-                                  width: 24.w,
-                                  height: 24.w,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: ColorManager.primary,
-                                  ),
-                                ),
-                              ),
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              child: _PatientCardSkeleton(),
                             );
                           }
 
@@ -249,6 +343,8 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                                 "tabIndex": 1,
                               },
                             ),
+                            onEdit: () => _onEditPatient(patient),
+                            onDelete: () => _onDeletePatient(patient),
                           );
                         },
                       ),
@@ -351,9 +447,11 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   }
 }
 
-// ─── Shimmer placeholder card ──────────────────────────────────────────────
+// ─── Shimmer skeleton mirroring PatientCard's layout ──────────────────────
 
-class _ShimmerCard extends StatelessWidget {
+class _PatientCardSkeleton extends StatelessWidget {
+  const _PatientCardSkeleton();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -370,35 +468,29 @@ class _ShimmerCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          _shimmerBox(context, 52.w, 52.w, isCircle: true),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _shimmerBox(context, 140.w, 14.h),
-                SizedBox(height: 8.h),
-                _shimmerBox(context, 100.w, 10.h),
-                SizedBox(height: 8.h),
-                _shimmerBox(context, 120.w, 10.h),
-              ],
+      child: AppShimmer(
+        child: Row(
+          children: [
+            ShimmerBox(
+              width: 52.w,
+              height: 52.w,
+              radius: BorderRadius.circular(52.w),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _shimmerBox(BuildContext context, double width, double height, {bool isCircle = false}) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).divider,
-        borderRadius: isCircle ? null : BorderRadius.circular(6.r),
-        shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShimmerBox(width: 140.w, height: 14.h),
+                  SizedBox(height: 8.h),
+                  ShimmerBox(width: 100.w, height: 10.h),
+                  SizedBox(height: 8.h),
+                  ShimmerBox(width: 120.w, height: 10.h),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -928,6 +928,16 @@
   "planCustomFeature5": "تدريب في الموقع",
   "planCustomFeature6": "ضمانات اتفاقية مستوى الخدمة",
   "planCustomFeature7": "خصومات الكميات الكبيرة",
-  "planCustomFeature8": "مصممة وفق احتياجاتك"
+  "planCustomFeature8": "مصممة وفق احتياجاتك",
+
+  "editPatient": "تعديل المريض",
+  "deletePatient": "حذف المريض",
+  "deletePatientConfirmation": "هل أنت متأكد من حذف {name}؟",
+  "@deletePatientConfirmation": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "patientDeleted": "تم حذف المريض",
+  "patientUpdated": "تم تحديث المريض",
+  "updatingPatient": "جارٍ تحديث المريض..."
 }
 

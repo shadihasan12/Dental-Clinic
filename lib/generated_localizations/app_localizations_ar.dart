@@ -2405,4 +2405,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planCustomFeature8 => 'مصممة وفق احتياجاتك';
+
+  @override
+  String get editPatient => 'تعديل المريض';
+
+  @override
+  String get deletePatient => 'حذف المريض';
+
+  @override
+  String deletePatientConfirmation(String name) {
+    return 'هل أنت متأكد من حذف $name؟';
+  }
+
+  @override
+  String get patientDeleted => 'تم حذف المريض';
+
+  @override
+  String get patientUpdated => 'تم تحديث المريض';
+
+  @override
+  String get updatingPatient => 'جارٍ تحديث المريض...';
 }

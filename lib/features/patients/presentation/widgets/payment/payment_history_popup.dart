@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class PaymentHistoryPopup extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => PaymentHistoryPopup(
         caseTitle: caseTitle,
@@ -126,10 +128,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
           // Payments list
           Flexible(
             child: _isLoading
-                ? Padding(
-                    padding: EdgeInsets.all(32.w),
-                    child: const Center(child: CircularProgressIndicator()),
-                  )
+                ? const _PaymentHistorySkeleton()
                 : _payments!.isEmpty
                     ? _buildEmptyState(context)
                     : ListView.separated(
@@ -242,6 +241,53 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PaymentHistorySkeleton extends StatelessWidget {
+  const _PaymentHistorySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: EdgeInsets.all(16.w),
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 4,
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
+      itemBuilder: (_, _) => Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: ColorManager.of(context).cardBgSecondary,
+          borderRadius: BorderRadiusManager.md,
+          border: Border.all(color: ColorManager.of(context).borderLight),
+        ),
+        child: AppShimmer(
+          child: Row(
+            children: [
+              ShimmerBox(
+                width: 40.w,
+                height: 40.w,
+                radius: BorderRadius.circular(40.w),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(width: 140.w, height: 12.h),
+                    SizedBox(height: 6.h),
+                    ShimmerBox(width: 90.w, height: 10.h),
+                  ],
+                ),
+              ),
+              SizedBox(width: 12.w),
+              ShimmerBox(width: 48.w, height: 14.h),
+            ],
+          ),
+        ),
       ),
     );
   }

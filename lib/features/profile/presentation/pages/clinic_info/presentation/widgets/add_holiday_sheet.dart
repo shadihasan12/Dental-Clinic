@@ -25,6 +25,7 @@ void showAddHolidaySheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     builder: (sheetContext) {
       return StatefulBuilder(

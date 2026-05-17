@@ -127,6 +127,8 @@ import 'features/patients/domain/use_cases/add_patient_use_case.dart' as _i594;
 import 'features/patients/domain/use_cases/add_payment_use_case.dart' as _i924;
 import 'features/patients/domain/use_cases/add_treatment_use_case.dart'
     as _i208;
+import 'features/patients/domain/use_cases/detach_patient_use_case.dart'
+    as _i479;
 import 'features/patients/domain/use_cases/get_all_core_treatments_use_case.dart'
     as _i931;
 import 'features/patients/domain/use_cases/get_all_patients_use_case.dart'
@@ -140,6 +142,8 @@ import 'features/patients/domain/use_cases/get_patient_details_use_case.dart'
 import 'features/patients/domain/use_cases/get_payments_use_case.dart' as _i773;
 import 'features/patients/domain/use_cases/mark_case_as_finished_use_case.dart'
     as _i920;
+import 'features/patients/domain/use_cases/update_patient_use_case.dart'
+    as _i496;
 import 'features/patients/presentation/manager/add_patient/add_patient_bloc.dart'
     as _i527;
 import 'features/patients/presentation/manager/add_treatment/add_treatment_bloc.dart'
@@ -545,6 +549,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i208.AddTreatmentUseCase>(
       () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
     );
+    gh.factory<_i479.DetachPatientUseCase>(
+      () => _i479.DetachPatientUseCase(gh<_i192.PatientRepository>()),
+    );
     gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
       () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
     );
@@ -565,6 +572,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i920.MarkCaseAsFinishedUseCase>(
       () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i496.UpdatePatientUseCase>(
+      () => _i496.UpdatePatientUseCase(gh<_i192.PatientRepository>()),
     );
     gh.factory<_i526.WorkingDaysBloc>(
       () =>

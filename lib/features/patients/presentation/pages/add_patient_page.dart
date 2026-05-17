@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/add_patient/add_patient_bloc.dart';
@@ -98,6 +99,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
     await showModalBottomSheet(
       context: context,
       backgroundColor: ColorManager.of(context).cardBg,
+      useSafeArea: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -167,6 +169,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
           },
           success: (patient) async {
             AppLoadingDialog.dismiss(context);
+            UserStorage.notifyPatientsChanged();
 
             final shouldAddTreatment = await AppConfirmationDialog.show(
               context: context,

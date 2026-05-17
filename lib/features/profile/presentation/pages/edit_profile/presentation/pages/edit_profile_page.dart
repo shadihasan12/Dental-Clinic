@@ -676,28 +676,31 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   Widget _buildSaveButton(AppLocalizations l10n) {
     final enabled = _hasChanges;
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: enabled ? _onSave : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: EdgeInsets.all(14.h),
-          decoration: BoxDecoration(
-            color: enabled
-                ? ColorManager.primary
-                : ColorManager.primary.withValues(alpha: 0.35),
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.saveChanges,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: GestureDetector(
+          onTap: enabled ? _onSave : null,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: double.infinity,
+            padding: EdgeInsets.all(14.h),
+            decoration: BoxDecoration(
+              color: enabled
+                  ? ColorManager.primary
+                  : ColorManager.primary.withValues(alpha: 0.35),
+              borderRadius: BorderRadiusManager.lg,
+            ),
+            child: Text(
+              l10n.saveChanges,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w600,
+                color: ColorManager.white,
+              ),
             ),
           ),
         ),

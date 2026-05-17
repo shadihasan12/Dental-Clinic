@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
@@ -273,11 +274,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: ColorManager.primary,
-                    ),
-                  )
+                ? const _NewTreatmentPlanSkeleton()
                 : SingleChildScrollView(
                     padding: EdgeInsets.all(16.w),
                     child: Column(
@@ -289,7 +286,12 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                         ),
                         SizedBox(height: 16.h),
                         _buildTreatmentsList(context),
-                        SizedBox(height: 80.h),
+                        // Buffer for FAB plus the Android 15 gesture inset so
+                        // the last treatment row scrolls clear of both.
+                        SizedBox(
+                          height: 80.h +
+                              MediaQuery.viewPaddingOf(context).bottom,
+                        ),
                       ],
                     ),
                   ),
@@ -393,6 +395,41 @@ class _EmptyTreatmentsState extends StatelessWidget {
                 color: ColorManager.of(context).textTertiary,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewTreatmentPlanSkeleton extends StatelessWidget {
+  const _NewTreatmentPlanSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      physics: const NeverScrollableScrollPhysics(),
+      child: AppShimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Plan summary header skeleton
+            ShimmerBox(
+              width: double.infinity,
+              height: 110.h,
+              radius: BorderRadius.circular(16.r),
+            ),
+            SizedBox(height: 16.h),
+            // Treatment cards skeleton
+            for (var i = 0; i < 4; i++) ...[
+              ShimmerBox(
+                width: double.infinity,
+                height: 72.h,
+                radius: BorderRadius.circular(12.r),
+              ),
+              SizedBox(height: 8.h),
+            ],
           ],
         ),
       ),

@@ -301,6 +301,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     final canRemove = getIt<UserStorage>().isAdmin && !isSelf && !user.isOwner;
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
@@ -382,6 +383,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<ClinicUsersBloc>(),

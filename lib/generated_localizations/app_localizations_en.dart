@@ -2418,4 +2418,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planCustomFeature8 => 'Tailored to your needs';
+
+  @override
+  String get editPatient => 'Edit Patient';
+
+  @override
+  String get deletePatient => 'Delete Patient';
+
+  @override
+  String deletePatientConfirmation(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get patientDeleted => 'Patient deleted';
+
+  @override
+  String get patientUpdated => 'Patient updated';
+
+  @override
+  String get updatingPatient => 'Updating patient...';
 }

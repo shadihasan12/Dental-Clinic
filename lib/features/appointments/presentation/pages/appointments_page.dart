@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class _AppointmentsContent extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, AppointmentState state) {
     if (state.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return _buildLoadingSkeleton(context);
     }
     if (state.error != null) {
       return Center(
@@ -477,6 +478,68 @@ class _AppointmentsContent extends StatelessWidget {
           ),
         ],
         ),
+      ),
+    );
+  }
+
+  // ─── Loading skeleton ───────────────────────────────────────────────────
+
+  Widget _buildLoadingSkeleton(BuildContext context) {
+    return AppShimmer(
+      child: ListView.separated(
+        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+        itemCount: 6,
+        separatorBuilder: (_, _) =>
+            Divider(height: 1, color: ColorManager.of(context).divider),
+        itemBuilder: (context, index) => _buildAppointmentRowSkeleton(context),
+      ),
+    );
+  }
+
+  Widget _buildAppointmentRowSkeleton(BuildContext context) {
+    final fill = ColorManager.of(context).shimmerBase;
+    Widget bar({required double width, required double height, double r = 4}) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: fill,
+          borderRadius: BorderRadius.circular(r),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      child: Row(
+        children: [
+          // Time column placeholder (time + duration)
+          SizedBox(
+            width: 60.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                bar(width: 44.w, height: 12.h),
+                SizedBox(height: 6.h),
+                bar(width: 28.w, height: 10.h),
+              ],
+            ),
+          ),
+          // Status bar placeholder
+          bar(width: 3.w, height: 40.h, r: 2),
+          SizedBox(width: 12.w),
+          // Patient name + treatment placeholders
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                bar(width: 140.w, height: 14.h),
+                SizedBox(height: 6.h),
+                bar(width: 90.w, height: 12.h),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

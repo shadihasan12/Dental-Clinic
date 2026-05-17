@@ -8,6 +8,12 @@ class PatientEndpoints {
   static String patientDetails(String patientId) =>
       '/clinics/patients/$patientId';
 
+  static String updatePatient(String patientId) =>
+      '/clinics/patients/$patientId';
+
+  static String detachPatient(String patientId) =>
+      '/clinics/patients/$patientId/detach';
+
   static String activeCase(String patientId) =>
       '/patients/$patientId/cases/active';
 
