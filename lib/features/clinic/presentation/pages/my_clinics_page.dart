@@ -316,6 +316,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
 
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),

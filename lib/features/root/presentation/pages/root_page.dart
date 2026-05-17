@@ -6,7 +6,6 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/appointments_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/custom_widgets/permission_gate.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -82,7 +81,6 @@ class _RootPageState extends State<RootPage> {
         feature: PermissionSlugs.viewClinicExpenses,
         child: const ExpensesPage(),
       ),
-      MenuPage(key: ValueKey('menu-$v')),
     ];
   }
 
@@ -96,7 +94,7 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // Single visual weight across all five tabs: SF Symbol outlines that
+    // Single visual weight across all four tabs: SF Symbol outlines that
     // share roughly the same stroke and bounding box. UITabBar's tint
     // colour signals the active tab; no fill swap needed.
     final tabs = <GlassTabItem>[
@@ -104,7 +102,6 @@ class _RootPageState extends State<RootPage> {
       GlassTabItem(title: l10n.patients, systemIcon: 'person.2'),
       GlassTabItem(title: l10n.appointments, systemIcon: 'calendar'),
       GlassTabItem(title: l10n.expenses, systemIcon: 'dollarsign.circle'),
-      GlassTabItem(title: l10n.more, systemIcon: 'ellipsis'),
     ];
 
     // Just the bar's own footprint reserved at the bottom — no extra

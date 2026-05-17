@@ -916,6 +916,16 @@
   "planCustomFeature5": "On-site training",
   "planCustomFeature6": "SLA & uptime guarantees",
   "planCustomFeature7": "Volume discounts",
-  "planCustomFeature8": "Tailored to your needs"
+  "planCustomFeature8": "Tailored to your needs",
+
+  "editPatient": "Edit Patient",
+  "deletePatient": "Delete Patient",
+  "deletePatientConfirmation": "Are you sure you want to delete {name}?",
+  "@deletePatientConfirmation": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "patientDeleted": "Patient deleted",
+  "patientUpdated": "Patient updated",
+  "updatingPatient": "Updating patient..."
 }
 

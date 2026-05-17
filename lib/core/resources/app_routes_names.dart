@@ -34,6 +34,7 @@ class AppRoutesNames {
   static const String patients = 'patients';
   static const String patientDetails = 'patientDetails';
   static const String addPatient = 'addPatient';
+  static const String editPatient = 'editPatient';
 
   // Case Routes
   static const String caseDetails = 'caseDetails';

@@ -43,6 +43,12 @@ abstract class PatientRepository {
     PatientEntity patient,
   );
 
+  Future<Either<NetworkExceptions, PatientEntity>> updatePatient(
+    PatientEntity patient,
+  );
+
+  Future<Either<NetworkExceptions, void>> detachPatient(String patientId);
+
   Future<Either<NetworkExceptions, TreatmentItem>> addTreatment(
     AddTreatmentParams params,
   );

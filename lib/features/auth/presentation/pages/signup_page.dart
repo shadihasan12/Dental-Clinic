@@ -536,6 +536,7 @@ class _SignupContentState extends State<_SignupContent> {
   void _showSpecialtySheet(AppLocalizations l10n, String fontFamily, AuthState state) {
     showModalBottomSheet(
       context: context,
+      useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),

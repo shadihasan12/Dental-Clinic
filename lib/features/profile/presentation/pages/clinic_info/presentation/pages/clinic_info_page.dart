@@ -251,25 +251,28 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   }
 
   Widget _buildSaveButton(AppLocalizations l10n) {
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: _onSave,
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 14.h),
-          decoration: BoxDecoration(
-            color: ColorManager.primary,
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.save,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: GestureDetector(
+          onTap: _onSave,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 14.h),
+            decoration: BoxDecoration(
+              color: ColorManager.primary,
+              borderRadius: BorderRadiusManager.lg,
+            ),
+            child: Text(
+              l10n.save,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w600,
+                color: ColorManager.white,
+              ),
             ),
           ),
         ),

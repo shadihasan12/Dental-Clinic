@@ -1,7 +1,6 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
-import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -38,15 +37,6 @@ class HomeHeader extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.welcomeBack,
-                      style: TextStyle(
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 14.sp,
-                        color: c.textTertiary,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
                     Text(
                       userName,
                       style: TextStyle(
@@ -157,8 +147,6 @@ class _HeaderTextSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ShimmerBox(width: 110.w, height: 14.h),
-        SizedBox(height: 6.h),
         ShimmerBox(width: 180.w, height: 22.h),
         SizedBox(height: 8.h),
         ShimmerBox(width: 140.w, height: 13.h),

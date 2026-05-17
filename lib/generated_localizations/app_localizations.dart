@@ -4615,6 +4615,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tailored to your needs'**
   String get planCustomFeature8;
+
+  /// No description provided for @editPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Patient'**
+  String get editPatient;
+
+  /// No description provided for @deletePatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Patient'**
+  String get deletePatient;
+
+  /// No description provided for @deletePatientConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {name}?'**
+  String deletePatientConfirmation(String name);
+
+  /// No description provided for @patientDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient deleted'**
+  String get patientDeleted;
+
+  /// No description provided for @patientUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient updated'**
+  String get patientUpdated;
+
+  /// No description provided for @updatingPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating patient...'**
+  String get updatingPatient;
 }
 
 class _AppLocalizationsDelegate

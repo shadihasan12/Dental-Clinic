@@ -27,6 +27,7 @@ Future<void> showStatisticsShareSheet({
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withValues(alpha: 0.55),
     builder: (_) => _StatisticsShareSheet(snapshot: snapshot),

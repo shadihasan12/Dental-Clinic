@@ -23,6 +23,16 @@ class UserStorage {
     clinicChangedNotifier.value++;
   }
 
+  /// Notifier that increments whenever a patient is added, updated, or
+  /// detached. The patients list listens to this so multi-step flows (e.g.
+  /// add patient → auto-jump to add treatment → back) still refresh.
+  static final ValueNotifier<int> patientsChangedNotifier =
+      ValueNotifier<int>(0);
+
+  static void notifyPatientsChanged() {
+    patientsChangedNotifier.value++;
+  }
+
   static const String _userNameKey = 'user_name';
   static const String _firstNameKey = 'first_name';
   static const String _lastNameKey = 'last_name';

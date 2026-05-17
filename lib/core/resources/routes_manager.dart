@@ -23,6 +23,7 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/support/pr
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/support_chat_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,7 +38,9 @@ import 'package:dental_clinic_app/features/auth/presentation/pages/set_new_passw
 import 'package:dental_clinic_app/features/auth/presentation/pages/signup_page.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patient_details_page.dart';
+import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_patient_page.dart';
+import 'package:dental_clinic_app/features/patients/presentation/pages/edit_patient_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/pending_approvals_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/my_clinics_page.dart';
@@ -261,6 +264,19 @@ class RoutesManager {
           },
         ),
         GoRoute(
+          path: '/patients/edit',
+          name: AppRoutesNames.editPatient,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final patient = extra['patient'] as PatientEntity;
+            return CupertinoPage(
+              child: EditPatientPage(patient: patient),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
           path: '/patients-details',
           name: AppRoutesNames.patientDetails,
           pageBuilder: (context, state) {
@@ -443,6 +459,17 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const StatisticsPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/more',
+          name: AppRoutesNames.moreMenu,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const MenuPage(),
               key: state.pageKey,
               name: state.name,
             );

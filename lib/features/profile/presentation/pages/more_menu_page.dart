@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
@@ -58,8 +59,11 @@ class _MenuPageState extends State<MenuPage> {
     final c = ColorManager.of(context);
     return Scaffold(
       backgroundColor: c.scaffoldBg,
+      appBar: PageHeader(title: l10n.more, onBack: () => context.pop()),
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: 24.h),
+        padding: EdgeInsets.only(
+          bottom: 24.h + MediaQuery.viewPaddingOf(context).bottom,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

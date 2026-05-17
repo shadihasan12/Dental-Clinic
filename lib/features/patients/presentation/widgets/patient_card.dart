@@ -29,10 +29,18 @@ class Patient {
 
 /// Card widget displaying patient information
 class PatientCard extends StatelessWidget {
-  const PatientCard({super.key, required this.patient, required this.onTap});
+  const PatientCard({
+    super.key,
+    required this.patient,
+    required this.onTap,
+    this.onEdit,
+    this.onDelete,
+  });
 
   final Patient patient;
   final VoidCallback onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +79,28 @@ class PatientCard extends StatelessWidget {
         _buildAvatar(context),
         SizedBox(width: 12.w),
         Expanded(child: _buildPatientInfo(context)),
+        if (onEdit != null || onDelete != null) _buildActions(context),
+      ],
+    );
+  }
+
+  Widget _buildActions(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (onEdit != null)
+          _IconAction(
+            icon: Icons.edit_outlined,
+            color: ColorManager.primary,
+            onTap: onEdit!,
+          ),
+        if (onEdit != null && onDelete != null) SizedBox(width: 4.w),
+        if (onDelete != null)
+          _IconAction(
+            icon: Icons.delete_outline,
+            color: ColorManager.error,
+            onTap: onDelete!,
+          ),
       ],
     );
   }
@@ -199,6 +229,35 @@ class PatientCard extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _IconAction extends StatelessWidget {
+  const _IconAction({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        width: 36.w,
+        height: 36.w,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 18.w, color: color),
+      ),
     );
   }
 }

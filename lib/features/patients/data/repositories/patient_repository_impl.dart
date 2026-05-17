@@ -99,6 +99,31 @@ class PatientRepositoryImpl implements PatientRepository {
   }
 
   @override
+  Future<Either<NetworkExceptions, PatientEntity>> updatePatient(
+    PatientEntity patient,
+  ) async {
+    try {
+      final model = PatientModel.fromEntity(patient);
+      final result = await _remoteDataSource.updatePatient(model);
+      return Right(result.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> detachPatient(
+    String patientId,
+  ) async {
+    try {
+      await _remoteDataSource.detachPatient(patientId);
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
   Future<Either<NetworkExceptions, TreatmentItem>> addTreatment(
     AddTreatmentParams params,
   ) async {

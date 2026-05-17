@@ -29,6 +29,8 @@ abstract class PatientRemoteDataSource {
   Future<DentalCase?> getActiveCase(String patientId);
   Future<List<DentalCase>> getCompletedCases(String patientId);
   Future<PatientModel> addPatient(PatientModel patient);
+  Future<PatientModel> updatePatient(PatientModel patient);
+  Future<void> detachPatient(String patientId);
   Future<TreatmentItem> addTreatment(AddTreatmentParams params);
   Future<List<Tooth>> getAllTeeth();
   Future<List<CoreTreatment>> getAllCoreTreatments();
@@ -180,6 +182,38 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
 
     final data = response['data'] as Map<String, dynamic>;
     return PatientModel.fromJson(data);
+  }
+
+  @override
+  Future<PatientModel> updatePatient(PatientModel patient) async {
+    final nameParts = patient.name.trim().split(RegExp(r'\s+'));
+    final firstName = nameParts.first;
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+    final body = <String, dynamic>{
+      'first_name': firstName,
+      'last_name': lastName,
+      if (patient.dateOfBirth.isNotEmpty) 'date_of_birth': patient.dateOfBirth,
+      'phone_number': patient.phone,
+      if (patient.gender.isNotEmpty) 'gender': patient.gender,
+      'medical_history_notes': patient.medicalHistory,
+      'allergy_notes': patient.allergies,
+    };
+
+    final response = await _apiConsumer.put(
+      PatientEndpoints.updatePatient(patient.id),
+      body: body,
+    );
+
+    final data = response['data'] as Map<String, dynamic>;
+    return PatientModel.fromJson(data);
+  }
+
+  @override
+  Future<void> detachPatient(String patientId) async {
+    await _apiConsumer.delete(
+      PatientEndpoints.detachPatient(patientId),
+    );
   }
 
   @override
