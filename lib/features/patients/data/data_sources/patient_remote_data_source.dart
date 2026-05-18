@@ -330,6 +330,10 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         selectedTeeth: params.selectedTeeth,
         attachments: params.attachments,
         createdAt: DateTime.now(),
+        // The create-case response carries the same `audits` block as
+        // GET; surfacing it here means the newly-added item shows the
+        // creator without needing a follow-up refresh.
+        audits: AuditEntry.listFromJson(data['audits']),
       );
     } else {
       // Add treatment to existing case
@@ -355,6 +359,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         selectedTeeth: params.selectedTeeth,
         attachments: params.attachments,
         createdAt: DateTime.now(),
+        audits: AuditEntry.listFromJson(data['audits']),
       );
     }
   }
