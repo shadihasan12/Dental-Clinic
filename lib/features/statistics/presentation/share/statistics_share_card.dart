@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../domain/entities/statistics_entities.dart';
-import '../../domain/entities/statistics_period.dart';
+import 'share_statistics.dart';
 
 /// Pixel-perfect 9:16 (1080×1920) shareable card.
 ///
@@ -27,7 +26,7 @@ import '../../domain/entities/statistics_period.dart';
 class StatisticsShareCard extends StatelessWidget {
   const StatisticsShareCard({
     super.key,
-    required this.snapshot,
+    required this.stats,
     required this.doctorName,
     required this.clinicName,
     required this.fontFamily,
@@ -54,7 +53,7 @@ class StatisticsShareCard extends StatelessWidget {
   static const Color _ink = Color(0xFFF5FAFA);
   static const Color _inkMuted = Color(0xFFB6CACA);
 
-  final StatisticsSnapshot snapshot;
+  final ShareStatistics stats;
   final String doctorName;
   final String clinicName;
   final String? doctorAvatarUrl;
@@ -85,15 +84,15 @@ class StatisticsShareCard extends StatelessWidget {
                   fontFamily: fontFamily,
                 ),
                 const SizedBox(height: 40),
-                _Hero(snapshot: snapshot, fontFamily: fontFamily),
+                _Hero(stats: stats, fontFamily: fontFamily),
                 const SizedBox(height: 32),
                 _SupportingStats(
-                  snapshot: snapshot,
+                  stats: stats,
                   fontFamily: fontFamily,
                 ),
                 const Spacer(),
                 _FeaturedTreatment(
-                  snapshot: snapshot,
+                  stats: stats,
                   fontFamily: fontFamily,
                 ),
                 const SizedBox(height: 24),
@@ -376,28 +375,19 @@ class _AvatarBadge extends StatelessWidget {
 // ─── Hero number ─────────────────────────────────────────────────────────
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.snapshot, required this.fontFamily});
-  final StatisticsSnapshot snapshot;
+  const _Hero({required this.stats, required this.fontFamily});
+  final ShareStatistics stats;
   final String fontFamily;
 
   @override
   Widget build(BuildContext context) {
-    final value = snapshot.overview.totalAppointments;
-    final periodLabel = switch (snapshot.period) {
-      StatisticsPeriod.week => 'THIS WEEK',
-      StatisticsPeriod.month => 'THIS MONTH',
-      StatisticsPeriod.year => 'THIS YEAR',
-    };
-    final dateLabel = _formatRange(
-      snapshot.period,
-      snapshot.rangeStart,
-      snapshot.rangeEnd,
-    );
+    final value = stats.visits;
+    final dateLabel = _formatRange(stats.startDate, stats.endDate);
 
     return Column(
       children: [
         _MetaLabel(
-          text: '$periodLabel  ·  $dateLabel',
+          text: 'SMILE REPORT  ·  $dateLabel',
           fontFamily: fontFamily,
         ),
         const SizedBox(height: 22),
@@ -417,7 +407,7 @@ class _Hero extends StatelessWidget {
             ).createShader(rect),
             blendMode: BlendMode.srcIn,
             child: Text(
-              _fmt(value),
+              value == null ? '—' : _fmt(value),
               style: TextStyle(
                 fontFamily: fontFamily,
                 fontSize: 340,
@@ -455,24 +445,18 @@ class _Hero extends StatelessWidget {
     return buf.toString();
   }
 
-  static String _formatRange(
-    StatisticsPeriod period,
-    DateTime start,
-    DateTime end,
-  ) {
+  /// Compact date-range label, e.g. "MAR 15 – 21, 2026" within a month,
+  /// "MAR 28 – APR 14, 2026" across months, with year on cross-year.
+  static String _formatRange(DateTime start, DateTime end) {
     final mon = DateFormat.MMM().format(start).toUpperCase();
     final monEnd = DateFormat.MMM().format(end).toUpperCase();
-    switch (period) {
-      case StatisticsPeriod.week:
-        if (start.year == end.year && start.month == end.month) {
-          return '$mon ${start.day}–${end.day}, ${end.year}';
-        }
-        return '$mon ${start.day}–$monEnd ${end.day}';
-      case StatisticsPeriod.month:
-        return '$mon ${start.year}';
-      case StatisticsPeriod.year:
-        return '${start.year}';
+    if (start.year != end.year) {
+      return '$mon ${start.day}, ${start.year} – $monEnd ${end.day}, ${end.year}';
     }
+    if (start.month == end.month) {
+      return '$mon ${start.day} – ${end.day}, ${end.year}';
+    }
+    return '$mon ${start.day} – $monEnd ${end.day}, ${end.year}';
   }
 }
 
@@ -530,34 +514,33 @@ class _MetaLabel extends StatelessWidget {
 // ─── Supporting stats (3 chips) ──────────────────────────────────────────
 
 class _SupportingStats extends StatelessWidget {
-  const _SupportingStats({required this.snapshot, required this.fontFamily});
-  final StatisticsSnapshot snapshot;
+  const _SupportingStats({required this.stats, required this.fontFamily});
+  final ShareStatistics stats;
   final String fontFamily;
 
   @override
   Widget build(BuildContext context) {
-    final o = snapshot.overview;
-    final breakdown = snapshot.appointmentBreakdown;
-    final completed = breakdown.completed;
-    final total = breakdown.total;
-    final completionPct =
-        total == 0 ? 0 : ((completed / total).clamp(0.0, 1.0) * 100).round();
+    final newPatients = stats.newPatients;
+    final completionRate = stats.completionRate;
+    final completedCases = stats.completedCases;
 
     final items = <_SupportItem>[
       _SupportItem(
-        icon: Icons.favorite_rounded,
-        value: _fmt(o.totalPatients),
-        label: 'patients',
-      ),
-      _SupportItem(
         icon: Icons.sentiment_very_satisfied_rounded,
-        value: '+${_fmt(o.newPatients)}',
+        value: newPatients == null ? '—' : '+${_fmt(newPatients)}',
         label: 'new smiles',
       ),
       _SupportItem(
         icon: Icons.check_circle_rounded,
-        value: '$completionPct%',
+        value: completionRate == null
+            ? '—'
+            : '${(completionRate * 100).round()}%',
         label: 'completed',
+      ),
+      _SupportItem(
+        icon: Icons.folder_special_rounded,
+        value: completedCases == null ? '—' : _fmt(completedCases),
+        label: 'cases done',
       ),
     ];
 
@@ -654,41 +637,20 @@ class _SupportPill extends StatelessWidget {
 
 class _FeaturedTreatment extends StatelessWidget {
   const _FeaturedTreatment({
-    required this.snapshot,
+    required this.stats,
     required this.fontFamily,
   });
-  final StatisticsSnapshot snapshot;
+  final ShareStatistics stats;
   final String fontFamily;
 
   @override
   Widget build(BuildContext context) {
-    // Prefer the snapshot's ranked leaderboard; fall back to sorting
-    // distribution slices when the backend hasn't supplied one.
-    final String? name;
-    final int? count;
-    final double? percentage;
-    if (snapshot.topTreatments.isNotEmpty) {
-      final t = snapshot.topTreatments.first;
-      name = t.name;
-      count = t.count;
-      percentage = null;
-    } else if (snapshot.treatmentDistribution.isNotEmpty) {
-      final sorted = [...snapshot.treatmentDistribution]
-        ..sort((a, b) => b.count.compareTo(a.count));
-      final t = sorted.first;
-      name = t.name;
-      count = t.count;
-      percentage = t.percentage;
-    } else {
-      name = null;
-      count = null;
-      percentage = null;
-    }
-    if (name == null) return const SizedBox.shrink();
+    final name = stats.topTreatmentName;
+    // Nothing to feature — collapse the block entirely.
+    if (name == null || name.isEmpty) return const SizedBox.shrink();
 
-    final sub = percentage != null
-        ? '$count procedures  ·  ${percentage.toStringAsFixed(0)}% of work'
-        : '$count procedures';
+    final count = stats.topTreatmentCount;
+    final sub = count == null ? 'Most requested' : '$count procedures';
 
     return Container(
       width: double.infinity,

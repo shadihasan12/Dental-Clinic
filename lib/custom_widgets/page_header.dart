@@ -21,7 +21,10 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    // Show the back button only when there's somewhere to go: a custom
+    // [onBack] handler, or a route that can actually be popped. Calling
+    // context.pop() on an empty stack throws "There is nothing to pop".
+    final showBack = onBack != null || context.canPop();
     return Column(
       children: [
         Container(
@@ -33,14 +36,17 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: c.textPrimary,
-                      size: 20.w,
-                    ),
-                    onPressed: () => context.pop(),
-                  ),
+                  if (showBack)
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: c.textPrimary,
+                        size: 20.w,
+                      ),
+                      onPressed: onBack ?? () => context.pop(),
+                    )
+                  else
+                    SizedBox(width: 12.w),
                   Expanded(
                     child: Text(
                       title,

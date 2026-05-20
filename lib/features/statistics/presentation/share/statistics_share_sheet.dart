@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../domain/entities/statistics_entities.dart';
+import 'share_statistics.dart';
 import 'statistics_share_card.dart';
 
 /// Opens the bottom sheet that previews the share card and lets the
@@ -22,7 +22,7 @@ import 'statistics_share_card.dart';
 /// shares work — the host app picks Instagram Stories, WhatsApp, etc).
 Future<void> showStatisticsShareSheet({
   required BuildContext context,
-  required StatisticsSnapshot snapshot,
+  required ShareStatistics stats,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -30,13 +30,13 @@ Future<void> showStatisticsShareSheet({
     useSafeArea: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withValues(alpha: 0.55),
-    builder: (_) => _StatisticsShareSheet(snapshot: snapshot),
+    builder: (_) => _StatisticsShareSheet(stats: stats),
   );
 }
 
 class _StatisticsShareSheet extends StatefulWidget {
-  const _StatisticsShareSheet({required this.snapshot});
-  final StatisticsSnapshot snapshot;
+  const _StatisticsShareSheet({required this.stats});
+  final ShareStatistics stats;
 
   @override
   State<_StatisticsShareSheet> createState() => _StatisticsShareSheetState();
@@ -135,7 +135,7 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
             SizedBox(height: 20.h),
             _Preview(
               boundaryKey: _boundaryKey,
-              snapshot: widget.snapshot,
+              stats: widget.stats,
               doctorName: doctorName,
               clinicName: clinicName,
               avatarUrl: avatarUrl,
@@ -280,7 +280,7 @@ class _Header extends StatelessWidget {
 class _Preview extends StatelessWidget {
   const _Preview({
     required this.boundaryKey,
-    required this.snapshot,
+    required this.stats,
     required this.doctorName,
     required this.clinicName,
     required this.avatarUrl,
@@ -292,7 +292,7 @@ class _Preview extends StatelessWidget {
   });
 
   final GlobalKey boundaryKey;
-  final StatisticsSnapshot snapshot;
+  final ShareStatistics stats;
   final String doctorName;
   final String clinicName;
   final String? avatarUrl;
@@ -341,7 +341,7 @@ class _Preview extends StatelessWidget {
               width: StatisticsShareCard.canvasWidth,
               height: StatisticsShareCard.canvasHeight,
               child: StatisticsShareCard(
-                snapshot: snapshot,
+                stats: stats,
                 doctorName: doctorName,
                 clinicName: clinicName,
                 doctorAvatarUrl: avatarUrl,

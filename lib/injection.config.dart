@@ -216,6 +216,14 @@ import 'features/profile/presentation/pages/support/presentation/manager/support
     as _i766;
 import 'features/profile/presentation/pages/support/presentation/manager/support_conversations_bloc.dart'
     as _i45;
+import 'features/statistics/data/data_sources/statistics_catalog_remote_data_source.dart'
+    as _i630;
+import 'features/statistics/data/repositories/statistics_catalog_repository_impl.dart'
+    as _i591;
+import 'features/statistics/domain/repositories/statistics_catalog_repository.dart'
+    as _i850;
+import 'features/statistics/presentation/bloc/statistics_dashboard_bloc.dart'
+    as _i25;
 import 'features/subscription/data/data_sources/subscription_remote_data_source.dart'
     as _i151;
 import 'features/subscription/data/repositories/subscription_repository_impl.dart'
@@ -369,6 +377,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i41.AppointmentRemoteDataSource>(
       () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
+    gh.factory<_i630.StatisticsCatalogRemoteDataSource>(
+      () =>
+          _i630.StatisticsCatalogRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
     gh.factory<_i369.WorkingDaysRemoteDataSource>(
       () => _i369.WorkingDaysRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
@@ -420,6 +432,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i4.NotificationRepository>(
       () => _i20.NotificationRepositoryImpl(
         gh<_i573.NotificationRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i850.StatisticsCatalogRepository>(
+      () => _i591.StatisticsCatalogRepositoryImpl(
+        gh<_i630.StatisticsCatalogRemoteDataSource>(),
       ),
     );
     gh.factory<_i493.NotificationSettingsBloc>(
@@ -518,6 +535,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i972.UpdateUserRolesUseCase>(
       () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i25.StatisticsDashboardBloc>(
+      () =>
+          _i25.StatisticsDashboardBloc(gh<_i850.StatisticsCatalogRepository>()),
     );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
