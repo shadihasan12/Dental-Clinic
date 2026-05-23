@@ -328,15 +328,16 @@ class _DesktopHeroBanner extends StatelessWidget {
   final VoidCallback onNewAppointment;
   final VoidCallback onAddPatient;
 
-  String _greeting() {
+  String _greeting(AppLocalizations l10n) {
     final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return l10n.goodMorning;
+    if (h < 17) return l10n.goodAfternoon;
+    return l10n.goodEvening;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final dateStr = DateFormat('EEEE, MMMM d').format(DateTime.now());
 
     return LayoutBuilder(
@@ -448,7 +449,7 @@ class _DesktopHeroBanner extends StatelessWidget {
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            '${_greeting()}, $firstName',
+                            '${_greeting(l10n)}, $firstName',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

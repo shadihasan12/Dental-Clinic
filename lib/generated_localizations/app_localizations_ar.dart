@@ -210,6 +210,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get menu => 'القائمة';
 
   @override
+  String get goodMorning => 'صباح الخير';
+
+  @override
+  String get goodAfternoon => 'مساء الخير';
+
+  @override
+  String get goodEvening => 'مرحبا';
+
+  @override
   String get about => 'حول التطبيق';
 
   @override
