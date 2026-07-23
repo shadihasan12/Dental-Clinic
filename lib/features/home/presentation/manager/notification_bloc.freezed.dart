@@ -22,18 +22,21 @@ mixin _$NotificationEvent {
     required TResult Function() loadNotifications,
     required TResult Function(String id) markAsRead,
     required TResult Function() markAllAsRead,
+    required TResult Function(NotificationEntity notification) pushReceived,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadNotifications,
     TResult? Function(String id)? markAsRead,
     TResult? Function()? markAllAsRead,
+    TResult? Function(NotificationEntity notification)? pushReceived,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadNotifications,
     TResult Function(String id)? markAsRead,
     TResult Function()? markAllAsRead,
+    TResult Function(NotificationEntity notification)? pushReceived,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -41,18 +44,21 @@ mixin _$NotificationEvent {
     required TResult Function(_LoadNotifications value) loadNotifications,
     required TResult Function(_MarkAsRead value) markAsRead,
     required TResult Function(_MarkAllAsRead value) markAllAsRead,
+    required TResult Function(_PushReceived value) pushReceived,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadNotifications value)? loadNotifications,
     TResult? Function(_MarkAsRead value)? markAsRead,
     TResult? Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult? Function(_PushReceived value)? pushReceived,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadNotifications value)? loadNotifications,
     TResult Function(_MarkAsRead value)? markAsRead,
     TResult Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult Function(_PushReceived value)? pushReceived,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -125,6 +131,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     required TResult Function() loadNotifications,
     required TResult Function(String id) markAsRead,
     required TResult Function() markAllAsRead,
+    required TResult Function(NotificationEntity notification) pushReceived,
   }) {
     return loadNotifications();
   }
@@ -135,6 +142,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     TResult? Function()? loadNotifications,
     TResult? Function(String id)? markAsRead,
     TResult? Function()? markAllAsRead,
+    TResult? Function(NotificationEntity notification)? pushReceived,
   }) {
     return loadNotifications?.call();
   }
@@ -145,6 +153,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     TResult Function()? loadNotifications,
     TResult Function(String id)? markAsRead,
     TResult Function()? markAllAsRead,
+    TResult Function(NotificationEntity notification)? pushReceived,
     required TResult orElse(),
   }) {
     if (loadNotifications != null) {
@@ -159,6 +168,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     required TResult Function(_LoadNotifications value) loadNotifications,
     required TResult Function(_MarkAsRead value) markAsRead,
     required TResult Function(_MarkAllAsRead value) markAllAsRead,
+    required TResult Function(_PushReceived value) pushReceived,
   }) {
     return loadNotifications(this);
   }
@@ -169,6 +179,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     TResult? Function(_LoadNotifications value)? loadNotifications,
     TResult? Function(_MarkAsRead value)? markAsRead,
     TResult? Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult? Function(_PushReceived value)? pushReceived,
   }) {
     return loadNotifications?.call(this);
   }
@@ -179,6 +190,7 @@ class _$LoadNotificationsImpl implements _LoadNotifications {
     TResult Function(_LoadNotifications value)? loadNotifications,
     TResult Function(_MarkAsRead value)? markAsRead,
     TResult Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult Function(_PushReceived value)? pushReceived,
     required TResult orElse(),
   }) {
     if (loadNotifications != null) {
@@ -265,6 +277,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     required TResult Function() loadNotifications,
     required TResult Function(String id) markAsRead,
     required TResult Function() markAllAsRead,
+    required TResult Function(NotificationEntity notification) pushReceived,
   }) {
     return markAsRead(id);
   }
@@ -275,6 +288,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     TResult? Function()? loadNotifications,
     TResult? Function(String id)? markAsRead,
     TResult? Function()? markAllAsRead,
+    TResult? Function(NotificationEntity notification)? pushReceived,
   }) {
     return markAsRead?.call(id);
   }
@@ -285,6 +299,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     TResult Function()? loadNotifications,
     TResult Function(String id)? markAsRead,
     TResult Function()? markAllAsRead,
+    TResult Function(NotificationEntity notification)? pushReceived,
     required TResult orElse(),
   }) {
     if (markAsRead != null) {
@@ -299,6 +314,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     required TResult Function(_LoadNotifications value) loadNotifications,
     required TResult Function(_MarkAsRead value) markAsRead,
     required TResult Function(_MarkAllAsRead value) markAllAsRead,
+    required TResult Function(_PushReceived value) pushReceived,
   }) {
     return markAsRead(this);
   }
@@ -309,6 +325,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     TResult? Function(_LoadNotifications value)? loadNotifications,
     TResult? Function(_MarkAsRead value)? markAsRead,
     TResult? Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult? Function(_PushReceived value)? pushReceived,
   }) {
     return markAsRead?.call(this);
   }
@@ -319,6 +336,7 @@ class _$MarkAsReadImpl implements _MarkAsRead {
     TResult Function(_LoadNotifications value)? loadNotifications,
     TResult Function(_MarkAsRead value)? markAsRead,
     TResult Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult Function(_PushReceived value)? pushReceived,
     required TResult orElse(),
   }) {
     if (markAsRead != null) {
@@ -386,6 +404,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     required TResult Function() loadNotifications,
     required TResult Function(String id) markAsRead,
     required TResult Function() markAllAsRead,
+    required TResult Function(NotificationEntity notification) pushReceived,
   }) {
     return markAllAsRead();
   }
@@ -396,6 +415,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     TResult? Function()? loadNotifications,
     TResult? Function(String id)? markAsRead,
     TResult? Function()? markAllAsRead,
+    TResult? Function(NotificationEntity notification)? pushReceived,
   }) {
     return markAllAsRead?.call();
   }
@@ -406,6 +426,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     TResult Function()? loadNotifications,
     TResult Function(String id)? markAsRead,
     TResult Function()? markAllAsRead,
+    TResult Function(NotificationEntity notification)? pushReceived,
     required TResult orElse(),
   }) {
     if (markAllAsRead != null) {
@@ -420,6 +441,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     required TResult Function(_LoadNotifications value) loadNotifications,
     required TResult Function(_MarkAsRead value) markAsRead,
     required TResult Function(_MarkAllAsRead value) markAllAsRead,
+    required TResult Function(_PushReceived value) pushReceived,
   }) {
     return markAllAsRead(this);
   }
@@ -430,6 +452,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     TResult? Function(_LoadNotifications value)? loadNotifications,
     TResult? Function(_MarkAsRead value)? markAsRead,
     TResult? Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult? Function(_PushReceived value)? pushReceived,
   }) {
     return markAllAsRead?.call(this);
   }
@@ -440,6 +463,7 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
     TResult Function(_LoadNotifications value)? loadNotifications,
     TResult Function(_MarkAsRead value)? markAsRead,
     TResult Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult Function(_PushReceived value)? pushReceived,
     required TResult orElse(),
   }) {
     if (markAllAsRead != null) {
@@ -451,6 +475,174 @@ class _$MarkAllAsReadImpl implements _MarkAllAsRead {
 
 abstract class _MarkAllAsRead implements NotificationEvent {
   const factory _MarkAllAsRead() = _$MarkAllAsReadImpl;
+}
+
+/// @nodoc
+abstract class _$$PushReceivedImplCopyWith<$Res> {
+  factory _$$PushReceivedImplCopyWith(
+    _$PushReceivedImpl value,
+    $Res Function(_$PushReceivedImpl) then,
+  ) = __$$PushReceivedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({NotificationEntity notification});
+
+  $NotificationEntityCopyWith<$Res> get notification;
+}
+
+/// @nodoc
+class __$$PushReceivedImplCopyWithImpl<$Res>
+    extends _$NotificationEventCopyWithImpl<$Res, _$PushReceivedImpl>
+    implements _$$PushReceivedImplCopyWith<$Res> {
+  __$$PushReceivedImplCopyWithImpl(
+    _$PushReceivedImpl _value,
+    $Res Function(_$PushReceivedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of NotificationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? notification = null}) {
+    return _then(
+      _$PushReceivedImpl(
+        null == notification
+            ? _value.notification
+            : notification // ignore: cast_nullable_to_non_nullable
+                  as NotificationEntity,
+      ),
+    );
+  }
+
+  /// Create a copy of NotificationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $NotificationEntityCopyWith<$Res> get notification {
+    return $NotificationEntityCopyWith<$Res>(_value.notification, (value) {
+      return _then(_value.copyWith(notification: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$PushReceivedImpl implements _PushReceived {
+  const _$PushReceivedImpl(this.notification);
+
+  @override
+  final NotificationEntity notification;
+
+  @override
+  String toString() {
+    return 'NotificationEvent.pushReceived(notification: $notification)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PushReceivedImpl &&
+            (identical(other.notification, notification) ||
+                other.notification == notification));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, notification);
+
+  /// Create a copy of NotificationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PushReceivedImplCopyWith<_$PushReceivedImpl> get copyWith =>
+      __$$PushReceivedImplCopyWithImpl<_$PushReceivedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadNotifications,
+    required TResult Function(String id) markAsRead,
+    required TResult Function() markAllAsRead,
+    required TResult Function(NotificationEntity notification) pushReceived,
+  }) {
+    return pushReceived(notification);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadNotifications,
+    TResult? Function(String id)? markAsRead,
+    TResult? Function()? markAllAsRead,
+    TResult? Function(NotificationEntity notification)? pushReceived,
+  }) {
+    return pushReceived?.call(notification);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadNotifications,
+    TResult Function(String id)? markAsRead,
+    TResult Function()? markAllAsRead,
+    TResult Function(NotificationEntity notification)? pushReceived,
+    required TResult orElse(),
+  }) {
+    if (pushReceived != null) {
+      return pushReceived(notification);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadNotifications value) loadNotifications,
+    required TResult Function(_MarkAsRead value) markAsRead,
+    required TResult Function(_MarkAllAsRead value) markAllAsRead,
+    required TResult Function(_PushReceived value) pushReceived,
+  }) {
+    return pushReceived(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadNotifications value)? loadNotifications,
+    TResult? Function(_MarkAsRead value)? markAsRead,
+    TResult? Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult? Function(_PushReceived value)? pushReceived,
+  }) {
+    return pushReceived?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadNotifications value)? loadNotifications,
+    TResult Function(_MarkAsRead value)? markAsRead,
+    TResult Function(_MarkAllAsRead value)? markAllAsRead,
+    TResult Function(_PushReceived value)? pushReceived,
+    required TResult orElse(),
+  }) {
+    if (pushReceived != null) {
+      return pushReceived(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _PushReceived implements NotificationEvent {
+  const factory _PushReceived(final NotificationEntity notification) =
+      _$PushReceivedImpl;
+
+  NotificationEntity get notification;
+
+  /// Create a copy of NotificationEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PushReceivedImplCopyWith<_$PushReceivedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

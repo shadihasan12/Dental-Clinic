@@ -53,7 +53,9 @@ import 'package:dental_clinic_app/features/billing/presentation/pages/invoice_de
 import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/submit_payment_proof_page.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+/// Root navigator key exposed so non-widget code (notification service, deep
+/// links, etc.) can navigate without holding a BuildContext.
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Routes manager for the application using GoRouter
 class RoutesManager {
@@ -62,7 +64,7 @@ class RoutesManager {
     final isAuthenticated = tokenStorage.hasToken();
 
     _appRouter = GoRouter(
-      navigatorKey: _rootNavigatorKey,
+      navigatorKey: rootNavigatorKey,
       debugLogDiagnostics: true,
       // Navigate to home if authenticated, otherwise show onboarding
       initialLocation: isAuthenticated ? '/' : '/onboarding',

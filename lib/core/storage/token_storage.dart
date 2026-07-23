@@ -8,6 +8,8 @@ class TokenStorage {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
   static const String _clinicIdKey = 'selected_clinic_id';
+  static const String _fcmTokenKey = 'fcm_token';
+  static const String _fcmTokenSyncedKey = 'fcm_token_synced';
 
   final SharedPreferences _prefs;
 
@@ -74,12 +76,39 @@ class TokenStorage {
     return (clinicId?.isEmpty ?? true) ? null : clinicId;
   }
 
+  /// Save the current FCM device token (the value FirebaseMessaging hands us).
+  Future<void> saveFcmToken(String token) async {
+    if (token.isEmpty) {
+      throw ArgumentError('FCM token cannot be empty');
+    }
+    await _prefs.setString(_fcmTokenKey, token);
+  }
+
+  String? getFcmToken() {
+    final token = _prefs.getString(_fcmTokenKey);
+    return (token?.isEmpty ?? true) ? null : token;
+  }
+
+  /// Tracks whether the current FCM token has been POSTed to the backend.
+  /// Lets us avoid re-syncing on every cold start.
+  Future<void> setFcmTokenSynced(String token) async {
+    await _prefs.setString(_fcmTokenSyncedKey, token);
+  }
+
+  bool isFcmTokenSynced(String token) {
+    return _prefs.getString(_fcmTokenSyncedKey) == token;
+  }
+
   /// Clear all stored authentication data
   Future<void> clearAuthData() async {
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_refreshTokenKey);
     await _prefs.remove(_userIdKey);
     await _prefs.remove(_clinicIdKey);
+    // FCM token intentionally NOT cleared on logout — the device is the same
+    // device. We only invalidate the "synced" marker so the next login re-POSTs
+    // it under the new user.
+    await _prefs.remove(_fcmTokenSyncedKey);
   }
 
   /// Clear all data (including other app preferences)

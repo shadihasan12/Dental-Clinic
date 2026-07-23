@@ -61,6 +61,11 @@ dependencies:
   # Loading skeletons
   shimmer: ^3.0.0
 
+  # Push notifications (Firebase Cloud Messaging + foreground local display)
+  firebase_core: ^4.9.0
+  firebase_messaging: ^16.2.2
+  flutter_local_notifications: ^21.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +14,9 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/routes_manager.dart';
 import 'package:dental_clinic_app/core/resources/theme_manager.dart';
 import 'package:dental_clinic_app/core/constants/app_constants.dart';
+import 'package:dental_clinic_app/core/services/notifications/fcm_background_handler.dart';
+import 'package:dental_clinic_app/core/services/notifications/firebase_options.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
@@ -43,8 +50,21 @@ Future<void> main() async {
   // Enable edge-to-edge mode
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  // Firebase — needed before the DI container resolves any FCM-touching
+  // singletons. The background handler must be registered on the platform
+  // channel BEFORE the app goes to background so the message isn't dropped.
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   // Configure dependencies
   await configureDependencies();
+
+  // Notification service: requests permission, wires FCM listeners, registers
+  // the device token. Fire-and-forget so we don't block first frame on a
+  // network round-trip; failures will retry on the next sign-in.
+  unawaited(getIt<NotificationService>().initialize());
 
   // Set up BLoC observer for debugging
   Bloc.observer = const AppBlocObserver();
@@ -61,12 +81,27 @@ class DentalClinicApp extends StatefulWidget {
 
 class _DentalClinicAppState extends State<DentalClinicApp> {
   final RoutesManager routesManager = RoutesManager(getIt<TokenStorage>());
+  StreamSubscription<void>? _notificationTapSubscription;
 
   @override
   void initState() {
     super.initState();
     getIt<LanguageBloc>().add(const LoadLanguageEvent());
     getIt<ThemeBloc>().add(const LoadThemeEvent());
+
+    // Deep-link push taps to the notifications screen. We use the GoRouter
+    // instance directly (rather than `context.go`) because taps may fire
+    // before any subtree has mounted (cold-start from a tapped push).
+    _notificationTapSubscription =
+        getIt<NotificationService>().onNotificationTap.listen((payload) {
+      routesManager.router.go(payload.deepLink);
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationTapSubscription?.cancel();
+    super.dispose();
   }
 
   @override

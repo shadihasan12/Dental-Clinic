@@ -10,6 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
@@ -26,6 +29,7 @@ import 'core/di/third_party_injection.dart' as _i1007;
 import 'core/localization/language_bloc.dart' as _i924;
 import 'core/localization/language_service.dart' as _i934;
 import 'core/network/network_info.dart' as _i75;
+import 'core/services/notifications/notification_service.dart' as _i40;
 import 'core/storage/token_storage.dart' as _i23;
 import 'core/storage/user_storage.dart' as _i663;
 import 'core/theme/theme_bloc.dart' as _i909;
@@ -106,10 +110,15 @@ import 'features/expenses/domain/use_cases/get_categories_use_case.dart'
 import 'features/expenses/domain/use_cases/update_expense_use_case.dart'
     as _i315;
 import 'features/expenses/presentation/manager/expense_bloc.dart' as _i763;
+import 'features/home/data/data_sources/fcm_token_remote_data_source.dart'
+    as _i188;
 import 'features/home/data/data_sources/notification_remote_data_source.dart'
     as _i573;
+import 'features/home/data/repositories/fcm_token_repository_impl.dart'
+    as _i269;
 import 'features/home/data/repositories/notification_repository_impl.dart'
     as _i20;
+import 'features/home/domain/repositories/fcm_token_repository.dart' as _i109;
 import 'features/home/domain/repositories/notification_repository.dart' as _i4;
 import 'features/home/domain/use_cases/get_all_notifications_use_case.dart'
     as _i923;
@@ -117,6 +126,8 @@ import 'features/home/domain/use_cases/mark_all_notifications_as_read_use_case.d
     as _i1060;
 import 'features/home/domain/use_cases/mark_notification_as_read_use_case.dart'
     as _i818;
+import 'features/home/domain/use_cases/register_fcm_token_use_case.dart'
+    as _i928;
 import 'features/home/presentation/manager/notification_bloc.dart' as _i347;
 import 'features/patients/data/data_sources/patient_remote_data_source.dart'
     as _i536;
@@ -247,8 +258,6 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final thirdPartyInjection = _$ThirdPartyInjection();
     final blocInjection = _$BlocInjection();
-    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
-    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.singleton<_i361.Dio>(() => thirdPartyInjection.dio);
     gh.singleton<_i973.InternetConnectionChecker>(
       () => thirdPartyInjection.internetConnectionChecker,
@@ -257,30 +266,38 @@ extension GetItInjectableX on _i174.GetIt {
       () => thirdPartyInjection.sharedPreferences,
       preResolve: true,
     );
-    gh.lazySingleton<_i525.FilePickerService>(() => _i525.FilePickerService());
+    gh.singleton<_i892.FirebaseMessaging>(
+      () => thirdPartyInjection.firebaseMessaging,
+    );
+    gh.singleton<_i163.FlutterLocalNotificationsPlugin>(
+      () => thirdPartyInjection.flutterLocalNotificationsPlugin,
+    );
+    gh.singleton<_i809.ErrorInterceptor>(() => _i809.ErrorInterceptor());
+    gh.singleton<_i416.LoggingInterceptor>(() => _i416.LoggingInterceptor());
     gh.lazySingleton<_i821.SubscriptionGuard>(() => _i821.SubscriptionGuard());
-    gh.factory<_i23.TokenStorage>(
-      () => _i23.TokenStorage(gh<_i460.SharedPreferences>()),
-    );
-    gh.factory<_i663.UserStorage>(
-      () => _i663.UserStorage(gh<_i460.SharedPreferences>()),
-    );
+    gh.lazySingleton<_i525.FilePickerService>(() => _i525.FilePickerService());
     gh.lazySingleton<_i733.BillingLocalDataSource>(
       () => _i733.InMemoryBillingDataSource(),
-    );
-    gh.lazySingleton<_i349.PaymentProvider>(
-      () => _i776.ManualPaymentProvider(gh<_i733.BillingLocalDataSource>()),
     );
     gh.lazySingleton<_i75.NetworkInfo>(
       () => _i75.NetworkInfoImpl(
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
       ),
     );
+    gh.factory<_i663.UserStorage>(
+      () => _i663.UserStorage(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i23.TokenStorage>(
+      () => _i23.TokenStorage(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i934.LanguageService>(
       () => blocInjection.languageService(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i275.ThemeService>(
       () => blocInjection.themeService(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i349.PaymentProvider>(
+      () => _i776.ManualPaymentProvider(gh<_i733.BillingLocalDataSource>()),
     );
     gh.factory<_i862.BillingRepository>(
       () => _i982.BillingRepositoryImpl(
@@ -289,17 +306,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i821.SubscriptionGuard>(),
       ),
     );
-    gh.lazySingleton<_i909.ThemeBloc>(
-      () => blocInjection.themeBloc(gh<_i275.ThemeService>()),
-    );
-    gh.factory<_i321.CreateInvoiceUseCase>(
-      () => _i321.CreateInvoiceUseCase(gh<_i862.BillingRepository>()),
+    gh.factory<_i212.SubmitPaymentProofUseCase>(
+      () => _i212.SubmitPaymentProofUseCase(gh<_i862.BillingRepository>()),
     );
     gh.factory<_i409.ListInvoicesUseCase>(
       () => _i409.ListInvoicesUseCase(gh<_i862.BillingRepository>()),
     );
-    gh.factory<_i212.SubmitPaymentProofUseCase>(
-      () => _i212.SubmitPaymentProofUseCase(gh<_i862.BillingRepository>()),
+    gh.factory<_i321.CreateInvoiceUseCase>(
+      () => _i321.CreateInvoiceUseCase(gh<_i862.BillingRepository>()),
     );
     gh.singleton<_i240.AuthInterceptor>(
       () => _i240.AuthInterceptor(
@@ -307,12 +321,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i934.LanguageService>(),
       ),
     );
+    gh.lazySingleton<_i909.ThemeBloc>(
+      () => blocInjection.themeBloc(gh<_i275.ThemeService>()),
+    );
     gh.singleton<_i962.ApiConsumer>(
       () => _i737.DioConsumer(
         gh<_i361.Dio>(),
         gh<_i240.AuthInterceptor>(),
         gh<_i809.ErrorInterceptor>(),
         gh<_i416.LoggingInterceptor>(),
+      ),
+    );
+    gh.factory<_i689.AuthRemoteDataSource>(
+      () => _i689.AuthRemoteDataSourceImpl(
+        gh<_i962.ApiConsumer>(),
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
       ),
     );
     gh.factory<_i755.BillingBloc>(
@@ -323,15 +347,80 @@ extension GetItInjectableX on _i174.GetIt {
         repository: gh<_i862.BillingRepository>(),
       ),
     );
-    gh.factory<_i689.AuthRemoteDataSource>(
-      () => _i689.AuthRemoteDataSourceImpl(
-        gh<_i962.ApiConsumer>(),
-        gh<_i23.TokenStorage>(),
-        gh<_i663.UserStorage>(),
-      ),
-    );
     gh.factory<_i573.NotificationRemoteDataSource>(
       () => _i573.NotificationRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i369.WorkingDaysRemoteDataSource>(
+      () => _i369.WorkingDaysRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i41.AppointmentRemoteDataSource>(
+      () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i423.EditProfileRemoteDataSource>(
+      () => _i423.EditProfileRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i806.NotificationSettingsRemoteDataSource>(
+      () => _i806.NotificationSettingsRemoteDataSourceImpl(
+        gh<_i962.ApiConsumer>(),
+      ),
+    );
+    gh.lazySingleton<_i355.ExpenseRemoteDataSource>(
+      () => _i355.ExpenseRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i252.ClinicPermissionsService>(
+      () => _i252.ClinicPermissionsService(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i315.CurrencyService>(
+      () => _i315.CurrencyService(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i977.MediaService>(
+      () => _i977.MediaService(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i536.PatientRemoteDataSource>(
+      () => _i536.PatientRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i46.CurrencyBloc>(
+      () => _i46.CurrencyBloc(gh<_i315.CurrencyService>()),
+    );
+    gh.factory<_i348.SupportRemoteDataSource>(
+      () => _i348.SupportRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i151.SubscriptionRemoteDataSource>(
+      () => _i151.SubscriptionRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i188.FcmTokenRemoteDataSource>(
+      () => _i188.FcmTokenRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.lazySingleton<_i190.ClinicRemoteDataSource>(
+      () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i455.NotificationSettingsRepository>(
+      () => _i395.NotificationSettingsRepositoryImpl(
+        gh<_i806.NotificationSettingsRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i778.SupportRepository>(
+      () => _i754.SupportRepositoryImpl(gh<_i348.SupportRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i1052.ClinicPermissionsBloc>(
+      () => _i1052.ClinicPermissionsBloc(gh<_i252.ClinicPermissionsService>()),
+    );
+    gh.factory<_i109.FcmTokenRepository>(
+      () => _i269.FcmTokenRepositoryImpl(gh<_i188.FcmTokenRemoteDataSource>()),
+    );
+    gh.factory<_i18.ExpenseRepository>(
+      () => _i792.ExpenseRepositoryImpl(gh<_i355.ExpenseRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i924.LanguageBloc>(
+      () => blocInjection.languageBloc(
+        gh<_i934.LanguageService>(),
+        gh<_i962.ApiConsumer>(),
+      ),
+    );
+    gh.factory<_i971.WorkingDaysRepository>(
+      () => _i987.WorkingDaysRepositoryImpl(
+        gh<_i369.WorkingDaysRemoteDataSource>(),
+      ),
     );
     gh.factory<_i1015.AuthRepository>(
       () => _i111.AuthRepositoryImpl(
@@ -339,11 +428,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i75.NetworkInfo>(),
       ),
     );
-    gh.factory<_i363.AuthBloc>(
-      () => _i363.AuthBloc(
-        gh<_i1015.AuthRepository>(),
-        gh<_i23.TokenStorage>(),
-        gh<_i663.UserStorage>(),
+    gh.factory<_i4.NotificationRepository>(
+      () => _i20.NotificationRepositoryImpl(
+        gh<_i573.NotificationRemoteDataSource>(),
       ),
     );
     gh.factory<_i485.ClinicInfoRemoteDataSource>(
@@ -352,80 +439,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i663.UserStorage>(),
       ),
     );
-    gh.factory<_i806.NotificationSettingsRemoteDataSource>(
-      () => _i806.NotificationSettingsRemoteDataSourceImpl(
-        gh<_i962.ApiConsumer>(),
-      ),
-    );
-    gh.lazySingleton<_i924.LanguageBloc>(
-      () => blocInjection.languageBloc(
-        gh<_i934.LanguageService>(),
-        gh<_i962.ApiConsumer>(),
-      ),
-    );
-    gh.factory<_i423.EditProfileRemoteDataSource>(
-      () => _i423.EditProfileRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i41.AppointmentRemoteDataSource>(
-      () => _i41.AppointmentRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i369.WorkingDaysRemoteDataSource>(
-      () => _i369.WorkingDaysRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.lazySingleton<_i315.CurrencyService>(
-      () => _i315.CurrencyService(gh<_i962.ApiConsumer>()),
-    );
-    gh.lazySingleton<_i977.MediaService>(
-      () => _i977.MediaService(gh<_i962.ApiConsumer>()),
-    );
-    gh.lazySingleton<_i252.ClinicPermissionsService>(
-      () => _i252.ClinicPermissionsService(gh<_i962.ApiConsumer>()),
-    );
-    gh.lazySingleton<_i355.ExpenseRemoteDataSource>(
-      () => _i355.ExpenseRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.lazySingleton<_i536.PatientRemoteDataSource>(
-      () => _i536.PatientRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i455.NotificationSettingsRepository>(
-      () => _i395.NotificationSettingsRepositoryImpl(
-        gh<_i806.NotificationSettingsRemoteDataSource>(),
-      ),
-    );
-    gh.lazySingleton<_i1052.ClinicPermissionsBloc>(
-      () => _i1052.ClinicPermissionsBloc(gh<_i252.ClinicPermissionsService>()),
-    );
-    gh.lazySingleton<_i190.ClinicRemoteDataSource>(
-      () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i151.SubscriptionRemoteDataSource>(
-      () => _i151.SubscriptionRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i348.SupportRemoteDataSource>(
-      () => _i348.SupportRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i818.ClinicRepository>(
-      () => _i968.ClinicRepositoryImpl(gh<_i190.ClinicRemoteDataSource>()),
-    );
-    gh.factory<_i275.GetNotificationSettingsUseCase>(
-      () => _i275.GetNotificationSettingsUseCase(
-        gh<_i455.NotificationSettingsRepository>(),
-      ),
-    );
-    gh.factory<_i237.UpdateNotificationSettingsUseCase>(
-      () => _i237.UpdateNotificationSettingsUseCase(
-        gh<_i455.NotificationSettingsRepository>(),
-      ),
-    );
-    gh.factory<_i4.NotificationRepository>(
-      () => _i20.NotificationRepositoryImpl(
-        gh<_i573.NotificationRemoteDataSource>(),
-      ),
-    );
-    gh.factory<_i493.NotificationSettingsBloc>(
-      () => _i493.NotificationSettingsBloc(
-        getSettings: gh<_i275.GetNotificationSettingsUseCase>(),
-        updateSettings: gh<_i237.UpdateNotificationSettingsUseCase>(),
+    gh.factory<_i675.AppointmentRepository>(
+      () => _i71.AppointmentRepositoryImpl(
+        gh<_i41.AppointmentRemoteDataSource>(),
       ),
     );
     gh.factory<_i900.SubscriptionRepository>(
@@ -433,91 +449,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i151.SubscriptionRemoteDataSource>(),
       ),
     );
-    gh.lazySingleton<_i46.CurrencyBloc>(
-      () => _i46.CurrencyBloc(gh<_i315.CurrencyService>()),
-    );
     gh.factory<_i192.PatientRepository>(
       () => _i504.PatientRepositoryImpl(gh<_i536.PatientRemoteDataSource>()),
     );
-    gh.factory<_i923.GetAllNotificationsUseCase>(
-      () => _i923.GetAllNotificationsUseCase(gh<_i4.NotificationRepository>()),
+    gh.factory<_i928.RegisterFcmTokenUseCase>(
+      () => _i928.RegisterFcmTokenUseCase(gh<_i109.FcmTokenRepository>()),
     );
-    gh.factory<_i1060.MarkAllNotificationsAsReadUseCase>(
-      () => _i1060.MarkAllNotificationsAsReadUseCase(
-        gh<_i4.NotificationRepository>(),
-      ),
-    );
-    gh.factory<_i818.MarkNotificationAsReadUseCase>(
-      () =>
-          _i818.MarkNotificationAsReadUseCase(gh<_i4.NotificationRepository>()),
-    );
-    gh.factory<_i18.ExpenseRepository>(
-      () => _i792.ExpenseRepositoryImpl(gh<_i355.ExpenseRemoteDataSource>()),
-    );
-    gh.factory<_i1027.ClinicInfoRepository>(
-      () => _i841.ClinicInfoRepositoryImpl(
-        gh<_i485.ClinicInfoRemoteDataSource>(),
-      ),
+    gh.factory<_i818.ClinicRepository>(
+      () => _i968.ClinicRepositoryImpl(gh<_i190.ClinicRemoteDataSource>()),
     );
     gh.factory<_i274.EditProfileRepository>(
       () => _i489.EditProfileRepositoryImpl(
         gh<_i423.EditProfileRemoteDataSource>(),
       ),
-    );
-    gh.factory<_i675.AppointmentRepository>(
-      () => _i71.AppointmentRepositoryImpl(
-        gh<_i41.AppointmentRemoteDataSource>(),
-      ),
-    );
-    gh.factory<_i971.WorkingDaysRepository>(
-      () => _i987.WorkingDaysRepositoryImpl(
-        gh<_i369.WorkingDaysRemoteDataSource>(),
-      ),
-    );
-    gh.factory<_i841.AddExpenseUseCase>(
-      () => _i841.AddExpenseUseCase(gh<_i18.ExpenseRepository>()),
-    );
-    gh.factory<_i526.DeleteExpenseUseCase>(
-      () => _i526.DeleteExpenseUseCase(gh<_i18.ExpenseRepository>()),
-    );
-    gh.factory<_i66.GetAllExpensesUseCase>(
-      () => _i66.GetAllExpensesUseCase(gh<_i18.ExpenseRepository>()),
-    );
-    gh.factory<_i342.GetCategoriesUseCase>(
-      () => _i342.GetCategoriesUseCase(gh<_i18.ExpenseRepository>()),
-    );
-    gh.factory<_i315.UpdateExpenseUseCase>(
-      () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
-    );
-    gh.factory<_i166.AddClinicUserUseCase>(
-      () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i398.GetClinicUsersUseCase>(
-      () => _i398.GetClinicUsersUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i113.GetMyClinicsUseCase>(
-      () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i860.GetReceivedInvitationsUseCase>(
-      () => _i860.GetReceivedInvitationsUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i675.GetSentInvitationsUseCase>(
-      () => _i675.GetSentInvitationsUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i223.RemoveClinicUserUseCase>(
-      () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i945.AcceptInvitationUseCase>(
-      () => _i945.AcceptInvitationUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i945.DeclineInvitationUseCase>(
-      () => _i945.DeclineInvitationUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i21.SendInvitationUseCase>(
-      () => _i21.SendInvitationUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i972.UpdateUserRolesUseCase>(
-      () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
     );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
@@ -531,67 +475,33 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i989.GetSubscriptionUsageUseCase(gh<_i900.SubscriptionRepository>()),
     );
-    gh.factory<_i778.SupportRepository>(
-      () => _i754.SupportRepositoryImpl(gh<_i348.SupportRemoteDataSource>()),
-    );
-    gh.factory<_i127.GetClinicInfoUseCase>(
-      () => _i127.GetClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
-    );
-    gh.factory<_i8.UpdateClinicInfoUseCase>(
-      () => _i8.UpdateClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
-    );
-    gh.factory<_i594.AddPatientUseCase>(
-      () => _i594.AddPatientUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i924.AddPaymentUseCase>(
-      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i208.AddTreatmentUseCase>(
-      () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i479.DetachPatientUseCase>(
-      () => _i479.DetachPatientUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
-      () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i281.GetAllPatientsUseCase>(
-      () => _i281.GetAllPatientsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i126.GetAllTeethUseCase>(
-      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i129.GetPatientCasesUseCase>(
-      () => _i129.GetPatientCasesUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i1063.GetPatientDetailsUseCase>(
-      () => _i1063.GetPatientDetailsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i773.GetPaymentsUseCase>(
-      () => _i773.GetPaymentsUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i920.MarkCaseAsFinishedUseCase>(
-      () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i496.UpdatePatientUseCase>(
-      () => _i496.UpdatePatientUseCase(gh<_i192.PatientRepository>()),
-    );
-    gh.factory<_i526.WorkingDaysBloc>(
-      () =>
-          _i526.WorkingDaysBloc(repository: gh<_i971.WorkingDaysRepository>()),
-    );
-    gh.factory<_i506.ClinicInfoBloc>(
-      () => _i506.ClinicInfoBloc(
-        getClinicInfo: gh<_i127.GetClinicInfoUseCase>(),
-        updateClinicInfo: gh<_i8.UpdateClinicInfoUseCase>(),
+    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
+      (userId, _) => _i13.UserHoursBloc(
+        gh<_i971.WorkingDaysRepository>(),
+        gh<_i663.UserStorage>(),
+        userId: userId,
       ),
     );
-    gh.factory<_i347.NotificationBloc>(
-      () => _i347.NotificationBloc(
-        getAllNotifications: gh<_i923.GetAllNotificationsUseCase>(),
-        markNotificationAsRead: gh<_i818.MarkNotificationAsReadUseCase>(),
-        markAllNotificationsAsRead:
-            gh<_i1060.MarkAllNotificationsAsReadUseCase>(),
+    gh.factory<_i1060.MarkAllNotificationsAsReadUseCase>(
+      () => _i1060.MarkAllNotificationsAsReadUseCase(
+        gh<_i4.NotificationRepository>(),
+      ),
+    );
+    gh.factory<_i818.MarkNotificationAsReadUseCase>(
+      () =>
+          _i818.MarkNotificationAsReadUseCase(gh<_i4.NotificationRepository>()),
+    );
+    gh.factory<_i923.GetAllNotificationsUseCase>(
+      () => _i923.GetAllNotificationsUseCase(gh<_i4.NotificationRepository>()),
+    );
+    gh.factory<_i275.GetNotificationSettingsUseCase>(
+      () => _i275.GetNotificationSettingsUseCase(
+        gh<_i455.NotificationSettingsRepository>(),
+      ),
+    );
+    gh.factory<_i237.UpdateNotificationSettingsUseCase>(
+      () => _i237.UpdateNotificationSettingsUseCase(
+        gh<_i455.NotificationSettingsRepository>(),
       ),
     );
     gh.factory<_i527.GetUserProfileUseCase>(
@@ -600,31 +510,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i494.UpdateUserProfileUseCase>(
       () => _i494.UpdateUserProfileUseCase(gh<_i274.EditProfileRepository>()),
     );
-    gh.factoryParam<_i475.ClinicUsersBloc, String, dynamic>(
-      (clinicId, _) => _i475.ClinicUsersBloc(
-        gh<_i398.GetClinicUsersUseCase>(),
-        gh<_i166.AddClinicUserUseCase>(),
-        gh<_i972.UpdateUserRolesUseCase>(),
-        gh<_i223.RemoveClinicUserUseCase>(),
-        clinicId,
-      ),
-    );
-    gh.factory<_i833.PatientsListBloc>(
-      () => _i833.PatientsListBloc(
-        getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
-      ),
-    );
-    gh.factory<_i1011.SubscriptionBloc>(
-      () => _i1011.SubscriptionBloc(
-        getPlans: gh<_i779.GetPlansUseCase>(),
-        guard: gh<_i821.SubscriptionGuard>(),
-      ),
-    );
     gh.factory<_i134.CreateConversationUseCase>(
       () => _i134.CreateConversationUseCase(gh<_i778.SupportRepository>()),
-    );
-    gh.factory<_i498.GetAutoReplyUseCase>(
-      () => _i498.GetAutoReplyUseCase(gh<_i778.SupportRepository>()),
     );
     gh.factory<_i983.GetConversationsUseCase>(
       () => _i983.GetConversationsUseCase(gh<_i778.SupportRepository>()),
@@ -632,47 +519,53 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i166.SendMessageUseCase>(
       () => _i166.SendMessageUseCase(gh<_i778.SupportRepository>()),
     );
-    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
-      (userId, _) => _i13.UserHoursBloc(
-        gh<_i971.WorkingDaysRepository>(),
-        gh<_i663.UserStorage>(),
-        userId: userId,
-      ),
+    gh.factory<_i498.GetAutoReplyUseCase>(
+      () => _i498.GetAutoReplyUseCase(gh<_i778.SupportRepository>()),
     );
-    gh.factory<_i890.EditProfileBloc>(
-      () => _i890.EditProfileBloc(
-        getUserProfile: gh<_i527.GetUserProfileUseCase>(),
-        updateUserProfile: gh<_i494.UpdateUserProfileUseCase>(),
-        mediaService: gh<_i977.MediaService>(),
-      ),
+    gh.factory<_i223.RemoveClinicUserUseCase>(
+      () => _i223.RemoveClinicUserUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i213.CreateAppointmentUseCase>(
-      () => _i213.CreateAppointmentUseCase(gh<_i675.AppointmentRepository>()),
+    gh.factory<_i398.GetClinicUsersUseCase>(
+      () => _i398.GetClinicUsersUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i791.GetAllAppointmentsUseCase>(
-      () => _i791.GetAllAppointmentsUseCase(gh<_i675.AppointmentRepository>()),
+    gh.factory<_i675.GetSentInvitationsUseCase>(
+      () => _i675.GetSentInvitationsUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i210.GetAvailableSlotsUseCase>(
-      () => _i210.GetAvailableSlotsUseCase(gh<_i675.AppointmentRepository>()),
+    gh.factory<_i945.AcceptInvitationUseCase>(
+      () => _i945.AcceptInvitationUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i827.GetClinicDoctorsUseCase>(
-      () => _i827.GetClinicDoctorsUseCase(gh<_i675.AppointmentRepository>()),
+    gh.factory<_i945.DeclineInvitationUseCase>(
+      () => _i945.DeclineInvitationUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i942.UpdateAppointmentStatusUseCase>(
-      () => _i942.UpdateAppointmentStatusUseCase(
-        gh<_i675.AppointmentRepository>(),
-      ),
+    gh.factory<_i972.UpdateUserRolesUseCase>(
+      () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i763.ExpenseBloc>(
-      () => _i763.ExpenseBloc(
-        getAllExpenses: gh<_i66.GetAllExpensesUseCase>(),
-        addExpense: gh<_i841.AddExpenseUseCase>(),
-        updateExpense: gh<_i315.UpdateExpenseUseCase>(),
-        deleteExpense: gh<_i526.DeleteExpenseUseCase>(),
-      ),
+    gh.factory<_i21.SendInvitationUseCase>(
+      () => _i21.SendInvitationUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i527.AddPatientBloc>(
-      () => _i527.AddPatientBloc(addPatient: gh<_i594.AddPatientUseCase>()),
+    gh.factory<_i860.GetReceivedInvitationsUseCase>(
+      () => _i860.GetReceivedInvitationsUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i113.GetMyClinicsUseCase>(
+      () => _i113.GetMyClinicsUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i166.AddClinicUserUseCase>(
+      () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i66.GetAllExpensesUseCase>(
+      () => _i66.GetAllExpensesUseCase(gh<_i18.ExpenseRepository>()),
+    );
+    gh.factory<_i841.AddExpenseUseCase>(
+      () => _i841.AddExpenseUseCase(gh<_i18.ExpenseRepository>()),
+    );
+    gh.factory<_i342.GetCategoriesUseCase>(
+      () => _i342.GetCategoriesUseCase(gh<_i18.ExpenseRepository>()),
+    );
+    gh.factory<_i526.DeleteExpenseUseCase>(
+      () => _i526.DeleteExpenseUseCase(gh<_i18.ExpenseRepository>()),
+    );
+    gh.factory<_i315.UpdateExpenseUseCase>(
+      () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
     gh.factory<_i932.InvitationBloc>(
       () => _i932.InvitationBloc(
@@ -683,16 +576,165 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i945.DeclineInvitationUseCase>(),
       ),
     );
-    gh.factory<_i533.MyClinicsBloc>(
-      () => _i533.MyClinicsBloc(
-        gh<_i113.GetMyClinicsUseCase>(),
+    gh.factory<_i363.AuthBloc>(
+      () => _i363.AuthBloc(
+        gh<_i1015.AuthRepository>(),
+        gh<_i23.TokenStorage>(),
         gh<_i663.UserStorage>(),
+      ),
+    );
+    gh.factory<_i526.WorkingDaysBloc>(
+      () =>
+          _i526.WorkingDaysBloc(repository: gh<_i971.WorkingDaysRepository>()),
+    );
+    gh.factory<_i1027.ClinicInfoRepository>(
+      () => _i841.ClinicInfoRepositoryImpl(
+        gh<_i485.ClinicInfoRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i496.UpdatePatientUseCase>(
+      () => _i496.UpdatePatientUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i931.GetAllCoreTreatmentsUseCase>(
+      () => _i931.GetAllCoreTreatmentsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i924.AddPaymentUseCase>(
+      () => _i924.AddPaymentUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i126.GetAllTeethUseCase>(
+      () => _i126.GetAllTeethUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i594.AddPatientUseCase>(
+      () => _i594.AddPatientUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i773.GetPaymentsUseCase>(
+      () => _i773.GetPaymentsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i281.GetAllPatientsUseCase>(
+      () => _i281.GetAllPatientsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i1063.GetPatientDetailsUseCase>(
+      () => _i1063.GetPatientDetailsUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i129.GetPatientCasesUseCase>(
+      () => _i129.GetPatientCasesUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i920.MarkCaseAsFinishedUseCase>(
+      () => _i920.MarkCaseAsFinishedUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i208.AddTreatmentUseCase>(
+      () => _i208.AddTreatmentUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.factory<_i479.DetachPatientUseCase>(
+      () => _i479.DetachPatientUseCase(gh<_i192.PatientRepository>()),
+    );
+    gh.lazySingleton<_i40.NotificationService>(
+      () => _i40.NotificationService(
+        messaging: gh<_i892.FirebaseMessaging>(),
+        localNotifications: gh<_i163.FlutterLocalNotificationsPlugin>(),
+        registerFcmToken: gh<_i928.RegisterFcmTokenUseCase>(),
+        tokenStorage: gh<_i23.TokenStorage>(),
+      ),
+    );
+    gh.factory<_i210.GetAvailableSlotsUseCase>(
+      () => _i210.GetAvailableSlotsUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i827.GetClinicDoctorsUseCase>(
+      () => _i827.GetClinicDoctorsUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i791.GetAllAppointmentsUseCase>(
+      () => _i791.GetAllAppointmentsUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i213.CreateAppointmentUseCase>(
+      () => _i213.CreateAppointmentUseCase(gh<_i675.AppointmentRepository>()),
+    );
+    gh.factory<_i942.UpdateAppointmentStatusUseCase>(
+      () => _i942.UpdateAppointmentStatusUseCase(
+        gh<_i675.AppointmentRepository>(),
       ),
     );
     gh.factory<_i766.SupportChatBloc>(
       () => _i766.SupportChatBloc(
         sendMessage: gh<_i166.SendMessageUseCase>(),
         getAutoReply: gh<_i498.GetAutoReplyUseCase>(),
+      ),
+    );
+    gh.factory<_i1011.SubscriptionBloc>(
+      () => _i1011.SubscriptionBloc(
+        getPlans: gh<_i779.GetPlansUseCase>(),
+        guard: gh<_i821.SubscriptionGuard>(),
+      ),
+    );
+    gh.factory<_i347.NotificationBloc>(
+      () => _i347.NotificationBloc(
+        getAllNotifications: gh<_i923.GetAllNotificationsUseCase>(),
+        markNotificationAsRead: gh<_i818.MarkNotificationAsReadUseCase>(),
+        markAllNotificationsAsRead:
+            gh<_i1060.MarkAllNotificationsAsReadUseCase>(),
+        notificationService: gh<_i40.NotificationService>(),
+      ),
+    );
+    gh.factory<_i493.NotificationSettingsBloc>(
+      () => _i493.NotificationSettingsBloc(
+        getSettings: gh<_i275.GetNotificationSettingsUseCase>(),
+        updateSettings: gh<_i237.UpdateNotificationSettingsUseCase>(),
+      ),
+    );
+    gh.factory<_i527.AddPatientBloc>(
+      () => _i527.AddPatientBloc(addPatient: gh<_i594.AddPatientUseCase>()),
+    );
+    gh.factory<_i833.PatientsListBloc>(
+      () => _i833.PatientsListBloc(
+        getAllPatients: gh<_i281.GetAllPatientsUseCase>(),
+      ),
+    );
+    gh.factory<_i533.MyClinicsBloc>(
+      () => _i533.MyClinicsBloc(
+        gh<_i113.GetMyClinicsUseCase>(),
+        gh<_i663.UserStorage>(),
+      ),
+    );
+    gh.factory<_i45.SupportConversationsBloc>(
+      () => _i45.SupportConversationsBloc(
+        getConversations: gh<_i983.GetConversationsUseCase>(),
+        createConversation: gh<_i134.CreateConversationUseCase>(),
+      ),
+    );
+    gh.factory<_i890.EditProfileBloc>(
+      () => _i890.EditProfileBloc(
+        getUserProfile: gh<_i527.GetUserProfileUseCase>(),
+        updateUserProfile: gh<_i494.UpdateUserProfileUseCase>(),
+        mediaService: gh<_i977.MediaService>(),
+      ),
+    );
+    gh.factory<_i675.AppointmentBloc>(
+      () => _i675.AppointmentBloc(
+        getAllAppointments: gh<_i791.GetAllAppointmentsUseCase>(),
+        createAppointment: gh<_i213.CreateAppointmentUseCase>(),
+        updateStatus: gh<_i942.UpdateAppointmentStatusUseCase>(),
+      ),
+    );
+    gh.factory<_i8.UpdateClinicInfoUseCase>(
+      () => _i8.UpdateClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
+    );
+    gh.factory<_i127.GetClinicInfoUseCase>(
+      () => _i127.GetClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
+    );
+    gh.factory<_i763.ExpenseBloc>(
+      () => _i763.ExpenseBloc(
+        getAllExpenses: gh<_i66.GetAllExpensesUseCase>(),
+        addExpense: gh<_i841.AddExpenseUseCase>(),
+        updateExpense: gh<_i315.UpdateExpenseUseCase>(),
+        deleteExpense: gh<_i526.DeleteExpenseUseCase>(),
+      ),
+    );
+    gh.factoryParam<_i475.ClinicUsersBloc, String, dynamic>(
+      (clinicId, _) => _i475.ClinicUsersBloc(
+        gh<_i398.GetClinicUsersUseCase>(),
+        gh<_i166.AddClinicUserUseCase>(),
+        gh<_i972.UpdateUserRolesUseCase>(),
+        gh<_i223.RemoveClinicUserUseCase>(),
+        clinicId,
       ),
     );
     gh.factory<_i548.PatientDetailsBloc>(
@@ -702,22 +744,15 @@ extension GetItInjectableX on _i174.GetIt {
         addPayment: gh<_i924.AddPaymentUseCase>(),
       ),
     );
+    gh.factory<_i506.ClinicInfoBloc>(
+      () => _i506.ClinicInfoBloc(
+        getClinicInfo: gh<_i127.GetClinicInfoUseCase>(),
+        updateClinicInfo: gh<_i8.UpdateClinicInfoUseCase>(),
+      ),
+    );
     gh.factory<_i154.AddTreatmentBloc>(
       () =>
           _i154.AddTreatmentBloc(addTreatment: gh<_i208.AddTreatmentUseCase>()),
-    );
-    gh.factory<_i675.AppointmentBloc>(
-      () => _i675.AppointmentBloc(
-        getAllAppointments: gh<_i791.GetAllAppointmentsUseCase>(),
-        createAppointment: gh<_i213.CreateAppointmentUseCase>(),
-        updateStatus: gh<_i942.UpdateAppointmentStatusUseCase>(),
-      ),
-    );
-    gh.factory<_i45.SupportConversationsBloc>(
-      () => _i45.SupportConversationsBloc(
-        getConversations: gh<_i983.GetConversationsUseCase>(),
-        createConversation: gh<_i134.CreateConversationUseCase>(),
-      ),
     );
     return this;
   }

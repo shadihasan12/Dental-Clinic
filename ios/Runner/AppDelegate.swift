@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,6 +9,18 @@ import UIKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+
+    // Foreground presentation: let banners + sound + badge surface while the
+    // app is open, matching what flutter_local_notifications already shows.
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+
+    // Ask iOS for the APNs token immediately. firebase_messaging's swizzle
+    // (FirebaseAppDelegateProxyEnabled=YES) catches the callback and forwards
+    // the token to FCM. Without this call, getToken() can hang on cold start
+    // until the user grants permission.
+    application.registerForRemoteNotifications()
 
     // Register a real UITabBar as a platform view so Flutter can host it
     // directly. This gives us the system blur, indicator, and (on iOS 26)
