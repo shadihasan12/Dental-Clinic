@@ -936,6 +936,8 @@
   },
   "patientDeleted": "Patient deleted",
   "patientUpdated": "Patient updated",
-  "updatingPatient": "Updating patient..."
+  "updatingPatient": "Updating patient...",
+
+  "couldNotOpenLink": "Could not open the link"
 }
 

@@ -3,4 +3,5 @@
 library constants;
 
 export 'app_constants.dart';
+export 'legal_urls.dart';
 export 'validation_constants.dart';

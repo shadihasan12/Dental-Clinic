@@ -1,1 +1,77 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"tech-runbit-denta","appId":"1:971977021027:android:311de2da8d046b64e30a56","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"tech-runbit-denta","appId":"1:971977021027:ios:0f54d386342860fde30a56","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"tech-runbit-denta","appId":"1:971977021027:ios:0f54d386342860fde30a56","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"tech-runbit-denta","configurations":{"android":"1:971977021027:android:311de2da8d046b64e30a56","ios":"1:971977021027:ios:0f54d386342860fde30a56","macos":"1:971977021027:ios:0f54d386342860fde30a56","web":"1:971977021027:web:d3e578784011292ce30a56","windows":"1:971977021027:web:16c142b2018a2a3ae30a56"}}}}}}
+{
+  "hosting": {
+    "public": "legal",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=31536000; includeSubDomains"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(css|png|svg|ico)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tech-runbit-denta",
+          "appId": "1:971977021027:android:311de2da8d046b64e30a56",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "tech-runbit-denta",
+          "appId": "1:971977021027:ios:0f54d386342860fde30a56",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "tech-runbit-denta",
+          "appId": "1:971977021027:ios:0f54d386342860fde30a56",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tech-runbit-denta",
+          "configurations": {
+            "android": "1:971977021027:android:311de2da8d046b64e30a56",
+            "ios": "1:971977021027:ios:0f54d386342860fde30a56",
+            "macos": "1:971977021027:ios:0f54d386342860fde30a56",
+            "web": "1:971977021027:web:d3e578784011292ce30a56",
+            "windows": "1:971977021027:web:16c142b2018a2a3ae30a56"
+          }
+        }
+      }
+    }
+  }
+}

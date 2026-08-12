@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/constants/legal_urls.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -12,6 +13,7 @@ import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
+import 'package:dental_clinic_app/features/profile/presentation/widgets/legal_links_sheet.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/theme_settings_dialog.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
@@ -118,7 +120,8 @@ class _MenuPageState extends State<MenuPage> {
                     MenuItem(
                       icon: Icons.security_outlined,
                       title: l10n.privacySecurity,
-                      onTap: () {},
+                      onTap: () =>
+                          openLegalUrl(context, LegalUrls.privacyPolicy),
                     ),
                   ]),
                   SizedBox(height: 24.h),
@@ -144,7 +147,7 @@ class _MenuPageState extends State<MenuPage> {
                     MenuItem(
                       icon: Icons.description_outlined,
                       title: l10n.termsPrivacy,
-                      onTap: () {},
+                      onTap: () => showLegalLinksSheet(context),
                     ),
                   ]),
                   SizedBox(height: 24.h),
