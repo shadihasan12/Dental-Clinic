@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
@@ -23,8 +26,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final TokenStorage _tokenStorage;
   final UserStorage _userStorage;
+  final NotificationService _notificationService;
 
-  AuthBloc(this._authRepository, this._tokenStorage, this._userStorage) : super(const AuthState()) {
+  AuthBloc(
+    this._authRepository,
+    this._tokenStorage,
+    this._userStorage,
+    this._notificationService,
+  ) : super(const AuthState()) {
     // Login events
     on<_LoginEmailChanged>(_onLoginEmailChanged);
     on<_LoginPasswordChanged>(_onLoginPasswordChanged);
@@ -192,6 +201,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         activeClinicId: active?.clinicId,
       ));
     } else {
+      _registerDeviceForPush();
       emit(state.copyWith(
         isLoginLoading: false,
         status: AuthStatus.authenticated,
@@ -607,6 +617,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _userStorage.saveSelectedClinicId(membership.clinicId);
     await _tokenStorage.saveClinicId(membership.clinicId);
 
+    _registerDeviceForPush();
+
     emit(state.copyWith(
       isSignupLoading: false,
       status: AuthStatus.authenticated,
@@ -843,6 +855,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _tokenStorage.clearAuthData();
     await _userStorage.clear();
 
+    // Then invalidate the push token, so the signed-out user stops receiving
+    // this device's notifications. Order matters: deleteToken() can make
+    // Firebase mint a replacement and fire onTokenRefresh, and that handler
+    // re-POSTs to /auth/device-token whenever a session exists. Clearing the
+    // auth token first means the replacement is deferred until the next login
+    // instead of being registered against the account we just signed out of.
+    await _notificationService.onLogout();
+
     // Reset to initial state (unauthenticated)
     emit(const AuthState());
   }
@@ -872,6 +892,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _EmailVerificationCompleted event,
     Emitter<AuthState> emit,
   ) {
+    // Login-with-unverified-email path: this is the point the session becomes
+    // fully usable, so it is the first safe moment to register the device.
+    _registerDeviceForPush();
+
     emit(state.copyWith(
       status: AuthStatus.authenticated,
       needsEmailVerification: false,
@@ -922,5 +946,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       clinicAddress: '',
       mobileNumber: '',
     ));
+  }
+
+  /// Registers this device's push token against the freshly authenticated
+  /// user (POST /auth/device-token) and subscribes to the broadcast topic.
+  ///
+  /// Deliberately fire-and-forget: push registration must never delay or fail
+  /// the sign-in. NotificationService keeps the token marked "unsynced" when
+  /// the POST fails, so the next launch or sign-in retries it.
+  void _registerDeviceForPush() {
+    unawaited(_notificationService.syncTokenIfNeeded());
+    unawaited(_notificationService.subscribeToGlobalTopics());
   }
 }

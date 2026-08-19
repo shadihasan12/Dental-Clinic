@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
@@ -59,6 +62,12 @@ class _HomePageState extends State<HomePage> {
     NewAppointmentPage.created.addListener(_onAppointmentCreated);
     _loadSubscription();
     _loadTodaysSchedule();
+
+    // Safety net for the "already signed in" cold start: AuthBloc only fires
+    // on a fresh login/register, so a session restored from storage - or one
+    // whose registration POST failed while offline - would otherwise never
+    // register. No-ops in ~1 shared-prefs read once the token is synced.
+    unawaited(getIt<NotificationService>().syncTokenIfNeeded());
   }
 
   void _onAppointmentCreated() {

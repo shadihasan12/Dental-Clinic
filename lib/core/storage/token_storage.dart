@@ -99,6 +99,13 @@ class TokenStorage {
     return _prefs.getString(_fcmTokenSyncedKey) == token;
   }
 
+  /// Drops the cached FCM token and its synced marker. Called on logout, right
+  /// after FirebaseMessaging.deleteToken() invalidates the token server-side.
+  Future<void> clearFcmToken() async {
+    await _prefs.remove(_fcmTokenKey);
+    await _prefs.remove(_fcmTokenSyncedKey);
+  }
+
   /// Clear all stored authentication data
   Future<void> clearAuthData() async {
     await _prefs.remove(_tokenKey);

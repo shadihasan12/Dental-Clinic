@@ -53,6 +53,18 @@ class NotificationService {
   static const String _androidChannelDescription =
       'Appointments, payments, patient updates, and other clinic alerts.';
 
+  /// Topic every install subscribes to so the backend can fan out global
+  /// announcements without enumerating device tokens.
+  ///
+  /// Agreed contract with the backend - it publishes global notifications to
+  /// this exact topic name. Changing it here breaks global pushes unless the
+  /// backend is changed in lockstep.
+  static const String globalTopic = 'all_en';
+
+  /// FCM device tokens and topics only exist on Android/iOS. On desktop we
+  /// skip the whole subsystem rather than POST a platform the API rejects.
+  static bool get _supportsPush => Platform.isAndroid || Platform.isIOS;
+
   final _onPushReceivedController = StreamController<PushPayload>.broadcast();
   final _onNotificationTapController = StreamController<PushPayload>.broadcast();
 
@@ -67,6 +79,7 @@ class NotificationService {
 
   Future<void> initialize() async {
     if (_initialized) return;
+    if (!_supportsPush) return;
     _initialized = true;
 
     await _requestPermission();
@@ -74,6 +87,7 @@ class NotificationService {
     await _setupAndroidChannel();
     await _wireFcmListeners();
     await _bootstrapInitialToken();
+    await subscribeToGlobalTopics();
     await _handleInitialMessage();
   }
 
@@ -193,30 +207,85 @@ class NotificationService {
   /// failed to sync (e.g. user wasn't authenticated yet at cold start), this
   /// retries the POST. Cheap when already synced — early-exits on the marker.
   Future<void> syncTokenIfNeeded() async {
+    if (!_supportsPush) return;
+    // The endpoint is authenticated - nothing to do until we have a session.
+    if (!_tokenStorage.hasToken()) return;
+
     final token = _tokenStorage.getFcmToken();
     if (token == null) {
-      // No token yet — bootstrap will fire syncToken once Firebase produces one.
+      // No token cached yet (fresh install, or cleared on the last logout).
+      // Ask Firebase for one and persist it on the way through.
       try {
         final fresh = await _messaging.getToken();
-        if (fresh != null) await _syncToken(fresh);
-      } catch (_) {/* offline / not ready — try again later */}
+        if (fresh != null) await _onTokenRefreshed(fresh);
+      } catch (e) {
+        if (kDebugMode) debugPrint('[FCM] getToken during sync failed: $e');
+      }
       return;
     }
     if (_tokenStorage.isFcmTokenSynced(token)) return;
     await _syncToken(token);
   }
 
+  /// Subscribes this install to the broadcast topic(s) the backend uses for
+  /// global announcements. Topic subscriptions are stored by FCM itself, so
+  /// this is idempotent and needs no auth token.
+  Future<void> subscribeToGlobalTopics() async {
+    if (!_supportsPush) return;
+    try {
+      await _messaging.subscribeToTopic(globalTopic);
+      if (kDebugMode) debugPrint('[FCM] subscribed to topic "$globalTopic"');
+    } catch (e) {
+      if (kDebugMode) debugPrint('[FCM] topic subscribe failed: $e');
+    }
+  }
+
+  Future<void> unsubscribeFromGlobalTopics() async {
+    if (!_supportsPush) return;
+    try {
+      await _messaging.unsubscribeFromTopic(globalTopic);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[FCM] topic unsubscribe failed: $e');
+    }
+  }
+
+  /// Call from the logout flow. Nothing here is authenticated, so it can run
+  /// before or after the auth token is cleared.
+  ///
+  /// Deleting the FCM token is what actually stops pushes for the signed-out
+  /// user: the backend maps token -> user and there is no DELETE endpoint to
+  /// unregister with. Firebase mints a fresh token on the next getToken(),
+  /// which the next sign-in registers against the new user.
+  Future<void> onLogout() async {
+    await unsubscribeFromGlobalTopics();
+    await deleteToken();
+  }
+
   /// Wipes the FCM token from this device, so a subsequent user sign-in on the
-  /// same device starts fresh. Call from your logout flow.
+  /// same device starts fresh.
   Future<void> deleteToken() async {
     try {
       await _messaging.deleteToken();
-    } catch (_) {/* ignore — best-effort */}
+    } catch (_) {/* ignore - best-effort */}
+    // Drop our cached copy too, otherwise the next syncTokenIfNeeded would
+    // happily re-POST the token we just invalidated.
+    await _tokenStorage.clearFcmToken();
   }
 
   // ── internals ─────────────────────────────────────────────────────────
 
   Future<void> _syncToken(String token) async {
+    // /auth/device-token requires the Authorization header. POSTing before
+    // sign-in just yields a 401 (and makes the auth interceptor burn a refresh
+    // attempt). Leave the token marked unsynced - the post-login call to
+    // syncTokenIfNeeded picks it up.
+    if (!_tokenStorage.hasToken()) {
+      if (kDebugMode) {
+        debugPrint('[FCM] not signed in yet - deferring device-token sync');
+      }
+      return;
+    }
+
     final result = await _registerFcmToken(token);
     result.fold(
       (err) {
