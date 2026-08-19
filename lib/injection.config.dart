@@ -10,6 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
@@ -26,6 +29,7 @@ import 'core/di/third_party_injection.dart' as _i1007;
 import 'core/localization/language_bloc.dart' as _i924;
 import 'core/localization/language_service.dart' as _i934;
 import 'core/network/network_info.dart' as _i75;
+import 'core/services/notifications/notification_service.dart' as _i40;
 import 'core/storage/token_storage.dart' as _i23;
 import 'core/storage/user_storage.dart' as _i663;
 import 'core/theme/theme_bloc.dart' as _i909;
@@ -106,10 +110,15 @@ import 'features/expenses/domain/use_cases/get_categories_use_case.dart'
 import 'features/expenses/domain/use_cases/update_expense_use_case.dart'
     as _i315;
 import 'features/expenses/presentation/manager/expense_bloc.dart' as _i763;
+import 'features/home/data/data_sources/fcm_token_remote_data_source.dart'
+    as _i188;
 import 'features/home/data/data_sources/notification_remote_data_source.dart'
     as _i573;
+import 'features/home/data/repositories/fcm_token_repository_impl.dart'
+    as _i269;
 import 'features/home/data/repositories/notification_repository_impl.dart'
     as _i20;
+import 'features/home/domain/repositories/fcm_token_repository.dart' as _i109;
 import 'features/home/domain/repositories/notification_repository.dart' as _i4;
 import 'features/home/domain/use_cases/get_all_notifications_use_case.dart'
     as _i923;
@@ -117,6 +126,8 @@ import 'features/home/domain/use_cases/mark_all_notifications_as_read_use_case.d
     as _i1060;
 import 'features/home/domain/use_cases/mark_notification_as_read_use_case.dart'
     as _i818;
+import 'features/home/domain/use_cases/register_fcm_token_use_case.dart'
+    as _i928;
 import 'features/home/presentation/manager/notification_bloc.dart' as _i347;
 import 'features/patients/data/data_sources/patient_remote_data_source.dart'
     as _i536;
@@ -265,6 +276,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => thirdPartyInjection.sharedPreferences,
       preResolve: true,
     );
+    gh.singleton<_i892.FirebaseMessaging>(
+      () => thirdPartyInjection.firebaseMessaging,
+    );
+    gh.singleton<_i163.FlutterLocalNotificationsPlugin>(
+      () => thirdPartyInjection.flutterLocalNotificationsPlugin,
+    );
     gh.lazySingleton<_i525.FilePickerService>(() => _i525.FilePickerService());
     gh.lazySingleton<_i821.SubscriptionGuard>(() => _i821.SubscriptionGuard());
     gh.factory<_i23.TokenStorage>(
@@ -347,13 +364,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i75.NetworkInfo>(),
       ),
     );
-    gh.factory<_i363.AuthBloc>(
-      () => _i363.AuthBloc(
-        gh<_i1015.AuthRepository>(),
-        gh<_i23.TokenStorage>(),
-        gh<_i663.UserStorage>(),
-      ),
-    );
     gh.factory<_i485.ClinicInfoRemoteDataSource>(
       () => _i485.ClinicInfoRemoteDataSourceImpl(
         gh<_i962.ApiConsumer>(),
@@ -410,6 +420,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i190.ClinicRemoteDataSource>(
       () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
+    gh.factory<_i188.FcmTokenRemoteDataSource>(
+      () => _i188.FcmTokenRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
     gh.factory<_i151.SubscriptionRemoteDataSource>(
       () => _i151.SubscriptionRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
@@ -433,6 +446,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i20.NotificationRepositoryImpl(
         gh<_i573.NotificationRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i109.FcmTokenRepository>(
+      () => _i269.FcmTokenRepositoryImpl(gh<_i188.FcmTokenRemoteDataSource>()),
     );
     gh.factory<_i850.StatisticsCatalogRepository>(
       () => _i591.StatisticsCatalogRepositoryImpl(
@@ -607,13 +623,8 @@ extension GetItInjectableX on _i174.GetIt {
         updateClinicInfo: gh<_i8.UpdateClinicInfoUseCase>(),
       ),
     );
-    gh.factory<_i347.NotificationBloc>(
-      () => _i347.NotificationBloc(
-        getAllNotifications: gh<_i923.GetAllNotificationsUseCase>(),
-        markNotificationAsRead: gh<_i818.MarkNotificationAsReadUseCase>(),
-        markAllNotificationsAsRead:
-            gh<_i1060.MarkAllNotificationsAsReadUseCase>(),
-      ),
+    gh.factory<_i928.RegisterFcmTokenUseCase>(
+      () => _i928.RegisterFcmTokenUseCase(gh<_i109.FcmTokenRepository>()),
     );
     gh.factory<_i527.GetUserProfileUseCase>(
       () => _i527.GetUserProfileUseCase(gh<_i274.EditProfileRepository>()),
@@ -710,6 +721,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i663.UserStorage>(),
       ),
     );
+    gh.lazySingleton<_i40.NotificationService>(
+      () => _i40.NotificationService(
+        messaging: gh<_i892.FirebaseMessaging>(),
+        localNotifications: gh<_i163.FlutterLocalNotificationsPlugin>(),
+        registerFcmToken: gh<_i928.RegisterFcmTokenUseCase>(),
+        tokenStorage: gh<_i23.TokenStorage>(),
+      ),
+    );
     gh.factory<_i766.SupportChatBloc>(
       () => _i766.SupportChatBloc(
         sendMessage: gh<_i166.SendMessageUseCase>(),
@@ -727,6 +746,14 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i154.AddTreatmentBloc(addTreatment: gh<_i208.AddTreatmentUseCase>()),
     );
+    gh.factory<_i363.AuthBloc>(
+      () => _i363.AuthBloc(
+        gh<_i1015.AuthRepository>(),
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
+        gh<_i40.NotificationService>(),
+      ),
+    );
     gh.factory<_i675.AppointmentBloc>(
       () => _i675.AppointmentBloc(
         getAllAppointments: gh<_i791.GetAllAppointmentsUseCase>(),
@@ -738,6 +765,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i45.SupportConversationsBloc(
         getConversations: gh<_i983.GetConversationsUseCase>(),
         createConversation: gh<_i134.CreateConversationUseCase>(),
+      ),
+    );
+    gh.factory<_i347.NotificationBloc>(
+      () => _i347.NotificationBloc(
+        getAllNotifications: gh<_i923.GetAllNotificationsUseCase>(),
+        markNotificationAsRead: gh<_i818.MarkNotificationAsReadUseCase>(),
+        markAllNotificationsAsRead:
+            gh<_i1060.MarkAllNotificationsAsReadUseCase>(),
+        notificationService: gh<_i40.NotificationService>(),
       ),
     );
     return this;
