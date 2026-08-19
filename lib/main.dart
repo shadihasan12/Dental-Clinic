@@ -99,7 +99,16 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
     // before any subtree has mounted (cold-start from a tapped push).
     _notificationTapSubscription =
         getIt<NotificationService>().onNotificationTap.listen((payload) {
-      routesManager.router.go(payload.deepLink);
+      // push, not go: every route here is top-level, so `go` replaces the
+      // whole stack and the destination has nothing to pop back to.
+      if (!getIt<TokenStorage>().hasToken()) return;
+
+      // Tapping several notifications in a row should not stack duplicates.
+      final current =
+          routesManager.router.routerDelegate.currentConfiguration.uri.path;
+      if (current == payload.deepLink) return;
+
+      routesManager.router.push(payload.deepLink);
     });
   }
 

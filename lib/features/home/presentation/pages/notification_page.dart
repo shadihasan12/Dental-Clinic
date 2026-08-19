@@ -45,7 +45,10 @@ class _NotificationContent extends StatelessWidget {
               );
               return PageHeader(
                 title: l10n.notifications,
-                onBack: () => context.pop(),
+                // Reachable directly from a push tap, so the stack may be
+                // empty - fall back to the root instead of throwing.
+                onBack: () =>
+                    context.canPop() ? context.pop() : context.go('/'),
                 actions: [
                   if (hasUnread)
                     GestureDetector(

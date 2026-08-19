@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/features/home/domain/entities/notification_ent
 import 'package:dental_clinic_app/features/home/domain/use_cases/register_fcm_token_use_case.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Color;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
@@ -111,7 +112,11 @@ class NotificationService {
   }
 
   Future<void> _setupLocalNotifications() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Default small icon for any notification that does not name one. Must be
+    // the silhouette, not the launcher icon - Android masks small icons to
+    // their alpha channel.
+    const android =
+        AndroidInitializationSettings('@drawable/ic_stat_notification');
     const darwin = DarwinInitializationSettings(
       // We already requested via FirebaseMessaging; don't double-prompt.
       requestAlertPermission: false,
@@ -323,7 +328,13 @@ class NotificationService {
           channelDescription: _androidChannelDescription,
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+          // White-on-transparent silhouette. Android masks the small icon to
+          // its alpha channel, so the full-colour launcher icon rendered as a
+          // featureless blob in the status bar.
+          icon: '@drawable/ic_stat_notification',
+          // Matches the manifest's default_notification_color so foreground
+          // banners look identical to server-sent ones.
+          color: const Color(0xFF199ED9),
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,

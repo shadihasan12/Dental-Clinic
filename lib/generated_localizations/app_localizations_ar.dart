@@ -1264,7 +1264,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alreadyHaveAccount => 'لديك حساب بالفعل؟ ';
 
   @override
-  String get copyrightSmylos => '© 2026 SmylOS Pro. جميع الحقوق محفوظة.';
+  String get copyrightDenta => '© 2026 Denta. جميع الحقوق محفوظة.';
 
   @override
   String get pleaseEnterEmailOrPhone =>
@@ -1284,7 +1284,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginFailed => 'فشل تسجيل الدخول';
 
   @override
-  String get appName => 'SmylOS Pro';
+  String get appName => 'Denta';
 
   @override
   String get professionalClinicManagement => 'إدارة العيادات الاحترافية';

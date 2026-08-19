@@ -2516,11 +2516,11 @@ abstract class AppLocalizations {
   /// **'Already have an account? '**
   String get alreadyHaveAccount;
 
-  /// No description provided for @copyrightSmylos.
+  /// No description provided for @copyrightDenta.
   ///
   /// In en, this message translates to:
-  /// **'© 2026 SmylOS Pro. All rights reserved.'**
-  String get copyrightSmylos;
+  /// **'© 2026 Denta. All rights reserved.'**
+  String get copyrightDenta;
 
   /// No description provided for @pleaseEnterEmailOrPhone.
   ///
@@ -2555,7 +2555,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'SmylOS Pro'**
+  /// **'Denta'**
   String get appName;
 
   /// No description provided for @professionalClinicManagement.

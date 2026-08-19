@@ -3,7 +3,7 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'Dental Clinic';
+  static const String appName = 'Denta';
 
   // Pagination
   static const int defaultPageSize = 20;

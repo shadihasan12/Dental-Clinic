@@ -40,9 +40,14 @@ class StatisticsShareCard extends StatelessWidget {
 
   /// Landing page the QR points to. Swap this single constant when
   /// the real smartlink is ready.
-  static const String appUrl = 'https://smylos.pro';
+  static const String appUrl = 'https://denta.pro';
 
-  static const String _brandName = 'SmylOS Pro';
+  static const String _brandName = 'Denta';
+
+  /// Brand mark drawn into the share image. Must be precached before the
+  /// RepaintBoundary snapshot or it captures as an empty tile - see
+  /// StatisticsShareSheet._precacheBrandMark.
+  static const String brandMarkAsset = 'assets/images/logo/denta_mark.png';
   static const String _brandTagline = 'Scan to install';
 
   // ─ Palette (kept deliberately small, all derived from brand) ──────
@@ -876,6 +881,9 @@ class _QrTile extends StatelessWidget {
 
 class _BrandMonogram extends StatelessWidget {
   const _BrandMonogram({required this.fontFamily});
+
+  /// Kept on the signature so the footer's call site is unchanged; the mark
+  /// is artwork now, so nothing here is typeset.
   final String fontFamily;
 
   @override
@@ -883,36 +891,22 @@ class _BrandMonogram extends StatelessWidget {
     return Container(
       width: 50,
       height: 50,
+      padding: const EdgeInsets.all(7),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            StatisticsShareCard._tealLight,
-            StatisticsShareCard._teal,
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: StatisticsShareCard._teal.withValues(alpha: 0.55),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: Center(
-        child: Text(
-          'S',
-          style: TextStyle(
-            fontFamily: fontFamily,
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: StatisticsShareCard._bgTop,
-            height: 1.0,
-            letterSpacing: -1.0,
-          ),
-        ),
+      child: Image.asset(
+        StatisticsShareCard.brandMarkAsset,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
       ),
     );
   }

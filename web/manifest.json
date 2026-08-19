@@ -1,11 +1,11 @@
 {
-    "name": "dental_clinic_app",
-    "short_name": "dental_clinic_app",
+    "name": "Denta",
+    "short_name": "Denta",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#199ED9",
+    "description": "Denta - dental clinic management.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

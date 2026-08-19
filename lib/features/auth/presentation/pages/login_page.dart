@@ -124,10 +124,12 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                           color: ColorManager.primary10,
                           borderRadius: BorderRadius.circular(16.r),
                         ),
-                        child: Icon(
-                          Icons.medical_services_rounded,
-                          color: ColorManager.primary,
-                          size: 32.w,
+                        child: Padding(
+                          padding: EdgeInsets.all(10.w),
+                          child: Image.asset(
+                            'assets/images/logo/denta_mark.png',
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),

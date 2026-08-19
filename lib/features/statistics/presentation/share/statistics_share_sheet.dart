@@ -82,6 +82,19 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     }
   }
 
+  /// Precache the brand mark for the same reason as the avatar: asset images
+  /// decode asynchronously, so an un-decoded logo snapshots as an empty tile.
+  Future<void> _precacheBrandMark() async {
+    try {
+      await precacheImage(
+        const AssetImage(StatisticsShareCard.brandMarkAsset),
+        context,
+      );
+    } catch (_) {
+      // Non-fatal - worst case the footer tile captures blank.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -171,6 +184,7 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
       // Make sure the avatar is decoded before we snapshot — otherwise
       // the captured PNG can show the initials fallback on first share.
       await _precacheAvatar(avatarUrl);
+      await _precacheBrandMark();
       final bytes = await _capture();
       final file = await _writeToTemp(bytes);
       await Share.shareXFiles(
