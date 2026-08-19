@@ -2438,4 +2438,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updatingPatient => 'Updating patient...';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link';
 }

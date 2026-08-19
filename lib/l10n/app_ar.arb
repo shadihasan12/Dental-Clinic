@@ -938,6 +938,8 @@
   },
   "patientDeleted": "تم حذف المريض",
   "patientUpdated": "تم تحديث المريض",
-  "updatingPatient": "جارٍ تحديث المريض..."
+  "updatingPatient": "جارٍ تحديث المريض...",
+
+  "couldNotOpenLink": "تعذّر فتح الرابط"
 }
 

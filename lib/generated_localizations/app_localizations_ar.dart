@@ -2425,4 +2425,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get updatingPatient => 'جارٍ تحديث المريض...';
+
+  @override
+  String get couldNotOpenLink => 'تعذّر فتح الرابط';
 }

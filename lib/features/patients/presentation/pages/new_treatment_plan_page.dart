@@ -221,7 +221,10 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
           title: l10nAfter.success,
           message: l10nAfter.treatmentPlanSavedSuccessfully,
         );
-        context.goNamed(
+        // pushReplacement, not go: goNamed on a top-level route clears the
+        // whole stack, leaving patient details with nothing to pop. Matches
+        // what AddTreatmentPage does on the same transition.
+        context.pushReplacementNamed(
           AppRoutesNames.patientDetails,
           extra: {
             'patientId': widget.patientId,

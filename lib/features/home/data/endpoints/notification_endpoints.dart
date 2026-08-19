@@ -4,4 +4,7 @@ class NotificationEndpoints {
   static const String notifications = '/notifications';
   static String markAsRead(String id) => '/notifications/$id/read';
   static const String markAllAsRead = '/notifications/read-all';
+
+  // The device-token endpoint lives on the auth API - see
+  // AuthEndpoints.deviceToken.
 }

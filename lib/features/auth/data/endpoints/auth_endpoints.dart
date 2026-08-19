@@ -44,4 +44,9 @@ class AuthEndpoints {
 
   /// POST /auth/change-email - Confirm email change with session ID
   static const String changeEmail = '/auth/change-email';
+
+  /// POST /auth/device-token - Register this device's push token against the
+  /// authenticated user. Body: { "token": "<fcm token>", "platform": "ANDROID"|"IOS" }
+  /// Requires the Authorization header, so it can only be called once signed in.
+  static const String deviceToken = '/auth/device-token';
 }
