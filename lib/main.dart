@@ -56,7 +56,12 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // firebase_core runs on Windows, but firebase_messaging does not ship a
+  // Windows plugin - calling into it there throws MissingPluginException at
+  // startup. Desktop gets its notifications over a different transport.
+  if (NotificationService.supportsPush) {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  }
 
   // Configure dependencies
   await configureDependencies();

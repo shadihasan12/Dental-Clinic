@@ -39,7 +39,11 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                       color: c.textPrimary,
                       size: 20.w,
                     ),
-                    onPressed: () => context.pop(),
+                    // Callers that need a guarded back (e.g. pages reachable
+                    // with an empty stack) pass their own onBack. Falling back
+                    // to a bare pop kept the parameter dead and threw
+                    // "there is nothing to pop" on those pages.
+                    onPressed: onBack ?? () => context.pop(),
                   ),
                   Expanded(
                     child: Text(

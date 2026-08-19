@@ -70,8 +70,8 @@ class _PatientInfoTabState extends State<PatientInfoTab>
         ),
       _ContactRowData(
         icon: Icons.calendar_month_outlined,
-        label: l10n.dateOfBirth,
-        value: widget.dateOfBirth,
+        label: l10n.age,
+        value: '${widget.age} ${l10n.years}',
       ),
     ];
 

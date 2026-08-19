@@ -61,9 +61,13 @@ class NotificationService {
   /// backend is changed in lockstep.
   static const String globalTopic = 'all_en';
 
-  /// FCM device tokens and topics only exist on Android/iOS. On desktop we
-  /// skip the whole subsystem rather than POST a platform the API rejects.
-  static bool get _supportsPush => Platform.isAndroid || Platform.isIOS;
+  /// Whether FCM exists on this platform at all.
+  ///
+  /// firebase_messaging ships implementations for android/ios/macos/web only -
+  /// there is no Windows or Linux plugin, so every FCM call there throws
+  /// MissingPluginException. Desktop builds skip the subsystem entirely and
+  /// get their notifications over a different transport.
+  static bool get supportsPush => Platform.isAndroid || Platform.isIOS;
 
   final _onPushReceivedController = StreamController<PushPayload>.broadcast();
   final _onNotificationTapController = StreamController<PushPayload>.broadcast();
@@ -79,7 +83,7 @@ class NotificationService {
 
   Future<void> initialize() async {
     if (_initialized) return;
-    if (!_supportsPush) return;
+    if (!supportsPush) return;
     _initialized = true;
 
     await _requestPermission();
@@ -207,7 +211,7 @@ class NotificationService {
   /// failed to sync (e.g. user wasn't authenticated yet at cold start), this
   /// retries the POST. Cheap when already synced — early-exits on the marker.
   Future<void> syncTokenIfNeeded() async {
-    if (!_supportsPush) return;
+    if (!supportsPush) return;
     // The endpoint is authenticated - nothing to do until we have a session.
     if (!_tokenStorage.hasToken()) return;
 
@@ -231,7 +235,7 @@ class NotificationService {
   /// global announcements. Topic subscriptions are stored by FCM itself, so
   /// this is idempotent and needs no auth token.
   Future<void> subscribeToGlobalTopics() async {
-    if (!_supportsPush) return;
+    if (!supportsPush) return;
     try {
       await _messaging.subscribeToTopic(globalTopic);
       if (kDebugMode) debugPrint('[FCM] subscribed to topic "$globalTopic"');
@@ -241,7 +245,7 @@ class NotificationService {
   }
 
   Future<void> unsubscribeFromGlobalTopics() async {
-    if (!_supportsPush) return;
+    if (!supportsPush) return;
     try {
       await _messaging.unsubscribeFromTopic(globalTopic);
     } catch (e) {
