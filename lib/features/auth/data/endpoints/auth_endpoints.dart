@@ -49,4 +49,10 @@ class AuthEndpoints {
   /// authenticated user. Body: `{ "token": "...", "platform": "ANDROID"|"IOS" }`
   /// Requires the Authorization header, so it can only be called once signed in.
   static const String deviceToken = '/auth/device-token';
+
+  /// POST /auth/logout - Ends the session and unregisters this device.
+  /// Body: `{ "token": "<fcm-token>" }`, where `token` is optional - a client
+  /// that never registered one can still log out. Send it when you have it, or
+  /// the device keeps receiving notifications for an account that signed out.
+  static const String logout = '/auth/logout';
 }

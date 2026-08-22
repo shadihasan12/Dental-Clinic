@@ -1611,6 +1611,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sessionExpired => 'انتهت الجلسة';
 
   @override
+  String get sessionExpiredMessage =>
+      'انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
   String get pleaseVerifyEmailAgain => 'يرجى التحقق من بريدك الإلكتروني مجدداً';
 
   @override
@@ -2428,4 +2432,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'تعذّر فتح الرابط';
+
+  @override
+  String get noNotificationSettings => 'لا توجد إعدادات إشعارات متاحة';
+
+  @override
+  String get markAsUnread => 'تعليم كغير مقروء';
+
+  @override
+  String get newNotificationsTitle => 'إشعارات جديدة';
+
+  @override
+  String moreNotifications(int count) {
+    return '$count إشعار آخر';
+  }
 }

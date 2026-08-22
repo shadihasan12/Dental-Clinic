@@ -65,6 +65,16 @@ class Assets {
   /// File path: assets/icons/root/statistics.svg
   static const String iconsRootStatistics = 'assets/icons/root/statistics.svg';
 
+  /// File path: assets/images/logo/denta_logo.png
+  static const AssetGenImage imagesLogoDentaLogo = AssetGenImage(
+    'assets/images/logo/denta_logo.png',
+  );
+
+  /// File path: assets/images/logo/denta_mark.png
+  static const AssetGenImage imagesLogoDentaMark = AssetGenImage(
+    'assets/images/logo/denta_mark.png',
+  );
+
   /// File path: assets/images/onboarding/1.jpg
   static const AssetGenImage imagesOnboarding1 = AssetGenImage(
     'assets/images/onboarding/1.jpg',
@@ -96,6 +106,8 @@ class Assets {
     iconsRootMoney,
     iconsRootPatient,
     iconsRootStatistics,
+    imagesLogoDentaLogo,
+    imagesLogoDentaMark,
     imagesOnboarding1,
     imagesOnboarding2,
     imagesOnboarding3,

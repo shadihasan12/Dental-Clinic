@@ -10,6 +10,7 @@ class TokenStorage {
   static const String _clinicIdKey = 'selected_clinic_id';
   static const String _fcmTokenKey = 'fcm_token';
   static const String _fcmTokenSyncedKey = 'fcm_token_synced';
+  static const String _fcmTopicsKey = 'fcm_subscribed_topics';
 
   final SharedPreferences _prefs;
 
@@ -97,6 +98,26 @@ class TokenStorage {
 
   bool isFcmTokenSynced(String token) {
     return _prefs.getString(_fcmTokenSyncedKey) == token;
+  }
+
+  /// Topic names this install is currently subscribed to.
+  ///
+  /// Every name here came from the `audience` field of
+  /// `GET /notification-settings` — the app never builds a topic name itself.
+  /// We remember them so a later language change (which swaps
+  /// `announcement_ar` for `announcement_en`) can unsubscribe the stale one:
+  /// the settings response only ever names the *current* audience, so without
+  /// this list the old subscription would linger forever, receiving nothing.
+  List<String> getSubscribedTopics() {
+    return _prefs.getStringList(_fcmTopicsKey) ?? const <String>[];
+  }
+
+  Future<void> setSubscribedTopics(Iterable<String> topics) async {
+    await _prefs.setStringList(_fcmTopicsKey, topics.toSet().toList());
+  }
+
+  Future<void> clearSubscribedTopics() async {
+    await _prefs.remove(_fcmTopicsKey);
   }
 
   /// Drops the cached FCM token and its synced marker. Called on logout, right

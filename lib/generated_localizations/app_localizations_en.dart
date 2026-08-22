@@ -1621,6 +1621,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionExpired => 'Session Expired';
 
   @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
+
+  @override
   String get pleaseVerifyEmailAgain => 'Please verify your email again';
 
   @override
@@ -2441,4 +2445,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'Could not open the link';
+
+  @override
+  String get noNotificationSettings => 'No notification settings available';
+
+  @override
+  String get markAsUnread => 'Mark as unread';
+
+  @override
+  String get newNotificationsTitle => 'New notifications';
+
+  @override
+  String moreNotifications(int count) {
+    return '$count more notifications';
+  }
 }

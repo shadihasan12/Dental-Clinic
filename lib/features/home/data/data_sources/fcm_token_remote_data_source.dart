@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 abstract class FcmTokenRemoteDataSource {
   Future<void> register(String token);
+  Future<void> logout(String? token);
 }
 
 @Injectable(as: FcmTokenRemoteDataSource)
@@ -40,6 +41,16 @@ class FcmTokenRemoteDataSourceImpl implements FcmTokenRemoteDataSource {
         'token': token,
         'platform': platform,
       },
+    );
+  }
+
+  @override
+  Future<void> logout(String? token) async {
+    // `token` is optional server-side, so a client that never registered one
+    // (or lost it) can still log out cleanly.
+    await _apiConsumer.post(
+      AuthEndpoints.logout,
+      body: {if (token != null && token.isNotEmpty) 'token': token},
     );
   }
 }

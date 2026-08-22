@@ -1,80 +1,66 @@
+import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 /// Strongly-typed view over an inbound FCM message.
 ///
-/// Server-side payload contract — keep in sync with the backend:
+/// Server-side payload contract (see the integration guide, §9):
 ///
-///   notification.title / notification.body  — system-shown text
+///   notification.title / notification.body   — system-shown text (Android/web)
+///   apns.payload.aps.alert.title / .body     — the same, on iOS
 ///   data: {
-///     "id":        "<uuid>",                 // server-side notification row
-///     "type":      "appointment|payment|patient|report|treatment|cancellation",
-///     "deep_link": "/notifications" (optional, defaults to /notifications),
+///     "type":     "appointment_reminder|payment_reminder|clinic_invitation|announcement",
+///     "category": same value as `type` — prefer `type`,
+///     ...id keys that depend on the type (see NotificationRouting)
 ///   }
 ///
-/// When `data.id` is present we treat the push as authoritative and surface it
-/// through the in-app stream so the bloc can append without a network refetch.
+/// Every FCM `data` value arrives as a string; the list API sends the same
+/// keys with real types. Nothing downstream may assume one or the other.
 class PushPayload {
   final String? id;
   final String? title;
   final String? body;
-  final NotificationType type;
-  final String deepLink;
+
+  /// The raw `data` map — the single source for both the category and the
+  /// deep link.
+  final Map<String, dynamic> data;
   final DateTime receivedAt;
-  final Map<String, dynamic> raw;
 
   const PushPayload({
     required this.id,
     required this.title,
     required this.body,
-    required this.type,
-    required this.deepLink,
+    required this.data,
     required this.receivedAt,
-    required this.raw,
   });
 
+  /// Server category, e.g. `announcement`. Empty when the push omits it.
+  String get category => NotificationRouting.typeOf(data);
+
   factory PushPayload.fromRemoteMessage(RemoteMessage message) {
-    final data = message.data;
+    final data = Map<String, dynamic>.from(message.data);
+    final id = (data['id'] as String?)?.trim();
     return PushPayload(
-      id: (data['id'] as String?)?.trim().isNotEmpty == true
-          ? data['id'] as String
-          : message.messageId,
+      id: (id != null && id.isNotEmpty) ? id : message.messageId,
       title: message.notification?.title ?? data['title'] as String?,
       body: message.notification?.body ?? data['body'] as String?,
-      type: _parseType(data['type'] as String?),
-      deepLink: (data['deep_link'] as String?) ?? '/notifications',
+      data: data,
       receivedAt: message.sentTime ?? DateTime.now(),
-      raw: Map<String, dynamic>.from(data),
     );
   }
 
+  /// A provisional inbox row for a push that just arrived, so an open list can
+  /// show it without a refetch. The server row remains authoritative.
   NotificationEntity toEntity() {
     return NotificationEntity(
       id: id ?? receivedAt.microsecondsSinceEpoch.toString(),
+      category: category,
       title: title ?? '',
-      content: body ?? '',
-      type: type,
-      timestamp: receivedAt,
+      body: body,
+      data: data,
+      isSeen: true,
       isRead: false,
+      sentAt: receivedAt,
     );
-  }
-
-  static NotificationType _parseType(String? raw) {
-    switch (raw) {
-      case 'appointment':
-        return NotificationType.appointment;
-      case 'payment':
-        return NotificationType.payment;
-      case 'patient':
-        return NotificationType.patient;
-      case 'report':
-        return NotificationType.report;
-      case 'treatment':
-        return NotificationType.treatment;
-      case 'cancellation':
-        return NotificationType.cancellation;
-      default:
-        return NotificationType.appointment;
-    }
   }
 }

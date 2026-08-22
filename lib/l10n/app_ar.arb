@@ -51,8 +51,8 @@
   "amount": "المبلغ",
   "paymentMethod": "طريقة الدفع",
   "status": "الحالة",
-  "active": "نشط",
-  "inactive": "غير نشط",
+  "active": "فعّال",
+  "inactive": "غير فعّال",
   "pending": "معلق",
   "confirmed": "مؤكد",
   "scheduled": "مجدول",
@@ -65,7 +65,7 @@
   "day": "يوم",
   "week": "أسبوع",
   "viewPatientDetails": "عرض تفاصيل المريض",
-  "completed": "مكتمل",
+  "completed": "تم الانتهاء",
   "cancelled": "ملغى",
   "search": "بحث",
   "filter": "تصفية",
@@ -100,7 +100,11 @@
   "dentistLimitMessage": "خطتك الحالية لا تسمح بإضافة المزيد من الأطباء. قم بترقية اشتراكك لإضافة المزيد من المستخدمين.",
   "roleLimitInfo": "خطتك الحالية بلغت الحد الأقصى لـ: {roles}. قم بترقية اشتراكك لإضافة مستخدمين بهذا الدور.",
   "@roleLimitInfo": {
-    "placeholders": { "roles": { "type": "String" } }
+    "placeholders": {
+      "roles": {
+        "type": "String"
+      }
+    }
   },
   "daysRemaining": "الأيام المتبقية",
   "accountSettings": "إعدادات الحساب",
@@ -140,13 +144,13 @@
   "addTreatment": "اضافة معالجة",
   "todaysSchedule": "جدول اليوم",
   "viewAll": "عرض الكل",
-  "analytics":"الإحصائيات",
+  "analytics": "الإحصائيات",
   "schedule": "الجدول",
   "payments": "الدفعات",
   "more": "المزيد",
   "total": "الكلي",
-  "welcomeBack":"مرحباً بعودتك",
-  "signInToContinue":"سجّل الدخول إلى حسابك للمتابعة",
+  "welcomeBack": "مرحباً بعودتك",
+  "signInToContinue": "سجّل الدخول إلى حسابك للمتابعة",
   "allFilter": "الكل",
   "newFilter": "الأحدث",
   "years": "سنوات",
@@ -168,7 +172,6 @@
   "treatmentSavedSuccessfully": "تم حفظ المعالجة بنجاح",
   "treatmentType": "نوع المعاجلة",
   "teeth": "الأسنان",
-  "notes": "ملاحظات",
   "addNotesAboutTreatment": "أضف أي ملاحظات عن العلاج...",
   "totalCost": "التكلفة الإجمالية",
   "totalCostHint": "التكلفة الإجمالية",
@@ -215,7 +218,6 @@
   "noPaymentsYet": "لا توجد دفعات حتى الآن",
   "recordPaymentTitle": "تسجيل دفعة",
   "patientName": "اسم المريض",
-  "totalCost": "التكلفة الإجمالية",
   "alreadyPaid": "المبلغ المدفوع",
   "remaining": "المتبقي",
   "noteOptional": "ملاحظة (اختيارية)",
@@ -224,7 +226,7 @@
   "pleaseEnterAmount": "يرجى إدخال المبلغ",
   "pleaseEnterValidAmount": "يرجى إدخال مبلغ صحيح",
   "fullAmount": "المبلغ الكامل",
-  "paymentMethodCash": "نقدي",
+  "paymentMethodCash": "نقداً",
   "paymentMethodCreditCard": "بطاقة ائتمان",
   "paymentMethodDebitCard": "بطاقة خصم",
   "paymentMethodInsurance": "تأمين",
@@ -232,13 +234,11 @@
   "paymentMethodOther": "آخر",
   "treatment": "المعالجة",
   "treatmentNumber": "المعالجة #{number}",
-  "description": "الوصف",
   "treatmentTypes": "أنواع المعالجة",
   "treatedTeeth": "الأسنان المعالجة",
   "attachments": "المرفقات",
   "created": "تم الإنشاء",
-  "completed": "تم الانتهاء",
-  "age":"العمر",
+  "age": "العمر",
   "noExpensesThisMonth": "لا توجد نفقات هذا الشهر",
   "addOne": "إضافة واحدة",
   "transactions": "معاملات",
@@ -246,7 +246,6 @@
   "addNoteOptional": "إضافة ملاحظة (اختيارية)",
   "addExpense": "إضافة نفقة",
   "saveExpense": "حفظ النفقة",
-  "today": "اليوم",
   "done": "تم",
   "deleteExpenseButton": "حذف النفقة",
   "deleteExpenseTitle": "حذف النفقة",
@@ -262,7 +261,11 @@
   "currentlyActive": "نشطة حاليًا",
   "clinicSelectedMessage": "أنت الآن تعمل على {name}",
   "@clinicSelectedMessage": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "leaveClinic": "مغادرة العيادة",
   "leaveClinicConfirmation": "هل أنت متأكد من رغبتك في مغادرة {clinicName}؟ سليحتاج إلى دعوة جديدة للالتحاق.",
@@ -287,7 +290,11 @@
   "inviteSentSuccess": "تم إرسال الدعوة",
   "invitedBy": "من {name}",
   "@invitedBy": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "noInvitations": "لا توجد دعوات",
   "noPendingInvitations": "لا توجد دعوات معلقة",
@@ -329,7 +336,7 @@
   "checkup": "فحص دوري",
   "consultation": "استشارة",
   "xray": "الأشعة السينية",
-  "noAppointments":"لا يوجد مواعيد",
+  "noAppointments": "لا يوجد مواعيد",
   "saveChanges": "حفظ التغييرات",
   "specialization": "التخصص",
   "location": "الموقع",
@@ -338,7 +345,6 @@
   "orthodontics": "تقويم الأسنان",
   "cosmeticDentistry": "طبابة تجميلية",
   "oralSurgery": "جراحة الفم",
-  "noAppointments":"لا يوجد مواعيد",
   "expenses": "المدفوعات",
   "currency": "العملة",
   "caseCurrency": "عملة الحالة",
@@ -391,53 +397,66 @@
   "minutesAgo": "منذ {count} دقيقة",
   "@minutesAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "hoursAgo": "منذ {count} ساعة",
   "@hoursAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "daysAgo": "منذ {count} يوم",
   "@daysAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "notificationsSettings": "إعدادات الإشعارات",
   "freeTrial": "فترة تجريبية مجانية",
   "daysLeft": "{count} يوم متبقي",
   "@daysLeft": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "upgradeNow": "ترقية الآن",
-  "active": "فعّال",
-  "inactive": "غير فعّال",
   "storageUsed": "التخزين",
   "storageValue": "{used} / {total} جيجابايت",
   "@storageValue": {
     "placeholders": {
-      "used": { "type": "String" },
-      "total": { "type": "String" }
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
     }
   },
   "viewAllPlans": "عرض جميع الباقات",
-  "plan": "باقة",
+  "plan": "الباقة",
   "renewsOn": "يتجدد في {date}",
   "@renewsOn": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "trialEndsIn": "تنتهي الفترة التجريبية خلال {count} يوم",
   "@trialEndsIn": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noSubscription": "لا توجد باقة نشطة",
@@ -452,7 +471,6 @@
   "onboardingDesc2": "إدارة المواعيد بسهولة مع عرض التقويم والتذكيرات التلقائية",
   "onboardingTitle3": "تتبع وطوّر\nعيادتك",
   "onboardingDesc3": "راقب أداء العيادة مع تحليلات شاملة ورؤى مالية",
-
   "signIn": "تسجيل الدخول",
   "signUp": "إنشاء حساب",
   "logIn": "تسجيل الدخول",
@@ -464,7 +482,7 @@
   "orContinueWith": "أو تابع عبر",
   "dontHaveAccount": "ليس لديك حساب؟ ",
   "alreadyHaveAccount": "لديك حساب بالفعل؟ ",
-  "copyrightDenta": "\u00A9 2026 Denta. جميع الحقوق محفوظة.",
+  "copyrightDenta": "© 2026 Denta. جميع الحقوق محفوظة.",
   "pleaseEnterEmailOrPhone": "يرجى إدخال بريدك الإلكتروني أو رقم هاتفك",
   "pleaseEnterValidEmailOrPhone": "يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح",
   "pleaseEnterPassword": "يرجى إدخال كلمة المرور",
@@ -472,7 +490,6 @@
   "loginFailed": "فشل تسجيل الدخول",
   "appName": "Denta",
   "professionalClinicManagement": "إدارة العيادات الاحترافية",
-
   "createAccount": "إنشاء حساب",
   "joinDentalCommunity": "انضم إلى مجتمعنا الطبي",
   "firstNameRequired": "الاسم الأول *",
@@ -501,7 +518,6 @@
   "checkConnectionRetry": "يرجى التحقق من الاتصال والمحاولة مرة أخرى",
   "retry": "إعادة المحاولة",
   "signupInfoBox": "أنشئ حسابك، ثم قم بإعداد أو الانضمام إلى عيادة من لوحة التحكم.",
-
   "enterEmailToGetStarted": "أدخل بريدك الإلكتروني للبدء",
   "verificationCodeInfo": "سنرسل لك رمز تحقق لتأكيد بريدك الإلكتروني.",
   "emailAddress": "البريد الإلكتروني",
@@ -513,10 +529,11 @@
   "verificationCodeSentTo": "تم إرسال رمز التحقق إلى {email}",
   "@verificationCodeSentTo": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
-
   "verifyYourAccount": "تحقق من حسابك",
   "verifyAccountSubtitle": "سنرسل رمز التحقق إلى بريدك الإلكتروني",
   "verifyYourEmail": "تحقق من بريدك الإلكتروني",
@@ -526,7 +543,9 @@
   "resendCodeIn": "إعادة الإرسال خلال {seconds} ثانية",
   "@resendCodeIn": {
     "placeholders": {
-      "seconds": { "type": "int" }
+      "seconds": {
+        "type": "int"
+      }
     }
   },
   "didntReceiveCode": "لم تستلم الرمز؟ ",
@@ -537,7 +556,6 @@
   "emailVerified": "تم التحقق من البريد الإلكتروني",
   "completeYourRegistration": "يرجى إكمال التسجيل",
   "verificationFailed": "فشل التحقق",
-
   "forgotPassword": "نسيت كلمة المرور",
   "forgotPasswordSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين",
   "enterRegisteredEmail": "أدخل بريدك الإلكتروني المسجل",
@@ -546,7 +564,6 @@
   "emailSent": "تم إرسال البريد!",
   "resetLinkSentMessage": "لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد واتباع التعليمات.",
   "didntReceiveEmail": "لم تستلم البريد الإلكتروني؟ ",
-
   "chooseYourPlan": "اختر باقتك",
   "selectPlanSubtitle": "اختر الخطة المثالية لعيادتك",
   "noPlansAvailable": "لا توجد خطط متاحة",
@@ -558,7 +575,9 @@
   "dayFreeTrial": "تجربة مجانية لمدة {days} يوم",
   "@dayFreeTrial": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "mostPopular": "الأكثر شيوعاً",
@@ -567,7 +586,9 @@
   "storageAmount": "{amount} جيجابايت تخزين",
   "@storageAmount": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "allFeaturesIncluded": "جميع الميزات مضمّنة",
@@ -575,7 +596,9 @@
   "upToDoctors": "حتى {count} أطباء",
   "@upToDoctors": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "prioritySupport": "دعم ذو أولوية",
@@ -583,7 +606,9 @@
   "storagePerAccount": "{amount} جيجابايت تخزين لكل حساب",
   "@storagePerAccount": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "advancedAnalytics": "تحليلات متقدمة",
@@ -591,7 +616,6 @@
   "fullPatientManagement": "إدارة كاملة للمرضى",
   "appointmentScheduling": "جدولة المواعيد",
   "treatmentTracking": "تتبع العلاج",
-
   "completeYourProfile": "أكمل ملفك الشخصي",
   "setupClinicDetails": "قم بإعداد تفاصيل عيادتك",
   "clinicDetailsInfo": "أدخل تفاصيل عيادتك لإكمال التسجيل. يمكنك تحديثها لاحقاً من الإعدادات.",
@@ -609,11 +633,11 @@
   "pleaseSelectLocation": "يرجى اختيار الموقع",
   "pleaseSelectPlan": "يرجى اختيار خطة الاشتراك",
   "sessionExpired": "انتهت الجلسة",
+  "sessionExpiredMessage": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
   "pleaseVerifyEmailAgain": "يرجى التحقق من بريدك الإلكتروني مجدداً",
   "welcome": "مرحباً!",
   "accountCreatedSuccessfully": "تم إنشاء حسابك بنجاح",
   "registrationFailed": "فشل التسجيل",
-
   "rememberPassword": "تتذكر كلمة المرور؟ ",
   "setNewPassword": "تعيين كلمة مرور جديدة",
   "enterNewPasswordBelow": "أدخل كلمة المرور الجديدة أدناه",
@@ -627,16 +651,13 @@
   "caseTitleHint": "أدخل عنوان للحالة المكتملة",
   "caseMarkedAsFinished": "تم إنهاء الحالة",
   "paymentAddedSuccessfully": "تمت إضافة الدفعة بنجاح",
-
   "noPatientsYet": "لا يوجد مرضى حتى الآن",
   "noPatientsYetDesc": "أضف أول مريض للبدء",
   "noMatchingPatients": "لا يوجد مرضى مطابقين",
   "noMatchingPatientsDesc": "حاول تعديل البحث أو الفلاتر",
-
   "pleaseEnterYourName": "يرجى إدخال اسمك",
   "nameTooShort": "يجب أن يكون الاسم حرفين على الأقل",
   "pleaseEnterYourEmail": "يرجى إدخال بريدك الإلكتروني",
-  "pleaseEnterValidEmail": "يرجى إدخال بريد إلكتروني صحيح",
   "pleaseEnterYourPassword": "يرجى إدخال كلمة المرور",
   "pleaseSelectSpecialty": "يرجى اختيار التخصص",
   "workingDaysAndHolidays": "أيام العمل والعطل",
@@ -648,14 +669,12 @@
   "newEmail": "البريد الإلكتروني الجديد",
   "currentPassword": "كلمة المرور الحالية",
   "changeEmailDescription": "أدخل بريدك الإلكتروني الجديد وكلمة المرور الحالية للتحقق من هويتك.",
-  "sendVerificationCode": "إرسال رمز التحقق",
   "verifyNewEmail": "تحقق من البريد الجديد",
   "changeEmailOtpDescription": "أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني الجديد.",
   "confirmChangeEmail": "تأكيد التغيير",
   "emailChangedSuccess": "تم تغيير البريد الإلكتروني بنجاح! يرجى تسجيل الدخول بالبريد الجديد.",
   "pleaseEnterNewEmail": "يرجى إدخال البريد الإلكتروني الجديد",
   "pleaseEnterCurrentPassword": "يرجى إدخال كلمة المرور الحالية",
-
   "editCosts": "تعديل التكاليف",
   "enterTotalCost": "أدخل التكلفة الإجمالية",
   "enterLabFees": "أدخل رسوم المخبر",
@@ -691,7 +710,9 @@
   "nTreatments": "{count} معالجات",
   "@nTreatments": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "addToPlan": "إضافة للخطة",
@@ -705,7 +726,9 @@
   "toothLabel": "السن {number}",
   "@toothLabel": {
     "placeholders": {
-      "number": { "type": "String" }
+      "number": {
+        "type": "String"
+      }
     }
   },
   "selectTreatments": "اختر المعالجات",
@@ -713,13 +736,17 @@
   "addNTreatments": "إضافة {count} معالجات",
   "@addNTreatments": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "alreadyPlannedForTooth": "{count} معالجة مخططة لهذا السن",
   "@alreadyPlannedForTooth": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "pleaseSelectCurrency": "يرجى اختيار العملة",
@@ -733,26 +760,31 @@
   "removeUserConfirmation": "هل أنت متأكد من إزالة {name} من العيادة؟",
   "@removeUserConfirmation": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "selectRoles": "اختر الأدوار",
   "roleSecretary": "سكرتير",
   "noUsersYet": "لا يوجد مستخدمون بعد",
   "manageRoles": "إدارة الأدوار",
-  "specialization": "التخصص",
   "selectSpecialization": "اختر التخصص",
-
   "patientInfo": "معلومات المريض",
   "caseInfo": "معلومات الحالة",
   "initialVisit": "الزيارة الأولى",
-  "addNewPatient": "إضافة مريض جديد",
   "stepOfTotal": "الخطوة {current} من {total}: {stepTitle}",
   "@stepOfTotal": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" },
-      "stepTitle": { "type": "String" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "stepTitle": {
+        "type": "String"
+      }
     }
   },
   "caseInformationOptional": "معلومات الحالة (اختياري)",
@@ -762,25 +794,33 @@
   "phoneHint": "0988026431",
   "accessRestricted": "الوصول مقيّد",
   "accessRestrictedDescription": "صلاحيات دورك لا تسمح بالوصول إلى هذه الميزة. تواصل مع مدير العيادة لمزيد من المعلومات.",
-
   "billingAndInvoices": "الفواتير والاشتراكات",
   "billingPageTitle": "الفواتير",
   "selectPlanTitle": "اختر باقة",
   "invoiceDetailsTitle": "الفاتورة",
   "submitProofTitle": "إرسال إثبات الدفع",
-
   "errorTitle": "خطأ",
   "copied": "تم النسخ",
-
   "currentPlan": "الباقة الحالية",
   "noActiveSubscription": "لا يوجد اشتراك نشط",
   "trialDaysRemaining": "متبقي {days} يوم في الفترة التجريبية",
-  "@trialDaysRemaining": { "placeholders": { "days": { "type": "int" } } },
+  "@trialDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "daysUntilRenewal": "{days} يوم حتى التجديد",
-  "@daysUntilRenewal": { "placeholders": { "days": { "type": "int" } } },
+  "@daysUntilRenewal": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "buyOrRenewPlan": "شراء أو تجديد الباقة",
   "continueOpenInvoice": "متابعة الفاتورة المفتوحة",
-
   "invoicesHistoryTitle": "الفواتير",
   "noInvoicesYet": "لا توجد فواتير بعد",
   "invoiceLineSubscription": "اشتراك",
@@ -789,30 +829,23 @@
   "activatesUntil": "ينشّط الاشتراك حتى",
   "invoiceType": "النوع",
   "renewal": "تجديد",
-  "plan": "الباقة",
-
   "invoiceStatusPending": "بانتظار الدفع",
   "invoiceStatusUnderReview": "قيد المراجعة",
   "invoiceStatusPaid": "مدفوعة",
   "invoiceStatusRejected": "مرفوضة",
   "invoiceStatusCancelled": "ملغاة",
-
   "billingMonthly": "شهري",
   "billingYearly": "سنوي",
   "selectBillingCycle": "دورة الفوترة",
   "choosePlan": "الباقة",
   "popular": "الأكثر شيوعاً",
   "generateInvoice": "إنشاء الفاتورة",
-
   "howToPayTitle": "طريقة الدفع",
   "howToPaySubtitle": "ادفع باستخدام إحدى الطرق التالية، ثم ارفع إيصال الدفع.",
   "referenceNumber": "الرقم المرجعي",
   "payOutsideAppNotice": "تتم عمليات الدفع خارج التطبيق. بعد الدفع، عُد إلى هنا لرفع الإيصال.",
-  "paymentMethodCash": "نقداً",
   "paymentMethodSyriatelCash": "سيرياتيل كاش",
   "paymentMethodShamCash": "شام كاش",
-  "paymentMethodBankTransfer": "تحويل بنكي",
-
   "uploadPaymentProof": "رفع إثبات الدفع",
   "uploadReceipt": "ارفع الإيصال",
   "uploadReceiptHint": "JPG أو PNG أو PDF",
@@ -827,25 +860,34 @@
   "receiptRequired": "يرجى إرفاق الإيصال قبل الإرسال.",
   "submitForReview": "إرسال للمراجعة",
   "invoiceNumberLabel": "الفاتورة {number}",
-  "@invoiceNumberLabel": { "placeholders": { "number": { "type": "String" } } },
+  "@invoiceNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "proofSubmittedTitle": "أُرسلت للمراجعة",
   "proofSubmittedMessage": "سيقوم الإدارة بمراجعة الدفع قريباً.",
-
   "underReviewTitle": "قيد المراجعة",
   "underReviewMessage": "فريقنا يتحقق من الدفع. سيتم إعلامك عند الموافقة.",
   "invoicePaidTitle": "تم الدفع",
   "invoicePaidOn": "تاريخ الدفع",
   "invoiceRejectedTitle": "الفاتورة مرفوضة",
-
   "subscriptionExpiredTitle": "انتهى الاشتراك",
   "subscriptionExpiredMessage": "العيادة في وضع القراءة فقط. جدّد الاشتراك للاستمرار في إضافة المرضى والمواعيد والمصاريف.",
   "subscriptionExpiredBlocksAction": "انتهى اشتراكك. جدّد الاشتراك لمتابعة استخدام الميزات المدفوعة.",
   "subscriptionExpiresSoonTitle": "اقترب انتهاء الاشتراك",
   "subscriptionExpiresInDays": "ينتهي خلال {days} يوم. أنشئ فاتورة الآن لتجنب انقطاع الخدمة.",
-  "@subscriptionExpiresInDays": { "placeholders": { "days": { "type": "int" } } },
+  "@subscriptionExpiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "renewNow": "جدّد الآن",
   "notNow": "ليس الآن",
-
   "pricingTitle": "اختر باقتك",
   "pricingSubtitle": "تسعير بسيط ينمو مع عيادتك",
   "pricingPopularBadge": "الأكثر شيوعاً",
@@ -853,7 +895,13 @@
   "pricingCurrentPlanLabel": "الباقة الحالية",
   "pricingSelectedLabel": "محددة",
   "pricingChooseAction": "اختر باقة {plan}",
-  "@pricingChooseAction": { "placeholders": { "plan": { "type": "String" } } },
+  "@pricingChooseAction": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
   "pricingContactUs": "تواصل معنا",
   "pricingCustomPricing": "تسعير مخصص",
   "pricingMonthSuffix": "/شهر",
@@ -861,19 +909,38 @@
   "pricingMoSuffix": "/شهر",
   "pricingYrSuffix": "/سنة",
   "pricingSaveAmount": "وفّر ${amount}",
-  "@pricingSaveAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@pricingSaveAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "pricingSubscribeAction": "اشترك في باقة {plan} · {priceText}",
-  "@pricingSubscribeAction": { "placeholders": { "plan": { "type": "String" }, "priceText": { "type": "String" } } },
+  "@pricingSubscribeAction": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "priceText": {
+        "type": "String"
+      }
+    }
+  },
   "pricingStartFreeTrial": "ابدأ التجربة المجانية",
   "pricingStartShort": "ابدأ",
   "pricingSubscriptionActiveTitle": "تم تفعيل الاشتراك",
   "pricingSubscriptionActiveMessage": "أهلاً بك في باقتك الجديدة!",
   "pricingTrialStartedTitle": "بدأت التجربة",
   "pricingTrialStartedMessage": "استمتع بثلاثين يوماً من الوصول الكامل!",
-
   "planEverythingInPlus": "جميع مزايا باقة {plan}، بالإضافة إلى:",
-  "@planEverythingInPlus": { "placeholders": { "plan": { "type": "String" } } },
-
+  "@planEverythingInPlus": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
   "planSoloName": "فردي",
   "planSoloDescription": "لطبيب أسنان واحد يبدأ مشواره",
   "planSoloFeature1": "طبيب أسنان واحد",
@@ -885,7 +952,6 @@
   "planSoloFeature7": "تخزين الأشعة والصور",
   "planSoloFeature8": "مزامنة سحابية ونسخ احتياطي",
   "planSoloFeature9": "دعم عبر البريد الإلكتروني",
-
   "planDuoName": "ثنائي",
   "planDuoDescription": "لطبيبَي أسنان يعملان معاً",
   "planDuoFeature1": "حتى طبيبَي أسنان",
@@ -893,7 +959,6 @@
   "planDuoFeature3": "لوحة الإحصائيات والتحليلات",
   "planDuoFeature4": "تذكيرات بالبريد والرسائل القصيرة",
   "planDuoFeature5": "دعم بريدي بأولوية",
-
   "planClinicName": "مركز",
   "planClinicDescription": "للمراكز متوسطة الحجم",
   "planClinicFeature1": "حتى أربعة أطباء أسنان",
@@ -909,7 +974,6 @@
   "planClinicFeature11": "تذكيرات بالبريد والرسائل القصيرة",
   "planClinicFeature12": "مزامنة سحابية ونسخ احتياطي",
   "planClinicFeature13": "دعم عبر الدردشة المباشرة",
-
   "planPracticeName": "مركز كبير",
   "planPracticeDescription": "للمراكز الكبيرة والعيادات متعددة الفروع",
   "planPracticeFeature1": "حتى ثمانية أطباء أسنان",
@@ -918,7 +982,6 @@
   "planPracticeFeature4": "تحليلات بين الفروع",
   "planPracticeFeature5": "دعم عبر الهاتف والدردشة",
   "planPracticeFeature6": "جلسات تدريب بأولوية",
-
   "planCustomName": "مخصصة",
   "planCustomDescription": "مصممة خصيصاً لمؤسستك",
   "planCustomFeature1": "أكثر من 10 أطباء أسنان",
@@ -929,17 +992,29 @@
   "planCustomFeature6": "ضمانات اتفاقية مستوى الخدمة",
   "planCustomFeature7": "خصومات الكميات الكبيرة",
   "planCustomFeature8": "مصممة وفق احتياجاتك",
-
   "editPatient": "تعديل المريض",
   "deletePatient": "حذف المريض",
   "deletePatientConfirmation": "هل أنت متأكد من حذف {name}؟",
   "@deletePatientConfirmation": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "patientDeleted": "تم حذف المريض",
   "patientUpdated": "تم تحديث المريض",
   "updatingPatient": "جارٍ تحديث المريض...",
-
-  "couldNotOpenLink": "تعذّر فتح الرابط"
+  "couldNotOpenLink": "تعذّر فتح الرابط",
+  "noNotificationSettings": "لا توجد إعدادات إشعارات متاحة",
+  "markAsUnread": "تعليم كغير مقروء",
+  "newNotificationsTitle": "إشعارات جديدة",
+  "moreNotifications": "{count} إشعار آخر",
+  "@moreNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
-

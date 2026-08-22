@@ -74,7 +74,7 @@ extension on _SnackbarType {
   Color get backgroundColor {
     switch (this) {
       case _SnackbarType.success:
-        return const Color(0xFF70B2B2);
+        return ColorManager.primary;
       case _SnackbarType.error:
         return const Color(0xFFEF4444);
       case _SnackbarType.warning:

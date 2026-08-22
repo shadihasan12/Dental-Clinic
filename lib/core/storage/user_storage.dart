@@ -53,6 +53,9 @@ class UserStorage {
   // "days on platform" anchor for the share card — we can't rely on
   // the backend's created_at being populated for every user.
   static const String _firstSeenAtKey = 'first_seen_at';
+  // Which statistics share-card design the doctor picked last. A pure UI
+  // preference, so it deliberately survives logout like theme or language.
+  static const String _shareCardTemplateKey = 'share_card_template';
 
   final SharedPreferences _prefs;
 
@@ -129,6 +132,10 @@ class UserStorage {
     await _prefs.setString(_firstSeenAtKey, now.toIso8601String());
     return now;
   }
+
+  Future<void> saveShareCardTemplate(String id) async =>
+      _prefs.setString(_shareCardTemplateKey, id);
+  String? getShareCardTemplate() => _prefs.getString(_shareCardTemplateKey);
 
   DateTime? getFirstSeenAt() {
     final iso = _prefs.getString(_firstSeenAtKey);

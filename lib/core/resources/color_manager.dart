@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Color management class for the dental clinic application
-/// Based on the design system with teal theme
+/// Based on the design system, keyed to the Denta brand blue
 ///
 /// Static colors remain for use in non-context situations (theme definitions).
 /// Use [of(context)] for theme-aware colors in widgets.
@@ -14,13 +14,20 @@ class ColorManager {
   static const Color transparent = Colors.transparent;
 
   // ============================================
-  // PRIMARY COLORS - Teal Theme (same in both themes)
+  // PRIMARY COLORS - Denta Blue (same in both themes)
   // ============================================
-  static const Color primary = Color(0xFF70B2B2);
-  static const Color primaryDark = Color(0xFF5A9999);
-  static const Color primaryDarker = Color(0xFF4A8888);
-  static const Color primaryLight = Color(0xFF8BC9C9);
-  static const Color primaryLighter = Color(0xFFA5D6D6);
+  // The logo blue (#199ED9) at full strength was too loud for large UI areas,
+// so the ramp keeps its hue but softens it to S62% L62%. The logo artwork
+// itself keeps the vivid original - this ramp is for UI surfaces only.
+// Swap these five values to retune; everything else derives from them.
+// The ramp keeps the
+  // lightness relationships of the previous teal palette, so every existing
+  // use of primaryLight/Dark/etc. holds its relative weight.
+  static const Color primary = Color(0xFF62B4DA);
+  static const Color primaryDark = Color(0xFF3DA2D1);
+  static const Color primaryDarker = Color(0xFF2D90BE);
+  static const Color primaryLight = Color(0xFF8BC8E4);
+  static const Color primaryLighter = Color(0xFFA8D6EB);
 
   // Primary with opacity variants
   static Color get primary5 => primary.withValues(alpha: 0.05);

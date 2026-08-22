@@ -91,6 +91,7 @@ flutter:
     - assets/icons/case/teeth/
     - assets/images/onboarding/
     - assets/images/logo/
+    - assets/images/share/
     - .env
 
   fonts:

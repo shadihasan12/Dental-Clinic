@@ -1,7 +1,10 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:go_router/go_router.dart';
@@ -101,16 +104,39 @@ class HomeHeader extends StatelessWidget {
                   size: 20.w,
                 ),
               ),
+              // Driven by `unread_count`, which every read/unread/list
+              // response carries - so it stays current without a request of
+              // its own. No unread mail, no dot.
               Positioned(
-                right: 10.w,
-                top: 10.h,
-                child: Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
+                right: 6.w,
+                top: 4.h,
+                child: BlocBuilder<UnreadCountCubit, int>(
+                  bloc: getIt<UnreadCountCubit>(),
+                  builder: (context, unreadCount) {
+                    if (unreadCount == 0) return const SizedBox.shrink();
+                    return Container(
+                      constraints: BoxConstraints(minWidth: 16.w),
+                      height: 16.w,
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      decoration: BoxDecoration(
+                        color: ColorManager.error,
+                        borderRadius: BorderRadius.circular(8.w),
+                        border: Border.all(color: c.cardBgSecondary, width: 1.5),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        // Past 99 the pill would outgrow the bell.
+                        unreadCount > 99 ? '99+' : '$unreadCount',
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 9.sp,
+                          height: 1,
+                          fontWeight: FontWeight.w700,
+                          color: ColorManager.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

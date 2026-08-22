@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/resources/strings_manager.dart';
 import 'package:dental_clinic_app/core/localization/language_service.dart';
+import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 
 /// Interceptor that handles authentication token management:
@@ -18,11 +19,16 @@ import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.da
 class AuthInterceptor extends QueuedInterceptor {
   final TokenStorage _tokenStorage;
   final LanguageService _languageService;
+  final SessionManager _sessionManager;
 
   /// Flag to prevent redirect loops
   bool _isRefreshing = false;
 
-  AuthInterceptor(this._tokenStorage, this._languageService);
+  AuthInterceptor(
+    this._tokenStorage,
+    this._languageService,
+    this._sessionManager,
+  );
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -174,8 +180,11 @@ class AuthInterceptor extends QueuedInterceptor {
     }
   }
 
+  /// The token is dead and cannot be renewed. Wipe the session and bounce the
+  /// user to login — otherwise they stay on a signed-in-looking screen while
+  /// every request keeps failing with `Unauthenticated`.
   Future<void> _forceLogout() async {
     debugPrint('[AuthInterceptor] Token refresh failed — forcing logout');
-    await _tokenStorage.clearAuthData();
+    await _sessionManager.endSession(expired: true);
   }
 }

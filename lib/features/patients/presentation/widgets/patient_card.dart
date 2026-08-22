@@ -107,8 +107,8 @@ class PatientCard extends StatelessWidget {
 
   Widget _buildAvatar(BuildContext context) {
     return Container(
-      width: 52.w,
-      height: 52.w,
+      width: 44.w,
+      height: 44.w,
       decoration: BoxDecoration(
         color: ColorManager.primary.withValues(alpha: 0.15),
         shape: BoxShape.circle,
@@ -119,7 +119,7 @@ class PatientCard extends StatelessWidget {
           style: TextStyle(
             color: ColorManager.primary,
             fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
+            fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
           ),
         ),
@@ -250,13 +250,13 @@ class _IconAction extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
-        width: 36.w,
-        height: 36.w,
+        width: 32.w,
+        height: 32.w,
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 18.w, color: color),
+        child: Icon(icon, size: 16.w, color: color),
       ),
     );
   }

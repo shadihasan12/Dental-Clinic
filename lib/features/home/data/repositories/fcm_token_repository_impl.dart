@@ -19,4 +19,14 @@ class FcmTokenRepositoryImpl implements FcmTokenRepository {
       return Left(NetworkExceptions.getException(e));
     }
   }
+
+  @override
+  Future<Either<NetworkExceptions, Unit>> logout(String? token) async {
+    try {
+      await _remoteDataSource.logout(token);
+      return const Right(unit);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
 }

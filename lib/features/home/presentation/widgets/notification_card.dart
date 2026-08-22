@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class NotificationCard extends StatelessWidget {
   final NotificationEntity notification;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final String timeAgo;
 
   const NotificationCard({
@@ -14,16 +15,18 @@ class NotificationCard extends StatelessWidget {
     required this.notification,
     required this.onTap,
     required this.timeAgo,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final icon = _iconForType(notification.type);
-    final iconColor = _colorForType(notification.type);
+    final iconColor = _colorForCategory(notification.category);
+    final body = notification.body;
 
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         color: notification.isRead ? c.cardBg : ColorManager.primary5,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
@@ -37,7 +40,11 @@ class NotificationCard extends StatelessWidget {
                 color: iconColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(icon, size: 20.w, color: iconColor),
+              child: Icon(
+                _iconForCategory(notification.category),
+                size: 20.w,
+                color: iconColor,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -70,18 +77,22 @@ class NotificationCard extends StatelessWidget {
                         ),
                     ],
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    notification.content,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      color: c.textSecondary,
-                      height: 1.4,
+                  // `body` is documented as nullable — announcements are often
+                  // title-only, and an empty Text would leave a dead gap.
+                  if (body != null && body.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      body,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: c.textSecondary,
+                        height: 1.4,
+                      ),
                     ),
-                  ),
+                  ],
                   SizedBox(height: 6.h),
                   Text(
                     timeAgo,
@@ -100,37 +111,36 @@ class NotificationCard extends StatelessWidget {
     );
   }
 
-  IconData _iconForType(NotificationType type) {
-    switch (type) {
-      case NotificationType.appointment:
+  /// Categories are server-defined and new ones ship without an app update, so
+  /// both of these fall through to a neutral default rather than switching
+  /// exhaustively over an enum.
+  IconData _iconForCategory(String category) {
+    switch (category) {
+      case NotificationCategories.appointmentReminder:
         return Icons.calendar_today_rounded;
-      case NotificationType.payment:
+      case NotificationCategories.paymentReminder:
         return Icons.payment_rounded;
-      case NotificationType.patient:
-        return Icons.person_add_rounded;
-      case NotificationType.report:
-        return Icons.bar_chart_rounded;
-      case NotificationType.treatment:
-        return Icons.medical_services_rounded;
-      case NotificationType.cancellation:
-        return Icons.cancel_rounded;
+      case NotificationCategories.clinicInvitation:
+        return Icons.group_add_rounded;
+      case NotificationCategories.announcement:
+        return Icons.campaign_rounded;
+      default:
+        return Icons.notifications_rounded;
     }
   }
 
-  Color _colorForType(NotificationType type) {
-    switch (type) {
-      case NotificationType.appointment:
+  Color _colorForCategory(String category) {
+    switch (category) {
+      case NotificationCategories.appointmentReminder:
         return ColorManager.info;
-      case NotificationType.payment:
-        return ColorManager.primary;
-      case NotificationType.patient:
-        return ColorManager.success;
-      case NotificationType.report:
-        return ColorManager.purple;
-      case NotificationType.treatment:
+      case NotificationCategories.paymentReminder:
         return ColorManager.warning;
-      case NotificationType.cancellation:
-        return ColorManager.error;
+      case NotificationCategories.clinicInvitation:
+        return ColorManager.success;
+      case NotificationCategories.announcement:
+        return ColorManager.purple;
+      default:
+        return ColorManager.primary;
     }
   }
 }

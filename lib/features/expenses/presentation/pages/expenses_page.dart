@@ -362,7 +362,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                         l10n.expenses,
                         style: TextStyle(
                           fontFamily: FontHelper.fontFamily(context),
-                          fontSize: 22.sp,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                           color: ColorManager.of(context).textPrimary,
                         ),

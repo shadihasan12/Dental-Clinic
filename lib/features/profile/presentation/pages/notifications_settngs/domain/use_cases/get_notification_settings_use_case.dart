@@ -7,13 +7,13 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class GetNotificationSettingsUseCase
-    extends UseCase<NotificationSettingsEntity, NoParams> {
+    implements UseCase<List<NotificationSettingEntity>, NoParams> {
   final NotificationSettingsRepository _repository;
 
   GetNotificationSettingsUseCase(this._repository);
 
   @override
-  Future<Either<NetworkExceptions, NotificationSettingsEntity>> call(
+  Future<Either<NetworkExceptions, List<NotificationSettingEntity>>> call(
     NoParams params,
   ) {
     return _repository.getSettings();

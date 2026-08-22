@@ -16,7 +16,11 @@ import 'package:dental_clinic_app/core/resources/theme_manager.dart';
 import 'package:dental_clinic_app/core/constants/app_constants.dart';
 import 'package:dental_clinic_app/core/services/notifications/fcm_background_handler.dart';
 import 'package:dental_clinic_app/core/services/notifications/firebase_options.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_poller.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_topics_synchronizer.dart';
+import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
@@ -69,7 +73,24 @@ Future<void> main() async {
   // Notification service: requests permission, wires FCM listeners, registers
   // the device token. Fire-and-forget so we don't block first frame on a
   // network round-trip; failures will retry on the next sign-in.
-  unawaited(getIt<NotificationService>().initialize());
+  unawaited(
+    // The poller waits for initialize(): it announces through the local
+    // notifications plugin, which is set up in there. A no-op on every
+    // platform that receives real pushes.
+    getIt<NotificationService>()
+        .initialize()
+        .then((_) => getIt<NotificationPoller>().start()),
+  );
+
+  // Both of these need a session. On a cold start with one already in storage
+  // nothing else re-asserts them:
+  //   * the server-named topic subscriptions (subscribeToTopic is idempotent,
+  //     and re-running it repairs one that failed silently earlier),
+  //   * the badge count.
+  if (getIt<TokenStorage>().hasToken()) {
+    unawaited(getIt<NotificationTopicsSynchronizer>().sync());
+    unawaited(getIt<UnreadCountCubit>().refresh());
+  }
 
   // Set up BLoC observer for debugging
   Bloc.observer = const AppBlocObserver();
@@ -84,13 +105,15 @@ class DentalClinicApp extends StatefulWidget {
   State<DentalClinicApp> createState() => _DentalClinicAppState();
 }
 
-class _DentalClinicAppState extends State<DentalClinicApp> {
+class _DentalClinicAppState extends State<DentalClinicApp>
+    with WidgetsBindingObserver {
   final RoutesManager routesManager = RoutesManager(getIt<TokenStorage>());
   StreamSubscription<void>? _notificationTapSubscription;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     getIt<LanguageBloc>().add(const LoadLanguageEvent());
     getIt<ThemeBloc>().add(const LoadThemeEvent());
 
@@ -98,24 +121,47 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
     // instance directly (rather than `context.go`) because taps may fire
     // before any subtree has mounted (cold-start from a tapped push).
     _notificationTapSubscription =
-        getIt<NotificationService>().onNotificationTap.listen((payload) {
-      // push, not go: every route here is top-level, so `go` replaces the
-      // whole stack and the destination has nothing to pop back to.
+        getIt<NotificationService>().onNotificationTap.listen((data) {
       if (!getIt<TokenStorage>().hasToken()) return;
 
       // Tapping several notifications in a row should not stack duplicates.
       final current =
           routesManager.router.routerDelegate.currentConfiguration.uri.path;
-      if (current == payload.deepLink) return;
+      if (current == NotificationRouting.locationFor(data)) return;
 
-      routesManager.router.push(payload.deepLink);
+      // The destination comes from `data['type']`, and an unknown type lands
+      // safely on the inbox rather than throwing.
+      NotificationRouting.navigate(routesManager.router, data);
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _notificationTapSubscription?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    if (!getIt<TokenStorage>().hasToken()) return;
+
+    // Notifications may have been read on another device, or arrived while we
+    // were backgrounded. Nothing else refreshes the badge on the way back in.
+    unawaited(getIt<UnreadCountCubit>().refresh());
+    // Windows only: the poller can be idle here if it was stopped, and start()
+    // polls immediately so anything that landed while we were away surfaces
+    // now rather than one interval later.
+    getIt<NotificationPoller>().start();
+  }
+
+  void _bindPollerStrings(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return;
+    final poller = getIt<NotificationPoller>();
+    poller.summaryTitle = l10n.newNotificationsTitle;
+    poller.summaryBodyBuilder = l10n.moreNotifications;
   }
 
   @override
@@ -159,6 +205,30 @@ class _DentalClinicAppState extends State<DentalClinicApp> {
                     ],
                     supportedLocales: const [Locale('en'), Locale('ar')],
                     routerConfig: routesManager.router,
+                    builder: (context, child) {
+                      // The Windows poller raises banners from outside the
+                      // widget tree, so it has no BuildContext of its own.
+                      // Hand it the localised summary copy from here, where
+                      // AppLocalizations is resolved and re-resolved whenever
+                      // the locale changes.
+                      _bindPollerStrings(context);
+
+                      // ScreenUtil already scales every .sp by the device's
+                      // width ratio; the OS font-size setting then multiplies
+                      // on top of that, so a device set above default compounds
+                      // twice and the whole UI reads oversized. Clamp the upper
+                      // end while still honouring users who need larger text.
+                      final mq = MediaQuery.of(context);
+                      return MediaQuery(
+                        data: mq.copyWith(
+                          textScaler: mq.textScaler.clamp(
+                            minScaleFactor: 1.0,
+                            maxScaleFactor: 1.2,
+                          ),
+                        ),
+                        child: child ?? const SizedBox.shrink(),
+                      );
+                    },
                   );
                 },
               );

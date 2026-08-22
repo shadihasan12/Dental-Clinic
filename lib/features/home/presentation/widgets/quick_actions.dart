@@ -63,14 +63,14 @@ class _ActionItem extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 14.h),
+          padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
             color: ColorManager.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Column(
             children: [
-              Icon(icon, color: ColorManager.primary, size: 22.w),
+              Icon(icon, color: ColorManager.primary, size: 20.w),
               SizedBox(height: 6.h),
               Text(
                 label,

@@ -10,6 +10,7 @@ import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
@@ -240,7 +241,6 @@ class _MenuPageState extends State<MenuPage> {
       MenuItem(
         icon: Icons.notifications_outlined,
         title: l10n.notifications,
-        trailing: _buildNotificationBadge(context),
         onTap: () =>
             context.pushNamed(AppRoutesNames.notificationsSettings),
       ),
@@ -405,27 +405,6 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // ─── Notification Badge ─────────────────────────────────────────────────
-
-  Widget _buildNotificationBadge(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Text(
-        '3',
-        style: TextStyle(
-          fontFamily: FontHelper.fontFamily(context),
-          fontSize: 11.sp,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
   // ─── Logout ─────────────────────────────────────────────────────────────
 
   Widget _buildLogoutRow(BuildContext context, AppLocalizations l10n) {
@@ -503,11 +482,9 @@ class _MenuPageState extends State<MenuPage> {
           TextButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
-              await getIt<TokenStorage>().clearAuthData();
-              await getIt<UserStorage>().clear();
-              if (context.mounted) {
-                context.goNamed(AppRoutesNames.login);
-              }
+              // Shares the wipe-and-redirect path with the forced sign-out on
+              // a 401, so both clear exactly the same state.
+              await getIt<SessionManager>().endSession();
             },
             child: Text(
               l10n.logout,

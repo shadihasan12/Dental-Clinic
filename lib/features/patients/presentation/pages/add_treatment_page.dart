@@ -156,7 +156,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
                     child: Text(
                       l10n.close,
                       style: TextStyle(
-                        color: const Color(0xFF70B2B2),
+                        color: ColorManager.primary,
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
                         fontFamily: FontHelper.fontFamily(context),

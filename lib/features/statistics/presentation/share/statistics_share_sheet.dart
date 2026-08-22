@@ -14,12 +14,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'cards/share_card_common.dart';
+import 'cards/share_card_template.dart';
 import 'share_statistics.dart';
-import 'statistics_share_card.dart';
 
-/// Opens the bottom sheet that previews the share card and lets the
-/// user share it as an image (the same way Instagram/Spotify Wrapped
-/// shares work — the host app picks Instagram Stories, WhatsApp, etc).
+/// Opens the bottom sheet that previews the share cards and lets the user
+/// swipe between designs before sharing one as an image (the same way
+/// Instagram/Spotify Wrapped shares work — the host app picks Instagram
+/// Stories, WhatsApp, etc).
 Future<void> showStatisticsShareSheet({
   required BuildContext context,
   required ShareStatistics stats,
@@ -43,81 +45,108 @@ class _StatisticsShareSheet extends StatefulWidget {
 }
 
 class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
-  final GlobalKey _boundaryKey = GlobalKey();
+  /// One capture boundary per design — the picker keeps neighbours mounted
+  /// so a swipe reveals a warm card, and sharing snapshots whichever key
+  /// belongs to the page on screen.
+  late final Map<ShareCardTemplate, GlobalKey> _boundaryKeys = {
+    for (final t in ShareCardTemplate.values) t: GlobalKey(),
+  };
+
+  late final PageController _pageController;
+  late ShareCardTemplate _selected;
   bool _sharing = false;
 
-  /// Builds the doctor's display name from cached profile data. Falls
-  /// back through first+last → username → a locale-specific generic
-  /// so the card never shows an empty title. Prefix is locale-aware:
-  /// "Dr." in English, "د." in Arabic.
-  static String _composeDoctorName(UserStorage s, {required bool isArabic}) {
-    final prefix = isArabic ? 'د. ' : 'Dr. ';
-    final fallbackName = isArabic ? 'طبيب' : 'Doctor';
+  @override
+  void initState() {
+    super.initState();
+    _selected = ShareCardTemplate.fromId(
+      getIt<UserStorage>().getShareCardTemplate(),
+    );
+    _pageController = PageController(
+      initialPage: ShareCardTemplate.values.indexOf(_selected),
+      viewportFraction: 0.78,
+    );
+  }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  /// Builds the doctor's display name from cached profile data. Falls back
+  /// through first+last → username → a generic so the card never shows an
+  /// empty title. The cards are English-only, so the prefix is always "Dr.".
+  static String _composeDoctorName(UserStorage s) {
     final first = (s.getFirstName() ?? '').trim();
     final last = (s.getLastName() ?? '').trim();
     final full = [first, last].where((p) => p.isNotEmpty).join(' ');
     final fallback = (s.getUserName() ?? '').trim();
     final base = full.isNotEmpty ? full : fallback;
-    if (base.isEmpty) return fallbackName;
-    // Already prefixed (in either language)? leave as-is.
+    if (base.isEmpty) return 'Doctor';
     final lower = base.toLowerCase();
     if (lower.startsWith('dr') || base.startsWith('د.') || base.startsWith('د ')) {
       return base;
     }
-    return '$prefix$base';
+    return 'Dr. $base';
   }
 
-  /// Precache the avatar so it's rasterized before [_capture] runs.
-  /// Network images decode async; without this the first share-press
-  /// can snapshot the card while the avatar is still a placeholder.
+  ShareCardData _buildData() {
+    final storage = getIt<UserStorage>();
+    final firstSeen = storage.getFirstSeenAt() ?? DateTime.now();
+    return ShareCardData(
+      stats: widget.stats,
+      doctorName: _composeDoctorName(storage),
+      clinicName: storage.getClinicName() ?? '',
+      doctorAvatarUrl: storage.getProfileImageUrl(),
+      // Both values were seeded in UserStorage on login. clinicCount
+      // defaults to 1 for legacy installs that logged in before the count
+      // was cached.
+      clinicCount: storage.getClinicCount() ?? 1,
+      daysOnPlatform:
+          DateTime.now().difference(firstSeen).inDays.clamp(1, 100000),
+    );
+  }
+
+  /// Precache the avatar so it's decoded before [_capture] runs. Network
+  /// images decode async; without this the first share-press can snapshot
+  /// the card while the avatar is still a placeholder.
   Future<void> _precacheAvatar(String? url) async {
     if (url == null || url.isEmpty) return;
     try {
       await precacheImage(NetworkImage(url), context);
     } catch (_) {
-      // The card has an [errorBuilder] that renders initials — a
-      // failed precache just means the captured image will use that
-      // fallback, which is fine.
+      // The cards fall back to initials — a failed precache just means the
+      // exported PNG uses that fallback, which is fine.
     }
   }
 
-  /// Precache the brand mark for the same reason as the avatar: asset images
-  /// decode asynchronously, so an un-decoded logo snapshots as an empty tile.
-  Future<void> _precacheBrandMark() async {
-    try {
-      await precacheImage(
-        const AssetImage(StatisticsShareCard.brandMarkAsset),
-        context,
-      );
-    } catch (_) {
-      // Non-fatal - worst case the footer tile captures blank.
+  /// Same reasoning for the two texture assets: an un-decoded asset
+  /// snapshots as an empty tile.
+  Future<void> _precacheTextures() async {
+    for (final asset in const [
+      ShareCardCanvas.grainAsset,
+      ShareCardCanvas.editorialContoursAsset,
+    ]) {
+      try {
+        if (!mounted) return;
+        await precacheImage(AssetImage(asset), context);
+      } catch (_) {
+        // Non-fatal — worst case that layer captures blank.
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final storage = getIt<UserStorage>();
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    final clinicName = storage.getClinicName() ?? '';
-    final doctorName = _composeDoctorName(storage, isArabic: isArabic);
-    final avatarUrl = storage.getProfileImageUrl();
-    final fontFamily = FontHelper.fontFamily(context);
-    // Synchronous reads — both values were seeded in UserStorage on
-    // login. clinicCount defaults to 1 for legacy installs that
-    // logged in before the count was cached.
-    final clinicCount = storage.getClinicCount() ?? 1;
-    final firstSeen = storage.getFirstSeenAt() ?? DateTime.now();
-    final daysOnPlatform =
-        DateTime.now().difference(firstSeen).inDays.clamp(1, 100000);
+    final data = _buildData();
 
-    // Pick a 9:16 preview size that fits the screen with room to spare
-    // for the header and buttons. Deterministic — no Flexible needed,
-    // and the surrounding Column shrinks to fit naturally.
+    // Pick a 9:16 preview size that fits the screen with room to spare for
+    // the header, picker chrome and buttons.
     final mq = MediaQuery.of(context);
-    final maxPreviewW = mq.size.width - 80.w;
-    final maxPreviewH = mq.size.height * 0.58;
+    final maxPreviewW = (mq.size.width - 80.w) * 0.86;
+    final maxPreviewH = mq.size.height * 0.50;
     final double previewWidth;
     final double previewHeight;
     if (maxPreviewW * 16 / 9 <= maxPreviewH) {
@@ -127,7 +156,6 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
       previewHeight = maxPreviewH;
       previewWidth = maxPreviewH * 9 / 16;
     }
-    // Floor to safe minimums in case the screen is unusually small.
     final pw = math.max(previewWidth, 180.0);
     final ph = math.max(previewHeight, pw * 16 / 9);
 
@@ -138,33 +166,66 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
           color: c.surfaceBg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
-        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+        padding: EdgeInsets.fromLTRB(0, 12.h, 0, 24.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _Grabber(color: c.borderLight),
             SizedBox(height: 16.h),
-            _Header(),
-            SizedBox(height: 20.h),
-            _Preview(
-              boundaryKey: _boundaryKey,
-              stats: widget.stats,
-              doctorName: doctorName,
-              clinicName: clinicName,
-              avatarUrl: avatarUrl,
-              fontFamily: fontFamily,
-              clinicCount: clinicCount,
-              daysOnPlatform: daysOnPlatform,
-              width: pw,
+            const _Header(),
+            SizedBox(height: 16.h),
+            SizedBox(
               height: ph,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: ShareCardTemplate.values.length,
+                // Keeps the off-screen neighbours built so swiping never
+                // lands on a blank card mid-decode.
+                allowImplicitScrolling: true,
+                onPageChanged: (i) {
+                  final next = ShareCardTemplate.values[i];
+                  setState(() => _selected = next);
+                  getIt<UserStorage>().saveShareCardTemplate(next.id);
+                },
+                itemBuilder: (context, i) {
+                  final template = ShareCardTemplate.values[i];
+                  return Center(
+                    child: _TemplatePreview(
+                      key: ValueKey(template),
+                      boundaryKey: _boundaryKeys[template]!,
+                      template: template,
+                      data: data,
+                      width: pw,
+                      height: ph,
+                      selected: template == _selected,
+                    ),
+                  );
+                },
+              ),
             ),
-            SizedBox(height: 20.h),
-            _ShareButton(
-              loading: _sharing,
-              onPressed: _sharing ? null : () => _onShare(avatarUrl),
+            SizedBox(height: 14.h),
+            _TemplateLabel(template: _selected),
+            SizedBox(height: 10.h),
+            _PageDots(
+              count: ShareCardTemplate.values.length,
+              index: ShareCardTemplate.values.indexOf(_selected),
             ),
-            SizedBox(height: 8.h),
-            _CancelButton(onPressed: () => Navigator.of(context).pop()),
+            SizedBox(height: 18.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  _ShareButton(
+                    loading: _sharing,
+                    onPressed: _sharing
+                        ? null
+                        : () => _onShare(data.doctorAvatarUrl),
+                  ),
+                  SizedBox(height: 8.h),
+                  _CancelButton(onPressed: () => Navigator.of(context).pop()),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -175,17 +236,14 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     // Grab the anchor rect *before* any async gaps. iPad needs this for
     // UIActivityViewController; on phones it's harmless to pass.
     final box = context.findRenderObject() as RenderBox?;
-    final origin = box == null
-        ? null
-        : box.localToGlobal(Offset.zero) & box.size;
+    final origin =
+        box == null ? null : box.localToGlobal(Offset.zero) & box.size;
 
     setState(() => _sharing = true);
     try {
-      // Make sure the avatar is decoded before we snapshot — otherwise
-      // the captured PNG can show the initials fallback on first share.
       await _precacheAvatar(avatarUrl);
-      await _precacheBrandMark();
-      final bytes = await _capture();
+      await _precacheTextures();
+      final bytes = await _capture(_selected);
       final file = await _writeToTemp(bytes);
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'image/png')],
@@ -204,18 +262,20 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     }
   }
 
-  Future<Uint8List> _capture() async {
-    final boundary = _boundaryKey.currentContext!
-        .findRenderObject() as RenderRepaintBoundary;
+  Future<Uint8List> _capture(ShareCardTemplate template) async {
+    final ctx = _boundaryKeys[template]!.currentContext;
+    if (ctx == null) {
+      throw StateError('Share card is not on screen yet');
+    }
+    final boundary = ctx.findRenderObject() as RenderRepaintBoundary;
     // flutter_svg decodes asynchronously on first use, so a single
-    // endOfFrame wait isn't always enough. Wait two frames + a small
-    // tail so every tooth SVG is rasterized before we snapshot.
+    // endOfFrame wait isn't always enough. Wait two frames plus a small
+    // tail so every vector layer is rasterized before we snapshot.
     await WidgetsBinding.instance.endOfFrame;
     await WidgetsBinding.instance.endOfFrame;
     await Future<void>.delayed(const Duration(milliseconds: 120));
     final image = await boundary.toImage(pixelRatio: 1.0);
-    final byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
       throw StateError('Failed to encode share image');
     }
@@ -252,6 +312,8 @@ class _Grabber extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
+  const _Header();
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -268,7 +330,7 @@ class _Header extends StatelessWidget {
         ),
         SizedBox(height: 4.h),
         Text(
-          'Post to your story or send to a friend',
+          'Swipe to choose a design',
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 13.sp,
@@ -280,93 +342,146 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// Preview: a scaled-down render of the 1080×1920 card.
+/// Preview: a scaled-down render of one 1080x1920 design.
 ///
-/// One [StatisticsShareCard] is mounted at its native 1080×1920 size
-/// inside a [RepaintBoundary] — so [RepaintBoundary.toImage] captures
-/// at full resolution and the exported PNG stays crisp.
-///
-/// The card is rendered visibly via a [Transform.scale]: layout stays
-/// at 1080×1920 (capture-friendly), paint is scaled down (display-
-/// friendly). [OverflowBox] lets the giant child render inside the
-/// smaller visible box without constraint errors; [ClipRRect] crops
-/// the scaled paint to the rounded preview frame.
-class _Preview extends StatelessWidget {
-  const _Preview({
+/// The card is mounted at its native size inside a [RepaintBoundary] — so
+/// [RepaintBoundary.toImage] captures at full resolution and the exported
+/// PNG stays crisp — and displayed through a [Transform.scale]: layout
+/// stays at 1080x1920 (capture-friendly), paint is scaled down (display-
+/// friendly). [OverflowBox] lets the giant child render inside the smaller
+/// visible box without constraint errors.
+class _TemplatePreview extends StatelessWidget {
+  const _TemplatePreview({
+    super.key,
     required this.boundaryKey,
-    required this.stats,
-    required this.doctorName,
-    required this.clinicName,
-    required this.avatarUrl,
-    required this.fontFamily,
-    required this.clinicCount,
-    required this.daysOnPlatform,
+    required this.template,
+    required this.data,
     required this.width,
     required this.height,
+    required this.selected,
   });
 
   final GlobalKey boundaryKey;
-  final ShareStatistics stats;
-  final String doctorName;
-  final String clinicName;
-  final String? avatarUrl;
-  final String fontFamily;
-  final int clinicCount;
-  final int daysOnPlatform;
+  final ShareCardTemplate template;
+  final ShareCardData data;
   final double width;
   final double height;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final scale = width / StatisticsShareCard.canvasWidth;
+    final scale = width / ShareCardCanvas.width;
 
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        // Solid fallback color so the preview is never just void if the
-        // child somehow fails to paint — matches the card's teal-black
-        // bg so there's no color flash while it warms up.
-        color: const Color(0xFF0B2424),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: c.borderLight, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 22,
-            offset: const Offset(0, 8),
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      scale: selected ? 1.0 : 0.93,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 180),
+        opacity: selected ? 1.0 : 0.62,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            // Solid fallback so the preview is never void if the child
+            // somehow fails to paint, and so there's no colour flash while
+            // it warms up.
+            color: template.previewBackground,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: selected ? ColorManager.primary : c.borderLight,
+              width: selected ? 2 : 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: selected ? 0.16 : 0.08),
+                blurRadius: 22,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: OverflowBox(
-        alignment: Alignment.topLeft,
-        minWidth: 0,
-        maxWidth: double.infinity,
-        minHeight: 0,
-        maxHeight: double.infinity,
-        child: Transform.scale(
-          scale: scale,
-          alignment: Alignment.topLeft,
-          child: RepaintBoundary(
-            key: boundaryKey,
-            child: SizedBox(
-              width: StatisticsShareCard.canvasWidth,
-              height: StatisticsShareCard.canvasHeight,
-              child: StatisticsShareCard(
-                stats: stats,
-                doctorName: doctorName,
-                clinicName: clinicName,
-                doctorAvatarUrl: avatarUrl,
-                fontFamily: fontFamily,
-                clinicCount: clinicCount,
-                daysOnPlatform: daysOnPlatform,
+          clipBehavior: Clip.antiAlias,
+          child: OverflowBox(
+            alignment: Alignment.topLeft,
+            minWidth: 0,
+            maxWidth: double.infinity,
+            minHeight: 0,
+            maxHeight: double.infinity,
+            child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.topLeft,
+              child: RepaintBoundary(
+                key: boundaryKey,
+                child: SizedBox(
+                  width: ShareCardCanvas.width,
+                  height: ShareCardCanvas.height,
+                  child: template.build(data),
+                ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TemplateLabel extends StatelessWidget {
+  const _TemplateLabel({required this.template});
+  final ShareCardTemplate template;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Column(
+      children: [
+        Text(
+          template.label,
+          style: TextStyle(
+            fontFamily: FontHelper.fontFamily(context),
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
+            color: c.textPrimary,
+          ),
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          template.blurb,
+          style: TextStyle(
+            fontFamily: FontHelper.fontFamily(context),
+            fontSize: 12.sp,
+            color: c.textTertiary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PageDots extends StatelessWidget {
+  const _PageDots({required this.count, required this.index});
+  final int count;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < count; i++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            margin: EdgeInsets.symmetric(horizontal: 3.w),
+            width: i == index ? 18.w : 6.w,
+            height: 6.w,
+            decoration: BoxDecoration(
+              color: i == index ? ColorManager.primary : c.borderLight,
+              borderRadius: BorderRadius.circular(3.r),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -399,7 +514,7 @@ class _ShareButton extends StatelessWidget {
                   color: Colors.white,
                 ),
               )
-            : Icon(Icons.ios_share_rounded, size: 20.w),
+            : Icon(Icons.ios_share_rounded, size: 18.w),
         label: Text(
           loading ? 'Preparing…' : 'Share',
           style: TextStyle(
@@ -426,9 +541,6 @@ class _CancelButton extends StatelessWidget {
         onPressed: onPressed,
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 12.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.r),
-          ),
         ),
         child: Text(
           'Cancel',

@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/services/notifications/push_payload.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
+import 'package:dental_clinic_app/features/home/domain/use_cases/logout_device_use_case.dart';
 import 'package:dental_clinic_app/features/home/domain/use_cases/register_fcm_token_use_case.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -11,17 +13,33 @@ import 'package:flutter/material.dart' show Color;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
+/// One broadcast topic the server told us about.
+///
+/// [name] is always a string the server handed back in the `audience` field of
+/// `GET /notification-settings`. The app never builds a topic name — a
+/// client-side name drifts out of step the moment the server renames one, and
+/// a topic the server never publishes to receives nothing, forever.
+class TopicSubscription {
+  final String name;
+
+  /// Subscribe only while the owning category is enabled.
+  final bool enabled;
+
+  const TopicSubscription({required this.name, required this.enabled});
+}
+
 /// Single source of truth for everything FCM-shaped in the app.
 ///
 /// Lifecycle (called once from `main.dart` after Firebase.initializeApp):
 ///
-///   1. [initialize] — asks the OS for notification permission, wires the
-///      local-notifications plugin, registers FCM listeners.
-///   2. The service then quietly listens for token refreshes and forwards any
+///   1. [initialize] — wires the local-notifications plugin on every platform,
+///      then (only where FCM exists) asks the OS for notification permission
+///      and registers the FCM listeners.
+///   2. The service quietly listens for token refreshes and forwards any
 ///      foreground push to the in-app stream so an active NotificationBloc can
 ///      react without an extra network round-trip.
-///   3. Taps on push notifications (foreground, background, or terminated)
-///      surface through [onNotificationTap] so the app's router can navigate.
+///   3. Taps on notifications (foreground, background, or terminated) surface
+///      through [onNotificationTap] so the app's router can navigate.
 ///
 /// The service is auth-state-agnostic: it grabs a token whenever Firebase has
 /// one and tries to POST it. If the request fails (no auth token yet, offline,
@@ -33,15 +51,18 @@ class NotificationService {
     required FirebaseMessaging messaging,
     required FlutterLocalNotificationsPlugin localNotifications,
     required RegisterFcmTokenUseCase registerFcmToken,
+    required LogoutDeviceUseCase logoutDevice,
     required TokenStorage tokenStorage,
   })  : _messaging = messaging,
         _localNotifications = localNotifications,
         _registerFcmToken = registerFcmToken,
+        _logoutDevice = logoutDevice,
         _tokenStorage = tokenStorage;
 
   final FirebaseMessaging _messaging;
   final FlutterLocalNotificationsPlugin _localNotifications;
   final RegisterFcmTokenUseCase _registerFcmToken;
+  final LogoutDeviceUseCase _logoutDevice;
   final TokenStorage _tokenStorage;
 
   // Android needs an explicit channel created up front; sending to a missing
@@ -54,45 +75,49 @@ class NotificationService {
   static const String _androidChannelDescription =
       'Appointments, payments, patient updates, and other clinic alerts.';
 
-  /// Topic every install subscribes to so the backend can fan out global
-  /// announcements without enumerating device tokens.
-  ///
-  /// Agreed contract with the backend - it publishes global notifications to
-  /// this exact topic name. Changing it here breaks global pushes unless the
-  /// backend is changed in lockstep.
-  static const String globalTopic = 'all_en';
-
   /// Whether FCM exists on this platform at all.
   ///
   /// firebase_messaging ships implementations for android/ios/macos/web only -
   /// there is no Windows or Linux plugin, so every FCM call there throws
   /// MissingPluginException. Desktop builds skip the subsystem entirely and
-  /// get their notifications over a different transport.
-  static bool get supportsPush => Platform.isAndroid || Platform.isIOS;
+  /// get their notifications by polling instead (see NotificationPoller).
+  static bool get supportsPush =>
+      kIsWeb || Platform.isAndroid || Platform.isIOS;
+
+  /// Windows has no push channel at all, so it is the one platform that polls.
+  /// Every other platform receives a real push and must NOT poll, or each
+  /// notification raises a second banner on top of the one FCM delivered.
+  static bool get usesPolling => !kIsWeb && Platform.isWindows;
 
   final _onPushReceivedController = StreamController<PushPayload>.broadcast();
-  final _onNotificationTapController = StreamController<PushPayload>.broadcast();
+  final _onNotificationTapController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   /// Foreground pushes — emitted right before we show the local banner.
   Stream<PushPayload> get onPushReceived => _onPushReceivedController.stream;
 
-  /// User taps from foreground/background/terminated states.
-  /// The router subscribes to this and navigates to the deep link.
-  Stream<PushPayload> get onNotificationTap => _onNotificationTapController.stream;
+  /// User taps from foreground/background/terminated states, carrying the
+  /// notification's `data` map. The router subscribes to this and navigates
+  /// via `NotificationRouting`.
+  Stream<Map<String, dynamic>> get onNotificationTap =>
+      _onNotificationTapController.stream;
 
   bool _initialized = false;
 
   Future<void> initialize() async {
     if (_initialized) return;
-    if (!supportsPush) return;
     _initialized = true;
 
-    await _requestPermission();
+    // Local notifications work everywhere, including Windows — the poller
+    // needs them there, so this must not sit behind the FCM check.
     await _setupLocalNotifications();
     await _setupAndroidChannel();
+
+    if (!supportsPush) return;
+
+    await _requestPermission();
     await _wireFcmListeners();
     await _bootstrapInitialToken();
-    await subscribeToGlobalTopics();
     await _handleInitialMessage();
   }
 
@@ -123,14 +148,25 @@ class NotificationService {
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
+    // Windows toasts are addressed by an AppUserModelID; the GUID identifies
+    // the COM activation callback that delivers taps back to us.
+    const windows = WindowsInitializationSettings(
+      appName: 'Denta',
+      appUserModelId: 'Skew.Denta.DentalClinic',
+      guid: '9a3f1f6c-6b2e-4f0e-9c1b-2f7a7d3c6f21',
+    );
     await _localNotifications.initialize(
-      settings: const InitializationSettings(android: android, iOS: darwin),
+      settings: const InitializationSettings(
+        android: android,
+        iOS: darwin,
+        windows: windows,
+      ),
       onDidReceiveNotificationResponse: _onLocalNotificationTapped,
     );
   }
 
   Future<void> _setupAndroidChannel() async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     const channel = AndroidNotificationChannel(
       _androidChannelId,
       _androidChannelName,
@@ -146,6 +182,9 @@ class NotificationService {
   Future<void> _wireFcmListeners() async {
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedFromBackground);
+    // Tokens rotate after an app update, a data wipe, or a restore. Without
+    // this listener push silently stops weeks later and the server never
+    // learns why.
     _messaging.onTokenRefresh.listen(_onTokenRefreshed);
   }
 
@@ -159,7 +198,7 @@ class NotificationService {
       }
     } catch (e, st) {
       if (kDebugMode) {
-        debugPrint('[FCM] getToken failed: $e\n$st');
+        debugPrint('[FCM] getToken failed: $e / $st');
       }
     }
   }
@@ -168,7 +207,8 @@ class NotificationService {
     // Cold-start path: user tapped a push from a fully-terminated state.
     final initial = await _messaging.getInitialMessage();
     if (initial != null) {
-      _onNotificationTapController.add(PushPayload.fromRemoteMessage(initial));
+      _onNotificationTapController
+          .add(PushPayload.fromRemoteMessage(initial).data);
     }
   }
 
@@ -177,11 +217,17 @@ class NotificationService {
   Future<void> _onForegroundMessage(RemoteMessage message) async {
     final payload = PushPayload.fromRemoteMessage(message);
     _onPushReceivedController.add(payload);
-    await _showLocalNotification(message, payload);
+    await _showLocalNotification(
+      id: _stableId(payload.id ?? payload.data.toString()),
+      title: payload.title,
+      body: payload.body,
+      data: payload.data,
+    );
   }
 
   void _onMessageOpenedFromBackground(RemoteMessage message) {
-    _onNotificationTapController.add(PushPayload.fromRemoteMessage(message));
+    _onNotificationTapController
+        .add(PushPayload.fromRemoteMessage(message).data);
   }
 
   Future<void> _onTokenRefreshed(String token) async {
@@ -193,21 +239,19 @@ class NotificationService {
   }
 
   void _onLocalNotificationTapped(NotificationResponse response) {
-    // The local notification was scheduled with the deep-link string in
-    // `payload`. We don't reconstruct the original RemoteMessage here — the
-    // router only needs to know where to go.
-    final deepLink = response.payload ?? '/notifications';
-    _onNotificationTapController.add(
-      PushPayload(
-        id: null,
-        title: null,
-        body: null,
-        type: NotificationType.appointment,
-        deepLink: deepLink,
-        receivedAt: DateTime.now(),
-        raw: const {},
-      ),
-    );
+    // The banner was scheduled with the notification's `data` map encoded as
+    // JSON, so the router gets the same payload a real push tap would carry.
+    _onNotificationTapController.add(_decodePayload(response.payload));
+  }
+
+  Map<String, dynamic> _decodePayload(String? payload) {
+    if (payload == null || payload.isEmpty) return const {};
+    try {
+      final decoded = jsonDecode(payload);
+      return decoded is Map ? Map<String, dynamic>.from(decoded) : const {};
+    } catch (_) {
+      return const {};
+    }
   }
 
   // ── Public API ────────────────────────────────────────────────────────
@@ -236,49 +280,139 @@ class NotificationService {
     await _syncToken(token);
   }
 
-  /// Subscribes this install to the broadcast topic(s) the backend uses for
-  /// global announcements. Topic subscriptions are stored by FCM itself, so
-  /// this is idempotent and needs no auth token.
-  Future<void> subscribeToGlobalTopics() async {
-    if (!supportsPush) return;
-    try {
-      await _messaging.subscribeToTopic(globalTopic);
-      if (kDebugMode) debugPrint('[FCM] subscribed to topic "$globalTopic"');
-    } catch (e) {
-      if (kDebugMode) debugPrint('[FCM] topic subscribe failed: $e');
-    }
-  }
-
-  Future<void> unsubscribeFromGlobalTopics() async {
-    if (!supportsPush) return;
-    try {
-      await _messaging.unsubscribeFromTopic(globalTopic);
-    } catch (e) {
-      if (kDebugMode) debugPrint('[FCM] topic unsubscribe failed: $e');
-    }
-  }
-
-  /// Call from the logout flow. Nothing here is authenticated, so it can run
-  /// before or after the auth token is cleared.
+  /// Brings this install's topic subscriptions in line with what the server
+  /// just told us, and forgets any topic that is no longer named.
   ///
-  /// Deleting the FCM token is what actually stops pushes for the signed-out
-  /// user: the backend maps token -> user and there is no DELETE endpoint to
-  /// unregister with. Firebase mints a fresh token on the next getToken(),
-  /// which the next sign-in registers against the new user.
+  /// [topics] must come straight from the `audience` fields of
+  /// `GET /notification-settings`. Re-running it on every launch is deliberate:
+  /// `subscribeToTopic` is idempotent, and re-asserting repairs a subscription
+  /// that failed silently earlier.
+  ///
+  /// A name that has dropped off the list — which is what a language change
+  /// looks like, `announcement_ar` giving way to `announcement_en` — is
+  /// unsubscribed, so a stale subscription can't linger receiving nothing.
+  ///
+  /// Windows subscribes to nothing: topics are a push concept and it polls.
+  Future<void> syncTopics(List<TopicSubscription> topics) async {
+    if (!supportsPush) return;
+
+    final wanted = topics.where((t) => t.enabled).map((t) => t.name).toSet();
+    final named = topics.map((t) => t.name).toSet();
+    final remembered = _tokenStorage.getSubscribedTopics().toSet();
+
+    // Anything we hold a subscription for that the server no longer wants:
+    // either explicitly disabled now, or gone from the response entirely
+    // (which is what a language change looks like). Plus disabled-but-named
+    // topics we never recorded, e.g. the toggle was flipped on another device.
+    final toUnsubscribe = {
+      ...remembered.difference(wanted),
+      ...named.difference(wanted),
+    };
+
+    for (final topic in toUnsubscribe) {
+      try {
+        await _messaging.unsubscribeFromTopic(topic);
+        if (kDebugMode) debugPrint('[FCM] unsubscribed from "$topic"');
+      } catch (e) {
+        if (kDebugMode) debugPrint('[FCM] unsubscribe "$topic" failed: $e');
+      }
+    }
+
+    final confirmed = <String>{};
+    for (final topic in wanted) {
+      try {
+        await _messaging.subscribeToTopic(topic);
+        confirmed.add(topic);
+        if (kDebugMode) debugPrint('[FCM] subscribed to "$topic"');
+      } catch (e) {
+        // Leave it out of the remembered set so the next launch retries.
+        if (kDebugMode) debugPrint('[FCM] subscribe "$topic" failed: $e');
+      }
+    }
+
+    await _tokenStorage.setSubscribedTopics(confirmed);
+  }
+
+  /// Drops every topic this install ever subscribed to. Used on logout — the
+  /// next user's settings response re-establishes whatever they should get.
+  Future<void> unsubscribeFromAllTopics() async {
+    if (!supportsPush) return;
+    for (final topic in _tokenStorage.getSubscribedTopics()) {
+      try {
+        await _messaging.unsubscribeFromTopic(topic);
+      } catch (e) {
+        if (kDebugMode) debugPrint('[FCM] unsubscribe "$topic" failed: $e');
+      }
+    }
+    await _tokenStorage.clearSubscribedTopics();
+  }
+
+  /// First half of the logout flow, run *before* the auth token is cleared —
+  /// `POST /auth/logout` is authenticated.
+  ///
+  /// Sending the FCM token is what stops this device receiving notifications
+  /// for an account that signed out. Failures are swallowed: a user tapping
+  /// "log out" must end up signed out regardless, and [onLogout] deletes the
+  /// token locally as a backstop.
+  Future<void> notifyServerOfLogout() async {
+    if (!_tokenStorage.hasToken()) return;
+    final result = await _logoutDevice(_tokenStorage.getFcmToken());
+    result.fold(
+      (error) {
+        if (kDebugMode) debugPrint('[FCM] logout call failed: $error');
+      },
+      (_) {},
+    );
+  }
+
+  /// Second half of the logout flow, run *after* the auth token has been
+  /// cleared.
+  ///
+  /// Deleting the FCM token is what stops pushes for the signed-out user on
+  /// devices where `POST /auth/logout` never reached the server. Firebase
+  /// mints a fresh token on the next getToken(), which the next sign-in
+  /// registers against the new user.
   Future<void> onLogout() async {
-    await unsubscribeFromGlobalTopics();
+    await unsubscribeFromAllTopics();
     await deleteToken();
   }
 
   /// Wipes the FCM token from this device, so a subsequent user sign-in on the
   /// same device starts fresh.
   Future<void> deleteToken() async {
+    if (!supportsPush) return;
     try {
       await _messaging.deleteToken();
     } catch (_) {/* ignore - best-effort */}
     // Drop our cached copy too, otherwise the next syncTokenIfNeeded would
     // happily re-POST the token we just invalidated.
     await _tokenStorage.clearFcmToken();
+  }
+
+  /// Raises a banner for an inbox row. The Windows poller's only way to
+  /// announce anything — there is no push channel to the desktop app.
+  Future<void> showNotification(NotificationEntity notification) {
+    return _showLocalNotification(
+      id: _stableId(notification.id),
+      title: notification.title,
+      body: notification.body,
+      data: notification.data,
+    );
+  }
+
+  /// A single summary banner standing in for notifications the server withheld
+  /// past its per-poll cap. Firing one banner per withheld row would mean
+  /// hundreds in a burst for a user who has been offline a while.
+  Future<void> showSummaryNotification({
+    required String title,
+    required String body,
+  }) {
+    return _showLocalNotification(
+      id: _stableId('unseen-summary'),
+      title: title,
+      body: body,
+      data: const <String, dynamic>{'type': 'announcement'},
+    );
   }
 
   // ── internals ─────────────────────────────────────────────────────────
@@ -304,23 +438,21 @@ class NotificationService {
     );
   }
 
-  Future<void> _showLocalNotification(
-    RemoteMessage message,
-    PushPayload payload,
-  ) async {
-    // If the FCM message carries a `notification` block, Android already shows
-    // it when the app is backgrounded — but in the foreground we MUST show it
-    // ourselves; FCM does not auto-display in the foreground on any platform.
-    final notification = message.notification;
-    if (notification == null && payload.title == null && payload.body == null) {
-      // data-only push — nothing user-visible to show.
-      return;
-    }
+  Future<void> _showLocalNotification({
+    required int id,
+    required String? title,
+    required String? body,
+    required Map<String, dynamic> data,
+  }) async {
+    // FCM never auto-displays in the foreground on any platform, so we show
+    // the banner ourselves there. A data-only push, and a row with neither a
+    // title nor a body, have nothing user-visible to show.
+    if (title == null && body == null) return;
 
     await _localNotifications.show(
-      id: _notificationIdFrom(payload),
-      title: payload.title,
-      body: payload.body,
+      id: id,
+      title: title,
+      body: body,
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           _androidChannelId,
@@ -341,18 +473,17 @@ class NotificationService {
           presentBadge: true,
           presentSound: true,
         ),
+        windows: const WindowsNotificationDetails(),
       ),
-      payload: payload.deepLink,
+      // Carry the routing payload through the tap round-trip.
+      payload: jsonEncode(data),
     );
   }
 
-  /// Stable-ish 32-bit id for the local notification. Using the FCM message
-  /// id (or our payload id) hashed lets a follow-up "same notification"
-  /// update overwrite the existing banner instead of stacking.
-  int _notificationIdFrom(PushPayload payload) {
-    final key = payload.id ?? payload.raw.toString();
-    return key.hashCode & 0x7fffffff;
-  }
+  /// Stable-ish 32-bit id for the local notification. Deriving it from the
+  /// server-side notification id lets a repeat of the same notification
+  /// overwrite the existing banner instead of stacking a duplicate.
+  int _stableId(String key) => key.hashCode & 0x7fffffff;
 
   Future<void> dispose() async {
     await _onPushReceivedController.close();

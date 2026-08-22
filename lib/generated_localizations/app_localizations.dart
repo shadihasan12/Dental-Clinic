@@ -3170,6 +3170,12 @@ abstract class AppLocalizations {
   /// **'Session Expired'**
   String get sessionExpired;
 
+  /// No description provided for @sessionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please log in again.'**
+  String get sessionExpiredMessage;
+
   /// No description provided for @pleaseVerifyEmailAgain.
   ///
   /// In en, this message translates to:
@@ -4717,6 +4723,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open the link'**
   String get couldNotOpenLink;
+
+  /// No description provided for @noNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'No notification settings available'**
+  String get noNotificationSettings;
+
+  /// No description provided for @markAsUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unread'**
+  String get markAsUnread;
+
+  /// No description provided for @newNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New notifications'**
+  String get newNotificationsTitle;
+
+  /// No description provided for @moreNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more notifications'**
+  String moreNotifications(int count);
 }
 
 class _AppLocalizationsDelegate
