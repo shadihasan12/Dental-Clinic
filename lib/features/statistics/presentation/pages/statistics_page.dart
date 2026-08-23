@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -75,7 +76,7 @@ class _ShareAction extends StatelessWidget {
     final c = ColorManager.of(context);
     return IconButton(
       onPressed: enabled ? onTap : null,
-      tooltip: 'Share',
+      tooltip: AppLocalizations.of(context)!.share,
       icon: Icon(
         Icons.ios_share_rounded,
         size: 22.w,
@@ -91,18 +92,39 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     switch (state.catalogStatus) {
       case CatalogStatus.initial:
       case CatalogStatus.loading:
-        return const Center(child: CircularProgressIndicator());
+        return const _CatalogSkeleton();
       case CatalogStatus.failure:
-        return _CatalogError(message: state.catalogError);
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
+          child: StateCard(
+            icon: Icons.cloud_off_rounded,
+            tone: ColorManager.error,
+            title: l10n.statisticsLoadFailed,
+            message: state.catalogError,
+            actionLabel: l10n.retry,
+            onAction: () => context
+                .read<StatisticsDashboardBloc>()
+                .add(const DashboardStarted()),
+          ),
+        );
       case CatalogStatus.success:
         if (state.metrics.isEmpty) {
-          return const _CatalogEmpty();
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
+            child: StateCard(
+              icon: Icons.bar_chart_rounded,
+              title: l10n.noStatisticsYet,
+              message: l10n.noStatisticsYetHint,
+            ),
+          );
         }
         return RefreshIndicator(
-          color: ColorManager.primary,
+          color: ColorManager.primaryDarker,
           onRefresh: () async {
             context
                 .read<StatisticsDashboardBloc>()
@@ -110,10 +132,10 @@ class _Body extends StatelessWidget {
           },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+            padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 32.h),
             children: [
               const StatisticsFilterBar(),
-              SizedBox(height: 16.h),
+              SizedBox(height: 14.h),
               for (final metric in state.metrics)
                 MetricCard(key: ValueKey(metric.key), metric: metric),
             ],
@@ -123,77 +145,50 @@ class _Body extends StatelessWidget {
   }
 }
 
-class _CatalogError extends StatelessWidget {
-  const _CatalogError({this.message});
-  final String? message;
+/// Holds the shape of the loaded screen - filter rail, then metric cards -
+/// so the layout does not jump when the catalog lands.
+class _CatalogSkeleton extends StatelessWidget {
+  const _CatalogSkeleton();
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline_rounded,
-              size: 48.w,
-              color: ColorManager.error,
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              message ?? 'Could not load statistics',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 14.sp,
-                color: c.textSecondary,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: ColorManager.primary,
-              ),
-              onPressed: () => context
-                  .read<StatisticsDashboardBloc>()
-                  .add(const DashboardStarted()),
-              child: const Text('Retry'),
-            ),
-          ],
+    return ListView(
+      padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 32.h),
+      children: [
+        AppShimmer(
+          child: ShimmerBox(
+            width: double.infinity,
+            height: 42.h,
+            radius: BorderRadius.circular(12.r),
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _CatalogEmpty extends StatelessWidget {
-  const _CatalogEmpty();
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.bar_chart_rounded, size: 48.w, color: c.textSubtle),
-            SizedBox(height: 12.h),
-            Text(
-              'No statistics are available yet',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 14.sp,
-                color: c.textSecondary,
+        SizedBox(height: 14.h),
+        for (var i = 0; i < 4; i++) ...[
+          if (i > 0) SizedBox(height: 8.h),
+          Container(
+            height: 118.h,
+            decoration: BoxDecoration(
+              color: c.cardBg,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: c.borderLight),
+            ),
+            padding: EdgeInsets.all(12.w),
+            child: AppShimmer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShimmerBox(width: 120.w, height: 12.h),
+                  SizedBox(height: 10.h),
+                  ShimmerBox(width: 90.w, height: 22.h),
+                  SizedBox(height: 12.h),
+                  ShimmerBox(width: double.infinity, height: 10.h),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        ],
+      ],
     );
   }
 }

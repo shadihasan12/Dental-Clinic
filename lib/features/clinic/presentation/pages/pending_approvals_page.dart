@@ -11,16 +11,13 @@ import 'package:dental_clinic_app/features/clinic/presentation/bloc/approvals_bl
 class PendingApprovalsPage extends StatelessWidget {
   final String clinicId;
 
-  const PendingApprovalsPage({
-    super.key,
-    required this.clinicId,
-  });
+  const PendingApprovalsPage({super.key, required this.clinicId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ApprovalsBloc()
-        ..add(ApprovalsEvent.loadPendingApprovals(clinicId)),
+      create: (context) =>
+          ApprovalsBloc()..add(ApprovalsEvent.loadPendingApprovals(clinicId)),
       child: _PendingApprovalsContent(clinicId: clinicId),
     );
   }
@@ -112,30 +109,25 @@ class _PendingApprovalsContent extends StatelessWidget {
                 SliverPadding(
                   padding: EdgeInsets.all(16.w),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final request = state.pendingApprovals[index];
-                        return _ApprovalRequestCard(
-                          request: request,
-                          isProcessing: state.isProcessing,
-                          onApprove: () {
-                            context.read<ApprovalsBloc>().add(
-                              ApprovalsEvent.approveRequest(request.id),
-                            );
-                          },
-                          onReject: () {
-                            _showRejectDialog(context, request);
-                          },
-                        );
-                      },
-                      childCount: state.pendingApprovals.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final request = state.pendingApprovals[index];
+                      return _ApprovalRequestCard(
+                        request: request,
+                        isProcessing: state.isProcessing,
+                        onApprove: () {
+                          context.read<ApprovalsBloc>().add(
+                            ApprovalsEvent.approveRequest(request.id),
+                          );
+                        },
+                        onReject: () {
+                          _showRejectDialog(context, request);
+                        },
+                      );
+                    }, childCount: state.pendingApprovals.length),
                   ),
                 ),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: 24.h),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: 24.h)),
             ],
           );
         },
@@ -158,9 +150,9 @@ class _PendingApprovalsContent extends StatelessWidget {
             SizedBox(height: 16.h),
             TextField(
               controller: reasonController,
-              decoration: const InputDecoration(
+              decoration: formOutlinedInput(
+                dialogContext,
                 hintText: 'Reason (optional)',
-                border: OutlineInputBorder(),
               ),
               maxLines: 2,
             ),
@@ -183,9 +175,7 @@ class _PendingApprovalsContent extends StatelessWidget {
                 ),
               );
             },
-            style: TextButton.styleFrom(
-              foregroundColor: ColorManager.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: ColorManager.error),
             child: const Text('Reject'),
           ),
         ],

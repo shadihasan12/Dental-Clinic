@@ -28,6 +28,8 @@ dependencies:
   # Networking
   dio: ^5.4.0
   file_picker: ^8.0.0
+  # Camera capture for case attachments; file_picker cannot take photos.
+  image_picker: ^1.1.2
   internet_connection_checker: ^1.0.0+1
 
   # Functional Programming
@@ -68,6 +70,7 @@ dependencies:
 
   # Opening the hosted Privacy Policy / Terms pages in the system browser
   url_launcher: ^6.3.1
+  flutter_slidable: ^4.0.3
 
 dev_dependencies:
   flutter_test:

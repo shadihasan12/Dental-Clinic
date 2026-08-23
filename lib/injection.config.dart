@@ -210,6 +210,18 @@ import 'features/profile/presentation/pages/edit_profile/domain/use_cases/update
     as _i494;
 import 'features/profile/presentation/pages/edit_profile/presentation/manager/edit_profile_bloc.dart'
     as _i890;
+import 'features/profile/presentation/pages/issues/data/data_sources/issue_remote_data_source.dart'
+    as _i76;
+import 'features/profile/presentation/pages/issues/data/repositories/issue_repository_impl.dart'
+    as _i679;
+import 'features/profile/presentation/pages/issues/domain/repositories/issue_repository.dart'
+    as _i426;
+import 'features/profile/presentation/pages/issues/domain/use_cases/create_issue_use_case.dart'
+    as _i839;
+import 'features/profile/presentation/pages/issues/domain/use_cases/get_issues_use_case.dart'
+    as _i239;
+import 'features/profile/presentation/pages/issues/presentation/manager/issues_bloc.dart'
+    as _i732;
 import 'features/profile/presentation/pages/notifications_settngs/data/data_sources/notification_settings_remote_data_source.dart'
     as _i806;
 import 'features/profile/presentation/pages/notifications_settngs/data/repositories/notification_settings_repository_impl.dart'
@@ -222,24 +234,6 @@ import 'features/profile/presentation/pages/notifications_settngs/domain/use_cas
     as _i237;
 import 'features/profile/presentation/pages/notifications_settngs/presentation/manager/notification_settings_bloc.dart'
     as _i493;
-import 'features/profile/presentation/pages/support/data/data_sources/support_remote_data_source.dart'
-    as _i348;
-import 'features/profile/presentation/pages/support/data/repositories/support_repository_impl.dart'
-    as _i754;
-import 'features/profile/presentation/pages/support/domain/repositories/support_repository.dart'
-    as _i778;
-import 'features/profile/presentation/pages/support/domain/use_cases/create_conversation_use_case.dart'
-    as _i134;
-import 'features/profile/presentation/pages/support/domain/use_cases/get_auto_reply_use_case.dart'
-    as _i498;
-import 'features/profile/presentation/pages/support/domain/use_cases/get_conversations_use_case.dart'
-    as _i983;
-import 'features/profile/presentation/pages/support/domain/use_cases/send_message_use_case.dart'
-    as _i166;
-import 'features/profile/presentation/pages/support/presentation/manager/support_chat_bloc.dart'
-    as _i766;
-import 'features/profile/presentation/pages/support/presentation/manager/support_conversations_bloc.dart'
-    as _i45;
 import 'features/statistics/data/data_sources/statistics_catalog_remote_data_source.dart'
     as _i630;
 import 'features/statistics/data/repositories/statistics_catalog_repository_impl.dart'
@@ -423,6 +417,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i536.PatientRemoteDataSource>(
       () => _i536.PatientRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
+    gh.factory<_i76.IssueRemoteDataSource>(
+      () => _i76.IssueRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
     gh.factory<_i455.NotificationSettingsRepository>(
       () => _i395.NotificationSettingsRepositoryImpl(
         gh<_i806.NotificationSettingsRemoteDataSource>(),
@@ -439,9 +436,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i151.SubscriptionRemoteDataSource>(
       () => _i151.SubscriptionRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
-    );
-    gh.factory<_i348.SupportRemoteDataSource>(
-      () => _i348.SupportRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
     gh.factory<_i818.ClinicRepository>(
       () => _i968.ClinicRepositoryImpl(gh<_i190.ClinicRemoteDataSource>()),
@@ -464,10 +458,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i109.FcmTokenRepository>(
       () => _i269.FcmTokenRepositoryImpl(gh<_i188.FcmTokenRemoteDataSource>()),
     );
+    gh.factory<_i426.IssueRepository>(
+      () => _i679.IssueRepositoryImpl(gh<_i76.IssueRemoteDataSource>()),
+    );
     gh.factory<_i850.StatisticsCatalogRepository>(
       () => _i591.StatisticsCatalogRepositoryImpl(
         gh<_i630.StatisticsCatalogRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i839.CreateIssueUseCase>(
+      () => _i839.CreateIssueUseCase(gh<_i426.IssueRepository>()),
+    );
+    gh.factory<_i239.GetIssuesUseCase>(
+      () => _i239.GetIssuesUseCase(gh<_i426.IssueRepository>()),
     );
     gh.factory<_i900.SubscriptionRepository>(
       () => _i155.SubscriptionRepositoryImpl(
@@ -480,15 +483,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i192.PatientRepository>(
       () => _i504.PatientRepositoryImpl(gh<_i536.PatientRemoteDataSource>()),
     );
-    gh.factory<_i1060.MarkAllNotificationsAsReadUseCase>(
-      () => _i1060.MarkAllNotificationsAsReadUseCase(
-        gh<_i4.NotificationRepository>(),
-      ),
-    );
-    gh.factory<_i818.MarkNotificationAsReadUseCase>(
-      () =>
-          _i818.MarkNotificationAsReadUseCase(gh<_i4.NotificationRepository>()),
-    );
     gh.factory<_i342.GetNotificationsUseCase>(
       () => _i342.GetNotificationsUseCase(gh<_i4.NotificationRepository>()),
     );
@@ -499,9 +493,18 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i453.GetUnseenNotificationsUseCase(gh<_i4.NotificationRepository>()),
     );
+    gh.factory<_i1060.MarkAllNotificationsAsReadUseCase>(
+      () => _i1060.MarkAllNotificationsAsReadUseCase(
+        gh<_i4.NotificationRepository>(),
+      ),
+    );
     gh.factory<_i219.MarkNotificationsSeenUseCase>(
       () =>
           _i219.MarkNotificationsSeenUseCase(gh<_i4.NotificationRepository>()),
+    );
+    gh.factory<_i818.MarkNotificationAsReadUseCase>(
+      () =>
+          _i818.MarkNotificationAsReadUseCase(gh<_i4.NotificationRepository>()),
     );
     gh.factory<_i519.MarkNotificationAsUnreadUseCase>(
       () => _i519.MarkNotificationAsUnreadUseCase(
@@ -576,6 +579,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i972.UpdateUserRolesUseCase>(
       () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
     );
+    gh.factory<_i732.IssuesBloc>(
+      () => _i732.IssuesBloc(
+        getIssues: gh<_i239.GetIssuesUseCase>(),
+        createIssue: gh<_i839.CreateIssueUseCase>(),
+      ),
+    );
     gh.factory<_i25.StatisticsDashboardBloc>(
       () =>
           _i25.StatisticsDashboardBloc(gh<_i850.StatisticsCatalogRepository>()),
@@ -591,9 +600,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i989.GetSubscriptionUsageUseCase>(
       () =>
           _i989.GetSubscriptionUsageUseCase(gh<_i900.SubscriptionRepository>()),
-    );
-    gh.factory<_i778.SupportRepository>(
-      () => _i754.SupportRepositoryImpl(gh<_i348.SupportRemoteDataSource>()),
     );
     gh.factory<_i127.GetClinicInfoUseCase>(
       () => _i127.GetClinicInfoUseCase(gh<_i1027.ClinicInfoRepository>()),
@@ -647,11 +653,11 @@ extension GetItInjectableX on _i174.GetIt {
         updateClinicInfo: gh<_i8.UpdateClinicInfoUseCase>(),
       ),
     );
-    gh.factory<_i928.RegisterFcmTokenUseCase>(
-      () => _i928.RegisterFcmTokenUseCase(gh<_i109.FcmTokenRepository>()),
-    );
     gh.factory<_i939.LogoutDeviceUseCase>(
       () => _i939.LogoutDeviceUseCase(gh<_i109.FcmTokenRepository>()),
+    );
+    gh.factory<_i928.RegisterFcmTokenUseCase>(
+      () => _i928.RegisterFcmTokenUseCase(gh<_i109.FcmTokenRepository>()),
     );
     gh.factory<_i527.GetUserProfileUseCase>(
       () => _i527.GetUserProfileUseCase(gh<_i274.EditProfileRepository>()),
@@ -678,18 +684,6 @@ extension GetItInjectableX on _i174.GetIt {
         getPlans: gh<_i779.GetPlansUseCase>(),
         guard: gh<_i821.SubscriptionGuard>(),
       ),
-    );
-    gh.factory<_i134.CreateConversationUseCase>(
-      () => _i134.CreateConversationUseCase(gh<_i778.SupportRepository>()),
-    );
-    gh.factory<_i498.GetAutoReplyUseCase>(
-      () => _i498.GetAutoReplyUseCase(gh<_i778.SupportRepository>()),
-    );
-    gh.factory<_i983.GetConversationsUseCase>(
-      () => _i983.GetConversationsUseCase(gh<_i778.SupportRepository>()),
-    );
-    gh.factory<_i166.SendMessageUseCase>(
-      () => _i166.SendMessageUseCase(gh<_i778.SupportRepository>()),
     );
     gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
       (userId, _) => _i13.UserHoursBloc(
@@ -757,12 +751,6 @@ extension GetItInjectableX on _i174.GetIt {
         tokenStorage: gh<_i23.TokenStorage>(),
       ),
     );
-    gh.factory<_i766.SupportChatBloc>(
-      () => _i766.SupportChatBloc(
-        sendMessage: gh<_i166.SendMessageUseCase>(),
-        getAutoReply: gh<_i498.GetAutoReplyUseCase>(),
-      ),
-    );
     gh.factory<_i548.PatientDetailsBloc>(
       () => _i548.PatientDetailsBloc(
         getPatientDetails: gh<_i1063.GetPatientDetailsUseCase>(),
@@ -794,12 +782,6 @@ extension GetItInjectableX on _i174.GetIt {
         getUnreadCount: gh<_i874.GetUnreadCountUseCase>(),
         tokenStorage: gh<_i23.TokenStorage>(),
         notificationService: gh<_i40.NotificationService>(),
-      ),
-    );
-    gh.factory<_i45.SupportConversationsBloc>(
-      () => _i45.SupportConversationsBloc(
-        getConversations: gh<_i983.GetConversationsUseCase>(),
-        createConversation: gh<_i134.CreateConversationUseCase>(),
       ),
     );
     gh.lazySingleton<_i132.NotificationTopicsSynchronizer>(

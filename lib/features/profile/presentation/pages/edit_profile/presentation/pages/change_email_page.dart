@@ -1,11 +1,10 @@
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/utils/error_helper.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -85,6 +84,9 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
           'newEmail': newEmail,
           'sessionId': sessionId,
           'secondsRemaining': secondsRemaining,
+          // The resend on the next screen re-posts to the same endpoint,
+          // which validates the password again.
+          'currentPassword': password,
         },
       );
     } catch (e) {
@@ -98,214 +100,115 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final fontFamily = FontHelper.fontFamily(context);
+    final family = FontHelper.fontFamily(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
-      body: SafeArea(
+      // Was hardcoded white, which left the page unreadable in the dark
+      // theme while every control on it switched.
+      backgroundColor: c.scaffoldBg,
+      appBar: PageHeader(title: l10n.changeEmail, onBack: () => context.pop()),
+      // The one primary action docks in the thumb arc rather than sitting at
+      // the end of the scroll.
+      bottomNavigationBar: FormActionBar(
+        label: l10n.sendVerificationCode,
+        busy: _isLoading,
+        onPressed: _requestOtp,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PageHeader(
-              title: l10n.changeEmail,
-              onBack: () => context.pop(),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 24.h),
-
-                    // Icon
-                    Center(
-                      child: Container(
-                        width: 72.w,
-                        height: 72.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.email_outlined,
-                          size: 36.w,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Current email
-                    Center(
-                      child: Text(
-                        widget.currentEmail,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.w600,
-                          color: ColorManager.of(context).textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 8.h),
-
-                    Center(
-                      child: Text(
-                        l10n.changeEmailDescription,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontFamily: fontFamily,
-                          color: ColorManager.of(context).textSecondary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 32.h),
-
-                    // New email field
-                    Text(
-                      l10n.newEmail,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontFamily: fontFamily,
-                        fontWeight: FontWeight.w500,
-                        color: ColorManager.of(context).textSecondary,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textPrimary,
-                      ),
-                      decoration: _inputDecoration(
-                        hint: 'email@example.com',
-                        icon: Icons.email_outlined,
-                      ),
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Current password field
-                    Text(
-                      l10n.currentPassword,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontFamily: fontFamily,
-                        fontWeight: FontWeight.w500,
-                        color: ColorManager.of(context).textSecondary,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => _requestOtp(),
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textPrimary,
-                      ),
-                      decoration: _inputDecoration(
-                        hint: '••••••••',
-                        icon: Icons.lock_outline,
-                        suffix: GestureDetector(
-                          onTap: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
-                          child: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            size: 20.w,
-                            color: ColorManager.of(context).textTertiary,
+            // What is being changed, stated before the fields that change it.
+            AppCard(
+              child: Row(
+                children: [
+                  const IconTile(icon: Icons.alternate_email_rounded),
+                  SizedBox(width: 11.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.currentEmail,
+                          style: TextStyle(
+                            fontSize: 9.5.sp,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.4,
+                            height: 1.3,
+                            fontFamily: family,
+                            color: c.textTertiary,
                           ),
                         ),
-                      ),
-                    ),
-
-                    SizedBox(height: 32.h),
-
-                    // Send button
-                    GestureDetector(
-                      onTap: _isLoading ? null : _requestOtp,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        decoration: BoxDecoration(
-                          color: _isLoading
-                              ? ColorManager.primary.withValues(alpha: 0.5)
-                              : ColorManager.primary,
-                          borderRadius: BorderRadiusManager.lg,
+                        SizedBox(height: 2.h),
+                        Text(
+                          widget.currentEmail,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            fontSize: 12.5.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: family,
+                            color: c.textPrimary,
+                          ),
                         ),
-                        child: _isLoading
-                            ? Center(
-                                child: SizedBox(
-                                  width: 20.w,
-                                  height: 20.w,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                l10n.sendVerificationCode,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontFamily: fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorManager.white,
-                                ),
-                              ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+            SizedBox(height: 8.h),
+            FormSectionCard(
+              title: l10n.changeEmail,
+              children: [
+                Text(
+                  l10n.changeEmailDescription,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    height: 1.5,
+                    fontFamily: family,
+                    color: c.textSecondary,
+                  ),
+                ),
+                FormTextField(
+                  label: l10n.newEmail,
+                  required: true,
+                  controller: _emailController,
+                  hintText: 'email@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  textDirection: TextDirection.ltr,
+                ),
+                FormTextField(
+                  label: l10n.currentPassword,
+                  required: true,
+                  controller: _passwordController,
+                  hintText: '........',
+                  obscureText: _obscurePassword,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: _requestOtp,
+                  suffix: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(
+                      () => _obscurePassword = !_obscurePassword,
+                    ),
+                    child: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 18.w,
+                      color: c.textTertiary,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration({
-    required String hint,
-    required IconData icon,
-    Widget? suffix,
-  }) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(
-        fontSize: 15.sp,
-        color: ColorManager.of(context).textTertiary,
-      ),
-      prefixIcon: Icon(icon, size: 20.w, color: ColorManager.of(context).textTertiary),
-      suffixIcon: suffix,
-      contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-      filled: true,
-      fillColor: ColorManager.of(context).cardBgSecondary,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: ColorManager.primary),
       ),
     );
   }

@@ -3,13 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/routes_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 
 /// Single place that ends a session and puts the user back on the login page.
 ///
@@ -81,16 +81,7 @@ class SessionManager {
       final l10n = AppLocalizations.of(context);
       if (l10n == null) return;
 
-      final messenger = ScaffoldMessenger.maybeOf(context);
-      messenger
-        ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(l10n.sessionExpiredMessage),
-            backgroundColor: ColorManager.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      AppSnackbar.showError(context, title: l10n.sessionExpiredMessage);
     });
   }
 }

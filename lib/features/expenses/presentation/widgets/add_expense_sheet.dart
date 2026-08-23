@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/domain/use_cases/get_categories_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -11,7 +12,6 @@ import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart'
 import 'package:dental_clinic_app/services/file_picker/picked_file_model.dart';
 import 'package:dental_clinic_app/services/media/media_service.dart';
 import 'package:dental_clinic_app/injection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,6 +43,11 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   bool _categoriesLoading = true;
 
   bool get _isEditing => widget.expense != null;
+
+  /// Shown only after the first save attempt, then kept current on every
+  /// edit - the same discipline the patient and appointment forms use.
+  _ExpenseErrors _errors = _ExpenseErrors.none;
+  bool _submitted = false;
 
   @override
   void initState() {
@@ -155,14 +160,39 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
     });
   }
 
+  _ExpenseErrors _validate() {
+    final l10n = AppLocalizations.of(context)!;
+    final amount = _amountController.text.trim();
+    final parsed = double.tryParse(amount);
+    return _ExpenseErrors(
+      amount: amount.isEmpty
+          ? l10n.pleaseEnterAmount
+          : (parsed == null || parsed <= 0
+                ? l10n.pleaseEnterValidAmount
+                : null),
+      category: _selectedCategory == null
+          ? l10n.pleaseSelectExpenseType
+          : (_isOtherCategory && _customCategoryController.text.trim().isEmpty
+                ? l10n.pleaseSelectExpenseType
+                : null),
+      currency: _selectedCurrency == null ? l10n.pleaseSelectCurrency : null,
+    );
+  }
+
+  void _revalidate() {
+    if (!_submitted) return;
+    final next = _validate();
+    if (next != _errors) setState(() => _errors = next);
+  }
+
   void _save() {
-    // Required: amount, category, and currency
-    if (_amountController.text.isEmpty) return;
-    if (_selectedCategory == null) return;
-    if (_isOtherCategory && _customCategoryController.text.trim().isEmpty) {
-      return;
-    }
-    if (_selectedCurrency == null) return;
+    FocusScope.of(context).unfocus();
+    final errors = _validate();
+    setState(() {
+      _submitted = true;
+      _errors = errors;
+    });
+    if (errors.hasAny) return;
 
     final body = <String, dynamic>{
       'amount': _amountController.text,
@@ -193,371 +223,177 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Future<void> _selectDate() async {
-    DateTime tempDate = _date;
     final l10n = AppLocalizations.of(context)!;
-
-    final picked = await showModalBottomSheet<DateTime>(
-      context: context,
-      useSafeArea: true,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (ctx) => SizedBox(
-        height: 300.h,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: ColorManager.of(ctx).textSecondary,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(ctx),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, tempDate),
-                    child: Text(
-                      l10n.save,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(ctx),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: ColorManager.of(ctx).divider),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _date,
-                minimumDate: DateTime(2020),
-                maximumDate: DateTime.now(),
-                onDateTimeChanged: (date) => tempDate = date,
-              ),
-            ),
-          ],
-        ),
-      ),
+    final picked = await DatePickerSheet.show(
+      context,
+      title: l10n.date,
+      initial: _date,
+      minimum: DateTime(2020),
+      maximum: DateTime.now(),
     );
-
-    if (picked != null) {
-      setState(() => _date = picked);
-    }
+    if (picked == null || !mounted) return;
+    setState(() => _date = picked);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
-    final bottomPadding = MediaQuery.viewInsetsOf(context).bottom;
-    final formatted = DateFormat('MMM d, yyyy').format(_date);
-    final isToday = DateUtils.isSameDay(_date, DateTime.now());
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h + bottomPadding),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Handle
-            Center(
-              child: Container(
-                width: 36.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: c.border,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
+    return FormSheetShell(
+      title: _isEditing ? l10n.edit : l10n.addExpense,
+      footer: FormSheetButton(
+        label: l10n.save,
+        onPressed: _save,
+        busy: _isUploading,
+      ),
+      children: [
+        // The amount is the one number this sheet exists to capture, so it
+        // stays a hero figure rather than another 13sp row.
+        FormFieldShell(
+          label: l10n.amount,
+          required: true,
+          errorText: _errors.amount,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+            decoration: formInputDecoration(
+              context,
+              focused: false,
+              hasError: _errors.amount != null,
             ),
-            SizedBox(height: 16.h),
-
-            Text(
-              _isEditing ? l10n.edit : l10n.addExpense,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w600,
-                color: c.textPrimary,
-              ),
-            ),
-            SizedBox(height: 20.h),
-
-            // Amount
-            TextField(
+            child: TextField(
               controller: _amountController,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
               autofocus: !_isEditing,
+              onChanged: (_) => _revalidate(),
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(context),
-                fontSize: 28.sp,
-                fontWeight: FontWeight.bold,
+                fontSize: 26.sp,
+                height: 1.3,
+                letterSpacing: -0.5,
+                fontWeight: FontWeight.w700,
                 color: c.textPrimary,
               ),
-              decoration: InputDecoration(
+              decoration: bareInputDecoration().copyWith(
                 hintText: '0',
                 hintStyle: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 28.sp,
-                  fontWeight: FontWeight.bold,
-                  color: c.border,
+                  fontSize: 26.sp,
+                  height: 1.3,
+                  letterSpacing: -0.5,
+                  fontWeight: FontWeight.w700,
+                  color: c.textSubtle.withValues(alpha: 0.5),
                 ),
-                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 8.h),
               ),
             ),
-            SizedBox(height: 16.h),
+          ),
+        ),
+        SizedBox(height: 12.h),
 
-            // Category dropdown
-            _categoriesLoading
-                ? ShimmerBox(
-                    width: double.infinity,
-                    height: 48.h,
-                    radius: BorderRadius.circular(10.r),
-                  )
-                : _buildCategoryDropdown(context, l10n),
-
-            // Custom category text field (shown when "Other" is selected)
-            if (_isOtherCategory) ...[
-              SizedBox(height: 10.h),
-              TextField(
-                controller: _customCategoryController,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                ),
-                decoration: InputDecoration(
-                  hintText: l10n.whatWasThisFor,
-                  hintStyle: TextStyle(
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 14.sp,
-                    color: c.textSubtle,
+        // Currency
+        BlocBuilder<CurrencyBloc, CurrencyState>(
+          bloc: getIt<CurrencyBloc>(),
+          builder: (context, currencyState) {
+            return currencyState.maybeWhen(
+              loaded: (currencies) {
+                if (currencies.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: FormFieldShell(
+                    label: l10n.currency,
+                    required: true,
+                    errorText: _errors.currency,
+                    child: CurrencyChips(
+                      currencies: currencies,
+                      selectedCurrency: _selectedCurrency,
+                      onSelected: (cur) {
+                        setState(() => _selectedCurrency = cur);
+                        _revalidate();
+                      },
+                    ),
                   ),
-                  filled: true,
-                  fillColor: c.inputBg,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 12.h,
-                  ),
-                ),
-              ),
-            ],
-            SizedBox(height: 14.h),
-
-            // Notes
-            TextField(
-              controller: _noteController,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 14.sp,
-              ),
-              decoration: InputDecoration(
-                hintText: l10n.addNoteOptional,
-                hintStyle: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  color: c.textSubtle,
-                ),
-                filled: true,
-                fillColor: c.inputBg,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 14.w,
-                  vertical: 12.h,
-                ),
-              ),
-            ),
-
-            SizedBox(height: 10.h),
-
-            // Currency chips from root CurrencyBloc
-            BlocBuilder<CurrencyBloc, CurrencyState>(
-              bloc: getIt<CurrencyBloc>(),
-              builder: (context, currencyState) {
-                return currencyState.maybeWhen(
-                  loaded: (currencies) {
-                    if (currencies.isEmpty) return const SizedBox.shrink();
-                    return Column(
-                      children: [
-                        CurrencyChips(
-                          currencies: currencies,
-                          selectedCurrency: _selectedCurrency,
-                          onSelected: (c) =>
-                              setState(() => _selectedCurrency = c),
-                        ),
-                        SizedBox(height: 10.h),
-                      ],
-                    );
-                  },
-                  orElse: () => const SizedBox.shrink(),
                 );
               },
-            ),
-
-            // Date selector
-            GestureDetector(
-              onTap: _selectDate,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: c.inputBg,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      size: 14.w,
-                      color: c.textSecondary,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      isToday ? l10n.today : formatted,
-                      style: TextStyle(
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 14.h),
-
-            // Attachments section
-            _buildAttachmentsSection(l10n),
-
-            SizedBox(height: 20.h),
-
-            // Save button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isUploading ? null : _save,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorManager.primary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: _isUploading
-                    ? SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        l10n.save,
-                        style: TextStyle(
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              ),
-            ),
-            SizedBox(height: 8.h),
-          ],
+              orElse: () => const SizedBox.shrink(),
+            );
+          },
         ),
-      ),
+
+        // Category
+        if (_categoriesLoading)
+          FormFieldShell(
+            label: l10n.expenseType,
+            required: true,
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 42.h,
+              radius: BorderRadius.circular(12.r),
+            ),
+          )
+        else
+          _buildCategoryDropdown(context, l10n),
+
+        if (_isOtherCategory) ...[
+          SizedBox(height: 12.h),
+          FormTextField(
+            label: l10n.expenseType,
+            required: true,
+            controller: _customCategoryController,
+            hintText: l10n.whatWasThisFor,
+            errorText: _errors.category,
+            onChanged: _revalidate,
+          ),
+        ],
+        SizedBox(height: 12.h),
+
+        FormDateField(label: l10n.date, value: _date, onTap: _selectDate),
+        SizedBox(height: 12.h),
+
+        FormTextField(
+          label: l10n.notes,
+          controller: _noteController,
+          hintText: l10n.addNoteOptional,
+          maxLines: 3,
+        ),
+        SizedBox(height: 12.h),
+
+        _buildAttachmentsSection(l10n),
+        SizedBox(height: 4.h),
+      ],
     );
   }
 
   Widget _buildCategoryDropdown(BuildContext context, AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
-      decoration: BoxDecoration(
-        color: c.inputBg,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<ExpenseCategoryEntity>(
-          value: _selectedCategory,
-          isExpanded: true,
-          hint: Text(
-            l10n.expenseType,
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 13.sp,
-              color: c.textSubtle,
-            ),
-          ),
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 13.sp,
-            color: c.textPrimary,
-          ),
-          icon: Icon(
-            Icons.expand_more,
-            size: 18.w,
-            color: c.textSubtle,
-          ),
-          items: _categories
-              .map(
-                (cat) => DropdownMenuItem(
-                  value: cat,
-                  child: Text(
-                    cat.name,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 13.sp,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (v) {
-            if (v == null) return;
-            final name = v.name.toLowerCase();
-            final isOther = name == 'other' || name == 'أخرى';
-            setState(() {
-              _selectedCategory = v;
-              _isOtherCategory = isOther;
-              if (isOther) _customCategoryController.clear();
-            });
-          },
-        ),
-      ),
+    return FormDropdownField<ExpenseCategoryEntity>(
+      label: l10n.expenseType,
+      required: true,
+      value: _selectedCategory,
+      items: _categories,
+      itemLabel: (cat) => cat.name,
+      hint: l10n.expenseType,
+      // The custom-name field carries its own error once "other" is picked.
+      errorText: _isOtherCategory ? null : _errors.category,
+      onChanged: (v) {
+        if (v == null) return;
+        final name = v.name.toLowerCase();
+        final isOther = name == 'other' || name == 'أخرى';
+        setState(() {
+          _selectedCategory = v;
+          _isOtherCategory = isOther;
+          if (isOther) _customCategoryController.clear();
+        });
+        _revalidate();
+      },
     );
   }
 
   Widget _buildAttachmentsSection(AppLocalizations l10n) {
     final c = ColorManager.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Attachment thumbnails
         if (_attachments.isNotEmpty) ...[
@@ -572,7 +408,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                 return Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(12.r),
                       child: picked.isImage
                           ? Image.file(
                               picked.file,
@@ -641,30 +477,29 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
         // Add attachment button
         GestureDetector(
           onTap: _isUploading ? null : _pickAttachment,
+          behavior: HitTestBehavior.opaque,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: c.inputBg,
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(
-                color: c.divider,
-                style: BorderStyle.solid,
-              ),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+            decoration: formInputDecoration(
+              context,
+              focused: false,
+              hasError: false,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.attach_file,
+                  Icons.receipt_long_outlined,
                   size: 16.w,
-                  color: c.textSecondary,
+                  color: c.textTertiary,
                 ),
                 SizedBox(width: 6.w),
                 Text(
-                  l10n.attachments,
+                  l10n.addReceipt,
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 13.sp,
+                    fontSize: 12.5.sp,
+                    fontWeight: FontWeight.w600,
                     color: c.textSecondary,
                   ),
                 ),
@@ -675,4 +510,27 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
       ],
     );
   }
+}
+
+/// The three values this sheet cannot be saved without.
+class _ExpenseErrors {
+  const _ExpenseErrors({this.amount, this.category, this.currency});
+
+  final String? amount;
+  final String? category;
+  final String? currency;
+
+  static const _ExpenseErrors none = _ExpenseErrors();
+
+  bool get hasAny => amount != null || category != null || currency != null;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _ExpenseErrors &&
+      other.amount == amount &&
+      other.category == category &&
+      other.currency == currency;
+
+  @override
+  int get hashCode => Object.hash(amount, category, currency);
 }

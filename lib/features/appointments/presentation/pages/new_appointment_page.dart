@@ -13,17 +13,14 @@ import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_available_slots_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_clinic_doctors_use_case.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/patient_picker.dart';
-import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_patients_use_case.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class NewAppointmentPage extends StatefulWidget {
   const NewAppointmentPage({super.key});
@@ -38,6 +35,7 @@ class NewAppointmentPage extends StatefulWidget {
 
 class _NewAppointmentPageState extends State<NewAppointmentPage> {
   final _formKey = GlobalKey<FormState>();
+  final _scrollController = ScrollController();
   final _notesController = TextEditingController();
 
   // Patients
@@ -68,6 +66,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   bool _isVip = false;
 
   bool _sendReminder = true;
+
+  /// Which of the three required choices are still unanswered. Populated on
+  /// the first save attempt and kept current after that, so a fixed field
+  /// clears its own error without another save.
+  _AppointmentErrors _errors = _AppointmentErrors.none;
+  bool _submitted = false;
 
   final List<Map<String, dynamic>> _durations = [
     {'label': '15m', 'value': 15},
@@ -119,6 +123,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -247,89 +252,60 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  Future<void> _selectDate() async {
-    DateTime tempDate = _selectedDate;
-
-    await showModalBottomSheet(
-      context: context,
-      useSafeArea: true,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (ctx) => SizedBox(
-        height: 300.h,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancel,
-                      style: TextStyle(
-                        color: ColorManager.of(context).textTertiary,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _selectedDate = tempDate);
-                      _loadAvailableSlots();
-                      Navigator.pop(ctx);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.save,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: ColorManager.of(context).divider),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _selectedDate,
-                minimumDate:
-                    DateTime.now().subtract(const Duration(days: 1)),
-                maximumDate: DateTime.now().add(const Duration(days: 365)),
-                onDateTimeChanged: (date) => tempDate = date,
-              ),
-            ),
-          ],
-        ),
-      ),
+  _AppointmentErrors _validate() {
+    final l10n = AppLocalizations.of(context)!;
+    return _AppointmentErrors(
+      patient:
+          _selectedPatientEntity == null ? l10n.pleaseSelectAPatient : null,
+      doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
+      slot: _selectedSlot == null
+          ? l10n.pleaseSelectAnAvailableTimeSlot
+          : null,
     );
   }
 
-  Future<void> _saveAppointment() async {
-    final l10n = AppLocalizations.of(context)!;
+  void _revalidate() {
+    if (!_submitted) return;
+    final next = _validate();
+    if (next != _errors) setState(() => _errors = next);
+  }
 
-    if (_selectedPatientEntity == null) {
+  Future<void> _selectDate() async {
+    final l10n = AppLocalizations.of(context)!;
+    final picked = await DatePickerSheet.show(
+      context,
+      title: l10n.date,
+      initial: _selectedDate,
+      minimum: DateTime.now().subtract(const Duration(days: 1)),
+      maximum: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _selectedDate = picked);
+    _loadAvailableSlots();
+  }
+
+  Future<void> _saveAppointment() async {
+    FocusScope.of(context).unfocus();
+    final l10n = AppLocalizations.of(context)!;
+    final errors = _validate();
+
+    setState(() {
+      _submitted = true;
+      _errors = errors;
+    });
+
+    if (errors.hasAny) {
+      // Patient is the first required choice on the page, so the top of the
+      // scroll is where the earliest unanswered one always is.
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
       AppSnackbar.showWarning(context,
-          title: l10n.missingData, message: l10n.pleaseSelectAPatient);
-      return;
-    }
-    if (_selectedDoctor == null) {
-      AppSnackbar.showWarning(context,
-          title: l10n.missingData, message: l10n.pleaseSelectADoctor);
-      return;
-    }
-    if (_selectedSlot == null) {
-      AppSnackbar.showWarning(context,
-          title: l10n.missingData,
-          message: l10n.pleaseSelectAnAvailableTimeSlot);
+          title: l10n.missingData, message: l10n.checkHighlightedFields);
       return;
     }
 
@@ -387,121 +363,111 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: Column(
-        children: [
-          PageHeader(
-            title: l10n.newAppointment,
-            onBack: () => context.pop(),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: SingleChildScrollView(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel(l10n.patient),
-                      SizedBox(height: 10.h),
-                      if (_isPatientsLoading)
-                        _buildPatientPickerSkeleton()
-                      else
-                        PatientPicker(
-                          patients:
-                              _patients.map((p) => p.name).toList(),
-                          selectedPatient: _selectedPatientEntity?.name,
-                          onPatientChanged: (name) {
-                            final entity = name != null
-                                ? _patients.firstWhere((p) => p.name == name)
-                                : null;
-                            setState(
-                                () => _selectedPatientEntity = entity);
-                          },
-                          onAddNewPatient: () =>
-                              context.pushNamed(AppRoutesNames.addPatient),
+      backgroundColor: c.scaffoldBg,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            FormTopBar(
+              title: l10n.newAppointment,
+              onBack: () => context.pop(),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FormSectionCard(
+                          title: l10n.patient,
+                          children: [
+                            if (_isPatientsLoading)
+                              _buildPatientPickerSkeleton()
+                            else
+                              PatientPicker(
+                                patients:
+                                    _patients.map((p) => p.name).toList(),
+                                selectedPatient: _selectedPatientEntity?.name,
+                                onPatientChanged: (name) {
+                                  final entity = name != null
+                                      ? _patients
+                                          .firstWhere((p) => p.name == name)
+                                      : null;
+                                  setState(
+                                      () => _selectedPatientEntity = entity);
+                                  _revalidate();
+                                },
+                                onAddNewPatient: () => context
+                                    .pushNamed(AppRoutesNames.addPatient),
+                              ),
+                            if (_errors.patient != null)
+                              FormErrorLine(message: _errors.patient!),
+                          ],
                         ),
-
-                      _divider(),
-
-                      _sectionLabel(l10n.doctor),
-                      SizedBox(height: 10.h),
-                      _buildDoctorChips(l10n),
-
-                      _divider(),
-
-                      _sectionLabel(l10n.duration),
-                      SizedBox(height: 10.h),
-                      _buildDurationChips(),
-
-                      _divider(),
-
-                      _buildDateRow(l10n),
-
-                      _divider(),
-
-                      _buildVipSwitch(l10n),
-
-                      _divider(),
-
-                      _sectionLabel(l10n.availableSlots),
-                      SizedBox(height: 10.h),
-                      _buildSlots(l10n),
-
-                      _divider(),
-
-                      _sectionLabel(l10n.notes),
-                      SizedBox(height: 10.h),
-                      AppFormField(
-                        controller: _notesController,
-                        maxLines: 3,
-                        hintText: l10n.addNotesForAppointment,
-                        label: '',
-                      ),
-
-                      _divider(),
-
-                      _buildReminderRow(l10n),
-
-                      SizedBox(height: 80.h),
-                    ],
+                        SizedBox(height: 8.h),
+                        FormSectionCard(
+                          title: l10n.doctor,
+                          children: [
+                            _buildDoctorChips(l10n),
+                            if (_errors.doctor != null)
+                              FormErrorLine(message: _errors.doctor!),
+                          ],
+                        ),
+                        SizedBox(height: 8.h),
+                        FormSectionCard(
+                          title: l10n.schedule,
+                          children: [
+                            FormDateField(
+                              label: l10n.date,
+                              value: _selectedDate,
+                              onTap: _selectDate,
+                            ),
+                            FormFieldShell(
+                              label: l10n.duration,
+                              child: _buildDurationChips(),
+                            ),
+                            _buildVipSwitch(l10n),
+                            FormFieldShell(
+                              label: l10n.availableSlots,
+                              required: true,
+                              errorText: _errors.slot,
+                              child: _buildSlots(l10n),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.h),
+                        FormSectionCard(
+                          title: l10n.notes,
+                          children: [
+                            FormTextField(
+                              label: '',
+                              controller: _notesController,
+                              maxLines: 3,
+                              hintText: l10n.addNotesForAppointment,
+                            ),
+                            _buildReminderRow(l10n),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
-        child: SafeArea(
-          top: false,
-          child: ElevatedButton(
-            onPressed: _saveAppointment,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-            ),
-            child: Text(
-              l10n.save,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          ],
         ),
+      ),
+      bottomNavigationBar: FormActionBar(
+        label: l10n.save,
+        onPressed: _saveAppointment,
       ),
     );
   }
@@ -514,9 +480,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return Text(
         l10n.noData,
         style: TextStyle(
-          fontSize: 13.sp,
+          fontSize: 11.5.sp,
           fontFamily: FontHelper.fontFamily(context),
-          color: ColorManager.of(context).textSubtle,
+          color: ColorManager.of(context).textTertiary,
         ),
       );
     }
@@ -528,11 +494,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         children: [
           for (var i = 0; i < _doctors.length; i++) ...[
             if (i > 0) SizedBox(width: 8.w),
-            SelectableChip(
+            FormChip(
               label: _doctors[i].name.isNotEmpty ? _doctors[i].name : '—',
-              isSelected: _selectedDoctor?.id == _doctors[i].id,
+              selected: _selectedDoctor?.id == _doctors[i].id,
               onTap: () {
                 setState(() => _selectedDoctor = _doctors[i]);
+                _revalidate();
                 _loadAvailableSlots();
               },
             ),
@@ -552,7 +519,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       child: Row(
         children: [
           Icon(Icons.workspace_premium_outlined,
-              size: 18.w, color: c.textTertiary),
+              size: 16.w, color: c.textTertiary),
           SizedBox(width: 8.w),
           Expanded(
             child: Column(
@@ -562,9 +529,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                 Text(
                   l10n.vipAppointment,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 12.5.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: c.textPrimary,
                   ),
                 ),
@@ -580,14 +547,14 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
               ],
             ),
           ),
-          Switch.adaptive(
+          Switch(
             value: _isVip,
             onChanged: (val) {
               setState(() => _isVip = val);
               _loadAvailableSlots();
             },
-            activeThumbColor: ColorManager.primary,
-            activeTrackColor: ColorManager.primary.withValues(alpha: 0.4),
+            activeThumbColor: ColorManager.white,
+            activeTrackColor: ColorManager.primary,
           ),
         ],
       ),
@@ -599,9 +566,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       spacing: 8.w,
       runSpacing: 8.h,
       children: _durations.map((d) {
-        return SelectableChip(
+        return FormChip(
           label: d['label'],
-          isSelected: _duration == d['value'],
+          selected: _duration == d['value'],
           onTap: () {
             setState(() => _duration = d['value']);
             _loadAvailableSlots();
@@ -650,9 +617,10 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return Text(
         l10n.noAvailableSlotsForThisDate,
         style: TextStyle(
-          fontSize: 13.sp,
+          fontSize: 11.5.sp,
+          height: 1.4,
           fontFamily: FontHelper.fontFamily(context),
-          color: ColorManager.of(context).textSubtle,
+          color: ColorManager.of(context).textTertiary,
         ),
       );
     }
@@ -665,53 +633,17 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         children: [
           for (var i = 0; i < _availableSlots.length; i++) ...[
             if (i > 0) SizedBox(width: 8.w),
-            SelectableChip(
+            FormChip(
               label: _availableSlots[i],
-              isSelected: _selectedSlot == _availableSlots[i],
-              onTap: () =>
-                  setState(() => _selectedSlot = _availableSlots[i]),
-              borderRadius: 10,
+              selected: _selectedSlot == _availableSlots[i],
+              onTap: () {
+                setState(() => _selectedSlot = _availableSlots[i]);
+                _revalidate();
+              },
+              radius: 10,
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildDateRow(AppLocalizations l10n) {
-    final formatted = DateFormat('MMM d, yyyy').format(_selectedDate);
-    final isToday = DateUtils.isSameDay(_selectedDate, DateTime.now());
-
-    return GestureDetector(
-      onTap: _selectDate,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 4.h),
-        child: Row(
-          children: [
-            Icon(Icons.calendar_today_outlined,
-                size: 16.w, color: ColorManager.of(context).textTertiary),
-            SizedBox(width: 8.w),
-            Text(
-              isToday ? '${l10n.today}, $formatted' : formatted,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              l10n.change,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
-                color: ColorManager.primary,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -722,58 +654,27 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       child: Row(
         children: [
           Icon(Icons.notifications_outlined,
-              size: 18.w, color: ColorManager.of(context).textTertiary),
+              size: 16.w, color: ColorManager.of(context).textTertiary),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
               l10n.sendReminderToPatient,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 12.5.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: ColorManager.of(context).textPrimary,
               ),
             ),
           ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 22.w,
-            height: 22.w,
-            decoration: BoxDecoration(
-              color: _sendReminder ? ColorManager.primary : ColorManager.of(context).cardBg,
-              borderRadius: BorderRadius.circular(6.r),
-              border: Border.all(
-                color: _sendReminder
-                    ? ColorManager.primary
-                    : ColorManager.of(context).border,
-                width: 1.5,
-              ),
-            ),
-            child: _sendReminder
-                ? Icon(Icons.check, size: 14.w, color: Colors.white)
-                : null,
+          Switch(
+            value: _sendReminder,
+            onChanged: (val) => setState(() => _sendReminder = val),
+            activeThumbColor: ColorManager.white,
+            activeTrackColor: ColorManager.primary,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _sectionLabel(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 15.sp,
-        fontWeight: FontWeight.w600,
-        color: ColorManager.of(context).textSecondary,
-        fontFamily: FontHelper.fontFamily(context),
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 18.h),
-      child: Divider(color: ColorManager.of(context).divider),
     );
   }
 
@@ -825,7 +726,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
               if (i > 0) SizedBox(width: 8.w),
               Container(
                 width: chipWidth,
-                height: 36.h,
+                height: 34.h,
                 decoration: BoxDecoration(
                   color: fill,
                   borderRadius: BorderRadius.circular(radius.r),
@@ -862,10 +763,10 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(13.w),
       decoration: BoxDecoration(
         color: ColorManager.primary.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(13.r),
         border: Border.all(
           color: ColorManager.primary.withValues(alpha: 0.20),
         ),
@@ -877,7 +778,7 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
             children: [
               Icon(
                 Icons.schedule_outlined,
-                size: 18.w,
+                size: 16.w,
                 color: ColorManager.primary,
               ),
               SizedBox(width: 8.w),
@@ -885,7 +786,7 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 12.5.sp,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w600,
                     color: c.textPrimary,
@@ -894,37 +795,40 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 6.h),
           Text(
             message,
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 11.5.sp,
               fontFamily: fontFamily,
               color: c.textSecondary,
-              height: 1.35,
+              height: 1.4,
             ),
           ),
-          SizedBox(height: 14.h),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onPressed,
-              style: FilledButton.styleFrom(
-                backgroundColor: ColorManager.primary,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
+          SizedBox(height: 12.h),
+          FilledButton.icon(
+            onPressed: onPressed,
+            // Sized by its own padding rather than a fixed box, so a tall
+            // Cairo line box grows the button instead of being clipped.
+            style: FilledButton.styleFrom(
+              backgroundColor: ColorManager.primary,
+              foregroundColor: ColorManager.white,
+              minimumSize: Size(double.infinity, 42.h),
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              icon: Icon(Icons.arrow_forward_rounded, size: 16.w),
-              label: Text(
-                buttonLabel,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: fontFamily,
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            icon: Icon(Icons.arrow_forward_rounded, size: 15.w),
+            label: Text(
+              buttonLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                height: 1.4,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -932,4 +836,28 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The three choices this form cannot be submitted without. Compared by value
+/// so a rebuild only happens when a message actually changes.
+class _AppointmentErrors {
+  const _AppointmentErrors({this.patient, this.doctor, this.slot});
+
+  final String? patient;
+  final String? doctor;
+  final String? slot;
+
+  static const _AppointmentErrors none = _AppointmentErrors();
+
+  bool get hasAny => patient != null || doctor != null || slot != null;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _AppointmentErrors &&
+      other.patient == patient &&
+      other.doctor == doctor &&
+      other.slot == slot;
+
+  @override
+  int get hashCode => Object.hash(patient, doctor, slot);
 }

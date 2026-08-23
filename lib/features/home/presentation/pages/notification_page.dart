@@ -1,11 +1,11 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
-import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/home/presentation/manager/notification_bloc.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/notification_card.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/notification_inbox_header.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/notification_list_states.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +35,11 @@ class _NotificationContent extends StatefulWidget {
 
 class _NotificationContentState extends State<_NotificationContent> {
   final ScrollController _scrollController = ScrollController();
+
+  /// Applied over the pages already loaded, not sent to the server - the
+  /// inbox has no unread-only endpoint, and re-querying on a cursor-paged
+  /// list would fight the paging.
+  NotificationFilter _filter = NotificationFilter.all;
 
   @override
   void initState() {
@@ -86,126 +91,219 @@ class _NotificationContentState extends State<_NotificationContent> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: Column(
-        children: [
-          // Header is always visible
-          BlocBuilder<NotificationBloc, NotificationState>(
-            buildWhen: (prev, curr) => prev.hasUnread != curr.hasUnread,
-            builder: (context, state) {
-              return PageHeader(
-                title: l10n.notifications,
-                // Reachable directly from a push tap, so the stack may be
-                // empty - fall back to the root instead of throwing.
-                onBack: () =>
-                    context.canPop() ? context.pop() : context.go('/'),
-                actions: [
-                  if (state.hasUnread)
-                    GestureDetector(
-                      onTap: () => context
-                          .read<NotificationBloc>()
-                          .add(const NotificationEvent.markAllAsRead()),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: Text(
-                          l10n.markAllAsRead,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w500,
-                            color: ColorManager.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-
-          // Body
-          Expanded(
-            child: BlocBuilder<NotificationBloc, NotificationState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case NotificationStatus.initial:
-                  case NotificationStatus.loading:
-                    return const _NotificationListSkeleton();
-
-                  case NotificationStatus.failure:
-                    return _ErrorState(
-                      message: state.errorMessage ?? l10n.somethingWentWrong,
-                      onRetry: () => context
-                          .read<NotificationBloc>()
-                          .add(const NotificationEvent.load()),
-                    );
-
-                  case NotificationStatus.success:
-                    return RefreshIndicator(
-                      color: ColorManager.primary,
-                      onRefresh: () async {
-                        context
-                            .read<NotificationBloc>()
-                            .add(const NotificationEvent.refresh());
-                        // Give the request a beat before retracting the
-                        // spinner; the bloc emits again when it lands.
-                        await Future<void>.delayed(
-                          const Duration(milliseconds: 400),
-                        );
-                      },
-                      child: state.notifications.isEmpty
-                          ? _EmptyState(l10n: l10n)
-                          : _buildList(context, state, l10n),
-                    );
-                }
-              },
+      backgroundColor: c.scaffoldBg,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            NotificationsTopBar(
+              title: l10n.notifications,
+              // Reachable directly from a push tap, so the stack may be
+              // empty - fall back to the root instead of throwing.
+              onBack: () => context.canPop() ? context.pop() : context.go('/'),
             ),
-          ),
-        ],
+            Expanded(
+              child: BlocBuilder<NotificationBloc, NotificationState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case NotificationStatus.initial:
+                    case NotificationStatus.loading:
+                      return const NotificationListSkeleton();
+
+                    case NotificationStatus.failure:
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 24.h),
+                        child: NotificationErrorState(
+                          message: state.errorMessage ?? l10n.somethingWentWrong,
+                          onRetry: () => context
+                              .read<NotificationBloc>()
+                              .add(const NotificationEvent.load()),
+                        ),
+                      );
+
+                    case NotificationStatus.success:
+                      return _buildInbox(context, state, l10n);
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildList(
+  Widget _buildInbox(
     BuildContext context,
     NotificationState state,
     AppLocalizations l10n,
   ) {
-    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
-    final c = ColorManager.of(context);
+    final visible = _filter == NotificationFilter.unread
+        ? state.notifications.where((n) => !n.isRead).toList()
+        : state.notifications;
+    final rows = _buildRows(visible, l10n);
 
-    return ListView.separated(
-      controller: _scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h + bottomInset),
-      // One extra row for the paging spinner when another page is on its way.
-      itemCount: state.notifications.length + (state.isLoadingMore ? 1 : 0),
-      separatorBuilder: (_, __) => Divider(height: 1, color: c.divider),
-      itemBuilder: (context, index) {
-        if (index >= state.notifications.length) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.h),
-            child: const Center(
-              child: SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(strokeWidth: 2),
+    // The docked bar floats over the list, so the tail has to clear it.
+    final barHeight = state.hasUnread
+        ? NotificationActionBar.height(context)
+        : MediaQuery.viewPaddingOf(context).bottom;
+
+    return Stack(
+      children: [
+        RefreshIndicator(
+          color: ColorManager.primary,
+          onRefresh: () async {
+            context
+                .read<NotificationBloc>()
+                .add(const NotificationEvent.refresh());
+            // Give the request a beat before retracting the spinner; the bloc
+            // emits again when it lands.
+            await Future<void>.delayed(const Duration(milliseconds: 400));
+          },
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: NotificationInboxHeader(
+                  allChipLabel: l10n.allFilter,
+                  unreadChipLabel: l10n.unread,
+                  filter: _filter,
+                  onFilterChanged: (f) => setState(() => _filter = f),
+                ),
               ),
-            ),
-          );
-        }
+              if (rows.isEmpty)
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(14.w, 24.h, 14.w, 24.h),
+                  sliver: SliverToBoxAdapter(
+                    child: _filter == NotificationFilter.unread
+                        ? NotificationEmptyState(
+                            title: l10n.noUnreadNotifications,
+                            message: l10n.noUnreadNotificationsDesc,
+                          )
+                        : NotificationEmptyState(
+                            title: l10n.noNotifications,
+                            message: l10n.noNotificationsDesc,
+                          ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 0),
+                  sliver: SliverList.builder(
+                    itemCount: rows.length,
+                    itemBuilder: (context, index) {
+                      final row = rows[index];
+                      if (row is _SectionRow) {
+                        return _SectionHeader(
+                          title: row.title,
+                          // No leading gap above the first label; the pinned
+                          // header already provides the break.
+                          topGap: index == 0 ? 8.h : 18.h,
+                        );
+                      }
 
-        final notification = state.notifications[index];
-        return NotificationCard(
-          notification: notification,
-          onTap: () => _onNotificationTap(notification),
-          onLongPress: () => _onNotificationLongPress(notification),
-          timeAgo: _formatTimeAgo(l10n, notification.sentAt),
-        );
-      },
+                      final notification =
+                          (row as _NotificationRow).notification;
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: NotificationCard(
+                          notification: notification,
+                          onTap: () => _onNotificationTap(notification),
+                          onLongPress: () =>
+                              _onNotificationLongPress(notification),
+                          timeAgo: _formatTimeAgo(l10n, notification.sentAt),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              if (state.isLoadingMore)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  ),
+                ),
+              SliverToBoxAdapter(child: SizedBox(height: barHeight + 12.h)),
+            ],
+          ),
+        ),
+        if (state.hasUnread)
+          PositionedDirectional(
+            start: 0,
+            end: 0,
+            bottom: 0,
+            child: NotificationActionBar(
+              label: l10n.markAllAsRead,
+              onPressed: () => context
+                  .read<NotificationBloc>()
+                  .add(const NotificationEvent.markAllAsRead()),
+            ),
+          ),
+      ],
     );
+  }
+
+  /// Flattens the (already newest-first) inbox into section labels + cards.
+  ///
+  /// Grouping is purely local and relative to *today*, so it stays correct
+  /// without asking the server for buckets. Empty buckets emit no label.
+  List<_Row> _buildRows(
+    List<NotificationEntity> notifications,
+    AppLocalizations l10n,
+  ) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final rows = <_Row>[];
+    _DateBucket? currentBucket;
+
+    for (final notification in notifications) {
+      final sentAt = notification.sentAt.toLocal();
+      final day = DateTime(sentAt.year, sentAt.month, sentAt.day);
+      final daysAgo = today.difference(day).inDays;
+
+      // Anything stamped in the future (clock skew) still belongs under Today.
+      final bucket = daysAgo <= 0
+          ? _DateBucket.today
+          : daysAgo == 1
+          ? _DateBucket.yesterday
+          : daysAgo <= 7
+          ? _DateBucket.pastWeek
+          : _DateBucket.older;
+
+      if (bucket != currentBucket) {
+        currentBucket = bucket;
+        rows.add(_SectionRow(_bucketTitle(l10n, bucket)));
+      }
+      rows.add(_NotificationRow(notification));
+    }
+
+    return rows;
+  }
+
+  String _bucketTitle(AppLocalizations l10n, _DateBucket bucket) {
+    switch (bucket) {
+      case _DateBucket.today:
+        return l10n.today;
+      case _DateBucket.yesterday:
+        return l10n.yesterday;
+      case _DateBucket.pastWeek:
+        return l10n.pastWeek;
+      case _DateBucket.older:
+        return l10n.older;
+    }
   }
 
   String _formatTimeAgo(AppLocalizations l10n, DateTime timestamp) {
@@ -218,154 +316,43 @@ class _NotificationContentState extends State<_NotificationContent> {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.l10n});
+enum _DateBucket { today, yesterday, pastWeek, older }
 
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    // Scrollable so pull-to-refresh still works on an empty inbox.
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(height: 120.h),
-        Center(
-          child: Padding(
-            padding: EdgeInsets.all(32.w),
-            child: Column(
-              children: [
-                Container(
-                  width: 80.w,
-                  height: 80.w,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary10,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.notifications_none_rounded,
-                    size: 40.w,
-                    color: ColorManager.primary,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  l10n.noNotifications,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: c.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  l10n.noNotificationsDesc,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    color: c.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+sealed class _Row {
+  const _Row();
 }
 
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.cloud_off_rounded,
-              size: 40.w,
-              color: c.textSubtle,
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textSecondary,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            TextButton(
-              onPressed: onRetry,
-              child: Text(
-                l10n.retry,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: ColorManager.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+class _SectionRow extends _Row {
+  const _SectionRow(this.title);
+  final String title;
 }
 
-class _NotificationListSkeleton extends StatelessWidget {
-  const _NotificationListSkeleton();
+class _NotificationRow extends _Row {
+  const _NotificationRow(this.notification);
+  final NotificationEntity notification;
+}
+
+/// Uppercase micro-label - it separates the run of cards without competing
+/// with their titles.
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.topGap});
+
+  final String title;
+  final double topGap;
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(0, 8.h, 0, 8.h + bottomInset),
-      itemCount: 6,
-      separatorBuilder: (_, __) => Divider(height: 1, color: c.divider),
-      itemBuilder: (_, __) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ShimmerBox(
-              width: 40.w,
-              height: 40.w,
-              radius: BorderRadius.circular(10.r),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ShimmerBox(width: 180.w, height: 14.h),
-                  SizedBox(height: 8.h),
-                  ShimmerBox(width: double.infinity, height: 12.h),
-                  SizedBox(height: 6.h),
-                  ShimmerBox(width: 220.w, height: 12.h),
-                  SizedBox(height: 8.h),
-                  ShimmerBox(width: 60.w, height: 10.h),
-                ],
-              ),
-            ),
-          ],
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(2.w, topGap, 2.w, 8.h),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(
+          fontSize: 9.5.sp,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.4,
+          fontFamily: FontHelper.fontFamily(context),
+          color: c.textTertiary,
         ),
       ),
     );

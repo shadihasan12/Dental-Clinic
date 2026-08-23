@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import 'certificate_share_card.dart';
@@ -14,32 +15,43 @@ enum ShareCardTemplate {
   enamel(
     id: 'enamel',
     label: 'Enamel',
-    blurb: 'Light, pearlescent',
     previewBackground: Color(0xFFE6F1F7),
   ),
   editorial(
     id: 'editorial',
     label: 'Editorial',
-    blurb: 'Dark, off-axis',
     previewBackground: Color(0xFF061412),
   ),
   certificate(
     id: 'certificate',
     label: 'Certificate',
-    blurb: 'Navy and gold foil',
     previewBackground: Color(0xFF08132E),
   );
 
   const ShareCardTemplate({
     required this.id,
     required this.label,
-    required this.blurb,
     required this.previewBackground,
   });
 
   final String id;
+
+  /// The design's name. Deliberately not localized: it names the artwork,
+  /// which is English-only, so it reads the same in every locale.
   final String label;
-  final String blurb;
+
+  /// One-line description of the design's look. This one *is* localized —
+  /// it describes the design rather than naming it.
+  String blurb(AppLocalizations l10n) {
+    switch (this) {
+      case ShareCardTemplate.enamel:
+        return l10n.shareCardEnamelBlurb;
+      case ShareCardTemplate.editorial:
+        return l10n.shareCardEditorialBlurb;
+      case ShareCardTemplate.certificate:
+        return l10n.shareCardCertificateBlurb;
+    }
+  }
 
   /// Painted behind the preview so there is never a flash of empty tile
   /// while the card warms up.

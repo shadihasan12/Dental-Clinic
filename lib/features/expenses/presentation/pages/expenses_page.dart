@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/manager/expense_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -14,6 +15,7 @@ import 'package:intl/intl.dart';
 import '../widgets/add_expense_sheet.dart';
 import '../widgets/expense_detail_sheet.dart';
 import '../widgets/expense_row.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 
 class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
@@ -115,10 +117,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => AddExpenseSheet(
         onSave: (body) {
           context.read<ExpenseBloc>().add(ExpenseEvent.addExpense(body));
@@ -130,11 +129,9 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   void _showExpenseDetails(BuildContext context, ExpenseEntity expense) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => ExpenseDetailSheet(
         expense: expense,
         onDelete: () {
@@ -155,10 +152,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) => AddExpenseSheet(
         expense: expense,
         onSave: (body) {
@@ -186,18 +180,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           state.whenOrNull(
             loaded: (_, _, actionError) {
               if (actionError != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      actionError,
-                      style: TextStyle(
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                    backgroundColor: Colors.red.shade400,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                AppSnackbar.showError(context, title: actionError);
               }
             },
           );
@@ -224,12 +207,11 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                       child: expenses.isEmpty
                           ? _buildEmptyState(context)
                           : ListView.separated(
-                              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+                              padding:
+                                  EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
                               itemCount: expenses.length,
-                              separatorBuilder: (_, _) => Divider(
-                                height: 1,
-                                color: ColorManager.of(context).divider,
-                              ),
+                              separatorBuilder: (_, _) =>
+                                  SizedBox(height: 8.h),
                               itemBuilder: (_, index) => ExpenseRow(
                                 expense: expenses[index],
                                 onTap: () => _showExpenseDetails(
@@ -247,30 +229,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
                   Divider(height: 1, color: ColorManager.of(context).divider),
-                  Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            size: 48.w,
-                            color: ColorManager.of(context).textTertiary,
-                          ),
-                          SizedBox(height: 12.h),
-                          Text(
-                            message,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontSize: 14.sp,
-                              color: ColorManager.of(context).textTertiary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  Expanded(child: _buildErrorState(context, message)),
                 ],
               ),
             );
@@ -282,7 +241,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
 
   Widget _buildMonthSelector(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       child: Row(
         children: [
           GestureDetector(
@@ -343,60 +302,60 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     List<ExpenseTotalEntity> totals,
     int count,
   ) {
+    final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
 
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+        padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.expenses,
-                        style: TextStyle(
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: ColorManager.of(context).textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        '$count ${l10n.transactions}',
-                        style: TextStyle(
-                          fontFamily: FontHelper.fontFamily(context),
-                          fontSize: 13.sp,
-                          color: ColorManager.of(context).textTertiary,
-                        ),
-                      ),
-                    ],
+                Text(
+                  l10n.expenses,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => _showAddExpense(context),
-                  child: Container(
-                    width: 40.w,
-                    height: 40.w,
-                    decoration: const BoxDecoration(
-                      color: ColorManager.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.add, color: Colors.white, size: 20.w),
+                SizedBox(width: 6.w),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6.r),
                   ),
+                  child: Text(
+                    '$count',
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      height: 1.3,
+                      color: ColorManager.primaryDarker,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                _NewExpenseButton(
+                  label: l10n.newButton,
+                  onTap: () => _showAddExpense(context),
                 ),
               ],
             ),
 
-            // Multi-currency totals
+            // Multi-currency totals. Micro-label over the figure, the same
+            // number tile the patient screen uses - the old 18sp bold pair
+            // took a third of the header for a value that is context, not
+            // the reason the screen was opened.
             if (totals.isNotEmpty) ...[
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
               Row(
                 children: totals.asMap().entries.map((entry) {
                   final t = entry.value;
@@ -404,34 +363,41 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   return Expanded(
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        vertical: 10.h,
-                        horizontal: 12.w,
+                        vertical: 7.h,
+                        horizontal: 10.w,
                       ),
                       margin: EdgeInsetsDirectional.only(end: isLast ? 0 : 8.w),
                       decoration: BoxDecoration(
                         color: ColorManager.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            t.currencyCode,
+                            t.currencyCode.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w500,
-                              color: ColorManager.primary,
+                              fontFamily: family,
+                              fontSize: 9.5.sp,
+                              height: 1.3,
+                              letterSpacing: 0.4,
+                              fontWeight: FontWeight.w600,
+                              color: ColorManager.primaryDarker,
                             ),
                           ),
                           SizedBox(height: 2.h),
                           Text(
                             t.total,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: ColorManager.of(context).textPrimary,
+                              fontFamily: family,
+                              fontSize: 15.sp,
+                              height: 1.1,
+                              fontWeight: FontWeight.w700,
+                              color: c.textPrimary,
                             ),
                           ),
                         ],
@@ -449,7 +415,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
 
   Widget _buildSkeletonList(BuildContext context) {
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
+      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
       itemCount: 6,
       separatorBuilder: (_, _) =>
           Divider(height: 1, color: ColorManager.of(context).divider),
@@ -457,40 +423,36 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     );
   }
 
+  /// Same shell as the patients and appointments screens: quiet grey disc,
+  /// one sentence, and the action that fills the list.
   Widget _buildEmptyState(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 48.w,
-            color: ColorManager.of(context).border,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            l10n.noExpensesThisMonth,
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 14.sp,
-              color: ColorManager.of(context).textTertiary,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          GestureDetector(
-            onTap: () => _showAddExpense(context),
-            child: Text(
-              l10n.addOne,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: ColorManager.primary,
-              ),
-            ),
-          ),
-        ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      child: StateCard(
+        icon: Icons.receipt_long_outlined,
+        title: l10n.noExpensesThisMonth,
+        message: l10n.noExpensesThisMonthHint,
+        actionLabel: '+ ${l10n.addExpense}',
+        onAction: () => _showAddExpense(context),
+      ),
+    );
+  }
+
+  /// Says what failed, that the records themselves are untouched, and offers
+  /// the reload - the month it retries is the one still on screen.
+  Widget _buildErrorState(BuildContext context, String message) {
+    final l10n = AppLocalizations.of(context)!;
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      child: StateCard(
+        icon: Icons.cloud_off_rounded,
+        tone: ColorManager.error,
+        title: l10n.expensesLoadFailed,
+        message: message,
+        detail: l10n.expensesUnchangedHint,
+        actionLabel: l10n.retry,
+        onAction: _loadMonth,
       ),
     );
   }
@@ -546,6 +508,47 @@ class _ExpenseRowSkeleton extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Rectangular primary button, the same one the patients and appointments
+/// headers use. A round `+` gave the action no name; the word carries it.
+class _NewExpenseButton extends StatelessWidget {
+  const _NewExpenseButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: ColorManager.primary,
+      borderRadius: BorderRadius.circular(11.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(11.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(Icons.add, size: 16.w, color: ColorManager.white),
+              SizedBox(width: 5.w),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 12.5.sp,
+                  fontWeight: FontWeight.w700,
+                  color: ColorManager.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

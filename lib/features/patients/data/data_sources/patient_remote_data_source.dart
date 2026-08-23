@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/models/paginated_response.dart';
 import 'package:dental_clinic_app/features/patients/data/endpoints/patient_endpoints.dart';
 import 'package:dental_clinic_app/features/patients/data/models/patient_model.dart';
+import 'package:dental_clinic_app/features/patients/data/models/case_attachment_model.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
@@ -79,6 +80,26 @@ abstract class PatientRemoteDataSource {
     required double labFees,
     String? labFeesCurrencyId,
   });
+  /// Case attachments live on their own sub-resource - see
+  /// [PatientEndpoints.caseAttachments].
+  Future<List<CaseAttachmentModel>> getCaseAttachments({
+    required String patientId,
+    required String caseId,
+  });
+
+  /// Attaches media ids produced by MediaService uploads to the case.
+  Future<List<CaseAttachmentModel>> addCaseAttachments({
+    required String patientId,
+    required String caseId,
+    required List<String> mediaIds,
+  });
+
+  Future<void> deleteCaseAttachment({
+    required String patientId,
+    required String caseId,
+    required String attachmentId,
+  });
+
   Future<void> updateCaseTitle({
     required String patientId,
     required String caseId,
@@ -546,6 +567,45 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
     await _apiConsumer.put(
       PatientEndpoints.updateCase(patientId, caseId),
       body: {'title': title},
+    );
+  }
+
+  @override
+  Future<List<CaseAttachmentModel>> getCaseAttachments({
+    required String patientId,
+    required String caseId,
+  }) async {
+    final response = await _apiConsumer.get(
+      PatientEndpoints.caseAttachments(patientId, caseId),
+    );
+    return CaseAttachmentModel.listFromJson(response['data']);
+  }
+
+  @override
+  Future<List<CaseAttachmentModel>> addCaseAttachments({
+    required String patientId,
+    required String caseId,
+    required List<String> mediaIds,
+  }) async {
+    final response = await _apiConsumer.post(
+      PatientEndpoints.caseAttachments(patientId, caseId),
+      // Note the key: this route wants `media_item_ids`, not the
+      // `attachments` key the case-creation payload uses.
+      body: {'media_item_ids': mediaIds},
+    );
+    // Some POSTs echo the created rows, some return the whole collection and
+    // some return nothing useful; the caller re-reads either way.
+    return CaseAttachmentModel.listFromJson(response['data']);
+  }
+
+  @override
+  Future<void> deleteCaseAttachment({
+    required String patientId,
+    required String caseId,
+    required String attachmentId,
+  }) async {
+    await _apiConsumer.delete(
+      PatientEndpoints.caseAttachment(patientId, caseId, attachmentId),
     );
   }
 

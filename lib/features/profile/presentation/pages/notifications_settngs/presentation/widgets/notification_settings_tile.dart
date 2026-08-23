@@ -1,9 +1,16 @@
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// One notification category, as a Denta list card.
+///
+/// On/off is the status this row carries, so it is drawn the way the style
+/// draws status everywhere else: a 3px strip on the leading edge plus an
+/// icon tile in the same hue. A category that is off drops to grey on both
+/// counts, which leaves the coloured rows as an at-a-glance answer to "what
+/// will actually reach me".
 class NotificationSettingsTile extends StatelessWidget {
   const NotificationSettingsTile({
     super.key,
@@ -14,7 +21,6 @@ class NotificationSettingsTile extends StatelessWidget {
     required this.onChanged,
     this.subtitle,
     this.isPending = false,
-    this.showDivider = false,
   });
 
   final IconData icon;
@@ -29,85 +35,64 @@ class NotificationSettingsTile extends StatelessWidget {
   /// True while this category's PATCH is in flight — the switch is inert so a
   /// second tap can't race the first.
   final bool isPending;
-  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
     final description = subtitle;
+    final tone = value ? iconColor : c.textSubtle;
 
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          child: Row(
-            children: [
-              // Icon container
-              Container(
-                width: 38.w,
-                height: 38.w,
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadiusManager.lg,
+    return AppCard(
+      padding: EdgeInsetsDirectional.fromSTEB(13.w, 11.h, 10.w, 11.h),
+      statusTone: value ? iconColor : null,
+      child: Row(
+        children: [
+          IconTile(icon: icon, tone: tone),
+          SizedBox(width: 11.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12.5.sp,
+                    fontFamily: family,
+                    fontWeight: FontWeight.w600,
+                    color: value ? c.textPrimary : c.textSecondary,
+                  ),
                 ),
-                child: Icon(icon, size: 20.w, color: iconColor),
-              ),
-              SizedBox(width: 14.w),
-
-              // Title + optional description
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w500,
-                        color: c.textPrimary,
-                      ),
+                if (description != null && description.isNotEmpty) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      height: 1.4,
+                      fontFamily: family,
+                      color: c.textTertiary,
                     ),
-                    if (description != null && description.isNotEmpty) ...[
-                      SizedBox(height: 2.h),
-                      Text(
-                        description,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          color: c.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              SizedBox(width: 12.w),
-
-              // Switch
-              Opacity(
-                opacity: isPending ? 0.5 : 1,
-                child: Switch(
-                  value: value,
-                  onChanged: isPending ? null : onChanged,
-                  activeThumbColor: ColorManager.white,
-                  activeTrackColor: ColorManager.primary,
-                  inactiveThumbColor: ColorManager.white,
-                  inactiveTrackColor: c.divider,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ],
+                  ),
+                ],
+              ],
+            ),
           ),
-        ),
-        if (showDivider)
-          Divider(
-            height: 1,
-            indent: 68.w,
-            endIndent: 16.w,
-            color: c.borderLight,
+          SizedBox(width: 10.w),
+          Opacity(
+            opacity: isPending ? 0.5 : 1,
+            child: Switch(
+              value: value,
+              onChanged: isPending ? null : onChanged,
+              activeThumbColor: ColorManager.white,
+              activeTrackColor: ColorManager.primary,
+              inactiveThumbColor: ColorManager.white,
+              inactiveTrackColor: c.divider,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }

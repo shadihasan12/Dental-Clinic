@@ -36,7 +36,7 @@ class StatisticsFilterBar extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 16.w,
-                  color: ColorManager.primary,
+                  color: ColorManager.primaryDarker,
                 ),
                 SizedBox(width: 10.w),
                 Expanded(
@@ -45,7 +45,7 @@ class StatisticsFilterBar extends StatelessWidget {
                     '${fmt.format(state.endDate)}',
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 13.sp,
+                      fontSize: 12.5.sp,
                       fontWeight: FontWeight.w600,
                       color: c.textPrimary,
                     ),

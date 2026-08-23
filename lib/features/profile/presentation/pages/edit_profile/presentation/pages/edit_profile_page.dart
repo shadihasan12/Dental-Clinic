@@ -3,16 +3,14 @@ import 'dart:io';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/data/data_sources/edit_profile_remote_data_source.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/domain/entities/user_profile_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/manager/edit_profile_bloc.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_dropdown_field.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/widgets/profile_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart';
@@ -203,7 +201,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       builder: (sheetContext) {
         return SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(20.w),
+            padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -215,79 +213,47 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
-                SizedBox(height: 20.h),
-                Icon(
-                  Icons.photo_library_outlined,
-                  size: 48.w,
-                  color: ColorManager.primary,
+                SizedBox(height: 18.h),
+                const IconTile(
+                  icon: Icons.photo_library_outlined,
+                  size: 44,
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 14.h),
                 Text(
                   l10n.photoPermissionRequired,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     color: c.textPrimary,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 6.h),
                 Text(
                   l10n.photoPermissionMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 11.5.sp,
+                    height: 1.5,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w400,
                     color: c.textSecondary,
                   ),
                 ),
-                SizedBox(height: 20.h),
-                GestureDetector(
+                SizedBox(height: 18.h),
+                DentaButton(
+                  label: l10n.openSettings,
+                  expand: true,
                   onTap: () {
                     Navigator.pop(sheetContext);
                     openAppSettings();
                   },
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(14.h),
-                    decoration: BoxDecoration(
-                      color: ColorManager.primary,
-                      borderRadius: BorderRadiusManager.lg,
-                    ),
-                    child: Text(
-                      l10n.openSettings,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.white,
-                      ),
-                    ),
-                  ),
                 ),
-                SizedBox(height: 12.h),
-                GestureDetector(
+                SizedBox(height: 8.h),
+                DentaOutlineButton(
+                  label: l10n.cancel,
+                  expand: true,
                   onTap: () => Navigator.pop(sheetContext),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(14.h),
-                    decoration: BoxDecoration(
-                      color: c.scaffoldBg,
-                      borderRadius: BorderRadiusManager.lg,
-                    ),
-                    child: Text(
-                      l10n.cancel,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -345,11 +311,11 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+                padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),
                 child: Text(
                   l10n.specialization,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
                     color: c.textPrimary,
@@ -368,47 +334,35 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 14.h,
+                      horizontal: 14.w,
+                      vertical: 12.h,
                     ),
                     child: Row(
                       children: [
                         Container(
-                          width: 20.w,
-                          height: 20.w,
+                          width: 18.w,
+                          height: 18.w,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
                                   ? ColorManager.primary
-                                  : c.borderLight,
-                              width: 2,
+                                  : c.border,
+                              width: isSelected ? 5 : 1.5,
                             ),
                           ),
-                          child: isSelected
-                              ? Center(
-                                  child: Container(
-                                    width: 10.w,
-                                    height: 10.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: ColorManager.primary,
-                                    ),
-                                  ),
-                                )
-                              : null,
                         ),
-                        SizedBox(width: 12.w),
+                        SizedBox(width: 11.w),
                         Text(
                           spec.name,
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 12.5.sp,
                             fontFamily: FontHelper.fontFamily(context),
                             fontWeight: isSelected
-                                ? FontWeight.w500
-                                : FontWeight.w400,
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                             color: isSelected
-                                ? ColorManager.primary
+                                ? ColorManager.primaryDarker
                                 : c.textPrimary,
                           ),
                         ),
@@ -503,18 +457,31 @@ class _EditProfileContentState extends State<_EditProfileContent> {
               PageHeader(title: l10n.editProfile, onBack: () => context.pop()),
               Expanded(
                 child: state.maybeWhen(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const _EditProfileSkeleton(),
                   error: (message) {
+                    // The form stays usable once populated: a failed refresh
+                    // must not throw away what the user has already typed.
                     if (_formPopulated) return _buildForm(l10n);
-                    return Center(child: Text(message));
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                      child: StateCard(
+                        icon: Icons.cloud_off_rounded,
+                        tone: ColorManager.error,
+                        title: l10n.profileLoadFailed,
+                        message: message,
+                        actionLabel: l10n.retry,
+                        onAction: () => context
+                            .read<EditProfileBloc>()
+                            .add(const EditProfileEvent.loadProfile()),
+                      ),
+                    );
                   },
                   loaded: (profile) {
                     if (!_formPopulated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         setState(() => _populateFromEntity(profile));
                       });
-                      return const Center(child: CircularProgressIndicator());
+                      return const _EditProfileSkeleton();
                     }
                     return _buildForm(l10n);
                   },
@@ -594,116 +561,123 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   Widget _buildForm(AppLocalizations l10n) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildProfileImage(),
-          SizedBox(height: 20.h),
-          CustomCard(
-            child: Column(
-              children: [
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.firstName,
-                  controller: _firstNameController,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileTextField(
-                  icon: Icons.person_outline,
-                  label: l10n.lastName,
-                  controller: _lastNameController,
-                  textInputAction: TextInputAction.next,
-                ),
-                ProfileDropdownField(
-                  icon: Icons.medical_services_outlined,
-                  label: l10n.specialization,
-                  value: _selectedSpecialtyName,
-                  onTap: _showSpecializationPicker,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    context.pushNamed(
+          SizedBox(height: 14.h),
+          // Same section card, shell and input surface as Add Patient: label
+          // above the control, hairline at rest, 1.5px primary on focus.
+          FormSectionCard(
+            title: l10n.personalInformation,
+            children: [
+              FormTextField(
+                label: l10n.firstName,
+                controller: _firstNameController,
+                textCapitalization: TextCapitalization.words,
+              ),
+              FormTextField(
+                label: l10n.lastName,
+                controller: _lastNameController,
+                textCapitalization: TextCapitalization.words,
+              ),
+              FormPickerField(
+                label: l10n.specialization,
+                value: _selectedSpecialtyName,
+                placeholder: l10n.specialization,
+                onTap: _showSpecializationPicker,
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          FormSectionCard(
+            title: l10n.contactInformation,
+            children: [
+              // The address is changed through its own verification flow, so
+              // the field is locked here and carries the link instead.
+              ListenableBuilder(
+                listenable: _emailController,
+                builder: (context, _) => FormPickerField(
+                  label: l10n.email,
+                  value: _emailController.text.trim(),
+                  textDirection: TextDirection.ltr,
+                  action: FormInlineAction(
+                    label: l10n.edit,
+                    onTap: () => context.pushNamed(
                       AppRoutesNames.changeEmail,
                       extra: {'currentEmail': _emailController.text.trim()},
-                    );
-                  },
-                  child: ProfileTextField(
-                    icon: Icons.edit,
-                    label: l10n.email,
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    enabled: false,
-                    textDirection: TextDirection.ltr,
-                    // suffixWidget: GestureDetector(
-                    //   onTap: () {
-                    //     context.pushNamed(
-                    //       AppRoutesNames.changeEmail,
-                    //       extra: {'currentEmail': _emailController.text.trim()},
-                    //     );
-                    //   },
-                    //   child: Padding(
-                    //     padding: EdgeInsetsDirectional.only(end: 12.w),
-                    //     child: Text(
-                    //       l10n.edit,
-                    //       style: TextStyle(
-                    //         fontSize: 13.sp,
-                    //         fontFamily: FontHelper.fontFamily(context),
-                    //         fontWeight: FontWeight.w600,
-                    //         color: ColorManager.primary,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    ),
                   ),
                 ),
-                ProfileTextField(
-                  icon: Icons.phone_outlined,
-                  label: l10n.phone,
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.done,
-                  isLast: true,
-                ),
-              ],
-            ),
+              ),
+              FormTextField(
+                label: l10n.phone,
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+              ),
+            ],
           ),
-          SizedBox(height: 24.h),
         ],
       ),
     );
   }
 
+  /// Docked primary action on its own surface, in the thumb arc.
   Widget _buildSaveButton(AppLocalizations l10n) {
-    final enabled = _hasChanges;
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: GestureDetector(
-          onTap: enabled ? _onSave : null,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: double.infinity,
-            padding: EdgeInsets.all(14.h),
-            decoration: BoxDecoration(
-              color: enabled
-                  ? ColorManager.primary
-                  : ColorManager.primary.withValues(alpha: 0.35),
-              borderRadius: BorderRadiusManager.lg,
-            ),
-            child: Text(
-              l10n.saveChanges,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-                color: ColorManager.white,
-              ),
-            ),
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(top: BorderSide(color: c.borderLight)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
+          child: DentaButton(
+            label: l10n.saveChanges,
+            expand: true,
+            onTap: _hasChanges ? _onSave : null,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Holds the avatar and the two form cards while the profile loads.
+class _EditProfileSkeleton extends StatelessWidget {
+  const _EditProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    Widget block(double height) => Container(
+          height: height,
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: c.borderLight),
+          ),
+        );
+
+    return AppShimmer(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+        children: [
+          Center(
+            child: ShimmerBox(
+              width: 88.w,
+              height: 88.w,
+              radius: BorderRadius.circular(88.w),
+            ),
+          ),
+          SizedBox(height: 14.h),
+          block(230.h),
+          SizedBox(height: 8.h),
+          block(120.h),
+        ],
       ),
     );
   }

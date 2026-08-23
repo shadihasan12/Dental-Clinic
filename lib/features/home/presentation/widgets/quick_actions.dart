@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 
+/// The three things started most often from home. Cards, not tinted blocks:
+/// elevation is a hairline border, and the primary hue is spent on the icon
+/// tile alone so the schedule above stays the loudest thing on the screen.
 class QuickActions extends StatelessWidget {
   const QuickActions({
     super.key,
@@ -20,24 +23,24 @@ class QuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         _ActionItem(
-          icon: Icons.person_add_outlined,
-          label: localizations.patient,
+          icon: Icons.person_add_alt_1_outlined,
+          label: l10n.patient,
           onTap: onAddPatient,
         ),
-        SizedBox(width: 12.w),
+        SizedBox(width: 8.w),
         _ActionItem(
           icon: Icons.calendar_month_outlined,
-          label: localizations.appointment,
+          label: l10n.appointment,
           onTap: onScheduleVisit,
         ),
-        SizedBox(width: 12.w),
+        SizedBox(width: 8.w),
         _ActionItem(
-          icon: Icons.attach_money,
-          label: localizations.payment,
+          icon: Icons.payments_outlined,
+          label: l10n.payment,
           onTap: onRecordPayment,
         ),
       ],
@@ -60,29 +63,49 @@ class _ActionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          decoration: BoxDecoration(
-            color: ColorManager.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: ColorManager.primary, size: 20.w),
-              SizedBox(height: 6.h),
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w500,
-                  color: c.textSecondary,
+      child: Material(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(14.r),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14.r),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 6.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(color: c.borderLight),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(11.r),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    icon,
+                    color: ColorManager.primaryDarker,
+                    size: 17.w,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                SizedBox(height: 8.h),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 11.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -9,6 +9,7 @@ export 'added_by_label.dart';
 export 'custom_button.dart';
 export 'custom_card.dart';
 export 'custom_text_field.dart';
+export 'denta_form.dart';
 export 'glass_tab_bar.dart';
 export 'gradient_header.dart';
 export 'info_popup.dart';

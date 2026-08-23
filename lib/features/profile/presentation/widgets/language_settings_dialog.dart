@@ -8,11 +8,9 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 void showLanguageSettingsDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
+    backgroundColor: ColorManager.of(context).cardBg,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(24.r),
-        topRight: Radius.circular(24.r),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
     ),
     builder: (context) => LanguageSettingsModal(),
   );
@@ -23,63 +21,87 @@ class LanguageSettingsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.language,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: ColorManager.of(context).textPrimary,
+    final c = ColorManager.of(context);
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 40x4 grab handle, then the title row with an x on the trailing
+            // side - the sheet shape every other sheet in the app uses.
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: c.borderLight,
+                  borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close),
-              ),
-            ],
-          ),
-          SizedBox(height: 24.h),
-
-          // Language switch
-          LanguageSwitchWidget(
-            onLanguageChanged: (language) {
-              Future.delayed(const Duration(milliseconds: 500), () {
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              });
-            },
-          ),
-          SizedBox(height: 24.h),
-
-          // Info text
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: ColorManager.of(context).cardBgSecondary,
-              borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Text(
-              AppLocalizations.of(context)!.appLanguageWillChangeImmediately,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textSecondary,
+            SizedBox(height: 14.h),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.language,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.pop(context),
+                  child: Padding(
+                    padding: EdgeInsets.all(4.w),
+                    child: Icon(
+                      Icons.close,
+                      size: 20.w,
+                      color: c.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
+
+            LanguageSwitchWidget(
+              onLanguageChanged: (language) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                });
+              },
+            ),
+            SizedBox(height: 14.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 9.h),
+              decoration: BoxDecoration(
+                color: c.cardBgSecondary,
+                borderRadius: BorderRadius.circular(11.r),
+                border: Border.all(color: c.borderLight),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.appLanguageWillChangeImmediately,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  height: 1.45,
+                  fontFamily: FontHelper.fontFamily(context),
+                  color: c.textTertiary,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 24.h),
-        ],
+            SizedBox(height: 8.h),
+          ],
+        ),
       ),
     );
   }

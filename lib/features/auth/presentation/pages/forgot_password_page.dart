@@ -7,8 +7,8 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 import 'package:dental_clinic_app/injection.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
@@ -98,22 +98,7 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                     SizedBox(height: 16.h),
 
                     // Back button
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.of(context).cardBgSecondary,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: ColorManager.of(context).textPrimary,
-                          size: 18.w,
-                        ),
-                      ),
-                    ),
+                    AuthBackButton(onTap: () => context.pop()),
 
                     SizedBox(height: 24.h),
 
@@ -140,43 +125,14 @@ class _ForgotPasswordContentState extends State<_ForgotPasswordContent> {
                     SizedBox(height: 40.h),
 
                     // Lock icon
-                    Center(
-                      child: Container(
-                        width: 72.w,
-                        height: 72.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.primary10,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.lock_reset_outlined,
-                          size: 36.w,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 24.h),
-
-                    Center(
-                      child: Text(
-                        l10n.verificationCodeInfo,
-                        style: TextStyle(
-                          fontSize: FontSizesManager.s14,
-                          fontFamily: fontFamily,
-                          color: ColorManager.of(context).textSecondary,
-                          height: FontHeightsManager.normal,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    AuthHeroGlyph(icon: Icons.lock_reset_outlined),
 
                     SizedBox(height: 32.h),
 
                     // Email field
                     AuthTextField(
                       label: l10n.emailAddress,
-                      hint: l10n.enterRegisteredEmail,
+                      hint: l10n.emailHint,
                       controller: _emailController,
                       prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,

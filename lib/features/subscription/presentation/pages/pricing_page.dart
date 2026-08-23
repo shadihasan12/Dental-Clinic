@@ -628,8 +628,10 @@ class _PlanCard extends StatelessWidget {
                   onPressed: isCurrentPlan
                       ? null
                       : plan.isCustom
+                          // Sales enquiry landing on Report an Issue —
+                          // see the note in select_billing_plan_page.
                           ? () => context.pushNamed(
-                                AppRoutesNames.contactSupport,
+                                AppRoutesNames.reportIssue,
                               )
                           : onSelect,
                   style: ElevatedButton.styleFrom(

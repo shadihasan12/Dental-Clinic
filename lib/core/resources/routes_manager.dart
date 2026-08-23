@@ -17,15 +17,13 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
     show UserHoursPage;
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/working_days_page.dart'
     show WorkingDaysPage;
+import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/pages/report_issue_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/pages/notifications_settings_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/support/domain/entities/support_entity.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/contact_support_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/support/presentation/pages/support_chat_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -526,23 +524,11 @@ class RoutesManager {
           },
         ),
         GoRoute(
-          path: '/contact-support',
-          name: AppRoutesNames.contactSupport,
+          path: '/report-issue',
+          name: AppRoutesNames.reportIssue,
           pageBuilder: (context, state) {
             return CupertinoPage(
-              child: const ContactSupportPage(),
-              key: state.pageKey,
-              name: state.name,
-            );
-          },
-        ),
-        GoRoute(
-          path: '/support-chat',
-          name: AppRoutesNames.supportChat,
-          pageBuilder: (context, state) {
-            final conversation = state.extra as SupportConversationEntity;
-            return CupertinoPage(
-              child: SupportChatPage(conversation: conversation),
+              child: const ReportIssuePage(),
               key: state.pageKey,
               name: state.name,
             );
@@ -592,11 +578,13 @@ class RoutesManager {
             final newEmail = extra['newEmail'] as String? ?? '';
             final sessionId = extra['sessionId'] as String?;
             final secondsRemaining = extra['secondsRemaining'] as int? ?? 60;
+            final currentPassword = extra['currentPassword'] as String? ?? '';
             return CupertinoPage(
               child: ChangeEmailOtpPage(
                 newEmail: newEmail,
                 sessionId: sessionId,
                 secondsRemaining: secondsRemaining,
+                currentPassword: currentPassword,
               ),
               key: state.pageKey,
               name: state.name,

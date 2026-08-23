@@ -94,6 +94,11 @@ class DentalCase {
   final String? totalCostCurrencyName;
   final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
+
+  /// Case-level media ids returned by the API. Uploads go through
+  /// MediaService (/media-items) and the resulting ids are persisted back
+  /// onto the case, so this is a list of ids, not URLs.
+  final List<String> attachments;
   final DateTime? createdAt;
   final List<AuditEntry> audits;
 
@@ -108,6 +113,7 @@ class DentalCase {
     required this.totalCost,
     this.labFees = 0,
     required this.paidAmount,
+    this.attachments = const [],
     required this.pendingAmount,
     this.totalCostCurrencyId,
     this.totalCostCurrencyCode,
@@ -136,9 +142,28 @@ class DentalCase {
       totalCostCurrencyCode: _parseCurrencyField(json, 'total_cost_currency', 'currency_code'),
       totalCostCurrencyName: _parseCurrencyField(json, 'total_cost_currency', 'currency_name'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
+      attachments: _parseAttachments(json['attachments']),
       createdAt: _parseNullableDate(json['created_at']),
       audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  /// The API has sent attachments as bare id strings and, in some payloads,
+  /// as media objects. Accept both so a shape change does not blank the
+  /// Files section.
+  static List<String> _parseAttachments(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map((e) {
+          if (e is String) return e;
+          if (e is Map<String, dynamic>) {
+            return (e['id'] ?? e['media_id'] ?? e['url'])?.toString();
+          }
+          return null;
+        })
+        .whereType<String>()
+        .where((e) => e.isNotEmpty)
+        .toList();
   }
 
   static DateTime? _parseNullableDate(dynamic value) {
@@ -205,6 +230,7 @@ class DentalCase {
     String? totalCostCurrencyId,
     String? labFeesCurrencyId,
     List<TreatmentItem>? treatmentItems,
+    List<String>? attachments,
   }) {
     return DentalCase(
       id: id ?? this.id,
@@ -221,6 +247,7 @@ class DentalCase {
       totalCostCurrencyId: totalCostCurrencyId ?? this.totalCostCurrencyId,
       labFeesCurrencyId: labFeesCurrencyId ?? this.labFeesCurrencyId,
       treatmentItems: treatmentItems ?? this.treatmentItems,
+      attachments: attachments ?? this.attachments,
     );
   }
 }

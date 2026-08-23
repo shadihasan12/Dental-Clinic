@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
 import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -42,44 +43,79 @@ class HomeHeader extends StatelessWidget {
                   children: [
                     Text(
                       userName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 20.sp,
+                        fontSize: 17.sp,
+                        letterSpacing: -0.3,
                         color: c.textPrimary,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(height: 6.h),
-                    GestureDetector(
-                      onTap: () => context.pushNamed(AppRoutesNames.myClinics),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 7.w,
-                            height: 7.w,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF4ADE80),
-                              shape: BoxShape.circle,
+                    SizedBox(height: 4.h),
+                    // A tinted chip rather than bare text: the clinic
+                    // switcher is a real destination, and a 6px-tall line of
+                    // 11.5sp text was too small a target to hit reliably.
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Material(
+                        color: ColorManager.primary.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: InkWell(
+                          onTap: () =>
+                              context.pushNamed(AppRoutesNames.myClinics),
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(9.w, 6.h, 7.w, 6.h),
+                            // The chip keeps one physical arrangement in both
+                            // languages - dot, name, chevron - so the arrow
+                            // never jumps from one side of the name to the
+                            // other. Only the glyph mirrors. The clinic name
+                            // itself still shapes right-to-left in Arabic.
+                            child: DirectionalChevron.pinLtr(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 6.w,
+                                    height: 6.w,
+                                    decoration: const BoxDecoration(
+                                      color: ColorManager.success,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Flexible(
+                                    child: Text(
+                                      clinicName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: FontHelper.fontFamily(
+                                          context,
+                                        ),
+                                        fontSize: 12.5.sp,
+                                        height: 1.2,
+                                        color: ColorManager.primaryDarker,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 2.w),
+                                  // Points at the clinic name in both
+                                  // languages: right in English, and left
+                                  // in Arabic because pinLtr kept it on
+                                  // the physical right.
+                                  DirectionalChevron(
+                                    size: 16.w,
+                                    color: ColorManager.primaryDarker,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            clinicName,
-                            style: TextStyle(
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontSize: 13.sp,
-                              color: ColorManager.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Icon(
-                            Icons.chevron_right,
-                            size: 16.w,
-                            color: ColorManager.primary,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
@@ -92,24 +128,27 @@ class HomeHeader extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                width: 40.w,
-                height: 40.w,
+                width: 38.w,
+                height: 38.w,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: c.cardBgSecondary,
+                  // gray200 in light, #2E2E2E in dark - the only neutral that
+                  // reads as a disc against both page backgrounds.
+                  color: c.divider,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.notifications_outlined,
                   color: c.textSecondary,
-                  size: 20.w,
+                  size: 19.w,
                 ),
               ),
               // Driven by `unread_count`, which every read/unread/list
               // response carries - so it stays current without a request of
               // its own. No unread mail, no dot.
-              Positioned(
-                right: 6.w,
-                top: 4.h,
+              PositionedDirectional(
+                end: 4.w,
+                top: 3.h,
                 child: BlocBuilder<UnreadCountCubit, int>(
                   bloc: getIt<UnreadCountCubit>(),
                   builder: (context, unreadCount) {
@@ -121,7 +160,7 @@ class HomeHeader extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: ColorManager.error,
                         borderRadius: BorderRadius.circular(8.w),
-                        border: Border.all(color: c.cardBgSecondary, width: 1.5),
+                        border: Border.all(color: c.divider, width: 1.5),
                       ),
                       alignment: Alignment.center,
                       child: Text(
@@ -149,16 +188,14 @@ class HomeHeader extends StatelessWidget {
         GestureDetector(
           onTap: onMoreTap,
           child: Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: c.cardBgSecondary,
-              shape: BoxShape.circle,
-            ),
+            width: 38.w,
+            height: 38.w,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: c.divider, shape: BoxShape.circle),
             child: Icon(
               Icons.settings_outlined,
               color: c.textSecondary,
-              size: 20.w,
+              size: 19.w,
             ),
           ),
         ),
@@ -173,9 +210,9 @@ class _HeaderTextSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ShimmerBox(width: 180.w, height: 22.h),
-        SizedBox(height: 8.h),
-        ShimmerBox(width: 140.w, height: 13.h),
+        ShimmerBox(width: 160.w, height: 18.h),
+        SizedBox(height: 7.h),
+        ShimmerBox(width: 120.w, height: 12.h),
       ],
     );
   }

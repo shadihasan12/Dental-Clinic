@@ -1,9 +1,9 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/detach_patient_use_case.dart';
@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/widgets.dart';
@@ -256,13 +257,14 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       children: [
         PatientsListHeader(
           patientCount: 0,
+          showCount: false,
           searchController: _searchController,
           onAddTap: () {},
           onSearchChanged: (_) {},
         ),
-        Divider(height: 1, color: ColorManager.of(context).divider),
+        Divider(height: 1, color: ColorManager.of(context).borderLight),
         Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
+          padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
           child: PatientFilterChips(
             filters: filters,
             selectedFilter: filters[0],
@@ -271,9 +273,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 14.w),
             itemCount: 6,
-            itemBuilder: (_, __) => const _PatientCardSkeleton(),
+            itemBuilder: (_, i) => const _PatientCardSkeleton(),
           ),
         ),
       ],
@@ -299,9 +301,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) => setState(() {}),
         ),
-        Divider(height: 1, color: ColorManager.of(context).divider),
+        Divider(height: 1, color: ColorManager.of(context).borderLight),
         Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
+          padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
           child: PatientFilterChips(
             filters: filters,
             selectedFilter: filters[_selectedFilterIndex],
@@ -312,24 +314,25 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         Expanded(
           child: filtered.isEmpty
               ? _buildEmptyState(l10n, allPatients.isEmpty)
-              : CustomScrollView(
+              // Keeps only one row's swipe pane open at a time, matched by
+              // PatientCard.groupTag.
+              : SlidableAutoCloseBehavior(
+                  child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
                     CupertinoSliverRefreshControl(onRefresh: _onRefresh),
                     SliverPadding(
-                      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
-                      sliver: SliverList.separated(
+                      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+                      // Cards carry their own hairline and 8.h gap, so no
+                      // separator: a divider between bordered cards would
+                      // read as a double rule.
+                      sliver: SliverList.builder(
                         itemCount:
                             filtered.length +
                             (isLoadingMore || hasMore ? 1 : 0),
-                        separatorBuilder: (_, __) =>
-                            Divider(height: 1, color: ColorManager.of(context).divider),
                         itemBuilder: (context, index) {
                           if (index == filtered.length) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 4),
-                              child: _PatientCardSkeleton(),
-                            );
+                            return const _PatientCardSkeleton();
                           }
 
                           final patient = filtered[index];
@@ -350,6 +353,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                       ),
                     ),
                   ],
+                  ),
                 ),
         ),
       ],
@@ -358,47 +362,23 @@ class _PatientsListContentState extends State<_PatientsListContent> {
 
   // ─── Empty state ──────────────────────────────────────────────────────
 
+  /// Same shape as the home screen's empty schedule: quiet grey disc, one
+  /// sentence, and the action that fills the list. A no-match result gets no
+  /// button - the fix is editing the search, which is already on screen.
   Widget _buildEmptyState(AppLocalizations l10n, bool isCompletelyEmpty) {
-    final fontFamily = FontHelper.fontFamily(context);
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isCompletelyEmpty
-                  ? Icons.person_add_outlined
-                  : Icons.search_off_outlined,
-              size: 30.w,
-              color: ColorManager.of(context).border,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              isCompletelyEmpty ? l10n.noPatientsYet : l10n.noMatchingPatients,
-              style: TextStyle(
-                fontSize: FontSizesManager.s14,
-                fontFamily: fontFamily,
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            GestureDetector(
-              onTap: _navigateToAddPatient,
-              child: Text(
-                isCompletelyEmpty
-                    ? l10n.noPatientsYetDesc
-                    : l10n.noMatchingPatientsDesc,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+      child: StateCard(
+        icon: isCompletelyEmpty
+            ? Icons.people_outline
+            : Icons.search_off_outlined,
+        title: isCompletelyEmpty ? l10n.noPatientsYet : l10n.noMatchingPatients,
+        message: isCompletelyEmpty
+            ? l10n.noPatientsYetDesc
+            : l10n.noMatchingPatientsDesc,
+        actionLabel: isCompletelyEmpty ? l10n.addPatient : null,
+        onAction: isCompletelyEmpty ? _navigateToAddPatient : null,
       ),
     );
   }
@@ -414,30 +394,23 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       children: [
         PatientsListHeader(
           patientCount: 0,
+          showCount: false,
           searchController: _searchController,
           onAddTap: _navigateToAddPatient,
           onSearchChanged: (_) {},
         ),
-        Divider(height: 1, color: ColorManager.of(context).divider),
+        Divider(height: 1, color: ColorManager.of(context).borderLight),
         Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.error_outline, size: 48.w, color: ColorManager.of(context).textTertiary),
-                  SizedBox(height: 12.h),
-                  Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: ColorManager.of(context).textTertiary,
-                      fontFamily: FontHelper.fontFamily(context),
-                    ),
-                  ),
-                ],
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+            child: StateCard(
+              icon: Icons.cloud_off_rounded,
+              tone: ColorManager.error,
+              title: l10n.patientsLoadFailed,
+              message: message,
+              actionLabel: l10n.retry,
+              onAction: () => context.read<PatientsListBloc>().add(
+                const PatientsListEvent.loadPatients(),
               ),
             ),
           ),
@@ -454,40 +427,39 @@ class _PatientCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
+        color: c.cardBg,
         borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: c.borderLight),
       ),
       child: AppShimmer(
         child: Row(
           children: [
             ShimmerBox(
-              width: 52.w,
-              height: 52.w,
-              radius: BorderRadius.circular(52.w),
+              width: 40.w,
+              height: 40.w,
+              radius: BorderRadius.circular(40.w),
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 11.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ShimmerBox(width: 140.w, height: 14.h),
-                  SizedBox(height: 8.h),
+                  ShimmerBox(width: 130.w, height: 12.h),
+                  SizedBox(height: 7.h),
                   ShimmerBox(width: 100.w, height: 10.h),
-                  SizedBox(height: 8.h),
-                  ShimmerBox(width: 120.w, height: 10.h),
                 ],
               ),
+            ),
+            SizedBox(width: 8.w),
+            ShimmerBox(
+              width: 42.w,
+              height: 20.h,
+              radius: BorderRadius.circular(6.r),
             ),
           ],
         ),

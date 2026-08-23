@@ -29,12 +29,12 @@ class InvoiceCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(16.r),
         child: Container(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: c.cardBg,
-            borderRadius: BorderRadius.circular(14.r),
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(color: c.borderLight, width: 1),
           ),
           child: Column(
@@ -49,7 +49,7 @@ class InvoiceCard extends StatelessWidget {
                         Text(
                           invoice.number,
                           style: TextStyle(
-                            fontSize: 15.sp,
+                            fontSize: 12.5.sp,
                             fontFamily: fontFamily,
                             fontWeight: FontWeight.w700,
                             color: c.textPrimary,
@@ -59,7 +59,7 @@ class InvoiceCard extends StatelessWidget {
                         Text(
                           _planLabel(invoice, l10n),
                           style: TextStyle(
-                            fontSize: 12.sp,
+                            fontSize: 11.sp,
                             fontFamily: fontFamily,
                             color: c.textTertiary,
                           ),
@@ -76,7 +76,7 @@ class InvoiceCard extends StatelessWidget {
                   Text(
                     '${invoice.currency} ${invoice.amount.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 18.sp,
+                      fontSize: 15.sp,
                       fontFamily: fontFamily,
                       fontWeight: FontWeight.w700,
                       color: ColorManager.primary,
@@ -86,7 +86,7 @@ class InvoiceCard extends StatelessWidget {
                   Text(
                     dateFormat.format(invoice.issuedAt),
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       fontFamily: fontFamily,
                       color: c.textTertiary,
                     ),

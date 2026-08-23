@@ -1,6 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/widgets/invitation_card.dart';
@@ -10,6 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Reusable list block for either kind of invitation.
+///
+/// Lays out flush with whatever gutter its parent sets — the clinics screen
+/// already pads its scroll body, so nothing here adds horizontal padding of
+/// its own.
 class InvitationsList extends StatelessWidget {
   final InvitationCardMode mode;
   final List<InvitationEntity> invitations;
@@ -30,30 +34,23 @@ class InvitationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InvitationStatusFilters(mode: mode, active: filter),
-        SizedBox(height: 12.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: _buildBody(context),
-        ),
-      ],
-    );
+    return _buildBody(context);
   }
 
   Widget _buildBody(BuildContext context) {
-    if (isLoading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final l10n = AppLocalizations.of(context)!;
+
+    if (isLoading) return const _InvitationsSkeleton();
+
     if (error != null) {
-      return _InvitationsError(
+      return StateCard(
+        icon: Icons.cloud_off_outlined,
+        title: l10n.couldNotLoadInvitations,
         message: error!,
-        onRetry: () {
+        detail: l10n.invitationsUnchanged,
+        tone: ColorManager.error,
+        actionLabel: l10n.retry,
+        onAction: () {
           final bloc = context.read<InvitationBloc>();
           if (mode == InvitationCardMode.sent) {
             bloc.add(const InvitationEvent.loadSentInvitations());
@@ -63,9 +60,25 @@ class InvitationsList extends StatelessWidget {
         },
       );
     }
+
     if (invitations.isEmpty) {
-      return _InvitationsEmpty(mode: mode, filter: filter);
+      final isSent = mode == InvitationCardMode.sent;
+      final message = switch (filter) {
+        InvitationStatus.pending =>
+          isSent ? l10n.noPendingSentInvitations : l10n.noPendingInvitations,
+        InvitationStatus.accepted =>
+          isSent ? l10n.noAcceptedSentInvitations : l10n.noAcceptedInvitations,
+        InvitationStatus.declined =>
+          isSent ? l10n.noDeclinedSentInvitations : l10n.noDeclinedInvitations,
+        _ => l10n.noInvitations,
+      };
+      return StateCard(
+        icon: isSent ? Icons.send_outlined : Icons.mail_outline,
+        title: l10n.noInvitations,
+        message: message,
+      );
     }
+
     return Column(
       children: [
         for (final inv in invitations)
@@ -74,164 +87,61 @@ class InvitationsList extends StatelessWidget {
             mode: mode,
             isUpdating: isUpdating,
             onAccept: () => context.read<InvitationBloc>().add(
-                  InvitationEvent.acceptInvitation(inv.id),
-                ),
+              InvitationEvent.acceptInvitation(inv.id),
+            ),
             onReject: () => context.read<InvitationBloc>().add(
-                  InvitationEvent.rejectInvitation(inv.id),
-                ),
+              InvitationEvent.rejectInvitation(inv.id),
+            ),
           ),
       ],
     );
   }
 }
 
-class InvitationStatusFilters extends StatelessWidget {
-  final InvitationCardMode mode;
-  final InvitationStatus active;
-
-  const InvitationStatusFilters({
-    super.key,
-    required this.mode,
-    required this.active,
-  });
+/// Same two slots an invitation row will fill, so the list does not jump when
+/// the request lands.
+class _InvitationsSkeleton extends StatelessWidget {
+  const _InvitationsSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final filters = [
-      (InvitationStatus.pending, l10n.pending),
-      (InvitationStatus.accepted, l10n.accepted),
-      (InvitationStatus.declined, l10n.declined),
-    ];
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          for (var i = 0; i < filters.length; i++) ...[
-            SelectableChip(
-              label: filters[i].$2,
-              isSelected: active == filters[i].$1,
-              onTap: () {
-                final bloc = context.read<InvitationBloc>();
-                if (mode == InvitationCardMode.sent) {
-                  bloc.add(
-                    InvitationEvent.filterSentByStatus(filters[i].$1),
-                  );
-                } else {
-                  bloc.add(
-                    InvitationEvent.filterReceivedByStatus(filters[i].$1),
-                  );
-                }
-              },
+    final c = ColorManager.of(context);
+    return Column(
+      children: [
+        for (var i = 0; i < 2; i++) ...[
+          if (i > 0) SizedBox(height: 8.h),
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: c.cardBg,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: c.borderLight),
             ),
-            if (i < filters.length - 1) SizedBox(width: 8.w),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _InvitationsEmpty extends StatelessWidget {
-  final InvitationCardMode mode;
-  final InvitationStatus filter;
-  const _InvitationsEmpty({required this.mode, required this.filter});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final isSent = mode == InvitationCardMode.sent;
-    final message = switch (filter) {
-      InvitationStatus.pending =>
-        isSent ? l10n.noPendingSentInvitations : l10n.noPendingInvitations,
-      InvitationStatus.accepted =>
-        isSent ? l10n.noAcceptedSentInvitations : l10n.noAcceptedInvitations,
-      InvitationStatus.declined =>
-        isSent ? l10n.noDeclinedSentInvitations : l10n.noDeclinedInvitations,
-      _ => l10n.noInvitations,
-    };
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 32.h),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64.w,
-              height: 64.w,
-              decoration: BoxDecoration(
-                color: ColorManager.of(context).cardBgSecondary,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                isSent ? Icons.send_outlined : Icons.mail_outline,
-                size: 28.w,
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              message,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _InvitationsError extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
-  const _InvitationsError({required this.message, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.h),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 36.w,
-              color: ColorManager.of(context).textTertiary,
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            TextButton(
-              onPressed: onRetry,
-              child: Text(
-                l10n.retry,
-                style: TextStyle(
-                  color: ColorManager.primary,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 13.sp,
+            child: Row(
+              children: [
+                ShimmerBox(
+                  width: 38.w,
+                  height: 38.w,
+                  radius: BorderRadius.circular(19.r),
                 ),
-              ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShimmerBox(width: 130.w, height: 11.h),
+                      SizedBox(height: 6.h),
+                      ShimmerBox(width: 80.w, height: 9.h),
+                      SizedBox(height: 8.h),
+                      ShimmerBox(width: 56.w, height: 14.h),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        ],
+      ],
     );
   }
 }

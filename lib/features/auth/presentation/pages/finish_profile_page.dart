@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -171,22 +171,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                     SizedBox(height: 16.h),
 
                     // Back button
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.of(context).cardBgSecondary,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: ColorManager.of(context).textPrimary,
-                          size: 18.w,
-                        ),
-                      ),
-                    ),
+                    AuthBackButton(onTap: () => context.pop()),
 
                     SizedBox(height: 24.h),
 
@@ -266,12 +251,12 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
 
   Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(13.w),
       decoration: BoxDecoration(
-        color: ColorManager.infoLight.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12.r),
+        color: ColorManager.infoLight.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(13.r),
         border: Border.all(
-          color: ColorManager.infoLight.withValues(alpha: 0.3),
+          color: ColorManager.infoLight.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -279,17 +264,18 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
         children: [
           Icon(
             Icons.info_outline,
-            size: 20.w,
+            size: 16.w,
             color: ColorManager.infoExtraLight,
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 9.w),
           Expanded(
             child: Text(
               l10n.clinicDetailsInfo,
               style: TextStyle(
                 color: ColorManager.infoExtraLight,
                 fontFamily: fontFamily,
-                fontSize: FontSizesManager.s12,
+                fontSize: 11.5.sp,
+                height: 1.4,
               ),
             ),
           ),
@@ -313,13 +299,16 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
           prefixIcon: Icons.search,
           suffixIcon: state.isSearchingLocations
               ? Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: SizedBox(
-                    width: 20.w,
-                    height: 20.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: ColorManager.primary,
+                  padding: EdgeInsetsDirectional.only(end: 12.w),
+                  child: Center(
+                    widthFactor: 1,
+                    child: SizedBox(
+                      width: 15.w,
+                      height: 15.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: ColorManager.primary,
+                      ),
                     ),
                   ),
                 )
@@ -331,42 +320,41 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
             state.searchedLocations.isNotEmpty &&
             state.selectedLocation == null)
           Container(
-            margin: EdgeInsets.only(top: 8.h),
+            margin: EdgeInsets.only(top: 6.h),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: ColorManager.of(context).cardBg,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: ColorManager.of(context).border),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              border: Border.all(color: ColorManager.of(context).borderLight),
             ),
             constraints: BoxConstraints(maxHeight: 200.h),
             child: ListView.separated(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: state.searchedLocations.length,
-              separatorBuilder: (context, index) =>
-                  Divider(height: 1, color: ColorManager.of(context).border),
+              separatorBuilder: (context, index) => Divider(
+                height: 1,
+                color: ColorManager.of(context).borderLight,
+              ),
               itemBuilder: (context, index) {
                 final location = state.searchedLocations[index];
                 return ListTile(
                   dense: true,
+                  visualDensity: VisualDensity.compact,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                   title: Text(
                     location.name,
                     style: TextStyle(
-                      fontSize: FontSizesManager.s14,
+                      fontSize: 12.5.sp,
                       fontFamily: fontFamily,
-                      fontWeight: FontWeightManager.medium,
+                      fontWeight: FontWeight.w600,
+                      color: ColorManager.of(context).textPrimary,
                     ),
                   ),
                   subtitle: Text(
                     location.fullName,
                     style: TextStyle(
-                      fontSize: FontSizesManager.s12,
+                      fontSize: 11.sp,
                       fontFamily: fontFamily,
                       color: ColorManager.of(context).textSecondary,
                     ),
@@ -386,19 +374,14 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
             !state.isSearchingLocations &&
             state.searchedLocations.isEmpty &&
             state.selectedLocation == null)
-          Container(
-            margin: EdgeInsets.only(top: 8.h),
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: ColorManager.of(context).cardBgSecondary,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
+          Padding(
+            padding: EdgeInsets.only(top: 6.h),
             child: Text(
               l10n.noLocationsFound,
               style: TextStyle(
-                fontSize: FontSizesManager.s14,
+                fontSize: 11.5.sp,
                 fontFamily: fontFamily,
-                color: ColorManager.of(context).textSecondary,
+                color: ColorManager.of(context).textTertiary,
               ),
             ),
           ),
@@ -407,36 +390,50 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
   }
 
   Widget _buildSelectedLocation(LocationEntity location, String fontFamily) {
+    final c = ColorManager.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? ColorManager.primary : ColorManager.primaryDarker;
+
+    // Same tinted-surface treatment the appointment patient picker uses for
+    // its chosen value: 8% fill, a 30% hairline, not a full-strength border.
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: ColorManager.primary10,
+        color: ColorManager.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: ColorManager.primary),
+        border: Border.all(
+          color: ColorManager.primary.withValues(alpha: 0.30),
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.location_on, color: ColorManager.primary, size: 20.w),
-          SizedBox(width: 8.w),
+          Icon(Icons.location_on_outlined, color: accent, size: 17.w),
+          SizedBox(width: 9.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   location.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: FontSizesManager.s14,
+                    fontSize: 12.5.sp,
                     fontFamily: fontFamily,
-                    fontWeight: FontWeightManager.semiBold,
-                    color: ColorManager.primary,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
                   ),
                 ),
+                SizedBox(height: 2.h),
                 Text(
                   location.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: FontSizesManager.s12,
+                    fontSize: 11.sp,
                     fontFamily: fontFamily,
-                    color: ColorManager.primary,
+                    color: c.textSecondary,
                   ),
                 ),
               ],
@@ -452,15 +449,12 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.all(16.w),
+          // Elevation in this design language is a border, not a shadow.
           decoration: BoxDecoration(
-            color: ColorManager.of(context).cardBg,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -4),
-              ),
-            ],
+            color: ColorManager.of(context).surfaceBg,
+            border: Border(
+              top: BorderSide(color: ColorManager.of(context).borderLight),
+            ),
           ),
           child: SafeArea(
             child: PrimaryButton(

@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -233,6 +234,9 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
   }
 
   Future<void> _onShare(String? avatarUrl) async {
+    // Read the localizations before the async gaps — after an await the
+    // sheet may already be gone and `context` unusable.
+    final l10n = AppLocalizations.of(context)!;
     // Grab the anchor rect *before* any async gaps. iPad needs this for
     // UIActivityViewController; on phones it's harmless to pass.
     final box = context.findRenderObject() as RenderBox?;
@@ -247,14 +251,14 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
       final file = await _writeToTemp(bytes);
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'image/png')],
-        text: 'My clinic statistics',
+        text: l10n.myClinicStatistics,
         sharePositionOrigin: origin,
       );
     } catch (e) {
       if (!mounted) return;
       AppSnackbar.showError(
         context,
-        title: 'Share failed',
+        title: l10n.shareFailed,
         message: e.toString(),
       );
     } finally {
@@ -317,10 +321,11 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Text(
-          'Share your stats',
+          l10n.shareYourStats,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 18.sp,
@@ -330,7 +335,7 @@ class _Header extends StatelessWidget {
         ),
         SizedBox(height: 4.h),
         Text(
-          'Swipe to choose a design',
+          l10n.swipeToChooseDesign,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 13.sp,
@@ -434,6 +439,7 @@ class _TemplateLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Text(
@@ -447,7 +453,7 @@ class _TemplateLabel extends StatelessWidget {
         ),
         SizedBox(height: 2.h),
         Text(
-          template.blurb,
+          template.blurb(l10n),
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 12.sp,
@@ -493,6 +499,7 @@ class _ShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
@@ -516,7 +523,7 @@ class _ShareButton extends StatelessWidget {
               )
             : Icon(Icons.ios_share_rounded, size: 18.w),
         label: Text(
-          loading ? 'Preparing…' : 'Share',
+          loading ? l10n.preparingShare : l10n.share,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 15.sp,
@@ -535,6 +542,7 @@ class _CancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       child: TextButton(
@@ -543,7 +551,7 @@ class _CancelButton extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 12.h),
         ),
         child: Text(
-          'Cancel',
+          l10n.cancel,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 14.sp,

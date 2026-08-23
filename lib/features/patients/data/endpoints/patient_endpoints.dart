@@ -44,4 +44,17 @@ class PatientEndpoints {
 
   static String reactivateCase(String patientId, String caseId) =>
       '/clinics/patients/$patientId/cases/$caseId/reactivate';
+
+  /// Case attachments are their own sub-resource: GET to list, POST to
+  /// attach uploaded media ids. The parent case route rejects PATCH (405),
+  /// so attachments are never written through [updateCase].
+  static String caseAttachments(String patientId, String caseId) =>
+      '/clinics/patients/$patientId/cases/$caseId/attachments';
+
+  static String caseAttachment(
+    String patientId,
+    String caseId,
+    String attachmentId,
+  ) =>
+      '/clinics/patients/$patientId/cases/$caseId/attachments/$attachmentId';
 }

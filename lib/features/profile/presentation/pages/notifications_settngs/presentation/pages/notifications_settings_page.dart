@@ -1,6 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/manager/notification_settings_bloc.dart';
@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 
 /// The notification-settings screen.
 ///
@@ -61,29 +62,50 @@ class _NotificationsSettingsContent extends StatelessWidget {
                   curr.errorMessage != prev.errorMessage &&
                   curr.status == NotificationSettingsStatus.success,
               listener: (context, state) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(content: Text(state.errorMessage!)),
-                  );
+                AppSnackbar.showError(context, title: state.errorMessage!);
               },
               builder: (context, state) {
                 switch (state.status) {
                   case NotificationSettingsStatus.initial:
                   case NotificationSettingsStatus.loading:
-                    return const Center(child: CircularProgressIndicator());
+                    return const _SettingsSkeleton();
 
                   case NotificationSettingsStatus.failure:
-                    return _ErrorState(
-                      message: state.errorMessage ?? l10n.somethingWentWrong,
-                      onRetry: () => context
-                          .read<NotificationSettingsBloc>()
-                          .add(const NotificationSettingsEvent.load()),
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        dentaGutter,
+                        14.h,
+                        dentaGutter,
+                        28.h,
+                      ),
+                      child: StateCard(
+                        icon: Icons.cloud_off_rounded,
+                        tone: ColorManager.error,
+                        title: l10n.notificationSettingsLoadFailed,
+                        message:
+                            state.errorMessage ?? l10n.somethingWentWrong,
+                        actionLabel: l10n.retry,
+                        onAction: () => context
+                            .read<NotificationSettingsBloc>()
+                            .add(const NotificationSettingsEvent.load()),
+                      ),
                     );
 
                   case NotificationSettingsStatus.success:
                     if (state.settings.isEmpty) {
-                      return _EmptyState(l10n: l10n);
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(
+                          dentaGutter,
+                          14.h,
+                          dentaGutter,
+                          28.h,
+                        ),
+                        child: StateCard(
+                          icon: Icons.notifications_off_outlined,
+                          title: l10n.noNotificationSettings,
+                          message: l10n.noNotificationSettingsHint,
+                        ),
+                      );
                     }
                     return _buildList(context, state);
                 }
@@ -96,33 +118,44 @@ class _NotificationsSettingsContent extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context, NotificationSettingsState state) {
+    final l10n = AppLocalizations.of(context)!;
     final settings = state.settings;
+    // The one number the user came for: how much of this list is actually
+    // reaching them. It sits beside the heading rather than in a hero tile -
+    // on a screen this short the list is never more than a thumb away.
+    final on = settings.where((s) => s.enabled).length;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: CustomCard(
-        padding: EdgeInsets.zero,
-        child: Column(
-          children: [
-            for (var i = 0; i < settings.length; i++)
-              NotificationSettingsTile(
-                icon: _iconForKey(settings[i].key),
-                iconColor: _colorForKey(settings[i].key),
-                title: settings[i].name,
-                subtitle: settings[i].description,
-                value: settings[i].enabled,
-                isPending: state.isPending(settings[i].key),
-                showDivider: i != settings.length - 1,
-                onChanged: (enabled) =>
-                    context.read<NotificationSettingsBloc>().add(
-                          NotificationSettingsEvent.toggle(
-                            key: settings[i].key,
-                            enabled: enabled,
-                          ),
+      padding: EdgeInsets.fromLTRB(dentaGutter, 14.h, dentaGutter, 28.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionLabel(
+            l10n.notificationCategories,
+            trailing: CountPill.label(
+              l10n.categoriesOnCount(on, settings.length),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          for (var i = 0; i < settings.length; i++) ...[
+            if (i > 0) SizedBox(height: 8.h),
+            NotificationSettingsTile(
+              icon: _iconForKey(settings[i].key),
+              iconColor: _colorForKey(settings[i].key),
+              title: settings[i].name,
+              subtitle: settings[i].description,
+              value: settings[i].enabled,
+              isPending: state.isPending(settings[i].key),
+              onChanged: (enabled) =>
+                  context.read<NotificationSettingsBloc>().add(
+                        NotificationSettingsEvent.toggle(
+                          key: settings[i].key,
+                          enabled: enabled,
                         ),
-              ),
+                      ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -160,71 +193,53 @@ class _NotificationsSettingsContent extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.l10n});
-
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(32.w),
-        child: Text(
-          l10n.noNotificationSettings,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: c.textSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
+/// Holds the real layout's slots while the categories load - heading, then
+/// stacked cards at the same 8px pitch - so nothing jumps when they arrive.
+class _SettingsSkeleton extends StatelessWidget {
+  const _SettingsSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(dentaGutter, 14.h, dentaGutter, 28.h),
+      child: AppShimmer(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.cloud_off_rounded, size: 40.w, color: c.textSubtle),
-            SizedBox(height: 12.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textSecondary,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            TextButton(
-              onPressed: onRetry,
-              child: Text(
-                l10n.retry,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: ColorManager.primary,
+            ShimmerBox(width: 96.w, height: 13.h),
+            SizedBox(height: 10.h),
+            for (var i = 0; i < 4; i++) ...[
+              if (i > 0) SizedBox(height: 8.h),
+              AppCard(
+                padding: EdgeInsetsDirectional.fromSTEB(13.w, 11.h, 10.w, 11.h),
+                child: Row(
+                  children: [
+                    ShimmerBox(
+                      width: 32.w,
+                      height: 32.w,
+                      radius: BorderRadius.circular(11.r),
+                    ),
+                    SizedBox(width: 11.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerBox(width: 120.w, height: 12.h),
+                          SizedBox(height: 6.h),
+                          ShimmerBox(width: 170.w, height: 10.h),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    ShimmerBox(
+                      width: 38.w,
+                      height: 22.h,
+                      radius: BorderRadius.circular(11.r),
+                    ),
+                  ],
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),

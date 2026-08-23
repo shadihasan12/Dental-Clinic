@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 /// Bottom sheet for sending a clinic invitation. Validates locally, then
 /// dispatches `sendInvitation` on the parent's [InvitationBloc].
@@ -18,10 +19,8 @@ class SendInviteSheet extends StatefulWidget {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: bloc,
-        child: const SendInviteSheet(),
-      ),
+      builder: (_) =>
+          BlocProvider.value(value: bloc, child: const SendInviteSheet()),
     );
   }
 
@@ -57,11 +56,11 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
 
   void _submit() {
     context.read<InvitationBloc>().add(
-          InvitationEvent.sendInvitation(
-            email: _emailCtrl.text.trim(),
-            roles: _selectedRoles.toList(),
-          ),
-        );
+      InvitationEvent.sendInvitation(
+        email: _emailCtrl.text.trim(),
+        roles: _selectedRoles.toList(),
+      ),
+    );
     Navigator.pop(context);
   }
 
@@ -128,34 +127,13 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
             autofocus: true,
             onChanged: (_) => setState(() {}),
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontFamily: FontHelper.fontFamily(context),
               color: c.textPrimary,
             ),
-            decoration: InputDecoration(
+            decoration: formOutlinedInput(
+              context,
               hintText: 'colleague@example.com',
-              hintStyle: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textTertiary,
-              ),
-              filled: true,
-              fillColor: c.inputBg,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 12.h,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide(color: c.borderLight),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide(color: c.borderLight),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide(color: ColorManager.primary),
-              ),
             ),
           ),
 

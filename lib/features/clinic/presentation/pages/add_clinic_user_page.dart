@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
@@ -130,277 +131,197 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
 
           return Scaffold(
             backgroundColor: c.scaffoldBg,
-            body: Column(
-              children: [
-                PageHeader(
-                  title: l10n.addUser,
-                  onBack: () => context.pop(),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 16.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _field(l10n.firstName, _firstNameCtrl),
+            appBar: PageHeader(
+              title: l10n.addUser,
+              onBack: () => context.pop(),
+            ),
+            bottomNavigationBar: FormActionBar(
+              label: l10n.addUser,
+              busy: isSubmitting,
+              onPressed: _canSubmit ? _submit : null,
+            ),
+            body: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FormSectionCard(
+                    title: l10n.personalInformation,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: FormTextField(
+                              label: l10n.firstName,
+                              required: true,
+                              controller: _firstNameCtrl,
+                              textCapitalization: TextCapitalization.words,
+                              onChanged: () => setState(() {}),
                             ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: _field(l10n.lastName, _lastNameCtrl),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        _field(
-                          l10n.emailAddress,
-                          _emailCtrl,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        SizedBox(height: 12.h),
-                        _field(
-                          l10n.mobileNumber,
-                          _mobileCtrl,
-                          keyboardType: TextInputType.phone,
-                        ),
-                        SizedBox(height: 12.h),
-                        _passwordField(
-                          l10n.password,
-                          _passwordCtrl,
-                          _obscurePassword,
-                          () => setState(
-                              () => _obscurePassword = !_obscurePassword),
-                        ),
-                        SizedBox(height: 12.h),
-                        _passwordField(
-                          l10n.confirmPassword,
-                          _confirmCtrl,
-                          _obscureConfirm,
-                          () => setState(
-                              () => _obscureConfirm = !_obscureConfirm),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          l10n.selectRoles,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: c.textPrimary,
                           ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Wrap(
-                          spacing: 8.w,
-                          runSpacing: 8.h,
-                          children: _allRoles.map((role) {
-                            final selected = _selectedRoles.contains(role);
-                            final disabled = _isRoleDisabled(role);
-                            return GestureDetector(
-                              onTap: disabled
-                                  ? null
-                                  : () => setState(() {
-                                        selected
-                                            ? _selectedRoles.remove(role)
-                                            : _selectedRoles.add(role);
-                                        if (!_isDentistSelected) {
-                                          _selectedSpecialty = null;
-                                        }
-                                      }),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 150),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 14.w,
-                                  vertical: 8.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: disabled
-                                      ? c.inputBg
-                                      : selected
-                                          ? ColorManager.primary
-                                          : c.inputBg,
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  border: Border.all(
-                                    color: disabled
-                                        ? c.borderLight
-                                        : selected
-                                            ? ColorManager.primary
-                                            : c.borderLight,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (disabled) ...[
-                                      Icon(
-                                        Icons.lock_outline_rounded,
-                                        size: 12.w,
-                                        color: c.textTertiary,
-                                      ),
-                                      SizedBox(width: 4.w),
-                                    ],
-                                    Text(
-                                      _roleLabel(l10n, role),
-                                      style: TextStyle(
-                                        fontSize: 13.sp,
-                                        fontFamily:
-                                            FontHelper.fontFamily(context),
-                                        fontWeight: FontWeight.w500,
-                                        color: disabled
-                                            ? c.textTertiary
-                                            : selected
-                                                ? Colors.white
-                                                : c.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        if (widget.dentistsReached ||
-                            widget.secretariesReached) ...[
-                          SizedBox(height: 8.h),
-                          _RoleLimitNote(
-                            dentists: widget.dentistsReached,
-                            secretaries: widget.secretariesReached,
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: FormTextField(
+                              label: l10n.lastName,
+                              required: true,
+                              controller: _lastNameCtrl,
+                              textCapitalization: TextCapitalization.words,
+                              onChanged: () => setState(() {}),
+                            ),
                           ),
                         ],
-                        if (_isDentistSelected) ...[
-                          SizedBox(height: 16.h),
-                          Text(
-                            l10n.specialization,
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w600,
-                              color: c.textPrimary,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          _loadingSpecialties
-                              ? SizedBox(
-                                  height: 48.h,
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 20.w,
-                                      height: 20.w,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: ColorManager.primary,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(
-                                    color: c.inputBg,
-                                    borderRadius: BorderRadius.circular(10.r),
-                                    border: Border.all(
-                                      color: _selectedSpecialty != null
-                                          ? ColorManager.primary
-                                          : c.borderLight,
-                                    ),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child:
-                                        DropdownButton<SpecialtyEntity>(
-                                      value: _selectedSpecialty,
-                                      isExpanded: true,
-                                      hint: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12.w,
-                                        ),
-                                        child: Text(
-                                          l10n.selectSpecialization,
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontFamily:
-                                                FontHelper.fontFamily(context),
-                                            color: c.textTertiary,
-                                          ),
-                                        ),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12.w,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10.r),
-                                      items: _specialties
-                                          .map(
-                                            (s) => DropdownMenuItem(
-                                              value: s,
-                                              child: Text(
-                                                s.name,
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  fontFamily:
-                                                      FontHelper.fontFamily(
-                                                    context,
-                                                  ),
-                                                  color: c.textPrimary,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                          .toList(),
-                                      onChanged: (val) => setState(
-                                          () => _selectedSpecialty = val),
-                                    ),
-                                  ),
-                                ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
-                  child: SafeArea(
-                    top: false,
-                    child: GestureDetector(
-                      onTap: (_canSubmit && !isSubmitting) ? _submit : null,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        decoration: BoxDecoration(
-                          color: (_canSubmit && !isSubmitting)
-                              ? ColorManager.primary
-                              : c.border,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: isSubmitting
-                            ? SizedBox(
-                                height: 18.h,
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 18.w,
-                                    height: 18.w,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                l10n.addUser,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
                       ),
-                    ),
+                      FormTextField(
+                        label: l10n.emailAddress,
+                        required: true,
+                        controller: _emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        textDirection: TextDirection.ltr,
+                        onChanged: () => setState(() {}),
+                      ),
+                      FormTextField(
+                        label: l10n.mobileNumber,
+                        controller: _mobileCtrl,
+                        keyboardType: TextInputType.phone,
+                        textDirection: TextDirection.ltr,
+                        onChanged: () => setState(() {}),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  SizedBox(height: 8.h),
+                  FormSectionCard(
+                    title: l10n.password,
+                    children: [
+                      FormTextField(
+                        label: l10n.password,
+                        required: true,
+                        controller: _passwordCtrl,
+                        obscureText: _obscurePassword,
+                        onChanged: () => setState(() {}),
+                        suffix: _RevealToggle(
+                          obscured: _obscurePassword,
+                          onTap: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                        ),
+                      ),
+                      FormTextField(
+                        label: l10n.confirmPassword,
+                        required: true,
+                        controller: _confirmCtrl,
+                        obscureText: _obscureConfirm,
+                        onChanged: () => setState(() {}),
+                        suffix: _RevealToggle(
+                          obscured: _obscureConfirm,
+                          onTap: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  FormSectionCard(
+                    title: l10n.selectRoles,
+                    children: [
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
+                        children: _allRoles.map((role) {
+                          final selected = _selectedRoles.contains(role);
+                          final disabled = _isRoleDisabled(role);
+                          return GestureDetector(
+                            onTap: disabled
+                                ? null
+                                : () => setState(() {
+                                    selected
+                                        ? _selectedRoles.remove(role)
+                                        : _selectedRoles.add(role);
+                                    if (!_isDentistSelected) {
+                                      _selectedSpecialty = null;
+                                    }
+                                  }),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 14.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: disabled
+                                    ? c.cardBgSecondary
+                                    : selected
+                                    ? ColorManager.primary.withValues(
+                                        alpha: 0.12,
+                                      )
+                                    : c.cardBg,
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
+                                  color: disabled
+                                      ? c.borderLight
+                                      : selected
+                                      ? ColorManager.primary
+                                      : c.borderLight,
+                                  width: selected && !disabled ? 1.5 : 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (disabled) ...[
+                                    Icon(
+                                      Icons.lock_outline_rounded,
+                                      size: 12.w,
+                                      color: c.textTertiary,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                  ],
+                                  Text(
+                                    _roleLabel(l10n, role),
+                                    style: TextStyle(
+                                      fontSize: 11.5.sp,
+                                      fontFamily: FontHelper.fontFamily(
+                                        context,
+                                      ),
+                                      fontWeight: selected
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: disabled
+                                          ? c.textTertiary
+                                          : selected
+                                          ? ColorManager.primaryDarker
+                                          : c.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      if (widget.dentistsReached || widget.secretariesReached)
+                        _RoleLimitNote(
+                          dentists: widget.dentistsReached,
+                          secretaries: widget.secretariesReached,
+                        ),
+                      // Only a dentist has a specialty, so the field appears
+                      // with the role rather than sitting there greyed out.
+                      if (_isDentistSelected)
+                        FormPickerField(
+                          label: l10n.specialization,
+                          value: _selectedSpecialty?.name,
+                          placeholder: _loadingSpecialties
+                              ? '...'
+                              : l10n.selectSpecialization,
+                          onTap: _loadingSpecialties || _specialties.isEmpty
+                              ? null
+                              : _pickSpecialty,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -408,101 +329,106 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
     );
   }
 
-  Widget _field(
-    String label,
-    TextEditingController ctrl, {
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          keyboardType: keyboardType,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration(),
-        ),
-      ],
-    );
-  }
-
-  Widget _passwordField(
-    String label,
-    TextEditingController ctrl,
-    bool obscure,
-    VoidCallback toggle,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          obscureText: obscure,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration().copyWith(
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscure
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-                size: 18.w,
-                color: ColorManager.of(context).textTertiary,
-              ),
-              onPressed: toggle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  InputDecoration _inputDecoration() {
+  /// Specialties in a sheet rather than a dropdown menu, matching the
+  /// picker on Edit Profile.
+  Future<void> _pickSpecialty() async {
     final c = ColorManager.of(context);
-    return InputDecoration(
-      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      filled: true,
-      fillColor: c.inputBg,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: c.borderLight),
+    final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
+
+    await showModalBottomSheet<void>(
+      context: context,
+      useSafeArea: true,
+      backgroundColor: c.cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: c.borderLight),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.primary),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10.h),
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: c.borderLight,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),
+              child: Text(
+                l10n.specialization,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontFamily: family,
+                  fontWeight: FontWeight.w600,
+                  color: c.textPrimary,
+                ),
+              ),
+            ),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _specialties.length,
+                itemBuilder: (_, index) {
+                  final spec = _specialties[index];
+                  final isSelected = _selectedSpecialty?.id == spec.id;
+                  return InkWell(
+                    onTap: () {
+                      setState(() => _selectedSpecialty = spec);
+                      Navigator.pop(sheetContext);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 12.h,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 18.w,
+                            height: 18.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? ColorManager.primary
+                                    : c.border,
+                                width: isSelected ? 5 : 1.5,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 11.w),
+                          Expanded(
+                            child: Text(
+                              spec.name,
+                              style: TextStyle(
+                                fontSize: 12.5.sp,
+                                fontFamily: family,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                                color: isSelected
+                                    ? ColorManager.primaryDarker
+                                    : c.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 10.h),
+          ],
+        ),
       ),
     );
   }
@@ -522,10 +448,7 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
 }
 
 class _RoleLimitNote extends StatelessWidget {
-  const _RoleLimitNote({
-    required this.dentists,
-    required this.secretaries,
-  });
+  const _RoleLimitNote({required this.dentists, required this.secretaries});
 
   final bool dentists;
   final bool secretaries;
@@ -544,10 +467,8 @@ class _RoleLimitNote extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: ColorManager.warning.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: ColorManager.warning.withValues(alpha: 0.25),
-        ),
+        borderRadius: BorderRadius.circular(11.r),
+        border: Border.all(color: ColorManager.warning.withValues(alpha: 0.35)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,14 +483,35 @@ class _RoleLimitNote extends StatelessWidget {
             child: Text(
               l10n.roleLimitInfo(lockedRoles.join(' / ')),
               style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 color: c.textSecondary,
-                height: 1.4,
+                height: 1.45,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Show/hide control for a password field, shaped for [FormTextField.suffix].
+class _RevealToggle extends StatelessWidget {
+  const _RevealToggle({required this.obscured, required this.onTap});
+
+  final bool obscured;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Icon(
+        obscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+        size: 18,
+        color: ColorManager.of(context).textTertiary,
       ),
     );
   }

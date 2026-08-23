@@ -80,10 +80,10 @@ class _Banner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
       ),
       child: Row(
@@ -98,7 +98,7 @@ class _Banner extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 12.5.sp,
                     fontFamily: fontFamily,
                     fontWeight: FontWeight.w700,
                     color: color,
@@ -108,7 +108,7 @@ class _Banner extends StatelessWidget {
                 Text(
                   message,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 11.sp,
                     fontFamily: fontFamily,
                     color: color,
                     height: 1.4,
@@ -128,7 +128,7 @@ class _Banner extends StatelessWidget {
                       child: Text(
                         actionLabel!,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 11.5.sp,
                           fontFamily: fontFamily,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

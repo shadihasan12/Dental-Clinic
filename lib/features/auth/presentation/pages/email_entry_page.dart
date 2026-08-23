@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 
 class EmailEntryPage extends StatefulWidget {
   const EmailEntryPage({super.key});
@@ -45,6 +46,10 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // primaryDarker is the on-white text tone; on a dark surface the base
+    // primary is the one that reads.
+    final accent = isDark ? ColorManager.primary : ColorManager.primaryDarker;
 
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
@@ -99,22 +104,26 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 8.h),
 
                   // Back button
                   GestureDetector(
                     onTap: () => context.pop(),
+                    behavior: HitTestBehavior.opaque,
                     child: Container(
-                      width: 40.w,
-                      height: 40.w,
+                      width: 36.w,
+                      height: 36.w,
                       decoration: BoxDecoration(
                         color: ColorManager.of(context).cardBgSecondary,
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(11.r),
+                        border: Border.all(
+                          color: ColorManager.of(context).borderLight,
+                        ),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new,
                         color: ColorManager.of(context).textPrimary,
-                        size: 18.w,
+                        size: 16.w,
                       ),
                     ),
                   ),
@@ -143,19 +152,20 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
 
                   SizedBox(height: 40.h),
 
-                  // Email icon
+                  // Email icon. A rounded tile rather than a disc - the
+                  // design language reserves circles for avatars.
                   Center(
                     child: Container(
-                      width: 72.w,
-                      height: 72.w,
+                      width: 60.w,
+                      height: 60.w,
                       decoration: BoxDecoration(
-                        color: ColorManager.primary10,
-                        shape: BoxShape.circle,
+                        color: ColorManager.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Icon(
                         Icons.email_outlined,
-                        size: 36.w,
-                        color: ColorManager.primary,
+                        size: 28.w,
+                        color: accent,
                       ),
                     ),
                   ),
@@ -178,16 +188,16 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
 
                   SizedBox(height: 32.h),
 
-                  // Email field
-                  CustomTextField(
+                  // Email field. Same shell as every other field in the
+                  // app - label above, hairline at rest, primary on focus.
+                  AuthTextField(
+                    label: l10n.emailAddress,
+                    hint: l10n.emailHint,
+                    required: true,
                     controller: _emailController,
-                    hintText: l10n.emailAddress,
                     keyboardType: TextInputType.emailAddress,
                     textDirection: TextDirection.ltr,
-                    prefixIcon: Icon(
-                      Icons.email_outlined,
-                      color: ColorManager.of(context).textTertiary,
-                    ),
+                    prefixIcon: Icons.email_outlined,
                     enabled: !state.isOtpLoading,
                     onChanged: (value) {
                       context
@@ -196,23 +206,13 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
                     },
                   ),
 
-                  SizedBox(height: 8.h),
-
+                  // Only complain once there is something to complain about;
+                  // an untouched field is not an error.
                   if (state.signupEmail.isNotEmpty &&
                       !state.isSignupEmailValid)
-                    Padding(
-                      padding: EdgeInsetsDirectional.only(start: 16.w),
-                      child: Text(
-                        l10n.pleaseEnterValidEmail,
-                        style: TextStyle(
-                          fontSize: FontSizesManager.s12,
-                          fontFamily: fontFamily,
-                          color: ColorManager.error,
-                        ),
-                      ),
-                    ),
+                    FormErrorLine(message: l10n.pleaseEnterValidEmail),
 
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 28.h),
 
                   // Send button
                   PrimaryButton(

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:dental_clinic_app/core/resources/shadow_manager.dart';
 import 'package:dental_clinic_app/core/resources/padding_manager.dart';
 
-/// Custom card widget matching the design system
+/// Card surface. Elevation is a 1px hairline, not a shadow - pass [shadow]
+/// explicitly on the rare surface that still wants one.
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
@@ -40,15 +40,16 @@ class CustomCard extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         color: color ?? ColorManager.of(context).cardBg,
-        borderRadius: borderRadius ?? BorderRadiusManager.xl,
-        border: border,
-        boxShadow: shadow ?? ShadowManager.cardShadow,
+        borderRadius: borderRadius ?? BorderRadius.circular(16.r),
+        border: border ??
+            Border.all(color: ColorManager.of(context).borderLight),
+        boxShadow: shadow,
       ),
       child: Material(
         color: ColorManager.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
+          borderRadius: borderRadius ?? BorderRadius.circular(16.r),
           child: Padding(
             padding: padding ?? PaddingManager.cardPadding,
             child: child,

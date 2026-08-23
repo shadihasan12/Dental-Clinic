@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -21,121 +22,82 @@ class ExpenseDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return FormSheetShell(
+      title: l10n.expenseDetails,
+      footer: Row(
         children: [
-          // Handle
-          Center(
-            child: Container(
-              width: 36.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2.r),
-              ),
+          Expanded(
+            child: _SheetAction(
+              icon: Icons.edit_outlined,
+              label: l10n.edit,
+              tone: ColorManager.primaryDarker,
+              border: ColorManager.primaryLighter,
+              onTap: onEdit,
             ),
           ),
-          SizedBox(height: 20.h),
-
-          // Amount + currency
-          Text(
-            '${expense.amount} ${expense.currency.currencyCode}',
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 32.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2D2D2D),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: _SheetAction(
+              icon: Icons.delete_outline,
+              label: l10n.delete,
+              tone: ColorManager.error,
+              border: ColorManager.errorBorder,
+              onTap: () => _confirmDelete(context, l10n),
             ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            expense.category.name,
-            style: TextStyle(
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-          SizedBox(height: 6.h),
-          AddedByLabel(
-            audits: expense.audits,
-            createdAt: DateTime.tryParse(expense.createdAt),
-          ),
-          SizedBox(height: 20.h),
-
-          // Details rows
-          _DetailRow(
-              icon: Icons.calendar_today_outlined, text: expense.entryDate),
-          if (expense.notes.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            _DetailRow(icon: Icons.notes_outlined, text: expense.notes),
-          ],
-          if (expense.attachments.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            _DetailRow(
-              icon: Icons.attach_file,
-              text: '${expense.attachments.length} ${l10n.attachments}',
-            ),
-          ],
-          SizedBox(height: 24.h),
-
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onEdit,
-                  icon: Icon(Icons.edit_outlined, size: 16.w),
-                  label: Text(
-                    l10n.edit,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ColorManager.primary,
-                    side: BorderSide(color: ColorManager.primary),
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _confirmDelete(context, l10n),
-                  icon: Icon(Icons.delete_outline, size: 16.w),
-                  label: Text(
-                    l10n.delete,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red.shade400,
-                    side: BorderSide(color: Colors.red.shade400),
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),
+      children: [
+        // The amount is why the sheet was opened, so it leads as a hero
+        // figure with the category as its caption.
+        Text(
+          '${expense.amount} ${expense.currency.currencyCode}',
+          style: TextStyle(
+            fontFamily: family,
+            fontSize: 26.sp,
+            height: 1.2,
+            letterSpacing: -0.5,
+            fontWeight: FontWeight.w700,
+            color: c.textPrimary,
+          ),
+        ),
+        SizedBox(height: 3.h),
+        Text(
+          expense.category.name,
+          style: TextStyle(
+            fontFamily: family,
+            fontSize: 12.5.sp,
+            fontWeight: FontWeight.w600,
+            color: c.textSecondary,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        AddedByLabel(
+          audits: expense.audits,
+          createdAt: DateTime.tryParse(expense.createdAt),
+        ),
+        SizedBox(height: 16.h),
+
+        _DetailRow(
+          icon: Icons.calendar_today_outlined,
+          text: expense.entryDate,
+        ),
+        if (expense.notes.isNotEmpty) ...[
+          SizedBox(height: 10.h),
+          _DetailRow(icon: Icons.notes_outlined, text: expense.notes),
+        ],
+        if (expense.attachments.isNotEmpty) ...[
+          SizedBox(height: 10.h),
+          _DetailRow(
+            icon: Icons.attach_file,
+            text: '${expense.attachments.length} ${l10n.attachments}',
+          ),
+        ],
+        SizedBox(height: 8.h),
+      ],
     );
   }
 
@@ -169,7 +131,7 @@ class ExpenseDetailSheet extends StatelessWidget {
               l10n.delete,
               style: TextStyle(
                 fontFamily: FontHelper.fontFamily(ctx),
-                color: Colors.red,
+                color: ColorManager.error,
               ),
             ),
           ),
@@ -187,21 +149,79 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16.w, color: Colors.grey.shade500),
-        SizedBox(width: 10.w),
+        Icon(icon, size: 15.w, color: c.textTertiary),
+        SizedBox(width: 8.w),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
-              fontSize: 14.sp,
-              color: Colors.black54,
+              fontSize: 11.5.sp,
+              height: 1.4,
+              color: c.textSecondary,
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+/// A short outlined action for the bottom of a sheet: 11r corners, a 1px
+/// border in a light tint of its own hue, and no enforced Material minimum
+/// height, so it stays the size the padding asks for.
+class _SheetAction extends StatelessWidget {
+  const _SheetAction({
+    required this.icon,
+    required this.label,
+    required this.tone,
+    required this.border,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color tone;
+  final Color border;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(11.r);
+    return Material(
+      color: ColorManager.of(context).cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(color: border),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 15.w, color: tone),
+              SizedBox(width: 6.w),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 12.5.sp,
+                  fontWeight: FontWeight.w600,
+                  color: tone,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

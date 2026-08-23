@@ -132,8 +132,11 @@ class _SelectBillingPlanPageState extends State<SelectBillingPlanPage> {
 
   void _onGenerate(BuildContext context) {
     // Custom plan: no invoice flow, route to contact sales instead.
+    // NOTE: this is a sales enquiry, but Report an Issue is the only
+    // support surface left after the chat was removed. Give it a proper
+    // destination when one exists.
     if (_selected == PlanTier.custom) {
-      context.pushNamed(AppRoutesNames.contactSupport);
+      context.pushNamed(AppRoutesNames.reportIssue);
       return;
     }
     final clinicId = getIt<UserStorage>().getSelectedClinicId() ?? '';

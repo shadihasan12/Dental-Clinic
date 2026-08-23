@@ -41,7 +41,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                       icon: Icon(
                         Icons.arrow_back_ios_new,
                         color: c.textPrimary,
-                        size: 20.w,
+                        size: 18.w,
                       ),
                       onPressed: onBack ?? () => context.pop(),
                     )
@@ -50,8 +50,10 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
                   Expanded(
                     child: Text(
                       title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
                         color: c.textPrimary,

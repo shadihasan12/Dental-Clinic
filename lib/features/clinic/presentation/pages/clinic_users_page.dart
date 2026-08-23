@@ -3,6 +3,8 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
@@ -130,13 +132,13 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
                 onBack: () => context.pop(),
                 actions: [
                   if (!isLoading && !isSubmitting)
-                    IconButton(
-                      icon: Icon(
-                        Icons.person_add_outlined,
-                        color: ColorManager.primary,
-                        size: 22.w,
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(end: 10.w),
+                      child: DentaButton(
+                        label: l10n.newButton,
+                        icon: Icons.add,
+                        onTap: () => _onAddUser(context, l10n),
                       ),
-                      onPressed: () => _onAddUser(context, l10n),
                     ),
                   if (isSubmitting)
                     Padding(
@@ -154,7 +156,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
               ),
               Expanded(
                 child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const _UsersSkeleton()
                     : state.maybeWhen(
                         error: (msg) => _buildError(context, l10n, msg),
                         orElse: () => users.isEmpty
@@ -170,71 +172,29 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   }
 
   Widget _buildEmpty(BuildContext context, AppLocalizations l10n) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.people_outline,
-              size: 48.w, color: ColorManager.of(context).border),
-          SizedBox(height: 12.h),
-          Text(
-            l10n.noUsersYet,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.of(context).textTertiary,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          TextButton(
-            onPressed: () => _onAddUser(context, l10n),
-            child: Text(
-              l10n.addUser,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.people_outline,
+        title: l10n.noUsersYet,
+        message: l10n.noUsersYetHint,
+        actionLabel: l10n.addUser,
+        onAction: () => _onAddUser(context, l10n),
       ),
     );
   }
 
   Widget _buildError(BuildContext context, AppLocalizations l10n, String msg) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline,
-              size: 48.w, color: ColorManager.of(context).textTertiary),
-          SizedBox(height: 12.h),
-          Text(
-            msg,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: ColorManager.of(context).textTertiary,
-              fontFamily: FontHelper.fontFamily(context),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          TextButton(
-            onPressed: () => context.read<ClinicUsersBloc>().add(
-              const ClinicUsersEvent.load(),
-            ),
-            child: Text(
-              l10n.retry,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-          ),
-        ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.cloud_off_rounded,
+        tone: ColorManager.error,
+        title: l10n.clinicUsersLoadFailed,
+        message: msg,
+        actionLabel: l10n.retry,
+        onAction: () =>
+            context.read<ClinicUsersBloc>().add(const ClinicUsersEvent.load()),
       ),
     );
   }
@@ -246,9 +206,9 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   ) {
     final currentEmail = getIt<UserStorage>().getUserEmail();
     return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       itemCount: users.length,
-      separatorBuilder: (_, _) => SizedBox(height: 10.h),
+      separatorBuilder: (_, _) => SizedBox(height: 8.h),
       itemBuilder: (_, index) {
         final user = users[index];
         return _UserCard(
@@ -337,7 +297,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
               ),
               Divider(
                 height: 1,
-                indent: 16.w,
+                indent: 57.w,
                 color: ColorManager.of(context).borderLight,
               ),
               _ActionRow(
@@ -355,7 +315,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
               if (canRemove) ...[
                 Divider(
                   height: 1,
-                  indent: 16.w,
+                  indent: 57.w,
                   color: ColorManager.of(context).borderLight,
                 ),
                 _ActionRow(
@@ -397,55 +357,90 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     AppLocalizations l10n,
     ClinicUserEntity user,
   ) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    // Centre dialog, because removing a user is destructive: the consequence
+    // is stated in a tinted box rather than left implied.
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: ColorManager.of(context).cardBg,
+        backgroundColor: c.cardBg,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(16.r),
         ),
-        title: Text(
-          l10n.removeUser,
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            color: ColorManager.error,
-          ),
-        ),
-        content: Text(
-          l10n.removeUserConfirmation(user.fullName),
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 14.sp,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textSecondary,
+        titlePadding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
+        contentPadding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 0),
+        actionsPadding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 16.h),
+        title: Row(
+          children: [
+            const IconTile(
+              icon: Icons.person_remove_outlined,
+              tone: ColorManager.error,
+            ),
+            SizedBox(width: 11.w),
+            Expanded(
+              child: Text(
+                l10n.removeUser,
+                style: TextStyle(
+                  fontFamily: family,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: c.textPrimary,
+                ),
               ),
             ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.removeUserConfirmation(user.fullName),
+              style: TextStyle(
+                fontFamily: family,
+                fontSize: 12.sp,
+                height: 1.5,
+                color: c.textSecondary,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 9.h),
+              decoration: BoxDecoration(
+                color: c.errorBg,
+                borderRadius: BorderRadius.circular(11.r),
+                border: Border.all(color: ColorManager.errorBorder),
+              ),
+              child: Text(
+                l10n.removeUserConsequence,
+                style: TextStyle(
+                  fontFamily: family,
+                  fontSize: 11.sp,
+                  height: 1.45,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.error,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          DentaOutlineButton(
+            label: l10n.cancel,
+            onTap: () => Navigator.pop(dialogContext),
           ),
-          TextButton(
-            onPressed: () {
+          DentaButton(
+            label: l10n.removeUser,
+            tone: ColorManager.destructive,
+            onTap: () {
               Navigator.pop(dialogContext);
               context.read<ClinicUsersBloc>().add(
                 ClinicUsersEvent.removeUser(user.id),
               );
             },
-            style: TextButton.styleFrom(foregroundColor: ColorManager.error),
-            child: Text(
-              l10n.removeUser,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ),
         ],
       ),
@@ -471,28 +466,22 @@ class _UserCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onMore,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(16.r),
           child: Padding(
-            padding: EdgeInsets.all(14.w),
+            padding: EdgeInsets.all(12.w),
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: 22.r,
+                  radius: 20.r,
                   backgroundColor:
-                      ColorManager.primary.withValues(alpha: 0.12),
+                      ColorManager.primary.withValues(alpha: 0.15),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
                       : null,
@@ -500,22 +489,24 @@ class _UserCard extends StatelessWidget {
                       ? Text(
                           _initials(),
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 13.sp,
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.primary,
+                            color: ColorManager.primaryDarker,
                           ),
                         )
                       : null,
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: 11.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         user.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 12.5.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           fontWeight: FontWeight.w600,
                           color: ColorManager.of(context).textPrimary,
@@ -524,8 +515,10 @@ class _UserCard extends StatelessWidget {
                       SizedBox(height: 2.h),
                       Text(
                         user.email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 11.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           color: ColorManager.of(context).textTertiary,
                         ),
@@ -543,13 +536,10 @@ class _UserCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: onMore,
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: ColorManager.of(context).textTertiary,
-                    size: 20.w,
-                  ),
+                Icon(
+                  Icons.more_vert,
+                  color: ColorManager.of(context).textSubtle,
+                  size: 18.w,
                 ),
               ],
             ),
@@ -627,13 +617,14 @@ class _ActionsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 10.h),
       child: Row(
         children: [
           CircleAvatar(
             radius: 20.r,
-            backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
+            backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
             backgroundImage: user.imageUrl != null
                 ? NetworkImage(user.imageUrl!)
                 : null,
@@ -641,14 +632,14 @@ class _ActionsHeader extends StatelessWidget {
                 ? Text(
                     _initials(user.fullName),
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.primary,
+                      color: ColorManager.primaryDarker,
                     ),
                   )
                 : null,
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 11.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -656,20 +647,24 @@ class _ActionsHeader extends StatelessWidget {
               children: [
                 Text(
                   user.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 15.sp,
+                    fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111111),
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
                   ),
                 ),
                 SizedBox(height: 2.h),
                 Text(
                   user.email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 11.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    color: const Color(0xFF666666),
+                    color: c.textTertiary,
                   ),
                 ),
               ],
@@ -704,33 +699,28 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = destructive ? ColorManager.error : ColorManager.primary;
+    final c = ColorManager.of(context);
+    final tone = destructive ? ColorManager.error : ColorManager.primary;
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 11.h),
         child: Row(
           children: [
-            Icon(icon, size: 20.w, color: color),
-            SizedBox(width: 14.w),
+            IconTile(icon: icon, tone: tone),
+            SizedBox(width: 11.w),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 12.5.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
-                  color: destructive
-                      ? ColorManager.error
-                      : const Color(0xFF111111),
+                  fontWeight: FontWeight.w600,
+                  color: destructive ? ColorManager.error : c.textPrimary,
                 ),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              size: 18.w,
-              color: const Color(0xFFB5B5B5),
-            ),
+            DirectionalChevron(size: 18.w, color: c.textSubtle),
           ],
         ),
       ),
@@ -777,12 +767,13 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
     final l10n = widget.l10n;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
+    final c = ColorManager.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        color: c.cardBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, bottomInset + 24.h),
+      padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, bottomInset + 16.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -792,57 +783,75 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.of(context).border,
+                color: c.borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
           ),
-          SizedBox(height: 16.h),
-          Text(
-            l10n.manageRoles,
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.of(context).textPrimary,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            widget.user.fullName,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.of(context).textTertiary,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          ..._allRoles.map((role) {
-            final selected = _selectedRoles.contains(role);
-            return CheckboxListTile(
-              value: selected,
-              onChanged: (val) => setState(() {
-                val == true
-                    ? _selectedRoles.add(role)
-                    : _selectedRoles.remove(role);
-              }),
-              title: Text(
-                _roleLabel(context, role),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.of(context).textPrimary,
+          SizedBox(height: 14.h),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.manageRoles,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w700,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      widget.user.fullName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              activeColor: ColorManager.primary,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-            );
-          }),
-          SizedBox(height: 8.h),
-          GestureDetector(
-            onTap: _selectedRoles.isNotEmpty
-                ? () {
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => Navigator.pop(context),
+                child: Padding(
+                  padding: EdgeInsets.all(4.w),
+                  child: Icon(
+                    Icons.close,
+                    size: 20.w,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          for (final role in _allRoles) ...[
+            _RoleRow(
+              label: _roleLabel(context, role),
+              selected: _selectedRoles.contains(role),
+              onTap: () => setState(() {
+                _selectedRoles.contains(role)
+                    ? _selectedRoles.remove(role)
+                    : _selectedRoles.add(role);
+              }),
+            ),
+            SizedBox(height: 8.h),
+          ],
+          SizedBox(height: 6.h),
+          DentaButton(
+            label: l10n.updateRoles,
+            expand: true,
+            onTap: _selectedRoles.isEmpty
+                ? null
+                : () {
                     context.read<ClinicUsersBloc>().add(
                       ClinicUsersEvent.updateRoles(
                         userId: widget.user.id,
@@ -850,28 +859,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
                       ),
                     );
                     Navigator.pop(context);
-                  }
-                : null,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              decoration: BoxDecoration(
-                color: _selectedRoles.isNotEmpty
-                    ? ColorManager.primary
-                    : ColorManager.of(context).border,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                l10n.updateRoles,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+                  },
           ),
         ],
       ),
@@ -890,5 +878,123 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
       default:
         return role;
     }
+  }
+}
+
+/// One role, on or off. A bordered card rather than a Material checkbox
+/// tile so it matches the selectable rows everywhere else in the app.
+class _RoleRow extends StatelessWidget {
+  const _RoleRow({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(12.r);
+
+    return Material(
+      color: selected
+          ? ColorManager.primary.withValues(alpha: 0.08)
+          : c.cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: selected ? ColorManager.primary : c.borderLight,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12.5.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected
+                        ? ColorManager.primaryDarker
+                        : c.textPrimary,
+                  ),
+                ),
+              ),
+              Icon(
+                selected
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked_rounded,
+                size: 18.w,
+                color: selected ? ColorManager.primaryDarker : c.textSubtle,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Keeps the avatar, two text lines and the role chips in place while the
+/// user list loads, so nothing jumps when it lands.
+class _UsersSkeleton extends StatelessWidget {
+  const _UsersSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      itemCount: 5,
+      separatorBuilder: (_, _) => SizedBox(height: 8.h),
+      itemBuilder: (_, _) => Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: c.cardBg,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: c.borderLight),
+        ),
+        // ignore: avoid_unnecessary_containers
+        child: AppShimmer(
+          child: Row(
+            children: [
+              ShimmerBox(
+                width: 40.w,
+                height: 40.w,
+                radius: BorderRadius.circular(40.w),
+              ),
+              SizedBox(width: 11.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(width: 130.w, height: 12.h),
+                    SizedBox(height: 6.h),
+                    ShimmerBox(width: 160.w, height: 10.h),
+                    SizedBox(height: 8.h),
+                    ShimmerBox(
+                      width: 60.w,
+                      height: 16.h,
+                      radius: BorderRadius.circular(6.r),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

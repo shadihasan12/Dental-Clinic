@@ -126,94 +126,127 @@ class _HomePageState extends State<HomePage> {
   void _hideSubscriptionCard() =>
       setState(() => _isSubscriptionCardHidden = true);
 
+  Future<void> _openNewAppointment() async {
+    if (!await SubscriptionGuardHelper.requireActive(context)) return;
+    if (!mounted) return;
+    context.pushNamed(AppRoutesNames.newAppointment);
+  }
+
+  Future<void> _openAddPatient() async {
+    if (!await SubscriptionGuardHelper.requireActive(context)) return;
+    if (!mounted) return;
+    context.pushNamed(AppRoutesNames.addPatient);
+  }
+
+  /// Pull-to-refresh keeps the current rows on screen - the indicator already
+  /// says work is happening, so swapping in the skeleton would only make the
+  /// list jump twice.
+  Future<void> _refresh() =>
+      Future.wait([_loadTodaysSchedule(), _loadSubscription()]);
+
   @override
   Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
+      backgroundColor: c.scaffoldBg,
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 24.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16.h),
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          color: ColorManager.primaryDarker,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 12.h),
 
-              HomeHeader(
-                userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
-                clinicName: _clinicName,
-                profileImageUrl: _profileImageUrl,
-                isLoading: _firstName.isEmpty,
-                onNotificationTap: () {
-                  context.pushNamed(AppRoutesNames.notifications);
-                },
-                onMoreTap: () {
-                  context.pushNamed(AppRoutesNames.moreMenu);
-                },
-              ),
+                HomeHeader(
+                  userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
+                  clinicName: _clinicName,
+                  profileImageUrl: _profileImageUrl,
+                  isLoading: _firstName.isEmpty,
+                  onNotificationTap: () {
+                    context.pushNamed(AppRoutesNames.notifications);
+                  },
+                  onMoreTap: () {
+                    context.pushNamed(AppRoutesNames.moreMenu);
+                  },
+                ),
 
-              if (!_isSubscriptionCardHidden) ...[
+                // The day comes first: what the clinic is actually doing in
+                // the next few hours outranks the plan banner and the
+                // shortcuts, both of which used to sit above it.
                 SizedBox(height: 20.h),
-                HomeSubscriptionCard(
-                  status: _status,
-                  usage: _usage,
-                  isLoading: _subscriptionLoading,
-                  onViewPlans: () =>
-                      context.pushNamed(AppRoutesNames.pricing),
-                  onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),
-                  onClose: _hideSubscriptionCard,
+                TodaysSchedule(
+                  appointments:
+                      _todayAppointments.take(_maxScheduleRows).toList(),
+                  totalCount: _todayAppointments.length,
+                  isLoading: _scheduleLoading,
+                  error: _scheduleError,
+                  onViewAllTap: () => RootPage.selectedTab.value = 2,
+                  onNewAppointment: _openNewAppointment,
+                  onRetry: () {
+                    setState(() => _scheduleLoading = true);
+                    _loadTodaysSchedule();
+                  },
                 ),
+
+                SizedBox(height: 20.h),
+
+                _SectionHeading(title: l10n.quickActions),
+                SizedBox(height: 10.h),
+                QuickActions(
+                  onAddPatient: _openAddPatient,
+                  onScheduleVisit: _openNewAppointment,
+                  onNewCase: () {},
+                  onRecordPayment: () {
+                    RootPage.selectedTab.value = 3;
+                    ExpensesPage.openAddExpenseRequest.value++;
+                  },
+                ),
+
+                if (!_isSubscriptionCardHidden) ...[
+                  SizedBox(height: 20.h),
+                  HomeSubscriptionCard(
+                    status: _status,
+                    usage: _usage,
+                    isLoading: _subscriptionLoading,
+                    onViewPlans: () => context.pushNamed(AppRoutesNames.pricing),
+                    onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),
+                    onClose: _hideSubscriptionCard,
+                  ),
+                ],
+
+                SizedBox(height: 16.h),
               ],
-
-              SizedBox(height: 24.h),
-
-              Text(
-                AppLocalizations.of(context)!.quickActions,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.of(context).textSecondary,
-                ),
-              ),
-              SizedBox(height: 12.h),
-              QuickActions(
-                onAddPatient: () async {
-                  if (!await SubscriptionGuardHelper
-                      .requireActive(context)) {
-                    return;
-                  }
-                  if (!context.mounted) return;
-                  context.pushNamed(AppRoutesNames.addPatient);
-                },
-                onScheduleVisit: () async {
-                  if (!await SubscriptionGuardHelper
-                      .requireActive(context)) {
-                    return;
-                  }
-                  if (!context.mounted) return;
-                  context.pushNamed(AppRoutesNames.newAppointment);
-                },
-                onNewCase: () {},
-                onRecordPayment: () {
-                  RootPage.selectedTab.value = 3;
-                  ExpensesPage.openAddExpenseRequest.value++;
-                },
-              ),
-
-              SizedBox(height: 24.h),
-
-              TodaysSchedule(
-                appointments: _todayAppointments.take(_maxScheduleRows).toList(),
-                isLoading: _scheduleLoading,
-                error: _scheduleError,
-                onViewAllTap: () => RootPage.selectedTab.value = 2,
-              ),
-
-              SizedBox(height: 24.h),
-            ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 13px/600 in the primary text colour - one heading weight for every group
+/// on the screen, matching the patient reference.
+class _SectionHeading extends StatelessWidget {
+  const _SectionHeading({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w600,
+        fontFamily: FontHelper.fontFamily(context),
+        color: ColorManager.of(context).textPrimary,
       ),
     );
   }

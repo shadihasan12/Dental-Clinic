@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'clinic_info_models.dart';
 import 'helpers.dart';
 import 'cupertino_picker_sheet.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 void showAddHolidaySheet(
   BuildContext context, {
@@ -39,7 +40,9 @@ void showAddHolidaySheet(
               20.w,
               16.h,
               20.w,
-              MediaQuery.of(ctx).viewInsets.bottom + MediaQuery.of(ctx).padding.bottom + 24.h,
+              MediaQuery.of(ctx).viewInsets.bottom +
+                  MediaQuery.of(ctx).padding.bottom +
+                  24.h,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -80,32 +83,13 @@ void showAddHolidaySheet(
                 TextField(
                   controller: nameController,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     color: c.textPrimary,
                   ),
-                  decoration: InputDecoration(
+                  decoration: formOutlinedInput(
+                    context,
                     hintText: l10n.holidayNameHint,
-                    hintStyle: TextStyle(
-                      fontSize: 14.sp,
-                      color: c.textTertiary,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 10.h,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                      borderSide: BorderSide(color: c.borderLight),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                      borderSide: BorderSide(color: c.borderLight),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                      borderSide: BorderSide(color: ColorManager.primary),
-                    ),
                   ),
                 ),
                 SizedBox(height: 16.h),

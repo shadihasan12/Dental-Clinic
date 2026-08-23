@@ -64,8 +64,7 @@ class AppRoutesNames {
 
   // Clinic Management Routes
   static const String pendingApprovals = 'pendingApprovals';
-  static const String contactSupport = 'contactSupport';
-  static const String supportChat = 'supportChat';
+  static const String reportIssue = 'reportIssue';
 
   // Dentist Routes
   static const String myClinics = 'myClinics';

@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 
 class PaymentInstructionsCard extends StatelessWidget {
   const PaymentInstructionsCard({super.key, required this.instructions});
@@ -145,9 +146,7 @@ class _ReferenceTile extends StatelessWidget {
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: reference));
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.copied)),
-                );
+                AppSnackbar.showSuccess(context, title: l10n.copied);
               }
             },
           ),

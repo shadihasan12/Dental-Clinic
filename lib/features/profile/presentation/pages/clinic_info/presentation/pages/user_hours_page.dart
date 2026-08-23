@@ -1,9 +1,9 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/user_hours_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/user_hours_bloc.dart';
@@ -29,8 +29,9 @@ class UserHoursPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<UserHoursBloc>(param1: userId)
-        ..add(const UserHoursEvent.load()),
+      create: (_) =>
+          getIt<UserHoursBloc>(param1: userId)
+            ..add(const UserHoursEvent.load()),
       child: _UserHoursContent(userName: userName),
     );
   }
@@ -102,15 +103,23 @@ class _UserHoursContentState extends State<_UserHoursContent> {
 
   List<_DaySnapshot> _snapshot(List<_UserDay> days) {
     return days
-        .map((d) => _DaySnapshot(
-              d.dayOfWeek,
-              d.isWorking,
-              d.isFullTime,
-              d.shifts
-                  .map((s) =>
-                      _ShiftSnapshot(s.from.hour, s.from.minute, s.to.hour, s.to.minute))
-                  .toList(),
-            ))
+        .map(
+          (d) => _DaySnapshot(
+            d.dayOfWeek,
+            d.isWorking,
+            d.isFullTime,
+            d.shifts
+                .map(
+                  (s) => _ShiftSnapshot(
+                    s.from.hour,
+                    s.from.minute,
+                    s.to.hour,
+                    s.to.minute,
+                  ),
+                )
+                .toList(),
+          ),
+        )
         .toList();
   }
 
@@ -127,7 +136,8 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     List<UserWorkingDayApiModel> apiDays, {
     bool isSeed = false,
   }) {
-    final sorted = [...apiDays]..sort((a, b) => a.dayOfWeek.compareTo(b.dayOfWeek));
+    final sorted = [...apiDays]
+      ..sort((a, b) => a.dayOfWeek.compareTo(b.dayOfWeek));
     _days = sorted.map((d) {
       return _UserDay(
         id: d.id,
@@ -177,11 +187,13 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         isFullTime: d.isFullTime,
         ranges: (d.isWorking && !d.isFullTime)
             ? d.shifts
-                .map((s) => TimeRangeModel(
+                  .map(
+                    (s) => TimeRangeModel(
                       startTime: _formatTime(s.from),
                       endTime: _formatTime(s.to),
-                    ))
-                .toList()
+                    ),
+                  )
+                  .toList()
             : [],
       );
     }).toList();
@@ -238,12 +250,14 @@ class _UserHoursContentState extends State<_UserHoursContent> {
 
   void _addShift(_UserDay day) {
     if (day.shifts.length >= _maxShifts) return;
-    setState(() => day.shifts.add(
-          WorkingShift(
-            from: const TimeOfDay(hour: 9, minute: 0),
-            to: const TimeOfDay(hour: 17, minute: 0),
-          ),
-        ));
+    setState(
+      () => day.shifts.add(
+        WorkingShift(
+          from: const TimeOfDay(hour: 9, minute: 0),
+          to: const TimeOfDay(hour: 17, minute: 0),
+        ),
+      ),
+    );
   }
 
   void _removeShift(_UserDay day) {
@@ -259,10 +273,15 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return BlocConsumer<UserHoursBloc, UserHoursState>(
+      // Rebuild for every state the builder can render. Listing only
+      // loading/loaded here left the shimmer on screen forever when the bloc
+      // answered `needsClinicHours` or `error`, because the builder was never
+      // called again. `saving`/`saved` are the exceptions: the listener owns
+      // those, and rebuilding on them would flash the form.
       buildWhen: (prev, curr) => curr.maybeMap(
-        loading: (_) => true,
-        loaded: (_) => true,
-        orElse: () => false,
+        saving: (_) => false,
+        saved: (_) => false,
+        orElse: () => true,
       ),
       listenWhen: (prev, curr) => curr.maybeMap(
         saving: (_) => true,
@@ -286,11 +305,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: message,
-            );
+            AppSnackbar.showError(context, title: l10n.error, message: message);
           },
           orElse: () {},
         );
@@ -299,11 +314,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         final c = ColorManager.of(context);
         // Hide the bottom save bar on the "no clinic hours yet" empty
         // state — the CTA inside the body is the only action there.
-        final showSaveBar = _days.isNotEmpty &&
-            state.maybeWhen(
-              needsClinicHours: (_) => false,
-              orElse: () => true,
-            );
+        final showSaveBar =
+            _days.isNotEmpty &&
+            state.maybeWhen(needsClinicHours: (_) => false, orElse: () => true);
         return Scaffold(
           backgroundColor: c.scaffoldBg,
           bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
@@ -317,27 +330,21 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               ),
               Expanded(
                 child: state.maybeWhen(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const _UserHoursSkeleton(),
                   error: (msg) => _buildError(msg, l10n),
                   needsClinicHours: (isAdmin) =>
                       _buildNeedsClinicHours(isAdmin, l10n),
                   loaded: (days, isSeed) {
                     if (!_populated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(
-                          () => _populateFromApi(days, isSeed: isSeed),
-                        );
+                        setState(() => _populateFromApi(days, isSeed: isSeed));
                       });
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const _UserHoursSkeleton();
                     }
                     return _buildForm(l10n);
                   },
-                  orElse: () => _populated
-                      ? _buildForm(l10n)
-                      : const SizedBox.shrink(),
+                  orElse: () =>
+                      _populated ? _buildForm(l10n) : const SizedBox.shrink(),
                 ),
               ),
             ],
@@ -352,126 +359,49 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   /// non-admins get a "ask your admin" message because the user-hours
   /// upsert requires `clinic_working_day_id`s only the admin can
   /// create.
+  /// The clinic has no schedule yet, so per-user hours cannot be set. An
+  /// admin gets the fix as a button; everyone else gets told who to ask.
   Widget _buildNeedsClinicHours(bool isAdmin, AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-    final message = isAdmin
-        ? l10n.clinicWorkingDaysMissingAdminMessage
-        : l10n.clinicWorkingDaysMissingNonAdminMessage;
-
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.schedule_outlined,
-              size: 48.w,
-              color: ColorManager.primary,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              l10n.clinicWorkingDaysMissingTitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: fontFamily,
-                fontWeight: FontWeight.w600,
-                color: c.textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: fontFamily,
-                color: c.textSecondary,
-                height: 1.4,
-              ),
-            ),
-            if (isAdmin) ...[
-              SizedBox(height: 20.h),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () =>
-                      context.pushNamed(AppRoutesNames.workingDays),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: ColorManager.primary,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                  icon: Icon(Icons.arrow_forward_rounded, size: 16.w),
-                  label: Text(
-                    l10n.setClinicWorkingDays,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontFamily: fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.schedule_outlined,
+        title: l10n.clinicWorkingDaysMissingTitle,
+        message: isAdmin
+            ? l10n.clinicWorkingDaysMissingAdminMessage
+            : l10n.clinicWorkingDaysMissingNonAdminMessage,
+        actionLabel: isAdmin ? l10n.setClinicWorkingDays : null,
+        onAction: isAdmin
+            ? () => context.pushNamed(AppRoutesNames.workingDays)
+            : null,
       ),
     );
   }
 
   Widget _buildError(String message, AppLocalizations l10n) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error_outline,
-                size: 40.w, color: ColorManager.of(context).textTertiary),
-            SizedBox(height: 12.h),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textTertiary,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            TextButton(
-              onPressed: () => context
-                  .read<UserHoursBloc>()
-                  .add(const UserHoursEvent.load()),
-              child: Text(l10n.retry),
-            ),
-          ],
-        ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.cloud_off_rounded,
+        tone: ColorManager.error,
+        title: l10n.workingHoursLoadFailed,
+        message: message,
+        actionLabel: l10n.retry,
+        onAction: () =>
+            context.read<UserHoursBloc>().add(const UserHoursEvent.load()),
       ),
     );
   }
 
   Widget _buildForm(AppLocalizations l10n) {
     if (_days.isEmpty) {
-      return Center(
-        child: Text(
-          l10n.noData,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textTertiary,
-          ),
-        ),
+      return SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+        child: StateCard(icon: Icons.schedule_outlined, title: l10n.noData),
       );
     }
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: CustomCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,51 +409,42 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             Text(
               l10n.workingHours,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
             ..._days.asMap().entries.map(
-                  (e) => _buildDayRow(
-                    e.value,
-                    isLast: e.key == _days.length - 1,
-                    l10n: l10n,
-                  ),
-                ),
+              (e) => _buildDayRow(
+                e.value,
+                isLast: e.key == _days.length - 1,
+                l10n: l10n,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  /// Docked primary action on its own surface, in the thumb arc.
   Widget _buildSaveButton(AppLocalizations l10n) {
-    final enabled = _hasChanges;
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: enabled ? _onSave : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 14.h),
-          decoration: BoxDecoration(
-            color: enabled
-                ? ColorManager.primary
-                : ColorManager.primary.withValues(alpha: 0.35),
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.save,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
-            ),
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(top: BorderSide(color: c.borderLight)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
+          child: DentaButton(
+            label: l10n.save,
+            expand: true,
+            onTap: _hasChanges ? _onSave : null,
           ),
         ),
       ),
@@ -555,9 +476,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: day.isWorking
-                ? () => setState(
-                      () => _expandedKey = isExpanded ? null : key,
-                    )
+                ? () => setState(() => _expandedKey = isExpanded ? null : key)
                 : null,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -577,7 +496,8 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                     child: Text(
                       _dayLabel(day),
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w600,
                         fontFamily: FontHelper.fontFamily(context),
                         color: day.isWorking ? c.textPrimary : c.textTertiary,
                       ),
@@ -586,7 +506,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                   Text(
                     _daySummary(day, l10n),
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       fontFamily: FontHelper.fontFamily(context),
                       color: day.isWorking ? c.textSecondary : c.textTertiary,
                     ),
@@ -699,10 +619,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     child: Text(
                       '–',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: c.textTertiary,
-                      ),
+                      style: TextStyle(fontSize: 16.sp, color: c.textTertiary),
                     ),
                   ),
                   Expanded(
@@ -747,7 +664,11 @@ class _DaySnapshot {
   final bool isFullTime;
   final List<_ShiftSnapshot> shifts;
   const _DaySnapshot(
-      this.dayOfWeek, this.isWorking, this.isFullTime, this.shifts);
+    this.dayOfWeek,
+    this.isWorking,
+    this.isFullTime,
+    this.shifts,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -767,4 +688,29 @@ class _DaySnapshot {
   @override
   int get hashCode =>
       Object.hash(dayOfWeek, isWorking, isFullTime, Object.hashAll(shifts));
+}
+
+/// Holds the hours card at full height while the schedule loads.
+class _UserHoursSkeleton extends StatelessWidget {
+  const _UserHoursSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return AppShimmer(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+        children: [
+          Container(
+            height: 380.h,
+            decoration: BoxDecoration(
+              color: c.cardBg,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: c.borderLight),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

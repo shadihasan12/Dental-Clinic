@@ -176,6 +176,30 @@ abstract class AppLocalizations {
   /// **'Cases'**
   String get cases;
 
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @statisticsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics could not be loaded'**
+  String get statisticsLoadFailed;
+
+  /// No description provided for @noStatisticsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No statistics yet'**
+  String get noStatisticsYet;
+
+  /// No description provided for @noStatisticsYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'They will appear here once the clinic has recorded some activity.'**
+  String get noStatisticsYetHint;
+
   /// No description provided for @statistics.
   ///
   /// In en, this message translates to:
@@ -524,6 +548,12 @@ abstract class AppLocalizations {
   /// **'Expense type'**
   String get expenseType;
 
+  /// No description provided for @expenseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense details'**
+  String get expenseDetails;
+
   /// No description provided for @sort.
   ///
   /// In en, this message translates to:
@@ -607,6 +637,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version'**
   String get version;
+
+  /// No description provided for @logoutConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'You will be signed out on this device and will need to sign in again.'**
+  String get logoutConsequence;
 
   /// No description provided for @areYouSureLogout.
   ///
@@ -710,11 +746,23 @@ abstract class AppLocalizations {
   /// **'Account Settings'**
   String get accountSettings;
 
+  /// No description provided for @profileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile could not be loaded'**
+  String get profileLoadFailed;
+
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:
   /// **'Edit Profile'**
   String get editProfile;
+
+  /// No description provided for @clinicInfoLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic information could not be loaded'**
+  String get clinicInfoLoadFailed;
 
   /// No description provided for @clinicInformation.
   ///
@@ -728,11 +776,23 @@ abstract class AppLocalizations {
   /// **'Clinic Name'**
   String get clinicName;
 
+  /// No description provided for @workingDaysLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Working days could not be loaded'**
+  String get workingDaysLoadFailed;
+
   /// No description provided for @workingDays.
   ///
   /// In en, this message translates to:
   /// **'Working Days'**
   String get workingDays;
+
+  /// No description provided for @workingHoursLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours could not be loaded'**
+  String get workingHoursLoadFailed;
 
   /// No description provided for @workingHours.
   ///
@@ -842,11 +902,101 @@ abstract class AppLocalizations {
   /// **'Help Center'**
   String get helpCenter;
 
-  /// No description provided for @contactSupport.
+  /// No description provided for @reportIssue.
   ///
   /// In en, this message translates to:
-  /// **'Contact Support'**
-  String get contactSupport;
+  /// **'Report an Issue'**
+  String get reportIssue;
+
+  /// No description provided for @newReport.
+  ///
+  /// In en, this message translates to:
+  /// **'New report'**
+  String get newReport;
+
+  /// No description provided for @issueTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get issueTitleLabel;
+
+  /// No description provided for @issueTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Short summary of the problem'**
+  String get issueTitleHint;
+
+  /// No description provided for @issueDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened, and what you expected'**
+  String get issueDescriptionHint;
+
+  /// No description provided for @issueTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get issueTitleRequired;
+
+  /// No description provided for @issueDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get issueDescriptionRequired;
+
+  /// No description provided for @sendReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get sendReport;
+
+  /// No description provided for @yourReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reports'**
+  String get yourReports;
+
+  /// No description provided for @issueStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get issueStatusPending;
+
+  /// No description provided for @issueStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get issueStatusInProgress;
+
+  /// No description provided for @issueStatusDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get issueStatusDone;
+
+  /// No description provided for @noReportsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reports yet'**
+  String get noReportsYet;
+
+  /// No description provided for @noReportsYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports you send appear here with their status.'**
+  String get noReportsYetHint;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Report sent'**
+  String get reportSent;
+
+  /// No description provided for @couldNotLoadReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your reports'**
+  String get couldNotLoadReports;
 
   /// No description provided for @termsPrivacy.
   ///
@@ -926,6 +1076,18 @@ abstract class AppLocalizations {
   /// **'Sign in to your account to continue'**
   String get signInToContinue;
 
+  /// No description provided for @newButton.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newButton;
+
+  /// No description provided for @patientsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Patients could not be loaded'**
+  String get patientsLoadFailed;
+
   /// No description provided for @allFilter.
   ///
   /// In en, this message translates to:
@@ -955,6 +1117,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Outstanding balance'**
   String get outstandingBalance;
+
+  /// No description provided for @pleaseEnterPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a phone number'**
+  String get pleaseEnterPhone;
+
+  /// No description provided for @pleaseSelectDateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a date of birth'**
+  String get pleaseSelectDateOfBirth;
+
+  /// No description provided for @noKnownAllergiesRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Will be recorded as no known allergies'**
+  String get noKnownAllergiesRecorded;
+
+  /// No description provided for @checkHighlightedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the highlighted fields'**
+  String get checkHighlightedFields;
+
+  /// No description provided for @contactInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInformation;
 
   /// No description provided for @personalInformation.
   ///
@@ -1007,7 +1199,7 @@ abstract class AppLocalizations {
   /// No description provided for @patientSavedSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'Patient Saved Successfully!'**
+  /// **'Patient saved'**
   String get patientSavedSuccessfully;
 
   /// No description provided for @addTreatmentQuestion.
@@ -1436,6 +1628,12 @@ abstract class AppLocalizations {
   /// **'Treated Teeth'**
   String get treatedTeeth;
 
+  /// No description provided for @addReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a receipt'**
+  String get addReceipt;
+
   /// No description provided for @attachments.
   ///
   /// In en, this message translates to:
@@ -1453,6 +1651,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Age'**
   String get age;
+
+  /// No description provided for @noExpensesThisMonthHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the first expense for this month and it will show here with its category and amount.'**
+  String get noExpensesThisMonthHint;
+
+  /// No description provided for @expensesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses could not be loaded'**
+  String get expensesLoadFailed;
+
+  /// No description provided for @expensesUnchangedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was changed. Your expenses are safe.'**
+  String get expensesUnchangedHint;
 
   /// No description provided for @noExpensesThisMonth.
   ///
@@ -1952,6 +2168,48 @@ abstract class AppLocalizations {
   /// **'X-Ray'**
   String get xray;
 
+  /// No description provided for @noAppointmentsScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointments scheduled'**
+  String get noAppointmentsScheduled;
+
+  /// No description provided for @noAppointmentsScheduledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an appointment and it will show here with its time and duration.'**
+  String get noAppointmentsScheduledHint;
+
+  /// No description provided for @appointmentsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments could not be loaded'**
+  String get appointmentsLoadFailed;
+
+  /// No description provided for @noAppointmentsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointments today'**
+  String get noAppointmentsToday;
+
+  /// No description provided for @noAppointmentsTodayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the first appointment and it will show here with its time and duration.'**
+  String get noAppointmentsTodayHint;
+
+  /// No description provided for @scheduleLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s schedule could not be loaded'**
+  String get scheduleLoadFailed;
+
+  /// No description provided for @scheduleUnchangedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was changed. Your appointments are safe.'**
+  String get scheduleUnchangedHint;
+
   /// No description provided for @noAppointments.
   ///
   /// In en, this message translates to:
@@ -2317,6 +2575,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count}d ago'**
   String daysAgo(int count);
+
+  /// No description provided for @unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get unread;
+
+  /// No description provided for @noUnreadNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No unread notifications'**
+  String get noUnreadNotifications;
+
+  /// No description provided for @noUnreadNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything here has been read.'**
+  String get noUnreadNotificationsDesc;
+
+  /// No description provided for @couldNotLoadNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load notifications'**
+  String get couldNotLoadNotifications;
+
+  /// No description provided for @noNotificationsChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was marked as read.'**
+  String get noNotificationsChanged;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @pastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Week'**
+  String get pastWeek;
+
+  /// No description provided for @older.
+  ///
+  /// In en, this message translates to:
+  /// **'Older'**
+  String get older;
 
   /// No description provided for @notificationsSettings.
   ///
@@ -2834,6 +3140,12 @@ abstract class AppLocalizations {
   /// **'Didn\'t receive the code? '**
   String get didntReceiveCode;
 
+  /// No description provided for @resendNeedsPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back and re-enter your password to send a new code.'**
+  String get resendNeedsPassword;
+
   /// No description provided for @resend.
   ///
   /// In en, this message translates to:
@@ -2885,7 +3197,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPasswordSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your email and we\'ll send you a reset link'**
+  /// **'We\'ll email you a 6-digit code to reset your password.'**
   String get forgotPasswordSubtitle;
 
   /// No description provided for @enterRegisteredEmail.
@@ -3335,7 +3647,7 @@ abstract class AppLocalizations {
   /// No description provided for @workingDaysAndHolidays.
   ///
   /// In en, this message translates to:
-  /// **'Working Days & Holidays'**
+  /// **'Clinic Working Days & Holidays'**
   String get workingDaysAndHolidays;
 
   /// No description provided for @myWorkingHours.
@@ -3367,6 +3679,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change Email'**
   String get changeEmail;
+
+  /// No description provided for @currentEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Current email'**
+  String get currentEmail;
 
   /// No description provided for @newEmail.
   ///
@@ -3704,6 +4022,12 @@ abstract class AppLocalizations {
   /// **'Please select a currency'**
   String get pleaseSelectCurrency;
 
+  /// No description provided for @pleaseSelectExpenseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an expense type'**
+  String get pleaseSelectExpenseType;
+
   /// No description provided for @clinicUsers.
   ///
   /// In en, this message translates to:
@@ -3746,6 +4070,12 @@ abstract class AppLocalizations {
   /// **'Roles updated successfully'**
   String get rolesUpdatedSuccess;
 
+  /// No description provided for @removeUserConsequence.
+  ///
+  /// In en, this message translates to:
+  /// **'They lose access to this clinic immediately. Their patient records and appointments are kept.'**
+  String get removeUserConsequence;
+
   /// No description provided for @removeUserConfirmation.
   ///
   /// In en, this message translates to:
@@ -3763,6 +4093,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Secretary'**
   String get roleSecretary;
+
+  /// No description provided for @noUsersYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a dentist or a secretary and they will appear here with their role.'**
+  String get noUsersYetHint;
+
+  /// No description provided for @clinicUsersLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic users could not be loaded'**
+  String get clinicUsersLoadFailed;
 
   /// No description provided for @noUsersYet.
   ///
@@ -3931,6 +4273,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invoices'**
   String get invoicesHistoryTitle;
+
+  /// No description provided for @trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial'**
+  String get trial;
+
+  /// No description provided for @noInvoicesYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices appear here once a plan has been bought or renewed.'**
+  String get noInvoicesYetHint;
 
   /// No description provided for @noInvoicesYet.
   ///
@@ -4724,6 +5078,18 @@ abstract class AppLocalizations {
   /// **'Could not open the link'**
   String get couldNotOpenLink;
 
+  /// No description provided for @notificationSettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings could not be loaded'**
+  String get notificationSettingsLoadFailed;
+
+  /// No description provided for @noNotificationSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Every category on this account is required and cannot be switched off.'**
+  String get noNotificationSettingsHint;
+
   /// No description provided for @noNotificationSettings.
   ///
   /// In en, this message translates to:
@@ -4747,6 +5113,528 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} more notifications'**
   String moreNotifications(int count);
+
+  /// No description provided for @couldNotLoadPatient.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this patient'**
+  String get couldNotLoadPatient;
+
+  /// No description provided for @useCachedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Use cached data'**
+  String get useCachedData;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @outstanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding'**
+  String get outstanding;
+
+  /// No description provided for @remainingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remainingWork;
+
+  /// No description provided for @filesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get filesTitle;
+
+  /// No description provided for @pastCasesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past cases'**
+  String get pastCasesTitle;
+
+  /// No description provided for @lastFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Last finished'**
+  String get lastFinished;
+
+  /// No description provided for @reopenAsActiveCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen as active case'**
+  String get reopenAsActiveCase;
+
+  /// No description provided for @reopenArchivesCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopening archives the current case first.'**
+  String get reopenArchivesCurrent;
+
+  /// No description provided for @readOnlyCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Read only'**
+  String get readOnlyCase;
+
+  /// No description provided for @allergyPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergy'**
+  String get allergyPrefix;
+
+  /// No description provided for @noKnownAllergies.
+  ///
+  /// In en, this message translates to:
+  /// **'No known allergies'**
+  String get noKnownAllergies;
+
+  /// No description provided for @allergiesNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies not confirmed'**
+  String get allergiesNotConfirmed;
+
+  /// No description provided for @medicalHistoryNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical history not confirmed'**
+  String get medicalHistoryNotConfirmed;
+
+  /// No description provided for @reviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewAction;
+
+  /// No description provided for @editCostsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit costs'**
+  String get editCostsAction;
+
+  /// No description provided for @finishCaseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish case'**
+  String get finishCaseAction;
+
+  /// No description provided for @finishThisCaseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish this case?'**
+  String get finishThisCaseTitle;
+
+  /// No description provided for @finishCaseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It moves to Past cases and stops accepting treatments.'**
+  String get finishCaseBody;
+
+  /// No description provided for @finishAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish anyway'**
+  String get finishAnyway;
+
+  /// No description provided for @stillOutstandingWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'There is still an outstanding balance and unfinished treatments.'**
+  String get stillOutstandingWarning;
+
+  /// No description provided for @leftOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'left of'**
+  String get leftOfTotal;
+
+  /// No description provided for @paymentsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'payments'**
+  String get paymentsCountLabel;
+
+  /// No description provided for @addVisitNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a visit note...'**
+  String get addVisitNoteHint;
+
+  /// No description provided for @noTreatmentsPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'No treatments planned'**
+  String get noTreatmentsPlanned;
+
+  /// No description provided for @openChartHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the chart and tap the teeth you are working on.'**
+  String get openChartHint;
+
+  /// No description provided for @generalTreatmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get generalTreatmentLabel;
+
+  /// No description provided for @addToThisCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to this case'**
+  String get addToThisCase;
+
+  /// No description provided for @noFilesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No files yet'**
+  String get noFilesYet;
+
+  /// No description provided for @noFilesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'X-rays, photos and lab reports for this case live here.'**
+  String get noFilesHint;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed'**
+  String get uploadFailed;
+
+  /// No description provided for @uploadFileAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a file'**
+  String get uploadFileAction;
+
+  /// No description provided for @uploadFileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Images, PDF or documents'**
+  String get uploadFileSub;
+
+  /// No description provided for @takePhotoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takePhotoAction;
+
+  /// No description provided for @takePhotoSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Intra-oral camera or device camera'**
+  String get takePhotoSub;
+
+  /// No description provided for @addFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to this case'**
+  String get addFileTitle;
+
+  /// No description provided for @removeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeAction;
+
+  /// No description provided for @selectToothFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a tooth above, or pick a general treatment.'**
+  String get selectToothFirst;
+
+  /// No description provided for @toothSpecificTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Tooth-specific'**
+  String get toothSpecificTab;
+
+  /// No description provided for @generalTab.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get generalTab;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearSelection;
+
+  /// No description provided for @selectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'selected'**
+  String get selectedCount;
+
+  /// No description provided for @patientInformationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient information'**
+  String get patientInformationTitle;
+
+  /// No description provided for @currentCaseAnchor.
+  ///
+  /// In en, this message translates to:
+  /// **'Case'**
+  String get currentCaseAnchor;
+
+  /// No description provided for @insuranceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get insuranceLabel;
+
+  /// No description provided for @emergencyContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contact'**
+  String get emergencyContactLabel;
+
+  /// No description provided for @notRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get notRecorded;
+
+  /// No description provided for @yrs.
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get yrs;
+
+  /// No description provided for @chooseFromGalleryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get chooseFromGalleryAction;
+
+  /// No description provided for @chooseFromGallerySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Images, multiple allowed'**
+  String get chooseFromGallerySub;
+
+  /// No description provided for @attachDocumentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach a document'**
+  String get attachDocumentAction;
+
+  /// No description provided for @attachDocumentSub.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, lab report, referral'**
+  String get attachDocumentSub;
+
+  /// No description provided for @offlineQueuedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If the connection drops, files are queued on the device and upload when the clinic network returns.'**
+  String get offlineQueuedNote;
+
+  /// No description provided for @removeFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this file?'**
+  String get removeFileTitle;
+
+  /// No description provided for @removeFileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be detached from this case. The file itself stays in your media library.'**
+  String get removeFileBody;
+
+  /// No description provided for @fileRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'File removed'**
+  String get fileRemoved;
+
+  /// No description provided for @paymentsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get paymentsAction;
+
+  /// No description provided for @legal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get legal;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to request deletion of your account and data'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @activeClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Active clinic'**
+  String get activeClinic;
+
+  /// No description provided for @noClinicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No clinics yet'**
+  String get noClinicsTitle;
+
+  /// No description provided for @noClinicsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics you create or are invited to appear here.'**
+  String get noClinicsMessage;
+
+  /// No description provided for @couldNotLoadClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your clinics'**
+  String get couldNotLoadClinics;
+
+  /// No description provided for @activeClinicUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your active clinic was not changed.'**
+  String get activeClinicUnchanged;
+
+  /// No description provided for @noneSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'None selected'**
+  String get noneSelected;
+
+  /// No description provided for @couldNotLoadInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load invitations'**
+  String get couldNotLoadInvitations;
+
+  /// No description provided for @invitationsUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'No invitation was accepted or declined.'**
+  String get invitationsUnchanged;
+
+  /// No description provided for @shareYourStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your stats'**
+  String get shareYourStats;
+
+  /// No description provided for @swipeToChooseDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to choose a design'**
+  String get swipeToChooseDesign;
+
+  /// No description provided for @preparingShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing…'**
+  String get preparingShare;
+
+  /// No description provided for @shareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Share failed'**
+  String get shareFailed;
+
+  /// No description provided for @myClinicStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'My clinic statistics'**
+  String get myClinicStatistics;
+
+  /// No description provided for @shareCardEnamelBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Light, pearlescent'**
+  String get shareCardEnamelBlurb;
+
+  /// No description provided for @shareCardEditorialBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark, off-axis'**
+  String get shareCardEditorialBlurb;
+
+  /// No description provided for @shareCardCertificateBlurb.
+  ///
+  /// In en, this message translates to:
+  /// **'Navy and gold foil'**
+  String get shareCardCertificateBlurb;
+
+  /// No description provided for @notificationCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get notificationCategories;
+
+  /// No description provided for @categoriesOnCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{on} of {total} on'**
+  String categoriesOnCount(int on, int total);
+
+  /// No description provided for @renewsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews'**
+  String get renewsLabel;
+
+  /// No description provided for @endsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get endsLabel;
+
+  /// No description provided for @graceEndsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Grace ends'**
+  String get graceEndsLabel;
+
+  /// No description provided for @endedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get endedLabel;
+
+  /// No description provided for @noPlanActiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No plan is active on this clinic.'**
+  String get noPlanActiveBody;
+
+  /// No description provided for @subscriptionGraceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is overdue. The plan keeps working until the grace period ends.'**
+  String get subscriptionGraceBody;
+
+  /// No description provided for @subscriptionExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This plan has ended. Renew to keep using it.'**
+  String get subscriptionExpiredBody;
+
+  /// No description provided for @renewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew'**
+  String get renewAction;
 }
 
 class _AppLocalizationsDelegate

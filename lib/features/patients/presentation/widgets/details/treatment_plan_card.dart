@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_m
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 class TreatmentPlanCard extends StatefulWidget {
   final PlannedTreatment treatment;
@@ -39,7 +40,8 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
   bool _expanded = false;
   late final TextEditingController _noteController;
 
-  bool get _isExpandable => widget.treatment.visitNotes.isNotEmpty || !widget.readOnly;
+  bool get _isExpandable =>
+      widget.treatment.visitNotes.isNotEmpty || !widget.readOnly;
 
   Color get _statusColor {
     switch (widget.treatment.status) {
@@ -104,8 +106,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                   // Status indicator or checkbox
                   if (widget.showCheckbox)
                     GestureDetector(
-                      onTap: () =>
-                          widget.onStatusChanged?.call(!isCompleted),
+                      onTap: () => widget.onStatusChanged?.call(!isCompleted),
                       child: Container(
                         width: 24.w,
                         height: 24.w,
@@ -122,8 +123,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                           ),
                         ),
                         child: isCompleted
-                            ? Icon(Icons.check,
-                                size: 14.w, color: Colors.white)
+                            ? Icon(Icons.check, size: 14.w, color: Colors.white)
                             : null,
                       ),
                     )
@@ -306,32 +306,9 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
                       fontFamily: FontHelper.fontFamily(context),
                       color: ColorManager.of(context).textPrimary,
                     ),
-                    decoration: InputDecoration(
+                    decoration: formOutlinedInput(
+                      context,
                       hintText: AppLocalizations.of(context)!.addANote,
-                      hintStyle: TextStyle(
-                        fontSize: 13.sp,
-                        color: ColorManager.of(context).textTertiary,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 10.h),
-                      filled: true,
-                      fillColor: ColorManager.of(context).cardBgSecondary,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide:
-                            BorderSide(color: ColorManager.of(context).borderLight),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide:
-                            BorderSide(color: ColorManager.of(context).borderLight),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                        borderSide:
-                            BorderSide(color: ColorManager.primary),
-                      ),
-                      isDense: true,
                     ),
                   ),
                 ),
@@ -375,8 +352,7 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
     );
   }
 
-  Widget _buildTimelineItem(
-      BuildContext context, VisitNote note, bool isLast) {
+  Widget _buildTimelineItem(BuildContext context, VisitNote note, bool isLast) {
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,8 +1,7 @@
-import 'package:dental_clinic_app/custom_widgets/glass_tab_bar.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/pages/appointments_page.dart';
@@ -106,31 +105,27 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // Single visual weight across all four tabs: SF Symbol outlines that
-    // share roughly the same stroke and bounding box. UITabBar's tint
-    // colour signals the active tab; no fill swap needed.
-    final tabs = <GlassTabItem>[
-      GlassTabItem(title: l10n.home, systemIcon: 'house'),
-      GlassTabItem(title: l10n.patients, systemIcon: 'person.2'),
-      GlassTabItem(title: l10n.appointments, systemIcon: 'calendar'),
-      GlassTabItem(title: l10n.expenses, systemIcon: 'dollarsign.circle'),
+    // One stroke weight and one bounding box across all four, drawn from the
+    // redesign's own icon set rather than a per-platform symbol lookup.
+    final tabs = <DentaNavItem>[
+      DentaNavItem(label: l10n.home, iconPath: DentaNavIcons.home),
+      DentaNavItem(label: l10n.patients, iconPath: DentaNavIcons.patients),
+      DentaNavItem(
+        label: l10n.appointments,
+        iconPath: DentaNavIcons.calendar,
+      ),
+      DentaNavItem(label: l10n.expenses, iconPath: DentaNavIcons.payments),
     ];
 
-    // Just the bar's own footprint reserved at the bottom — no extra
-    // margin. Static content will sit cleanly above the bar; pages that
-    // end with a scrollable list add their own bottom padding so the last
-    // item can be scrolled clear of the bar.
-    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
-    final reservedBarHeight =
-        (isIOS ? 49.0 : 64.0) + MediaQuery.of(context).padding.bottom;
+    // The pill floats, so the pages are pushed up by its full footprint. It
+    // still renders translucent over whatever scrolls into the gap beneath
+    // it, but nothing a page draws can end up hidden underneath it.
+    final reservedBarHeight = DentaNavBar.reservedHeight(context);
     const reservedTop = 8.0;
 
     return Scaffold(
       body: Stack(
         children: [
-          // Pages fill everything above the bar — Padding pushes the
-          // IndexedStack up by the bar's height so no widget at the bottom
-          // of any page sits underneath the bar.
           Positioned.fill(
             child: Padding(
               padding: EdgeInsets.only(
@@ -140,16 +135,10 @@ class _RootPageState extends State<RootPage> {
               child: IndexedStack(index: _currentIndex, children: _buildPages()),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: GlassTabBar(
-              items: tabs,
-              selectedIndex: _currentIndex,
-              onTap: _onTabSelected,
-              tintColor: ColorManager.primary,
-            ),
+          DentaNavBar(
+            items: tabs,
+            selectedIndex: _currentIndex,
+            onTap: _onTabSelected,
           ),
         ],
       ),

@@ -72,18 +72,27 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64.w,
-                              color: ColorManager.error,
+                            Container(
+                              width: 44.w,
+                              height: 44.w,
+                              decoration: BoxDecoration(
+                                color: ColorManager.error
+                                    .withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              child: Icon(
+                                Icons.error_outline,
+                                size: 22.w,
+                                color: ColorManager.error,
+                              ),
                             ),
-                            SizedBox(height: 16.h),
+                            SizedBox(height: 14.h),
                             Text(
                               l10n.noPlansAvailable,
                               style: TextStyle(
                                 color: ColorManager.of(context).textPrimary,
-                                fontSize: FontSizesManager.s18,
-                                fontWeight: FontWeightManager.semiBold,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: fontFamily,
                               ),
                               textAlign: TextAlign.center,
@@ -114,7 +123,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   _buildTopBar(l10n, fontFamily),
                   SizedBox(height: 8.h),
                   _buildBillingToggle(l10n, fontFamily),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 16.h),
                   ...state.plans.map((plan) => _buildPlanCard(plan, l10n, fontFamily)),
                   SizedBox(height: 100.h),
                 ],
@@ -173,113 +182,103 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     );
   }
 
+  /// Two segments in one track, the same segmented control the gender picker
+  /// and the treatments filter use: a shared track says the choice is
+  /// exclusive, and the active half is a primary fill rather than a shadow.
   Widget _buildBillingToggle(AppLocalizations l10n, String fontFamily) {
+    final c = ColorManager.of(context);
     return Container(
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
-        color: ColorManager.grey.withValues(alpha: 0.1),
+        color: c.cardBgSecondary,
         borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: c.borderLight),
       ),
       child: Row(
         children: [
           Expanded(
-            child: GestureDetector(
+            child: _billingSegment(
+              label: l10n.monthly,
+              active: !_isYearly,
+              fontFamily: fontFamily,
               onTap: () => setState(() => _isYearly = false),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: !_isYearly ? ColorManager.of(context).cardBg : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: !_isYearly
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Center(
-                  child: Text(
-                    l10n.monthly,
-                    style: TextStyle(
-                      color: !_isYearly
-                          ? ColorManager.of(context).textPrimary
-                          : ColorManager.of(context).textSecondary,
-                      fontWeight: !_isYearly
-                          ? FontWeightManager.semiBold
-                          : FontWeightManager.regular,
-                      fontFamily: fontFamily,
-                      fontSize: FontSizesManager.s14,
-                    ),
-                  ),
-                ),
-              ),
             ),
           ),
+          SizedBox(width: 2.w),
           Expanded(
-            child: GestureDetector(
+            child: _billingSegment(
+              label: l10n.yearly,
+              active: _isYearly,
+              fontFamily: fontFamily,
               onTap: () => setState(() => _isYearly = true),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: _isYearly ? ColorManager.of(context).cardBg : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10.r),
-                  boxShadow: _isYearly
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        l10n.yearly,
-                        style: TextStyle(
-                          color: _isYearly
-                              ? ColorManager.of(context).textPrimary
-                              : ColorManager.of(context).textSecondary,
-                          fontWeight: _isYearly
-                              ? FontWeightManager.semiBold
-                              : FontWeightManager.regular,
-                          fontFamily: fontFamily,
-                          fontSize: FontSizesManager.s14,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: ColorManager.success,
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          l10n.savePercent,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeightManager.semiBold,
-                            fontSize: FontSizesManager.s10,
-                            fontFamily: fontFamily,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              badge: l10n.savePercent,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _billingSegment({
+    required String label,
+    required bool active,
+    required String fontFamily,
+    required VoidCallback onTap,
+    String? badge,
+  }) {
+    final c = ColorManager.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: EdgeInsets.symmetric(vertical: 9.h),
+        decoration: BoxDecoration(
+          color: active ? ColorManager.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: active ? ColorManager.white : c.textSecondary,
+                  fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                  fontFamily: fontFamily,
+                  fontSize: 12.sp,
+                ),
+              ),
+            ),
+            if (badge != null) ...[
+              SizedBox(width: 5.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                decoration: BoxDecoration(
+                  // Green on a primary fill would fight it, so the badge
+                  // borrows the segment's own foreground once selected.
+                  color: active
+                      ? ColorManager.white.withValues(alpha: 0.22)
+                      : ColorManager.success.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(5.r),
+                ),
+                child: Text(
+                  badge,
+                  style: TextStyle(
+                    color: active ? ColorManager.white : ColorManager.success,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 10.sp,
+                    height: 1.4,
+                    fontFamily: fontFamily,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -321,7 +320,14 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     }
   }
 
-  Widget _buildPlanCard(PlanEntity plan, AppLocalizations l10n, String fontFamily) {
+  Widget _buildPlanCard(
+    PlanEntity plan,
+    AppLocalizations l10n,
+    String fontFamily,
+  ) {
+    final c = ColorManager.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? ColorManager.primary : ColorManager.primaryDarker;
     final isSelected = _selectedPlanId == plan.id;
     final isPopular = plan.name.toLowerCase() == 'growing';
 
@@ -335,57 +341,44 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
 
     return GestureDetector(
       onTap: () => setState(() => _selectedPlanId = plan.id),
+      behavior: HitTestBehavior.opaque,
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
+        margin: EdgeInsets.only(bottom: 8.h),
+        clipBehavior: Clip.antiAlias,
+        // Selection is a 1.5px border in the primary hue - elevation in this
+        // design language is a border, never a shadow.
         decoration: BoxDecoration(
-          color: ColorManager.of(context).cardBg,
+          color: c.cardBg,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected ? ColorManager.primary : ColorManager.of(context).border,
-            width: isSelected ? 2 : 1,
+            color: isSelected ? ColorManager.primary : c.borderLight,
+            width: isSelected ? 1.5 : 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected
-                  ? ColorManager.primary.withValues(alpha: 0.15)
-                  : Colors.black.withValues(alpha: 0.05),
-              blurRadius: isSelected ? 12 : 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (isPopular)
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [ColorManager.primary, ColorManager.primaryDark],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(14.r),
-                    topRight: Radius.circular(14.r),
-                  ),
-                ),
+                padding: EdgeInsets.symmetric(vertical: 6.h),
+                color: ColorManager.primary,
                 child: Center(
                   child: Text(
-                    l10n.mostPopular,
+                    l10n.mostPopular.toUpperCase(),
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeightManager.bold,
-                      letterSpacing: 1,
+                      color: ColorManager.white,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.4,
                       fontFamily: fontFamily,
-                      fontSize: FontSizesManager.s12,
+                      fontSize: 9.5.sp,
                     ),
                   ),
                 ),
               ),
 
             Padding(
-              padding: EdgeInsets.all(20.w),
+              padding: EdgeInsets.all(14.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -398,37 +391,38 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                             Text(
                               plan.name,
                               style: TextStyle(
-                                color: ColorManager.of(context).textPrimary,
-                                fontWeight: FontWeightManager.bold,
+                                color: c.textPrimary,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: fontFamily,
-                                fontSize: FontSizesManager.s18,
+                                fontSize: 12.5.sp,
                               ),
                             ),
-                            SizedBox(height: 4.h),
+                            SizedBox(height: 3.h),
                             Text(
                               plan.description,
-                              style: TextStyle(
-                                color: ColorManager.of(context).textSecondary,
-                                fontFamily: fontFamily,
-                                fontSize: FontSizesManager.s13,
-                              ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: c.textSecondary,
+                                fontFamily: fontFamily,
+                                fontSize: 11.5.sp,
+                                height: 1.4,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       SizedBox(width: 12.w),
                       Container(
-                        width: 24.w,
-                        height: 24.w,
+                        width: 20.w,
+                        height: 20.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: isSelected
                                 ? ColorManager.primary
-                                : ColorManager.of(context).border,
-                            width: 2,
+                                : c.border,
+                            width: 1.5,
                           ),
                           color: isSelected
                               ? ColorManager.primary
@@ -436,16 +430,16 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         ),
                         child: isSelected
                             ? Icon(
-                                Icons.check,
-                                size: 14.w,
-                                color: Colors.white,
+                                Icons.check_rounded,
+                                size: 13.w,
+                                color: ColorManager.white,
                               )
                             : null,
                       ),
                     ],
                   ),
 
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
 
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -453,87 +447,80 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                       Text(
                         '\$$price',
                         style: TextStyle(
-                          color: ColorManager.primary,
-                          fontWeight: FontWeightManager.extraBold,
+                          color: accent,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
+                          height: 1.1,
                           fontFamily: fontFamily,
-                          fontSize: FontSizesManager.s22,
+                          fontSize: 20.sp,
                         ),
                       ),
                       SizedBox(width: 4.w),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 4.h),
-                        child: Text(
-                          period,
-                          style: TextStyle(
-                            color: ColorManager.of(context).textSecondary,
-                            fontFamily: fontFamily,
-                            fontSize: FontSizesManager.s14,
-                          ),
+                      Text(
+                        period,
+                        style: TextStyle(
+                          color: c.textSecondary,
+                          fontFamily: fontFamily,
+                          fontSize: 11.5.sp,
                         ),
                       ),
                     ],
                   ),
 
                   if (plan.supportsTrial) ...[
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 10.h),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
+                        horizontal: 8.w,
+                        vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: ColorManager.primary10,
-                        borderRadius: BorderRadius.circular(8.r),
+                        color: ColorManager.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Text(
                         l10n.dayFreeTrial(trialDays),
                         style: TextStyle(
-                          color: ColorManager.primary,
-                          fontWeight: FontWeightManager.regular,
+                          color: accent,
+                          fontWeight: FontWeight.w500,
                           fontFamily: fontFamily,
-                          fontSize: FontSizesManager.s10,
+                          fontSize: 10.sp,
+                          height: 1.4,
                         ),
                       ),
                     ),
                   ],
 
-                  SizedBox(height: 16.h),
-                  Divider(color: ColorManager.of(context).border, height: 1),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
+                  Divider(color: c.borderLight, height: 1),
+                  SizedBox(height: 12.h),
 
-                  ...features.map(
-                    (feature) => Padding(
-                      padding: EdgeInsets.only(bottom: 10.h),
+                  for (final feature in features)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 20.w,
-                            height: 20.w,
-                            decoration: BoxDecoration(
-                              color: ColorManager.success.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.check,
-                              size: 12.w,
-                              color: ColorManager.success,
-                            ),
+                          Icon(
+                            Icons.check_rounded,
+                            size: 14.w,
+                            color: ColorManager.success,
                           ),
-                          SizedBox(width: 10.w),
+                          SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
                               feature,
                               style: TextStyle(
-                                color: ColorManager.of(context).textPrimary,
+                                color: c.textSecondary,
                                 fontFamily: fontFamily,
-                                fontSize: FontSizesManager.s12,
+                                fontSize: 11.5.sp,
+                                height: 1.4,
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -548,15 +535,12 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.all(16.w),
+          // Elevation in this design language is a border, not a shadow.
           decoration: BoxDecoration(
-            color: ColorManager.of(context).cardBg,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -4),
-              ),
-            ],
+            color: ColorManager.of(context).surfaceBg,
+            border: Border(
+              top: BorderSide(color: ColorManager.of(context).borderLight),
+            ),
           ),
           child: SafeArea(
             child: PrimaryButton(

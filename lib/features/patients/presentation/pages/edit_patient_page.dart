@@ -29,8 +29,13 @@ class _EditPatientPageState extends State<EditPatientPage> {
   late final TextEditingController _phoneController;
   late final TextEditingController _medicalHistoryController;
   late final TextEditingController _allergiesController;
-  String? _selectedGender;
+  final _scrollController = ScrollController();
+  late String _gender;
   DateTime? _dateOfBirth;
+  PatientFormErrors _errors = PatientFormErrors.none;
+
+  /// Errors stay hidden until the first save attempt, then track edits.
+  bool _submitted = false;
 
   @override
   void initState() {
@@ -46,10 +51,12 @@ class _EditPatientPageState extends State<EditPatientPage> {
     _allergiesController =
         TextEditingController(text: widget.patient.allergies ?? '');
     _dateOfBirth = widget.patient.dateOfBirth;
+    _gender = PatientGenders.normalise(widget.patient.gender);
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
@@ -58,99 +65,70 @@ class _EditPatientPageState extends State<EditPatientPage> {
     super.dispose();
   }
 
-  String _localizedGenderFromApi() {
-    final l10n = AppLocalizations.of(context)!;
-    switch (widget.patient.gender.toUpperCase()) {
-      case 'MALE':
-        return l10n.male;
-      case 'FEMALE':
-        return l10n.female;
-      default:
-        return l10n.other;
-    }
-  }
-
-  String _mapGenderToApi(String? localizedGender) {
-    final l10n = AppLocalizations.of(context)!;
-    if (localizedGender == l10n.male) return 'MALE';
-    if (localizedGender == l10n.female) return 'FEMALE';
-    return 'OTHER';
-  }
-
-  Future<void> _selectDate() async {
-    FocusScope.of(context).unfocus();
-    final l10n = AppLocalizations.of(context)!;
-    DateTime tempDate = _dateOfBirth ?? DateTime(1990);
-
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: ColorManager.of(context).cardBg,
-      useSafeArea: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (context) => SizedBox(
-        height: 300.h,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: ColorManager.of(context).textTertiary,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _dateOfBirth = tempDate);
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      l10n.close,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: ColorManager.of(context).divider),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _dateOfBirth ?? DateTime(1990),
-                minimumDate: DateTime(1900),
-                maximumDate: DateTime.now(),
-                onDateTimeChanged: (date) => tempDate = date,
-              ),
-            ),
-          ],
-        ),
-      ),
+  PatientFormErrors _validate() {
+    return PatientFormErrors.validate(
+      AppLocalizations.of(context)!,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phone: _phoneController.text,
+      dateOfBirth: _dateOfBirth,
     );
   }
 
+  void _revalidate() {
+    if (!_submitted) return;
+    final next = _validate();
+    if (next.firstName != _errors.firstName ||
+        next.lastName != _errors.lastName ||
+        next.phone != _errors.phone ||
+        next.dateOfBirth != _errors.dateOfBirth) {
+      setState(() => _errors = next);
+    }
+  }
+
+  Future<void> _selectDate() async {
+    final picked = await DatePickerSheet.show(
+      context,
+      title: AppLocalizations.of(context)!.dateOfBirth,
+      initial: _dateOfBirth,
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _dateOfBirth = picked);
+    _revalidate();
+  }
+
   Future<void> _save() async {
+    FocusScope.of(context).unfocus();
     final l10n = AppLocalizations.of(context)!;
+    final errors = _validate();
+
+    setState(() {
+      _submitted = true;
+      _errors = errors;
+    });
+
+    if (errors.hasAny) {
+      // Every required field is in the first card, so the top of the
+      // scroll puts all of them in view at once.
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+      AppSnackbar.showError(
+        context,
+        title: l10n.error,
+        message: l10n.checkHighlightedFields,
+      );
+      return;
+    }
+
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     final phone = _phoneController.text.trim();
-    if (firstName.isEmpty || lastName.isEmpty || phone.isEmpty) return;
-
-    final dob = _dateOfBirth ?? widget.patient.dateOfBirth;
+    final dob = _dateOfBirth!;
     final now = DateTime.now();
     final age = now.year -
         dob.year -
@@ -162,7 +140,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
     final updated = widget.patient.copyWith(
       name: '$firstName $lastName',
       age: age,
-      gender: _mapGenderToApi(_selectedGender),
+      gender: _gender,
       phone: phone,
       dateOfBirth: dob,
       medicalHistory: _medicalHistoryController.text.trim().isEmpty
@@ -199,56 +177,68 @@ class _EditPatientPageState extends State<EditPatientPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    _selectedGender ??= _localizedGenderFromApi();
+    final c = ColorManager.of(context);
+
     return Scaffold(
-      backgroundColor: ColorManager.of(context).cardBg,
-      body: Column(
-        children: [
-          PageHeader(title: l10n.editPatient, onBack: () => context.pop()),
-          Expanded(
-            child: SingleChildScrollView(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-              child: PatientInfoForm(
-                firstNameController: _firstNameController,
-                lastNameController: _lastNameController,
-                phoneController: _phoneController,
-                medicalHistoryController: _medicalHistoryController,
-                allergiesController: _allergiesController,
-                selectedGender: _selectedGender,
-                dateOfBirth: _dateOfBirth,
-                onGenderChanged: (v) => setState(() => _selectedGender = v),
-                onDateOfBirthTap: _selectDate,
+      backgroundColor: c.scaffoldBg,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Container(
+              color: c.surfaceBg,
+              padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => context.pop(),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 18.w,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      l10n.editPatient,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: c.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
-        child: SafeArea(
-          top: false,
-          child: ElevatedButton(
-            onPressed: _save,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
-              foregroundColor: ColorManager.white,
-              elevation: 0,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+                child: PatientInfoForm(
+                  firstNameController: _firstNameController,
+                  lastNameController: _lastNameController,
+                  phoneController: _phoneController,
+                  medicalHistoryController: _medicalHistoryController,
+                  allergiesController: _allergiesController,
+                  gender: _gender,
+                  dateOfBirth: _dateOfBirth,
+                  errors: _errors,
+                  onGenderChanged: (v) => setState(() => _gender = v),
+                  onDateOfBirthTap: _selectDate,
+                  onFieldChanged: _revalidate,
+                ),
               ),
             ),
-            child: Text(
-              l10n.save,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          ],
         ),
+      ),
+      bottomNavigationBar: FormActionBar(
+        label: l10n.save,
+        onPressed: _save,
       ),
     );
   }

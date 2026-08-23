@@ -2,13 +2,14 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
-import 'package:dental_clinic_app/features/clinic/presentation/widgets/action_button.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum InvitationCardMode { received, sent }
 
+/// One invitation. Same list-card shape as a clinic row: 16px card, hairline
+/// border, and a 3px leading border carrying the status hue.
 class InvitationCard extends StatelessWidget {
   final InvitationEntity invitation;
   final InvitationCardMode mode;
@@ -33,9 +34,7 @@ class InvitationCard extends StatelessWidget {
     if (mode == InvitationCardMode.sent) {
       final name = invitation.inviteeName;
       if (name != null && name.isNotEmpty) return name;
-      return invitation.inviteeEmail.isNotEmpty
-          ? invitation.inviteeEmail
-          : '—';
+      return invitation.inviteeEmail.isNotEmpty ? invitation.inviteeEmail : '—';
     }
     return invitation.clinicName.isNotEmpty ? invitation.clinicName : '—';
   }
@@ -59,140 +58,152 @@ class InvitationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
     final statusColor = _statusColor(invitation.status);
+    final secondary = _secondaryLabel();
+    final message = invitation.message;
+    final invitedBy = invitation.invitedByName;
+    final specialty = invitation.inviteeSpecialty;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(
         color: c.cardBg,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(16.r),
+        // Uniform border only: a BoxDecoration with differing sides and a
+        // borderRadius throws while painting. The status accent is drawn as a
+        // positioned stripe instead.
         border: Border.all(color: c.borderLight),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _Avatar(
-                invitation: invitation,
-                mode: mode,
-                fallbackColor: statusColor,
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
+          // Full-height status stripe on the leading edge; RTL moves it to the
+          // trailing edge with the rest of the mirror.
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: 3.w,
+            child: ColoredBox(color: statusColor),
+          ),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(14.w, 12.h, 12.w, 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _primaryLabel(),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w700,
-                        color: c.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    _Avatar(
+                      invitation: invitation,
+                      mode: mode,
+                      fallbackColor: statusColor,
                     ),
-                    if (_secondaryLabel() != null) ...[
-                      SizedBox(height: 2.h),
-                      Text(
-                        _secondaryLabel()!,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          color: c.textTertiary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                    SizedBox(height: 6.h),
-                    Wrap(
-                      spacing: 6.w,
-                      runSpacing: 4.h,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        for (final r in _displayRoles()) _RolePill(role: r),
-                        if (invitation.inviteeSpecialty != null &&
-                            invitation.inviteeSpecialty!.isNotEmpty)
-                          _SpecialtyChip(
-                              label: invitation.inviteeSpecialty!),
-                        if (mode == InvitationCardMode.received &&
-                            invitation.invitedByName != null &&
-                            invitation.invitedByName!.isNotEmpty)
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            l10n.invitedBy(invitation.invitedByName!),
+                            _primaryLabel(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              color: c.textTertiary,
+                              fontSize: 12.5.sp,
+                              fontFamily: family,
+                              fontWeight: FontWeight.w600,
+                              color: c.textPrimary,
                             ),
                           ),
-                      ],
+                          if (secondary != null && secondary.isNotEmpty) ...[
+                            SizedBox(height: 3.h),
+                            Text(
+                              secondary,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontFamily: family,
+                                color: c.textTertiary,
+                              ),
+                            ),
+                          ],
+                          SizedBox(height: 7.h),
+                          Wrap(
+                            spacing: 5.w,
+                            runSpacing: 4.h,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              for (final r in _displayRoles())
+                                _RolePill(role: r),
+                              if (specialty != null && specialty.isNotEmpty)
+                                _NeutralPill(label: specialty),
+                              if (mode == InvitationCardMode.received &&
+                                  invitedBy != null &&
+                                  invitedBy.isNotEmpty)
+                                Text(
+                                  l10n.invitedBy(invitedBy),
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontFamily: family,
+                                    color: c.textTertiary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                    SizedBox(width: 8.w),
+                    _StatusBadge(status: invitation.status, color: statusColor),
                   ],
                 ),
-              ),
-              SizedBox(width: 8.w),
-              _StatusBadge(status: invitation.status, color: statusColor),
-            ],
-          ),
-
-          if (invitation.message != null && invitation.message!.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: c.cardBgSecondary,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Text(
-                invitation.message!,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontStyle: FontStyle.italic,
-                  color: c.textSecondary,
-                ),
-              ),
-            ),
-          ],
-
-          if (_isPendingReceived) ...[
-            SizedBox(height: 14.h),
-            Row(
-              children: [
-                Expanded(
-                  child: ActionButton(
-                    text: l10n.decline,
-                    onPressed: isUpdating ? null : onReject,
-                    fillColor: c.cardBg,
-                    filled: false,
+                if (message != null && message.isNotEmpty) ...[
+                  SizedBox(height: 9.h),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: c.cardBgSecondary,
+                      borderRadius: BorderRadius.circular(13.r),
+                    ),
+                    child: Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 11.5.sp,
+                        height: 1.5,
+                        fontFamily: family,
+                        color: c.textSecondary,
+                      ),
+                    ),
                   ),
-                ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: ActionButton(
-                    text: l10n.accept,
-                    onPressed: isUpdating ? null : onAccept,
-                    fillColor: ColorManager.primary,
-                    textColor: ColorManager.white,
-                    filled: true,
+                ],
+                if (_isPendingReceived) ...[
+                  SizedBox(height: 10.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _CardButton(
+                          label: l10n.decline,
+                          onTap: isUpdating ? null : onReject,
+                          filled: false,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: _CardButton(
+                          label: l10n.accept,
+                          onTap: isUpdating ? null : onAccept,
+                          filled: true,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ],
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -213,42 +224,64 @@ class InvitationCard extends StatelessWidget {
   }
 }
 
+/// Filled brand button for the action that moves the invitation forward;
+/// white with a 1.5px brand border for the one that turns it down.
+class _CardButton extends StatelessWidget {
+  const _CardButton({
+    required this.label,
+    required this.onTap,
+    required this.filled,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(12.r);
+    final disabled = onTap == null;
+
+    return Opacity(
+      opacity: disabled ? 0.5 : 1,
+      child: Material(
+        color: filled ? ColorManager.primary : c.cardBg,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 11.h),
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              border: filled
+                  ? null
+                  : Border.all(color: ColorManager.primary, width: 1.5),
+            ),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w600,
+                color: filled ? ColorManager.white : ColorManager.primaryDarker,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _RolePill extends StatelessWidget {
   final ClinicRole role;
   const _RolePill({required this.role});
 
   @override
-  Widget build(BuildContext context) {
-    final color = _color();
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6.r),
-      ),
-      child: Text(
-        _label(context),
-        style: TextStyle(
-          fontSize: 11.sp,
-          fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Color _color() {
-    switch (role) {
-      case ClinicRole.admin:
-        return ColorManager.primary;
-      case ClinicRole.dentist:
-        return ColorManager.info;
-      case ClinicRole.secretary:
-      case ClinicRole.receptionist:
-        return ColorManager.secondary;
-    }
-  }
+  Widget build(BuildContext context) => _NeutralPill(label: _label(context));
 
   String _label(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -265,6 +298,37 @@ class _RolePill extends StatelessWidget {
   }
 }
 
+/// Roles and specialties describe the invitation; they are not its status, so
+/// they stay neutral and let the 3px border carry the only colour that means
+/// something.
+class _NeutralPill extends StatelessWidget {
+  const _NeutralPill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: c.cardBgSecondary,
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10.sp,
+          fontFamily: FontHelper.fontFamily(context),
+          fontWeight: FontWeight.w500,
+          color: c.textSecondary,
+        ),
+      ),
+    );
+  }
+}
+
 class _StatusBadge extends StatelessWidget {
   final InvitationStatus status;
   final Color color;
@@ -274,17 +338,17 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(6.r),
       ),
       child: Text(
         _label(l10n),
         style: TextStyle(
           fontSize: 10.sp,
           fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
           color: color,
         ),
       ),
@@ -320,87 +384,65 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sent: invitee's photo. Received: no good photo source from the API
-    // yet, fall back to a status-coloured icon.
+    // Sent: invitee's photo. Received: the clinic logo when the API has one,
+    // otherwise a status-coloured icon.
     final url = mode == InvitationCardMode.sent
         ? invitation.inviteeImageUrl
         : invitation.clinicLogoUrl;
     if (url != null && url.isNotEmpty) {
       return CircleAvatar(
-        radius: 22.r,
+        radius: 19.r,
         backgroundColor: fallbackColor.withValues(alpha: 0.12),
         backgroundImage: NetworkImage(url),
       );
     }
 
     if (mode == InvitationCardMode.sent) {
-      final initials = _initials(invitation.inviteeName ??
-          invitation.inviteeEmail);
+      final initials = _initials(
+        invitation.inviteeName ?? invitation.inviteeEmail,
+      );
       return Container(
-        width: 44.w,
-        height: 44.w,
+        width: 38.w,
+        height: 38.w,
         decoration: BoxDecoration(
           color: fallbackColor.withValues(alpha: 0.12),
           shape: BoxShape.circle,
         ),
-        child: Center(
-          child: Text(
-            initials,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w700,
-              color: fallbackColor,
-            ),
+        alignment: Alignment.center,
+        child: Text(
+          initials,
+          style: TextStyle(
+            fontSize: 12.5.sp,
+            fontFamily: FontHelper.fontFamily(context),
+            fontWeight: FontWeight.w600,
+            color: fallbackColor,
           ),
         ),
       );
     }
 
     return Container(
-      width: 44.w,
-      height: 44.w,
+      width: 38.w,
+      height: 38.w,
       decoration: BoxDecoration(
         color: fallbackColor.withValues(alpha: 0.12),
         shape: BoxShape.circle,
       ),
-      child: Icon(Icons.business_outlined, size: 22.w, color: fallbackColor),
+      alignment: Alignment.center,
+      child: Icon(Icons.business_outlined, size: 19.w, color: fallbackColor),
     );
   }
 
   String _initials(String source) {
-    final parts =
-        source.trim().split(RegExp(r'[\s@]+')).where((p) => p.isNotEmpty);
+    final parts = source
+        .trim()
+        .split(RegExp(r'[\s@]+'))
+        .where((p) => p.isNotEmpty);
     if (parts.isEmpty) return '?';
     if (parts.length == 1) {
       return parts.first.characters.first.toUpperCase();
     }
     return (parts.first.characters.first + parts.elementAt(1).characters.first)
         .toUpperCase();
-  }
-}
-
-class _SpecialtyChip extends StatelessWidget {
-  final String label;
-  const _SpecialtyChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBgSecondary,
-        borderRadius: BorderRadius.circular(6.r),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11.sp,
-          fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w500,
-          color: ColorManager.of(context).textSecondary,
-        ),
-      ),
-    );
   }
 }

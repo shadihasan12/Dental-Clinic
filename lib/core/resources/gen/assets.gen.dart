@@ -90,6 +90,16 @@ class Assets {
     'assets/images/onboarding/3.jpg',
   );
 
+  /// File path: assets/images/share/editorial_contours.png
+  static const AssetGenImage imagesShareEditorialContours = AssetGenImage(
+    'assets/images/share/editorial_contours.png',
+  );
+
+  /// File path: assets/images/share/grain.png
+  static const AssetGenImage imagesShareGrain = AssetGenImage(
+    'assets/images/share/grain.png',
+  );
+
   /// List of all assets
   static List<dynamic> get values => [
     iconsCaseTeethCanine,
@@ -111,6 +121,8 @@ class Assets {
     imagesOnboarding1,
     imagesOnboarding2,
     imagesOnboarding3,
+    imagesShareEditorialContours,
+    imagesShareGrain,
   ];
 }
 

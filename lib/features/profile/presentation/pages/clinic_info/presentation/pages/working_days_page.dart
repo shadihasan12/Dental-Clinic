@@ -1,8 +1,8 @@
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/working_days_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/day_toggle.dart';
@@ -62,21 +62,37 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
   List<_DaySnapshot> _snapshotDays(List<WorkingDay> days) {
     return days
-        .map((d) => _DaySnapshot(
-              d.dayOfWeek,
-              d.enabled,
-              d.shifts
-                  .map((s) =>
-                      _ShiftSnapshot(s.from.hour, s.from.minute, s.to.hour, s.to.minute))
-                  .toList(),
-            ))
+        .map(
+          (d) => _DaySnapshot(
+            d.dayOfWeek,
+            d.enabled,
+            d.shifts
+                .map(
+                  (s) => _ShiftSnapshot(
+                    s.from.hour,
+                    s.from.minute,
+                    s.to.hour,
+                    s.to.minute,
+                  ),
+                )
+                .toList(),
+          ),
+        )
         .toList();
   }
 
   List<_HolidaySnapshot> _snapshotHolidays(List<HolidayEntry> holidays) {
     return holidays
-        .map((h) => _HolidaySnapshot(
-              h.id, h.name, h.date.year, h.date.month, h.date.day, h.recurring))
+        .map(
+          (h) => _HolidaySnapshot(
+            h.id,
+            h.name,
+            h.date.year,
+            h.date.month,
+            h.date.day,
+            h.recurring,
+          ),
+        )
         .toList();
   }
 
@@ -155,14 +171,16 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
     _holidays
       ..clear()
-      ..addAll(apiHolidays.map((h) {
-        return HolidayEntry(
-          id: h.id,
-          name: h.name,
-          date: DateTime.parse(h.date),
-          recurring: h.isRecurring,
-        );
-      }));
+      ..addAll(
+        apiHolidays.map((h) {
+          return HolidayEntry(
+            id: h.id,
+            name: h.name,
+            date: DateTime.parse(h.date),
+            recurring: h.isRecurring,
+          );
+        }),
+      );
 
     _populated = true;
 
@@ -267,21 +285,24 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
   void _onSave() {
     context.read<WorkingDaysBloc>().add(
-          WorkingDaysEvent.saveAll(
-            workingDays: _buildWorkingDaysPayload(),
-            holidays: _buildHolidaysPayload(),
-          ),
-        );
+      WorkingDaysEvent.saveAll(
+        workingDays: _buildWorkingDaysPayload(),
+        holidays: _buildHolidaysPayload(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return BlocConsumer<WorkingDaysBloc, WorkingDaysState>(
+      // Rebuild for every state the builder renders — leaving `error` out kept
+      // the skeleton on screen forever when the load failed. `saving`/`saved`
+      // stay out: the listener owns those and rebuilding would flash the form.
       buildWhen: (prev, curr) => curr.maybeMap(
-        loading: (_) => true,
-        loaded: (_) => true,
-        orElse: () => false,
+        saving: (_) => false,
+        saved: (_) => false,
+        orElse: () => true,
       ),
       listenWhen: (prev, curr) => curr.maybeMap(
         saving: (_) => true,
@@ -292,10 +313,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
       listener: (context, state) {
         state.maybeWhen(
           saving: () {
-            AppLoadingDialog.show(
-              context: context,
-              message: l10n.save,
-            );
+            AppLoadingDialog.show(context: context, message: l10n.save);
           },
           saved: () {
             AppLoadingDialog.dismiss(context);
@@ -315,11 +333,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: message,
-            );
+            AppSnackbar.showError(context, title: l10n.error, message: message);
           },
           orElse: () {},
         );
@@ -328,8 +342,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         final c = ColorManager.of(context);
         return Scaffold(
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar:
-              _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
+          bottomNavigationBar: _workingDays.isNotEmpty
+              ? _buildSaveButton(l10n)
+              : null,
           body: Column(
             children: [
               PageHeader(
@@ -338,21 +353,26 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
               ),
               Expanded(
                 child: state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  error: (message) => Center(
-                    child: Text(message),
+                  loading: () => const _WorkingDaysSkeleton(),
+                  error: (message) => SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                    child: StateCard(
+                      icon: Icons.cloud_off_rounded,
+                      tone: ColorManager.error,
+                      title: l10n.workingDaysLoadFailed,
+                      message: message,
+                      actionLabel: l10n.retry,
+                      onAction: () => context.read<WorkingDaysBloc>().add(
+                        const WorkingDaysEvent.load(),
+                      ),
+                    ),
                   ),
                   loaded: (workingDays, holidays) {
                     if (!_populated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(
-                            () => _populateFromApi(workingDays, holidays));
+                        setState(() => _populateFromApi(workingDays, holidays));
                       });
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const _WorkingDaysSkeleton();
                     }
                     return _buildForm(l10n);
                   },
@@ -373,43 +393,34 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
   Widget _buildForm(AppLocalizations l10n) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: Column(
         children: [
           CustomCard(child: _buildWorkingDaysSection()),
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
           _buildHolidaysSection(),
-          SizedBox(height: 24.h),
         ],
       ),
     );
   }
 
+  /// Docked primary action on its own surface, so the form scrolls behind
+  /// it and Save is always in the thumb arc.
   Widget _buildSaveButton(AppLocalizations l10n) {
-    final enabled = _hasChanges;
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: GestureDetector(
-        onTap: enabled ? _onSave : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: 14.h),
-          decoration: BoxDecoration(
-            color: enabled
-                ? ColorManager.primary
-                : ColorManager.primary.withValues(alpha: 0.35),
-            borderRadius: BorderRadiusManager.lg,
-          ),
-          child: Text(
-            l10n.save,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.white,
-            ),
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(top: BorderSide(color: c.borderLight)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
+          child: DentaButton(
+            label: l10n.save,
+            expand: true,
+            onTap: _hasChanges ? _onSave : null,
           ),
         ),
       ),
@@ -425,17 +436,17 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         Text(
           l10n.workingDays,
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 13.sp,
             fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: c.textPrimary,
           ),
         ),
         SizedBox(height: 8.h),
         ..._workingDays.asMap().entries.map(
-              (e) => _buildDayRow(e.value,
-                  isLast: e.key == _workingDays.length - 1),
-            ),
+          (e) =>
+              _buildDayRow(e.value, isLast: e.key == _workingDays.length - 1),
+        ),
       ],
     );
   }
@@ -449,8 +460,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           ? null
           : BoxDecoration(
               border: Border(
-                bottom:
-                    BorderSide(color: c.borderLight, width: 1),
+                bottom: BorderSide(color: c.borderLight, width: 1),
               ),
             ),
       child: Column(
@@ -459,8 +469,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: day.enabled
-                ? () => setState(
-                    () => _expandedDay = isExpanded ? null : day.id)
+                ? () =>
+                      setState(() => _expandedDay = isExpanded ? null : day.id)
                 : null,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -482,9 +492,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontFamily: FontHelper.fontFamily(context),
-                        color: day.enabled
-                            ? c.textPrimary
-                            : c.textTertiary,
+                        color: day.enabled ? c.textPrimary : c.textTertiary,
                       ),
                     ),
                   ),
@@ -493,9 +501,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
-                      color: day.enabled
-                          ? c.textSecondary
-                          : c.textTertiary,
+                      color: day.enabled ? c.textSecondary : c.textTertiary,
                     ),
                   ),
                   if (day.enabled) ...[
@@ -583,10 +589,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Text(
                     '–',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: c.textTertiary,
-                    ),
+                    style: TextStyle(fontSize: 16.sp, color: c.textTertiary),
                   ),
                 ),
                 Expanded(
@@ -617,9 +620,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
               Text(
                 l10n.holidays,
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 13.sp,
                   fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: c.textPrimary,
                 ),
               ),
@@ -635,21 +638,25 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: ColorManager.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8.r),
+                    color: ColorManager.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(11.r),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.add, size: 14.w, color: ColorManager.primary),
+                      Icon(
+                        Icons.add,
+                        size: 14.w,
+                        color: ColorManager.primaryDarker,
+                      ),
                       SizedBox(width: 4.w),
                       Text(
                         l10n.addHoliday,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 11.5.sp,
                           fontFamily: FontHelper.fontFamily(context),
-                          fontWeight: FontWeight.w500,
-                          color: ColorManager.primary,
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.primaryDarker,
                         ),
                       ),
                     ],
@@ -659,35 +666,41 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
             ],
           ),
           if (_holidays.isEmpty) ...[
-            SizedBox(height: 20.h),
-            Center(
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: c.cardBgSecondary,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: c.borderLight),
+              ),
               child: Text(
                 l10n.noHolidays,
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13.sp,
+                  fontSize: 11.5.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   color: c.textTertiary,
                 ),
               ),
             ),
-            SizedBox(height: 8.h),
           ] else ...[
             SizedBox(height: 8.h),
             ..._holidays.asMap().entries.map(
-                  (e) => HolidayItem(
-                    holiday: e.value,
-                    isLast: e.key == _holidays.length - 1,
-                    onEdit: () => showAddHolidaySheet(
-                      context,
-                      existing: e.value,
-                      index: e.key,
-                      onSave: (entry, idx) =>
-                          setState(() => _holidays[idx!] = entry),
-                    ),
-                    onDelete: () =>
-                        setState(() => _holidays.removeAt(e.key)),
-                  ),
+              (e) => HolidayItem(
+                holiday: e.value,
+                isLast: e.key == _holidays.length - 1,
+                onEdit: () => showAddHolidaySheet(
+                  context,
+                  existing: e.value,
+                  index: e.key,
+                  onSave: (entry, idx) =>
+                      setState(() => _holidays[idx!] = entry),
                 ),
+                onDelete: () => setState(() => _holidays.removeAt(e.key)),
+              ),
+            ),
           ],
         ],
       ),
@@ -740,7 +753,13 @@ class _HolidaySnapshot {
   final int year, month, day;
   final bool recurring;
   const _HolidaySnapshot(
-      this.id, this.name, this.year, this.month, this.day, this.recurring);
+    this.id,
+    this.name,
+    this.year,
+    this.month,
+    this.day,
+    this.recurring,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -754,4 +773,34 @@ class _HolidaySnapshot {
 
   @override
   int get hashCode => Object.hash(id, name, year, month, day, recurring);
+}
+
+/// Holds the working-days card and the holidays card at full height while
+/// the schedule loads.
+class _WorkingDaysSkeleton extends StatelessWidget {
+  const _WorkingDaysSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    Widget block(double height) => Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: c.borderLight),
+      ),
+    );
+
+    return AppShimmer(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+        children: [
+          block(320.h),
+          SizedBox(height: 8.h),
+          block(120.h),
+        ],
+      ),
+    );
+  }
 }

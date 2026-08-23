@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 class CompletedCasePage extends StatefulWidget {
   final DentalCase dentalCase;
@@ -69,10 +70,13 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
   List<PlannedTreatment> _mapTreatments() {
     final result = <PlannedTreatment>[];
     for (final item in widget.dentalCase.treatmentItems) {
-      final toothCodes = item.selectedTeeth.map((id) {
-        final match = widget.teeth.where((t) => t.id == id);
-        return match.isNotEmpty ? match.first.universalCode : null;
-      }).whereType<String>().toList();
+      final toothCodes = item.selectedTeeth
+          .map((id) {
+            final match = widget.teeth.where((t) => t.id == id);
+            return match.isNotEmpty ? match.first.universalCode : null;
+          })
+          .whereType<String>()
+          .toList();
 
       for (final typeId in item.treatmentTypes) {
         final ct = widget.coreTreatments.where((t) => t.id == typeId);
@@ -100,16 +104,18 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
           return VisitNote(date: date, text: n['note'] ?? '');
         }).toList();
 
-        result.add(PlannedTreatment(
-          id: '${item.id}_$typeId',
-          type: typeInfo,
-          toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
-          status: item.isDone
-              ? TreatmentPlanStatus.completed
-              : TreatmentPlanStatus.planned,
-          notes: item.description,
-          visitNotes: visitNotes,
-        ));
+        result.add(
+          PlannedTreatment(
+            id: '${item.id}_$typeId',
+            type: typeInfo,
+            toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
+            status: item.isDone
+                ? TreatmentPlanStatus.completed
+                : TreatmentPlanStatus.planned,
+            notes: item.description,
+            visitNotes: visitNotes,
+          ),
+        );
       }
     }
     return result;
@@ -137,10 +143,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                   // Title card (editable)
                   _buildTitleCard(context),
                   SizedBox(height: 8.h),
-                  AddedByLabel(
-                    audits: dc.audits,
-                    createdAt: dc.createdAt,
-                  ),
+                  AddedByLabel(audits: dc.audits, createdAt: dc.createdAt),
                   SizedBox(height: 12.h),
 
                   // Info card
@@ -190,7 +193,11 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.refresh, size: 18.w, color: ColorManager.white),
+                      Icon(
+                        Icons.refresh,
+                        size: 18.w,
+                        color: ColorManager.white,
+                      ),
                       SizedBox(width: 8.w),
                       Text(
                         AppLocalizations.of(context)!.reopenCase,
@@ -234,38 +241,30 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                     fontWeight: FontWeight.w600,
                     color: ColorManager.of(context).textPrimary,
                   ),
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.caseTitlePlaceholder,
-                    hintStyle: TextStyle(
-                      fontSize: 16.sp,
-                      color: ColorManager.of(context).textTertiary,
-                    ),
-                    filled: true,
-                    fillColor: ColorManager.of(context).cardBgSecondary,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      borderSide: BorderSide(color: ColorManager.primary),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 12.h,
-                    ),
-                  ),
+                  decoration:
+                      formOutlinedInput(
+                        context,
+                        hintText: AppLocalizations.of(
+                          context,
+                        )!.caseTitlePlaceholder,
+                      ).copyWith(
+                        // The title is edited at the size it is read at.
+                        hintStyle: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          color: ColorManager.of(context).textTertiary,
+                        ),
+                      ),
                   onSubmitted: (_) => _saveTitle(),
                 ),
                 SizedBox(height: 10.h),
                 GestureDetector(
                   onTap: _saveTitle,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: ColorManager.primary,
                       borderRadius: BorderRadius.circular(8.r),
@@ -273,7 +272,11 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check, size: 16.w, color: ColorManager.white),
+                        Icon(
+                          Icons.check,
+                          size: 16.w,
+                          color: ColorManager.white,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           AppLocalizations.of(context)!.save,
@@ -375,7 +378,11 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
           SizedBox(height: 10.h),
           Row(
             children: [
-              Icon(Icons.info_outline, size: 16.w, color: ColorManager.of(context).textTertiary),
+              Icon(
+                Icons.info_outline,
+                size: 16.w,
+                color: ColorManager.of(context).textTertiary,
+              ),
               SizedBox(width: 8.w),
               Text(
                 AppLocalizations.of(context)!.status,
@@ -409,8 +416,12 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     );
   }
 
-  Widget _infoRow(BuildContext context,
-      {required IconData icon, required String label, required String value}) {
+  Widget _infoRow(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
     return Row(
       children: [
         Icon(icon, size: 16.w, color: ColorManager.of(context).textTertiary),
@@ -444,20 +455,29 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            ColorManager.primary,
-            ColorManager.primaryDark,
-          ],
+          colors: [ColorManager.primary, ColorManager.primaryDark],
         ),
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
         children: [
-          _financialStat(context, AppLocalizations.of(context)!.totalLabel, dc.totalCost.toStringAsFixed(0)),
+          _financialStat(
+            context,
+            AppLocalizations.of(context)!.totalLabel,
+            dc.totalCost.toStringAsFixed(0),
+          ),
           _financialDivider(),
-          _financialStat(context, AppLocalizations.of(context)!.paidLabel, dc.paidAmount.toStringAsFixed(0)),
+          _financialStat(
+            context,
+            AppLocalizations.of(context)!.paidLabel,
+            dc.paidAmount.toStringAsFixed(0),
+          ),
           _financialDivider(),
-          _financialStat(context, AppLocalizations.of(context)!.pendingLabel, dc.pendingAmount.toStringAsFixed(0)),
+          _financialStat(
+            context,
+            AppLocalizations.of(context)!.pendingLabel,
+            dc.pendingAmount.toStringAsFixed(0),
+          ),
         ],
       ),
     );
@@ -498,7 +518,10 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     );
   }
 
-  Widget _buildTreatmentsList(BuildContext context, List<PlannedTreatment> treatments) {
+  Widget _buildTreatmentsList(
+    BuildContext context,
+    List<PlannedTreatment> treatments,
+  ) {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -555,14 +578,16 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
             ),
           )
         else
-          ...treatments.map((t) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: TreatmentPlanCard(
-                  treatment: t,
-                  readOnly: true,
-                  onTap: () => _showTreatmentDetailsSheet(t),
-                ),
-              )),
+          ...treatments.map(
+            (t) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: TreatmentPlanCard(
+                treatment: t,
+                readOnly: true,
+                onTap: () => _showTreatmentDetailsSheet(t),
+              ),
+            ),
+          ),
       ],
     );
   }

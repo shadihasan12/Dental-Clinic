@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
-/// Horizontal filter chip list for patient filtering
+/// Horizontal filter rail. Switchable chips are the 20r shape; the selected
+/// one is a primary tint with a primary hairline rather than a solid fill,
+/// so it never outweighs the New button beside it.
 class PatientFilterChips extends StatelessWidget {
   const PatientFilterChips({
     super.key,
@@ -19,20 +21,17 @@ class PatientFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36.h,
-      child: ListView.builder(
+      height: 32.h,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
+        separatorBuilder: (_, i) => SizedBox(width: 6.w),
         itemBuilder: (context, index) {
           final filter = filters[index];
-          final isSelected = selectedFilter == filter;
-          return Padding(
-            padding: EdgeInsets.only(right: 8.w),
-            child: FilterChip(
-              label: filter,
-              isSelected: isSelected,
-              onTap: () => onFilterSelected(filter),
-            ),
+          return FilterChip(
+            label: filter,
+            isSelected: selectedFilter == filter,
+            onTap: () => onFilterSelected(filter),
           );
         },
       ),
@@ -55,22 +54,37 @@ class FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primary : ColorManager.of(context).cardBg,
-          borderRadius: BorderRadius.circular(20.r),
-          border: isSelected ? null : Border.all(color: ColorManager.of(context).divider),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontFamily: FontHelper.fontFamily(context),
-            color: isSelected ? ColorManager.white : ColorManager.of(context).textSecondary,
-            fontWeight: FontWeight.w500,
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(20.r);
+
+    return Material(
+      color: isSelected
+          ? ColorManager.primary.withValues(alpha: 0.12)
+          : c.cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: isSelected ? ColorManager.primary : c.borderLight,
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5.sp,
+              fontFamily: FontHelper.fontFamily(context),
+              color: isSelected
+                  ? ColorManager.primaryDarker
+                  : c.textSecondary,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
           ),
         ),
       ),

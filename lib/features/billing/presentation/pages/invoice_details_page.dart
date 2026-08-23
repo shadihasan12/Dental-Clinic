@@ -27,8 +27,8 @@ class InvoiceDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<BillingBloc>()
-        ..add(BillingEvent.selectInvoice(invoice)),
+      create: (_) =>
+          getIt<BillingBloc>()..add(BillingEvent.selectInvoice(invoice)),
       child: const _InvoiceDetailsView(),
     );
   }
@@ -81,8 +81,7 @@ class _InvoiceDetailsView extends StatelessWidget {
                   ),
                 ),
               ],
-              if (invoice.awaitsAdmin)
-                _UnderReviewCard(invoice: invoice),
+              if (invoice.awaitsAdmin) _UnderReviewCard(invoice: invoice),
               if (invoice.isPaid) _PaidCard(invoice: invoice),
 
               // Debug-only admin simulation panel. Lets us test the
@@ -105,10 +104,7 @@ class _InvoiceDetailsView extends StatelessWidget {
 }
 
 class _DebugAdminPanel extends StatelessWidget {
-  const _DebugAdminPanel({
-    required this.invoiceId,
-    required this.isProcessing,
-  });
+  const _DebugAdminPanel({required this.invoiceId, required this.isProcessing});
 
   final String invoiceId;
   final bool isProcessing;
@@ -134,8 +130,11 @@ class _DebugAdminPanel extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.bug_report_outlined,
-                  size: 16.w, color: ColorManager.warning),
+              Icon(
+                Icons.bug_report_outlined,
+                size: 16.w,
+                color: ColorManager.warning,
+              ),
               SizedBox(width: 6.w),
               Text(
                 'Debug · simulate admin',
@@ -168,8 +167,8 @@ class _DebugAdminPanel extends StatelessWidget {
                       ? null
                       : () {
                           context.read<BillingBloc>().add(
-                                BillingEvent.adminApproveInvoice(invoiceId),
-                              );
+                            BillingEvent.adminApproveInvoice(invoiceId),
+                          );
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorManager.success,
@@ -193,9 +192,7 @@ class _DebugAdminPanel extends StatelessWidget {
               SizedBox(width: 10.w),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: isProcessing
-                      ? null
-                      : () => _onReject(context),
+                  onPressed: isProcessing ? null : () => _onReject(context),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: ColorManager.error,
                     side: BorderSide(color: ColorManager.error),
@@ -233,7 +230,8 @@ class _DebugAdminPanel extends StatelessWidget {
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(
+            decoration: formOutlinedInput(
+              dialogCtx,
               hintText: 'e.g. proof unreadable',
             ),
           ),
@@ -254,11 +252,11 @@ class _DebugAdminPanel extends StatelessWidget {
     if (reason == null) return;
     if (!context.mounted) return;
     context.read<BillingBloc>().add(
-          BillingEvent.adminRejectInvoice(
-            invoiceId: invoiceId,
-            reason: reason.isEmpty ? null : reason,
-          ),
-        );
+      BillingEvent.adminRejectInvoice(
+        invoiceId: invoiceId,
+        reason: reason.isEmpty ? null : reason,
+      ),
+    );
   }
 }
 
@@ -325,8 +323,7 @@ class _Summary extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final dateFormat = DateFormat.yMMMd();
     final tier = invoice.planTier;
-    final plan =
-        tier == null ? null : SubscriptionPlans.getPlanByTier(tier);
+    final plan = tier == null ? null : SubscriptionPlans.getPlanByTier(tier);
     final cycle = invoice.billingCycle == BillingCycle.yearly
         ? l10n.billingYearly
         : l10n.billingMonthly;
@@ -426,8 +423,11 @@ class _UnderReviewCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.hourglass_top_rounded,
-                  color: ColorManager.info, size: 18.w),
+              Icon(
+                Icons.hourglass_top_rounded,
+                color: ColorManager.info,
+                size: 18.w,
+              ),
               SizedBox(width: 8.w),
               Text(
                 l10n.underReviewTitle,
@@ -498,8 +498,11 @@ class _PaidCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.check_circle_rounded,
-                  color: ColorManager.success, size: 18.w),
+              Icon(
+                Icons.check_circle_rounded,
+                color: ColorManager.success,
+                size: 18.w,
+              ),
               SizedBox(width: 8.w),
               Text(
                 l10n.invoicePaidTitle,
@@ -550,8 +553,7 @@ class _RejectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.cancel_rounded,
-                  color: ColorManager.error, size: 18.w),
+              Icon(Icons.cancel_rounded, color: ColorManager.error, size: 18.w),
               SizedBox(width: 8.w),
               Text(
                 l10n.invoiceRejectedTitle,

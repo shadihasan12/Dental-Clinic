@@ -48,6 +48,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cases => 'الحالات';
 
   @override
+  String get share => 'مشاركة';
+
+  @override
+  String get statisticsLoadFailed => 'تعذر تحميل الإحصائيات';
+
+  @override
+  String get noStatisticsYet => 'لا توجد إحصائيات بعد';
+
+  @override
+  String get noStatisticsYetHint =>
+      'ستظهر هنا بمجرد تسجيل بعض النشاط في العيادة.';
+
+  @override
   String get statistics => 'الإحصائيات';
 
   @override
@@ -222,6 +235,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expenseType => 'نوع المصروف';
 
   @override
+  String get expenseDetails => 'تفاصيل المصروف';
+
+  @override
   String get sort => 'ترتيب';
 
   @override
@@ -262,6 +278,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get version => 'الإصدار';
+
+  @override
+  String get logoutConsequence =>
+      'سيتم تسجيل خروجك من هذا الجهاز وستحتاج إلى تسجيل الدخول مرة أخرى.';
 
   @override
   String get areYouSureLogout => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
@@ -318,7 +338,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountSettings => 'إعدادات الحساب';
 
   @override
+  String get profileLoadFailed => 'تعذر تحميل الملف الشخصي';
+
+  @override
   String get editProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get clinicInfoLoadFailed => 'تعذر تحميل معلومات العيادة';
 
   @override
   String get clinicInformation => 'معلومات العيادة';
@@ -327,7 +353,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clinicName => 'اسم العيادة';
 
   @override
+  String get workingDaysLoadFailed => 'تعذر تحميل أيام العمل';
+
+  @override
   String get workingDays => 'أيام العمل';
+
+  @override
+  String get workingHoursLoadFailed => 'تعذر تحميل ساعات العمل';
 
   @override
   String get workingHours => 'ساعات العمل';
@@ -386,7 +418,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpCenter => 'مركز المساعدة';
 
   @override
-  String get contactSupport => 'اتصل بالدعم';
+  String get reportIssue => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get newReport => 'بلاغ جديد';
+
+  @override
+  String get issueTitleLabel => 'العنوان';
+
+  @override
+  String get issueTitleHint => 'ملخص قصير للمشكلة';
+
+  @override
+  String get issueDescriptionHint => 'ما الذي حدث، وما الذي كنت تتوقعه';
+
+  @override
+  String get issueTitleRequired => 'العنوان مطلوب';
+
+  @override
+  String get issueDescriptionRequired => 'الوصف مطلوب';
+
+  @override
+  String get sendReport => 'إرسال البلاغ';
+
+  @override
+  String get yourReports => 'بلاغاتك';
+
+  @override
+  String get issueStatusPending => 'قيد الانتظار';
+
+  @override
+  String get issueStatusInProgress => 'قيد المعالجة';
+
+  @override
+  String get issueStatusDone => 'تم';
+
+  @override
+  String get noReportsYet => 'لا توجد بلاغات بعد';
+
+  @override
+  String get noReportsYetHint => 'ستظهر البلاغات التي ترسلها هنا مع حالتها.';
+
+  @override
+  String get reportSent => 'تم إرسال البلاغ';
+
+  @override
+  String get couldNotLoadReports => 'تعذر تحميل بلاغاتك';
 
   @override
   String get termsPrivacy => 'الشروط والخصوصية';
@@ -428,6 +505,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signInToContinue => 'سجّل الدخول إلى حسابك للمتابعة';
 
   @override
+  String get newButton => 'جديد';
+
+  @override
+  String get patientsLoadFailed => 'تعذر تحميل قائمة المرضى';
+
+  @override
   String get allFilter => 'الكل';
 
   @override
@@ -441,6 +524,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get outstandingBalance => 'الرصيد المستحق';
+
+  @override
+  String get pleaseEnterPhone => 'الرجاء إدخال رقم الهاتف';
+
+  @override
+  String get pleaseSelectDateOfBirth => 'الرجاء اختيار تاريخ الميلاد';
+
+  @override
+  String get noKnownAllergiesRecorded => 'سيتم التسجيل كعدم وجود حساسية معروفة';
+
+  @override
+  String get checkHighlightedFields => 'راجع الحقول المميزة';
+
+  @override
+  String get contactInformation => 'معلومات الاتصال';
 
   @override
   String get personalInformation => 'المعلومات شخصية';
@@ -467,7 +565,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get savingPatient => 'جاري حفظ معلومات المريض...';
 
   @override
-  String get patientSavedSuccessfully => 'تم حفظ المريض بنجاح!';
+  String get patientSavedSuccessfully => 'تم حفظ المريض';
 
   @override
   String get addTreatmentQuestion => 'هل تريد إضافة علاج لهذا المريض؟';
@@ -687,6 +785,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get treatedTeeth => 'الأسنان المعالجة';
 
   @override
+  String get addReceipt => 'إضافة إيصال';
+
+  @override
   String get attachments => 'المرفقات';
 
   @override
@@ -694,6 +795,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get age => 'العمر';
+
+  @override
+  String get noExpensesThisMonthHint =>
+      'أضف أول نفقة لهذا الشهر وستظهر هنا مع فئتها ومبلغها.';
+
+  @override
+  String get expensesLoadFailed => 'تعذر تحميل النفقات';
+
+  @override
+  String get expensesUnchangedHint => 'لم يتم تغيير أي شيء. نفقاتك محفوظة.';
 
   @override
   String get noExpensesThisMonth => 'لا توجد نفقات هذا الشهر';
@@ -961,6 +1072,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get xray => 'الأشعة السينية';
 
   @override
+  String get noAppointmentsScheduled => 'لا توجد مواعيد مجدولة';
+
+  @override
+  String get noAppointmentsScheduledHint =>
+      'أضف موعدًا وسيظهر هنا مع وقته ومدته.';
+
+  @override
+  String get appointmentsLoadFailed => 'تعذر تحميل المواعيد';
+
+  @override
+  String get noAppointmentsToday => 'لا مواعيد اليوم';
+
+  @override
+  String get noAppointmentsTodayHint =>
+      'أضف أول موعد وسيظهر هنا مع وقته ومدته.';
+
+  @override
+  String get scheduleLoadFailed => 'تعذر تحميل جدول اليوم';
+
+  @override
+  String get scheduleUnchangedHint => 'لم يتم تغيير أي شيء. مواعيدك محفوظة.';
+
+  @override
   String get noAppointments => 'لا يوجد مواعيد';
 
   @override
@@ -1153,6 +1287,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String daysAgo(int count) {
     return 'منذ $count يوم';
   }
+
+  @override
+  String get unread => 'غير مقروء';
+
+  @override
+  String get noUnreadNotifications => 'لا توجد إشعارات غير مقروءة';
+
+  @override
+  String get noUnreadNotificationsDesc => 'تمت قراءة كل الإشعارات هنا.';
+
+  @override
+  String get couldNotLoadNotifications => 'تعذر تحميل الإشعارات';
+
+  @override
+  String get noNotificationsChanged => 'لم يتم تعيين أي إشعار كمقروء.';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
+  String get pastWeek => 'الأسبوع الماضي';
+
+  @override
+  String get older => 'أقدم';
 
   @override
   String get notificationsSettings => 'إعدادات الإشعارات';
@@ -1432,6 +1590,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get didntReceiveCode => 'لم تستلم الرمز؟ ';
 
   @override
+  String get resendNeedsPassword =>
+      'ارجع وأعد إدخال كلمة المرور لإرسال رمز جديد.';
+
+  @override
   String get resend => 'إعادة الإرسال';
 
   @override
@@ -1457,7 +1619,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordSubtitle =>
-      'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين';
+      'سنرسل إلى بريدك رمزًا من 6 أرقام لإعادة تعيين كلمة المرور.';
 
   @override
   String get enterRegisteredEmail => 'أدخل بريدك الإلكتروني المسجل';
@@ -1694,7 +1856,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectSpecialty => 'يرجى اختيار التخصص';
 
   @override
-  String get workingDaysAndHolidays => 'أيام العمل والعطل';
+  String get workingDaysAndHolidays => 'أيام عمل العيادة والعطل';
 
   @override
   String get myWorkingHours => 'ساعات عملي';
@@ -1711,6 +1873,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get changeEmail => 'تغيير البريد الإلكتروني';
+
+  @override
+  String get currentEmail => 'البريد الإلكتروني الحالي';
 
   @override
   String get newEmail => 'البريد الإلكتروني الجديد';
@@ -1893,6 +2058,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectCurrency => 'يرجى اختيار العملة';
 
   @override
+  String get pleaseSelectExpenseType => 'الرجاء اختيار نوع المصروف';
+
+  @override
   String get clinicUsers => 'مستخدمو العيادة';
 
   @override
@@ -1914,6 +2082,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rolesUpdatedSuccess => 'تم تحديث الأدوار بنجاح';
 
   @override
+  String get removeUserConsequence =>
+      'سيفقد الوصول إلى هذه العيادة فورًا. تبقى سجلات المرضى والمواعيد الخاصة به محفوظة.';
+
+  @override
   String removeUserConfirmation(String name) {
     return 'هل أنت متأكد من إزالة $name من العيادة؟';
   }
@@ -1923,6 +2095,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get roleSecretary => 'سكرتير';
+
+  @override
+  String get noUsersYetHint =>
+      'ادعُ طبيب أسنان أو سكرتيرًا وسيظهر هنا مع دوره.';
+
+  @override
+  String get clinicUsersLoadFailed => 'تعذر تحميل مستخدمي العيادة';
 
   @override
   String get noUsersYet => 'لا يوجد مستخدمون بعد';
@@ -2015,6 +2194,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invoicesHistoryTitle => 'الفواتير';
+
+  @override
+  String get trial => 'تجريبي';
+
+  @override
+  String get noInvoicesYetHint => 'تظهر الفواتير هنا بعد شراء باقة أو تجديدها.';
 
   @override
   String get noInvoicesYet => 'لا توجد فواتير بعد';
@@ -2434,6 +2619,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get couldNotOpenLink => 'تعذّر فتح الرابط';
 
   @override
+  String get notificationSettingsLoadFailed => 'تعذر تحميل إعدادات الإشعارات';
+
+  @override
+  String get noNotificationSettingsHint =>
+      'جميع الفئات في هذا الحساب مطلوبة ولا يمكن إيقافها.';
+
+  @override
   String get noNotificationSettings => 'لا توجد إعدادات إشعارات متاحة';
 
   @override
@@ -2446,4 +2638,274 @@ class AppLocalizationsAr extends AppLocalizations {
   String moreNotifications(int count) {
     return '$count إشعار آخر';
   }
+
+  @override
+  String get couldNotLoadPatient => 'تعذر تحميل بيانات المريض';
+
+  @override
+  String get useCachedData => 'استخدام البيانات المخزنة';
+
+  @override
+  String get tryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get outstanding => 'المتبقي';
+
+  @override
+  String get remainingWork => 'معالجات باقية';
+
+  @override
+  String get filesTitle => 'الملفات';
+
+  @override
+  String get pastCasesTitle => 'الحالات السابقة';
+
+  @override
+  String get lastFinished => 'آخر إتمام';
+
+  @override
+  String get reopenAsActiveCase => 'إعادة فتحها كحالة نشطة';
+
+  @override
+  String get reopenArchivesCurrent => 'إعادة الفتح تؤرشف الحالة الحالية أولاً.';
+
+  @override
+  String get readOnlyCase => 'للقراءة فقط';
+
+  @override
+  String get allergyPrefix => 'حساسية';
+
+  @override
+  String get noKnownAllergies => 'لا توجد حساسية معروفة';
+
+  @override
+  String get allergiesNotConfirmed => 'لم يتم تأكيد الحساسية';
+
+  @override
+  String get medicalHistoryNotConfirmed => 'لم يتم تأكيد التاريخ الطبي';
+
+  @override
+  String get reviewAction => 'مراجعة';
+
+  @override
+  String get editCostsAction => 'تعديل التكاليف';
+
+  @override
+  String get finishCaseAction => 'إتمام الحالة';
+
+  @override
+  String get finishThisCaseTitle => 'إتمام هذه الحالة؟';
+
+  @override
+  String get finishCaseBody =>
+      'ستنتقل إلى الحالات السابقة ولن تقبل معالجات جديدة.';
+
+  @override
+  String get finishAnyway => 'إتمام على أي حال';
+
+  @override
+  String get stillOutstandingWarning =>
+      'لا يزال هناك رصيد مستحق ومعالجات غير منتهية.';
+
+  @override
+  String get leftOfTotal => 'من';
+
+  @override
+  String get paymentsCountLabel => 'دفعات';
+
+  @override
+  String get addVisitNoteHint => 'أضف ملاحظة زيارة...';
+
+  @override
+  String get noTreatmentsPlanned => 'لا توجد معالجات مخططة';
+
+  @override
+  String get openChartHint => 'افتح المخطط واضغط على الأسنان التي تعمل عليها.';
+
+  @override
+  String get generalTreatmentLabel => 'عام';
+
+  @override
+  String get addToThisCase => 'إضافة إلى هذه الحالة';
+
+  @override
+  String get noFilesYet => 'لا توجد ملفات بعد';
+
+  @override
+  String get noFilesHint =>
+      'الأشعة والصور وتقارير المخبر لهذه الحالة تظهر هنا.';
+
+  @override
+  String get uploadFailed => 'فشل الرفع';
+
+  @override
+  String get uploadFileAction => 'رفع ملف';
+
+  @override
+  String get uploadFileSub => 'صور أو PDF أو مستندات';
+
+  @override
+  String get takePhotoAction => 'التقاط صورة';
+
+  @override
+  String get takePhotoSub => 'كاميرا داخل الفم أو كاميرا الجهاز';
+
+  @override
+  String get addFileTitle => 'إضافة إلى هذه الحالة';
+
+  @override
+  String get removeAction => 'إزالة';
+
+  @override
+  String get selectToothFirst => 'اضغط على سن بالأعلى، أو اختر معالجة عامة.';
+
+  @override
+  String get toothSpecificTab => 'خاصة بالسن';
+
+  @override
+  String get generalTab => 'عامة';
+
+  @override
+  String get clearSelection => 'مسح';
+
+  @override
+  String get selectedCount => 'محددة';
+
+  @override
+  String get patientInformationTitle => 'معلومات المريض';
+
+  @override
+  String get currentCaseAnchor => 'الحالة';
+
+  @override
+  String get insuranceLabel => 'التأمين';
+
+  @override
+  String get emergencyContactLabel => 'جهة اتصال الطوارئ';
+
+  @override
+  String get notRecorded => 'غير مسجل';
+
+  @override
+  String get yrs => 'سنة';
+
+  @override
+  String get chooseFromGalleryAction => 'اختيار من المعرض';
+
+  @override
+  String get chooseFromGallerySub => 'صور، يمكن اختيار أكثر من واحدة';
+
+  @override
+  String get attachDocumentAction => 'إرفاق مستند';
+
+  @override
+  String get attachDocumentSub => 'PDF، تقرير مخبري، إحالة';
+
+  @override
+  String get offlineQueuedNote =>
+      'في حال فقدان الاتصال، يتم حفظ الملفات على الجهاز ورفعها عند عودة شبكة العيادة.';
+
+  @override
+  String get removeFileTitle => 'حذف هذا الملف؟';
+
+  @override
+  String get removeFileBody =>
+      'سيتم فصله عن هذه الحالة. يبقى الملف نفسه في مكتبة الوسائط.';
+
+  @override
+  String get fileRemoved => 'تم حذف الملف';
+
+  @override
+  String get paymentsAction => 'الدفعات';
+
+  @override
+  String get legal => 'قانوني';
+
+  @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountSubtitle => 'كيفية طلب حذف حسابك وبياناتك';
+
+  @override
+  String get activeClinic => 'العيادة النشطة';
+
+  @override
+  String get noClinicsTitle => 'لا توجد عيادات بعد';
+
+  @override
+  String get noClinicsMessage =>
+      'تظهر هنا العيادات التي تنشئها أو تُدعى إليها.';
+
+  @override
+  String get couldNotLoadClinics => 'تعذّر تحميل عياداتك';
+
+  @override
+  String get activeClinicUnchanged => 'لم يتم تغيير عيادتك النشطة.';
+
+  @override
+  String get noneSelected => 'لم يتم الاختيار';
+
+  @override
+  String get couldNotLoadInvitations => 'تعذّر تحميل الدعوات';
+
+  @override
+  String get invitationsUnchanged => 'لم يتم قبول أو رفض أي دعوة.';
+
+  @override
+  String get shareYourStats => 'شارك إحصائياتك';
+
+  @override
+  String get swipeToChooseDesign => 'اسحب لاختيار التصميم';
+
+  @override
+  String get preparingShare => 'جارٍ التحضير…';
+
+  @override
+  String get shareFailed => 'تعذّرت المشاركة';
+
+  @override
+  String get myClinicStatistics => 'إحصائيات عيادتي';
+
+  @override
+  String get shareCardEnamelBlurb => 'فاتح ولؤلؤي';
+
+  @override
+  String get shareCardEditorialBlurb => 'داكن ومائل';
+
+  @override
+  String get shareCardCertificateBlurb => 'كحلي مع ذهبي لامع';
+
+  @override
+  String get notificationCategories => 'الفئات';
+
+  @override
+  String categoriesOnCount(int on, int total) {
+    return '$on من $total مفعّلة';
+  }
+
+  @override
+  String get renewsLabel => 'التجديد';
+
+  @override
+  String get endsLabel => 'الانتهاء';
+
+  @override
+  String get graceEndsLabel => 'انتهاء المهلة';
+
+  @override
+  String get endedLabel => 'انتهت';
+
+  @override
+  String get noPlanActiveBody => 'لا توجد خطة مفعّلة لهذه العيادة.';
+
+  @override
+  String get subscriptionGraceBody =>
+      'الدفعة متأخرة. تبقى الخطة قابلة للاستخدام حتى انتهاء مهلة السماح.';
+
+  @override
+  String get subscriptionExpiredBody => 'انتهت هذه الخطة. جدّدها للمتابعة.';
+
+  @override
+  String get renewAction => 'تجديد';
 }

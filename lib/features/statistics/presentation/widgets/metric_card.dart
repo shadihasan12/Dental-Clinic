@@ -28,25 +28,18 @@ class MetricCard extends StatelessWidget {
             state.results[metric.key] ?? const MetricState.loading();
 
         return Container(
-          margin: EdgeInsets.only(bottom: 14.h),
-          padding: EdgeInsets.all(16.w),
+          margin: EdgeInsets.only(bottom: 8.h),
+          padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: c.cardBg,
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(color: c.borderLight),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Header(metric: metric, metricState: metricState),
-              SizedBox(height: 14.h),
+              SizedBox(height: 12.h),
               _Body(metric: metric, metricState: metricState),
             ],
           ),
@@ -76,8 +69,8 @@ class _Header extends StatelessWidget {
                 metric.name,
                 style: TextStyle(
                   fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 12.5.sp,
+                  fontWeight: FontWeight.w600,
                   color: c.textPrimary,
                 ),
               ),
