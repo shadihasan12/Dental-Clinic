@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -46,7 +47,7 @@ class _PricingContent extends StatelessWidget {
     // see the full plan list, the trial banner, and the subscribe CTA in
     // one continuous flow. Bottom padding accounts for the Android system
     // nav bar (edge-to-edge is enabled globally in main.dart).
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final bottomInset = systemBottomInset(context);
 
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,

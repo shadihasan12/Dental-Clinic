@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
@@ -593,8 +594,10 @@ class _Confirm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    return SafeArea(
-      top: false,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: systemBottomInset(context),
+      ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 10.h),
         child: SizedBox(

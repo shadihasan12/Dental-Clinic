@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
@@ -199,8 +200,10 @@ class DockedCaseActions extends StatelessWidget {
         color: c.surfaceBg,
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: scaffoldBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(12.w, 10.h, 12.w, 10.h),
           child: Row(

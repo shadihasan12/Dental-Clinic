@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_button.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
@@ -207,7 +208,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         24.w,
         60.h,
         24.w,
-        MediaQuery.of(context).padding.bottom + 24.h,
+        dockedBottomPadding(context, 24.h),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

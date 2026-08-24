@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -40,8 +42,12 @@ void showAddHolidaySheet(
               20.w,
               16.h,
               20.w,
-              MediaQuery.of(ctx).viewInsets.bottom +
-                  MediaQuery.of(ctx).padding.bottom +
+              // An open keyboard already covers the navigation bar, so
+              // the sheet clears whichever is taller - never both.
+              math.max(
+                    MediaQuery.of(ctx).viewInsets.bottom,
+                    systemBottomInset(ctx),
+                  ) +
                   24.h,
             ),
             child: Column(

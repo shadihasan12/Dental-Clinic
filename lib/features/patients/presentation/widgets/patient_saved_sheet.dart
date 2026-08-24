@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -39,8 +40,10 @@ class _PatientSavedSheetBody extends StatelessWidget {
         color: c.cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: systemBottomInset(context),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

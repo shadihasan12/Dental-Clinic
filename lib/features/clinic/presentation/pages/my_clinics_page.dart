@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
@@ -283,8 +284,10 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      builder: (sheetContext) => SafeArea(
-        top: false,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: systemBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
           child: Column(
@@ -1070,8 +1073,10 @@ class _DockedInviteBar extends StatelessWidget {
         color: c.surfaceBg,
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: scaffoldBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: Material(

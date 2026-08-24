@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -456,7 +457,10 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               top: BorderSide(color: ColorManager.of(context).borderLight),
             ),
           ),
-          child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: scaffoldBottomInset(context),
+            ),
             child: PrimaryButton(
               text: l10n.completeRegistration,
               isEnabled:

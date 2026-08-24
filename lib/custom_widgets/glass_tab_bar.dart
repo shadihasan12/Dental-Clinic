@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/foundation.dart';
@@ -121,7 +122,7 @@ class _GlassTabBarState extends State<GlassTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final bottomInset = systemBottomInset(context);
     final totalHeight = widget.barHeight + bottomInset;
 
     if (defaultTargetPlatform != TargetPlatform.iOS) {

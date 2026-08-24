@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -266,8 +267,10 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      builder: (sheetContext) => SafeArea(
-        top: false,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: systemBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
           child: Column(

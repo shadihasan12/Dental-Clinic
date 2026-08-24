@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
@@ -80,7 +82,14 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           20.w,
           16.h,
           20.w,
-          MediaQuery.of(ctx).viewInsets.bottom + 16.h,
+          // viewInsets alone only clears the keyboard; with it closed the
+          // sheet still has to clear the navigation bar. max, not a sum: an
+          // open keyboard already covers that bar.
+          math.max(
+                MediaQuery.of(ctx).viewInsets.bottom,
+                systemBottomInset(ctx),
+              ) +
+              16.h,
         ),
         decoration: BoxDecoration(
           color: ColorManager.of(context).cardBg,
@@ -232,7 +241,14 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           20.w,
           16.h,
           20.w,
-          MediaQuery.of(ctx).viewInsets.bottom + 16.h,
+          // viewInsets alone only clears the keyboard; with it closed the
+          // sheet still has to clear the navigation bar. max, not a sum: an
+          // open keyboard already covers that bar.
+          math.max(
+                MediaQuery.of(ctx).viewInsets.bottom,
+                systemBottomInset(ctx),
+              ) +
+              16.h,
         ),
         decoration: BoxDecoration(
           color: ColorManager.of(context).cardBg,
@@ -371,7 +387,9 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
           body,
           Positioned(
             right: 16.w,
-            bottom: 16.h,
+            // Embedded here, so there is no Scaffold keeping the FAB above
+            // the navigation bar the way the standalone route gets free.
+            bottom: dockedBottomPadding(context, 16.h),
             child: _buildFab(context),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -303,8 +304,10 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         color: c.cardBg,
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: scaffoldBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(

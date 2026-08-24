@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -160,8 +161,10 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     final pw = math.max(previewWidth, 180.0);
     final ph = math.max(previewHeight, pw * 16 / 9);
 
-    return SafeArea(
-      top: false,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: systemBottomInset(context),
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: c.surfaceBg,

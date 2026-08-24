@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -129,8 +130,12 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (context) => SizedBox(
-        height: 300.h,
-        child: Column(
+        // The wheel keeps its 300dp; the sheet grows by the navigation bar
+        // so the bottom row of dates is not sitting under the buttons.
+        height: 300.h + systemBottomInset(context),
+        child: Padding(
+          padding: EdgeInsets.only(bottom: systemBottomInset(context)),
+          child: Column(
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -177,6 +182,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -261,8 +267,10 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
         ),
         bottomNavigationBar: Padding(
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
-          child: SafeArea(
-            top: false,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: scaffoldBottomInset(context),
+            ),
             child: ElevatedButton(
               onPressed: _saveTreatment,
               style: ElevatedButton.styleFrom(

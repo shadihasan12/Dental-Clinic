@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -57,8 +58,10 @@ class AppointmentDetailsSheet extends StatelessWidget {
         color: ColorManager.of(context).cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: systemBottomInset(context),
+        ),
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
           child: Column(
@@ -567,8 +570,10 @@ class _StatusPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return SafeArea(
-      top: false,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: systemBottomInset(context),
+      ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
         child: Column(

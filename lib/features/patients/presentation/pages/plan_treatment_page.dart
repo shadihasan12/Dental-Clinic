@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -376,7 +377,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
         20.w,
         12.h,
         20.w,
-        MediaQuery.of(context).padding.bottom + 12.h,
+        scaffoldBottomPadding(context, 12.h),
       ),
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBg,

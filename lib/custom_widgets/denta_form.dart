@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -704,8 +707,15 @@ class FormSheetShell extends StatelessWidget {
         color: c.cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        // The sheet is anchored to the bottom of the screen, so whatever
+        // sits down there has to be reserved here or the footer is drawn
+        // underneath it. max() rather than a sum: with the keyboard up it
+        // already covers the navigation bar, so adding both would leave a
+        // navigation bar's worth of dead space above the keyboard.
+        padding: EdgeInsets.only(
+          bottom: math.max(keyboard, systemBottomInset(context)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -748,7 +758,7 @@ class FormSheetShell extends StatelessWidget {
             ),
             Flexible(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 6.h, 20.w, 8.h + keyboard),
+                padding: EdgeInsets.fromLTRB(20.w, 6.h, 20.w, 8.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
@@ -758,12 +768,7 @@ class FormSheetShell extends StatelessWidget {
             ),
             if (footer != null)
               Padding(
-                padding: EdgeInsets.fromLTRB(
-                  20.w,
-                  8.h,
-                  20.w,
-                  12.h + (keyboard > 0 ? 0 : 0),
-                ),
+                padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 12.h),
                 child: footer!,
               ),
           ],
@@ -905,8 +910,10 @@ class FormActionBar extends StatelessWidget {
         color: c.surfaceBg,
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
-      child: SafeArea(
-        top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: scaffoldBottomInset(context),
+        ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: ElevatedButton(
@@ -981,8 +988,10 @@ class DatePickerSheet {
           color: c.cardBg,
           borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
         ),
-        child: SafeArea(
-          top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: systemBottomInset(context),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -393,8 +394,10 @@ class AddFileSheet extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final family = FontHelper.fontFamily(context);
 
-    return SafeArea(
-      top: false,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: systemBottomInset(context),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

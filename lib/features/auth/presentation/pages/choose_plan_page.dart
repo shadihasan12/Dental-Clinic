@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -542,7 +543,10 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               top: BorderSide(color: ColorManager.of(context).borderLight),
             ),
           ),
-          child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: scaffoldBottomInset(context),
+            ),
             child: PrimaryButton(
               text: l10n.next,
               isEnabled: _selectedPlanId != null,
