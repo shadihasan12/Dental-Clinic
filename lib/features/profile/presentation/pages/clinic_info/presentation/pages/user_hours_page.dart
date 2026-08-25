@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -406,7 +407,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   Future<void> _refresh() async {
     final bloc = context.read<UserHoursBloc>();
     bloc.add(const UserHoursEvent.load());
-    await bloc.stream.firstWhere(
+    await bloc.stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -144,7 +145,7 @@ class _BillingView extends StatelessWidget {
       SubscriptionEvent.loadSubscription(clinicId),
     );
     billing.add(BillingEvent.loadInvoices(clinicId));
-    await billing.stream.firstWhere((state) => !state.isLoading);
+    await billing.stream.settled((state) => !state.isLoading);
   }
 
   void _onRenew(BuildContext context) {

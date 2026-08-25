@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
@@ -46,7 +47,7 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<IssuesBloc>();
     bloc.add(const IssuesEvent.load());
-    await bloc.stream.firstWhere((state) => !state.isLoadingList);
+    await bloc.stream.settled((state) => !state.isLoadingList);
   }
 
   @override

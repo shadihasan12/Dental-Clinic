@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -76,7 +77,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     bloc.add(const ClinicUsersEvent.load());
     await Future.wait([
       _loadUsage(),
-      bloc.stream.firstWhere(
+      bloc.stream.settled(
         (state) => state.maybeWhen(loading: () => false, orElse: () => true),
       ),
     ]);

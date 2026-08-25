@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -119,7 +120,7 @@ class _InvoiceDetailsView extends StatelessWidget {
     final clinicId =
         bloc.state.clinicId ?? getIt<UserStorage>().getSelectedClinicId() ?? '';
     bloc.add(BillingEvent.loadInvoices(clinicId));
-    await bloc.stream.firstWhere((state) => !state.isLoading);
+    await bloc.stream.settled((state) => !state.isLoading);
     for (final refreshed in bloc.state.invoices) {
       if (refreshed.id == invoice.id) {
         bloc.add(BillingEvent.selectInvoice(refreshed));

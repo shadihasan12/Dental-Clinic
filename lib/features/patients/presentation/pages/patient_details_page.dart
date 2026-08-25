@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
@@ -150,7 +151,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     _reload();
     await Future.wait([
       _loadCoreTreatments(),
-      bloc.stream.firstWhere(
+      bloc.stream.settled(
         (state) => state.maybeWhen(loading: () => false, orElse: () => true),
       ),
     ]);

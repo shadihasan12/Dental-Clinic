@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -238,7 +239,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
     if (widget.isAdmin) {
       invitations.add(const InvitationEvent.loadSentInvitations());
     }
-    await clinics.stream.firstWhere(
+    await clinics.stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -165,7 +166,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<ClinicInfoBloc>();
     bloc.add(const ClinicInfoEvent.loadClinicInfo());
-    await bloc.stream.firstWhere(
+    await bloc.stream.settled(
       (state) => state.maybeMap(loading: (_) => false, orElse: () => true),
     );
   }

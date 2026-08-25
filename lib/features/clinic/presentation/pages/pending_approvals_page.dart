@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -141,7 +142,7 @@ class _PendingApprovalsContent extends StatelessWidget {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<ApprovalsBloc>();
     bloc.add(ApprovalsEvent.loadPendingApprovals(clinicId));
-    await bloc.stream.firstWhere((state) => !state.isLoading);
+    await bloc.stream.settled((state) => !state.isLoading);
   }
 
   void _showRejectDialog(BuildContext context, ApprovalRequestEntity request) {

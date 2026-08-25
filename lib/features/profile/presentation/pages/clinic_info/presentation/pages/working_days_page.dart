@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -296,7 +297,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<WorkingDaysBloc>();
     bloc.add(const WorkingDaysEvent.load());
-    await bloc.stream.firstWhere(
+    await bloc.stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
@@ -23,8 +24,7 @@ class ExpensesPage extends StatelessWidget {
 
   /// Bump this notifier to open the "add expense" sheet on the active
   /// expenses page (e.g. from the home screen's quick action).
-  static final ValueNotifier<int> openAddExpenseRequest =
-      ValueNotifier<int>(0);
+  static final ValueNotifier<int> openAddExpenseRequest = ValueNotifier<int>(0);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Future<void> _refresh() async {
     final bloc = context.read<ExpenseBloc>();
     _loadMonth();
-    await bloc.stream.firstWhere(
+    await bloc.stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
@@ -220,8 +220,12 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                         child: expenses.isEmpty
                             ? _buildEmptyState(context)
                             : ListView.separated(
-                                padding:
-                                    EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+                                padding: EdgeInsets.fromLTRB(
+                                  14.w,
+                                  8.h,
+                                  14.w,
+                                  24.h,
+                                ),
                                 itemCount: expenses.length,
                                 separatorBuilder: (_, _) =>
                                     SizedBox(height: 8.h),

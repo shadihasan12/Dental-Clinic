@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
@@ -66,16 +67,12 @@ class _NotificationContentState extends State<_NotificationContent> {
     }
   }
 
-  /// The refresh event emits once, when the first page lands. Bounded, because
-  /// a response identical to what is already on screen is a no-op emit the
-  /// bloc drops - and that would otherwise leave the band hanging open.
+  /// The refresh event deliberately emits no loading state, so the next state
+  /// of any kind is the one that says the page landed.
   Future<void> _refresh() async {
     final bloc = context.read<NotificationBloc>();
     bloc.add(const NotificationEvent.refresh());
-    await bloc.stream.first.timeout(
-      const Duration(seconds: 10),
-      onTimeout: () => bloc.state,
-    );
+    await bloc.stream.settled((_) => true);
   }
 
   void _onNotificationTap(NotificationEntity notification) {

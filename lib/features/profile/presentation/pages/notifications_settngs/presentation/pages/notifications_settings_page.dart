@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -133,7 +134,7 @@ class _NotificationsSettingsContent extends StatelessWidget {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<NotificationSettingsBloc>();
     bloc.add(const NotificationSettingsEvent.load());
-    await bloc.stream.firstWhere(
+    await bloc.stream.settled(
       (state) => state.status != NotificationSettingsStatus.loading,
     );
   }

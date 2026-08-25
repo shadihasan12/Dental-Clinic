@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -150,9 +151,7 @@ class _Body extends StatelessWidget {
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<StatisticsDashboardBloc>();
     bloc.add(const DashboardStarted());
-    await bloc.stream.firstWhere(
-      (s) => s.catalogStatus != CatalogStatus.loading,
-    );
+    await bloc.stream.settled((s) => s.catalogStatus != CatalogStatus.loading);
   }
 }
 

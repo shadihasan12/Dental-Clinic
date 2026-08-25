@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -106,7 +107,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       const PatientsListEvent.loadPatients(),
     );
     // Wait for the bloc to emit a non-loading state
-    await context.read<PatientsListBloc>().stream.firstWhere(
+    await context.read<PatientsListBloc>().stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
@@ -314,47 +315,47 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           child: DentaRefresh(
             onRefresh: _onRefresh,
             child: filtered.isEmpty
-              ? _buildEmptyState(l10n, allPatients.isEmpty)
-              // Keeps only one row's swipe pane open at a time, matched by
-              // PatientCard.groupTag.
-              : SlidableAutoCloseBehavior(
-                  child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
-                      // Cards carry their own hairline and 8.h gap, so no
-                      // separator: a divider between bordered cards would
-                      // read as a double rule.
-                      sliver: SliverList.builder(
-                        itemCount:
-                            filtered.length +
-                            (isLoadingMore || hasMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == filtered.length) {
-                            return const _PatientCardSkeleton();
-                          }
+                ? _buildEmptyState(l10n, allPatients.isEmpty)
+                // Keeps only one row's swipe pane open at a time, matched by
+                // PatientCard.groupTag.
+                : SlidableAutoCloseBehavior(
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverPadding(
+                          padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+                          // Cards carry their own hairline and 8.h gap, so no
+                          // separator: a divider between bordered cards would
+                          // read as a double rule.
+                          sliver: SliverList.builder(
+                            itemCount:
+                                filtered.length +
+                                (isLoadingMore || hasMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == filtered.length) {
+                                return const _PatientCardSkeleton();
+                              }
 
-                          final patient = filtered[index];
-                          return PatientCard(
-                            patient: patient,
-                            onTap: () => context.pushNamed(
-                              AppRoutesNames.patientDetails,
-                              extra: <String, dynamic>{
-                                "patientId": patient.id,
-                                "patientName": patient.name,
-                                "tabIndex": 1,
-                              },
-                            ),
-                            onEdit: () => _onEditPatient(patient),
-                            onDelete: () => _onDeletePatient(patient),
-                          );
-                        },
-                      ),
+                              final patient = filtered[index];
+                              return PatientCard(
+                                patient: patient,
+                                onTap: () => context.pushNamed(
+                                  AppRoutesNames.patientDetails,
+                                  extra: <String, dynamic>{
+                                    "patientId": patient.id,
+                                    "patientName": patient.name,
+                                    "tabIndex": 1,
+                                  },
+                                ),
+                                onEdit: () => _onEditPatient(patient),
+                                onDelete: () => _onDeletePatient(patient),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
                   ),
-                ),
           ),
         ),
       ],
