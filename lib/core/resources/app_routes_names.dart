@@ -34,6 +34,7 @@ class AppRoutesNames {
   static const String patients = 'patients';
   static const String patientDetails = 'patientDetails';
   static const String addPatient = 'addPatient';
+  static const String editPatient = 'editPatient';
 
   // Case Routes
   static const String caseDetails = 'caseDetails';
@@ -57,15 +58,13 @@ class AppRoutesNames {
   static const String settings = 'settings';
   static const String moreMenu = 'moreMenu';
   static const String clinicInfo = 'clinicInfo';
-  static const String workingHours = 'workingHours';
+  static const String workingDays = 'workingDays';
+  static const String userHours = 'userHours';
   static const String notificationsSettings = 'notificationsSettings';
 
   // Clinic Management Routes
-  static const String staffManagement = 'staffManagement';
-  static const String inviteStaff = 'inviteStaff';
   static const String pendingApprovals = 'pendingApprovals';
-  static const String contactSupport = 'contactSupport';
-  static const String supportChat = 'supportChat';
+  static const String reportIssue = 'reportIssue';
 
   // Dentist Routes
   static const String myClinics = 'myClinics';
@@ -76,6 +75,12 @@ class AppRoutesNames {
   static const String pricing = 'pricing';
   static const String subscription = 'subscription';
   static const String manageSubscription = 'manageSubscription';
+
+  // Billing Routes
+  static const String billing = 'billing';
+  static const String selectBillingPlan = 'selectBillingPlan';
+  static const String invoiceDetails = 'invoiceDetails';
+  static const String submitPaymentProof = 'submitPaymentProof';
 
   // Other Routes
   static const String medicalHistory = 'medicalHistory';

@@ -6,7 +6,9 @@ import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/shadow_manager.dart';
 
-/// Primary gradient button matching the design system
+/// Primary button. Flat fill in the brand hue: DENTA_STYLE allows a
+/// gradient only on a deliberate dark hero surface, and elevation across the
+/// app is a border rather than a shadow.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -37,16 +39,14 @@ class PrimaryButton extends StatelessWidget {
         width: width ?? double.infinity,
         height: height ?? 56.h,
         decoration: BoxDecoration(
-          gradient: isEnabled ? GradientManager.primaryButton : null,
-          color: isEnabled ? null : ColorManager.gray300,
-          borderRadius: BorderRadiusManager.xl,
-          boxShadow: isEnabled ? ShadowManager.shadowSm : null,
+          color: isEnabled ? ColorManager.primary : ColorManager.gray300,
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: Material(
           color: ColorManager.transparent,
           child: InkWell(
             onTap: isEnabled && !isLoading ? onPressed : null,
-            borderRadius: BorderRadiusManager.xl,
+            borderRadius: BorderRadius.circular(12.r),
             child: Center(
               child: isLoading
                   ? SizedBox(
@@ -74,8 +74,8 @@ class PrimaryButton extends StatelessWidget {
         style: TextStyle(
           color: isEnabled ? ColorManager.white : ColorManager.gray500,
           fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w600,
-          fontSize: 14.sp
+          fontWeight: FontWeight.w700,
+          fontSize: 13.sp,
         ),
       );
     }
@@ -136,17 +136,18 @@ class SecondaryButton extends StatelessWidget {
       height: height ?? 56.h,
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadiusManager.xl,
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: isEnabled ? effectiveBorderColor : ColorManager.of(context).border,
-          width: 1.5,
+          color: isEnabled
+              ? effectiveBorderColor
+              : ColorManager.of(context).border,
         ),
       ),
       child: Material(
         color: ColorManager.transparent,
         child: InkWell(
           onTap: isEnabled && !isLoading ? onPressed : null,
-          borderRadius: BorderRadiusManager.xl,
+          borderRadius: BorderRadius.circular(12.r),
           child: Center(
             child: isLoading
                 ? SizedBox(

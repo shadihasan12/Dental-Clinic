@@ -11,6 +11,7 @@ import 'package:dental_clinic_app/features/patients/domain/entities/patient_enti
 import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
 import 'package:injectable/injectable.dart';
+import 'package:dental_clinic_app/features/patients/data/models/case_attachment_model.dart';
 
 @Injectable(as: PatientRepository)
 class PatientRepositoryImpl implements PatientRepository {
@@ -93,6 +94,31 @@ class PatientRepositoryImpl implements PatientRepository {
       final model = PatientModel.fromEntity(patient);
       final result = await _remoteDataSource.addPatient(model);
       return Right(result.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, PatientEntity>> updatePatient(
+    PatientEntity patient,
+  ) async {
+    try {
+      final model = PatientModel.fromEntity(patient);
+      final result = await _remoteDataSource.updatePatient(model);
+      return Right(result.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> detachPatient(
+    String patientId,
+  ) async {
+    try {
+      await _remoteDataSource.detachPatient(patientId);
+      return const Right(null);
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }
@@ -266,6 +292,60 @@ class PatientRepositoryImpl implements PatientRepository {
         totalCostCurrencyId: totalCostCurrencyId,
         labFees: labFees,
         labFeesCurrencyId: labFeesCurrencyId,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<CaseAttachmentModel>>>
+      getCaseAttachments({
+    required String patientId,
+    required String caseId,
+  }) async {
+    try {
+      final result = await _remoteDataSource.getCaseAttachments(
+        patientId: patientId,
+        caseId: caseId,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<CaseAttachmentModel>>>
+      addCaseAttachments({
+    required String patientId,
+    required String caseId,
+    required List<String> mediaIds,
+  }) async {
+    try {
+      final result = await _remoteDataSource.addCaseAttachments(
+        patientId: patientId,
+        caseId: caseId,
+        mediaIds: mediaIds,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, void>> deleteCaseAttachment({
+    required String patientId,
+    required String caseId,
+    required String attachmentId,
+  }) async {
+    try {
+      await _remoteDataSource.deleteCaseAttachment(
+        patientId: patientId,
+        caseId: caseId,
+        attachmentId: attachmentId,
       );
       return const Right(null);
     } catch (e) {

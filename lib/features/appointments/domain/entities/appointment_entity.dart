@@ -1,14 +1,20 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 part 'appointment_entity.freezed.dart';
 
-/// Appointment status enum
+/// Appointment status. Mirrors the backend enum exactly:
+///   SCHEDULED, CONFIRMED, CANCELLED_BY_CLINIC, CANCELLED_BY_PATIENT,
+///   NO_SHOW, COMPLETED.
 enum AppointmentStatus {
-  pending,
+  scheduled,
   confirmed,
-  completed,
-  cancelled,
+  cancelledByClinic,
+  cancelledByPatient,
   noShow,
+  completed,
 }
 
 /// Appointment entity representing a scheduled appointment
@@ -26,6 +32,8 @@ class AppointmentEntity with _$AppointmentEntity {
     required AppointmentStatus status,
     String? notes,
     String? clinicId,
+    DateTime? createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _AppointmentEntity;
 
   const AppointmentEntity._();
@@ -57,7 +65,8 @@ class AppointmentEntity with _$AppointmentEntity {
   /// Check if appointment can be cancelled
   bool get canBeCancelled {
     return status != AppointmentStatus.completed &&
-        status != AppointmentStatus.cancelled &&
+        status != AppointmentStatus.cancelledByClinic &&
+        status != AppointmentStatus.cancelledByPatient &&
         !isPast;
   }
 }

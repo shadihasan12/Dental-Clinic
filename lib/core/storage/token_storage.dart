@@ -8,6 +8,9 @@ class TokenStorage {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
   static const String _clinicIdKey = 'selected_clinic_id';
+  static const String _fcmTokenKey = 'fcm_token';
+  static const String _fcmTokenSyncedKey = 'fcm_token_synced';
+  static const String _fcmTopicsKey = 'fcm_subscribed_topics';
 
   final SharedPreferences _prefs;
 
@@ -74,12 +77,66 @@ class TokenStorage {
     return (clinicId?.isEmpty ?? true) ? null : clinicId;
   }
 
+  /// Save the current FCM device token (the value FirebaseMessaging hands us).
+  Future<void> saveFcmToken(String token) async {
+    if (token.isEmpty) {
+      throw ArgumentError('FCM token cannot be empty');
+    }
+    await _prefs.setString(_fcmTokenKey, token);
+  }
+
+  String? getFcmToken() {
+    final token = _prefs.getString(_fcmTokenKey);
+    return (token?.isEmpty ?? true) ? null : token;
+  }
+
+  /// Tracks whether the current FCM token has been POSTed to the backend.
+  /// Lets us avoid re-syncing on every cold start.
+  Future<void> setFcmTokenSynced(String token) async {
+    await _prefs.setString(_fcmTokenSyncedKey, token);
+  }
+
+  bool isFcmTokenSynced(String token) {
+    return _prefs.getString(_fcmTokenSyncedKey) == token;
+  }
+
+  /// Topic names this install is currently subscribed to.
+  ///
+  /// Every name here came from the `audience` field of
+  /// `GET /notification-settings` — the app never builds a topic name itself.
+  /// We remember them so a later language change (which swaps
+  /// `announcement_ar` for `announcement_en`) can unsubscribe the stale one:
+  /// the settings response only ever names the *current* audience, so without
+  /// this list the old subscription would linger forever, receiving nothing.
+  List<String> getSubscribedTopics() {
+    return _prefs.getStringList(_fcmTopicsKey) ?? const <String>[];
+  }
+
+  Future<void> setSubscribedTopics(Iterable<String> topics) async {
+    await _prefs.setStringList(_fcmTopicsKey, topics.toSet().toList());
+  }
+
+  Future<void> clearSubscribedTopics() async {
+    await _prefs.remove(_fcmTopicsKey);
+  }
+
+  /// Drops the cached FCM token and its synced marker. Called on logout, right
+  /// after FirebaseMessaging.deleteToken() invalidates the token server-side.
+  Future<void> clearFcmToken() async {
+    await _prefs.remove(_fcmTokenKey);
+    await _prefs.remove(_fcmTokenSyncedKey);
+  }
+
   /// Clear all stored authentication data
   Future<void> clearAuthData() async {
     await _prefs.remove(_tokenKey);
     await _prefs.remove(_refreshTokenKey);
     await _prefs.remove(_userIdKey);
     await _prefs.remove(_clinicIdKey);
+    // FCM token intentionally NOT cleared on logout — the device is the same
+    // device. We only invalidate the "synced" marker so the next login re-POSTs
+    // it under the new user.
+    await _prefs.remove(_fcmTokenSyncedKey);
   }
 
   /// Clear all data (including other app preferences)

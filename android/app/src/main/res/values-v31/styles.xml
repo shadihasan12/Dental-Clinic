@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android 12 (API 31) took the splash screen over. The system honours
+    android:windowBackground only when it is a single colour, so the layer-list
+    in @drawable/launch_background is discarded and splash_logo never draws.
+    These attributes are the supported way to say the same thing.
+
+    A style declaration is replaced wholesale by its qualified variant, so
+    everything from values/styles.xml has to be restated here. The colours and
+    the status-bar bool still resolve per night mode on their own.
+-->
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowLightStatusBar">@bool/splash_light_status_bar</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <!-- The system splash icon area is square, so the wide lockup in
+             splash_logo cannot go here. splash_icon is the D mark alone, sized
+             to the 288dp / 192dp artwork spec for an icon with no background. -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:windowLightStatusBar">@bool/splash_light_status_bar</item>
+    </style>
+</resources>

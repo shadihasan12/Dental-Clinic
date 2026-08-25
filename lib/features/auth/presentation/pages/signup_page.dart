@@ -256,27 +256,37 @@ class _SignupContentState extends State<_SignupContent> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64.w,
-                              color: ColorManager.error,
+                            Container(
+                              width: 44.w,
+                              height: 44.w,
+                              decoration: BoxDecoration(
+                                color: ColorManager.error
+                                    .withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              child: Icon(
+                                Icons.error_outline,
+                                size: 22.w,
+                                color: ColorManager.error,
+                              ),
                             ),
-                            SizedBox(height: 16.h),
+                            SizedBox(height: 14.h),
                             Text(
                               l10n.failedToLoadData,
                               style: TextStyle(
-                                fontSize: FontSizesManager.s18,
-                                fontWeight: FontWeightManager.semiBold,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: fontFamily,
                                 color: ColorManager.of(context).textPrimary,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 6.h),
                             Text(
                               l10n.checkConnectionRetry,
                               style: TextStyle(
-                                fontSize: FontSizesManager.s14,
+                                fontSize: 11.5.sp,
+                                height: 1.4,
                                 fontFamily: fontFamily,
                                 color: ColorManager.of(context).textSecondary,
                               ),
@@ -400,19 +410,21 @@ class _SignupContentState extends State<_SignupContent> {
                       prefixIcon: Icons.lock_outline,
                       obscureText: !state.isSignupPasswordVisible,
                       validator: _validatePassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          state.isSignupPasswordVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: ColorManager.of(context).textTertiary,
-                          size: 20.w,
-                        ),
-                        onPressed: () {
+                      // A GestureDetector, not an IconButton: the latter's
+                      // 48dp minimum inflates the field past the others.
+                      suffixIcon: GestureDetector(
+                        onTap: () {
                           context.read<AuthBloc>().add(
                             const AuthEvent.signupPasswordVisibilityToggled(),
                           );
                         },
+                        child: Icon(
+                          state.isSignupPasswordVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: ColorManager.of(context).textTertiary,
+                          size: 18.w,
+                        ),
                       ),
                       onChanged: (value) {
                         context.read<AuthBloc>().add(
@@ -430,19 +442,21 @@ class _SignupContentState extends State<_SignupContent> {
                       prefixIcon: Icons.lock_outline,
                       obscureText: !state.isSignupConfirmPasswordVisible,
                       validator: _validateConfirmPassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          state.isSignupConfirmPasswordVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: ColorManager.of(context).textTertiary,
-                          size: 20.w,
-                        ),
-                        onPressed: () {
+                      // A GestureDetector, not an IconButton: the latter's
+                      // 48dp minimum inflates the field past the others.
+                      suffixIcon: GestureDetector(
+                        onTap: () {
                           context.read<AuthBloc>().add(
                             const AuthEvent.signupConfirmPasswordVisibilityToggled(),
                           );
                         },
+                        child: Icon(
+                          state.isSignupConfirmPasswordVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: ColorManager.of(context).textTertiary,
+                          size: 18.w,
+                        ),
                       ),
                       onChanged: (value) {
                         context.read<AuthBloc>().add(
@@ -472,168 +486,120 @@ class _SignupContentState extends State<_SignupContent> {
     ),);
   }
 
-  Widget _buildSpecialtyPicker(AppLocalizations l10n, String fontFamily, AuthState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.specializationRequired,
-          style: TextStyle(
-            color: ColorManager.of(context).textPrimary,
-            fontWeight: FontWeightManager.medium,
-            fontFamily: fontFamily,
-            fontSize: FontSizesManager.s12,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        GestureDetector(
-          onTap: () => _showSpecialtySheet(l10n, fontFamily, state),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            decoration: BoxDecoration(
-              color: ColorManager.of(context).inputBg,
-              borderRadius: BorderRadius.circular(12.r),
-              border: _showValidationErrors && _selectedSpecialty == null
-                  ? Border.all(color: ColorManager.error, width: 1)
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.local_hospital_outlined, color: ColorManager.of(context).textTertiary, size: 20.w),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: Text(
-                    _selectedSpecialty?.name ?? l10n.selectYourSpecialization,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: FontSizesManager.s14,
-                      color: _selectedSpecialty != null
-                          ? ColorManager.of(context).textPrimary
-                          : ColorManager.of(context).textTertiary,
-                    ),
-                  ),
-                ),
-                Icon(Icons.keyboard_arrow_down, color: ColorManager.of(context).textTertiary),
-              ],
-            ),
-          ),
-        ),
-        if (_showValidationErrors && _selectedSpecialty == null)
-          Padding(
-            padding: EdgeInsets.only(top: 8.h, left: 12.w),
-            child: Text(
-              l10n.pleaseSelectSpecialty,
-              style: TextStyle(
-                fontSize: FontSizesManager.s12,
-                fontFamily: fontFamily,
-                color: ColorManager.error,
-              ),
-            ),
-          ),
-      ],
+  Widget _buildSpecialtyPicker(
+    AppLocalizations l10n,
+    String fontFamily,
+    AuthState state,
+  ) {
+    final missing = _showValidationErrors && _selectedSpecialty == null;
+    return FormPickerField(
+      label: l10n.specialization,
+      required: true,
+      value: _selectedSpecialty?.name,
+      placeholder: l10n.selectYourSpecialization,
+      errorText: missing ? l10n.pleaseSelectSpecialty : null,
+      onTap: () => _showSpecialtySheet(l10n, fontFamily, state),
     );
   }
 
-  void _showSpecialtySheet(AppLocalizations l10n, String fontFamily, AuthState state) {
+  void _showSpecialtySheet(
+    AppLocalizations l10n,
+    String fontFamily,
+    AuthState state,
+  ) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(top: 12.h),
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: ColorManager.of(context).borderLight,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
-                child: Text(
-                  l10n.specialization,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: fontFamily,
-                    fontWeight: FontWeight.w600,
-                    color: ColorManager.of(context).textPrimary,
-                  ),
-                ),
-              ),
-              ...state.specialties.map((spec) {
-                final isSelected = _selectedSpecialty?.id == spec.id;
-                return InkWell(
-                  onTap: () {
-                    setState(() => _selectedSpecialty = spec);
-                    this.context.read<AuthBloc>().add(
-                      AuthEvent.signupSpecialtyEntitySelected(spec),
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 14.h,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 20.w,
-                          height: 20.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected
-                                  ? ColorManager.primary
-                                  : ColorManager.of(context).borderLight,
-                              width: 2,
-                            ),
-                          ),
-                          child: isSelected
-                              ? Center(
-                                  child: Container(
-                                    width: 10.w,
-                                    height: 10.w,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: ColorManager.primary,
-                                    ),
-                                  ),
-                                )
-                              : null,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final c = ColorManager.of(sheetContext);
+        return FormSheetShell(
+          title: l10n.specialization,
+          children: [
+            for (final spec in state.specialties)
+              Builder(
+                builder: (_) {
+                  final isSelected = _selectedSpecialty?.id == spec.id;
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 8.h),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() => _selectedSpecialty = spec);
+                        context.read<AuthBloc>().add(
+                          AuthEvent.signupSpecialtyEntitySelected(spec),
+                        );
+                        Navigator.pop(sheetContext);
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 11.h,
                         ),
-                        SizedBox(width: 12.w),
-                        Text(
-                          spec.name,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: fontFamily,
-                            fontWeight: isSelected
-                                ? FontWeight.w500
-                                : FontWeight.w400,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? ColorManager.primary.withValues(alpha: 0.08)
+                              : c.cardBg,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
                             color: isSelected
                                 ? ColorManager.primary
-                                : ColorManager.of(context).textPrimary,
+                                : c.borderLight,
+                            width: isSelected ? 1.5 : 1,
                           ),
                         ),
-                      ],
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 18.w,
+                              height: 18.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? ColorManager.primary
+                                      : c.border,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? Center(
+                                      child: Container(
+                                        width: 9.w,
+                                        height: 9.w,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: ColorManager.primary,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Text(
+                                spec.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12.5.sp,
+                                  fontFamily: fontFamily,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: c.textPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              }),
-              SizedBox(height: 12.h),
-            ],
-          ),
+                  );
+                },
+              ),
+          ],
         );
       },
     );
@@ -647,17 +613,21 @@ class _SignupContentState extends State<_SignupContent> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
+            behavior: HitTestBehavior.opaque,
             child: Container(
-              width: 40.w,
-              height: 40.w,
+              width: 36.w,
+              height: 36.w,
               decoration: BoxDecoration(
                 color: ColorManager.of(context).cardBgSecondary,
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(11.r),
+                border: Border.all(
+                  color: ColorManager.of(context).borderLight,
+                ),
               ),
               child: Icon(
                 Icons.arrow_back_ios_new,
                 color: ColorManager.of(context).textPrimary,
-                size: 18.w,
+                size: 16.w,
               ),
             ),
           ),
@@ -687,24 +657,30 @@ class _SignupContentState extends State<_SignupContent> {
 
   Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(13.w),
       decoration: BoxDecoration(
         color: ColorManager.infoLight.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(13.r),
         border: Border.all(
           color: ColorManager.infoLight.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline, color: ColorManager.infoExtraLight, size: 20.w),
-          SizedBox(width: 12.w),
+          Icon(
+            Icons.info_outline,
+            color: ColorManager.infoExtraLight,
+            size: 16.w,
+          ),
+          SizedBox(width: 9.w),
           Expanded(
             child: Text(
               l10n.signupInfoBox,
               style: TextStyle(
                 color: ColorManager.infoExtraLight,
-                fontSize: FontSizesManager.s14,
+                fontSize: 11.5.sp,
+                height: 1.4,
                 fontFamily: fontFamily,
               ),
             ),

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 /// Custom text field widget matching the design system
 class CustomTextField extends StatelessWidget {
@@ -84,53 +84,28 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
       onTap: onTap,
-      style: TextStyleManager.bodyLarge.copyWith(
+      style: TextStyle(
+        fontSize: 13.sp,
+        fontFamily: FontHelper.fontFamily(context),
         color: c.textPrimary,
       ),
-      decoration: InputDecoration(
-        hintText: hintText,
-        labelText: labelText,
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: fillColor ?? c.inputBg,
-        hintStyle: TextStyle(
-          color: c.textHint,
-          fontFamily: FontHelper.fontFamily(context),
-          fontSize: 12.sp
-        ),
-        labelStyle: TextStyle(
-          color: c.textSecondary,
-          fontFamily: FontHelper.fontFamily(context),
-        ),
-        contentPadding:
-            contentPadding ??
-            EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-        border: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(color: ColorManager.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(color: ColorManager.error, width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: const BorderSide(color: ColorManager.error, width: 2),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: borderRadius ?? BorderRadiusManager.xl,
-          borderSide: BorderSide.none,
-        ),
-      ),
+      decoration:
+          formOutlinedInput(
+            context,
+            hintText: hintText,
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+            fillColor: fillColor,
+          ).copyWith(
+            labelText: labelText,
+            labelStyle: TextStyle(
+              color: c.textSecondary,
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 13.sp,
+            ),
+            // Null keeps the shared padding; a call site can still override it.
+            contentPadding: contentPadding,
+          ),
     );
   }
 }

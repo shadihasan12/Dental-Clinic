@@ -1,7 +1,11 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
+import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:go_router/go_router.dart';
@@ -12,13 +16,17 @@ class HomeHeader extends StatelessWidget {
     required this.userName,
     required this.clinicName,
     this.profileImageUrl,
+    this.isLoading = false,
     this.onNotificationTap,
+    this.onMoreTap,
   });
 
   final String userName;
   final String clinicName;
   final String? profileImageUrl;
+  final bool isLoading;
   final VoidCallback? onNotificationTap;
+  final VoidCallback? onMoreTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,62 +36,90 @@ class HomeHeader extends StatelessWidget {
       children: [
         // Left: greeting + clinic
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.welcomeBack,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 14.sp,
-                  color: c.textTertiary,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                userName,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 20.sp,
-                  color: c.textPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 6.h),
-              GestureDetector(
-                onTap: () => context.pushNamed(AppRoutesNames.myClinics),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+          child: isLoading
+              ? _HeaderTextSkeleton()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 7.w,
-                      height: 7.w,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4ADE80),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 6.w),
                     Text(
-                      clinicName,
+                      userName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 13.sp,
-                        color: ColorManager.primary,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 17.sp,
+                        letterSpacing: -0.3,
+                        color: c.textPrimary,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 4.w),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 16.w,
-                      color: ColorManager.primary,
+                    SizedBox(height: 4.h),
+                    // A tinted chip rather than bare text: the clinic
+                    // switcher is a real destination, and a 6px-tall line of
+                    // 11.5sp text was too small a target to hit reliably.
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Material(
+                        color: ColorManager.primary.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: InkWell(
+                          onTap: () =>
+                              context.pushNamed(AppRoutesNames.myClinics),
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(9.w, 6.h, 7.w, 6.h),
+                            // The chip keeps one physical arrangement in both
+                            // languages - dot, name, chevron - so the arrow
+                            // never jumps from one side of the name to the
+                            // other. Only the glyph mirrors. The clinic name
+                            // itself still shapes right-to-left in Arabic.
+                            child: DirectionalChevron.pinLtr(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 6.w,
+                                    height: 6.w,
+                                    decoration: const BoxDecoration(
+                                      color: ColorManager.success,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Flexible(
+                                    child: Text(
+                                      clinicName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: FontHelper.fontFamily(
+                                          context,
+                                        ),
+                                        fontSize: 12.5.sp,
+                                        height: 1.2,
+                                        color: ColorManager.primaryDarker,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 2.w),
+                                  // Points at the clinic name in both
+                                  // languages: right in English, and left
+                                  // in Arabic because pinLtr kept it on
+                                  // the physical right.
+                                  DirectionalChevron(
+                                    size: 16.w,
+                                    color: ColorManager.primaryDarker,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
         ),
 
         // Right: notification bell
@@ -92,33 +128,91 @@ class HomeHeader extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                width: 40.w,
-                height: 40.w,
+                width: 38.w,
+                height: 38.w,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: c.cardBgSecondary,
+                  // gray200 in light, #2E2E2E in dark - the only neutral that
+                  // reads as a disc against both page backgrounds.
+                  color: c.divider,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.notifications_outlined,
                   color: c.textSecondary,
-                  size: 20.w,
+                  size: 19.w,
                 ),
               ),
-              Positioned(
-                right: 10.w,
-                top: 10.h,
-                child: Container(
-                  width: 8.w,
-                  height: 8.w,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
+              // Driven by `unread_count`, which every read/unread/list
+              // response carries - so it stays current without a request of
+              // its own. No unread mail, no dot.
+              PositionedDirectional(
+                end: 4.w,
+                top: 3.h,
+                child: BlocBuilder<UnreadCountCubit, int>(
+                  bloc: getIt<UnreadCountCubit>(),
+                  builder: (context, unreadCount) {
+                    if (unreadCount == 0) return const SizedBox.shrink();
+                    return Container(
+                      constraints: BoxConstraints(minWidth: 16.w),
+                      height: 16.w,
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      decoration: BoxDecoration(
+                        color: ColorManager.error,
+                        borderRadius: BorderRadius.circular(8.w),
+                        border: Border.all(color: c.divider, width: 1.5),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        // Past 99 the pill would outgrow the bell.
+                        unreadCount > 99 ? '99+' : '$unreadCount',
+                        style: TextStyle(
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontSize: 9.sp,
+                          height: 1,
+                          fontWeight: FontWeight.w700,
+                          color: ColorManager.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
         ),
+
+        SizedBox(width: 8.w),
+
+        // Right: more menu
+        GestureDetector(
+          onTap: onMoreTap,
+          child: Container(
+            width: 38.w,
+            height: 38.w,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: c.divider, shape: BoxShape.circle),
+            child: Icon(
+              Icons.settings_outlined,
+              color: c.textSecondary,
+              size: 19.w,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeaderTextSkeleton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShimmerBox(width: 160.w, height: 18.h),
+        SizedBox(height: 7.h),
+        ShimmerBox(width: 120.w, height: 12.h),
       ],
     );
   }

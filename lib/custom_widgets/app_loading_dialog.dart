@@ -8,7 +8,7 @@ class AppLoadingDialog extends StatelessWidget {
   const AppLoadingDialog({
     super.key,
     this.message = 'Loading...',
-    this.indicatorColor = const Color(0xFF70B2B2),
+    this.indicatorColor = const Color(0xFF62B4DA),
   });
 
   final String message;
@@ -18,7 +18,7 @@ class AppLoadingDialog extends StatelessWidget {
   static void show({
     required BuildContext context,
     String message = 'Loading...',
-    Color indicatorColor = const Color(0xFF70B2B2),
+    Color indicatorColor = const Color(0xFF62B4DA),
   }) {
     showDialog(
       context: context,

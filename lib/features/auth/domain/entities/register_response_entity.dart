@@ -42,6 +42,9 @@ class RegisterClinicMembershipEntity with _$RegisterClinicMembershipEntity {
   const factory RegisterClinicMembershipEntity({
     required RegisterClinicEntity clinic,
     required List<String> roles,
+    // True when the user is the original owner of the clinic — drives
+    // the "cannot be removed by other admins" rule downstream.
+    @Default(false) bool isOwner,
   }) = _RegisterClinicMembershipEntity;
 }
 
@@ -98,6 +101,7 @@ class RegisterResponseEntity with _$RegisterResponseEntity {
       clinicName: clinic.name,
       role: role,
       status: MembershipStatus.active,
+      isOwner: clinicData.isOwner,
       userName: name,
       userEmail: email,
       userAvatarUrl: image,

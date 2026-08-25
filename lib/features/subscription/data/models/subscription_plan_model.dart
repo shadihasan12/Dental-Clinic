@@ -71,14 +71,18 @@ class SubscriptionPlanModel {
     switch (tier) {
       case 'trial':
         return PlanTier.trial;
-      case 'starter':
-        return PlanTier.starter;
-      case 'growing':
-        return PlanTier.growing;
-      case 'advanced':
-        return PlanTier.advanced;
+      case 'solo':
+        return PlanTier.solo;
+      case 'duo':
+        return PlanTier.duo;
+      case 'clinic':
+        return PlanTier.clinic;
+      case 'practice':
+        return PlanTier.practice;
+      case 'custom':
+        return PlanTier.custom;
       default:
-        return PlanTier.starter;
+        return PlanTier.solo;
     }
   }
 

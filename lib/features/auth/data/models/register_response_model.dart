@@ -127,10 +127,12 @@ class RegisterClinicModel {
 class RegisterClinicMembershipModel {
   final RegisterClinicModel clinic;
   final List<String> roles;
+  final bool isOwner;
 
   RegisterClinicMembershipModel({
     required this.clinic,
     required this.roles,
+    this.isOwner = false,
   });
 
   factory RegisterClinicMembershipModel.fromJson(Map<String, dynamic> json) {
@@ -139,6 +141,7 @@ class RegisterClinicMembershipModel {
         json['clinic'] as Map<String, dynamic>,
       ),
       roles: (json['roles'] as List).map((e) => e as String).toList(),
+      isOwner: json['is_owner'] as bool? ?? false,
     );
   }
 
@@ -146,6 +149,7 @@ class RegisterClinicMembershipModel {
     return {
       'clinic': clinic.toJson(),
       'roles': roles,
+      'is_owner': isOwner,
     };
   }
 
@@ -153,6 +157,7 @@ class RegisterClinicMembershipModel {
     return RegisterClinicMembershipEntity(
       clinic: clinic.toEntity(),
       roles: roles,
+      isOwner: isOwner,
     );
   }
 }

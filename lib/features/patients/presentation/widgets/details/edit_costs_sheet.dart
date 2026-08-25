@@ -46,6 +46,7 @@ class EditCostsSheet extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => EditCostsSheet(
         initialTotalCost: initialTotalCost,

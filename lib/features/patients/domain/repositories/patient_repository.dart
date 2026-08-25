@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
+import 'package:dental_clinic_app/features/patients/data/models/case_attachment_model.dart';
 
 class PatientFullDetailsResult {
   final PatientEntity patient;
@@ -42,6 +43,12 @@ abstract class PatientRepository {
   Future<Either<NetworkExceptions, PatientEntity>> addPatient(
     PatientEntity patient,
   );
+
+  Future<Either<NetworkExceptions, PatientEntity>> updatePatient(
+    PatientEntity patient,
+  );
+
+  Future<Either<NetworkExceptions, void>> detachPatient(String patientId);
 
   Future<Either<NetworkExceptions, TreatmentItem>> addTreatment(
     AddTreatmentParams params,
@@ -100,6 +107,25 @@ abstract class PatientRepository {
     String? totalCostCurrencyId,
     required double labFees,
     String? labFeesCurrencyId,
+  });
+
+  Future<Either<NetworkExceptions, List<CaseAttachmentModel>>>
+      getCaseAttachments({
+    required String patientId,
+    required String caseId,
+  });
+
+  Future<Either<NetworkExceptions, List<CaseAttachmentModel>>>
+      addCaseAttachments({
+    required String patientId,
+    required String caseId,
+    required List<String> mediaIds,
+  });
+
+  Future<Either<NetworkExceptions, void>> deleteCaseAttachment({
+    required String patientId,
+    required String caseId,
+    required String attachmentId,
   });
 
   Future<Either<NetworkExceptions, void>> updateCaseTitle({

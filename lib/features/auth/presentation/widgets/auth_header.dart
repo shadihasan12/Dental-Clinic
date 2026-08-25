@@ -97,8 +97,12 @@ class AuthHeader extends StatelessWidget {
           ),
         ],
       ),
-      child: Center(
-        child: Text('\u{1F9B7}', style: TextStyle(fontSize: 40.sp)),
+      child: Padding(
+        padding: EdgeInsets.all(14.w),
+        child: Image.asset(
+          'assets/images/logo/denta_mark.png',
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }

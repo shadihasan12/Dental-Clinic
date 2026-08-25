@@ -16,116 +16,92 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$NotificationSettingsEntity {
-  // Reminders
-  bool get appointmentReminders => throw _privateConstructorUsedError;
-  bool get paymentReminders => throw _privateConstructorUsedError;
-  bool get patientFollowUp => throw _privateConstructorUsedError; // Updates
-  bool get newsAndUpdates => throw _privateConstructorUsedError;
-  bool get newFeatures => throw _privateConstructorUsedError;
-  bool get promotionalOffers => throw _privateConstructorUsedError;
-  bool get statisticsUpdates =>
-      throw _privateConstructorUsedError; // Communication
-  bool get pushNotifications => throw _privateConstructorUsedError;
-  bool get emailNotifications => throw _privateConstructorUsedError;
+mixin _$NotificationSettingEntity {
+  /// Send this back when toggling. Never shown to the user.
+  String get key => throw _privateConstructorUsedError;
 
-  /// Create a copy of NotificationSettingsEntity
+  /// The switch label, already translated by the server.
+  String get name => throw _privateConstructorUsedError;
+
+  /// Sub-label. May be absent entirely — check before rendering.
+  String? get description => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
+
+  /// Present only for broadcast categories, and the **only** source of
+  /// Firebase topic names in this app. Today: `announcement_ar` /
+  /// `announcement_en`, and the server decides which. Subscribe to the exact
+  /// string, only while [enabled] is true; never build the name.
+  String? get audience => throw _privateConstructorUsedError;
+
+  /// Create a copy of NotificationSettingEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $NotificationSettingsEntityCopyWith<NotificationSettingsEntity>
-  get copyWith => throw _privateConstructorUsedError;
+  $NotificationSettingEntityCopyWith<NotificationSettingEntity> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NotificationSettingsEntityCopyWith<$Res> {
-  factory $NotificationSettingsEntityCopyWith(
-    NotificationSettingsEntity value,
-    $Res Function(NotificationSettingsEntity) then,
-  ) =
-      _$NotificationSettingsEntityCopyWithImpl<
-        $Res,
-        NotificationSettingsEntity
-      >;
+abstract class $NotificationSettingEntityCopyWith<$Res> {
+  factory $NotificationSettingEntityCopyWith(
+    NotificationSettingEntity value,
+    $Res Function(NotificationSettingEntity) then,
+  ) = _$NotificationSettingEntityCopyWithImpl<$Res, NotificationSettingEntity>;
   @useResult
   $Res call({
-    bool appointmentReminders,
-    bool paymentReminders,
-    bool patientFollowUp,
-    bool newsAndUpdates,
-    bool newFeatures,
-    bool promotionalOffers,
-    bool statisticsUpdates,
-    bool pushNotifications,
-    bool emailNotifications,
+    String key,
+    String name,
+    String? description,
+    bool enabled,
+    String? audience,
   });
 }
 
 /// @nodoc
-class _$NotificationSettingsEntityCopyWithImpl<
+class _$NotificationSettingEntityCopyWithImpl<
   $Res,
-  $Val extends NotificationSettingsEntity
+  $Val extends NotificationSettingEntity
 >
-    implements $NotificationSettingsEntityCopyWith<$Res> {
-  _$NotificationSettingsEntityCopyWithImpl(this._value, this._then);
+    implements $NotificationSettingEntityCopyWith<$Res> {
+  _$NotificationSettingEntityCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of NotificationSettingsEntity
+  /// Create a copy of NotificationSettingEntity
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appointmentReminders = null,
-    Object? paymentReminders = null,
-    Object? patientFollowUp = null,
-    Object? newsAndUpdates = null,
-    Object? newFeatures = null,
-    Object? promotionalOffers = null,
-    Object? statisticsUpdates = null,
-    Object? pushNotifications = null,
-    Object? emailNotifications = null,
+    Object? key = null,
+    Object? name = null,
+    Object? description = freezed,
+    Object? enabled = null,
+    Object? audience = freezed,
   }) {
     return _then(
       _value.copyWith(
-            appointmentReminders: null == appointmentReminders
-                ? _value.appointmentReminders
-                : appointmentReminders // ignore: cast_nullable_to_non_nullable
+            key: null == key
+                ? _value.key
+                : key // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            enabled: null == enabled
+                ? _value.enabled
+                : enabled // ignore: cast_nullable_to_non_nullable
                       as bool,
-            paymentReminders: null == paymentReminders
-                ? _value.paymentReminders
-                : paymentReminders // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            patientFollowUp: null == patientFollowUp
-                ? _value.patientFollowUp
-                : patientFollowUp // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            newsAndUpdates: null == newsAndUpdates
-                ? _value.newsAndUpdates
-                : newsAndUpdates // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            newFeatures: null == newFeatures
-                ? _value.newFeatures
-                : newFeatures // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            promotionalOffers: null == promotionalOffers
-                ? _value.promotionalOffers
-                : promotionalOffers // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            statisticsUpdates: null == statisticsUpdates
-                ? _value.statisticsUpdates
-                : statisticsUpdates // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            pushNotifications: null == pushNotifications
-                ? _value.pushNotifications
-                : pushNotifications // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            emailNotifications: null == emailNotifications
-                ? _value.emailNotifications
-                : emailNotifications // ignore: cast_nullable_to_non_nullable
-                      as bool,
+            audience: freezed == audience
+                ? _value.audience
+                : audience // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -133,93 +109,69 @@ class _$NotificationSettingsEntityCopyWithImpl<
 }
 
 /// @nodoc
-abstract class _$$NotificationSettingsEntityImplCopyWith<$Res>
-    implements $NotificationSettingsEntityCopyWith<$Res> {
-  factory _$$NotificationSettingsEntityImplCopyWith(
-    _$NotificationSettingsEntityImpl value,
-    $Res Function(_$NotificationSettingsEntityImpl) then,
-  ) = __$$NotificationSettingsEntityImplCopyWithImpl<$Res>;
+abstract class _$$NotificationSettingEntityImplCopyWith<$Res>
+    implements $NotificationSettingEntityCopyWith<$Res> {
+  factory _$$NotificationSettingEntityImplCopyWith(
+    _$NotificationSettingEntityImpl value,
+    $Res Function(_$NotificationSettingEntityImpl) then,
+  ) = __$$NotificationSettingEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
-    bool appointmentReminders,
-    bool paymentReminders,
-    bool patientFollowUp,
-    bool newsAndUpdates,
-    bool newFeatures,
-    bool promotionalOffers,
-    bool statisticsUpdates,
-    bool pushNotifications,
-    bool emailNotifications,
+    String key,
+    String name,
+    String? description,
+    bool enabled,
+    String? audience,
   });
 }
 
 /// @nodoc
-class __$$NotificationSettingsEntityImplCopyWithImpl<$Res>
+class __$$NotificationSettingEntityImplCopyWithImpl<$Res>
     extends
-        _$NotificationSettingsEntityCopyWithImpl<
+        _$NotificationSettingEntityCopyWithImpl<
           $Res,
-          _$NotificationSettingsEntityImpl
+          _$NotificationSettingEntityImpl
         >
-    implements _$$NotificationSettingsEntityImplCopyWith<$Res> {
-  __$$NotificationSettingsEntityImplCopyWithImpl(
-    _$NotificationSettingsEntityImpl _value,
-    $Res Function(_$NotificationSettingsEntityImpl) _then,
+    implements _$$NotificationSettingEntityImplCopyWith<$Res> {
+  __$$NotificationSettingEntityImplCopyWithImpl(
+    _$NotificationSettingEntityImpl _value,
+    $Res Function(_$NotificationSettingEntityImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of NotificationSettingsEntity
+  /// Create a copy of NotificationSettingEntity
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appointmentReminders = null,
-    Object? paymentReminders = null,
-    Object? patientFollowUp = null,
-    Object? newsAndUpdates = null,
-    Object? newFeatures = null,
-    Object? promotionalOffers = null,
-    Object? statisticsUpdates = null,
-    Object? pushNotifications = null,
-    Object? emailNotifications = null,
+    Object? key = null,
+    Object? name = null,
+    Object? description = freezed,
+    Object? enabled = null,
+    Object? audience = freezed,
   }) {
     return _then(
-      _$NotificationSettingsEntityImpl(
-        appointmentReminders: null == appointmentReminders
-            ? _value.appointmentReminders
-            : appointmentReminders // ignore: cast_nullable_to_non_nullable
+      _$NotificationSettingEntityImpl(
+        key: null == key
+            ? _value.key
+            : key // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        enabled: null == enabled
+            ? _value.enabled
+            : enabled // ignore: cast_nullable_to_non_nullable
                   as bool,
-        paymentReminders: null == paymentReminders
-            ? _value.paymentReminders
-            : paymentReminders // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        patientFollowUp: null == patientFollowUp
-            ? _value.patientFollowUp
-            : patientFollowUp // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        newsAndUpdates: null == newsAndUpdates
-            ? _value.newsAndUpdates
-            : newsAndUpdates // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        newFeatures: null == newFeatures
-            ? _value.newFeatures
-            : newFeatures // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        promotionalOffers: null == promotionalOffers
-            ? _value.promotionalOffers
-            : promotionalOffers // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        statisticsUpdates: null == statisticsUpdates
-            ? _value.statisticsUpdates
-            : statisticsUpdates // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        pushNotifications: null == pushNotifications
-            ? _value.pushNotifications
-            : pushNotifications // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        emailNotifications: null == emailNotifications
-            ? _value.emailNotifications
-            : emailNotifications // ignore: cast_nullable_to_non_nullable
-                  as bool,
+        audience: freezed == audience
+            ? _value.audience
+            : audience // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -227,144 +179,107 @@ class __$$NotificationSettingsEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$NotificationSettingsEntityImpl implements _NotificationSettingsEntity {
-  const _$NotificationSettingsEntityImpl({
-    this.appointmentReminders = true,
-    this.paymentReminders = true,
-    this.patientFollowUp = false,
-    this.newsAndUpdates = true,
-    this.newFeatures = true,
-    this.promotionalOffers = false,
-    this.statisticsUpdates = true,
-    this.pushNotifications = true,
-    this.emailNotifications = true,
-  });
+class _$NotificationSettingEntityImpl extends _NotificationSettingEntity {
+  const _$NotificationSettingEntityImpl({
+    required this.key,
+    required this.name,
+    this.description,
+    this.enabled = true,
+    this.audience,
+  }) : super._();
 
-  // Reminders
+  /// Send this back when toggling. Never shown to the user.
+  @override
+  final String key;
+
+  /// The switch label, already translated by the server.
+  @override
+  final String name;
+
+  /// Sub-label. May be absent entirely — check before rendering.
+  @override
+  final String? description;
   @override
   @JsonKey()
-  final bool appointmentReminders;
+  final bool enabled;
+
+  /// Present only for broadcast categories, and the **only** source of
+  /// Firebase topic names in this app. Today: `announcement_ar` /
+  /// `announcement_en`, and the server decides which. Subscribe to the exact
+  /// string, only while [enabled] is true; never build the name.
   @override
-  @JsonKey()
-  final bool paymentReminders;
-  @override
-  @JsonKey()
-  final bool patientFollowUp;
-  // Updates
-  @override
-  @JsonKey()
-  final bool newsAndUpdates;
-  @override
-  @JsonKey()
-  final bool newFeatures;
-  @override
-  @JsonKey()
-  final bool promotionalOffers;
-  @override
-  @JsonKey()
-  final bool statisticsUpdates;
-  // Communication
-  @override
-  @JsonKey()
-  final bool pushNotifications;
-  @override
-  @JsonKey()
-  final bool emailNotifications;
+  final String? audience;
 
   @override
   String toString() {
-    return 'NotificationSettingsEntity(appointmentReminders: $appointmentReminders, paymentReminders: $paymentReminders, patientFollowUp: $patientFollowUp, newsAndUpdates: $newsAndUpdates, newFeatures: $newFeatures, promotionalOffers: $promotionalOffers, statisticsUpdates: $statisticsUpdates, pushNotifications: $pushNotifications, emailNotifications: $emailNotifications)';
+    return 'NotificationSettingEntity(key: $key, name: $name, description: $description, enabled: $enabled, audience: $audience)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NotificationSettingsEntityImpl &&
-            (identical(other.appointmentReminders, appointmentReminders) ||
-                other.appointmentReminders == appointmentReminders) &&
-            (identical(other.paymentReminders, paymentReminders) ||
-                other.paymentReminders == paymentReminders) &&
-            (identical(other.patientFollowUp, patientFollowUp) ||
-                other.patientFollowUp == patientFollowUp) &&
-            (identical(other.newsAndUpdates, newsAndUpdates) ||
-                other.newsAndUpdates == newsAndUpdates) &&
-            (identical(other.newFeatures, newFeatures) ||
-                other.newFeatures == newFeatures) &&
-            (identical(other.promotionalOffers, promotionalOffers) ||
-                other.promotionalOffers == promotionalOffers) &&
-            (identical(other.statisticsUpdates, statisticsUpdates) ||
-                other.statisticsUpdates == statisticsUpdates) &&
-            (identical(other.pushNotifications, pushNotifications) ||
-                other.pushNotifications == pushNotifications) &&
-            (identical(other.emailNotifications, emailNotifications) ||
-                other.emailNotifications == emailNotifications));
+            other is _$NotificationSettingEntityImpl &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.audience, audience) ||
+                other.audience == audience));
   }
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    appointmentReminders,
-    paymentReminders,
-    patientFollowUp,
-    newsAndUpdates,
-    newFeatures,
-    promotionalOffers,
-    statisticsUpdates,
-    pushNotifications,
-    emailNotifications,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, key, name, description, enabled, audience);
 
-  /// Create a copy of NotificationSettingsEntity
+  /// Create a copy of NotificationSettingEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$NotificationSettingsEntityImplCopyWith<_$NotificationSettingsEntityImpl>
+  _$$NotificationSettingEntityImplCopyWith<_$NotificationSettingEntityImpl>
   get copyWith =>
-      __$$NotificationSettingsEntityImplCopyWithImpl<
-        _$NotificationSettingsEntityImpl
+      __$$NotificationSettingEntityImplCopyWithImpl<
+        _$NotificationSettingEntityImpl
       >(this, _$identity);
 }
 
-abstract class _NotificationSettingsEntity
-    implements NotificationSettingsEntity {
-  const factory _NotificationSettingsEntity({
-    final bool appointmentReminders,
-    final bool paymentReminders,
-    final bool patientFollowUp,
-    final bool newsAndUpdates,
-    final bool newFeatures,
-    final bool promotionalOffers,
-    final bool statisticsUpdates,
-    final bool pushNotifications,
-    final bool emailNotifications,
-  }) = _$NotificationSettingsEntityImpl;
+abstract class _NotificationSettingEntity extends NotificationSettingEntity {
+  const factory _NotificationSettingEntity({
+    required final String key,
+    required final String name,
+    final String? description,
+    final bool enabled,
+    final String? audience,
+  }) = _$NotificationSettingEntityImpl;
+  const _NotificationSettingEntity._() : super._();
 
-  // Reminders
+  /// Send this back when toggling. Never shown to the user.
   @override
-  bool get appointmentReminders;
-  @override
-  bool get paymentReminders;
-  @override
-  bool get patientFollowUp; // Updates
-  @override
-  bool get newsAndUpdates;
-  @override
-  bool get newFeatures;
-  @override
-  bool get promotionalOffers;
-  @override
-  bool get statisticsUpdates; // Communication
-  @override
-  bool get pushNotifications;
-  @override
-  bool get emailNotifications;
+  String get key;
 
-  /// Create a copy of NotificationSettingsEntity
+  /// The switch label, already translated by the server.
+  @override
+  String get name;
+
+  /// Sub-label. May be absent entirely — check before rendering.
+  @override
+  String? get description;
+  @override
+  bool get enabled;
+
+  /// Present only for broadcast categories, and the **only** source of
+  /// Firebase topic names in this app. Today: `announcement_ar` /
+  /// `announcement_en`, and the server decides which. Subscribe to the exact
+  /// string, only while [enabled] is true; never build the name.
+  @override
+  String? get audience;
+
+  /// Create a copy of NotificationSettingEntity
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$NotificationSettingsEntityImplCopyWith<_$NotificationSettingsEntityImpl>
+  _$$NotificationSettingEntityImplCopyWith<_$NotificationSettingEntityImpl>
   get copyWith => throw _privateConstructorUsedError;
 }

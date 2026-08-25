@@ -1,83 +1,40 @@
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/domain/entities/notification_settings_entity.dart';
 
-class NotificationSettingsModel {
-  final bool appointmentReminders;
-  final bool paymentReminders;
-  final bool patientFollowUp;
-  final bool newsAndUpdates;
-  final bool newFeatures;
-  final bool promotionalOffers;
-  final bool statisticsUpdates;
-  final bool pushNotifications;
-  final bool emailNotifications;
+/// Wire model for one entry of `GET /notification-settings`.
+class NotificationSettingModel {
+  final String key;
+  final String name;
+  final String? description;
+  final bool enabled;
+  final String? audience;
 
-  const NotificationSettingsModel({
-    required this.appointmentReminders,
-    required this.paymentReminders,
-    required this.patientFollowUp,
-    required this.newsAndUpdates,
-    required this.newFeatures,
-    required this.promotionalOffers,
-    required this.statisticsUpdates,
-    required this.pushNotifications,
-    required this.emailNotifications,
+  const NotificationSettingModel({
+    required this.key,
+    required this.name,
+    this.description,
+    required this.enabled,
+    this.audience,
   });
 
-  factory NotificationSettingsModel.fromJson(Map<String, dynamic> json) {
-    return NotificationSettingsModel(
-      appointmentReminders: json['appointmentReminders'] as bool? ?? true,
-      paymentReminders: json['paymentReminders'] as bool? ?? true,
-      patientFollowUp: json['patientFollowUp'] as bool? ?? false,
-      newsAndUpdates: json['newsAndUpdates'] as bool? ?? true,
-      newFeatures: json['newFeatures'] as bool? ?? true,
-      promotionalOffers: json['promotionalOffers'] as bool? ?? false,
-      statisticsUpdates: json['statisticsUpdates'] as bool? ?? true,
-      pushNotifications: json['pushNotifications'] as bool? ?? true,
-      emailNotifications: json['emailNotifications'] as bool? ?? true,
+  factory NotificationSettingModel.fromJson(Map<String, dynamic> json) {
+    return NotificationSettingModel(
+      key: json['key'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      // Documented as possibly absent, not merely null.
+      description: json['description'] as String?,
+      enabled: json['enabled'] as bool? ?? false,
+      // Present only for broadcast categories.
+      audience: json['audience'] as String?,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'appointmentReminders': appointmentReminders,
-      'paymentReminders': paymentReminders,
-      'patientFollowUp': patientFollowUp,
-      'newsAndUpdates': newsAndUpdates,
-      'newFeatures': newFeatures,
-      'promotionalOffers': promotionalOffers,
-      'statisticsUpdates': statisticsUpdates,
-      'pushNotifications': pushNotifications,
-      'emailNotifications': emailNotifications,
-    };
-  }
-
-  factory NotificationSettingsModel.fromEntity(
-    NotificationSettingsEntity entity,
-  ) {
-    return NotificationSettingsModel(
-      appointmentReminders: entity.appointmentReminders,
-      paymentReminders: entity.paymentReminders,
-      patientFollowUp: entity.patientFollowUp,
-      newsAndUpdates: entity.newsAndUpdates,
-      newFeatures: entity.newFeatures,
-      promotionalOffers: entity.promotionalOffers,
-      statisticsUpdates: entity.statisticsUpdates,
-      pushNotifications: entity.pushNotifications,
-      emailNotifications: entity.emailNotifications,
-    );
-  }
-
-  NotificationSettingsEntity toEntity() {
-    return NotificationSettingsEntity(
-      appointmentReminders: appointmentReminders,
-      paymentReminders: paymentReminders,
-      patientFollowUp: patientFollowUp,
-      newsAndUpdates: newsAndUpdates,
-      newFeatures: newFeatures,
-      promotionalOffers: promotionalOffers,
-      statisticsUpdates: statisticsUpdates,
-      pushNotifications: pushNotifications,
-      emailNotifications: emailNotifications,
+  NotificationSettingEntity toEntity() {
+    return NotificationSettingEntity(
+      key: key,
+      name: name,
+      description: description,
+      enabled: enabled,
+      audience: audience,
     );
   }
 }

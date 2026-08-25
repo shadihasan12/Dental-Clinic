@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Dental Clinic App</string>
+	<string>Denta</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>dental_clinic_app</string>
+	<string>Denta</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -44,6 +44,27 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<!--
+		Background modes required by Firebase Cloud Messaging:
+		  remote-notification  - lets data-only pushes wake the app
+		  fetch                - lets the OS poll for content updates
+		You still need to enable the "Push Notifications" capability in Xcode
+		(Signing & Capabilities tab). Info.plist alone does not enable APNs;
+		Apple requires the entitlement to be added in the Xcode UI so the
+		provisioning profile gets the aps-environment entry.
+	-->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<!--
+		FirebaseAppDelegateProxyEnabled=YES (default) lets firebase_messaging
+		swizzle UIApplicationDelegate methods so APNs token registration is
+		automatic. Explicit here so future maintainers see it's intentional.
+	-->
+	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
 </dict>
 </plist>

@@ -48,6 +48,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cases => 'Cases';
 
   @override
+  String get share => 'Share';
+
+  @override
+  String get statisticsLoadFailed => 'Statistics could not be loaded';
+
+  @override
+  String get noStatisticsYet => 'No statistics yet';
+
+  @override
+  String get noStatisticsYetHint =>
+      'They will appear here once the clinic has recorded some activity.';
+
+  @override
   String get statistics => 'Statistics';
 
   @override
@@ -88,6 +101,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get unlimited => 'Unlimited';
 
   @override
   String get loading => 'Loading...';
@@ -171,6 +187,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pending => 'Pending';
 
   @override
+  String get confirmed => 'Confirmed';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get cancelledByClinic => 'Cancelled by clinic';
+
+  @override
+  String get cancelledByPatient => 'Cancelled by patient';
+
+  @override
+  String get changeStatus => 'Change status';
+
+  @override
+  String get noShow => 'No show';
+
+  @override
+  String get appointmentDetails => 'Appointment details';
+
+  @override
+  String get doctor => 'Doctor';
+
+  @override
+  String get day => 'Day';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get viewPatientDetails => 'View patient details';
+
+  @override
   String get completed => 'Completed';
 
   @override
@@ -184,6 +233,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseType => 'Expense type';
+
+  @override
+  String get expenseDetails => 'Expense details';
 
   @override
   String get sort => 'Sort';
@@ -210,15 +262,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menu => 'Menu';
 
   @override
-  String get goodMorning => 'Good morning';
-
-  @override
-  String get goodAfternoon => 'Good afternoon';
-
-  @override
-  String get goodEvening => 'Good evening';
-
-  @override
   String get about => 'About';
 
   @override
@@ -235,6 +278,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get version => 'Version';
+
+  @override
+  String get logoutConsequence =>
+      'You will be signed out on this device and will need to sign in again.';
 
   @override
   String get areYouSureLogout => 'Are you sure you want to logout?';
@@ -273,13 +320,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeSubscription => 'Upgrade Subscription';
 
   @override
+  String get subscriptionLimitTitle => 'Subscription limit reached';
+
+  @override
+  String get dentistLimitMessage =>
+      'Your current plan doesn\'t allow adding more dentists. Upgrade your subscription to add more clinic users.';
+
+  @override
+  String roleLimitInfo(String roles) {
+    return 'Your current plan is at its limit for: $roles. Upgrade to add users with this role.';
+  }
+
+  @override
   String get daysRemaining => 'Days Remaining';
 
   @override
   String get accountSettings => 'Account Settings';
 
   @override
+  String get profileLoadFailed => 'Profile could not be loaded';
+
+  @override
   String get editProfile => 'Edit Profile';
+
+  @override
+  String get clinicInfoLoadFailed => 'Clinic information could not be loaded';
 
   @override
   String get clinicInformation => 'Clinic Information';
@@ -288,7 +353,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clinicName => 'Clinic Name';
 
   @override
+  String get workingDaysLoadFailed => 'Working days could not be loaded';
+
+  @override
+  String get workingDays => 'Working Days';
+
+  @override
+  String get workingHoursLoadFailed => 'Working hours could not be loaded';
+
+  @override
   String get workingHours => 'Working Hours';
+
+  @override
+  String get fullClinicHours => 'Full clinic hours';
+
+  @override
+  String get manageWorkingHours => 'Manage working hours';
 
   @override
   String get closed => 'Closed';
@@ -338,7 +418,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpCenter => 'Help Center';
 
   @override
-  String get contactSupport => 'Contact Support';
+  String get reportIssue => 'Report an Issue';
+
+  @override
+  String get newReport => 'New report';
+
+  @override
+  String get issueTitleLabel => 'Title';
+
+  @override
+  String get issueTitleHint => 'Short summary of the problem';
+
+  @override
+  String get issueDescriptionHint => 'What happened, and what you expected';
+
+  @override
+  String get issueTitleRequired => 'Title is required';
+
+  @override
+  String get issueDescriptionRequired => 'Description is required';
+
+  @override
+  String get sendReport => 'Send report';
+
+  @override
+  String get yourReports => 'Your reports';
+
+  @override
+  String get issueStatusPending => 'Pending';
+
+  @override
+  String get issueStatusInProgress => 'In progress';
+
+  @override
+  String get issueStatusDone => 'Done';
+
+  @override
+  String get noReportsYet => 'No reports yet';
+
+  @override
+  String get noReportsYetHint =>
+      'Reports you send appear here with their status.';
+
+  @override
+  String get reportSent => 'Report sent';
+
+  @override
+  String get couldNotLoadReports => 'Could not load your reports';
 
   @override
   String get termsPrivacy => 'Terms & Privacy';
@@ -380,6 +506,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInToContinue => 'Sign in to your account to continue';
 
   @override
+  String get newButton => 'New';
+
+  @override
+  String get patientsLoadFailed => 'Patients could not be loaded';
+
+  @override
   String get allFilter => 'All';
 
   @override
@@ -393,6 +525,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get outstandingBalance => 'Outstanding balance';
+
+  @override
+  String get pleaseEnterPhone => 'Please enter a phone number';
+
+  @override
+  String get pleaseSelectDateOfBirth => 'Please select a date of birth';
+
+  @override
+  String get noKnownAllergiesRecorded =>
+      'Will be recorded as no known allergies';
+
+  @override
+  String get checkHighlightedFields => 'Check the highlighted fields';
+
+  @override
+  String get contactInformation => 'Contact Information';
 
   @override
   String get personalInformation => 'Personal Information';
@@ -420,7 +568,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingPatient => 'Saving Patient...';
 
   @override
-  String get patientSavedSuccessfully => 'Patient Saved Successfully!';
+  String get patientSavedSuccessfully => 'Patient saved';
 
   @override
   String get addTreatmentQuestion =>
@@ -641,6 +789,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treatedTeeth => 'Treated Teeth';
 
   @override
+  String get addReceipt => 'Add a receipt';
+
+  @override
   String get attachments => 'Attachments';
 
   @override
@@ -648,6 +799,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get age => 'Age';
+
+  @override
+  String get noExpensesThisMonthHint =>
+      'Add the first expense for this month and it will show here with its category and amount.';
+
+  @override
+  String get expensesLoadFailed => 'Expenses could not be loaded';
+
+  @override
+  String get expensesUnchangedHint =>
+      'Nothing was changed. Your expenses are safe.';
 
   @override
   String get noExpensesThisMonth => 'No expenses this month';
@@ -705,6 +867,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myClinics => 'My Clinics';
 
   @override
+  String get useThisClinic => 'Use this clinic';
+
+  @override
+  String get currentlyActive => 'Currently active';
+
+  @override
+  String clinicSelectedMessage(String name) {
+    return 'Now working on $name';
+  }
+
+  @override
   String get leaveClinic => 'Leave Clinic';
 
   @override
@@ -739,11 +912,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invitationDeclinedMessage => 'The invitation has been declined';
 
   @override
+  String get invitations => 'Invitations';
+
+  @override
+  String get accepted => 'Accepted';
+
+  @override
+  String get declined => 'Declined';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get sent => 'Sent';
+
+  @override
+  String get received => 'Received';
+
+  @override
+  String get sendInvite => 'Send invite';
+
+  @override
+  String get sendInviteSubtitle => 'Invite a colleague to join this clinic.';
+
+  @override
+  String get inviteSentSuccess => 'Invitation sent';
+
+  @override
+  String invitedBy(String name) {
+    return 'by $name';
+  }
+
+  @override
+  String get noInvitations => 'No invitations';
+
+  @override
+  String get noPendingInvitations => 'No pending invitations';
+
+  @override
+  String get noAcceptedInvitations => 'No accepted invitations';
+
+  @override
+  String get noDeclinedInvitations => 'No declined invitations';
+
+  @override
+  String get noPendingSentInvitations => 'No pending invitations sent';
+
+  @override
+  String get noAcceptedSentInvitations => 'No accepted invitations sent';
+
+  @override
+  String get noDeclinedSentInvitations => 'No declined invitations sent';
+
+  @override
   String get appLanguageWillChangeImmediately =>
       'The app language will change immediately';
 
   @override
   String get pleaseSelectAPatient => 'Please select a patient';
+
+  @override
+  String get pleaseSelectADoctor => 'Please select a doctor';
+
+  @override
+  String get selectDoctor => 'Select doctor';
+
+  @override
+  String get selectDoctorFirst => 'Select a doctor to see available slots';
+
+  @override
+  String get vipAppointment => 'VIP appointment';
+
+  @override
+  String get vipAppointmentSubtitle =>
+      'Bypass the doctor\'s schedule and show every slot';
 
   @override
   String get missingData => 'Missing Data';
@@ -781,6 +1029,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAvailableSlotsForThisDate => 'No available slots for this date';
 
   @override
+  String get noWorkingHoursTitle => 'Set up your working hours';
+
+  @override
+  String get noWorkingHoursMessage =>
+      'You haven\'t added your working hours yet, so we can\'t show available slots. Add them once and you\'ll be able to schedule appointments right away.';
+
+  @override
+  String get setWorkingHours => 'Set working hours';
+
+  @override
+  String get notWorkingOnThisDayTitle => 'You don\'t work on this day';
+
+  @override
+  String get notWorkingOnThisDayMessage =>
+      'Your working hours don\'t cover this day. Pick another date or update your hours to add it.';
+
+  @override
+  String get updateWorkingHours => 'Update working hours';
+
+  @override
+  String get clinicWorkingDaysMissingTitle =>
+      'Set up clinic working days first';
+
+  @override
+  String get clinicWorkingDaysMissingAdminMessage =>
+      'Your clinic doesn\'t have working days yet. Add them once and you\'ll be able to set your own hours on top of them.';
+
+  @override
+  String get clinicWorkingDaysMissingNonAdminMessage =>
+      'Your clinic\'s admin hasn\'t set up working days yet. Ask them to add them before you can save your hours.';
+
+  @override
+  String get setClinicWorkingDays => 'Set clinic working days';
+
+  @override
   String get sendReminderToPatient => 'Send reminder to patient';
 
   @override
@@ -794,6 +1077,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get xray => 'X-Ray';
+
+  @override
+  String get noAppointmentsScheduled => 'No appointments scheduled';
+
+  @override
+  String get noAppointmentsScheduledHint =>
+      'Add an appointment and it will show here with its time and duration.';
+
+  @override
+  String get appointmentsLoadFailed => 'Appointments could not be loaded';
+
+  @override
+  String get noAppointmentsToday => 'No appointments today';
+
+  @override
+  String get noAppointmentsTodayHint =>
+      'Add the first appointment and it will show here with its time and duration.';
+
+  @override
+  String get scheduleLoadFailed => 'Today\'s schedule could not be loaded';
+
+  @override
+  String get scheduleUnchangedHint =>
+      'Nothing was changed. Your appointments are safe.';
 
   @override
   String get noAppointments => 'No Appointments';
@@ -824,9 +1131,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenses => 'Expenses';
-
-  @override
-  String get expenseDetails => 'Expense Details';
 
   @override
   String get currency => 'Currency';
@@ -995,6 +1299,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get unread => 'Unread';
+
+  @override
+  String get noUnreadNotifications => 'No unread notifications';
+
+  @override
+  String get noUnreadNotificationsDesc => 'Everything here has been read.';
+
+  @override
+  String get couldNotLoadNotifications => 'Could not load notifications';
+
+  @override
+  String get noNotificationsChanged => 'Nothing was marked as read.';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get pastWeek => 'Past Week';
+
+  @override
+  String get older => 'Older';
+
+  @override
   String get notificationsSettings => 'Notifications Settings';
 
   @override
@@ -1105,7 +1433,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyHaveAccount => 'Already have an account? ';
 
   @override
-  String get copyrightSmylos => '© 2026 SmylOS Pro. All rights reserved.';
+  String get copyrightDenta => '© 2026 Denta. All rights reserved.';
 
   @override
   String get pleaseEnterEmailOrPhone =>
@@ -1125,7 +1453,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginFailed => 'Login Failed';
 
   @override
-  String get appName => 'SmylOS Pro';
+  String get appName => 'Denta';
 
   @override
   String get professionalClinicManagement => 'Professional Clinic Management';
@@ -1274,6 +1602,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get didntReceiveCode => 'Didn\'t receive the code? ';
 
   @override
+  String get resendNeedsPassword =>
+      'Go back and re-enter your password to send a new code.';
+
+  @override
   String get resend => 'Resend';
 
   @override
@@ -1299,7 +1631,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordSubtitle =>
-      'Enter your email and we\'ll send you a reset link';
+      'We\'ll email you a 6-digit code to reset your password.';
 
   @override
   String get enterRegisteredEmail => 'Enter your registered email';
@@ -1455,6 +1787,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionExpired => 'Session Expired';
 
   @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
+
+  @override
   String get pleaseVerifyEmailAgain => 'Please verify your email again';
 
   @override
@@ -1535,7 +1871,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectSpecialty => 'Please select your specialization';
 
   @override
-  String get workingHoursAndHolidays => 'Working Hours & Holidays';
+  String get workingDaysAndHolidays => 'Clinic Working Days & Holidays';
+
+  @override
+  String get myWorkingHours => 'My Working Hours';
 
   @override
   String get photoPermissionRequired => 'Photo Permission Required';
@@ -1549,6 +1888,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeEmail => 'Change Email';
+
+  @override
+  String get currentEmail => 'Current email';
 
   @override
   String get newEmail => 'New Email';
@@ -1732,6 +2074,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectCurrency => 'Please select a currency';
 
   @override
+  String get pleaseSelectExpenseType => 'Please select an expense type';
+
+  @override
   String get clinicUsers => 'Clinic Users';
 
   @override
@@ -1753,6 +2098,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rolesUpdatedSuccess => 'Roles updated successfully';
 
   @override
+  String get removeUserConsequence =>
+      'They lose access to this clinic immediately. Their patient records and appointments are kept.';
+
+  @override
   String removeUserConfirmation(String name) {
     return 'Are you sure you want to remove $name from the clinic?';
   }
@@ -1762,6 +2111,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleSecretary => 'Secretary';
+
+  @override
+  String get noUsersYetHint =>
+      'Invite a dentist or a secretary and they will appear here with their role.';
+
+  @override
+  String get clinicUsersLoadFailed => 'Clinic users could not be loaded';
 
   @override
   String get noUsersYet => 'No users yet';
@@ -1811,8 +2167,769 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your role doesn\'t have permission to access this feature. Contact your clinic admin for more information.';
 
   @override
-  String get todaysAppointments => 'Today\'s Appointments';
+  String get billingAndInvoices => 'Billing & Invoices';
 
   @override
-  String get revenue => 'Revenue';
+  String get billingPageTitle => 'Billing';
+
+  @override
+  String get selectPlanTitle => 'Choose a Plan';
+
+  @override
+  String get invoiceDetailsTitle => 'Invoice';
+
+  @override
+  String get submitProofTitle => 'Submit Payment Proof';
+
+  @override
+  String get errorTitle => 'Error';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get currentPlan => 'Current Plan';
+
+  @override
+  String get noActiveSubscription => 'No active subscription';
+
+  @override
+  String trialDaysRemaining(int days) {
+    return '$days days remaining in trial';
+  }
+
+  @override
+  String daysUntilRenewal(int days) {
+    return '$days days until renewal';
+  }
+
+  @override
+  String get buyOrRenewPlan => 'Buy or Renew Plan';
+
+  @override
+  String get continueOpenInvoice => 'Continue Open Invoice';
+
+  @override
+  String get invoicesHistoryTitle => 'Invoices';
+
+  @override
+  String get trial => 'Trial';
+
+  @override
+  String get noInvoicesYetHint =>
+      'Invoices appear here once a plan has been bought or renewed.';
+
+  @override
+  String get noInvoicesYet => 'No invoices yet';
+
+  @override
+  String get invoiceLineSubscription => 'Subscription';
+
+  @override
+  String get invoiceIssuedOn => 'Issued on';
+
+  @override
+  String get invoiceDueOn => 'Due on';
+
+  @override
+  String get activatesUntil => 'Activates until';
+
+  @override
+  String get invoiceType => 'Type';
+
+  @override
+  String get renewal => 'Renewal';
+
+  @override
+  String get invoiceStatusPending => 'Pending';
+
+  @override
+  String get invoiceStatusUnderReview => 'Under Review';
+
+  @override
+  String get invoiceStatusPaid => 'Paid';
+
+  @override
+  String get invoiceStatusRejected => 'Rejected';
+
+  @override
+  String get invoiceStatusCancelled => 'Cancelled';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Yearly';
+
+  @override
+  String get selectBillingCycle => 'Billing cycle';
+
+  @override
+  String get choosePlan => 'Plan';
+
+  @override
+  String get popular => 'Popular';
+
+  @override
+  String get generateInvoice => 'Generate Invoice';
+
+  @override
+  String get howToPayTitle => 'How to pay';
+
+  @override
+  String get howToPaySubtitle =>
+      'Use any of the channels below, then upload your receipt.';
+
+  @override
+  String get referenceNumber => 'Reference Number';
+
+  @override
+  String get payOutsideAppNotice =>
+      'Payments are processed outside the app. After paying, return here and upload your receipt.';
+
+  @override
+  String get paymentMethodSyriatelCash => 'Syriatel Cash';
+
+  @override
+  String get paymentMethodShamCash => 'Sham Cash';
+
+  @override
+  String get uploadPaymentProof => 'Upload Payment Proof';
+
+  @override
+  String get uploadReceipt => 'Upload receipt';
+
+  @override
+  String get uploadReceiptHint => 'JPG, PNG, or PDF';
+
+  @override
+  String get methodUsed => 'Method used';
+
+  @override
+  String get transactionReferenceLabel => 'Transaction / Reference Number';
+
+  @override
+  String get transactionReferenceHint =>
+      'e.g. last 4 digits of the transfer ID';
+
+  @override
+  String get transactionRefShort => 'Ref';
+
+  @override
+  String get submittedAt => 'Submitted';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get notesHint => 'Anything we should know about this payment';
+
+  @override
+  String get fieldRequired => 'Required';
+
+  @override
+  String get receiptRequired => 'Please attach a receipt before submitting.';
+
+  @override
+  String get submitForReview => 'Submit for Review';
+
+  @override
+  String invoiceNumberLabel(String number) {
+    return 'Invoice $number';
+  }
+
+  @override
+  String get proofSubmittedTitle => 'Sent for review';
+
+  @override
+  String get proofSubmittedMessage => 'Admin will verify your payment shortly.';
+
+  @override
+  String get underReviewTitle => 'Under Review';
+
+  @override
+  String get underReviewMessage =>
+      'Our team is verifying your payment. You will be notified once it is approved.';
+
+  @override
+  String get invoicePaidTitle => 'Invoice Paid';
+
+  @override
+  String get invoicePaidOn => 'Paid on';
+
+  @override
+  String get invoiceRejectedTitle => 'Invoice Rejected';
+
+  @override
+  String get subscriptionExpiredTitle => 'Subscription Expired';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'Your clinic is in read-only mode. Renew now to keep adding patients, appointments, and expenses.';
+
+  @override
+  String get subscriptionExpiredBlocksAction =>
+      'Your subscription has expired. Renew to continue using premium features.';
+
+  @override
+  String get subscriptionExpiresSoonTitle => 'Subscription Ending Soon';
+
+  @override
+  String subscriptionExpiresInDays(int days) {
+    return 'Renews in $days days. Generate an invoice now to avoid downtime.';
+  }
+
+  @override
+  String get renewNow => 'Renew Now';
+
+  @override
+  String get notNow => 'Not Now';
+
+  @override
+  String get pricingTitle => 'Choose Your Plan';
+
+  @override
+  String get pricingSubtitle => 'Simple pricing that grows with your practice';
+
+  @override
+  String get pricingPopularBadge => 'Popular';
+
+  @override
+  String get pricingCurrentBadge => 'Current';
+
+  @override
+  String get pricingCurrentPlanLabel => 'Current Plan';
+
+  @override
+  String get pricingSelectedLabel => 'Selected';
+
+  @override
+  String pricingChooseAction(String plan) {
+    return 'Choose $plan';
+  }
+
+  @override
+  String get pricingContactUs => 'Contact Us';
+
+  @override
+  String get pricingCustomPricing => 'Custom pricing';
+
+  @override
+  String get pricingMonthSuffix => '/month';
+
+  @override
+  String get pricingYearSuffix => '/year';
+
+  @override
+  String get pricingMoSuffix => '/mo';
+
+  @override
+  String get pricingYrSuffix => '/yr';
+
+  @override
+  String pricingSaveAmount(String amount) {
+    return 'Save \$$amount';
+  }
+
+  @override
+  String pricingSubscribeAction(String plan, String priceText) {
+    return 'Subscribe to $plan · $priceText';
+  }
+
+  @override
+  String get pricingStartFreeTrial => 'Start Free Trial';
+
+  @override
+  String get pricingStartShort => 'Start';
+
+  @override
+  String get pricingSubscriptionActiveTitle => 'Subscription Active';
+
+  @override
+  String get pricingSubscriptionActiveMessage => 'Welcome to your new plan!';
+
+  @override
+  String get pricingTrialStartedTitle => 'Trial Started';
+
+  @override
+  String get pricingTrialStartedMessage => 'Enjoy 30 days of full access!';
+
+  @override
+  String planEverythingInPlus(String plan) {
+    return 'Everything in $plan, plus:';
+  }
+
+  @override
+  String get planSoloName => 'Solo';
+
+  @override
+  String get planSoloDescription => 'For a single dentist starting out';
+
+  @override
+  String get planSoloFeature1 => '1 dentist';
+
+  @override
+  String get planSoloFeature2 => '1 assistant';
+
+  @override
+  String get planSoloFeature3 => 'Unlimited patients';
+
+  @override
+  String get planSoloFeature4 => 'Appointment scheduling';
+
+  @override
+  String get planSoloFeature5 => 'Treatment plans & records';
+
+  @override
+  String get planSoloFeature6 => 'Invoice generation';
+
+  @override
+  String get planSoloFeature7 => 'X-ray & photo storage';
+
+  @override
+  String get planSoloFeature8 => 'Cloud sync & backup';
+
+  @override
+  String get planSoloFeature9 => 'Email support';
+
+  @override
+  String get planDuoName => 'Duo';
+
+  @override
+  String get planDuoDescription => 'For two dentists working together';
+
+  @override
+  String get planDuoFeature1 => 'Up to 2 dentists';
+
+  @override
+  String get planDuoFeature2 => 'Up to 2 assistants';
+
+  @override
+  String get planDuoFeature3 => 'Statistics & analytics dashboard';
+
+  @override
+  String get planDuoFeature4 => 'Email & SMS reminders';
+
+  @override
+  String get planDuoFeature5 => 'Priority email support';
+
+  @override
+  String get planClinicName => 'Clinic';
+
+  @override
+  String get planClinicDescription => 'For mid-size centers';
+
+  @override
+  String get planClinicFeature1 => 'Up to 4 dentists';
+
+  @override
+  String get planClinicFeature2 => 'Up to 6 staff members';
+
+  @override
+  String get planClinicFeature3 => '1 branch location';
+
+  @override
+  String get planClinicFeature4 => 'Statistics & analytics dashboard';
+
+  @override
+  String get planClinicFeature5 => 'Advanced reports';
+
+  @override
+  String get planClinicFeature6 => 'Unlimited patients';
+
+  @override
+  String get planClinicFeature7 => 'Appointment scheduling';
+
+  @override
+  String get planClinicFeature8 => 'Treatment plans & records';
+
+  @override
+  String get planClinicFeature9 => 'Invoice generation & branding';
+
+  @override
+  String get planClinicFeature10 => 'X-ray & photo storage';
+
+  @override
+  String get planClinicFeature11 => 'Email & SMS reminders';
+
+  @override
+  String get planClinicFeature12 => 'Cloud sync & backup';
+
+  @override
+  String get planClinicFeature13 => 'Live chat support';
+
+  @override
+  String get planPracticeName => 'Practice';
+
+  @override
+  String get planPracticeDescription =>
+      'For big centers and multi-branch practices';
+
+  @override
+  String get planPracticeFeature1 => 'Up to 8 dentists';
+
+  @override
+  String get planPracticeFeature2 => 'Unlimited staff members';
+
+  @override
+  String get planPracticeFeature3 => 'Up to 3 branch locations';
+
+  @override
+  String get planPracticeFeature4 => 'Cross-location analytics';
+
+  @override
+  String get planPracticeFeature5 => 'Phone & chat support';
+
+  @override
+  String get planPracticeFeature6 => 'Priority training sessions';
+
+  @override
+  String get planCustomName => 'Custom';
+
+  @override
+  String get planCustomDescription => 'Tailored to your organization';
+
+  @override
+  String get planCustomFeature1 => '10+ dentists';
+
+  @override
+  String get planCustomFeature2 => 'Unlimited staff & branches';
+
+  @override
+  String get planCustomFeature3 => 'Custom integrations';
+
+  @override
+  String get planCustomFeature4 => 'Dedicated account manager';
+
+  @override
+  String get planCustomFeature5 => 'On-site training';
+
+  @override
+  String get planCustomFeature6 => 'SLA & uptime guarantees';
+
+  @override
+  String get planCustomFeature7 => 'Volume discounts';
+
+  @override
+  String get planCustomFeature8 => 'Tailored to your needs';
+
+  @override
+  String get editPatient => 'Edit Patient';
+
+  @override
+  String get deletePatient => 'Delete Patient';
+
+  @override
+  String deletePatientConfirmation(String name) {
+    return 'Are you sure you want to delete $name?';
+  }
+
+  @override
+  String get patientDeleted => 'Patient deleted';
+
+  @override
+  String get patientUpdated => 'Patient updated';
+
+  @override
+  String get updatingPatient => 'Updating patient...';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link';
+
+  @override
+  String get notificationSettingsLoadFailed =>
+      'Notification settings could not be loaded';
+
+  @override
+  String get noNotificationSettingsHint =>
+      'Every category on this account is required and cannot be switched off.';
+
+  @override
+  String get noNotificationSettings => 'No notification settings available';
+
+  @override
+  String get markAsUnread => 'Mark as unread';
+
+  @override
+  String get newNotificationsTitle => 'New notifications';
+
+  @override
+  String moreNotifications(int count) {
+    return '$count more notifications';
+  }
+
+  @override
+  String get couldNotLoadPatient => 'Could not load this patient';
+
+  @override
+  String get useCachedData => 'Use cached data';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get outstanding => 'Outstanding';
+
+  @override
+  String get remainingWork => 'Remaining';
+
+  @override
+  String get filesTitle => 'Files';
+
+  @override
+  String get pastCasesTitle => 'Past cases';
+
+  @override
+  String get lastFinished => 'Last finished';
+
+  @override
+  String get reopenAsActiveCase => 'Reopen as active case';
+
+  @override
+  String get reopenArchivesCurrent =>
+      'Reopening archives the current case first.';
+
+  @override
+  String get readOnlyCase => 'Read only';
+
+  @override
+  String get allergyPrefix => 'Allergy';
+
+  @override
+  String get noKnownAllergies => 'No known allergies';
+
+  @override
+  String get allergiesNotConfirmed => 'Allergies not confirmed';
+
+  @override
+  String get medicalHistoryNotConfirmed => 'Medical history not confirmed';
+
+  @override
+  String get reviewAction => 'Review';
+
+  @override
+  String get editCostsAction => 'Edit costs';
+
+  @override
+  String get finishCaseAction => 'Finish case';
+
+  @override
+  String get finishThisCaseTitle => 'Finish this case?';
+
+  @override
+  String get finishCaseBody =>
+      'It moves to Past cases and stops accepting treatments.';
+
+  @override
+  String get finishAnyway => 'Finish anyway';
+
+  @override
+  String get stillOutstandingWarning =>
+      'There is still an outstanding balance and unfinished treatments.';
+
+  @override
+  String get leftOfTotal => 'left of';
+
+  @override
+  String get paymentsCountLabel => 'payments';
+
+  @override
+  String get addVisitNoteHint => 'Add a visit note...';
+
+  @override
+  String get noTreatmentsPlanned => 'No treatments planned';
+
+  @override
+  String get openChartHint =>
+      'Open the chart and tap the teeth you are working on.';
+
+  @override
+  String get generalTreatmentLabel => 'General';
+
+  @override
+  String get addToThisCase => 'Add to this case';
+
+  @override
+  String get noFilesYet => 'No files yet';
+
+  @override
+  String get noFilesHint =>
+      'X-rays, photos and lab reports for this case live here.';
+
+  @override
+  String get uploadFailed => 'Upload failed';
+
+  @override
+  String get uploadFileAction => 'Upload a file';
+
+  @override
+  String get uploadFileSub => 'Images, PDF or documents';
+
+  @override
+  String get takePhotoAction => 'Take a photo';
+
+  @override
+  String get takePhotoSub => 'Intra-oral camera or device camera';
+
+  @override
+  String get addFileTitle => 'Add to this case';
+
+  @override
+  String get removeAction => 'Remove';
+
+  @override
+  String get selectToothFirst =>
+      'Tap a tooth above, or pick a general treatment.';
+
+  @override
+  String get toothSpecificTab => 'Tooth-specific';
+
+  @override
+  String get generalTab => 'General';
+
+  @override
+  String get clearSelection => 'Clear';
+
+  @override
+  String get selectedCount => 'selected';
+
+  @override
+  String get patientInformationTitle => 'Patient information';
+
+  @override
+  String get currentCaseAnchor => 'Case';
+
+  @override
+  String get insuranceLabel => 'Insurance';
+
+  @override
+  String get emergencyContactLabel => 'Emergency contact';
+
+  @override
+  String get notRecorded => 'Not recorded';
+
+  @override
+  String get yrs => 'yrs';
+
+  @override
+  String get chooseFromGalleryAction => 'Choose from gallery';
+
+  @override
+  String get chooseFromGallerySub => 'Images, multiple allowed';
+
+  @override
+  String get attachDocumentAction => 'Attach a document';
+
+  @override
+  String get attachDocumentSub => 'PDF, lab report, referral';
+
+  @override
+  String get offlineQueuedNote =>
+      'If the connection drops, files are queued on the device and upload when the clinic network returns.';
+
+  @override
+  String get removeFileTitle => 'Remove this file?';
+
+  @override
+  String get removeFileBody =>
+      'It will be detached from this case. The file itself stays in your media library.';
+
+  @override
+  String get fileRemoved => 'File removed';
+
+  @override
+  String get paymentsAction => 'Payments';
+
+  @override
+  String get legal => 'Legal';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'How to request deletion of your account and data';
+
+  @override
+  String get activeClinic => 'Active clinic';
+
+  @override
+  String get noClinicsTitle => 'No clinics yet';
+
+  @override
+  String get noClinicsMessage =>
+      'Clinics you create or are invited to appear here.';
+
+  @override
+  String get couldNotLoadClinics => 'Could not load your clinics';
+
+  @override
+  String get activeClinicUnchanged => 'Your active clinic was not changed.';
+
+  @override
+  String get noneSelected => 'None selected';
+
+  @override
+  String get couldNotLoadInvitations => 'Could not load invitations';
+
+  @override
+  String get invitationsUnchanged => 'No invitation was accepted or declined.';
+
+  @override
+  String get shareYourStats => 'Share your stats';
+
+  @override
+  String get swipeToChooseDesign => 'Swipe to choose a design';
+
+  @override
+  String get preparingShare => 'Preparing…';
+
+  @override
+  String get shareFailed => 'Share failed';
+
+  @override
+  String get myClinicStatistics => 'My clinic statistics';
+
+  @override
+  String get shareCardEnamelBlurb => 'Light, pearlescent';
+
+  @override
+  String get shareCardEditorialBlurb => 'Dark, off-axis';
+
+  @override
+  String get shareCardCertificateBlurb => 'Navy and gold foil';
+
+  @override
+  String get notificationCategories => 'Categories';
+
+  @override
+  String categoriesOnCount(int on, int total) {
+    return '$on of $total on';
+  }
+
+  @override
+  String get renewsLabel => 'Renews';
+
+  @override
+  String get endsLabel => 'Ends';
+
+  @override
+  String get graceEndsLabel => 'Grace ends';
+
+  @override
+  String get endedLabel => 'Ended';
+
+  @override
+  String get noPlanActiveBody => 'No plan is active on this clinic.';
+
+  @override
+  String get subscriptionGraceBody =>
+      'Payment is overdue. The plan keeps working until the grace period ends.';
+
+  @override
+  String get subscriptionExpiredBody =>
+      'This plan has ended. Renew to keep using it.';
+
+  @override
+  String get renewAction => 'Renew';
 }

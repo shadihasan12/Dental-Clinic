@@ -1,20 +1,16 @@
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/responsive.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/add_patient/add_patient_bloc.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_form_widgets.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+
 import '../widgets/widgets.dart';
 
 class AddPatientPage extends StatelessWidget {
@@ -37,17 +33,28 @@ class _AddPatientContent extends StatefulWidget {
 }
 
 class _AddPatientContentState extends State<_AddPatientContent> {
+  final _scrollController = ScrollController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _medicalHistoryController = TextEditingController();
   final _allergiesController = TextEditingController();
-  String? _selectedGender;
+
+  /// Starts on a value rather than empty - gender is required, and an
+  /// unanswered required field is a complaint waiting to happen.
+  String _gender = PatientGenders.defaultValue;
   DateTime? _dateOfBirth;
-  bool _hasAllergies = false;
+
+  PatientFormErrors _errors = PatientFormErrors.none;
+
+  /// Errors only appear after the first save attempt, then keep themselves
+  /// current on every keystroke. Flagging empty fields before the user has
+  /// tried to submit anything reads as nagging.
+  bool _submitted = false;
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
@@ -56,27 +63,69 @@ class _AddPatientContentState extends State<_AddPatientContent> {
     super.dispose();
   }
 
-  String _mapGenderToApi(String? localizedGender) {
-    final l10n = AppLocalizations.of(context)!;
-    if (localizedGender == l10n.male) return 'MALE';
-    if (localizedGender == l10n.female) return 'FEMALE';
-    return 'OTHER';
+  PatientFormErrors _validate() {
+    return PatientFormErrors.validate(
+      AppLocalizations.of(context)!,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phone: _phoneController.text,
+      dateOfBirth: _dateOfBirth,
+    );
   }
 
-  bool get _canSave =>
-      _firstNameController.text.trim().isNotEmpty &&
-      _lastNameController.text.trim().isNotEmpty &&
-      _phoneController.text.trim().isNotEmpty;
+  void _revalidate() {
+    if (!_submitted) return;
+    final next = _validate();
+    if (next.hasAny != _errors.hasAny ||
+        next.firstName != _errors.firstName ||
+        next.lastName != _errors.lastName ||
+        next.phone != _errors.phone ||
+        next.dateOfBirth != _errors.dateOfBirth) {
+      setState(() => _errors = next);
+    }
+  }
+
+  Future<void> _pickDateOfBirth() async {
+    final picked = await DatePickerSheet.show(
+      context,
+      title: AppLocalizations.of(context)!.dateOfBirth,
+      initial: _dateOfBirth,
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _dateOfBirth = picked);
+    _revalidate();
+  }
 
   void _savePatient() {
-    final firstName = _firstNameController.text.trim();
-    final lastName = _lastNameController.text.trim();
-    final phone = _phoneController.text.trim();
+    FocusScope.of(context).unfocus();
+    final l10n = AppLocalizations.of(context)!;
+    final errors = _validate();
 
-    if (firstName.isEmpty || lastName.isEmpty || phone.isEmpty) return;
+    setState(() {
+      _submitted = true;
+      _errors = errors;
+    });
 
+    if (errors.hasAny) {
+      // Every required field lives in the first card, so returning to the top
+      // is enough to put all of them in view.
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+      AppSnackbar.showError(
+        context,
+        title: l10n.error,
+        message: l10n.checkHighlightedFields,
+      );
+      return;
+    }
+
+    final dob = _dateOfBirth!;
     final now = DateTime.now();
-    final dob = _dateOfBirth ?? DateTime(1990);
     final age = now.year -
         dob.year -
         ((now.month < dob.month ||
@@ -86,10 +135,11 @@ class _AddPatientContentState extends State<_AddPatientContent> {
 
     final patient = PatientEntity(
       id: '',
-      name: '$firstName $lastName',
+      name: '${_firstNameController.text.trim()} '
+          '${_lastNameController.text.trim()}',
       age: age,
-      gender: _mapGenderToApi(_selectedGender),
-      phone: phone,
+      gender: _gender,
+      phone: _phoneController.text.trim(),
       email: '',
       address: '',
       dateOfBirth: dob,
@@ -104,113 +154,25 @@ class _AddPatientContentState extends State<_AddPatientContent> {
     context.read<AddPatientBloc>().add(AddPatientEvent.submit(patient));
   }
 
-  Future<void> _selectDateMobile() async {
-    FocusScope.of(context).unfocus();
-    final l10n = AppLocalizations.of(context)!;
-    DateTime tempDate = _dateOfBirth ?? DateTime(1990);
-
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: ColorManager.of(context).cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (context) => SizedBox(
-        height: 300.h,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: ColorManager.of(context).textTertiary,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _dateOfBirth = tempDate);
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      l10n.close,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: ColorManager.of(context).divider),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _dateOfBirth ?? DateTime(1990),
-                minimumDate: DateTime(1900),
-                maximumDate: DateTime.now(),
-                onDateTimeChanged: (date) => tempDate = date,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _selectDateDesktop() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _dateOfBirth ?? DateTime(1990),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: ColorManager.primary,
-              ),
-        ),
-        child: child!,
-      ),
-    );
-    if (picked != null) {
-      setState(() => _dateOfBirth = picked);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
 
     return BlocListener<AddPatientBloc, AddPatientState>(
       listener: (context, state) {
         state.when(
           initial: () {},
           saving: () {
-            AppLoadingDialog.show(
-              context: context,
-              message: l10n.savingPatient,
-            );
+            AppLoadingDialog.show(context: context, message: l10n.savingPatient);
           },
           success: (patient) async {
             AppLoadingDialog.dismiss(context);
-            final shouldAddTreatment = await AppConfirmationDialog.show(
-              context: context,
-              title: l10n.patientSavedSuccessfully,
-              subtitle: l10n.addTreatmentQuestion,
-              icon: Icons.check_circle,
-            );
+            UserStorage.notifyPatientsChanged();
+
+            if (!context.mounted) return;
+            final shouldAddTreatment = await PatientSavedSheet.show(context);
+
             if (shouldAddTreatment == true) {
               if (context.mounted) {
                 context.pushReplacementNamed(
@@ -236,258 +198,41 @@ class _AddPatientContentState extends State<_AddPatientContent> {
           },
         );
       },
-      child: Responsive.isDesktop(context)
-          ? _buildDesktopLayout(l10n)
-          : _buildMobileLayout(l10n),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // DESKTOP LAYOUT
-  // ═══════════════════════════════════════════════════════════════
-
-  Widget _buildDesktopLayout(AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-
-    return DesktopShell(
-      title: l10n.addPatient,
-      body: Scaffold(
+      child: Scaffold(
         backgroundColor: c.scaffoldBg,
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 880),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DesktopPageHeader(
-                    title: l10n.addPatient,
-                    subtitle: l10n.personalInformation,
-                  ),
-                  const SizedBox(height: 20),
-                  _desktopPersonalCard(l10n),
-                  const SizedBox(height: 16),
-                  _desktopMedicalCard(l10n),
-                  const SizedBox(height: 20),
-                  _desktopActionRow(l10n),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _desktopPersonalCard(AppLocalizations l10n) {
-    return DesktopSectionCard(
-      title: l10n.personalInformation,
-      subtitle: '${l10n.firstName}, ${l10n.phone.toLowerCase()}',
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
             children: [
-              Expanded(
-                child: DesktopTextField(
-                  label: l10n.firstName,
-                  controller: _firstNameController,
-                  onChanged: (_) => setState(() {}),
-                  isRequired: true,
-                ),
+              FormTopBar(
+                title: l10n.addPatient,
+                onBack: () => context.pop(),
               ),
-              const SizedBox(width: 16),
               Expanded(
-                child: DesktopTextField(
-                  label: l10n.lastName,
-                  controller: _lastNameController,
-                  onChanged: (_) => setState(() {}),
-                  isRequired: true,
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+                  child: PatientInfoForm(
+                    firstNameController: _firstNameController,
+                    lastNameController: _lastNameController,
+                    phoneController: _phoneController,
+                    medicalHistoryController: _medicalHistoryController,
+                    allergiesController: _allergiesController,
+                    gender: _gender,
+                    dateOfBirth: _dateOfBirth,
+                    errors: _errors,
+                    onGenderChanged: (v) => setState(() => _gender = v),
+                    onDateOfBirthTap: _pickDateOfBirth,
+                    onFieldChanged: _revalidate,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: DesktopDateField(
-                  label: l10n.dateOfBirth,
-                  value: _dateOfBirth,
-                  onTap: _selectDateDesktop,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: DesktopDropdownField(
-                  label: l10n.gender,
-                  value: _selectedGender,
-                  items: [l10n.male, l10n.female, l10n.other],
-                  onChanged: (v) => setState(() => _selectedGender = v),
-                  hint: l10n.selectGender,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          DesktopTextField(
-            label: l10n.phone,
-            controller: _phoneController,
-            hintText: l10n.phoneHint,
-            keyboardType: TextInputType.phone,
-            onChanged: (_) => setState(() {}),
-            isRequired: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopMedicalCard(AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-    return DesktopSectionCard(
-      title: l10n.medicalInformation,
-      subtitle: l10n.medicalHistory,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DesktopTextField(
-            label: l10n.medicalHistory,
-            controller: _medicalHistoryController,
-            hintText: l10n.previousDentalProcedures,
-            maxLines: 4,
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: c.inputBg,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: c.borderLight),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.warning_amber_rounded,
-                    size: 18, color: ColorManager.warning),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    l10n.hasAllergies,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w500,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                ),
-                Switch(
-                  value: _hasAllergies,
-                  activeThumbColor: Colors.white,
-                  activeTrackColor: ColorManager.primary,
-                  onChanged: (value) {
-                    setState(() {
-                      _hasAllergies = value;
-                      if (!value) _allergiesController.clear();
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOut,
-            child: _hasAllergies
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: DesktopTextField(
-                      label: '',
-                      controller: _allergiesController,
-                      hintText: l10n.listAnyAllergies,
-                      maxLines: 3,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopActionRow(AppLocalizations l10n) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        DesktopSecondaryButton(
-          label: l10n.cancel,
-          onPressed: () => context.pop(),
         ),
-        const SizedBox(width: 12),
-        DesktopPrimaryButton(
+        bottomNavigationBar: FormActionBar(
           label: l10n.save,
-          icon: Icons.check,
-          onPressed: _canSave ? _savePatient : null,
-        ),
-      ],
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // MOBILE LAYOUT (unchanged)
-  // ═══════════════════════════════════════════════════════════════
-
-  Widget _buildMobileLayout(AppLocalizations l10n) {
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).cardBg,
-      body: Column(
-        children: [
-          PageHeader(title: l10n.addPatient, onBack: () => context.pop()),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-              child: PatientInfoForm(
-                firstNameController: _firstNameController,
-                lastNameController: _lastNameController,
-                phoneController: _phoneController,
-                medicalHistoryController: _medicalHistoryController,
-                allergiesController: _allergiesController,
-                selectedGender: _selectedGender,
-                dateOfBirth: _dateOfBirth,
-                onGenderChanged: (v) => setState(() => _selectedGender = v),
-                onDateOfBirthTap: _selectDateMobile,
-              ),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
-        child: SafeArea(
-          top: false,
-          child: ElevatedButton(
-            onPressed: _savePatient,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
-              foregroundColor: ColorManager.white,
-              elevation: 0,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-            ),
-            child: Text(
-              l10n.save,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          onPressed: _savePatient,
         ),
       ),
     );

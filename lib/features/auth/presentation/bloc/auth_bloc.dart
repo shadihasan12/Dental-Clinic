@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_poller.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_topics_synchronizer.dart';
+import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
@@ -23,8 +29,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final TokenStorage _tokenStorage;
   final UserStorage _userStorage;
+  final NotificationService _notificationService;
+  final NotificationTopicsSynchronizer _topicsSynchronizer;
+  final NotificationPoller _notificationPoller;
+  final UnreadCountCubit _unreadCount;
 
-  AuthBloc(this._authRepository, this._tokenStorage, this._userStorage) : super(const AuthState()) {
+  AuthBloc(
+    this._authRepository,
+    this._tokenStorage,
+    this._userStorage,
+    this._notificationService,
+    this._topicsSynchronizer,
+    this._notificationPoller,
+    this._unreadCount,
+  ) : super(const AuthState()) {
     // Login events
     on<_LoginEmailChanged>(_onLoginEmailChanged);
     on<_LoginPasswordChanged>(_onLoginPasswordChanged);
@@ -122,6 +140,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
 
+  /// Picks the membership we treat as "active" right after auth — admin
+  /// clinic if the user has one, otherwise the first membership.
+  ClinicMembershipEntity? _pickActiveMembership(
+    List<ClinicMembershipEntity> memberships,
+  ) {
+    if (memberships.isEmpty) return null;
+    for (final m in memberships) {
+      if (m.role == ClinicRole.admin) return m;
+    }
+    return memberships.first;
+  }
+
   Future<void> _onLoginSubmitted(_LoginSubmitted event, Emitter<AuthState> emit) async {
     if (!state.isLoginFormValid) {
       debugPrint('[AuthBloc] Login validation failed — identifier: "${state.loginEmail}"');
@@ -139,42 +169,56 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final result = await _authRepository.login(params: params);
 
-    result.fold(
-      (failure) {
-        debugPrint('[AuthBloc] ✗ Login failed — ${NetworkExceptions.getErrorMessage(failure)}');
-        emit(state.copyWith(
-          isLoginLoading: false,
-          loginError: NetworkExceptions.getErrorMessage(failure),
-        ));
-      },
-      (loginResult) {
-        debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
-        if (!loginResult.emailVerified) {
-          // User exists but hasn't verified email yet — redirect to email verification
-          emit(state.copyWith(
-            isLoginLoading: false,
-            needsEmailVerification: true,
-            emailVerificationForLogin: true,
-            signupEmail: state.loginEmail,
-            currentUser: loginResult.user,
-            memberships: loginResult.memberships,
-            activeClinicId: loginResult.memberships.isNotEmpty
-                ? loginResult.memberships.first.clinicId
-                : null,
-          ));
-        } else {
-          emit(state.copyWith(
-            isLoginLoading: false,
-            status: AuthStatus.authenticated,
-            currentUser: loginResult.user,
-            memberships: loginResult.memberships,
-            activeClinicId: loginResult.memberships.isNotEmpty
-                ? loginResult.memberships.first.clinicId
-                : null,
-          ));
-        }
-      },
+    // Early-return pattern (instead of fold) so we can `await` the
+    // storage writes before emitting `authenticated`. The menu page
+    // reads `UserStorage.isAdmin` synchronously at build time — if
+    // the write hasn't flushed, the admin-only items are hidden.
+    final failure = result.fold((l) => l, (_) => null);
+    if (failure != null) {
+      debugPrint('[AuthBloc] ✗ Login failed — ${NetworkExceptions.getErrorMessage(failure)}');
+      emit(state.copyWith(
+        isLoginLoading: false,
+        loginError: NetworkExceptions.getErrorMessage(failure),
+      ));
+      return;
+    }
+
+    final loginResult = result.getOrElse(
+      () => throw StateError('unreachable: failure already returned'),
     );
+    debugPrint('[AuthBloc] ✓ Login success — user: ${loginResult.user.name} (${loginResult.user.id}), emailVerified: ${loginResult.emailVerified}');
+
+    // Cache the role + selected clinic id of the active membership
+    // so admin gates and the auth interceptor's X-Selected-Clinic-id
+    // header are correct on the very first request after login.
+    final active = _pickActiveMembership(loginResult.memberships);
+    if (active != null) {
+      await _userStorage.saveUserRole(active.role.name);
+      await _userStorage.saveSelectedClinicId(active.clinicId);
+      await _tokenStorage.saveClinicId(active.clinicId);
+    }
+
+    if (!loginResult.emailVerified) {
+      // User exists but hasn't verified email yet — redirect to email verification
+      emit(state.copyWith(
+        isLoginLoading: false,
+        needsEmailVerification: true,
+        emailVerificationForLogin: true,
+        signupEmail: state.loginEmail,
+        currentUser: loginResult.user,
+        memberships: loginResult.memberships,
+        activeClinicId: active?.clinicId,
+      ));
+    } else {
+      _registerDeviceForPush();
+      emit(state.copyWith(
+        isLoginLoading: false,
+        status: AuthStatus.authenticated,
+        currentUser: loginResult.user,
+        memberships: loginResult.memberships,
+        activeClinicId: active?.clinicId,
+      ));
+    }
   }
 
   // Signup handlers
@@ -556,25 +600,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Call register API
     final result = await _authRepository.register(params: params);
 
-    result.fold(
-      (failure) => emit(state.copyWith(
+    // Early-return pattern (instead of fold) so the storage writes
+    // can be awaited before emitting `authenticated`. Without this,
+    // the menu page rebuilds and reads `UserStorage.isAdmin` while
+    // the role write is still pending — hiding admin-only items
+    // even though the new account is the clinic admin.
+    final failure = result.fold((l) => l, (_) => null);
+    if (failure != null) {
+      emit(state.copyWith(
         isSignupLoading: false,
         signupError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) {
-        // Convert response to user entity and clinic membership
-        final user = response.toUserEntity();
-        final membership = response.toClinicMembership();
+      ));
+      return;
+    }
 
-        emit(state.copyWith(
-          isSignupLoading: false,
-          status: AuthStatus.authenticated,
-          currentUser: user,
-          memberships: [membership],
-          activeClinicId: membership.clinicId,
-        ));
-      },
+    final response = result.getOrElse(
+      () => throw StateError('unreachable: failure already returned'),
     );
+    final user = response.toUserEntity();
+    final membership = response.toClinicMembership();
+
+    // A fresh signup always owns the clinic they just created, so
+    // we cache role + clinic id the same way login does.
+    await _userStorage.saveUserRole(membership.role.name);
+    await _userStorage.saveSelectedClinicId(membership.clinicId);
+    await _tokenStorage.saveClinicId(membership.clinicId);
+
+    _registerDeviceForPush();
+
+    emit(state.copyWith(
+      isSignupLoading: false,
+      status: AuthStatus.authenticated,
+      currentUser: user,
+      memberships: [membership],
+      activeClinicId: membership.clinicId,
+    ));
   }
 
   // Forgot password handlers
@@ -800,9 +860,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogoutRequested(_LogoutRequested event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
 
+    // Windows polls /unseen on a timer; stop it before the session goes away
+    // so it can't 401 in a loop against a token we are about to clear.
+    _notificationPoller.stop();
+
+    // Tell the server first, while the session is still valid: POST
+    // /auth/logout is authenticated, and it is what unregisters this device's
+    // push token server-side.
+    await _notificationService.notifyServerOfLogout();
+
     // Clear authentication and user data from local storage
     await _tokenStorage.clearAuthData();
     await _userStorage.clear();
+    _unreadCount.clear();
+
+    // Then drop the topic subscriptions and invalidate the push token locally,
+    // so the signed-out user stops receiving this device's notifications even
+    // if the logout call never reached the server. Order matters:
+    // deleteToken() can make Firebase mint a replacement and fire
+    // onTokenRefresh, and that handler re-POSTs to /auth/device-token whenever
+    // a session exists. Clearing the auth token first means the replacement is
+    // deferred until the next login instead of being registered against the
+    // account we just signed out of.
+    await _notificationService.onLogout();
 
     // Reset to initial state (unauthenticated)
     emit(const AuthState());
@@ -833,6 +913,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _EmailVerificationCompleted event,
     Emitter<AuthState> emit,
   ) {
+    // Login-with-unverified-email path: this is the point the session becomes
+    // fully usable, so it is the first safe moment to register the device.
+    _registerDeviceForPush();
+
     emit(state.copyWith(
       status: AuthStatus.authenticated,
       needsEmailVerification: false,
@@ -883,5 +967,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       clinicAddress: '',
       mobileNumber: '',
     ));
+  }
+
+  /// Brings every notification subsystem up for the freshly authenticated
+  /// user: registers this device's push token (POST /auth/device-token),
+  /// re-asserts the server-named topic subscriptions, refreshes the badge, and
+  /// starts the Windows poller.
+  ///
+  /// Deliberately fire-and-forget: push registration must never delay or fail
+  /// the sign-in. NotificationService keeps the token marked "unsynced" when
+  /// the POST fails, so the next launch or sign-in retries it.
+  void _registerDeviceForPush() {
+    unawaited(_notificationService.syncTokenIfNeeded());
+    // Topics come only from the `audience` fields of GET
+    // /notification-settings - never from a name built in the app.
+    unawaited(_topicsSynchronizer.sync());
+    unawaited(_unreadCount.refresh());
+    // No-op anywhere FCM works; Windows has no push channel and polls instead.
+    _notificationPoller.start();
   }
 }

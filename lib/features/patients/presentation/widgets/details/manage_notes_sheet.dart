@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
@@ -5,6 +6,7 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 
 /// A bottom sheet for managing notes on a treatment plan item.
 ///
@@ -123,7 +125,7 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = systemBottomInset(context);
 
     return Container(
       constraints: BoxConstraints(
@@ -230,45 +232,28 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                         minLines: 1,
                         autofocus: false,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           color: ColorManager.of(context).textPrimary,
                         ),
-                        decoration: InputDecoration(
+                        decoration: formOutlinedInput(
+                          context,
                           hintText: _editingIndex != null
                               ? AppLocalizations.of(context)!.editNote
                               : AppLocalizations.of(context)!.writeANote,
-                          hintStyle: TextStyle(
-                            fontSize: 14.sp,
-                            color: ColorManager.of(context).textTertiary,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 14.w, vertical: 12.h),
-                          filled: true,
-                          fillColor: ColorManager.of(context).cardBgSecondary,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide:
-                                BorderSide(color: ColorManager.of(context).borderLight),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide:
-                                BorderSide(color: ColorManager.of(context).borderLight),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                            borderSide: BorderSide(
-                              color: _editingIndex != null
-                                  ? ColorManager.warning
-                                  : ColorManager.primary,
-                            ),
-                          ),
+                          // Editing an existing note keeps its amber hue.
+                          focusTone: _editingIndex != null
+                              ? ColorManager.warning
+                              : null,
                           suffixIcon: _editingIndex != null
                               ? IconButton(
-                                  icon: Icon(Icons.close,
-                                      size: 18.w,
-                                      color: ColorManager.of(context).textTertiary),
+                                  icon: Icon(
+                                    Icons.close,
+                                    size: 18.w,
+                                    color: ColorManager.of(
+                                      context,
+                                    ).textTertiary,
+                                  ),
                                   onPressed: _cancelEditing,
                                 )
                               : null,

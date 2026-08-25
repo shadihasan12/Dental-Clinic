@@ -8,14 +8,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PermissionGate extends StatelessWidget {
-  final String feature;
+  /// Single slug shorthand. Use when only one permission grants access.
+  final String? feature;
+
+  /// Any-of list. Use when multiple slugs grant access (e.g. a `view-`
+  /// slug *or* its `manage-` counterpart — admins with manage but no
+  /// explicit view would otherwise see a false "access denied" page).
+  final List<String>? anyOf;
+
   final Widget child;
 
   const PermissionGate({
     super.key,
-    required this.feature,
+    this.feature,
+    this.anyOf,
     required this.child,
-  });
+  }) : assert(
+          feature != null || anyOf != null,
+          'PermissionGate needs either `feature` or `anyOf`.',
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +40,8 @@ class PermissionGate extends StatelessWidget {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_) => child,
           loaded: (permissions) {
-            if (permissions.hasFeature(feature)) {
+            final slugs = anyOf ?? <String>[feature!];
+            if (slugs.any(permissions.hasFeature)) {
               return child;
             }
             return _RestrictedView();

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "dental_clinic_app" "\0"
+            VALUE "FileDescription", "Denta" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "dental_clinic_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "dental_clinic_app.exe" "\0"
-            VALUE "ProductName", "dental_clinic_app" "\0"
+            VALUE "ProductName", "Denta" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

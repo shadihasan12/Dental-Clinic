@@ -8,7 +8,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -22,11 +22,18 @@ class ChangeEmailOtpPage extends StatefulWidget {
   final String? sessionId;
   final int secondsRemaining;
 
+  /// Carried through from the request screen because the backend has no
+  /// dedicated resend route: a resend is another POST to
+  /// `change-email/request-otp`, which validates `current_password` every
+  /// time. Held in memory for the length of the flow only, never stored.
+  final String currentPassword;
+
   const ChangeEmailOtpPage({
     super.key,
     required this.newEmail,
     this.sessionId,
     this.secondsRemaining = 60,
+    this.currentPassword = '',
   });
 
   @override
@@ -110,10 +117,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
       // Step 1: Verify OTP to get session_id
       final verifyResponse = await getIt<ApiConsumer>().post(
         AuthEndpoints.verifyOtp,
-        body: {
-          'email': widget.newEmail,
-          'otp': otpCode,
-        },
+        body: {'email': widget.newEmail, 'otp': otpCode},
       );
 
       final meta = verifyResponse['meta'] as Map<String, dynamic>?;
@@ -158,6 +162,18 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
     if (_secondsNotifier.value > 0 || _isResending) return;
     final l10n = AppLocalizations.of(context)!;
 
+    // No password means this screen was reached without going through the
+    // request form. The endpoint would reject the resend, so say what to do
+    // rather than surfacing a raw validation error.
+    if (widget.currentPassword.isEmpty) {
+      AppSnackbar.showError(
+        context,
+        title: l10n.error,
+        message: l10n.resendNeedsPassword,
+      );
+      return;
+    }
+
     setState(() => _isResending = true);
 
     try {
@@ -165,7 +181,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
         AuthEndpoints.changeEmailRequestOtp,
         body: {
           'new_email': widget.newEmail,
-          'current_password': '', // Not needed for resend in most APIs
+          'current_password': widget.currentPassword,
         },
       );
 
@@ -213,260 +229,244 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
+    final c = ColorManager.of(context);
 
     return Scaffold(
-      backgroundColor: ColorManager.white,
-      body: SafeArea(
+      // Was hardcoded white, which left the page unreadable in the dark theme.
+      backgroundColor: c.scaffoldBg,
+      appBar: PageHeader(
+        title: l10n.verifyNewEmail,
+        onBack: () => context.pop(),
+      ),
+      bottomNavigationBar: FormActionBar(
+        label: l10n.confirmChangeEmail,
+        busy: _isVerifying,
+        onPressed: _handleVerify,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            PageHeader(
-              title: l10n.verifyNewEmail,
-              onBack: () => context.pop(),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 24.h),
-
-                    // Icon
-                    Center(
-                      child: Container(
-                        width: 72.w,
-                        height: 72.w,
-                        decoration: BoxDecoration(
-                          color: ColorManager.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
+            // Where the code went, stated before the boxes that take it.
+            AppCard(
+              child: Row(
+                children: [
+                  const IconTile(icon: Icons.mark_email_read_outlined),
+                  SizedBox(width: 11.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.newEmail,
+                          style: TextStyle(
+                            fontSize: 9.5.sp,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.4,
+                            height: 1.3,
+                            fontFamily: fontFamily,
+                            color: c.textTertiary,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.mark_email_read_outlined,
-                          size: 36.w,
-                          color: ColorManager.primary,
+                        SizedBox(height: 2.h),
+                        Text(
+                          widget.newEmail,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            fontSize: 12.5.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: fontFamily,
+                            color: c.textPrimary,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-
-                    SizedBox(height: 16.h),
-
-                    // New email
-                    Center(
-                      child: Text(
-                        widget.newEmail,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontFamily: fontFamily,
-                          fontWeight: FontWeight.w600,
-                          color: ColorManager.of(context).textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 8.h),
-
-                    Center(
-                      child: Text(
-                        l10n.changeEmailOtpDescription,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontFamily: fontFamily,
-                          color: ColorManager.of(context).textSecondary,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 36.h),
-
-                    // OTP Input Fields
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(6, (index) {
-                          return Container(
-                            width: 48.w,
-                            height: 56.h,
-                            margin: EdgeInsets.symmetric(horizontal: 3.w),
-                            child: TextField(
-                              controller: _otpControllers[index],
-                              focusNode: _otpFocusNodes[index],
-                              enabled: !_isVerifying,
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(
-                                fontSize: 24.sp,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textPrimary,
-                              ),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 14.h),
-                                filled: true,
-                                fillColor: ColorManager.of(context).cardBgSecondary,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide:
-                                      BorderSide(color: ColorManager.of(context).border),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide:
-                                      BorderSide(color: ColorManager.of(context).border),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: ColorManager.primary,
-                                    width: 2,
-                                  ),
-                                ),
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide:
-                                      BorderSide(color: ColorManager.of(context).border),
-                                ),
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(1),
-                              ],
-                              onChanged: (value) =>
-                                  _onOtpChanged(index, value),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-
-                    SizedBox(height: 28.h),
-
-                    // Resend section
-                    if (_isResending)
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 16.w,
-                              height: 16.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ColorManager.primary,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              l10n.sendingCode,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      ValueListenableBuilder<int>(
-                        valueListenable: _secondsNotifier,
-                        builder: (context, secondsRemaining, _) {
-                          if (secondsRemaining > 0) {
-                            return Center(
-                              child: Text(
-                                l10n.resendCodeIn(secondsRemaining),
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontFamily: fontFamily,
-                                  color: ColorManager.of(context).textSecondary,
-                                ),
-                              ),
-                            );
-                          }
-                          return Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  l10n.didntReceiveCode,
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontFamily: fontFamily,
-                                    color: ColorManager.of(context).textSecondary,
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: _resendOtp,
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: Size.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  child: Text(
-                                    l10n.resend,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontFamily: fontFamily,
-                                      color: ColorManager.primary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-
-                    SizedBox(height: 32.h),
-
-                    // Verify button
-                    GestureDetector(
-                      onTap: _isVerifying ? null : _handleVerify,
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        decoration: BoxDecoration(
-                          color: _isVerifying
-                              ? ColorManager.primary.withValues(alpha: 0.5)
-                              : ColorManager.primary,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: _isVerifying
-                            ? Center(
-                                child: SizedBox(
-                                  width: 20.w,
-                                  height: 20.w,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : Text(
-                                l10n.confirmChangeEmail,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontFamily: fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorManager.white,
-                                ),
-                              ),
-                      ),
-                    ),
-
-                    SizedBox(height: 32.h),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+            SizedBox(height: 8.h),
+            FormSectionCard(
+              title: l10n.verifyNewEmail,
+              children: [
+                Text(
+                  l10n.changeEmailOtpDescription,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    height: 1.5,
+                    fontFamily: fontFamily,
+                    color: c.textSecondary,
+                  ),
+                ),
+                // Digits are ltr in every locale, so the boxes never mirror.
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Row(
+                    children: [
+                      for (var index = 0; index < 6; index++) ...[
+                        if (index > 0) SizedBox(width: 6.w),
+                        Expanded(
+                          child: _OtpBox(
+                            controller: _otpControllers[index],
+                            focusNode: _otpFocusNodes[index],
+                            enabled: !_isVerifying,
+                            onChanged: (value) => _onOtpChanged(index, value),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (_isResending)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 14.w,
+                        height: 14.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation(
+                            ColorManager.primary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Text(
+                        l10n.sendingCode,
+                        style: TextStyle(
+                          fontSize: 11.5.sp,
+                          fontFamily: fontFamily,
+                          color: c.textSecondary,
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  ValueListenableBuilder<int>(
+                    valueListenable: _secondsNotifier,
+                    builder: (context, secondsRemaining, _) {
+                      if (secondsRemaining > 0) {
+                        return Center(
+                          child: Text(
+                            l10n.resendCodeIn(secondsRemaining),
+                            style: TextStyle(
+                              fontSize: 11.5.sp,
+                              fontFamily: fontFamily,
+                              color: c.textTertiary,
+                            ),
+                          ),
+                        );
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.didntReceiveCode,
+                            style: TextStyle(
+                              fontSize: 11.5.sp,
+                              fontFamily: fontFamily,
+                              color: c.textSecondary,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: _resendOtp,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4.h),
+                              child: Text(
+                                l10n.resend,
+                                style: TextStyle(
+                                  fontSize: 11.5.sp,
+                                  fontFamily: fontFamily,
+                                  color: ColorManager.primaryDarker,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// One digit of the code. Same input surface as every other field: hairline
+/// at rest, 1.5px primary on focus.
+class _OtpBox extends StatefulWidget {
+  const _OtpBox({
+    required this.controller,
+    required this.focusNode,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final bool enabled;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_OtpBox> createState() => _OtpBoxState();
+}
+
+class _OtpBoxState extends State<_OtpBox> {
+  @override
+  void initState() {
+    super.initState();
+    widget.focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(_onFocusChange);
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: formInputDecoration(
+        context,
+        focused: widget.focusNode.hasFocus,
+        hasError: false,
+      ),
+      child: TextField(
+        controller: widget.controller,
+        focusNode: widget.focusNode,
+        enabled: widget.enabled,
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        style: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          fontFamily: FontHelper.fontFamily(context),
+          color: c.textPrimary,
+        ),
+        decoration: bareInputDecoration().copyWith(
+          contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+        ),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(1),
+        ],
+        onChanged: widget.onChanged,
       ),
     );
   }

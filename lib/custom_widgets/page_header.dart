@@ -11,12 +11,20 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final List<Widget>? actions;
 
+  // Why kToolbarHeight + 9: IconButton's minimum interactive size is 48dp,
+  // the row sits inside 8.h vertical padding (~16dp on a 1.0 scale), and
+  // the bottom Divider adds another 1dp. 56 + 1 wasn't tall enough and
+  // caused an ~8px RenderFlex overflow on standard Android devices.
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 9);
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    // Show the back button only when there's somewhere to go: a custom
+    // [onBack] handler, or a route that can actually be popped. Calling
+    // context.pop() on an empty stack throws "There is nothing to pop".
+    final showBack = onBack != null || context.canPop();
     return Column(
       children: [
         Container(
@@ -25,22 +33,27 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: c.textPrimary,
-                      size: 20.w,
-                    ),
-                    onPressed: () => context.pop(),
-                  ),
+                  if (showBack)
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: c.textPrimary,
+                        size: 18.w,
+                      ),
+                      onPressed: onBack ?? () => context.pop(),
+                    )
+                  else
+                    SizedBox(width: 12.w),
                   Expanded(
                     child: Text(
                       title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 15.sp,
                         fontFamily: FontHelper.fontFamily(context),
                         fontWeight: FontWeight.w600,
                         color: c.textPrimary,

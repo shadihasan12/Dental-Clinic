@@ -1,14 +1,19 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
-import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
+import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -32,226 +37,182 @@ class ClinicUsersPage extends StatelessWidget {
   }
 }
 
-class _ClinicUsersContent extends StatelessWidget {
+class _ClinicUsersContent extends StatefulWidget {
   const _ClinicUsersContent();
+
+  @override
+  State<_ClinicUsersContent> createState() => _ClinicUsersContentState();
+}
+
+class _ClinicUsersContentState extends State<_ClinicUsersContent> {
+  SubscriptionUsageEntity? _usage;
+
+  bool _isMetricReached(String key) {
+    final m = _usage?.metric(key);
+    if (m == null || m.isUnlimited) return false;
+    return m.used >= m.limit!;
+  }
+
+  bool get _dentistsReached => _isMetricReached('dentists');
+  bool get _secretariesReached => _isMetricReached('secretaries');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsage();
+  }
+
+  Future<void> _loadUsage() async {
+    final result = await getIt<GetSubscriptionUsageUseCase>()(NoParams());
+    if (!mounted) return;
+    setState(() {
+      result.fold((_) => _usage = null, (u) => _usage = u);
+    });
+  }
+
+  /// Pulls the roster and the seat usage together - the limit chips read off
+  /// the usage call, so refreshing one without the other leaves them disagreeing.
+  Future<void> _refresh() async {
+    final bloc = context.read<ClinicUsersBloc>();
+    bloc.add(const ClinicUsersEvent.load());
+    await Future.wait([
+      _loadUsage(),
+      bloc.stream.settled(
+        (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+      ),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isDesktop = Responsive.isDesktop(context);
-
-    final blocWidget = BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
-      listener: (context, state) {
-        state.maybeWhen(
-          submitSuccess: (_, message) {
-            String text;
-            if (message == 'userAddedSuccess') {
-              text = l10n.userAddedSuccess;
-            } else if (message == 'userRemovedSuccess') {
-              text = l10n.userRemovedSuccess;
-            } else {
-              text = l10n.rolesUpdatedSuccess;
-            }
-            AppSnackbar.showSuccess(
-              context,
-              title: l10n.success,
-              message: text,
-            );
-            context.read<ClinicUsersBloc>().add(
-              const ClinicUsersEvent.load(),
-            );
-          },
-          submitError: (_, message) {
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: message,
-            );
-          },
-          orElse: () {},
-        );
-      },
-      builder: (context, state) {
-        final users = state.maybeWhen(
-          loaded: (u) => u,
-          submitting: (u) => u,
-          submitSuccess: (u, _) => u,
-          submitError: (u, _) => u,
-          orElse: () => <ClinicUserEntity>[],
-        );
-        final isLoading = state.maybeWhen(
-          loading: () => true,
-          orElse: () => false,
-        );
-        final isSubmitting = state.maybeWhen(
-          submitting: (_) => true,
-          orElse: () => false,
-        );
-
-        final body = isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : state.maybeWhen(
-                error: (msg) => _buildError(context, l10n, msg),
-                orElse: () => users.isEmpty
-                    ? _buildEmpty(context, l10n)
-                    : _buildList(context, l10n, users, isDesktop),
-              );
-
-        if (isDesktop) {
-          return Column(
-            children: [
-              _DesktopUsersHeader(
-                l10n: l10n,
-                isSubmitting: isSubmitting,
-                onAdd: () => _showAddUserSheet(context, l10n),
-                userCount: users.length,
-              ),
-              Expanded(child: body),
-            ],
-          );
-        }
-
-        return Column(
-          children: [
-            // Header
-            Container(
-              width: double.infinity,
-              color: ColorManager.of(context).cardBg,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 4.w,
-                    vertical: 8.h,
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: ColorManager.of(context).textPrimary,
-                          size: 20.w,
-                        ),
-                        onPressed: () => context.pop(),
-                      ),
-                      Expanded(
-                        child: Text(
-                          l10n.clinicUsers,
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontWeight: FontWeight.w600,
-                            color: ColorManager.of(context).textPrimary,
-                          ),
-                        ),
-                      ),
-                      if (!isLoading && !isSubmitting)
-                        IconButton(
-                          icon: Icon(
-                            Icons.person_add_outlined,
-                            color: ColorManager.primary,
-                            size: 22.w,
-                          ),
-                          onPressed: () => _showAddUserSheet(context, l10n),
-                        ),
-                      if (isSubmitting)
-                        Padding(
-                          padding: EdgeInsets.only(right: 16.w),
-                          child: SizedBox(
-                            width: 20.w,
-                            height: 20.w,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: ColorManager.primary,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Divider(height: 1, color: ColorManager.of(context).borderLight),
-            Expanded(child: body),
-          ],
-        );
-      },
-    );
-
-    if (isDesktop) {
-      return DesktopShell(
-        title: l10n.clinicUsers,
-        body: Scaffold(
-          backgroundColor: ColorManager.of(context).scaffoldBg,
-          body: blocWidget,
-        ),
-      );
-    }
 
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: blocWidget,
+      body: BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
+        listener: (context, state) {
+          state.maybeWhen(
+            submitSuccess: (_, message) {
+              String text;
+              if (message == 'userAddedSuccess') {
+                text = l10n.userAddedSuccess;
+                // Refetch usage so the limit reflects the new count
+                _loadUsage();
+              } else if (message == 'userRemovedSuccess') {
+                text = l10n.userRemovedSuccess;
+                _loadUsage();
+              } else {
+                text = l10n.rolesUpdatedSuccess;
+              }
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.success,
+                message: text,
+              );
+              context.read<ClinicUsersBloc>().add(
+                const ClinicUsersEvent.load(),
+              );
+            },
+            submitError: (_, message) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.error,
+                message: message,
+              );
+            },
+            orElse: () {},
+          );
+        },
+        builder: (context, state) {
+          final users = state.maybeWhen(
+            loaded: (u) => u,
+            submitting: (u) => u,
+            submitSuccess: (u, _) => u,
+            submitError: (u, _) => u,
+            orElse: () => <ClinicUserEntity>[],
+          );
+          final isLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
+          final isSubmitting = state.maybeWhen(
+            submitting: (_) => true,
+            orElse: () => false,
+          );
+
+          return Column(
+            children: [
+              PageHeader(
+                title: l10n.clinicUsers,
+                onBack: () => context.pop(),
+                actions: [
+                  if (!isLoading && !isSubmitting)
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(end: 10.w),
+                      child: DentaButton(
+                        label: l10n.newButton,
+                        icon: Icons.add,
+                        onTap: () => _onAddUser(context, l10n),
+                      ),
+                    ),
+                  if (isSubmitting)
+                    Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              Expanded(
+                child: DentaRefresh(
+                  onRefresh: _refresh,
+                  child: isLoading
+                      ? const _UsersSkeleton()
+                      : state.maybeWhen(
+                          error: (msg) => _buildError(context, l10n, msg),
+                          orElse: () => users.isEmpty
+                              ? _buildEmpty(context, l10n)
+                              : _buildList(context, l10n, users),
+                        ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
   Widget _buildEmpty(BuildContext context, AppLocalizations l10n) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.people_outline, size: 48.w, color: ColorManager.of(context).border),
-          SizedBox(height: 12.h),
-          Text(
-            l10n.noUsersYet,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.of(context).textTertiary,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          TextButton(
-            onPressed: () =>
-                _showAddUserSheet(context, AppLocalizations.of(context)!),
-            child: Text(
-              l10n.addUser,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.people_outline,
+        title: l10n.noUsersYet,
+        message: l10n.noUsersYetHint,
+        actionLabel: l10n.addUser,
+        onAction: () => _onAddUser(context, l10n),
       ),
     );
   }
 
   Widget _buildError(BuildContext context, AppLocalizations l10n, String msg) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline, size: 48.w, color: ColorManager.of(context).textTertiary),
-          SizedBox(height: 12.h),
-          Text(
-            msg,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: ColorManager.of(context).textTertiary,
-              fontFamily: FontHelper.fontFamily(context),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          TextButton(
-            onPressed: () => context.read<ClinicUsersBloc>().add(
-              const ClinicUsersEvent.load(),
-            ),
-            child: Text(l10n.retry),
-          ),
-        ],
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+      child: StateCard(
+        icon: Icons.cloud_off_rounded,
+        tone: ColorManager.error,
+        title: l10n.clinicUsersLoadFailed,
+        message: msg,
+        actionLabel: l10n.retry,
+        onAction: () =>
+            context.read<ClinicUsersBloc>().add(const ClinicUsersEvent.load()),
       ),
     );
   }
@@ -260,80 +221,134 @@ class _ClinicUsersContent extends StatelessWidget {
     BuildContext context,
     AppLocalizations l10n,
     List<ClinicUserEntity> users,
-    bool isDesktop,
   ) {
     final currentEmail = getIt<UserStorage>().getUserEmail();
-
-    if (isDesktop) {
-      return Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1100),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final cols = constraints.maxWidth > 820 ? 2 : 1;
-                return Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: users.map((user) {
-                    final cardWidth =
-                        (constraints.maxWidth - (cols - 1) * 16) / cols;
-                    return SizedBox(
-                      width: cardWidth,
-                      child: _UserCard(
-                        user: user,
-                        isSelf: user.email == currentEmail,
-                        onManageRoles: () =>
-                            _showManageRolesSheet(context, l10n, user),
-                        onRemove: () => _confirmRemove(context, l10n, user),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-        ),
-      );
-    }
-
     return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       itemCount: users.length,
-      separatorBuilder: (_, __) => SizedBox(height: 10.h),
+      separatorBuilder: (_, _) => SizedBox(height: 8.h),
       itemBuilder: (_, index) {
         final user = users[index];
         return _UserCard(
           user: user,
           isSelf: user.email == currentEmail,
-          onManageRoles: () => _showManageRolesSheet(context, l10n, user),
-          onRemove: () => _confirmRemove(context, l10n, user),
+          onMore: () => _showUserActionsSheet(context, l10n, user),
         );
       },
     );
   }
 
-  void _showAddUserSheet(BuildContext context, AppLocalizations l10n) {
-    if (Responsive.isDesktop(context)) {
-      showDialog(
+  void _onAddUser(BuildContext context, AppLocalizations l10n) {
+    // Block entirely only when every limited role is full. If at least one
+    // role still has capacity, let the user enter the form — the disabled
+    // chips on that page will steer them to a role they can actually pick.
+    if (_dentistsReached && _secretariesReached) {
+      InfoPopup.show(
         context: context,
-        builder: (_) => _DesktopDialogWrapper(
-          child: BlocProvider.value(
-            value: context.read<ClinicUsersBloc>(),
-            child: _AddUserSheet(l10n: l10n),
-          ),
-        ),
+        icon: Icons.lock_outline_rounded,
+        title: l10n.subscriptionLimitTitle,
+        body: l10n.dentistLimitMessage,
       );
       return;
     }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<ClinicUsersBloc>(),
+          child: AddClinicUserPage(
+            dentistsReached: _dentistsReached,
+            secretariesReached: _secretariesReached,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showUserActionsSheet(
+    BuildContext context,
+    AppLocalizations l10n,
+    ClinicUserEntity user,
+  ) {
+    final isSelf = user.email == getIt<UserStorage>().getUserEmail();
+    // Three-way gate on the destructive "Remove" action:
+    //   • only an admin may delete (the page itself is admin-only, but
+    //     we double-check at the action level)
+    //   • users can't remove themselves
+    //   • the clinic owner can't be removed by anyone, even other admins
+    final canRemove = getIt<UserStorage>().isAdmin && !isSelf && !user.isOwner;
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: context.read<ClinicUsersBloc>(),
-        child: _AddUserSheet(l10n: l10n),
+      useSafeArea: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(bottom: systemBottomInset(context)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: ColorManager.of(context).border,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 14.h),
+              _ActionsHeader(user: user),
+              SizedBox(height: 8.h),
+              Divider(height: 1, color: ColorManager.of(context).borderLight),
+              _ActionRow(
+                icon: Icons.manage_accounts_outlined,
+                label: l10n.manageRoles,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _showManageRolesSheet(context, l10n, user);
+                },
+              ),
+              Divider(
+                height: 1,
+                indent: 57.w,
+                color: ColorManager.of(context).borderLight,
+              ),
+              _ActionRow(
+                icon: Icons.schedule_outlined,
+                label: l10n.manageWorkingHours,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  context.pushNamed(
+                    AppRoutesNames.userHours,
+                    pathParameters: {'userId': user.id},
+                    extra: <String, dynamic>{'userName': user.fullName},
+                  );
+                },
+              ),
+              if (canRemove) ...[
+                Divider(
+                  height: 1,
+                  indent: 57.w,
+                  color: ColorManager.of(context).borderLight,
+                ),
+                _ActionRow(
+                  icon: Icons.person_remove_outlined,
+                  label: l10n.removeUser,
+                  destructive: true,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _confirmRemove(context, l10n, user);
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -343,21 +358,10 @@ class _ClinicUsersContent extends StatelessWidget {
     AppLocalizations l10n,
     ClinicUserEntity user,
   ) {
-    if (Responsive.isDesktop(context)) {
-      showDialog(
-        context: context,
-        builder: (_) => _DesktopDialogWrapper(
-          child: BlocProvider.value(
-            value: context.read<ClinicUsersBloc>(),
-            child: _ManageRolesSheet(user: user, l10n: l10n),
-          ),
-        ),
-      );
-      return;
-    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<ClinicUsersBloc>(),
@@ -371,209 +375,92 @@ class _ClinicUsersContent extends StatelessWidget {
     AppLocalizations l10n,
     ClinicUserEntity user,
   ) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    // Centre dialog, because removing a user is destructive: the consequence
+    // is stated in a tinted box rather than left implied.
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: ColorManager.of(context).cardBg,
+        backgroundColor: c.cardBg,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(16.r),
         ),
-        title: Text(
-          l10n.removeUser,
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            color: ColorManager.error,
-          ),
-        ),
-        content: Text(
-          l10n.removeUserConfirmation(user.fullName),
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 14.sp,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textSecondary,
+        titlePadding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
+        contentPadding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 0),
+        actionsPadding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 16.h),
+        title: Row(
+          children: [
+            const IconTile(
+              icon: Icons.person_remove_outlined,
+              tone: ColorManager.error,
+            ),
+            SizedBox(width: 11.w),
+            Expanded(
+              child: Text(
+                l10n.removeUser,
+                style: TextStyle(
+                  fontFamily: family,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: c.textPrimary,
+                ),
               ),
             ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.removeUserConfirmation(user.fullName),
+              style: TextStyle(
+                fontFamily: family,
+                fontSize: 12.sp,
+                height: 1.5,
+                color: c.textSecondary,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 9.h),
+              decoration: BoxDecoration(
+                color: c.errorBg,
+                borderRadius: BorderRadius.circular(11.r),
+                border: Border.all(color: ColorManager.errorBorder),
+              ),
+              child: Text(
+                l10n.removeUserConsequence,
+                style: TextStyle(
+                  fontFamily: family,
+                  fontSize: 11.sp,
+                  height: 1.45,
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.error,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          DentaOutlineButton(
+            label: l10n.cancel,
+            onTap: () => Navigator.pop(dialogContext),
           ),
-          TextButton(
-            onPressed: () {
+          DentaButton(
+            label: l10n.removeUser,
+            tone: ColorManager.destructive,
+            onTap: () {
               Navigator.pop(dialogContext);
               context.read<ClinicUsersBloc>().add(
                 ClinicUsersEvent.removeUser(user.id),
               );
             },
-            style: TextButton.styleFrom(foregroundColor: ColorManager.error),
-            child: Text(
-              l10n.removeUser,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─── Desktop Dialog Wrapper ───────────────────────────────────────────────────
-// Re-establishes a mobile-sized MediaQuery and reconfigures ScreenUtil so
-// that .sp/.h/.w scale correctly inside dialogs opened on desktop.
-
-class _DesktopDialogWrapper extends StatelessWidget {
-  const _DesktopDialogWrapper({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    const mobileSize = Size(375, 812);
-    return MediaQuery(
-      data: mediaQuery.copyWith(size: mobileSize),
-      child: Builder(
-        builder: (innerContext) {
-          ScreenUtil.configure(
-            data: MediaQuery.of(innerContext),
-            designSize: const Size(375, 812),
-          );
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
-              child: child,
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// ─── Desktop Users Header ─────────────────────────────────────────────────────
-
-class _DesktopUsersHeader extends StatelessWidget {
-  const _DesktopUsersHeader({
-    required this.l10n,
-    required this.isSubmitting,
-    required this.onAdd,
-    required this.userCount,
-  });
-
-  final AppLocalizations l10n;
-  final bool isSubmitting;
-  final VoidCallback onAdd;
-  final int userCount;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(28, 24, 28, 20),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.people_outline,
-                  color: ColorManager.primary,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.clinicUsers,
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: c.textPrimary,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      userCount == 1
-                          ? '1 ${l10n.clinicUsers.toLowerCase()}'
-                          : '$userCount ${l10n.clinicUsers.toLowerCase()}',
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 13,
-                        color: c.textTertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (isSubmitting)
-                SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: ColorManager.primary,
-                  ),
-                )
-              else
-                Material(
-                  color: ColorManager.primary,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: onAdd,
-                    borderRadius: BorderRadius.circular(10),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.person_add_outlined,
-                              size: 16, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.addUser,
-                            style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -584,14 +471,12 @@ class _DesktopUsersHeader extends StatelessWidget {
 class _UserCard extends StatelessWidget {
   final ClinicUserEntity user;
   final bool isSelf;
-  final VoidCallback onManageRoles;
-  final VoidCallback onRemove;
+  final VoidCallback onMore;
 
   const _UserCard({
     required this.user,
     required this.isSelf,
-    required this.onManageRoles,
-    required this.onRemove,
+    required this.onMore,
   });
 
   @override
@@ -599,28 +484,21 @@ class _UserCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: ColorManager.of(context).borderLight),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onManageRoles,
-          borderRadius: BorderRadius.circular(12.r),
+          onTap: onMore,
+          borderRadius: BorderRadius.circular(16.r),
           child: Padding(
-            padding: EdgeInsets.all(14.w),
+            padding: EdgeInsets.all(12.w),
             child: Row(
               children: [
-                // Avatar
                 CircleAvatar(
-                  radius: 22.r,
-                  backgroundColor: ColorManager.primary.withValues(alpha: 0.12),
+                  radius: 20.r,
+                  backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
                       : null,
@@ -628,24 +506,24 @@ class _UserCard extends StatelessWidget {
                       ? Text(
                           _initials(),
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 13.sp,
                             fontWeight: FontWeight.w600,
-                            color: ColorManager.primary,
+                            color: ColorManager.primaryDarker,
                           ),
                         )
                       : null,
                 ),
-                SizedBox(width: 12.w),
-
-                // Info
+                SizedBox(width: 11.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         user.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 12.5.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           fontWeight: FontWeight.w600,
                           color: ColorManager.of(context).textPrimary,
@@ -654,8 +532,10 @@ class _UserCard extends StatelessWidget {
                       SizedBox(height: 2.h),
                       Text(
                         user.email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 11.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           color: ColorManager.of(context).textTertiary,
                         ),
@@ -673,65 +553,10 @@ class _UserCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Actions
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: ColorManager.of(context).textTertiary,
-                    size: 20.w,
-                  ),
-                  onSelected: (value) {
-                    if (value == 'roles') onManageRoles();
-                    if (value == 'remove') onRemove();
-                  },
-                  itemBuilder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return [
-                      PopupMenuItem(
-                        value: 'roles',
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.manage_accounts_outlined,
-                              size: 18.w,
-                              color: ColorManager.primary,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              l10n.manageRoles,
-                              style: TextStyle(
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (!isSelf)
-                        PopupMenuItem(
-                          value: 'remove',
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.person_remove_outlined,
-                                size: 18.w,
-                                color: ColorManager.error,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                l10n.removeUser,
-                                style: TextStyle(
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  fontSize: 13.sp,
-                                  color: ColorManager.error,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ];
-                  },
+                Icon(
+                  Icons.more_vert,
+                  color: ColorManager.of(context).textSubtle,
+                  size: 18.w,
                 ),
               ],
             ),
@@ -801,325 +626,65 @@ class _RoleChip extends StatelessWidget {
   }
 }
 
-// ─── Add User Bottom Sheet ────────────────────────────────────────────────────
+// ─── Actions Bottom Sheet helpers ─────────────────────────────────────────────
 
-class _AddUserSheet extends StatefulWidget {
-  final AppLocalizations l10n;
-  const _AddUserSheet({required this.l10n});
-
-  @override
-  State<_AddUserSheet> createState() => _AddUserSheetState();
-}
-
-class _AddUserSheetState extends State<_AddUserSheet> {
-  final _firstNameCtrl = TextEditingController();
-  final _lastNameCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
-  final _mobileCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
-  final _selectedRoles = <String>{};
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-
-  List<SpecialtyEntity> _specialties = [];
-  SpecialtyEntity? _selectedSpecialty;
-  bool _loadingSpecialties = false;
-
-  bool get _isDentistSelected => _selectedRoles.contains('DENTIST');
-
-  static const _allRoles = ['ADMIN', 'DENTIST', 'SECRETARY'];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSpecialties();
-  }
-
-  Future<void> _loadSpecialties() async {
-    setState(() => _loadingSpecialties = true);
-    final result = await getIt<AuthRepository>().getSpecialties();
-    result.fold((_) {}, (list) => setState(() => _specialties = list));
-    setState(() => _loadingSpecialties = false);
-  }
-
-  @override
-  void dispose() {
-    _firstNameCtrl.dispose();
-    _lastNameCtrl.dispose();
-    _emailCtrl.dispose();
-    _mobileCtrl.dispose();
-    _passwordCtrl.dispose();
-    _confirmCtrl.dispose();
-    super.dispose();
-  }
-
-  bool get _canSubmit =>
-      _firstNameCtrl.text.trim().isNotEmpty &&
-      _lastNameCtrl.text.trim().isNotEmpty &&
-      _emailCtrl.text.trim().isNotEmpty &&
-      _mobileCtrl.text.trim().isNotEmpty &&
-      _passwordCtrl.text.length >= 8 &&
-      _passwordCtrl.text == _confirmCtrl.text &&
-      _selectedRoles.isNotEmpty &&
-      (!_isDentistSelected || _selectedSpecialty != null);
+class _ActionsHeader extends StatelessWidget {
+  final ClinicUserEntity user;
+  const _ActionsHeader({required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = widget.l10n;
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      constraints: BoxConstraints(maxHeight: size.height * 0.92),
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    final c = ColorManager.of(context);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 10.h),
+      child: Row(
         children: [
-          // Handle
-          Padding(
-            padding: EdgeInsets.only(top: 12.h),
-            child: Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: ColorManager.of(context).border,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
-            child: Text(
-              l10n.addUser,
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-          ),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 8.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _field(l10n.firstName, _firstNameCtrl, context),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _field(l10n.lastName, _lastNameCtrl, context),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  _field(
-                    l10n.emailAddress,
-                    _emailCtrl,
-                    context,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  SizedBox(height: 12.h),
-                  _field(
-                    l10n.mobileNumber,
-                    _mobileCtrl,
-                    context,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  SizedBox(height: 12.h),
-                  _passwordField(
-                    l10n.password,
-                    _passwordCtrl,
-                    context,
-                    _obscurePassword,
-                    () {
-                      setState(() => _obscurePassword = !_obscurePassword);
-                    },
-                  ),
-                  SizedBox(height: 12.h),
-                  _passwordField(
-                    l10n.confirmPassword,
-                    _confirmCtrl,
-                    context,
-                    _obscureConfirm,
-                    () {
-                      setState(() => _obscureConfirm = !_obscureConfirm);
-                    },
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    l10n.selectRoles,
+          CircleAvatar(
+            radius: 20.r,
+            backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
+            backgroundImage: user.imageUrl != null
+                ? NetworkImage(user.imageUrl!)
+                : null,
+            child: user.imageUrl == null
+                ? Text(
+                    _initials(user.fullName),
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
                       fontWeight: FontWeight.w600,
-                      color: ColorManager.of(context).textPrimary,
+                      color: ColorManager.primaryDarker,
                     ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Wrap(
-                    spacing: 8.w,
-                    runSpacing: 8.h,
-                    children: _allRoles.map((role) {
-                      final selected = _selectedRoles.contains(role);
-                      return GestureDetector(
-                        onTap: () => setState(() {
-                          selected
-                              ? _selectedRoles.remove(role)
-                              : _selectedRoles.add(role);
-                          if (!_isDentistSelected) _selectedSpecialty = null;
-                        }),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? ColorManager.primary
-                                : ColorManager.of(context).inputBg,
-                            borderRadius: BorderRadius.circular(20.r),
-                            border: Border.all(
-                              color: selected
-                                  ? ColorManager.primary
-                                  : ColorManager.of(context).borderLight,
-                            ),
-                          ),
-                          child: Text(
-                            _roleLabel(context, role),
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w500,
-                              color: selected
-                                  ? Colors.white
-                                  : ColorManager.of(context).textSecondary,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  if (_isDentistSelected) ...[
-                    SizedBox(height: 16.h),
-                    Text(
-                      l10n.specialization,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.of(context).textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    _loadingSpecialties
-                        ? SizedBox(
-                            height: 48.h,
-                            child: Center(
-                              child: SizedBox(
-                                width: 20.w,
-                                height: 20.w,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: ColorManager.primary,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                              color: ColorManager.of(context).inputBg,
-                              borderRadius: BorderRadius.circular(10.r),
-                              border: Border.all(
-                                color: _selectedSpecialty != null
-                                    ? ColorManager.primary
-                                    : ColorManager.of(context).borderLight,
-                              ),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<SpecialtyEntity>(
-                                value: _selectedSpecialty,
-                                isExpanded: true,
-                                hint: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                  ),
-                                  child: Text(
-                                    l10n.selectSpecialization,
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontFamily: FontHelper.fontFamily(
-                                        context,
-                                      ),
-                                      color: ColorManager.of(context).textTertiary,
-                                    ),
-                                  ),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                                borderRadius: BorderRadius.circular(10.r),
-                                items: _specialties
-                                    .map(
-                                      (s) => DropdownMenuItem(
-                                        value: s,
-                                        child: Text(
-                                          s.name,
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontFamily: FontHelper.fontFamily(
-                                              context,
-                                            ),
-                                            color: ColorManager.of(context).textPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (val) =>
-                                    setState(() => _selectedSpecialty = val),
-                              ),
-                            ),
-                          ),
-                  ],
-                ],
-              ),
-            ),
+                  )
+                : null,
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, bottomInset + 20.h),
-            child: GestureDetector(
-              onTap: _canSubmit ? _submit : null,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: _canSubmit
-                      ? ColorManager.primary
-                      : ColorManager.of(context).border,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  l10n.addUser,
-                  textAlign: TextAlign.center,
+          SizedBox(width: 11.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  user.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 15.sp,
+                    fontSize: 13.sp,
                     fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
                   ),
                 ),
-              ),
+                SizedBox(height: 2.h),
+                Text(
+                  user.email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: c.textTertiary,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1127,134 +692,56 @@ class _AddUserSheetState extends State<_AddUserSheet> {
     );
   }
 
-  void _submit() {
-    context.read<ClinicUsersBloc>().add(
-      ClinicUsersEvent.addUser(
-        firstName: _firstNameCtrl.text.trim(),
-        lastName: _lastNameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-        mobileNumber: _mobileCtrl.text.trim(),
-        password: _passwordCtrl.text,
-        passwordConfirmation: _confirmCtrl.text,
-        roles: _selectedRoles.toList(),
-        specialtyId: _selectedSpecialty?.id,
-      ),
-    );
-    Navigator.pop(context);
-  }
-
-  Widget _field(
-    String label,
-    TextEditingController ctrl,
-    BuildContext context, {
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          keyboardType: keyboardType,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration(),
-        ),
-      ],
-    );
-  }
-
-  Widget _passwordField(
-    String label,
-    TextEditingController ctrl,
-    BuildContext context,
-    bool obscure,
-    VoidCallback toggle,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w500,
-            color: ColorManager.of(context).textSecondary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        TextField(
-          controller: ctrl,
-          obscureText: obscure,
-          onChanged: (_) => setState(() {}),
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.of(context).textPrimary,
-          ),
-          decoration: _inputDecoration().copyWith(
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscure
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-                size: 18.w,
-                color: ColorManager.of(context).textTertiary,
-              ),
-              onPressed: toggle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  InputDecoration _inputDecoration() {
-    return InputDecoration(
-      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      filled: true,
-      fillColor: ColorManager.of(context).inputBg,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.r),
-        borderSide: BorderSide(color: ColorManager.primary),
-      ),
-    );
-  }
-
-  String _roleLabel(BuildContext context, String role) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (role) {
-      case 'ADMIN':
-        return l10n.roleAdmin;
-      case 'DENTIST':
-        return l10n.roleDentist;
-      case 'SECRETARY':
-        return l10n.roleSecretary;
-      default:
-        return role;
+  String _initials(String name) {
+    final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     }
+    return parts.isNotEmpty ? parts.first[0].toUpperCase() : '?';
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool destructive;
+
+  const _ActionRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.destructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final tone = destructive ? ColorManager.error : ColorManager.primary;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 11.h),
+        child: Row(
+          children: [
+            IconTile(icon: icon, tone: tone),
+            SizedBox(width: 11.w),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                  color: destructive ? ColorManager.error : c.textPrimary,
+                ),
+              ),
+            ),
+            DirectionalChevron(size: 18.w, color: c.textSubtle),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -1297,12 +784,13 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
     final l10n = widget.l10n;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
+    final c = ColorManager.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        color: c.cardBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
-      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, bottomInset + 24.h),
+      padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, bottomInset + 16.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1312,57 +800,71 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: ColorManager.of(context).border,
+                color: c.borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
           ),
-          SizedBox(height: 16.h),
-          Text(
-            l10n.manageRoles,
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.of(context).textPrimary,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            widget.user.fullName,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              color: ColorManager.of(context).textTertiary,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          ..._allRoles.map((role) {
-            final selected = _selectedRoles.contains(role);
-            return CheckboxListTile(
-              value: selected,
-              onChanged: (val) => setState(() {
-                val == true
-                    ? _selectedRoles.add(role)
-                    : _selectedRoles.remove(role);
-              }),
-              title: Text(
-                _roleLabel(context, role),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.of(context).textPrimary,
+          SizedBox(height: 14.h),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.manageRoles,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w700,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      widget.user.fullName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              activeColor: ColorManager.primary,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-            );
-          }),
-          SizedBox(height: 8.h),
-          GestureDetector(
-            onTap: _selectedRoles.isNotEmpty
-                ? () {
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => Navigator.pop(context),
+                child: Padding(
+                  padding: EdgeInsets.all(4.w),
+                  child: Icon(Icons.close, size: 20.w, color: c.textSecondary),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          for (final role in _allRoles) ...[
+            _RoleRow(
+              label: _roleLabel(context, role),
+              selected: _selectedRoles.contains(role),
+              onTap: () => setState(() {
+                _selectedRoles.contains(role)
+                    ? _selectedRoles.remove(role)
+                    : _selectedRoles.add(role);
+              }),
+            ),
+            SizedBox(height: 8.h),
+          ],
+          SizedBox(height: 6.h),
+          DentaButton(
+            label: l10n.updateRoles,
+            expand: true,
+            onTap: _selectedRoles.isEmpty
+                ? null
+                : () {
                     context.read<ClinicUsersBloc>().add(
                       ClinicUsersEvent.updateRoles(
                         userId: widget.user.id,
@@ -1370,28 +872,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
                       ),
                     );
                     Navigator.pop(context);
-                  }
-                : null,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              decoration: BoxDecoration(
-                color: _selectedRoles.isNotEmpty
-                    ? ColorManager.primary
-                    : ColorManager.of(context).border,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                l10n.updateRoles,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+                  },
           ),
         ],
       ),
@@ -1410,5 +891,121 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
       default:
         return role;
     }
+  }
+}
+
+/// One role, on or off. A bordered card rather than a Material checkbox
+/// tile so it matches the selectable rows everywhere else in the app.
+class _RoleRow extends StatelessWidget {
+  const _RoleRow({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(12.r);
+
+    return Material(
+      color: selected ? ColorManager.primary.withValues(alpha: 0.08) : c.cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: selected ? ColorManager.primary : c.borderLight,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12.5.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected
+                        ? ColorManager.primaryDarker
+                        : c.textPrimary,
+                  ),
+                ),
+              ),
+              Icon(
+                selected
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked_rounded,
+                size: 18.w,
+                color: selected ? ColorManager.primaryDarker : c.textSubtle,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Keeps the avatar, two text lines and the role chips in place while the
+/// user list loads, so nothing jumps when it lands.
+class _UsersSkeleton extends StatelessWidget {
+  const _UsersSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      itemCount: 5,
+      separatorBuilder: (_, _) => SizedBox(height: 8.h),
+      itemBuilder: (_, _) => Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: c.cardBg,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: c.borderLight),
+        ),
+        // ignore: avoid_unnecessary_containers
+        child: AppShimmer(
+          child: Row(
+            children: [
+              ShimmerBox(
+                width: 40.w,
+                height: 40.w,
+                radius: BorderRadius.circular(40.w),
+              ),
+              SizedBox(width: 11.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(width: 130.w, height: 12.h),
+                    SizedBox(height: 6.h),
+                    ShimmerBox(width: 160.w, height: 10.h),
+                    SizedBox(height: 8.h),
+                    ShimmerBox(
+                      width: 60.w,
+                      height: 16.h,
+                      radius: BorderRadius.circular(6.r),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

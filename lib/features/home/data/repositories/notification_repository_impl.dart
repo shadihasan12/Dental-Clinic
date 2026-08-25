@@ -12,34 +12,86 @@ class NotificationRepositoryImpl implements NotificationRepository {
   NotificationRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Either<NetworkExceptions, List<NotificationEntity>>>
-      getAllNotifications() async {
+  Future<Either<NetworkExceptions, NotificationPageEntity>> getNotifications({
+    int limit = NotificationRemoteDataSourceImpl.defaultLimit,
+    String? before,
+  }) async {
     try {
-      final models = await _remoteDataSource.getAllNotifications();
-      return Right(models.map((m) => m.toEntity()).toList());
+      final page = await _remoteDataSource.getNotifications(
+        limit: limit,
+        before: before,
+      );
+      return Right(
+        NotificationPageEntity(
+          notifications: page.notifications.map((m) => m.toEntity()).toList(),
+          nextCursor: page.nextCursor,
+          unreadCount: page.unreadCount,
+        ),
+      );
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }
   }
 
   @override
-  Future<Either<NetworkExceptions, NotificationEntity>> markAsRead(
-    String id,
-  ) async {
+  Future<Either<NetworkExceptions, UnseenNotificationsEntity>>
+      getUnseen() async {
     try {
-      final model = await _remoteDataSource.markAsRead(id);
-      return Right(model.toEntity());
+      final response = await _remoteDataSource.getUnseen();
+      return Right(
+        UnseenNotificationsEntity(
+          notifications:
+              response.notifications.map((m) => m.toEntity()).toList(),
+          remaining: response.remaining,
+          unreadCount: response.unreadCount,
+          pollAfter: response.pollAfter,
+        ),
+      );
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }
   }
 
   @override
-  Future<Either<NetworkExceptions, List<NotificationEntity>>>
-      markAllAsRead() async {
+  Future<Either<NetworkExceptions, int>> markSeen(List<String> ids) async {
     try {
-      final models = await _remoteDataSource.markAllAsRead();
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(await _remoteDataSource.markSeen(ids));
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, int>> markAsRead(String id) async {
+    try {
+      return Right(await _remoteDataSource.markAsRead(id));
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, int>> markAsUnread(String id) async {
+    try {
+      return Right(await _remoteDataSource.markAsUnread(id));
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, int>> markAllAsRead() async {
+    try {
+      return Right(await _remoteDataSource.markAllAsRead());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, int>> getUnreadCount() async {
+    try {
+      return Right(await _remoteDataSource.getUnreadCount());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }

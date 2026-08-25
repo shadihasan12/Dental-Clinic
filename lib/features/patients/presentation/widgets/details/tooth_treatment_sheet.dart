@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -207,7 +208,7 @@ class _ToothTreatmentSheetContentState
               20.w,
               8.h,
               20.w,
-              MediaQuery.of(context).padding.bottom + 16.h,
+              dockedBottomPadding(context, 16.h),
             ),
             child: GestureDetector(
               onTap: _selectedIds.isEmpty

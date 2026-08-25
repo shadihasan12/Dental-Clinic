@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,16 +12,13 @@ import 'package:dental_clinic_app/features/clinic/presentation/bloc/approvals_bl
 class PendingApprovalsPage extends StatelessWidget {
   final String clinicId;
 
-  const PendingApprovalsPage({
-    super.key,
-    required this.clinicId,
-  });
+  const PendingApprovalsPage({super.key, required this.clinicId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ApprovalsBloc()
-        ..add(ApprovalsEvent.loadPendingApprovals(clinicId)),
+      create: (context) =>
+          ApprovalsBloc()..add(ApprovalsEvent.loadPendingApprovals(clinicId)),
       child: _PendingApprovalsContent(clinicId: clinicId),
     );
   }
@@ -60,60 +58,61 @@ class _PendingApprovalsContent extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              // Header
-              SliverToBoxAdapter(
-                child: GradientHeader(
-                  title: 'Pending Approvals',
-                  subtitle: 'Review and approve requests',
-                  height: 160.h,
-                  showBackButton: true,
-                  onBackPressed: () => context.pop(),
-                ),
-              ),
-
-              // Content
-              if (state.isLoading)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (state.pendingApprovals.isEmpty)
-                SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline,
-                          size: 64.w,
-                          color: ColorManager.success,
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          'All caught up!',
-                          style: TextStyleManager.titleMedium.copyWith(
-                            color: ColorManager.of(context).textPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          'No pending approval requests',
-                          style: TextStyleManager.bodyMedium.copyWith(
-                            color: ColorManager.of(context).textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
+          return DentaRefresh(
+            onRefresh: () => _refresh(context),
+            child: CustomScrollView(
+              slivers: [
+                // Header
+                SliverToBoxAdapter(
+                  child: GradientHeader(
+                    title: 'Pending Approvals',
+                    subtitle: 'Review and approve requests',
+                    height: 160.h,
+                    showBackButton: true,
+                    onBackPressed: () => context.pop(),
                   ),
-                )
-              else
-                SliverPadding(
-                  padding: EdgeInsets.all(16.w),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
+                ),
+
+                // Content
+                if (state.isLoading)
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (state.pendingApprovals.isEmpty)
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 64.w,
+                            color: ColorManager.success,
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'All caught up!',
+                            style: TextStyleManager.titleMedium.copyWith(
+                              color: ColorManager.of(context).textPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'No pending approval requests',
+                            style: TextStyleManager.bodyMedium.copyWith(
+                              color: ColorManager.of(context).textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: EdgeInsets.all(16.w),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
                         final request = state.pendingApprovals[index];
                         return _ApprovalRequestCard(
                           request: request,
@@ -127,20 +126,23 @@ class _PendingApprovalsContent extends StatelessWidget {
                             _showRejectDialog(context, request);
                           },
                         );
-                      },
-                      childCount: state.pendingApprovals.length,
+                      }, childCount: state.pendingApprovals.length),
                     ),
                   ),
-                ),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: 24.h),
-              ),
-            ],
+                SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+              ],
+            ),
           );
         },
       ),
     );
+  }
+
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<ApprovalsBloc>();
+    bloc.add(ApprovalsEvent.loadPendingApprovals(clinicId));
+    await bloc.stream.settled((state) => !state.isLoading);
   }
 
   void _showRejectDialog(BuildContext context, ApprovalRequestEntity request) {
@@ -158,9 +160,9 @@ class _PendingApprovalsContent extends StatelessWidget {
             SizedBox(height: 16.h),
             TextField(
               controller: reasonController,
-              decoration: const InputDecoration(
+              decoration: formOutlinedInput(
+                dialogContext,
                 hintText: 'Reason (optional)',
-                border: OutlineInputBorder(),
               ),
               maxLines: 2,
             ),
@@ -183,9 +185,7 @@ class _PendingApprovalsContent extends StatelessWidget {
                 ),
               );
             },
-            style: TextButton.styleFrom(
-              foregroundColor: ColorManager.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: ColorManager.error),
             child: const Text('Reject'),
           ),
         ],

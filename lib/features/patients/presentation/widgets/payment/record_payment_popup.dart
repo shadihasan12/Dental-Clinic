@@ -62,6 +62,7 @@ class RecordPaymentPopup extends StatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => RecordPaymentPopup(
         patientName: patientName,
@@ -128,9 +129,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     // Reverse of the save conversion:
     //   Not swapped: 1 caseCurrency = X selectedCurrency → multiply
     //   Swapped:     1 selectedCurrency = X caseCurrency → divide
-    final converted = _isExchangeSwapped
-        ? remaining / rate
-        : remaining * rate;
+    final converted = _isExchangeSwapped ? remaining / rate : remaining * rate;
     _amountController.text = converted.toStringAsFixed(2);
   }
 
@@ -151,288 +150,294 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle
-          Container(
-            margin: EdgeInsets.only(top: 12.h),
-            width: 40.w,
-            height: 4.h,
-            decoration: BoxDecoration(
-              color: ColorManager.of(context).border,
-              borderRadius: BorderRadius.circular(2.r),
+    return Padding(
+      // Keyboard inset — keeps the Save button above the on-screen keyboard.
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
+        decoration: BoxDecoration(
+          color: ColorManager.of(context).cardBg,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle
+            Container(
+              margin: EdgeInsets.only(top: 12.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: ColorManager.of(context).border,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
             ),
-          ),
 
-          // Content
-          Flexible(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(20.w),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Row(
-                      children: [
-                        Container(
-                          width: 48.w,
-                          height: 48.w,
-                          decoration: BoxDecoration(
-                            color: ColorManager.success.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.payments_outlined,
-                            color: ColorManager.success,
-                            size: 24.w,
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.recordPaymentTitle,
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontFamily: fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorManager.of(context).textPrimary,
-                                ),
+            // Content
+            Flexible(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(20.w),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          Container(
+                            width: 48.w,
+                            height: 48.w,
+                            decoration: BoxDecoration(
+                              color: ColorManager.success.withValues(
+                                alpha: 0.1,
                               ),
-                              Text(
-                                widget.patientName,
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.of(context).textSecondary,
-                                ),
-                              ),
-                              if (widget.caseCurrencyCode != null)
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.payments_outlined,
+                              color: ColorManager.success,
+                              size: 24.w,
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  '${l10n.caseCurrency}: ${widget.caseCurrencyCode}',
+                                  l10n.recordPaymentTitle,
                                   style: TextStyle(
-                                    fontSize: 12.sp,
+                                    fontSize: 18.sp,
                                     fontFamily: fontFamily,
-                                    color: ColorManager.textSecondary,
+                                    fontWeight: FontWeight.w600,
+                                    color: ColorManager.of(context).textPrimary,
                                   ),
                                 ),
-                            ],
+                                Text(
+                                  widget.patientName,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily: FontHelper.fontFamily(context),
+                                    color: ColorManager.of(
+                                      context,
+                                    ).textSecondary,
+                                  ),
+                                ),
+                                if (widget.caseCurrencyCode != null)
+                                  Text(
+                                    '${l10n.caseCurrency}: ${widget.caseCurrencyCode}',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontFamily: fontFamily,
+                                      color: ColorManager.textSecondary,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(
-                            Icons.close,
-                            color: ColorManager.of(context).textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    // Payment summary
-                    Container(
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        color: ColorManager.of(context).cardBgSecondary,
-                        borderRadius: BorderRadiusManager.lg,
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 8.h),
-                          _buildSummaryRow(
-                            l10n.totalCost,
-                            '${widget.caseCurrencyCode ?? ''} ${widget.totalCost.toStringAsFixed(2)}',
-                          ),
-                          SizedBox(height: 8.h),
-                          _buildSummaryRow(
-                            l10n.alreadyPaid,
-                            '${widget.caseCurrencyCode ?? ''} ${widget.paidAmount.toStringAsFixed(2)}',
-                            valueColor: ColorManager.success,
-                          ),
-                          SizedBox(height: 8.h),
-                          Divider(color: ColorManager.of(context).borderLight),
-                          SizedBox(height: 8.h),
-                          _buildSummaryRow(
-                            l10n.remaining,
-                            '${widget.caseCurrencyCode ?? ''} ${_remainingAmount.toStringAsFixed(2)}',
-                            valueColor: _remainingAmount > 0
-                                ? ColorManager.warning
-                                : ColorManager.success,
-                            isBold: true,
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.close,
+                              color: ColorManager.of(context).textSecondary,
+                            ),
                           ),
                         ],
                       ),
-                    ),
 
-                    SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
 
-                    // Currency selector
-                    _buildLabel(l10n.currency),
-                    SizedBox(height: 6.h),
-                    BlocBuilder<CurrencyBloc, CurrencyState>(
-                      bloc: _currencyBloc,
-                      builder: (context, state) {
-                        return state.when(
-                          initial: () => const SizedBox.shrink(),
-                          loading: () => SizedBox(
-                            height: 40.h,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                      // Payment summary
+                      Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: ColorManager.of(context).cardBgSecondary,
+                          borderRadius: BorderRadiusManager.lg,
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 8.h),
+                            _buildSummaryRow(
+                              l10n.totalCost,
+                              '${widget.caseCurrencyCode ?? ''} ${widget.totalCost.toStringAsFixed(2)}',
                             ),
-                          ),
-                          loaded: (currencies) {
-                            _initCurrencySelection(currencies);
-                            return CurrencyChips(
-                              currencies: currencies,
-                              selectedCurrency: _selectedCurrency,
-                              onSelected: (currency) {
-                                setState(() {
-                                  _selectedCurrency = currency;
-                                  _isExchangeSwapped = false;
-                                  _exchangeRateController.clear();
-                                });
-                              },
-                            );
-                          },
-                          error: (msg) => Text(
-                            msg,
-                            style: TextStyle(
-                              color: ColorManager.error,
-                              fontSize: 12.sp,
+                            SizedBox(height: 8.h),
+                            _buildSummaryRow(
+                              l10n.alreadyPaid,
+                              '${widget.caseCurrencyCode ?? ''} ${widget.paidAmount.toStringAsFixed(2)}',
+                              valueColor: ColorManager.success,
                             ),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: 16.h),
-
-                    // Exchange rate (only if currency changed)
-                    if (_isCurrencyChanged) ...[
-                      _buildLabel(l10n.exchangeRate),
-                      SizedBox(height: 6.h),
-                      _buildExchangeRateFields(fontFamily),
-                      SizedBox(height: 16.h),
-                    ],
-
-                    // Amount field
-                    _buildAmountField(),
-
-                    SizedBox(height: 16.h),
-
-                    // Note (optional)
-                    _buildLabel(l10n.noteOptional),
-                    SizedBox(height: 6.h),
-                    TextFormField(
-                      controller: _noteController,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        hintText: l10n.addNote,
-                        hintStyle: TextStyle(
-                          color: ColorManager.of(context).textTertiary,
-                          fontFamily: FontHelper.fontFamily(context),
-                        ),
-                        filled: true,
-                        fillColor: ColorManager.of(context).inputBg,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(
-                            color: ColorManager.of(context).borderLight,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(
-                            color: ColorManager.of(context).borderLight,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadiusManager.lg,
-                          borderSide: BorderSide(color: ColorManager.primary),
+                            SizedBox(height: 8.h),
+                            Divider(
+                              color: ColorManager.of(context).borderLight,
+                            ),
+                            SizedBox(height: 8.h),
+                            _buildSummaryRow(
+                              l10n.remaining,
+                              '${widget.caseCurrencyCode ?? ''} ${_remainingAmount.toStringAsFixed(2)}',
+                              valueColor: _remainingAmount > 0
+                                  ? ColorManager.warning
+                                  : ColorManager.success,
+                              isBold: true,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 20.h),
 
-                    // Save button
-                    _isSubmitting
-                        ? const Center(child: CircularProgressIndicator())
-                        : PrimaryButton(
-                            text: l10n.save,
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate() &&
-                                  _selectedCurrency != null) {
-                                final amount = double.parse(
-                                  _amountController.text,
-                                );
-                                final exchangeRate = double.parse(
-                                  _exchangeRateController.text,
-                                );
-                                final caseCurrencyId =
-                                    widget.caseCurrencyId ??
-                                    _selectedCurrency!.id;
+                      // Currency selector
+                      _buildLabel(l10n.currency),
+                      SizedBox(height: 6.h),
+                      BlocBuilder<CurrencyBloc, CurrencyState>(
+                        bloc: _currencyBloc,
+                        builder: (context, state) {
+                          return state.when(
+                            initial: () => const SizedBox.shrink(),
+                            loading: () => SizedBox(
+                              height: 40.h,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            loaded: (currencies) {
+                              _initCurrencySelection(currencies);
+                              return CurrencyChips(
+                                currencies: currencies,
+                                selectedCurrency: _selectedCurrency,
+                                onSelected: (currency) {
+                                  setState(() {
+                                    _selectedCurrency = currency;
+                                    _isExchangeSwapped = false;
+                                    _exchangeRateController.clear();
+                                  });
+                                },
+                              );
+                            },
+                            error: (msg) => Text(
+                              msg,
+                              style: TextStyle(
+                                color: ColorManager.error,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
 
-                                // If same currency, no conversion needed
-                                // If different currency, convert based on swap direction:
-                                //   Not swapped: 1 [caseCurrency] = X [selectedCurrency] → divide
-                                //   Swapped:     1 [selectedCurrency] = X [caseCurrency] → multiply
-                                double amountInCaseCurrency;
-                                if (!_isCurrencyChanged) {
-                                  amountInCaseCurrency = amount;
-                                } else if (_isExchangeSwapped) {
-                                  // 1 selectedCurrency = X caseCurrency → multiply
-                                  amountInCaseCurrency = amount * exchangeRate;
-                                } else {
-                                  // 1 caseCurrency = X selectedCurrency → divide
-                                  amountInCaseCurrency = amount / exchangeRate;
-                                }
+                      SizedBox(height: 16.h),
 
-                                final notes =
-                                    _noteController.text.trim().isEmpty
-                                    ? null
-                                    : _noteController.text.trim();
+                      // Exchange rate (only if currency changed)
+                      if (_isCurrencyChanged) ...[
+                        _buildLabel(l10n.exchangeRate),
+                        SizedBox(height: 6.h),
+                        _buildExchangeRateFields(fontFamily),
+                        SizedBox(height: 16.h),
+                      ],
 
-                                setState(() => _isSubmitting = true);
-                                try {
-                                  await widget.onSave(
-                                    amount,
-                                    _selectedCurrency!.id,
-                                    caseCurrencyId,
-                                    amountInCaseCurrency,
-                                    exchangeRate,
-                                    notes,
+                      // Amount field
+                      _buildAmountField(),
+
+                      SizedBox(height: 16.h),
+
+                      // Note (optional)
+                      _buildLabel(l10n.noteOptional),
+                      SizedBox(height: 6.h),
+                      TextFormField(
+                        controller: _noteController,
+                        maxLines: 2,
+                        decoration: formOutlinedInput(
+                          context,
+                          hintText: l10n.addNote,
+                        ),
+                      ),
+
+                      SizedBox(height: 24.h),
+
+                      // Save button
+                      _isSubmitting
+                          ? const Center(child: CircularProgressIndicator())
+                          : PrimaryButton(
+                              text: l10n.save,
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate() &&
+                                    _selectedCurrency != null) {
+                                  final amount = double.tryParse(
+                                    _amountController.text.trim(),
                                   );
-                                  if (mounted) context.pop();
-                                } catch (_) {
-                                  if (mounted) {
-                                    setState(() => _isSubmitting = false);
+                                  if (amount == null) return;
+                                  // The rate field is only rendered when the
+                                  // payment currency differs from the case
+                                  // currency, so on the common same-currency
+                                  // path this controller is empty - parsing it
+                                  // outright threw FormatException on every
+                                  // save.
+                                  final parsedRate = double.tryParse(
+                                    _exchangeRateController.text.trim(),
+                                  );
+                                  // Guard the divide below: a zero rate would
+                                  // send Infinity to the API.
+                                  final exchangeRate =
+                                      (parsedRate == null || parsedRate <= 0)
+                                      ? 1.0
+                                      : parsedRate;
+                                  final caseCurrencyId =
+                                      widget.caseCurrencyId ??
+                                      _selectedCurrency!.id;
+
+                                  // If same currency, no conversion needed
+                                  // If different currency, convert based on swap direction:
+                                  //   Not swapped: 1 [caseCurrency] = X [selectedCurrency] → divide
+                                  //   Swapped:     1 [selectedCurrency] = X [caseCurrency] → multiply
+                                  double amountInCaseCurrency;
+                                  if (!_isCurrencyChanged) {
+                                    amountInCaseCurrency = amount;
+                                  } else if (_isExchangeSwapped) {
+                                    // 1 selectedCurrency = X caseCurrency → multiply
+                                    amountInCaseCurrency =
+                                        amount * exchangeRate;
+                                  } else {
+                                    // 1 caseCurrency = X selectedCurrency → divide
+                                    amountInCaseCurrency =
+                                        amount / exchangeRate;
+                                  }
+
+                                  final notes =
+                                      _noteController.text.trim().isEmpty
+                                      ? null
+                                      : _noteController.text.trim();
+
+                                  setState(() => _isSubmitting = true);
+                                  try {
+                                    await widget.onSave(
+                                      amount,
+                                      _selectedCurrency!.id,
+                                      caseCurrencyId,
+                                      amountInCaseCurrency,
+                                      exchangeRate,
+                                      notes,
+                                    );
+                                    if (mounted) context.pop();
+                                  } catch (_) {
+                                    if (mounted) {
+                                      setState(() => _isSubmitting = false);
+                                    }
                                   }
                                 }
-                              }
-                            },
-                          ),
-                  ],
+                              },
+                            ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

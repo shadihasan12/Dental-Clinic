@@ -1,13 +1,24 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
-/// Custom snackbar helper for consistent, visible notifications
+/// App-wide toast helper.
+///
+/// Rendered into the root [Overlay] rather than through [ScaffoldMessenger] so
+/// it floats at the *top* of the screen — above dialogs and bottom sheets — and
+/// never covers the bottom navigation or a page's primary action button.
 class AppSnackbar {
   AppSnackbar._();
 
-  /// Show success snackbar (teal color, appears from top)
+  /// Distance from the very top of the screen to the toast.
+  static const double _topOffset = 50;
+
+  static OverlayEntry? _entry;
+
+  /// Show success toast (teal, appears at the top)
   static void showSuccess(
     BuildContext context, {
     required String title,
@@ -16,7 +27,7 @@ class AppSnackbar {
     _show(context, title: title, message: message, type: _SnackbarType.success);
   }
 
-  /// Show error snackbar (red color, appears from top)
+  /// Show error toast (red, appears at the top)
   static void showError(
     BuildContext context, {
     required String title,
@@ -25,7 +36,7 @@ class AppSnackbar {
     _show(context, title: title, message: message, type: _SnackbarType.error);
   }
 
-  /// Show warning snackbar (orange color, appears from top)
+  /// Show warning toast (yellow, appears at the top)
   static void showWarning(
     BuildContext context, {
     required String title,
@@ -34,7 +45,7 @@ class AppSnackbar {
     _show(context, title: title, message: message, type: _SnackbarType.warning);
   }
 
-  /// Show info snackbar (blue color, appears from top)
+  /// Show info toast (blue, appears at the top)
   static void showInfo(
     BuildContext context, {
     required String title,
@@ -43,28 +54,41 @@ class AppSnackbar {
     _show(context, title: title, message: message, type: _SnackbarType.info);
   }
 
+  /// Removes the toast currently on screen, if any.
+  static void dismiss() {
+    final entry = _entry;
+    _entry = null;
+    if (entry != null && entry.mounted) entry.remove();
+  }
+
   static void _show(
     BuildContext context, {
     required String title,
     String? message,
     required _SnackbarType type,
   }) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: _SnackbarContent(title: title, message: message, type: type),
-        backgroundColor: type.backgroundColor,
-        behavior: SnackBarBehavior.floating,
-        elevation: 8,
-        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        duration: const Duration(seconds: 4),
-        dismissDirection: DismissDirection.horizontal,
+    // rootOverlay so the toast also shows over dialogs and modal sheets.
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null) return;
+
+    // Only one toast at a time — a new one replaces whatever is showing.
+    dismiss();
+
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (_) => _ToastCard(
+        title: title,
+        message: message,
+        type: type,
+        topOffset: _topOffset,
+        onDismissed: () {
+          if (_entry == entry) _entry = null;
+          if (entry.mounted) entry.remove();
+        },
       ),
     );
+    _entry = entry;
+    overlay.insert(entry);
   }
 }
 
@@ -74,113 +98,203 @@ extension on _SnackbarType {
   Color get backgroundColor {
     switch (this) {
       case _SnackbarType.success:
-        return const Color(0xFF70B2B2);
+        return ColorManager.primary;
       case _SnackbarType.error:
         return const Color(0xFFEF4444);
       case _SnackbarType.warning:
-        return const Color(0xFFF59E0B);
+        return const Color(0xFFFBBF24);
       case _SnackbarType.info:
         return const Color(0xFF3B82F6);
     }
   }
 
-  IconData get icon {
+  /// Text and close-icon color, picked for contrast against [backgroundColor].
+  Color get foregroundColor {
     switch (this) {
-      case _SnackbarType.success:
-        return Icons.check_circle_rounded;
-      case _SnackbarType.error:
-        return Icons.error_rounded;
       case _SnackbarType.warning:
-        return Icons.warning_rounded;
+        return const Color(0xFF5C3D00);
+      case _SnackbarType.success:
+      case _SnackbarType.error:
       case _SnackbarType.info:
-        return Icons.info_rounded;
+        return ColorManager.white;
     }
   }
 }
 
-class _SnackbarContent extends StatelessWidget {
-  const _SnackbarContent({
+/// The pill itself: slides up into place as it fades in, and keeps drifting up
+/// as it fades out — so the whole motion reads as a single upward gesture.
+class _ToastCard extends StatefulWidget {
+  const _ToastCard({
     required this.title,
-    this.message,
+    required this.message,
     required this.type,
+    required this.topOffset,
+    required this.onDismissed,
   });
 
   final String title;
   final String? message;
   final _SnackbarType type;
+  final double topOffset;
+  final VoidCallback onDismissed;
+
+  @override
+  State<_ToastCard> createState() => _ToastCardState();
+}
+
+class _ToastCardState extends State<_ToastCard> {
+  static const _enterDuration = Duration(milliseconds: 260);
+  static const _exitDuration = Duration(milliseconds: 220);
+  static const _visibleDuration = Duration(seconds: 3);
+
+  bool _visible = false;
+  bool _leaving = false;
+  Timer? _autoDismiss;
+
+  @override
+  void initState() {
+    super.initState();
+    // The first frame paints it low and transparent; the next frame animates it
+    // up to its resting position.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _visible = true);
+    });
+    _autoDismiss = Timer(_visibleDuration, _dismiss);
+  }
+
+  @override
+  void dispose() {
+    _autoDismiss?.cancel();
+    super.dispose();
+  }
+
+  void _dismiss() {
+    if (!mounted || _leaving) return;
+    _autoDismiss?.cancel();
+    setState(() {
+      _leaving = true;
+      _visible = false;
+    });
+    Future<void>.delayed(_exitDuration, widget.onDismissed);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: type.backgroundColor.withValues(alpha: 0.4),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Icon container
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: ColorManager.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: Icon(type.icon, color: ColorManager.white, size: 22.w),
-          ),
-          SizedBox(width: 12.w),
-          // Text content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: ColorManager.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                    fontFamily: FontHelper.fontFamily(context)
+    final type = widget.type;
+    final fg = type.foregroundColor;
+    final message = widget.message;
+
+    final hasMessage = message != null && message.isNotEmpty;
+    // Most call sites pass a short title ("Error") plus the real text as the
+    // message. When the title carries everything — a raw server message — it
+    // gets the extra line the message would have used.
+    final titleMaxLines = hasMessage ? 2 : 3;
+
+    final offset = _leaving
+        ? const Offset(0, -0.7)
+        : (_visible ? Offset.zero : const Offset(0, 0.6));
+
+    return Positioned(
+      top: widget.topOffset.h,
+      left: 20.w,
+      right: 20.w,
+      child: IgnorePointer(
+        ignoring: _leaving,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: AnimatedSlide(
+            offset: offset,
+            duration: _leaving ? _exitDuration : _enterDuration,
+            curve: Curves.easeOutCubic,
+            child: AnimatedOpacity(
+              opacity: _visible ? 1 : 0,
+              duration: _leaving ? _exitDuration : _enterDuration,
+              curve: Curves.easeOut,
+              child: Material(
+                color: Colors.transparent,
+                child: GestureDetector(
+                  // Flick it upwards to get rid of it early.
+                  onVerticalDragEnd: (details) {
+                    if ((details.primaryVelocity ?? 0) < 0) _dismiss();
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 320.w),
+                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 8.w, 8.h),
+                    decoration: BoxDecoration(
+                      color: type.backgroundColor,
+                      // Fully rounded — a pill, whatever the text length.
+                      borderRadius: BorderRadius.circular(100.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.12),
+                          blurRadius: 14,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: TextStyle(
+                                  color: fg,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.5.sp,
+                                  height: 1.25,
+                                  fontFamily: FontHelper.fontFamily(context),
+                                ),
+                                maxLines: titleMaxLines,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (hasMessage) ...[
+                                SizedBox(height: 1.h),
+                                Text(
+                                  message,
+                                  style: TextStyle(
+                                    color: fg.withValues(alpha: 0.85),
+                                    fontSize: 11.sp,
+                                    height: 1.25,
+                                    fontFamily: FontHelper.fontFamily(context),
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        GestureDetector(
+                          onTap: _dismiss,
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            width: 22.w,
+                            height: 22.w,
+                            decoration: BoxDecoration(
+                              color: fg.withValues(alpha: 0.18),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 14.w,
+                              color: fg,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                if (message != null) ...[
-                  SizedBox(height: 2.h),
-                  Text(
-                    message!,
-                    style: TextStyle(
-                      color: ColorManager.white.withValues(alpha: 0.9),
-                      fontSize: 14.sp,
-                      fontFamily: FontHelper.fontFamily(context)
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          // Close button
-          GestureDetector(
-            onTap: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-            child: Container(
-              width: 28.w,
-              height: 28.w,
-              decoration: BoxDecoration(
-                color: ColorManager.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8.r),
               ),
-              child: Icon(Icons.close, color: ColorManager.white, size: 16.w),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

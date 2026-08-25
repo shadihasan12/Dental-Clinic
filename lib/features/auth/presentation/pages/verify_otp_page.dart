@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -212,22 +213,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   SizedBox(height: 16.h),
 
                   // Back button
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        color: ColorManager.of(context).cardBgSecondary,
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: ColorManager.of(context).textPrimary,
-                        size: 18.w,
-                      ),
-                    ),
-                  ),
+                  AuthBackButton(onTap: () => context.pop()),
 
                   SizedBox(height: 24.h),
 
@@ -235,7 +221,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   Text(
                     l10n.verifyYourEmail,
                     style: TextStyle(
-                      fontSize: FontSizesManager.s24,
+                      fontSize: FontSizesManager.s28,
                       fontWeight: FontWeightManager.bold,
                       fontFamily: fontFamily,
                       color: ColorManager.of(context).textPrimary,
@@ -254,21 +240,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   SizedBox(height: 40.h),
 
                   // Email icon
-                  Center(
-                    child: Container(
-                      width: 72.w,
-                      height: 72.w,
-                      decoration: BoxDecoration(
-                        color: ColorManager.primary10,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.mark_email_read_outlined,
-                        size: 36.w,
-                        color: ColorManager.primary,
-                      ),
-                    ),
-                  ),
+                  AuthHeroGlyph(icon: Icons.mark_email_read_outlined),
 
                   SizedBox(height: 20.h),
 
@@ -321,7 +293,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                           textAlign: TextAlign.center,
                           keyboardType: TextInputType.number,
                           style: TextStyle(
-                            fontSize: FontSizesManager.s24,
+                            fontSize: FontSizesManager.s28,
                             fontWeight: FontWeightManager.bold,
                             fontFamily: fontFamily,
                             color: ColorManager.of(context).textPrimary,
@@ -330,30 +302,30 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(vertical: 14.h),
                             filled: true,
-                            fillColor: ColorManager.of(context).cardBgSecondary,
+                            fillColor: ColorManager.of(context).inputBg,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
                               borderSide: BorderSide(
-                                color: ColorManager.of(context).border,
+                                color: ColorManager.of(context).borderLight,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
                               borderSide: BorderSide(
-                                color: ColorManager.of(context).border,
+                                color: ColorManager.of(context).borderLight,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
                               borderSide: BorderSide(
                                 color: ColorManager.primary,
-                                width: 2,
+                                width: 1.5,
                               ),
                             ),
                             disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
                               borderSide: BorderSide(
-                                color: ColorManager.of(context).border,
+                                color: ColorManager.of(context).borderLight,
                               ),
                             ),
                           ),

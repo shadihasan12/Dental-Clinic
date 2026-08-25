@@ -255,6 +255,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await _userStorage.saveUserEmail(email);
     }
     final clinics = data['clinics'] as List?;
+    // Cache the membership count + stamp the "first seen on this
+    // device" timestamp here (the helper only writes on the very
+    // first call) so the share card has both numbers ready without
+    // an extra API round-trip when the share sheet opens.
+    await _userStorage.saveClinicCount(clinics?.length ?? 0);
+    await _userStorage.getOrInitFirstSeenAt();
     if (clinics != null && clinics.isNotEmpty) {
       final clinic = clinics[0]['clinic'] as Map<String, dynamic>?;
       if (clinic != null) {

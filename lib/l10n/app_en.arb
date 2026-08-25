@@ -12,6 +12,10 @@
   "patients": "Patients",
   "appointments": "Appointments",
   "cases": "Cases",
+  "share": "Share",
+  "statisticsLoadFailed": "Statistics could not be loaded",
+  "noStatisticsYet": "No statistics yet",
+  "noStatisticsYetHint": "They will appear here once the clinic has recorded some activity.",
   "statistics": "Statistics",
   "profile": "Profile",
   "settings": "Settings",
@@ -26,6 +30,7 @@
   "add": "Add",
   "update": "Update",
   "close": "Close",
+  "unlimited": "Unlimited",
   "loading": "Loading...",
   "error": "Error",
   "somethingWentWrong": "Something went wrong",
@@ -53,11 +58,23 @@
   "active": "Active",
   "inactive": "Inactive",
   "pending": "Pending",
+  "confirmed": "Confirmed",
+  "scheduled": "Scheduled",
+  "cancelledByClinic": "Cancelled by clinic",
+  "cancelledByPatient": "Cancelled by patient",
+  "changeStatus": "Change status",
+  "noShow": "No show",
+  "appointmentDetails": "Appointment details",
+  "doctor": "Doctor",
+  "day": "Day",
+  "week": "Week",
+  "viewPatientDetails": "View patient details",
   "completed": "Completed",
   "cancelled": "Cancelled",
   "search": "Search",
   "filter": "Filter",
   "expenseType": "Expense type",
+  "expenseDetails": "Expense details",
   "sort": "Sort",
   "export": "Export",
   "import": "Import",
@@ -66,15 +83,13 @@
   "back": "Back",
   "home": "Home",
   "menu": "Menu",
-  "goodMorning": "Good morning",
-  "goodAfternoon": "Good afternoon",
-  "goodEvening": "Good evening",
   "about": "About",
   "contactUs": "Contact Us",
   "termsOfService": "Terms of Service",
   "privacyPolicy": "Privacy Policy",
   "help": "Help",
   "version": "Version",
+  "logoutConsequence": "You will be signed out on this device and will need to sign in again.",
   "areYouSureLogout": "Are you sure you want to logout?",
   "copyright": "© 2025 Dental Clinic App",
   "quickActions": "Quick Actions",
@@ -87,12 +102,29 @@
   "subscriptionPlan": "Subscription Plan",
   "renewSubscription": "Renew Subscription",
   "upgradeSubscription": "Upgrade Subscription",
+  "subscriptionLimitTitle": "Subscription limit reached",
+  "dentistLimitMessage": "Your current plan doesn't allow adding more dentists. Upgrade your subscription to add more clinic users.",
+  "roleLimitInfo": "Your current plan is at its limit for: {roles}. Upgrade to add users with this role.",
+  "@roleLimitInfo": {
+    "placeholders": {
+      "roles": {
+        "type": "String"
+      }
+    }
+  },
   "daysRemaining": "Days Remaining",
   "accountSettings": "Account Settings",
+  "profileLoadFailed": "Profile could not be loaded",
   "editProfile": "Edit Profile",
+  "clinicInfoLoadFailed": "Clinic information could not be loaded",
   "clinicInformation": "Clinic Information",
   "clinicName": "Clinic Name",
+  "workingDaysLoadFailed": "Working days could not be loaded",
+  "workingDays": "Working Days",
+  "workingHoursLoadFailed": "Working hours could not be loaded",
   "workingHours": "Working Hours",
+  "fullClinicHours": "Full clinic hours",
+  "manageWorkingHours": "Manage working hours",
   "closed": "Closed",
   "from": "From",
   "to": "To",
@@ -115,7 +147,22 @@
   "privacySecurity": "Privacy & Security",
   "support": "Support",
   "helpCenter": "Help Center",
-  "contactSupport": "Contact Support",
+  "reportIssue": "Report an Issue",
+  "newReport": "New report",
+  "issueTitleLabel": "Title",
+  "issueTitleHint": "Short summary of the problem",
+  "issueDescriptionHint": "What happened, and what you expected",
+  "issueTitleRequired": "Title is required",
+  "issueDescriptionRequired": "Description is required",
+  "sendReport": "Send report",
+  "yourReports": "Your reports",
+  "issueStatusPending": "Pending",
+  "issueStatusInProgress": "In progress",
+  "issueStatusDone": "Done",
+  "noReportsYet": "No reports yet",
+  "noReportsYetHint": "Reports you send appear here with their status.",
+  "reportSent": "Report sent",
+  "couldNotLoadReports": "Could not load your reports",
   "termsPrivacy": "Terms & Privacy",
   "manageSubscription": "Manage subscription coming soon",
   "newAppointment": "New Appointment",
@@ -127,13 +174,20 @@
   "payments": "Payments",
   "more": "More",
   "total": "Total",
-  "welcomeBack":"Welcome back",
-  "signInToContinue":"Sign in to your account to continue",
+  "welcomeBack": "Welcome back",
+  "signInToContinue": "Sign in to your account to continue",
+  "newButton": "New",
+  "patientsLoadFailed": "Patients could not be loaded",
   "allFilter": "All",
   "newFilter": "New",
   "years": "years",
   "nextVisit": "Next visit",
   "outstandingBalance": "Outstanding balance",
+  "pleaseEnterPhone": "Please enter a phone number",
+  "pleaseSelectDateOfBirth": "Please select a date of birth",
+  "noKnownAllergiesRecorded": "Will be recorded as no known allergies",
+  "checkHighlightedFields": "Check the highlighted fields",
+  "contactInformation": "Contact Information",
   "personalInformation": "Personal Information",
   "medicalInformation": "Medical Information",
   "other": "Other",
@@ -142,7 +196,7 @@
   "hasAllergies": "Has Allergies",
   "listAnyAllergies": "List any known allergies",
   "savingPatient": "Saving Patient...",
-  "patientSavedSuccessfully": "Patient Saved Successfully!",
+  "patientSavedSuccessfully": "Patient saved",
   "addTreatmentQuestion": "Would you like to add treatment for this patient?",
   "yes": "Yes",
   "no": "No",
@@ -150,7 +204,6 @@
   "treatmentSavedSuccessfully": "Treatment saved successfully",
   "treatmentType": "Treatment Type",
   "teeth": "Teeth",
-  "notes": "Notes",
   "addNotesAboutTreatment": "Add any notes about the treatment...",
   "totalCost": "Total Cost",
   "totalCostHint": "Total cost",
@@ -197,7 +250,6 @@
   "noPaymentsYet": "No payments yet",
   "recordPaymentTitle": "Record Payment",
   "patientName": "Patient Name",
-  "totalCost": "Total Cost",
   "alreadyPaid": "Already Paid",
   "remaining": "Remaining",
   "noteOptional": "Note (Optional)",
@@ -214,13 +266,15 @@
   "paymentMethodOther": "Other",
   "treatment": "Treatment",
   "treatmentNumber": "Treatment #{number}",
-  "description": "Description",
   "treatmentTypes": "Treatment Types",
   "treatedTeeth": "Treated Teeth",
+  "addReceipt": "Add a receipt",
   "attachments": "Attachments",
   "created": "Created",
-  "completed": "Completed",
   "age": "Age",
+  "noExpensesThisMonthHint": "Add the first expense for this month and it will show here with its category and amount.",
+  "expensesLoadFailed": "Expenses could not be loaded",
+  "expensesUnchangedHint": "Nothing was changed. Your expenses are safe.",
   "noExpensesThisMonth": "No expenses this month",
   "addOne": "Add one",
   "transactions": "transactions",
@@ -228,7 +282,6 @@
   "addNoteOptional": "Add a note (optional)",
   "addExpense": "Add Expense",
   "saveExpense": "Save Expense",
-  "today": "Today",
   "done": "Done",
   "deleteExpenseButton": "Delete Expense",
   "deleteExpenseTitle": "Delete Expense",
@@ -240,6 +293,16 @@
   "expenseCategorySalary": "Salary",
   "expenseCategoryOther": "Other",
   "myClinics": "My Clinics",
+  "useThisClinic": "Use this clinic",
+  "currentlyActive": "Currently active",
+  "clinicSelectedMessage": "Now working on {name}",
+  "@clinicSelectedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "leaveClinic": "Leave Clinic",
   "leaveClinicConfirmation": "Are you sure you want to leave {clinicName}? You will need to be re-invited to rejoin.",
   "joined": "Joined {date}",
@@ -250,8 +313,39 @@
   "invitationAcceptedMessage": "You have joined the clinic",
   "invitationDeclined": "Invitation Declined",
   "invitationDeclinedMessage": "The invitation has been declined",
+  "invitations": "Invitations",
+  "accepted": "Accepted",
+  "declined": "Declined",
+  "expired": "Expired",
+  "accept": "Accept",
+  "decline": "Decline",
+  "sent": "Sent",
+  "received": "Received",
+  "sendInvite": "Send invite",
+  "sendInviteSubtitle": "Invite a colleague to join this clinic.",
+  "inviteSentSuccess": "Invitation sent",
+  "invitedBy": "by {name}",
+  "@invitedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noInvitations": "No invitations",
+  "noPendingInvitations": "No pending invitations",
+  "noAcceptedInvitations": "No accepted invitations",
+  "noDeclinedInvitations": "No declined invitations",
+  "noPendingSentInvitations": "No pending invitations sent",
+  "noAcceptedSentInvitations": "No accepted invitations sent",
+  "noDeclinedSentInvitations": "No declined invitations sent",
   "appLanguageWillChangeImmediately": "The app language will change immediately",
   "pleaseSelectAPatient": "Please select a patient",
+  "pleaseSelectADoctor": "Please select a doctor",
+  "selectDoctor": "Select doctor",
+  "selectDoctorFirst": "Select a doctor to see available slots",
+  "vipAppointment": "VIP appointment",
+  "vipAppointmentSubtitle": "Bypass the doctor's schedule and show every slot",
   "missingData": "Missing Data",
   "pleaseSelectAtLeastOneTreatment": "Please select at least one treatment",
   "pleaseSelectAnAvailableTimeSlot": "Please select an available time slot",
@@ -263,12 +357,29 @@
   "searchPatientName": "Search patient name",
   "noPatientsFound": "No patients found",
   "noAvailableSlotsForThisDate": "No available slots for this date",
+  "noWorkingHoursTitle": "Set up your working hours",
+  "noWorkingHoursMessage": "You haven't added your working hours yet, so we can't show available slots. Add them once and you'll be able to schedule appointments right away.",
+  "setWorkingHours": "Set working hours",
+  "notWorkingOnThisDayTitle": "You don't work on this day",
+  "notWorkingOnThisDayMessage": "Your working hours don't cover this day. Pick another date or update your hours to add it.",
+  "updateWorkingHours": "Update working hours",
+  "clinicWorkingDaysMissingTitle": "Set up clinic working days first",
+  "clinicWorkingDaysMissingAdminMessage": "Your clinic doesn't have working days yet. Add them once and you'll be able to set your own hours on top of them.",
+  "clinicWorkingDaysMissingNonAdminMessage": "Your clinic's admin hasn't set up working days yet. Ask them to add them before you can save your hours.",
+  "setClinicWorkingDays": "Set clinic working days",
   "sendReminderToPatient": "Send reminder to patient",
   "addNotesForAppointment": "Any special notes or instructions...",
   "checkup": "Checkup",
   "consultation": "Consultation",
   "xray": "X-Ray",
-  "noAppointments":"No Appointments",
+  "noAppointmentsScheduled": "No appointments scheduled",
+  "noAppointmentsScheduledHint": "Add an appointment and it will show here with its time and duration.",
+  "appointmentsLoadFailed": "Appointments could not be loaded",
+  "noAppointmentsToday": "No appointments today",
+  "noAppointmentsTodayHint": "Add the first appointment and it will show here with its time and duration.",
+  "scheduleLoadFailed": "Today's schedule could not be loaded",
+  "scheduleUnchangedHint": "Nothing was changed. Your appointments are safe.",
+  "noAppointments": "No Appointments",
   "saveChanges": "Save Changes",
   "specialization": "Specialization",
   "location": "Location",
@@ -278,7 +389,6 @@
   "cosmeticDentistry": "Cosmetic Dentistry",
   "oralSurgery": "Oral Surgery",
   "expenses": "Expenses",
-  "expenseDetails": "Expense Details",
   "currency": "Currency",
   "caseCurrency": "Case Currency",
   "exchangeRate": "Exchange Rate",
@@ -298,7 +408,7 @@
   "send": "Send",
   "supportTeam": "Support Team",
   "startConversationDesc": "Our support team is here to help you with any questions or issues.",
-  "optional":"Optional",
+  "optional": "Optional",
   "reminders": "Reminders",
   "updates": "Updates",
   "communication": "Communication",
@@ -330,38 +440,56 @@
   "minutesAgo": "{count} min ago",
   "@minutesAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "hoursAgo": "{count}h ago",
   "@hoursAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "daysAgo": "{count}d ago",
   "@daysAgo": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
+  "unread": "Unread",
+  "noUnreadNotifications": "No unread notifications",
+  "noUnreadNotificationsDesc": "Everything here has been read.",
+  "couldNotLoadNotifications": "Could not load notifications",
+  "noNotificationsChanged": "Nothing was marked as read.",
+  "yesterday": "Yesterday",
+  "pastWeek": "Past Week",
+  "older": "Older",
   "notificationsSettings": "Notifications Settings",
   "freeTrial": "Free Trial",
   "daysLeft": "{count} days left",
   "@daysLeft": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "upgradeNow": "Upgrade Now",
-  "active": "Active",
-  "inactive": "Inactive",
   "storageUsed": "Storage",
   "storageValue": "{used} / {total} GB",
   "@storageValue": {
     "placeholders": {
-      "used": { "type": "String" },
-      "total": { "type": "String" }
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
     }
   },
   "viewAllPlans": "View All Plans",
@@ -369,13 +497,17 @@
   "renewsOn": "Renews {date}",
   "@renewsOn": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "trialEndsIn": "Your trial ends in {count} days",
   "@trialEndsIn": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noSubscription": "No Active Plan",
@@ -390,7 +522,6 @@
   "onboardingDesc2": "Easily manage appointments with intuitive calendar views and automated reminders",
   "onboardingTitle3": "Track & Grow\nYour Practice",
   "onboardingDesc3": "Monitor clinic performance with comprehensive analytics and financial insights",
-
   "signIn": "Sign In",
   "signUp": "Sign Up",
   "logIn": "Log In",
@@ -402,15 +533,14 @@
   "orContinueWith": "Or continue with",
   "dontHaveAccount": "Don't have an account? ",
   "alreadyHaveAccount": "Already have an account? ",
-  "copyrightSmylos": "\u00A9 2026 SmylOS Pro. All rights reserved.",
+  "copyrightDenta": "© 2026 Denta. All rights reserved.",
   "pleaseEnterEmailOrPhone": "Please enter your email or phone number",
   "pleaseEnterValidEmailOrPhone": "Please enter a valid email or phone number",
   "pleaseEnterPassword": "Please enter your password",
   "passwordMinLength": "Password must be at least 8 characters",
   "loginFailed": "Login Failed",
-  "appName": "SmylOS Pro",
+  "appName": "Denta",
   "professionalClinicManagement": "Professional Clinic Management",
-
   "createAccount": "Create Account",
   "joinDentalCommunity": "Join our dental community",
   "firstNameRequired": "First Name *",
@@ -439,11 +569,10 @@
   "checkConnectionRetry": "Please check your connection and try again",
   "retry": "Retry",
   "signupInfoBox": "Create your account, then set up or join a clinic from your dashboard.",
-
   "enterEmailToGetStarted": "Enter your email to get started",
   "verificationCodeInfo": "We'll send you a verification code to confirm your email address.",
   "emailAddress": "Email Address",
-  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "pleaseEnterValidEmail": "Please enter a valid email",
   "sendVerificationCode": "Send Verification Code",
   "emailRequiredTitle": "Email Required",
   "pleaseEnterEmailAddress": "Please enter your email address",
@@ -451,10 +580,11 @@
   "verificationCodeSentTo": "Verification code sent to {email}",
   "@verificationCodeSentTo": {
     "placeholders": {
-      "email": { "type": "String" }
+      "email": {
+        "type": "String"
+      }
     }
   },
-
   "verifyYourAccount": "Verify Your Account",
   "verifyAccountSubtitle": "We'll send a verification code to your email",
   "verifyYourEmail": "Verify Your Email",
@@ -464,10 +594,13 @@
   "resendCodeIn": "Resend code in {seconds}s",
   "@resendCodeIn": {
     "placeholders": {
-      "seconds": { "type": "int" }
+      "seconds": {
+        "type": "int"
+      }
     }
   },
   "didntReceiveCode": "Didn't receive the code? ",
+  "resendNeedsPassword": "Go back and re-enter your password to send a new code.",
   "resend": "Resend",
   "verifyAndContinue": "Verify & Continue",
   "invalidCode": "Invalid Code",
@@ -475,16 +608,14 @@
   "emailVerified": "Email Verified",
   "completeYourRegistration": "Please complete your registration",
   "verificationFailed": "Verification Failed",
-
   "forgotPassword": "Forgot Password",
-  "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
+  "forgotPasswordSubtitle": "We'll email you a 6-digit code to reset your password.",
   "enterRegisteredEmail": "Enter your registered email",
   "sendResetLink": "Send Reset Link",
   "backToSignIn": "Back to Sign In",
   "emailSent": "Email Sent!",
   "resetLinkSentMessage": "We have sent a password reset link to your email address. Please check your inbox and follow the instructions.",
   "didntReceiveEmail": "Didn't receive the email? ",
-
   "chooseYourPlan": "Choose Your Plan",
   "selectPlanSubtitle": "Select the perfect plan for your clinic",
   "noPlansAvailable": "No plans available",
@@ -496,7 +627,9 @@
   "dayFreeTrial": "{days}-day free trial",
   "@dayFreeTrial": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "mostPopular": "MOST POPULAR",
@@ -505,7 +638,9 @@
   "storageAmount": "{amount} GB storage",
   "@storageAmount": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "allFeaturesIncluded": "All features included",
@@ -513,7 +648,9 @@
   "upToDoctors": "Up to {count} doctors",
   "@upToDoctors": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "prioritySupport": "Priority support",
@@ -521,7 +658,9 @@
   "storagePerAccount": "{amount} GB storage per account",
   "@storagePerAccount": {
     "placeholders": {
-      "amount": { "type": "String" }
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "advancedAnalytics": "Advanced analytics",
@@ -529,7 +668,6 @@
   "fullPatientManagement": "Full patient management",
   "appointmentScheduling": "Appointment scheduling",
   "treatmentTracking": "Treatment tracking",
-
   "completeYourProfile": "Complete Your Profile",
   "setupClinicDetails": "Set up your clinic details",
   "clinicDetailsInfo": "Enter your clinic details to complete registration. You can update these later in settings.",
@@ -547,11 +685,11 @@
   "pleaseSelectLocation": "Please select a location",
   "pleaseSelectPlan": "Please select a subscription plan",
   "sessionExpired": "Session Expired",
+  "sessionExpiredMessage": "Your session has expired. Please log in again.",
   "pleaseVerifyEmailAgain": "Please verify your email again",
   "welcome": "Welcome!",
   "accountCreatedSuccessfully": "Your account has been created successfully",
   "registrationFailed": "Registration Failed",
-
   "rememberPassword": "Remember your password? ",
   "setNewPassword": "Set New Password",
   "enterNewPasswordBelow": "Enter your new password below",
@@ -565,34 +703,31 @@
   "caseTitleHint": "Enter a title for the completed case",
   "caseMarkedAsFinished": "Case marked as finished",
   "paymentAddedSuccessfully": "Payment added successfully",
-
   "noPatientsYet": "No patients yet",
   "noPatientsYetDesc": "Add your first patient to get started",
   "noMatchingPatients": "No matching patients",
   "noMatchingPatientsDesc": "Try adjusting your search or filters",
-
   "pleaseEnterYourName": "Please enter your name",
   "nameTooShort": "Name must be at least 2 characters",
   "pleaseEnterYourEmail": "Please enter your email",
-  "pleaseEnterValidEmail": "Please enter a valid email",
   "pleaseEnterYourPassword": "Please enter your password",
   "pleaseSelectSpecialty": "Please select your specialization",
-  "workingHoursAndHolidays": "Working Hours & Holidays",
+  "workingDaysAndHolidays": "Clinic Working Days & Holidays",
+  "myWorkingHours": "My Working Hours",
   "photoPermissionRequired": "Photo Permission Required",
   "photoPermissionMessage": "This app needs access to your photos to set your profile picture. Please grant permission in Settings.",
   "openSettings": "Open Settings",
   "changeEmail": "Change Email",
+  "currentEmail": "Current email",
   "newEmail": "New Email",
   "currentPassword": "Current Password",
   "changeEmailDescription": "Enter your new email and current password to verify your identity.",
-  "sendVerificationCode": "Send Verification Code",
   "verifyNewEmail": "Verify New Email",
   "changeEmailOtpDescription": "Enter the 6-digit code sent to your new email address.",
   "confirmChangeEmail": "Confirm Change",
   "emailChangedSuccess": "Email changed successfully! Please login with your new email.",
   "pleaseEnterNewEmail": "Please enter your new email",
   "pleaseEnterCurrentPassword": "Please enter your current password",
-
   "editCosts": "Edit Costs",
   "enterTotalCost": "Enter total cost",
   "enterLabFees": "Enter lab fees",
@@ -628,7 +763,9 @@
   "nTreatments": "{count} treatments",
   "@nTreatments": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "addToPlan": "Add to Plan",
@@ -642,7 +779,9 @@
   "toothLabel": "Tooth {number}",
   "@toothLabel": {
     "placeholders": {
-      "number": { "type": "String" }
+      "number": {
+        "type": "String"
+      }
     }
   },
   "selectTreatments": "Select Treatments",
@@ -650,16 +789,21 @@
   "addNTreatments": "Add {count} Treatments",
   "@addNTreatments": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "alreadyPlannedForTooth": "{count} treatment(s) already planned for this tooth",
   "@alreadyPlannedForTooth": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "pleaseSelectCurrency": "Please select a currency",
+  "pleaseSelectExpenseType": "Please select an expense type",
   "clinicUsers": "Clinic Users",
   "addUser": "Add User",
   "removeUser": "Remove",
@@ -667,29 +811,37 @@
   "userAddedSuccess": "User added successfully",
   "userRemovedSuccess": "User removed successfully",
   "rolesUpdatedSuccess": "Roles updated successfully",
+  "removeUserConsequence": "They lose access to this clinic immediately. Their patient records and appointments are kept.",
   "removeUserConfirmation": "Are you sure you want to remove {name} from the clinic?",
   "@removeUserConfirmation": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "selectRoles": "Select Roles",
   "roleSecretary": "Secretary",
+  "noUsersYetHint": "Invite a dentist or a secretary and they will appear here with their role.",
+  "clinicUsersLoadFailed": "Clinic users could not be loaded",
   "noUsersYet": "No users yet",
   "manageRoles": "Manage Roles",
-  "specialization": "Specialization",
   "selectSpecialization": "Select specialization",
-
   "patientInfo": "Patient Info",
   "caseInfo": "Case Info",
   "initialVisit": "Initial Visit",
-  "addNewPatient": "Add new patient",
   "stepOfTotal": "Step {current} of {total}: {stepTitle}",
   "@stepOfTotal": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" },
-      "stepTitle": { "type": "String" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "stepTitle": {
+        "type": "String"
+      }
     }
   },
   "caseInformationOptional": "Case Information (Optional)",
@@ -699,7 +851,328 @@
   "phoneHint": "0988026431",
   "accessRestricted": "Access Restricted",
   "accessRestrictedDescription": "Your role doesn't have permission to access this feature. Contact your clinic admin for more information.",
-  "todaysAppointments": "Today's Appointments",
-  "revenue": "Revenue"
+  "billingAndInvoices": "Billing & Invoices",
+  "billingPageTitle": "Billing",
+  "selectPlanTitle": "Choose a Plan",
+  "invoiceDetailsTitle": "Invoice",
+  "submitProofTitle": "Submit Payment Proof",
+  "errorTitle": "Error",
+  "copied": "Copied",
+  "currentPlan": "Current Plan",
+  "noActiveSubscription": "No active subscription",
+  "trialDaysRemaining": "{days} days remaining in trial",
+  "@trialDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "daysUntilRenewal": "{days} days until renewal",
+  "@daysUntilRenewal": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "buyOrRenewPlan": "Buy or Renew Plan",
+  "continueOpenInvoice": "Continue Open Invoice",
+  "invoicesHistoryTitle": "Invoices",
+  "trial": "Trial",
+  "noInvoicesYetHint": "Invoices appear here once a plan has been bought or renewed.",
+  "noInvoicesYet": "No invoices yet",
+  "invoiceLineSubscription": "Subscription",
+  "invoiceIssuedOn": "Issued on",
+  "invoiceDueOn": "Due on",
+  "activatesUntil": "Activates until",
+  "invoiceType": "Type",
+  "renewal": "Renewal",
+  "invoiceStatusPending": "Pending",
+  "invoiceStatusUnderReview": "Under Review",
+  "invoiceStatusPaid": "Paid",
+  "invoiceStatusRejected": "Rejected",
+  "invoiceStatusCancelled": "Cancelled",
+  "billingMonthly": "Monthly",
+  "billingYearly": "Yearly",
+  "selectBillingCycle": "Billing cycle",
+  "choosePlan": "Plan",
+  "popular": "Popular",
+  "generateInvoice": "Generate Invoice",
+  "howToPayTitle": "How to pay",
+  "howToPaySubtitle": "Use any of the channels below, then upload your receipt.",
+  "referenceNumber": "Reference Number",
+  "payOutsideAppNotice": "Payments are processed outside the app. After paying, return here and upload your receipt.",
+  "paymentMethodSyriatelCash": "Syriatel Cash",
+  "paymentMethodShamCash": "Sham Cash",
+  "uploadPaymentProof": "Upload Payment Proof",
+  "uploadReceipt": "Upload receipt",
+  "uploadReceiptHint": "JPG, PNG, or PDF",
+  "methodUsed": "Method used",
+  "transactionReferenceLabel": "Transaction / Reference Number",
+  "transactionReferenceHint": "e.g. last 4 digits of the transfer ID",
+  "transactionRefShort": "Ref",
+  "submittedAt": "Submitted",
+  "notesOptional": "Notes (optional)",
+  "notesHint": "Anything we should know about this payment",
+  "fieldRequired": "Required",
+  "receiptRequired": "Please attach a receipt before submitting.",
+  "submitForReview": "Submit for Review",
+  "invoiceNumberLabel": "Invoice {number}",
+  "@invoiceNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "proofSubmittedTitle": "Sent for review",
+  "proofSubmittedMessage": "Admin will verify your payment shortly.",
+  "underReviewTitle": "Under Review",
+  "underReviewMessage": "Our team is verifying your payment. You will be notified once it is approved.",
+  "invoicePaidTitle": "Invoice Paid",
+  "invoicePaidOn": "Paid on",
+  "invoiceRejectedTitle": "Invoice Rejected",
+  "subscriptionExpiredTitle": "Subscription Expired",
+  "subscriptionExpiredMessage": "Your clinic is in read-only mode. Renew now to keep adding patients, appointments, and expenses.",
+  "subscriptionExpiredBlocksAction": "Your subscription has expired. Renew to continue using premium features.",
+  "subscriptionExpiresSoonTitle": "Subscription Ending Soon",
+  "subscriptionExpiresInDays": "Renews in {days} days. Generate an invoice now to avoid downtime.",
+  "@subscriptionExpiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "renewNow": "Renew Now",
+  "notNow": "Not Now",
+  "pricingTitle": "Choose Your Plan",
+  "pricingSubtitle": "Simple pricing that grows with your practice",
+  "pricingPopularBadge": "Popular",
+  "pricingCurrentBadge": "Current",
+  "pricingCurrentPlanLabel": "Current Plan",
+  "pricingSelectedLabel": "Selected",
+  "pricingChooseAction": "Choose {plan}",
+  "@pricingChooseAction": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "pricingContactUs": "Contact Us",
+  "pricingCustomPricing": "Custom pricing",
+  "pricingMonthSuffix": "/month",
+  "pricingYearSuffix": "/year",
+  "pricingMoSuffix": "/mo",
+  "pricingYrSuffix": "/yr",
+  "pricingSaveAmount": "Save ${amount}",
+  "@pricingSaveAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "pricingSubscribeAction": "Subscribe to {plan} · {priceText}",
+  "@pricingSubscribeAction": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "priceText": {
+        "type": "String"
+      }
+    }
+  },
+  "pricingStartFreeTrial": "Start Free Trial",
+  "pricingStartShort": "Start",
+  "pricingSubscriptionActiveTitle": "Subscription Active",
+  "pricingSubscriptionActiveMessage": "Welcome to your new plan!",
+  "pricingTrialStartedTitle": "Trial Started",
+  "pricingTrialStartedMessage": "Enjoy 30 days of full access!",
+  "planEverythingInPlus": "Everything in {plan}, plus:",
+  "@planEverythingInPlus": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "planSoloName": "Solo",
+  "planSoloDescription": "For a single dentist starting out",
+  "planSoloFeature1": "1 dentist",
+  "planSoloFeature2": "1 assistant",
+  "planSoloFeature3": "Unlimited patients",
+  "planSoloFeature4": "Appointment scheduling",
+  "planSoloFeature5": "Treatment plans & records",
+  "planSoloFeature6": "Invoice generation",
+  "planSoloFeature7": "X-ray & photo storage",
+  "planSoloFeature8": "Cloud sync & backup",
+  "planSoloFeature9": "Email support",
+  "planDuoName": "Duo",
+  "planDuoDescription": "For two dentists working together",
+  "planDuoFeature1": "Up to 2 dentists",
+  "planDuoFeature2": "Up to 2 assistants",
+  "planDuoFeature3": "Statistics & analytics dashboard",
+  "planDuoFeature4": "Email & SMS reminders",
+  "planDuoFeature5": "Priority email support",
+  "planClinicName": "Clinic",
+  "planClinicDescription": "For mid-size centers",
+  "planClinicFeature1": "Up to 4 dentists",
+  "planClinicFeature2": "Up to 6 staff members",
+  "planClinicFeature3": "1 branch location",
+  "planClinicFeature4": "Statistics & analytics dashboard",
+  "planClinicFeature5": "Advanced reports",
+  "planClinicFeature6": "Unlimited patients",
+  "planClinicFeature7": "Appointment scheduling",
+  "planClinicFeature8": "Treatment plans & records",
+  "planClinicFeature9": "Invoice generation & branding",
+  "planClinicFeature10": "X-ray & photo storage",
+  "planClinicFeature11": "Email & SMS reminders",
+  "planClinicFeature12": "Cloud sync & backup",
+  "planClinicFeature13": "Live chat support",
+  "planPracticeName": "Practice",
+  "planPracticeDescription": "For big centers and multi-branch practices",
+  "planPracticeFeature1": "Up to 8 dentists",
+  "planPracticeFeature2": "Unlimited staff members",
+  "planPracticeFeature3": "Up to 3 branch locations",
+  "planPracticeFeature4": "Cross-location analytics",
+  "planPracticeFeature5": "Phone & chat support",
+  "planPracticeFeature6": "Priority training sessions",
+  "planCustomName": "Custom",
+  "planCustomDescription": "Tailored to your organization",
+  "planCustomFeature1": "10+ dentists",
+  "planCustomFeature2": "Unlimited staff & branches",
+  "planCustomFeature3": "Custom integrations",
+  "planCustomFeature4": "Dedicated account manager",
+  "planCustomFeature5": "On-site training",
+  "planCustomFeature6": "SLA & uptime guarantees",
+  "planCustomFeature7": "Volume discounts",
+  "planCustomFeature8": "Tailored to your needs",
+  "editPatient": "Edit Patient",
+  "deletePatient": "Delete Patient",
+  "deletePatientConfirmation": "Are you sure you want to delete {name}?",
+  "@deletePatientConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "patientDeleted": "Patient deleted",
+  "patientUpdated": "Patient updated",
+  "updatingPatient": "Updating patient...",
+  "couldNotOpenLink": "Could not open the link",
+  "notificationSettingsLoadFailed": "Notification settings could not be loaded",
+  "noNotificationSettingsHint": "Every category on this account is required and cannot be switched off.",
+  "noNotificationSettings": "No notification settings available",
+  "markAsUnread": "Mark as unread",
+  "newNotificationsTitle": "New notifications",
+  "moreNotifications": "{count} more notifications",
+  "@moreNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "couldNotLoadPatient": "Could not load this patient",
+  "useCachedData": "Use cached data",
+  "tryAgain": "Try again",
+  "outstanding": "Outstanding",
+  "remainingWork": "Remaining",
+  "filesTitle": "Files",
+  "pastCasesTitle": "Past cases",
+  "lastFinished": "Last finished",
+  "reopenAsActiveCase": "Reopen as active case",
+  "reopenArchivesCurrent": "Reopening archives the current case first.",
+  "readOnlyCase": "Read only",
+  "allergyPrefix": "Allergy",
+  "noKnownAllergies": "No known allergies",
+  "allergiesNotConfirmed": "Allergies not confirmed",
+  "medicalHistoryNotConfirmed": "Medical history not confirmed",
+  "reviewAction": "Review",
+  "editCostsAction": "Edit costs",
+  "finishCaseAction": "Finish case",
+  "finishThisCaseTitle": "Finish this case?",
+  "finishCaseBody": "It moves to Past cases and stops accepting treatments.",
+  "finishAnyway": "Finish anyway",
+  "stillOutstandingWarning": "There is still an outstanding balance and unfinished treatments.",
+  "leftOfTotal": "left of",
+  "paymentsCountLabel": "payments",
+  "addVisitNoteHint": "Add a visit note...",
+  "noTreatmentsPlanned": "No treatments planned",
+  "openChartHint": "Open the chart and tap the teeth you are working on.",
+  "generalTreatmentLabel": "General",
+  "addToThisCase": "Add to this case",
+  "noFilesYet": "No files yet",
+  "noFilesHint": "X-rays, photos and lab reports for this case live here.",
+  "uploadFailed": "Upload failed",
+  "uploadFileAction": "Upload a file",
+  "uploadFileSub": "Images, PDF or documents",
+  "takePhotoAction": "Take a photo",
+  "takePhotoSub": "Intra-oral camera or device camera",
+  "addFileTitle": "Add to this case",
+  "removeAction": "Remove",
+  "selectToothFirst": "Tap a tooth above, or pick a general treatment.",
+  "toothSpecificTab": "Tooth-specific",
+  "generalTab": "General",
+  "clearSelection": "Clear",
+  "selectedCount": "selected",
+  "patientInformationTitle": "Patient information",
+  "currentCaseAnchor": "Case",
+  "insuranceLabel": "Insurance",
+  "emergencyContactLabel": "Emergency contact",
+  "notRecorded": "Not recorded",
+  "yrs": "yrs",
+  "chooseFromGalleryAction": "Choose from gallery",
+  "chooseFromGallerySub": "Images, multiple allowed",
+  "attachDocumentAction": "Attach a document",
+  "attachDocumentSub": "PDF, lab report, referral",
+  "offlineQueuedNote": "If the connection drops, files are queued on the device and upload when the clinic network returns.",
+  "removeFileTitle": "Remove this file?",
+  "removeFileBody": "It will be detached from this case. The file itself stays in your media library.",
+  "fileRemoved": "File removed",
+  "paymentsAction": "Payments",
+  "legal": "Legal",
+  "deleteAccount": "Delete Account",
+  "deleteAccountSubtitle": "How to request deletion of your account and data",
+  "activeClinic": "Active clinic",
+  "noClinicsTitle": "No clinics yet",
+  "noClinicsMessage": "Clinics you create or are invited to appear here.",
+  "couldNotLoadClinics": "Could not load your clinics",
+  "activeClinicUnchanged": "Your active clinic was not changed.",
+  "noneSelected": "None selected",
+  "couldNotLoadInvitations": "Could not load invitations",
+  "invitationsUnchanged": "No invitation was accepted or declined.",
+  "shareYourStats": "Share your stats",
+  "swipeToChooseDesign": "Swipe to choose a design",
+  "preparingShare": "Preparing…",
+  "shareFailed": "Share failed",
+  "myClinicStatistics": "My clinic statistics",
+  "shareCardEnamelBlurb": "Light, pearlescent",
+  "shareCardEditorialBlurb": "Dark, off-axis",
+  "shareCardCertificateBlurb": "Navy and gold foil",
+  "notificationCategories": "Categories",
+  "categoriesOnCount": "{on} of {total} on",
+  "@categoriesOnCount": {
+    "placeholders": {
+      "on": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "renewsLabel": "Renews",
+  "endsLabel": "Ends",
+  "graceEndsLabel": "Grace ends",
+  "endedLabel": "Ended",
+  "noPlanActiveBody": "No plan is active on this clinic.",
+  "subscriptionGraceBody": "Payment is overdue. The plan keeps working until the grace period ends.",
+  "subscriptionExpiredBody": "This plan has ended. Renew to keep using it.",
+  "renewAction": "Renew"
 }
-

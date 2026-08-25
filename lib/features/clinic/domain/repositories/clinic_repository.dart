@@ -2,9 +2,29 @@ import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 
 abstract class ClinicRepository {
   Future<Either<NetworkExceptions, List<ClinicMembershipEntity>>> getMyClinics();
+
+  Future<Either<NetworkExceptions, List<InvitationEntity>>>
+      getReceivedInvitations({InvitationStatus? status});
+
+  Future<Either<NetworkExceptions, List<InvitationEntity>>>
+      getSentInvitations({InvitationStatus? status});
+
+  Future<Either<NetworkExceptions, InvitationEntity>> sendInvitation({
+    required String email,
+    required List<String> roles,
+  });
+
+  Future<Either<NetworkExceptions, InvitationEntity>> acceptInvitation(
+    String id,
+  );
+
+  Future<Either<NetworkExceptions, InvitationEntity>> declineInvitation(
+    String id,
+  );
 
   Future<Either<NetworkExceptions, List<ClinicUserEntity>>> getClinicUsers(
       String clinicId);

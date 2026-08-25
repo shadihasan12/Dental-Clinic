@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Ground the adaptive icon sits on. White, matching the logo artwork -
+         the mark itself is blue, so a blue plate would swallow it. -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+
+    <!-- Tint Android applies to the notification small icon and the app name
+         line in the shade. Brand blue sampled from the logo mark. -->
+    <color name="notification_accent">#199ED9</color>
+</resources>

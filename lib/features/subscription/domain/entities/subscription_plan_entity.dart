@@ -4,20 +4,23 @@ part 'subscription_plan_entity.freezed.dart';
 
 /// Subscription plan tiers
 enum PlanTier {
-  /// Free trial - all features for limited time
+  /// Free trial
   trial,
 
-  /// For individual dentists or new small clinics
-  /// 1 dentist, 1 assistant, limited features
-  starter,
+  /// Solo practitioner — 1 dentist
+  solo,
 
-  /// For growing clinics
-  /// 2-4 dentists, full features, unlimited patients
-  growing,
+  /// Two dentists with statistics
+  duo,
 
-  /// For busy clinics with multiple branches
-  /// 5+ dentists, advanced reports, priority support
-  advanced,
+  /// Mid-size center — up to 4 dentists
+  clinic,
+
+  /// Big center — up to 10 dentists
+  practice,
+
+  /// Custom plan — pricing arranged via sales contact
+  custom,
 }
 
 /// Billing cycle options
@@ -47,126 +50,184 @@ class SubscriptionPlanEntity with _$SubscriptionPlanEntity {
 
   const SubscriptionPlanEntity._();
 
+  /// True for the "Custom" plan — no fixed price; UI must route the user
+  /// to the contact-sales flow instead of the normal checkout.
+  bool get isCustom => tier == PlanTier.custom;
+
   /// Get price based on billing cycle
   double getPrice(BillingCycle cycle) {
     return cycle == BillingCycle.yearly ? yearlyPrice : monthlyPrice;
   }
 
   /// Get monthly equivalent for yearly plan
-  double get yearlyMonthlyEquivalent => yearlyPrice / 12;
+  double get yearlyMonthlyEquivalent =>
+      yearlyPrice == 0 ? 0 : yearlyPrice / 12;
 
   /// Calculate savings with yearly plan
   double get yearlySavings => (monthlyPrice * 12) - yearlyPrice;
 
   /// Get savings percentage
-  int get savingsPercentage =>
-      ((yearlySavings / (monthlyPrice * 12)) * 100).round();
+  int get savingsPercentage {
+    if (monthlyPrice == 0) return 0;
+    return ((yearlySavings / (monthlyPrice * 12)) * 100).round();
+  }
 }
 
-/// Predefined plans - Unified for all dental professionals
-/// Plans scale based on practice size, not account type
+/// Predefined plans — four pay tiers + a custom (sales-led) tier.
+///
+/// Yearly price = monthly × 10 (i.e. two months free), matching the
+/// original plan structure.
 class SubscriptionPlans {
   SubscriptionPlans._();
 
-  /// Starter Plan - Solo practitioners
-  static const starterPlan = SubscriptionPlanEntity(
-    id: 'starter',
-    tier: PlanTier.starter,
-    name: 'Starter',
-    description: 'Perfect for solo practitioners',
-    monthlyPrice: 4.99,
-    yearlyPrice: 49.99, // ~2 months free
+  /// Solo practitioner — single-dentist clinics.
+  static const soloPlan = SubscriptionPlanEntity(
+    id: 'solo',
+    tier: PlanTier.solo,
+    name: 'Solo',
+    description: 'For a single dentist starting out',
+    monthlyPrice: 7,
+    yearlyPrice: 70, // ~2 months free
     maxDentists: 1,
     maxAssistants: 1,
     maxBranches: 1,
     features: [
-      'Unlimited patients',
-      'Appointment scheduling',
-      'Treatment records',
-      'Invoice generation',
-      'Email reminders',
-      'Cloud sync & backup',
-    ],
-    limitations: [
       '1 dentist',
       '1 assistant',
-      'Basic reports',
-      'Email support',
-    ],
-  );
-
-  /// Growing Plan - Small teams
-  static const growingPlan = SubscriptionPlanEntity(
-    id: 'growing',
-    tier: PlanTier.growing,
-    name: 'Growing',
-    description: 'For practices ready to expand',
-    monthlyPrice: 14.99,
-    yearlyPrice: 149.99, // ~2 months free
-    maxDentists: 4,
-    maxAssistants: 6,
-    maxBranches: 2,
-    isPopular: true,
-    features: [
-      'Everything in Starter',
-      'Up to 4 dentists',
-      'Up to 6 staff members',
-      'Up to 2 locations',
-      'Advanced reports & analytics',
+      'Unlimited patients',
+      'Appointment scheduling',
+      'Treatment plans & records',
+      'Invoice generation',
       'X-ray & photo storage',
-      'SMS reminders',
-      'Priority email support',
-    ],
-    limitations: [
-      '4 dentists max',
-      '2 branches max',
-    ],
-  );
-
-  /// Advanced Plan - Large practices & chains
-  static const advancedPlan = SubscriptionPlanEntity(
-    id: 'advanced',
-    tier: PlanTier.advanced,
-    name: 'Advanced',
-    description: 'For busy multi-location practices',
-    monthlyPrice: 34.99,
-    yearlyPrice: 349.99, // ~2 months free
-    maxDentists: 99,
-    maxAssistants: 99,
-    maxBranches: 99,
-    features: [
-      'Everything in Growing',
-      'Unlimited dentists',
-      'Unlimited staff',
-      'Unlimited branches',
-      'Cross-location analytics',
-      'Custom branding',
-      'API access',
-      'Dedicated account manager',
-      'Phone & chat support',
-      'Training sessions',
+      'Cloud sync & backup',
+      'Email support',
     ],
     limitations: [],
   );
 
-  /// Get all available plans (unified for all users)
+  /// Duo — two dentists, with statistics.
+  static const duoPlan = SubscriptionPlanEntity(
+    id: 'duo',
+    tier: PlanTier.duo,
+    name: 'Duo',
+    description: 'For two dentists working together',
+    monthlyPrice: 12,
+    yearlyPrice: 120, // ~2 months free
+    maxDentists: 2,
+    maxAssistants: 2,
+    maxBranches: 1,
+    features: [
+      'Everything in Solo, plus:',
+      'Up to 2 dentists',
+      'Up to 2 assistants',
+      'Statistics & analytics dashboard',
+      'Email & SMS reminders',
+      'Priority email support',
+    ],
+    limitations: [],
+  );
+
+  /// Clinic — mid-size center, up to 4 dentists.
+  static const clinicPlan = SubscriptionPlanEntity(
+    id: 'clinic',
+    tier: PlanTier.clinic,
+    name: 'Clinic',
+    description: 'For mid-size centers',
+    monthlyPrice: 24,
+    yearlyPrice: 240, // ~2 months free
+    maxDentists: 4,
+    maxAssistants: 6,
+    maxBranches: 1,
+    isPopular: true,
+    features: [
+      'Up to 4 dentists',
+      'Up to 6 staff members',
+      '1 branch location',
+      'Statistics & analytics dashboard',
+      'Advanced reports',
+      'Unlimited patients',
+      'Appointment scheduling',
+      'Treatment plans & records',
+      'Invoice generation & branding',
+      'X-ray & photo storage',
+      'Email & SMS reminders',
+      'Cloud sync & backup',
+      'Live chat support',
+    ],
+    limitations: [],
+  );
+
+  /// Practice — big center, up to 10 dentists.
+  static const practicePlan = SubscriptionPlanEntity(
+    id: 'practice',
+    tier: PlanTier.practice,
+    name: 'Practice',
+    description: 'For big centers and multi-branch practices',
+    monthlyPrice: 49,
+    yearlyPrice: 490, // ~2 months free
+    maxDentists: 8,
+    maxAssistants: 999,
+    maxBranches: 3,
+    features: [
+      'Everything in Clinic, plus:',
+      'Up to 8 dentists',
+      'Unlimited staff members',
+      'Up to 3 branch locations',
+      'Cross-location analytics',
+      'Phone & chat support',
+      'Priority training sessions',
+    ],
+    limitations: [],
+  );
+
+  /// Custom — bespoke plan, contact sales for pricing.
+  static const customPlan = SubscriptionPlanEntity(
+    id: 'custom',
+    tier: PlanTier.custom,
+    name: 'Custom',
+    description: 'Tailored to your organization',
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    maxDentists: 999,
+    maxAssistants: 999,
+    maxBranches: 999,
+    features: [
+      '10+ dentists',
+      'Unlimited staff & branches',
+      'Custom integrations',
+      'Dedicated account manager',
+      'On-site training',
+      'SLA & uptime guarantees',
+      'Volume discounts',
+      'Tailored to your needs',
+    ],
+    limitations: [],
+  );
+
+  /// Get all available plans
   static List<SubscriptionPlanEntity> get allPlans => [
-        starterPlan,
-        growingPlan,
-        advancedPlan,
+        soloPlan,
+        duoPlan,
+        clinicPlan,
+        practicePlan,
+        customPlan,
       ];
 
   /// Get plan by tier
   static SubscriptionPlanEntity? getPlanByTier(PlanTier tier) {
     switch (tier) {
-      case PlanTier.starter:
-        return starterPlan;
-      case PlanTier.growing:
-        return growingPlan;
-      case PlanTier.advanced:
-        return advancedPlan;
+      case PlanTier.solo:
+        return soloPlan;
+      case PlanTier.duo:
+        return duoPlan;
+      case PlanTier.clinic:
+        return clinicPlan;
+      case PlanTier.practice:
+        return practicePlan;
+      case PlanTier.custom:
+        return customPlan;
       case PlanTier.trial:
-        return growingPlan; // Trial has Growing features
+        return clinicPlan; // Trial gives Clinic-tier features.
     }
   }
 }

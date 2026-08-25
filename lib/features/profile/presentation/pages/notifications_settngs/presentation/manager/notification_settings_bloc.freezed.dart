@@ -19,35 +19,34 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$NotificationSettingsEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadSettings,
-    required TResult Function(NotificationSettingsEntity settings)
-    updateSettings,
+    required TResult Function() load,
+    required TResult Function(String key, bool enabled) toggle,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadSettings,
-    TResult? Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult? Function()? load,
+    TResult? Function(String key, bool enabled)? toggle,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadSettings,
-    TResult Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult Function()? load,
+    TResult Function(String key, bool enabled)? toggle,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadSettings value) loadSettings,
-    required TResult Function(_UpdateSettings value) updateSettings,
+    required TResult Function(_Load value) load,
+    required TResult Function(_Toggle value) toggle,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadSettings value)? loadSettings,
-    TResult? Function(_UpdateSettings value)? updateSettings,
+    TResult? Function(_Load value)? load,
+    TResult? Function(_Toggle value)? toggle,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadSettings value)? loadSettings,
-    TResult Function(_UpdateSettings value)? updateSettings,
+    TResult Function(_Load value)? load,
+    TResult Function(_Toggle value)? toggle,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -78,21 +77,19 @@ class _$NotificationSettingsEventCopyWithImpl<
 }
 
 /// @nodoc
-abstract class _$$LoadSettingsImplCopyWith<$Res> {
-  factory _$$LoadSettingsImplCopyWith(
-    _$LoadSettingsImpl value,
-    $Res Function(_$LoadSettingsImpl) then,
-  ) = __$$LoadSettingsImplCopyWithImpl<$Res>;
+abstract class _$$LoadImplCopyWith<$Res> {
+  factory _$$LoadImplCopyWith(
+    _$LoadImpl value,
+    $Res Function(_$LoadImpl) then,
+  ) = __$$LoadImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$LoadSettingsImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsEventCopyWithImpl<$Res, _$LoadSettingsImpl>
-    implements _$$LoadSettingsImplCopyWith<$Res> {
-  __$$LoadSettingsImplCopyWithImpl(
-    _$LoadSettingsImpl _value,
-    $Res Function(_$LoadSettingsImpl) _then,
-  ) : super(_value, _then);
+class __$$LoadImplCopyWithImpl<$Res>
+    extends _$NotificationSettingsEventCopyWithImpl<$Res, _$LoadImpl>
+    implements _$$LoadImplCopyWith<$Res> {
+  __$$LoadImplCopyWithImpl(_$LoadImpl _value, $Res Function(_$LoadImpl) _then)
+    : super(_value, _then);
 
   /// Create a copy of NotificationSettingsEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -100,18 +97,18 @@ class __$$LoadSettingsImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadSettingsImpl implements _LoadSettings {
-  const _$LoadSettingsImpl();
+class _$LoadImpl implements _Load {
+  const _$LoadImpl();
 
   @override
   String toString() {
-    return 'NotificationSettingsEvent.loadSettings()';
+    return 'NotificationSettingsEvent.load()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadSettingsImpl);
+        (other.runtimeType == runtimeType && other is _$LoadImpl);
   }
 
   @override
@@ -120,31 +117,30 @@ class _$LoadSettingsImpl implements _LoadSettings {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadSettings,
-    required TResult Function(NotificationSettingsEntity settings)
-    updateSettings,
+    required TResult Function() load,
+    required TResult Function(String key, bool enabled) toggle,
   }) {
-    return loadSettings();
+    return load();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadSettings,
-    TResult? Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult? Function()? load,
+    TResult? Function(String key, bool enabled)? toggle,
   }) {
-    return loadSettings?.call();
+    return load?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadSettings,
-    TResult Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult Function()? load,
+    TResult Function(String key, bool enabled)? toggle,
     required TResult orElse(),
   }) {
-    if (loadSettings != null) {
-      return loadSettings();
+    if (load != null) {
+      return load();
     }
     return orElse();
   }
@@ -152,150 +148,140 @@ class _$LoadSettingsImpl implements _LoadSettings {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadSettings value) loadSettings,
-    required TResult Function(_UpdateSettings value) updateSettings,
+    required TResult Function(_Load value) load,
+    required TResult Function(_Toggle value) toggle,
   }) {
-    return loadSettings(this);
+    return load(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadSettings value)? loadSettings,
-    TResult? Function(_UpdateSettings value)? updateSettings,
+    TResult? Function(_Load value)? load,
+    TResult? Function(_Toggle value)? toggle,
   }) {
-    return loadSettings?.call(this);
+    return load?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadSettings value)? loadSettings,
-    TResult Function(_UpdateSettings value)? updateSettings,
+    TResult Function(_Load value)? load,
+    TResult Function(_Toggle value)? toggle,
     required TResult orElse(),
   }) {
-    if (loadSettings != null) {
-      return loadSettings(this);
+    if (load != null) {
+      return load(this);
     }
     return orElse();
   }
 }
 
-abstract class _LoadSettings implements NotificationSettingsEvent {
-  const factory _LoadSettings() = _$LoadSettingsImpl;
+abstract class _Load implements NotificationSettingsEvent {
+  const factory _Load() = _$LoadImpl;
 }
 
 /// @nodoc
-abstract class _$$UpdateSettingsImplCopyWith<$Res> {
-  factory _$$UpdateSettingsImplCopyWith(
-    _$UpdateSettingsImpl value,
-    $Res Function(_$UpdateSettingsImpl) then,
-  ) = __$$UpdateSettingsImplCopyWithImpl<$Res>;
+abstract class _$$ToggleImplCopyWith<$Res> {
+  factory _$$ToggleImplCopyWith(
+    _$ToggleImpl value,
+    $Res Function(_$ToggleImpl) then,
+  ) = __$$ToggleImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({NotificationSettingsEntity settings});
-
-  $NotificationSettingsEntityCopyWith<$Res> get settings;
+  $Res call({String key, bool enabled});
 }
 
 /// @nodoc
-class __$$UpdateSettingsImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsEventCopyWithImpl<$Res, _$UpdateSettingsImpl>
-    implements _$$UpdateSettingsImplCopyWith<$Res> {
-  __$$UpdateSettingsImplCopyWithImpl(
-    _$UpdateSettingsImpl _value,
-    $Res Function(_$UpdateSettingsImpl) _then,
+class __$$ToggleImplCopyWithImpl<$Res>
+    extends _$NotificationSettingsEventCopyWithImpl<$Res, _$ToggleImpl>
+    implements _$$ToggleImplCopyWith<$Res> {
+  __$$ToggleImplCopyWithImpl(
+    _$ToggleImpl _value,
+    $Res Function(_$ToggleImpl) _then,
   ) : super(_value, _then);
 
   /// Create a copy of NotificationSettingsEvent
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? settings = null}) {
+  $Res call({Object? key = null, Object? enabled = null}) {
     return _then(
-      _$UpdateSettingsImpl(
-        null == settings
-            ? _value.settings
-            : settings // ignore: cast_nullable_to_non_nullable
-                  as NotificationSettingsEntity,
+      _$ToggleImpl(
+        key: null == key
+            ? _value.key
+            : key // ignore: cast_nullable_to_non_nullable
+                  as String,
+        enabled: null == enabled
+            ? _value.enabled
+            : enabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
-  }
-
-  /// Create a copy of NotificationSettingsEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $NotificationSettingsEntityCopyWith<$Res> get settings {
-    return $NotificationSettingsEntityCopyWith<$Res>(_value.settings, (value) {
-      return _then(_value.copyWith(settings: value));
-    });
   }
 }
 
 /// @nodoc
 
-class _$UpdateSettingsImpl implements _UpdateSettings {
-  const _$UpdateSettingsImpl(this.settings);
+class _$ToggleImpl implements _Toggle {
+  const _$ToggleImpl({required this.key, required this.enabled});
 
   @override
-  final NotificationSettingsEntity settings;
+  final String key;
+  @override
+  final bool enabled;
 
   @override
   String toString() {
-    return 'NotificationSettingsEvent.updateSettings(settings: $settings)';
+    return 'NotificationSettingsEvent.toggle(key: $key, enabled: $enabled)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UpdateSettingsImpl &&
-            (identical(other.settings, settings) ||
-                other.settings == settings));
+            other is _$ToggleImpl &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, settings);
+  int get hashCode => Object.hash(runtimeType, key, enabled);
 
   /// Create a copy of NotificationSettingsEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$UpdateSettingsImplCopyWith<_$UpdateSettingsImpl> get copyWith =>
-      __$$UpdateSettingsImplCopyWithImpl<_$UpdateSettingsImpl>(
-        this,
-        _$identity,
-      );
+  _$$ToggleImplCopyWith<_$ToggleImpl> get copyWith =>
+      __$$ToggleImplCopyWithImpl<_$ToggleImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() loadSettings,
-    required TResult Function(NotificationSettingsEntity settings)
-    updateSettings,
+    required TResult Function() load,
+    required TResult Function(String key, bool enabled) toggle,
   }) {
-    return updateSettings(settings);
+    return toggle(key, enabled);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loadSettings,
-    TResult? Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult? Function()? load,
+    TResult? Function(String key, bool enabled)? toggle,
   }) {
-    return updateSettings?.call(settings);
+    return toggle?.call(key, enabled);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loadSettings,
-    TResult Function(NotificationSettingsEntity settings)? updateSettings,
+    TResult Function()? load,
+    TResult Function(String key, bool enabled)? toggle,
     required TResult orElse(),
   }) {
-    if (updateSettings != null) {
-      return updateSettings(settings);
+    if (toggle != null) {
+      return toggle(key, enabled);
     }
     return orElse();
   }
@@ -303,94 +289,73 @@ class _$UpdateSettingsImpl implements _UpdateSettings {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadSettings value) loadSettings,
-    required TResult Function(_UpdateSettings value) updateSettings,
+    required TResult Function(_Load value) load,
+    required TResult Function(_Toggle value) toggle,
   }) {
-    return updateSettings(this);
+    return toggle(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadSettings value)? loadSettings,
-    TResult? Function(_UpdateSettings value)? updateSettings,
+    TResult? Function(_Load value)? load,
+    TResult? Function(_Toggle value)? toggle,
   }) {
-    return updateSettings?.call(this);
+    return toggle?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadSettings value)? loadSettings,
-    TResult Function(_UpdateSettings value)? updateSettings,
+    TResult Function(_Load value)? load,
+    TResult Function(_Toggle value)? toggle,
     required TResult orElse(),
   }) {
-    if (updateSettings != null) {
-      return updateSettings(this);
+    if (toggle != null) {
+      return toggle(this);
     }
     return orElse();
   }
 }
 
-abstract class _UpdateSettings implements NotificationSettingsEvent {
-  const factory _UpdateSettings(final NotificationSettingsEntity settings) =
-      _$UpdateSettingsImpl;
+abstract class _Toggle implements NotificationSettingsEvent {
+  const factory _Toggle({
+    required final String key,
+    required final bool enabled,
+  }) = _$ToggleImpl;
 
-  NotificationSettingsEntity get settings;
+  String get key;
+  bool get enabled;
 
   /// Create a copy of NotificationSettingsEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UpdateSettingsImplCopyWith<_$UpdateSettingsImpl> get copyWith =>
+  _$$ToggleImplCopyWith<_$ToggleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 mixin _$NotificationSettingsState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(NotificationSettingsEntity settings) loaded,
-    required TResult Function(String message) error,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(NotificationSettingsEntity settings)? loaded,
-    TResult? Function(String message)? error,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(NotificationSettingsEntity settings)? loaded,
-    TResult Function(String message)? error,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  NotificationSettingsStatus get status => throw _privateConstructorUsedError;
+
+  /// Rendered as a flat list in exactly this order. There are no sections,
+  /// and nothing here is hardcoded client-side.
+  List<NotificationSettingEntity> get settings =>
+      throw _privateConstructorUsedError;
+
+  /// Keys whose PATCH is still in flight - their switch is disabled so a
+  /// second tap can't race the first.
+  Set<String> get pendingKeys => throw _privateConstructorUsedError;
+
+  /// Set when a toggle was rejected and rolled back; shown once, then
+  /// cleared by the next successful action.
+  String? get errorMessage => throw _privateConstructorUsedError;
+
+  /// Create a copy of NotificationSettingsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $NotificationSettingsStateCopyWith<NotificationSettingsState> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -399,6 +364,13 @@ abstract class $NotificationSettingsStateCopyWith<$Res> {
     NotificationSettingsState value,
     $Res Function(NotificationSettingsState) then,
   ) = _$NotificationSettingsStateCopyWithImpl<$Res, NotificationSettingsState>;
+  @useResult
+  $Res call({
+    NotificationSettingsStatus status,
+    List<NotificationSettingEntity> settings,
+    Set<String> pendingKeys,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
@@ -416,444 +388,96 @@ class _$NotificationSettingsStateCopyWithImpl<
 
   /// Create a copy of NotificationSettingsState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+    Object? settings = null,
+    Object? pendingKeys = null,
+    Object? errorMessage = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as NotificationSettingsStatus,
+            settings: null == settings
+                ? _value.settings
+                : settings // ignore: cast_nullable_to_non_nullable
+                      as List<NotificationSettingEntity>,
+            pendingKeys: null == pendingKeys
+                ? _value.pendingKeys
+                : pendingKeys // ignore: cast_nullable_to_non_nullable
+                      as Set<String>,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
+  }
 }
 
 /// @nodoc
-abstract class _$$InitialImplCopyWith<$Res> {
-  factory _$$InitialImplCopyWith(
-    _$InitialImpl value,
-    $Res Function(_$InitialImpl) then,
-  ) = __$$InitialImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$InitialImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsStateCopyWithImpl<$Res, _$InitialImpl>
-    implements _$$InitialImplCopyWith<$Res> {
-  __$$InitialImplCopyWithImpl(
-    _$InitialImpl _value,
-    $Res Function(_$InitialImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$InitialImpl implements _Initial {
-  const _$InitialImpl();
-
+abstract class _$$NotificationSettingsStateImplCopyWith<$Res>
+    implements $NotificationSettingsStateCopyWith<$Res> {
+  factory _$$NotificationSettingsStateImplCopyWith(
+    _$NotificationSettingsStateImpl value,
+    $Res Function(_$NotificationSettingsStateImpl) then,
+  ) = __$$NotificationSettingsStateImplCopyWithImpl<$Res>;
   @override
-  String toString() {
-    return 'NotificationSettingsState.initial()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$InitialImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(NotificationSettingsEntity settings) loaded,
-    required TResult Function(String message) error,
-  }) {
-    return initial();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(NotificationSettingsEntity settings)? loaded,
-    TResult? Function(String message)? error,
-  }) {
-    return initial?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(NotificationSettingsEntity settings)? loaded,
-    TResult Function(String message)? error,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return initial(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return initial?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Initial implements NotificationSettingsState {
-  const factory _Initial() = _$InitialImpl;
-}
-
-/// @nodoc
-abstract class _$$LoadingImplCopyWith<$Res> {
-  factory _$$LoadingImplCopyWith(
-    _$LoadingImpl value,
-    $Res Function(_$LoadingImpl) then,
-  ) = __$$LoadingImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsStateCopyWithImpl<$Res, _$LoadingImpl>
-    implements _$$LoadingImplCopyWith<$Res> {
-  __$$LoadingImplCopyWithImpl(
-    _$LoadingImpl _value,
-    $Res Function(_$LoadingImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$LoadingImpl implements _Loading {
-  const _$LoadingImpl();
-
-  @override
-  String toString() {
-    return 'NotificationSettingsState.loading()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(NotificationSettingsEntity settings) loaded,
-    required TResult Function(String message) error,
-  }) {
-    return loading();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(NotificationSettingsEntity settings)? loaded,
-    TResult? Function(String message)? error,
-  }) {
-    return loading?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(NotificationSettingsEntity settings)? loaded,
-    TResult Function(String message)? error,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return loading(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return loading?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Loading implements NotificationSettingsState {
-  const factory _Loading() = _$LoadingImpl;
-}
-
-/// @nodoc
-abstract class _$$LoadedImplCopyWith<$Res> {
-  factory _$$LoadedImplCopyWith(
-    _$LoadedImpl value,
-    $Res Function(_$LoadedImpl) then,
-  ) = __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({NotificationSettingsEntity settings});
-
-  $NotificationSettingsEntityCopyWith<$Res> get settings;
+  $Res call({
+    NotificationSettingsStatus status,
+    List<NotificationSettingEntity> settings,
+    Set<String> pendingKeys,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
-class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsStateCopyWithImpl<$Res, _$LoadedImpl>
-    implements _$$LoadedImplCopyWith<$Res> {
-  __$$LoadedImplCopyWithImpl(
-    _$LoadedImpl _value,
-    $Res Function(_$LoadedImpl) _then,
+class __$$NotificationSettingsStateImplCopyWithImpl<$Res>
+    extends
+        _$NotificationSettingsStateCopyWithImpl<
+          $Res,
+          _$NotificationSettingsStateImpl
+        >
+    implements _$$NotificationSettingsStateImplCopyWith<$Res> {
+  __$$NotificationSettingsStateImplCopyWithImpl(
+    _$NotificationSettingsStateImpl _value,
+    $Res Function(_$NotificationSettingsStateImpl) _then,
   ) : super(_value, _then);
 
   /// Create a copy of NotificationSettingsState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? settings = null}) {
+  $Res call({
+    Object? status = null,
+    Object? settings = null,
+    Object? pendingKeys = null,
+    Object? errorMessage = freezed,
+  }) {
     return _then(
-      _$LoadedImpl(
-        null == settings
-            ? _value.settings
+      _$NotificationSettingsStateImpl(
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as NotificationSettingsStatus,
+        settings: null == settings
+            ? _value._settings
             : settings // ignore: cast_nullable_to_non_nullable
-                  as NotificationSettingsEntity,
-      ),
-    );
-  }
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $NotificationSettingsEntityCopyWith<$Res> get settings {
-    return $NotificationSettingsEntityCopyWith<$Res>(_value.settings, (value) {
-      return _then(_value.copyWith(settings: value));
-    });
-  }
-}
-
-/// @nodoc
-
-class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.settings);
-
-  @override
-  final NotificationSettingsEntity settings;
-
-  @override
-  String toString() {
-    return 'NotificationSettingsState.loaded(settings: $settings)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LoadedImpl &&
-            (identical(other.settings, settings) ||
-                other.settings == settings));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, settings);
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(NotificationSettingsEntity settings) loaded,
-    required TResult Function(String message) error,
-  }) {
-    return loaded(settings);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(NotificationSettingsEntity settings)? loaded,
-    TResult? Function(String message)? error,
-  }) {
-    return loaded?.call(settings);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(NotificationSettingsEntity settings)? loaded,
-    TResult Function(String message)? error,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded(settings);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return loaded(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return loaded?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Loaded implements NotificationSettingsState {
-  const factory _Loaded(final NotificationSettingsEntity settings) =
-      _$LoadedImpl;
-
-  NotificationSettingsEntity get settings;
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$ErrorImplCopyWith<$Res> {
-  factory _$$ErrorImplCopyWith(
-    _$ErrorImpl value,
-    $Res Function(_$ErrorImpl) then,
-  ) = __$$ErrorImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String message});
-}
-
-/// @nodoc
-class __$$ErrorImplCopyWithImpl<$Res>
-    extends _$NotificationSettingsStateCopyWithImpl<$Res, _$ErrorImpl>
-    implements _$$ErrorImplCopyWith<$Res> {
-  __$$ErrorImplCopyWithImpl(
-    _$ErrorImpl _value,
-    $Res Function(_$ErrorImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of NotificationSettingsState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? message = null}) {
-    return _then(
-      _$ErrorImpl(
-        null == message
-            ? _value.message
-            : message // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as List<NotificationSettingEntity>,
+        pendingKeys: null == pendingKeys
+            ? _value._pendingKeys
+            : pendingKeys // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -861,119 +485,126 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl implements _Error {
-  const _$ErrorImpl(this.message);
+class _$NotificationSettingsStateImpl extends _NotificationSettingsState {
+  const _$NotificationSettingsStateImpl({
+    this.status = NotificationSettingsStatus.initial,
+    final List<NotificationSettingEntity> settings =
+        const <NotificationSettingEntity>[],
+    final Set<String> pendingKeys = const <String>{},
+    this.errorMessage,
+  }) : _settings = settings,
+       _pendingKeys = pendingKeys,
+       super._();
 
   @override
-  final String message;
+  @JsonKey()
+  final NotificationSettingsStatus status;
+
+  /// Rendered as a flat list in exactly this order. There are no sections,
+  /// and nothing here is hardcoded client-side.
+  final List<NotificationSettingEntity> _settings;
+
+  /// Rendered as a flat list in exactly this order. There are no sections,
+  /// and nothing here is hardcoded client-side.
+  @override
+  @JsonKey()
+  List<NotificationSettingEntity> get settings {
+    if (_settings is EqualUnmodifiableListView) return _settings;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_settings);
+  }
+
+  /// Keys whose PATCH is still in flight - their switch is disabled so a
+  /// second tap can't race the first.
+  final Set<String> _pendingKeys;
+
+  /// Keys whose PATCH is still in flight - their switch is disabled so a
+  /// second tap can't race the first.
+  @override
+  @JsonKey()
+  Set<String> get pendingKeys {
+    if (_pendingKeys is EqualUnmodifiableSetView) return _pendingKeys;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_pendingKeys);
+  }
+
+  /// Set when a toggle was rejected and rolled back; shown once, then
+  /// cleared by the next successful action.
+  @override
+  final String? errorMessage;
 
   @override
   String toString() {
-    return 'NotificationSettingsState.error(message: $message)';
+    return 'NotificationSettingsState(status: $status, settings: $settings, pendingKeys: $pendingKeys, errorMessage: $errorMessage)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ErrorImpl &&
-            (identical(other.message, message) || other.message == message));
+            other is _$NotificationSettingsStateImpl &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other._settings, _settings) &&
+            const DeepCollectionEquality().equals(
+              other._pendingKeys,
+              _pendingKeys,
+            ) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(
+    runtimeType,
+    status,
+    const DeepCollectionEquality().hash(_settings),
+    const DeepCollectionEquality().hash(_pendingKeys),
+    errorMessage,
+  );
 
   /// Create a copy of NotificationSettingsState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
-      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(NotificationSettingsEntity settings) loaded,
-    required TResult Function(String message) error,
-  }) {
-    return error(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(NotificationSettingsEntity settings)? loaded,
-    TResult? Function(String message)? error,
-  }) {
-    return error?.call(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(NotificationSettingsEntity settings)? loaded,
-    TResult Function(String message)? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error(message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
-    required TResult Function(_Error value) error,
-  }) {
-    return error(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
-    TResult? Function(_Error value)? error,
-  }) {
-    return error?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
-    TResult Function(_Error value)? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error(this);
-    }
-    return orElse();
-  }
+  _$$NotificationSettingsStateImplCopyWith<_$NotificationSettingsStateImpl>
+  get copyWith =>
+      __$$NotificationSettingsStateImplCopyWithImpl<
+        _$NotificationSettingsStateImpl
+      >(this, _$identity);
 }
 
-abstract class _Error implements NotificationSettingsState {
-  const factory _Error(final String message) = _$ErrorImpl;
+abstract class _NotificationSettingsState extends NotificationSettingsState {
+  const factory _NotificationSettingsState({
+    final NotificationSettingsStatus status,
+    final List<NotificationSettingEntity> settings,
+    final Set<String> pendingKeys,
+    final String? errorMessage,
+  }) = _$NotificationSettingsStateImpl;
+  const _NotificationSettingsState._() : super._();
 
-  String get message;
+  @override
+  NotificationSettingsStatus get status;
+
+  /// Rendered as a flat list in exactly this order. There are no sections,
+  /// and nothing here is hardcoded client-side.
+  @override
+  List<NotificationSettingEntity> get settings;
+
+  /// Keys whose PATCH is still in flight - their switch is disabled so a
+  /// second tap can't race the first.
+  @override
+  Set<String> get pendingKeys;
+
+  /// Set when a toggle was rejected and rolled back; shown once, then
+  /// cleared by the next successful action.
+  @override
+  String? get errorMessage;
 
   /// Create a copy of NotificationSettingsState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$NotificationSettingsStateImplCopyWith<_$NotificationSettingsStateImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }

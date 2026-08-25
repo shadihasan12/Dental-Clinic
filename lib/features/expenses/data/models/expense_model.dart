@@ -9,6 +9,7 @@ class ExpenseModel {
   final Map<String, dynamic> category;
   final List<Map<String, dynamic>> attachments;
   final String createdAt;
+  final List<AuditEntry> audits;
 
   const ExpenseModel({
     required this.id,
@@ -19,6 +20,7 @@ class ExpenseModel {
     required this.category,
     this.attachments = const [],
     this.createdAt = '',
+    this.audits = const [],
   });
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class ExpenseModel {
               .toList() ??
           [],
       createdAt: json['created_at'] as String? ?? '',
+      audits: AuditEntry.listFromJson(json['audits']),
     );
   }
 
@@ -59,6 +62,7 @@ class ExpenseModel {
               ))
           .toList(),
       createdAt: createdAt,
+      audits: audits,
     );
   }
 }

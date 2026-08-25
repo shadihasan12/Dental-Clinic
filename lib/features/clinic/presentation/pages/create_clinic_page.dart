@@ -238,7 +238,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                         textCapitalization: TextCapitalization.sentences,
                         maxLines: 3,
                         decoration: _buildInputDecoration(
-                          hintText: 'Tell patients about your clinic (Optional)',
+                          hintText:
+                              'Tell patients about your clinic (Optional)',
                           prefixIcon: const Icon(Icons.description_outlined),
                         ),
                       ),
@@ -265,7 +266,9 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                                   height: 24.h,
                                   child: const CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
                                   ),
                                 )
                               : Text(
@@ -284,9 +287,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
             ),
           ),
 
-          SliverToBoxAdapter(
-            child: SizedBox(height: 24.h),
-          ),
+          SliverToBoxAdapter(child: SizedBox(height: 24.h)),
         ],
       ),
     );
@@ -306,47 +307,10 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
     required String hintText,
     required Widget prefixIcon,
   }) {
-    return InputDecoration(
+    return formOutlinedInput(
+      context,
       hintText: hintText,
-      hintStyle: TextStyleManager.bodyMedium.copyWith(
-        color: ColorManager.of(context).textTertiary,
-      ),
       prefixIcon: prefixIcon,
-      filled: true,
-      fillColor: ColorManager.of(context).inputBg,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: const BorderSide(
-          color: ColorManager.primary,
-          width: 1.5,
-        ),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: const BorderSide(
-          color: ColorManager.error,
-          width: 1,
-        ),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: const BorderSide(
-          color: ColorManager.error,
-          width: 1.5,
-        ),
-      ),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
     );
   }
 }

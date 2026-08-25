@@ -1,11 +1,17 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
+import 'dart:io';
+
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
-import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
+import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_payment_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
@@ -13,14 +19,18 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_cor
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_payments_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/patient_details/patient_details_bloc.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_history_tab.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_overview_tab.dart';
-import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
-import 'completed_case_page.dart';
-import 'plan_treatment_page.dart';
-import 'treatment_plan_view_page.dart';
-import 'package:dental_clinic_app/core/resources/responsive.dart';
-import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/add_treatment_sheet.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_files_section.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/edit_costs_sheet.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_money_card.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/clinical_alerts_strip.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_case_actions.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_detail_states.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_info_card.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_scroll_header.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatments_section.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/payment_history_popup.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/record_payment_popup.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +38,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/details/case_history_card.dart';
-import '../widgets/details/widgets.dart';
+import 'completed_case_page.dart';
+import 'treatment_plan_view_page.dart';
 
+/// Patient details, rebuilt as one scroll.
+///
+/// The three tabs are gone: money, plan, files and info are positions on a
+/// single surface with a pinned vitals bar and an anchor rail. Nothing was
+/// removed - the groupings survive, they just no longer cost a tap to compare.
 class PatientDetailsPage extends StatelessWidget {
   final String patientId;
   final String patientName;
@@ -53,7 +68,6 @@ class PatientDetailsPage extends StatelessWidget {
             ..add(PatientDetailsEvent.loadPatientDetails(patientId)),
       child: _PatientDetailsContent(
         patientId: patientId,
-        tabIndex: tabIndex,
         patientName: patientName,
         prototypePlan: prototypePlan,
       ),
@@ -63,13 +77,11 @@ class PatientDetailsPage extends StatelessWidget {
 
 class _PatientDetailsContent extends StatefulWidget {
   final String patientId;
-  final int? tabIndex;
   final String patientName;
   final TreatmentPlan? prototypePlan;
 
   const _PatientDetailsContent({
     required this.patientId,
-    this.tabIndex,
     required this.patientName,
     this.prototypePlan,
   });
@@ -78,111 +90,582 @@ class _PatientDetailsContent extends StatefulWidget {
   State<_PatientDetailsContent> createState() => _PatientDetailsContentState();
 }
 
-class _PatientDetailsContentState extends State<_PatientDetailsContent>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _PatientDetailsContentState extends State<_PatientDetailsContent> {
+  final _scroll = ScrollController();
+
+  final _caseKey = GlobalKey();
+  final _treatmentsKey = GlobalKey();
+  final _filesKey = GlobalKey();
+  final _infoKey = GlobalKey();
+
+  PatientAnchor _active = PatientAnchor.caseSection;
 
   List<Tooth> _teeth = [];
   List<CoreTreatment> _coreTreatments = [];
 
+  /// Local mirror of the case attachments so an in-flight upload can show a
+  /// thumbnail with a spinner before the server knows about it.
+  List<CaseAttachment> _attachments = [];
+  String? _attachmentsCaseId;
+
+  /// Done-state applied locally by [_toggleDone], keyed by plan item id.
+  /// Lets the check flip immediately instead of waiting on a page reload;
+  /// cleared whenever the bloc hands us a genuinely new case.
+  final Map<String, bool> _doneOverrides = {};
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 3,
-      vsync: this,
-      initialIndex: widget.tabIndex ?? 1,
-    );
     _loadTeeth();
     _loadCoreTreatments();
   }
 
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadTeeth() async {
     final result = await getIt<GetAllTeethUseCase>()(NoParams());
-    result.fold(
-      (_) {},
-      (teeth) => setState(() => _teeth = teeth),
-    );
+    result.fold((_) {}, (teeth) {
+      if (mounted) setState(() => _teeth = teeth);
+    });
   }
 
   Future<void> _loadCoreTreatments() async {
     final result = await getIt<GetAllCoreTreatmentsUseCase>()(NoParams());
-    result.fold(
-      (_) {},
-      (treatments) => setState(() => _coreTreatments = treatments),
+    result.fold((_) {}, (treatments) {
+      if (mounted) setState(() => _coreTreatments = treatments);
+    });
+  }
+
+  void _reload() => context.read<PatientDetailsBloc>().add(
+    PatientDetailsEvent.loadPatientDetails(widget.patientId),
+  );
+
+  /// Pull-to-refresh: the case, its attachments and the treatment catalogue
+  /// all come from separate calls, so all three are re-run together.
+  Future<void> _refresh() async {
+    final bloc = context.read<PatientDetailsBloc>();
+    _reload();
+    await Future.wait([
+      _loadCoreTreatments(),
+      bloc.stream.settled(
+        (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+      ),
+    ]);
+  }
+
+  void _error(Object e) {
+    if (!mounted) return;
+    AppSnackbar.showError(
+      context,
+      title: AppLocalizations.of(context)!.error,
+      message: e is NetworkExceptions
+          ? NetworkExceptions.getErrorMessage(e)
+          : e.toString(),
     );
   }
 
-  void _onHistoryCaseTap(DentalCase selectedCase) {
+  void _ok(String message) {
+    if (!mounted) return;
+    AppSnackbar.showSuccess(
+      context,
+      title: AppLocalizations.of(context)!.success,
+      message: message,
+    );
+  }
+
+  // ── anchors ─────────────────────────────────────────────────────────────
+
+  void _jumpTo(PatientAnchor anchor) {
+    final key = switch (anchor) {
+      PatientAnchor.caseSection => _caseKey,
+      PatientAnchor.treatments => _treatmentsKey,
+      PatientAnchor.files => _filesKey,
+      PatientAnchor.info => _infoKey,
+    };
+    final ctx = key.currentContext;
+    if (ctx == null) return;
+    setState(() => _active = anchor);
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOutCubic,
+      // Clear the pinned vitals bar.
+      alignment: 0.0,
+      alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+    );
+  }
+
+  // ── treatments ──────────────────────────────────────────────────────────
+
+  List<PlannedTreatment> _mapPlanned(DentalCase c) {
+    final result = <PlannedTreatment>[];
+    for (final item in c.treatmentItems) {
+      final toothCodes = item.selectedTeeth
+          .map((id) {
+            final match = _teeth.where((t) => t.id == id);
+            return match.isNotEmpty ? match.first.universalCode : null;
+          })
+          .whereType<String>()
+          .toList();
+
+      for (final typeId in item.treatmentTypes) {
+        final ct = _coreTreatments.where((t) => t.id == typeId);
+        final typeInfo = ct.isNotEmpty
+            ? TreatmentTypeInfo(
+                id: ct.first.id,
+                name: ct.first.name,
+                icon: Icons.medical_services_outlined,
+                categoryId: ct.first.category.id,
+                categoryName: ct.first.category.name,
+              )
+            : TreatmentTypeInfo(
+                id: typeId,
+                name: typeId,
+                icon: Icons.medical_services_outlined,
+                categoryId: '',
+                categoryName: '',
+              );
+
+        final visitNotes = item.notes.map((n) {
+          final dateStr = n['date'] ?? '';
+          final date = dateStr.isNotEmpty
+              ? DateTime.tryParse(dateStr) ?? DateTime.now()
+              : DateTime.now();
+          return VisitNote(date: date, text: n['note'] ?? '');
+        }).toList();
+
+        // A pending or already-confirmed toggle wins over the bloc's copy,
+        // which is only refreshed when the whole page reloads.
+        final done = _doneOverrides[item.id] ?? item.isDone;
+
+        result.add(
+          PlannedTreatment(
+            id: '${item.id}_$typeId',
+            type: typeInfo,
+            toothNumber: toothCodes.isNotEmpty ? toothCodes.join(', ') : null,
+            status: done
+                ? TreatmentPlanStatus.completed
+                : TreatmentPlanStatus.planned,
+            notes: item.description,
+            visitNotes: visitNotes,
+          ),
+        );
+      }
+    }
+    return result;
+  }
+
+  /// Treatment ids are `itemId_typeId`; the API only wants the item id.
+  String _itemId(PlannedTreatment t) => t.id.split('_').first;
+
+  /// Marking work done is the most frequent action on this screen, so it
+  /// updates in place and syncs behind the scenes. A full reload here threw
+  /// the skeleton up and lost the scroll position on every tick.
+  Future<void> _toggleDone(DentalCase c, PlannedTreatment t) async {
+    final itemId = _itemId(t);
+    final wasDone = t.status == TreatmentPlanStatus.completed;
+
+    setState(() => _doneOverrides[itemId] = !wasDone);
+
+    final result = await getIt<PatientRepository>()
+        .toggleTreatmentPlanItemStatus(
+          patientId: widget.patientId,
+          caseId: c.id,
+          itemId: itemId,
+        );
+    if (!mounted) return;
+    result.fold((e) {
+      // Put the check back where it was rather than leaving a lie on screen.
+      setState(() => _doneOverrides[itemId] = wasDone);
+      _error(e);
+    }, (_) {});
+  }
+
+  Future<void> _addNote(DentalCase c, PlannedTreatment t, String note) async {
+    final now = DateTime.now();
+    final notes = [
+      ...t.visitNotes.map(
+        (n) => {
+          'note': n.text,
+          'date':
+              '${n.date.year}-${n.date.month.toString().padLeft(2, '0')}'
+              '-${n.date.day.toString().padLeft(2, '0')}',
+        },
+      ),
+      {
+        'note': note,
+        'date':
+            '${now.year}-${now.month.toString().padLeft(2, '0')}'
+            '-${now.day.toString().padLeft(2, '0')}',
+      },
+    ];
+
+    final result = await getIt<PatientRepository>().updateTreatmentPlanItem(
+      patientId: widget.patientId,
+      caseId: c.id,
+      itemId: _itemId(t),
+      notes: notes,
+    );
+    result.fold(_error, (_) {
+      _ok(AppLocalizations.of(context)!.notesUpdated);
+      _reload();
+    });
+  }
+
+  Future<void> _removeTreatment(DentalCase c, PlannedTreatment t) async {
+    final result = await getIt<PatientRepository>().deleteTreatmentPlanItem(
+      patientId: widget.patientId,
+      caseId: c.id,
+      itemId: _itemId(t),
+    );
+    result.fold(
+      (e) {
+        _error(e);
+        _reload();
+      },
+      (_) {
+        _ok(AppLocalizations.of(context)!.treatmentRemoved);
+        _reload();
+      },
+    );
+  }
+
+  Future<void> _addTreatment(DentalCase activeCase) async {
+    final categories = mapCoreTreatments(_coreTreatments)
+      ..sort((a, b) {
+        final aGeneral = a.name.contains('عامة');
+        final bGeneral = b.name.contains('عامة');
+        if (aGeneral && !bGeneral) return 1;
+        if (!aGeneral && bGeneral) return -1;
+        return 0;
+      });
+
+    final picked = await AddTreatmentSheet.show(
+      context,
+      categories: categories,
+      teeth: _teeth,
+    );
+    if (picked == null || picked.isEmpty || !mounted) return;
+
+    final typeIds = picked.map((t) => t.type.id).toList();
+    final toothIds = picked
+        .where((t) => t.toothNumber != null)
+        .map((t) {
+          final match = _teeth.where((x) => x.universalCode == t.toothNumber);
+          return match.isNotEmpty ? match.first.id : null;
+        })
+        .whereType<String>()
+        .toSet()
+        .toList();
+
+    final l10n = AppLocalizations.of(context)!;
+    AppLoadingDialog.show(context: context, message: l10n.saving);
+
+    final result = await getIt<AddTreatmentUseCase>()(
+      AddTreatmentParams(
+        patientId: widget.patientId,
+        isInitial: false,
+        caseId: activeCase.id,
+        visitDate: DateTime.now(),
+        treatmentTypes: typeIds,
+        selectedTeeth: toothIds,
+        summary: null,
+        totalCost: 0,
+        labFees: 0,
+        attachments: const [],
+      ),
+    );
+
+    if (!mounted) return;
+    AppLoadingDialog.dismiss(context);
+    result.fold(_error, (_) {
+      _ok(l10n.treatmentAddedSuccessfully);
+      _reload();
+    });
+  }
+
+  // ── money ───────────────────────────────────────────────────────────────
+
+  Future<List<Payment>> _loadPayments(String caseId) async {
+    final result = await getIt<GetPaymentsUseCase>()(
+      GetPaymentsParams(patientId: widget.patientId, caseId: caseId),
+    );
+    return result.fold((_) => <Payment>[], (p) => p);
+  }
+
+  void _recordPayment(DentalCase c) {
+    RecordPaymentPopup.show(
+      context,
+      patientName: c.patientName,
+      caseTitle: c.title,
+      totalCost: c.totalCost,
+      paidAmount: c.paidAmount,
+      caseCurrencyId: c.totalCostCurrencyId,
+      caseCurrencyCode: c.totalCostCurrencyCode,
+      onSave:
+          (
+            amount,
+            currencyId,
+            caseCurrencyId,
+            amountInCaseCurrency,
+            exchangeRate,
+            notes,
+          ) async {
+            final result = await getIt<AddPaymentUseCase>()(
+              AddPaymentParams(
+                patientId: widget.patientId,
+                caseId: c.id,
+                amount: amount,
+                currencyId: currencyId,
+                caseCurrencyId: caseCurrencyId,
+                amountInCaseCurrency: amountInCaseCurrency,
+                exchangeRate: exchangeRate,
+                notes: notes,
+              ),
+            );
+            final err = result.fold<NetworkExceptions?>((l) => l, (_) => null);
+            if (err != null) {
+              throw Exception(NetworkExceptions.getErrorMessage(err));
+            }
+            if (mounted) _reload();
+          },
+    );
+  }
+
+  void _paymentHistory(DentalCase c) {
+    PaymentHistoryPopup.show(
+      context,
+      caseTitle: c.title,
+      onLoadPayments: () => _loadPayments(c.id),
+      totalCost: c.totalCost,
+      paidAmount: c.paidAmount,
+    );
+  }
+
+  void _editCosts(DentalCase c) {
+    EditCostsSheet.show(
+      context,
+      initialTotalCost: c.totalCost,
+      initialLabFees: c.labFees,
+      initialTotalCostCurrencyId: c.totalCostCurrencyId,
+      initialLabFeesCurrencyId: c.labFeesCurrencyId,
+      onSave: (totalCost, totalCurrencyId, labFees, labCurrencyId) async {
+        final result = await getIt<PatientRepository>().updateCaseCosts(
+          patientId: widget.patientId,
+          caseId: c.id,
+          totalCost: totalCost,
+          totalCostCurrencyId: totalCurrencyId,
+          labFees: labFees,
+          labFeesCurrencyId: labCurrencyId,
+        );
+        result.fold(_error, (_) {
+          _ok(AppLocalizations.of(context)!.costsUpdated);
+          _reload();
+        });
+      },
+    );
+  }
+
+  Future<void> _finishCase(DentalCase c, int unfinished) async {
+    final confirmed = await FinishCaseDialog.show(
+      context,
+      outstanding: c.pendingAmount,
+      unfinishedTreatments: unfinished,
+      currencyCode: c.totalCostCurrencyCode ?? '',
+    );
+    if (!confirmed || !mounted) return;
+    context.read<PatientDetailsBloc>().add(
+      PatientDetailsEvent.markCaseAsFinished(
+        patientId: widget.patientId,
+        caseId: c.id,
+        title: null,
+      ),
+    );
+  }
+
+  // ── attachments ─────────────────────────────────────────────────────────
+
+  void _syncAttachments(DentalCase c) {
+    // Rebuild the local mirror only when the case changes, so an in-flight
+    // upload is not wiped by an unrelated bloc emission.
+    if (_attachmentsCaseId == c.id) return;
+    _attachmentsCaseId = c.id;
+    // Different case, so the optimistic done-flags belong to nothing.
+    _doneOverrides.clear();
+    // Seed from whatever the case payload carried so the strip is not empty
+    // while the authoritative read is in flight.
+    // No `remoteId`: the case payload lists media ids, not rows on the
+    // attachments sub-resource, and the DELETE route only accepts the
+    // latter. Delete stays hidden on a seeded item until the authoritative
+    // read below replaces it with a row that carries a real id.
+    _attachments = c.attachments
+        .map(
+          (id) =>
+              CaseAttachment(id: id, url: id.startsWith('http') ? id : null),
+        )
+        .toList();
+    // Called from build(), so the network read has to wait for the frame.
+    Future.microtask(() => _fetchAttachments(c.id));
+  }
+
+  Future<void> _fetchAttachments(String caseId) async {
+    final result = await getIt<PatientRepository>().getCaseAttachments(
+      patientId: widget.patientId,
+      caseId: caseId,
+    );
+    if (!mounted || _attachmentsCaseId != caseId) return;
+    // Deliberately silent on failure: the seeded list still renders, and a
+    // toast on every page open would be noise rather than information.
+    result.fold((_) {}, (rows) {
+      setState(() {
+        final pending = _attachments
+            .where((a) => a.uploading || a.failed)
+            .toList();
+        _attachments = [
+          ...rows.map(
+            (r) => CaseAttachment(
+              id: r.mediaId ?? r.id,
+              remoteId: r.attachmentId,
+              url: r.url,
+              name: r.name,
+            ),
+          ),
+          ...pending,
+        ];
+      });
+    });
+  }
+
+  void _markFailed(String placeholderId) {
+    setState(() {
+      _attachments = _attachments
+          .map(
+            (a) => a.id != placeholderId
+                ? a
+                : a.copyWith(uploading: false, failed: true),
+          )
+          .toList();
+    });
+  }
+
+  Future<void> _uploadTo(DentalCase c, File file) async {
+    final placeholder = CaseAttachment(
+      id: 'local_${DateTime.now().microsecondsSinceEpoch}',
+      name: file.path.split(Platform.pathSeparator).last,
+      localFile: file,
+      uploading: true,
+    );
+    setState(() => _attachments = [..._attachments, placeholder]);
+
+    final mediaId = await uploadCaseFile(file);
+    if (!mounted) return;
+    if (mediaId == null) {
+      _markFailed(placeholder.id);
+      return;
+    }
+
+    final result = await getIt<PatientRepository>().addCaseAttachments(
+      patientId: widget.patientId,
+      caseId: c.id,
+      mediaIds: [mediaId],
+    );
+    if (!mounted) return;
+
+    await result.fold(
+      (e) async {
+        _markFailed(placeholder.id);
+        _error(e);
+      },
+      (_) async {
+        // Drop the uploading flag first: _fetchAttachments keeps only
+        // in-flight items, so this lets the server row take its place.
+        setState(() {
+          _attachments = _attachments
+              .map(
+                (a) =>
+                    a.id != placeholder.id ? a : a.copyWith(uploading: false),
+              )
+              .toList();
+        });
+        await _fetchAttachments(c.id);
+      },
+    );
+  }
+
+  Future<void> _addFile(DentalCase c) async {
+    final files = await AddFileSheet.show(context);
+    if (files == null || files.isEmpty || !mounted) return;
+    // One at a time - a gallery multi-select can be a dozen photos and the
+    // media endpoint should not take them all at once.
+    for (final file in files) {
+      await _uploadTo(c, file);
+      if (!mounted) return;
+    }
+  }
+
+  Future<void> _retryUpload(DentalCase c, CaseAttachment a) async {
+    if (a.localFile == null) return;
+    setState(() => _attachments.remove(a));
+    await _uploadTo(c, a.localFile!);
+  }
+
+  Future<void> _deleteAttachment(DentalCase c, CaseAttachment a) async {
+    final remoteId = a.remoteId;
+    if (remoteId == null) return;
+
+    final snapshot = _attachments;
+    setState(
+      () => _attachments = _attachments.where((x) => x.id != a.id).toList(),
+    );
+
+    final result = await getIt<PatientRepository>().deleteCaseAttachment(
+      patientId: widget.patientId,
+      caseId: c.id,
+      attachmentId: remoteId,
+    );
+    if (!mounted) return;
+    result.fold((e) {
+      setState(() => _attachments = snapshot);
+      _error(e);
+    }, (_) => _ok(AppLocalizations.of(context)!.fileRemoved));
+  }
+
+  // ── navigation ──────────────────────────────────────────────────────────
+
+  void _openPastCase(DentalCase selected) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CompletedCasePage(
-          dentalCase: selectedCase,
+          dentalCase: selected,
           teeth: _teeth,
           coreTreatments: _coreTreatments,
           onTitleChanged: (newTitle) async {
             final result = await getIt<PatientRepository>().updateCaseTitle(
               patientId: widget.patientId,
-              caseId: selectedCase.id,
+              caseId: selected.id,
               title: newTitle,
             );
-            result.fold(
-              (error) {
-                if (mounted) {
-                  AppSnackbar.showError(
-                    context,
-                    title: 'Error',
-                    message: NetworkExceptions.getErrorMessage(error),
-                  );
-                }
-              },
-              (_) {
-                if (mounted) {
-                  final l10n = AppLocalizations.of(context)!;
-                  AppSnackbar.showSuccess(
-                    context,
-                    title: l10n.success,
-                    message: l10n.titleUpdated,
-                  );
-                  context.read<PatientDetailsBloc>().add(
-                        PatientDetailsEvent.loadPatientDetails(widget.patientId),
-                      );
-                }
-              },
-            );
+            result.fold(_error, (_) {
+              _ok(AppLocalizations.of(context)!.titleUpdated);
+              _reload();
+            });
           },
           onReopenCase: () async {
             final result = await getIt<PatientRepository>().reactivateCase(
               patientId: widget.patientId,
-              caseId: selectedCase.id,
+              caseId: selected.id,
             );
-            result.fold(
-              (error) {
-                if (mounted) {
-                  AppSnackbar.showError(
-                    context,
-                    title: 'Error',
-                    message: NetworkExceptions.getErrorMessage(error),
-                  );
-                }
-              },
-              (_) {
-                if (mounted) {
-                  Navigator.pop(context);
-                  _tabController.animateTo(1);
-                  context.read<PatientDetailsBloc>().add(
-                        PatientDetailsEvent.loadPatientDetails(widget.patientId),
-                      );
-                  final l10n = AppLocalizations.of(context)!;
-                  AppSnackbar.showSuccess(
-                    context,
-                    title: l10n.success,
-                    message: l10n.caseReopened,
-                  );
-                }
-              },
-            );
+            result.fold(_error, (_) {
+              if (!mounted) return;
+              Navigator.pop(context);
+              _ok(AppLocalizations.of(context)!.caseReopened);
+              _reload();
+            });
           },
         ),
       ),
@@ -200,733 +683,253 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     );
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  Future<void> _editPatient(PatientEntity patient) async {
+    await context.pushNamed(
+      AppRoutesNames.editPatient,
+      extra: <String, dynamic>{'patient': patient},
+    );
+    if (mounted) _reload();
   }
+
+  // ── build ───────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PatientDetailsBloc, PatientDetailsState>(
-      listener: (context, state) {},
+    final c = ColorManager.of(context);
+
+    return BlocBuilder<PatientDetailsBloc, PatientDetailsState>(
       builder: (context, state) {
         return state.when(
-          initial: () => const Scaffold(body: SizedBox.shrink()),
-          loading: () => Scaffold(
-            backgroundColor: ColorManager.of(context).scaffoldBg,
-            body: Column(
-              children: [
-                if (!Responsive.isDesktop(context))
-                  PatientHeader(
-                    name: widget.patientName,
-                    onBackPressed: () =>
-                        context.canPop() ? context.pop() : context.go('/'),
-                    tabController: _tabController,
-                  ),
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-            ),
+          initial: () => Scaffold(
+            backgroundColor: c.scaffoldBg,
+            body: const SizedBox.shrink(),
           ),
-          error: (message) => Scaffold(
-            body: Center(
-              child: Padding(
-                padding: EdgeInsets.all(24.w),
-                child: Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: ColorManager.of(context).textSecondary,
+          loading: () => Scaffold(
+            backgroundColor: c.scaffoldBg,
+            body: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  PatientIdentityBar(
+                    name: widget.patientName,
+                    subtitle: '',
+                    onBack: _back,
                   ),
-                ),
+                  const Expanded(child: PatientDetailSkeleton()),
+                ],
               ),
             ),
           ),
-          loaded: (patient, activeCase, completedCases) {
-            if (Responsive.isDesktop(context)) {
-              return _buildDesktopLayout(
-                  patient, activeCase, completedCases);
-            }
-            return _buildMobileLayout(patient, activeCase, completedCases);
-          },
+          error: (message) => Scaffold(
+            backgroundColor: c.scaffoldBg,
+            body: SafeArea(
+              child: PatientDetailErrorState(
+                message: message,
+                onRetry: _reload,
+              ),
+            ),
+          ),
+          loaded: (patient, activeCase, completedCases) => _buildLoaded(
+            patient: patient,
+            activeCase: activeCase,
+            completedCases: completedCases,
+          ),
         );
       },
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════
-  // DESKTOP LAYOUT
-  // ═══════════════════════════════════════════════════════════════════
+  void _back() => context.canPop() ? context.pop() : context.go('/');
 
-  Widget _buildDesktopLayout(
-    dynamic patient,
-    DentalCase? activeCase,
-    List<DentalCase> completedCases,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    final fontFamily = FontHelper.fontFamily(context);
+  Widget _buildLoaded({
+    required PatientEntity patient,
+    required DentalCase? activeCase,
+    required List<DentalCase> completedCases,
+  }) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    final String patientName = patient.name as String;
-    final initials = patientName
-        .trim()
-        .split(' ')
-        .where((s) => s.isNotEmpty)
-        .map((e) => e[0])
-        .take(2)
-        .join()
-        .toUpperCase();
-
-    return DesktopShell(
-      title: patient.name,
-      body: Scaffold(
+    // Unsaved plan preview - the screen is reached straight from the planner.
+    if (activeCase == null && widget.prototypePlan != null) {
+      return Scaffold(
         backgroundColor: c.scaffoldBg,
-        body: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Left: patient profile card ────────────────────
-            SizedBox(
-              width: 300,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    // Profile card (hero)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: c.cardBg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: c.borderLight),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 72,
-                            height: 72,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  ColorManager.primary.withValues(alpha: 0.25),
-                                  ColorManager.primary.withValues(alpha: 0.10),
-                                ],
-                              ),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: ColorManager.primary
-                                    .withValues(alpha: 0.3),
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                initials,
-                                style: TextStyle(
-                                  fontFamily: fontFamily,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: ColorManager.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          Text(
-                            patient.name,
-                            style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                              color: c.textPrimary,
-                              letterSpacing: -0.3,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: ColorManager.primary
-                                  .withValues(alpha: 0.10),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              '${patient.age} ${l10n.years} • ${patient.gender}',
-                              style: TextStyle(
-                                fontFamily: fontFamily,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: ColorManager.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Contact details card
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: c.cardBg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: c.borderLight),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _dInfoTile(Icons.phone_outlined, l10n.phone,
-                              patient.phone, fontFamily, c),
-                          if (patient.email.isNotEmpty) ...[
-                            Divider(height: 16, color: c.borderLight),
-                            _dInfoTile(Icons.email_outlined, l10n.email,
-                                patient.email, fontFamily, c),
-                          ],
-                          Divider(height: 16, color: c.borderLight),
-                          _dInfoTile(
-                              Icons.cake_outlined,
-                              l10n.dateOfBirth,
-                              patient.dateOfBirth
-                                  .toIso8601String()
-                                  .substring(0, 10),
-                              fontFamily,
-                              c),
-                          if (patient.address.isNotEmpty) ...[
-                            Divider(height: 16, color: c.borderLight),
-                            _dInfoTile(Icons.location_on_outlined,
-                                l10n.address, patient.address, fontFamily, c),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    // Medical history
-                    if ((patient.medicalHistory ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: c.cardBg,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: c.borderLight),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.medicalHistory,
-                              style: TextStyle(
-                                fontFamily: fontFamily,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: c.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              patient.medicalHistory!,
-                              style: TextStyle(
-                                fontFamily: fontFamily,
-                                fontSize: 13,
-                                color: c.textPrimary,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                    // Case history
-                    if (completedCases.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: c.cardBg,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: c.borderLight),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.history,
-                              style: TextStyle(
-                                fontFamily: fontFamily,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: c.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            ...completedCases.map(
-                              (dc) => CaseHistoryCard(
-                                dentalCase: dc,
-                                onTap: () => _onHistoryCaseTap(dc),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-
-            // ── Right: active case ───────────────────────────
-            Expanded(child: _buildCaseTab(activeCase)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _dInfoTile(IconData icon, String label, String value,
-      String fontFamily, dynamic c) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: c.textTertiary),
-        const SizedBox(width: 10),
-        Expanded(
+        body: SafeArea(
+          bottom: false,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: fontFamily,
-                  fontSize: 11,
-                  color: c.textTertiary,
-                ),
+              PatientIdentityBar(
+                name: patient.name,
+                subtitle: _subtitle(patient),
+                onBack: _back,
+                onEdit: () => _editPatient(patient),
               ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: TextStyle(
-                  fontFamily: fontFamily,
-                  fontSize: 13,
-                  color: c.textPrimary,
+              Expanded(
+                child: TreatmentPlanViewPage(
+                  plan: widget.prototypePlan!,
+                  embedded: true,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════
-  // MOBILE LAYOUT (original)
-  // ═══════════════════════════════════════════════════════════════════
-
-  Widget _buildMobileLayout(
-    dynamic patient,
-    DentalCase? activeCase,
-    List<DentalCase> completedCases,
-  ) {
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: Column(
-        children: [
-          PatientHeader(
-            name: patient.name,
-            onBackPressed: () =>
-                context.canPop() ? context.pop() : context.go('/'),
-            onEditPressed: () {},
-            tabController: _tabController,
-          ),
-          Expanded(
-            child: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _tabController,
-              children: [
-                // Tab 1: Patient Info
-                SingleChildScrollView(
-                  padding: PaddingManager.all16,
-                  child: PatientInfoTab(
-                    phone: patient.phone,
-                    email: patient.email,
-                    address: patient.address,
-                    medicalHistory: patient.medicalHistory ?? '',
-                    dateOfBirth: patient.dateOfBirth
-                        .toIso8601String()
-                        .substring(0, 10),
-                    allergies: 'None',
-                    age: patient.age,
-                    gender: patient.gender,
-                    initiallyExpanded: true,
-                  ),
-                ),
-
-                // Tab 2: Case
-                _buildCaseTab(activeCase),
-
-                // Tab 3: History
-                CaseHistoryTab(
-                  completedCases: completedCases,
-                  onCaseTap: _onHistoryCaseTap,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<List<Payment>> _loadPayments(String caseId) async {
-    final result = await getIt<GetPaymentsUseCase>()(
-      GetPaymentsParams(patientId: widget.patientId, caseId: caseId),
-    );
-    return result.fold((_) => [], (payments) => payments);
-  }
-
-  Widget _buildCaseTab(DentalCase? activeCase) {
-    if (activeCase == null && widget.prototypePlan != null) {
-      return TreatmentPlanViewPage(
-        plan: widget.prototypePlan!,
-        embedded: true,
       );
     }
 
-    if (activeCase == null) {
-      return _buildNoCaseState();
-    }
+    if (activeCase != null) _syncAttachments(activeCase);
 
-    return CaseOverviewWidget(
-      dentalCase: activeCase,
-      teeth: _teeth,
-      coreTreatments: _coreTreatments,
-      isReadOnly: false,
-      onPaymentRecorded: (amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes) async {
-        final result = await getIt<AddPaymentUseCase>()(
-          AddPaymentParams(
-            patientId: widget.patientId,
-            caseId: activeCase.id,
-            amount: amount,
-            currencyId: currencyId,
-            caseCurrencyId: caseCurrencyId,
-            amountInCaseCurrency: amountInCaseCurrency,
-            exchangeRate: exchangeRate,
-            notes: notes,
-          ),
-        );
-        final error = result.fold<NetworkExceptions?>(
-          (l) => l,
-          (_) => null,
-        );
-        if (error != null) {
-          throw Exception(NetworkExceptions.getErrorMessage(error));
-        }
-        if (mounted) {
-          context.read<PatientDetailsBloc>().add(
-            PatientDetailsEvent.loadPatientDetails(widget.patientId),
-          );
-        }
-      },
-      onLoadPayments: () => _loadPayments(activeCase.id),
-      onMarkAsFinished: () => _showMarkAsFinishedDialog(),
-      onAddTreatment: () => _navigateToAddTreatment(activeCase),
-      onMarkTreatmentFinished: (treatment) async {
-        final itemId = treatment.id.split('_').first;
-        final result =
-            await getIt<PatientRepository>().toggleTreatmentPlanItemStatus(
-          patientId: widget.patientId,
-          caseId: activeCase.id,
-          itemId: itemId,
-        );
+    final planned = activeCase == null
+        ? <PlannedTreatment>[]
+        : _mapPlanned(activeCase);
+    final unfinished = planned
+        .where((t) => t.status != TreatmentPlanStatus.completed)
+        .length;
+    final currency = activeCase?.totalCostCurrencyCode ?? '';
+    final outstanding = activeCase == null
+        ? '-'
+        : '${_money(activeCase.pendingAmount)}${currency.isEmpty ? '' : ' $currency'}';
 
-        result.fold(
-          (error) {
-            if (mounted) {
-              AppSnackbar.showError(
-                context,
-                title: 'Error',
-                message: NetworkExceptions.getErrorMessage(error),
-              );
-              // Reload to revert the local toggle
-              context.read<PatientDetailsBloc>().add(
-                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
-                  );
-            }
-          },
-          (_) {},
-        );
-      },
-      onNotesUpdated: (treatment, updatedNotes) async {
-        // treatment.id is formatted as "${itemId}_${typeId}"
-        final itemId = treatment.id.split('_').first;
-        final noteMaps = updatedNotes
-            .map((n) => {
-                  'note': n.text,
-                  'date':
-                      '${n.date.year}-${n.date.month.toString().padLeft(2, '0')}-${n.date.day.toString().padLeft(2, '0')}',
-                })
-            .toList();
+    // A chip that scrolls to a section which is not on screen reads as
+    // broken, so only the sections that exist get one. Case and Info are
+    // always present - Case carries its own empty state, Info is never empty.
+    final anchors = <({PatientAnchor anchor, String label})>[
+      (anchor: PatientAnchor.caseSection, label: l10n.currentCaseAnchor),
+      if (planned.isNotEmpty)
+        (anchor: PatientAnchor.treatments, label: l10n.treatments),
+      if (_attachments.isNotEmpty)
+        (anchor: PatientAnchor.files, label: l10n.filesTitle),
+      (anchor: PatientAnchor.info, label: l10n.patientInfo),
+    ];
 
-        final result =
-            await getIt<PatientRepository>().updateTreatmentPlanItem(
-          patientId: widget.patientId,
-          caseId: activeCase.id,
-          itemId: itemId,
-          notes: noteMaps,
-        );
-
-        result.fold(
-          (error) {
-            if (mounted) {
-              AppSnackbar.showError(
-                context,
-                title: 'Error',
-                message: NetworkExceptions.getErrorMessage(error),
-              );
-            }
-          },
-          (_) {
-            if (mounted) {
-              final l10n = AppLocalizations.of(context)!;
-              AppSnackbar.showSuccess(
-                context,
-                title: l10n.success,
-                message: l10n.notesUpdated,
-              );
-            }
-          },
-        );
-      },
-      onRemoveTreatment: (treatment) async {
-        final itemId = treatment.id.split('_').first;
-        final result =
-            await getIt<PatientRepository>().deleteTreatmentPlanItem(
-          patientId: widget.patientId,
-          caseId: activeCase.id,
-          itemId: itemId,
-        );
-
-        result.fold(
-          (error) {
-            if (mounted) {
-              AppSnackbar.showError(
-                context,
-                title: 'Error',
-                message: NetworkExceptions.getErrorMessage(error),
-              );
-              // Reload to restore the item in the list
-              context.read<PatientDetailsBloc>().add(
-                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
-                  );
-            }
-          },
-          (_) {
-            if (mounted) {
-              final l10n = AppLocalizations.of(context)!;
-              AppSnackbar.showSuccess(
-                context,
-                title: l10n.success,
-                message: l10n.treatmentRemoved,
-              );
-            }
-          },
-        );
-      },
-      onEditCosts: (totalCost, totalCostCurrencyId, labFees, labFeesCurrencyId) async {
-        final result = await getIt<PatientRepository>().updateCaseCosts(
-          patientId: widget.patientId,
-          caseId: activeCase.id,
-          totalCost: totalCost,
-          totalCostCurrencyId: totalCostCurrencyId,
-          labFees: labFees,
-          labFeesCurrencyId: labFeesCurrencyId,
-        );
-
-        result.fold(
-          (error) {
-            if (mounted) {
-              AppSnackbar.showError(
-                context,
-                title: 'Error',
-                message: NetworkExceptions.getErrorMessage(error),
-              );
-            }
-          },
-          (_) {
-            if (mounted) {
-              final l10n = AppLocalizations.of(context)!;
-              AppSnackbar.showSuccess(
-                context,
-                title: l10n.success,
-                message: l10n.costsUpdated,
-              );
-              context.read<PatientDetailsBloc>().add(
-                    PatientDetailsEvent.loadPatientDetails(widget.patientId),
-                  );
-            }
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _navigateToAddTreatment(DentalCase activeCase) async {
-    final categories = mapCoreTreatments(_coreTreatments);
-    // Sort: tooth-specific first, general last
-    categories.sort((a, b) {
-      final aIsGeneral = a.name.contains('عامة');
-      final bIsGeneral = b.name.contains('عامة');
-      if (aIsGeneral && !bIsGeneral) return 1;
-      if (!aIsGeneral && bIsGeneral) return -1;
-      return 0;
-    });
-
-    final result = await Navigator.push<List<PlannedTreatment>>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PlanTreatmentPage(
-          categories: categories,
-          teeth: _teeth,
-        ),
-      ),
-    );
-
-    if (result == null || result.isEmpty || !mounted) return;
-
-    // Save via AddTreatmentUseCase with isInitial: false
-    final treatmentTypeIds = result.map((t) => t.type.id).toList();
-    final toothIds = result
-        .where((t) => t.toothNumber != null)
-        .map((t) {
-          final match = _teeth.where(
-            (tooth) => tooth.universalCode == t.toothNumber,
-          );
-          return match.isNotEmpty ? match.first.id : null;
-        })
-        .whereType<String>()
-        .toSet()
-        .toList();
-
-    final l10n = AppLocalizations.of(context)!;
-    AppLoadingDialog.show(context: context, message: l10n.saving);
-
-    final addResult = await getIt<AddTreatmentUseCase>()(
-      AddTreatmentParams(
-        patientId: widget.patientId,
-        isInitial: false,
-        caseId: activeCase.id,
-        visitDate: DateTime.now(),
-        treatmentTypes: treatmentTypeIds,
-        selectedTeeth: toothIds,
-        summary: null,
-        totalCost: 0,
-        labFees: 0,
-        attachments: [],
-      ),
-    );
-
-    if (!mounted) return;
-    AppLoadingDialog.dismiss(context);
-
-    addResult.fold(
-      (error) {
-        AppSnackbar.showError(
-          context,
-          title: 'Error',
-          message: NetworkExceptions.getErrorMessage(error),
-        );
-      },
-      (_) {
-        AppSnackbar.showSuccess(
-          context,
-          title: AppLocalizations.of(context)!.success,
-          message: AppLocalizations.of(context)!.treatmentAddedSuccessfully,
-        );
-        context.read<PatientDetailsBloc>().add(
-          PatientDetailsEvent.loadPatientDetails(widget.patientId),
-        );
-      },
-    );
-  }
-
-  Widget _buildNoCaseState() {
-    final l10n = AppLocalizations.of(context)!;
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(32.w),
+    return Scaffold(
+      backgroundColor: c.scaffoldBg,
+      bottomNavigationBar: activeCase == null
+          ? null
+          : DockedCaseActions(
+              onAddTreatment: () => _addTreatment(activeCase),
+              onRecordPayment: () => _recordPayment(activeCase),
+            ),
+      body: SafeArea(
+        bottom: false,
+        // The identity bar and the vitals/anchor rail both sit outside the
+        // scroll view, so the pull opens its band *under* the rail instead of
+        // shoving the patient's name and the chips down the screen. It also
+        // lines this state up with the loading and error ones, which already
+        // put the identity bar above an Expanded.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                color: ColorManager.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.medical_services_outlined,
-                size: 40.w,
-                color: ColorManager.primary,
-              ),
+            PatientIdentityBar(
+              name: patient.name,
+              subtitle: _subtitle(patient),
+              onBack: _back,
+              onEdit: () => _editPatient(patient),
             ),
-            SizedBox(height: 24.h),
-            Text(
-              l10n.noOngoingCase,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-                color: ColorManager.of(context).textPrimary,
-              ),
+            PatientVitalsBar(
+              outstandingLabel: l10n.outstanding,
+              outstandingValue: outstanding,
+              remainingLabel: l10n.remainingWork,
+              remainingValue: '$unfinished',
+              // Both figures describe the open case, so with none there is
+              // nothing for them to report.
+              showVitals: activeCase != null,
+              // Deleting the last file or treatment can strip the chip the
+              // user is standing on; fall back so the rail always has a
+              // selection.
+              activeAnchor: anchors.any((a) => a.anchor == _active)
+                  ? _active
+                  : PatientAnchor.caseSection,
+              onAnchorTap: _jumpTo,
+              anchors: anchors,
             ),
-            SizedBox(height: 8.h),
-            Text(
-              l10n.patientNoActiveTreatment,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textSecondary,
-              ),
-            ),
-            SizedBox(height: 32.h),
-            GestureDetector(
-              onTap: _createNewCase,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: ColorManager.primary,
-                  borderRadius: BorderRadiusManager.lg,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline,
-                      size: 20.w,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      l10n.createNew,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+            Expanded(
+              child: DentaRefresh(
+                onRefresh: _refresh,
+                // Longer than the app default on this screen alone: the rail
+                // sits directly above the content, and a short flick meant to
+                // nudge the list was firing a full reload of the case.
+                triggerExtent: 150.h,
+                child: CustomScrollView(
+                  controller: _scroll,
+                  slivers: [
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          ClinicalAlertsStrip(
+                            allergies: patient.allergies,
+                            medicalHistory: patient.medicalHistory,
+                            onEditAllergies: () => _editPatient(patient),
+                            onReviewHistory: () => _editPatient(patient),
+                          ),
+
+                          Container(key: _caseKey),
+                          if (activeCase == null)
+                            PatientDetailPlaceholder(
+                              icon: Icons.medical_services_outlined,
+                              title: l10n.noOngoingCase,
+                              message: l10n.patientNoActiveTreatment,
+                              primaryLabel: l10n.createNew,
+                              onPrimary: _createNewCase,
+                            )
+                          else
+                            CaseMoneyCard(
+                              totalCost: activeCase.totalCost,
+                              paidAmount: activeCase.paidAmount,
+                              pendingAmount: activeCase.pendingAmount,
+                              labFees: activeCase.labFees,
+                              paymentCount: 0,
+                              onPayments: () => _paymentHistory(activeCase),
+                              onEditCosts: () => _editCosts(activeCase),
+                              onFinishCase: () =>
+                                  _finishCase(activeCase, unfinished),
+                            ),
+
+                          if (activeCase != null) ...[
+                            SizedBox(height: 20.h),
+                            Container(key: _treatmentsKey),
+                            TreatmentsSection(
+                              treatments: planned,
+                              outstandingLabel: activeCase.pendingAmount > 0
+                                  ? '$outstanding ${l10n.pendingLabel}'
+                                  : null,
+                              onToggleDone: (t) => _toggleDone(activeCase, t),
+                              onAddNote: (t, note) =>
+                                  _addNote(activeCase, t, note),
+                              onRemove: (t) => _removeTreatment(activeCase, t),
+                              onAddTreatment: () => _addTreatment(activeCase),
+                              onFinishCase: () =>
+                                  _finishCase(activeCase, unfinished),
+                            ),
+                            SizedBox(height: 20.h),
+                            Container(key: _filesKey),
+                            CaseFilesSection(
+                              attachments: _attachments,
+                              onAdd: () => _addFile(activeCase),
+                              onOpen: (i) => CaseFileViewer.open(
+                                context,
+                                attachments: _attachments,
+                                initialIndex: i,
+                                onDelete: (a) =>
+                                    _deleteAttachment(activeCase, a),
+                              ),
+                              onRetry: (a) => _retryUpload(activeCase, a),
+                            ),
+                          ],
+
+                          SizedBox(height: 20.h),
+                          Container(key: _infoKey),
+                          PatientInfoCard(
+                            patient: patient,
+                            onEdit: () => _editPatient(patient),
+                          ),
+
+                          if (completedCases.isNotEmpty) ...[
+                            SizedBox(height: 20.h),
+                            PastCasesSection(
+                              cases: completedCases,
+                              onOpenCase: _openPastCase,
+                            ),
+                          ],
+                        ]),
                       ),
                     ),
                   ],
@@ -939,118 +942,25 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent>
     );
   }
 
-  void _showMarkAsFinishedDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    final activeCase = context.read<PatientDetailsBloc>().state.mapOrNull(
-      loaded: (s) => s.activeCase,
-    );
-    if (activeCase == null) return;
+  String _subtitle(PatientEntity p) {
+    final bits = <String>[];
+    if (p.age > 0) bits.add('${p.age}');
+    if (p.gender.isNotEmpty) bits.add(p.gender);
+    return bits.join(' - ');
+  }
 
-    final titleController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(
-          l10n.markAsFinished,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            fontWeight: FontWeight.w600,
-            color: ColorManager.of(context).textPrimary,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.markCaseFinishedQuestion,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w400,
-                color: ColorManager.of(context).textSecondary,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(
-                labelText: l10n.caseTitleOptional,
-                hintText: l10n.caseTitleHint,
-                labelStyle: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.of(context).textSecondary,
-                ),
-                hintStyle: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  color: ColorManager.of(context).textTertiary,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: ColorManager.of(context).borderLight),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: ColorManager.primary),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12.w,
-                  vertical: 10.h,
-                ),
-              ),
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              final title = titleController.text.trim();
-              Navigator.pop(dialogContext);
-              context.read<PatientDetailsBloc>().add(
-                PatientDetailsEvent.markCaseAsFinished(
-                  patientId: widget.patientId,
-                  caseId: activeCase.id,
-                  title: title.isEmpty ? null : title,
-                ),
-              );
-            },
-            child: Text(
-              l10n.confirm,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w500,
-                color: ColorManager.primary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  /// Matches the grouping used inside [CaseMoneyCard] so the pinned figure and
+  /// the card below it read as the same number.
+  String _money(double v) {
+    final s = v.toStringAsFixed(v.truncateToDouble() == v ? 0 : 2);
+    final dot = s.indexOf('.');
+    final whole = dot == -1 ? s : s.substring(0, dot);
+    final rest = dot == -1 ? '' : s.substring(dot);
+    final buf = StringBuffer();
+    for (var i = 0; i < whole.length; i++) {
+      if (i > 0 && (whole.length - i) % 3 == 0) buf.write(',');
+      buf.write(whole[i]);
+    }
+    return '$buf$rest';
   }
 }

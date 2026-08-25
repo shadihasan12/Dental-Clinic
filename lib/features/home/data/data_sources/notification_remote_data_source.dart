@@ -1,121 +1,169 @@
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/features/home/data/endpoints/notification_endpoints.dart';
 import 'package:dental_clinic_app/features/home/data/models/notification_model.dart';
 import 'package:injectable/injectable.dart';
 
+/// One page of the inbox, straight off the wire.
+class NotificationPageResponse {
+  final List<NotificationModel> notifications;
+  final String? nextCursor;
+  final int unreadCount;
+
+  const NotificationPageResponse({
+    required this.notifications,
+    required this.nextCursor,
+    required this.unreadCount,
+  });
+}
+
+/// The `/unseen` payload — Windows polling only.
+class UnseenNotificationsResponse {
+  final List<NotificationModel> notifications;
+  final int remaining;
+  final int unreadCount;
+  final int pollAfter;
+
+  const UnseenNotificationsResponse({
+    required this.notifications,
+    required this.remaining,
+    required this.unreadCount,
+    required this.pollAfter,
+  });
+}
+
 abstract class NotificationRemoteDataSource {
-  Future<List<NotificationModel>> getAllNotifications();
-  Future<NotificationModel> markAsRead(String id);
-  Future<List<NotificationModel>> markAllAsRead();
+  Future<NotificationPageResponse> getNotifications({
+    int limit,
+    String? before,
+  });
+  Future<UnseenNotificationsResponse> getUnseen();
+  Future<int> markSeen(List<String> ids);
+  Future<int> markAsRead(String id);
+  Future<int> markAsUnread(String id);
+  Future<int> markAllAsRead();
+  Future<int> getUnreadCount();
 }
 
 @Injectable(as: NotificationRemoteDataSource)
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
-  // ignore: unused_field
   final ApiConsumer _apiConsumer;
 
   NotificationRemoteDataSourceImpl(this._apiConsumer);
 
-  // In-memory mock store so markAsRead persists within session
-  List<NotificationModel>? _cachedNotifications;
+  /// The server caps `limit` at 100.
+  static const int defaultLimit = 30;
 
-  List<NotificationModel> _getMockNotifications() {
-    if (_cachedNotifications != null) return _cachedNotifications!;
+  /// `POST /notifications/seen` accepts 1–200 ids per call.
+  static const int maxSeenIdsPerRequest = 200;
 
-    final now = DateTime.now();
-    _cachedNotifications = [
-      NotificationModel(
-        id: '1',
-        title: 'Appointment Reminder',
-        content:
-            'You have an upcoming appointment with Ahmad Ali at 10:00 AM tomorrow.',
-        type: 'appointment',
-        timestamp: now.subtract(const Duration(minutes: 5)).toIso8601String(),
-      ),
-      NotificationModel(
-        id: '2',
-        title: 'New Patient Registered',
-        content: 'Sara Mohammed has been added to your patients list.',
-        type: 'patient',
-        timestamp: now.subtract(const Duration(minutes: 30)).toIso8601String(),
-      ),
-      NotificationModel(
-        id: '3',
-        title: 'Payment Received',
-        content:
-            'Payment of 500 SAR received from Khaled Ibrahim for dental filling.',
-        type: 'payment',
-        timestamp: now.subtract(const Duration(hours: 2)).toIso8601String(),
-      ),
-      NotificationModel(
-        id: '4',
-        title: 'Appointment Cancelled',
-        content:
-            'Fatima Hassan cancelled the appointment scheduled for Thursday.',
-        type: 'cancellation',
-        timestamp: now.subtract(const Duration(hours: 5)).toIso8601String(),
-        isRead: true,
-      ),
-      NotificationModel(
-        id: '5',
-        title: 'Weekly Report Ready',
-        content:
-            'Your clinic performance report for this week is now available.',
-        type: 'report',
-        timestamp: now.subtract(const Duration(days: 1)).toIso8601String(),
-        isRead: true,
-      ),
-      NotificationModel(
-        id: '6',
-        title: 'Treatment Completed',
-        content:
-            'Case #1042 for Omar Youssef has been marked as completed.',
-        type: 'treatment',
-        timestamp: now.subtract(const Duration(days: 2)).toIso8601String(),
-        isRead: true,
-      ),
-    ];
-    return _cachedNotifications!;
+  @override
+  Future<NotificationPageResponse> getNotifications({
+    int limit = defaultLimit,
+    String? before,
+  }) async {
+    final response = await _apiConsumer.get(
+      NotificationEndpoints.notifications,
+      queryParameters: {
+        'limit': limit,
+        if (before != null) 'before': before,
+      },
+    );
+
+    final meta = _meta(response);
+    return NotificationPageResponse(
+      notifications: _parseList(response['data']),
+      // null means "no more pages" — not an error.
+      nextCursor: meta['next_cursor'] as String?,
+      unreadCount: _asInt(meta['unread_count']),
+    );
   }
 
   @override
-  Future<List<NotificationModel>> getAllNotifications() async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.get(NotificationEndpoints.notifications);
-    // return (response as List)
-    //     .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
-    //     .toList();
+  Future<UnseenNotificationsResponse> getUnseen() async {
+    final response = await _apiConsumer.get(NotificationEndpoints.unseen);
 
-    await Future.delayed(const Duration(milliseconds: 800));
-    return _getMockNotifications();
+    final meta = _meta(response);
+    return UnseenNotificationsResponse(
+      notifications: _parseList(response['data']),
+      remaining: _asInt(meta['remaining']),
+      unreadCount: _asInt(meta['unread_count']),
+      // Obey the server's interval so it can be raised under load without
+      // shipping a new build. 30 only covers a malformed response.
+      pollAfter: _asInt(meta['poll_after'], fallback: 30),
+    );
   }
 
   @override
-  Future<NotificationModel> markAsRead(String id) async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.put(NotificationEndpoints.markAsRead(id));
-    // return NotificationModel.fromJson(response as Map<String, dynamic>);
+  Future<int> markSeen(List<String> ids) async {
+    if (ids.isEmpty) return 0;
 
-    await Future.delayed(const Duration(milliseconds: 300));
-    final notifications = _getMockNotifications();
-    final index = notifications.indexWhere((n) => n.id == id);
-    if (index != -1) {
-      _cachedNotifications![index] =
-          notifications[index].copyWith(isRead: true);
+    var marked = 0;
+    // The endpoint rejects more than 200 ids at once; chunk rather than drop.
+    for (var i = 0; i < ids.length; i += maxSeenIdsPerRequest) {
+      final chunk = ids.sublist(
+        i,
+        (i + maxSeenIdsPerRequest).clamp(0, ids.length),
+      );
+      final response = await _apiConsumer.post(
+        NotificationEndpoints.seen,
+        body: {'ids': chunk},
+      );
+      marked += _asInt(_data(response)['marked']);
     }
-    return _cachedNotifications![index];
+    return marked;
   }
 
   @override
-  Future<List<NotificationModel>> markAllAsRead() async {
-    // TODO: Replace with real API call when backend is ready
-    // final response = await _apiConsumer.put(NotificationEndpoints.markAllAsRead);
-    // return (response as List)
-    //     .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
-    //     .toList();
+  Future<int> markAsRead(String id) async {
+    final response =
+        await _apiConsumer.post(NotificationEndpoints.markAsRead(id));
+    return _asInt(_data(response)['unread_count']);
+  }
 
-    await Future.delayed(const Duration(milliseconds: 500));
-    _cachedNotifications =
-        _getMockNotifications().map((n) => n.copyWith(isRead: true)).toList();
-    return _cachedNotifications!;
+  @override
+  Future<int> markAsUnread(String id) async {
+    final response =
+        await _apiConsumer.post(NotificationEndpoints.markAsUnread(id));
+    return _asInt(_data(response)['unread_count']);
+  }
+
+  @override
+  Future<int> markAllAsRead() async {
+    final response = await _apiConsumer.post(NotificationEndpoints.readAll);
+    return _asInt(_data(response)['unread_count']);
+  }
+
+  @override
+  Future<int> getUnreadCount() async {
+    final response = await _apiConsumer.get(NotificationEndpoints.unreadCount);
+    return _asInt(_data(response)['unread_count']);
+  }
+
+  // ── envelope helpers ──────────────────────────────────────────────────
+
+  List<NotificationModel> _parseList(dynamic data) {
+    if (data is! List) return const [];
+    return data
+        .whereType<Map>()
+        .map((e) => NotificationModel.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  /// `meta` is `null` on several endpoints — never index it blind.
+  Map<String, dynamic> _meta(dynamic response) {
+    final meta = response is Map ? response['meta'] : null;
+    return meta is Map ? Map<String, dynamic>.from(meta) : const {};
+  }
+
+  Map<String, dynamic> _data(dynamic response) {
+    final data = response is Map ? response['data'] : null;
+    return data is Map ? Map<String, dynamic>.from(data) : const {};
+  }
+
+  int _asInt(dynamic value, {int fallback = 0}) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? fallback;
+    return fallback;
   }
 }

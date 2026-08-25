@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/core/services/notifications/notification_topics_synchronizer.dart';
 import 'language_service.dart';
 
 abstract class LanguageEvent {
@@ -38,9 +39,14 @@ class LanguageChangedState extends LanguageState {
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   final LanguageService languageService;
   final ApiConsumer _apiConsumer;
+  final NotificationTopicsSynchronizer _topicsSynchronizer;
 
-  LanguageBloc({required this.languageService, required ApiConsumer apiConsumer})
-      : _apiConsumer = apiConsumer,
+  LanguageBloc({
+    required this.languageService,
+    required ApiConsumer apiConsumer,
+    required NotificationTopicsSynchronizer topicsSynchronizer,
+  })  : _apiConsumer = apiConsumer,
+        _topicsSynchronizer = topicsSynchronizer,
         super(const LanguageInitialState()) {
     on<LoadLanguageEvent>(_onLoadLanguage);
     on<ChangeLanguageEvent>(_onChangeLanguage);
@@ -71,7 +77,14 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
     final locale = Locale(event.languageCode);
     emit(LanguageChangedState(locale));
 
-    // Notify backend (fire-and-forget)
+    // Tell the backend, then re-derive the topics from the new locale.
+    //
+    // Both halves matter. A push carries no request behind it, so the server
+    // picks its language from the *stored* preference - skip the first call
+    // and notifications keep arriving in the old language forever. And the
+    // broadcast audience is per-language (`announcement_ar` vs
+    // `announcement_en`), so skip the second and the subscription stays on the
+    // old topic, which nothing will ever publish to again.
     try {
       await _apiConsumer.post(
         '/users/update-current-language',
@@ -80,5 +93,9 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
     } catch (e) {
       debugPrint('[LanguageBloc] Failed to update language on server: $e');
     }
+
+    // Re-fetches the settings, so the audiences come back in the new locale;
+    // the synchronizer unsubscribes whichever name just dropped off the list.
+    await _topicsSynchronizer.sync();
   }
 }

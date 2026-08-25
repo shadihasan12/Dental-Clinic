@@ -46,7 +46,10 @@ class ClinicInfoRepositoryImpl implements ClinicInfoRepository {
     required String countryCode,
   }) async {
     try {
-      final models = await _remoteDataSource.searchLocations(query, countryCode);
+      final models = await _remoteDataSource.searchLocations(
+        query,
+        countryCode,
+      );
       return Right(models.map((m) => m.toEntity()).toList());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));

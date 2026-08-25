@@ -25,7 +25,9 @@ abstract class ThemeState {
 }
 
 class ThemeInitialState extends ThemeState {
-  const ThemeInitialState() : super(ThemeMode.light);
+  // Matches ThemeService's fallback, so the frames rendered before
+  // LoadThemeEvent resolves do not flash the wrong brightness.
+  const ThemeInitialState() : super(ThemeMode.system);
 }
 
 class ThemeLoadedState extends ThemeState {

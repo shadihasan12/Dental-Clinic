@@ -6,18 +6,18 @@
     "configurations": [
 
         {
-            "name": "SmylOS-Pro",
+            "name": "Denta",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "SmylOS-Pro (profile mode)",
+            "name": "Denta (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "SmylOS-Pro (release mode)",
+            "name": "Denta (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

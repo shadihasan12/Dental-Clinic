@@ -1,10 +1,16 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 
-/// Styled text field for auth pages with label, validation, and optional suffix
-class AuthTextField extends StatelessWidget {
+/// Text field for the auth pages.
+///
+/// Wears the shared form-kit shell - same 12r radius, hairline, focus and
+/// error hues, label scale and type size as every field on Add Patient - so
+/// signing up and adding a record feel like the same product. It keeps
+/// [TextFormField] because the auth pages validate through a [Form].
+class AuthTextField extends StatefulWidget {
   const AuthTextField({
     super.key,
     required this.label,
@@ -18,6 +24,7 @@ class AuthTextField extends StatelessWidget {
     this.onChanged,
     this.enabled = true,
     this.textDirection,
+    this.required = false,
   });
 
   final String label;
@@ -31,75 +38,106 @@ class AuthTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool enabled;
   final TextDirection? textDirection;
+  final bool required;
+
+  @override
+  State<AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<AuthTextField> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: c.textPrimary,
-            fontWeight: FontWeight.w500,
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 12.sp
+    final family = FontHelper.fontFamily(context);
+
+    return FormFieldShell(
+      label: widget.label,
+      required: widget.required,
+      child: TextFormField(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        keyboardType: widget.keyboardType,
+        obscureText: widget.obscureText,
+        validator: widget.validator,
+        onChanged: widget.onChanged,
+        enabled: widget.enabled,
+        textDirection: widget.textDirection,
+        style: TextStyle(
+          color: c.textPrimary,
+          fontFamily: family,
+          fontSize: 13.sp,
+        ),
+        decoration: InputDecoration(
+          hintText: widget.hint,
+          hintStyle: TextStyle(
+            color: c.textTertiary,
+            fontFamily: family,
+            fontSize: 13.sp,
+          ),
+          errorStyle: TextStyle(
+            fontSize: 11.sp,
+            height: 1.3,
+            fontFamily: family,
+            color: ColorManager.error,
+          ),
+          prefixIcon: widget.prefixIcon != null
+              ? Icon(widget.prefixIcon, color: c.textTertiary, size: 18.w)
+              : null,
+          prefixIconConstraints: BoxConstraints(
+            minWidth: 38.w,
+            minHeight: 0,
+          ),
+          // Use `suffixIcon` (not `suffix`) so the widget sits in its own
+          // slot, and tighten `suffixIconConstraints` so the default 48 dp
+          // `kMinInteractiveDimension` doesn't inflate the row past the
+          // height of fields without a suffix.
+          suffixIcon: widget.suffixIcon,
+          suffixIconConstraints: BoxConstraints(
+            minWidth: 36.w,
+            minHeight: 0,
+          ),
+          filled: true,
+          fillColor: c.inputBg,
+          isDense: true,
+          border: _border(BorderSide(color: c.borderLight)),
+          enabledBorder: _border(BorderSide(color: c.borderLight)),
+          disabledBorder: _border(BorderSide(color: c.borderLight)),
+          focusedBorder: _border(
+            const BorderSide(color: ColorManager.primary, width: 1.5),
+          ),
+          errorBorder: _border(
+            const BorderSide(color: ColorManager.error, width: 1.5),
+          ),
+          focusedErrorBorder: _border(
+            const BorderSide(color: ColorManager.error, width: 1.5),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: 12.h,
           ),
         ),
-        SizedBox(height: 8.h),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          validator: validator,
-          onChanged: onChanged,
-          enabled: enabled,
-          textDirection: textDirection,
-          style: TextStyle(
-            color: c.textPrimary,
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 14.sp
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: c.textTertiary,
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 12.sp
-            ),
-            errorStyle: TextStyle(
-              fontSize: 10.sp,
-              fontFamily: FontHelper.fontFamily(context)
-            ),
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: c.textTertiary, size: 20.w)
-                : null,
-            suffix: suffixIcon,
-            filled: true,
-            fillColor: c.inputBg,
-            border: _buildBorder(BorderSide.none),
-            enabledBorder: _buildBorder(BorderSide.none),
-            focusedBorder: _buildBorder(
-              const BorderSide(color: ColorManager.primary, width: 1.5),
-            ),
-            errorBorder: _buildBorder(
-              const BorderSide(color: ColorManager.error, width: 1),
-            ),
-            focusedErrorBorder: _buildBorder(
-              const BorderSide(color: ColorManager.error, width: 1.5),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  OutlineInputBorder _buildBorder(BorderSide side) {
+  OutlineInputBorder _border(BorderSide side) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.r),
       borderSide: side,

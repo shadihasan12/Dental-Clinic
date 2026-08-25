@@ -1,4 +1,7 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 part 'patient_entity.freezed.dart';
 
@@ -22,6 +25,8 @@ class PatientEntity with _$PatientEntity {
     String? avatarUrl,
     String? nextVisit,
     @Default(0) double balance,
+    DateTime? createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _PatientEntity;
 }
 
@@ -37,6 +42,8 @@ class CaseEntity with _$CaseEntity {
     required double paidAmount,
     required double pendingAmount,
     @Default([]) List<VisitEntity> visits,
+    DateTime? createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _CaseEntity;
 }
 
@@ -49,6 +56,8 @@ class VisitEntity with _$VisitEntity {
     @Default([]) List<int> teethTreated,
     required String summary,
     @Default([]) List<String> attachments,
+    DateTime? createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _VisitEntity;
 }
 

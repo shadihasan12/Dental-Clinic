@@ -1,4 +1,7 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:flutter/material.dart';
+
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 
 /// Treatment types available in the clinic
 enum TreatmentType {
@@ -31,6 +34,7 @@ class TreatmentItem {
   final bool isDone;
   /// Raw notes from the API: [{note: '...', date: '2026-03-12'}, ...]
   final List<Map<String, String>> notes;
+  final List<AuditEntry> audits;
 
   const TreatmentItem({
     required this.id,
@@ -42,6 +46,7 @@ class TreatmentItem {
     this.completedAt,
     this.isDone = false,
     this.notes = const [],
+    this.audits = const [],
   });
 
   TreatmentItem copyWith({
@@ -54,6 +59,7 @@ class TreatmentItem {
     DateTime? completedAt,
     bool? isDone,
     List<Map<String, String>>? notes,
+    List<AuditEntry>? audits,
   }) {
     return TreatmentItem(
       id: id ?? this.id,
@@ -65,6 +71,7 @@ class TreatmentItem {
       completedAt: completedAt ?? this.completedAt,
       isDone: isDone ?? this.isDone,
       notes: notes ?? this.notes,
+      audits: audits ?? this.audits,
     );
   }
 }
@@ -88,6 +95,13 @@ class DentalCase {
   final String? labFeesCurrencyId;
   final List<TreatmentItem> treatmentItems;
 
+  /// Case-level media ids returned by the API. Uploads go through
+  /// MediaService (/media-items) and the resulting ids are persisted back
+  /// onto the case, so this is a list of ids, not URLs.
+  final List<String> attachments;
+  final DateTime? createdAt;
+  final List<AuditEntry> audits;
+
   const DentalCase({
     required this.id,
     required this.patientId,
@@ -99,12 +113,15 @@ class DentalCase {
     required this.totalCost,
     this.labFees = 0,
     required this.paidAmount,
+    this.attachments = const [],
     required this.pendingAmount,
     this.totalCostCurrencyId,
     this.totalCostCurrencyCode,
     this.totalCostCurrencyName,
     this.labFeesCurrencyId,
     this.treatmentItems = const [],
+    this.createdAt,
+    this.audits = const [],
   });
 
   factory DentalCase.fromJson(Map<String, dynamic> json, {String patientName = ''}) {
@@ -125,7 +142,33 @@ class DentalCase {
       totalCostCurrencyCode: _parseCurrencyField(json, 'total_cost_currency', 'currency_code'),
       totalCostCurrencyName: _parseCurrencyField(json, 'total_cost_currency', 'currency_name'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
+      attachments: _parseAttachments(json['attachments']),
+      createdAt: _parseNullableDate(json['created_at']),
+      audits: AuditEntry.listFromJson(json['audits']),
     );
+  }
+
+  /// The API has sent attachments as bare id strings and, in some payloads,
+  /// as media objects. Accept both so a shape change does not blank the
+  /// Files section.
+  static List<String> _parseAttachments(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map((e) {
+          if (e is String) return e;
+          if (e is Map<String, dynamic>) {
+            return (e['id'] ?? e['media_id'] ?? e['url'])?.toString();
+          }
+          return null;
+        })
+        .whereType<String>()
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
+  static DateTime? _parseNullableDate(dynamic value) {
+    if (value == null) return null;
+    return DateTime.tryParse(value.toString());
   }
 
   static String? _parseCurrencyId(Map<String, dynamic> json, String key) {
@@ -187,6 +230,7 @@ class DentalCase {
     String? totalCostCurrencyId,
     String? labFeesCurrencyId,
     List<TreatmentItem>? treatmentItems,
+    List<String>? attachments,
   }) {
     return DentalCase(
       id: id ?? this.id,
@@ -203,6 +247,7 @@ class DentalCase {
       totalCostCurrencyId: totalCostCurrencyId ?? this.totalCostCurrencyId,
       labFeesCurrencyId: labFeesCurrencyId ?? this.labFeesCurrencyId,
       treatmentItems: treatmentItems ?? this.treatmentItems,
+      attachments: attachments ?? this.attachments,
     );
   }
 }

@@ -338,6 +338,7 @@ mixin _$ExpenseEntity {
   ExpenseCategoryEntity get category => throw _privateConstructorUsedError;
   List<AttachmentEntity> get attachments => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of ExpenseEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -362,6 +363,7 @@ abstract class $ExpenseEntityCopyWith<$Res> {
     ExpenseCategoryEntity category,
     List<AttachmentEntity> attachments,
     String createdAt,
+    List<AuditEntry> audits,
   });
 
   $CurrencyEntityCopyWith<$Res> get currency;
@@ -391,6 +393,7 @@ class _$ExpenseEntityCopyWithImpl<$Res, $Val extends ExpenseEntity>
     Object? category = null,
     Object? attachments = null,
     Object? createdAt = null,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -426,6 +429,10 @@ class _$ExpenseEntityCopyWithImpl<$Res, $Val extends ExpenseEntity>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as String,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -470,6 +477,7 @@ abstract class _$$ExpenseEntityImplCopyWith<$Res>
     ExpenseCategoryEntity category,
     List<AttachmentEntity> attachments,
     String createdAt,
+    List<AuditEntry> audits,
   });
 
   @override
@@ -500,6 +508,7 @@ class __$$ExpenseEntityImplCopyWithImpl<$Res>
     Object? category = null,
     Object? attachments = null,
     Object? createdAt = null,
+    Object? audits = null,
   }) {
     return _then(
       _$ExpenseEntityImpl(
@@ -535,6 +544,10 @@ class __$$ExpenseEntityImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as String,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -552,7 +565,9 @@ class _$ExpenseEntityImpl implements _ExpenseEntity {
     required this.category,
     final List<AttachmentEntity> attachments = const [],
     this.createdAt = '',
-  }) : _attachments = attachments;
+    final List<AuditEntry> audits = const [],
+  }) : _attachments = attachments,
+       _audits = audits;
 
   @override
   final String id;
@@ -579,10 +594,18 @@ class _$ExpenseEntityImpl implements _ExpenseEntity {
   @override
   @JsonKey()
   final String createdAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
 
   @override
   String toString() {
-    return 'ExpenseEntity(id: $id, amount: $amount, currency: $currency, entryDate: $entryDate, notes: $notes, category: $category, attachments: $attachments, createdAt: $createdAt)';
+    return 'ExpenseEntity(id: $id, amount: $amount, currency: $currency, entryDate: $entryDate, notes: $notes, category: $category, attachments: $attachments, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -604,7 +627,8 @@ class _$ExpenseEntityImpl implements _ExpenseEntity {
               _attachments,
             ) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -618,6 +642,7 @@ class _$ExpenseEntityImpl implements _ExpenseEntity {
     category,
     const DeepCollectionEquality().hash(_attachments),
     createdAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of ExpenseEntity
@@ -639,6 +664,7 @@ abstract class _ExpenseEntity implements ExpenseEntity {
     required final ExpenseCategoryEntity category,
     final List<AttachmentEntity> attachments,
     final String createdAt,
+    final List<AuditEntry> audits,
   }) = _$ExpenseEntityImpl;
 
   @override
@@ -657,6 +683,8 @@ abstract class _ExpenseEntity implements ExpenseEntity {
   List<AttachmentEntity> get attachments;
   @override
   String get createdAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of ExpenseEntity
   /// with the given fields replaced by the non-null parameter values.

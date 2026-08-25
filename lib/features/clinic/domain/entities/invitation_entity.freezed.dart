@@ -25,6 +25,11 @@ mixin _$InvitationEntity {
   ClinicRole get role => throw _privateConstructorUsedError;
   InvitationStatus get status => throw _privateConstructorUsedError;
   String get invitedByUserId => throw _privateConstructorUsedError;
+  List<ClinicRole> get roles => throw _privateConstructorUsedError;
+  String? get inviteeName =>
+      throw _privateConstructorUsedError; // Set on /sent — the invitee's full name
+  String? get inviteeImageUrl => throw _privateConstructorUsedError;
+  String? get inviteeSpecialty => throw _privateConstructorUsedError;
   String? get invitedByName =>
       throw _privateConstructorUsedError; // Denormalized for display
   String? get message =>
@@ -33,6 +38,7 @@ mixin _$InvitationEntity {
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get expiresAt => throw _privateConstructorUsedError;
   DateTime? get respondedAt => throw _privateConstructorUsedError;
+  List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
   /// Create a copy of InvitationEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -56,12 +62,17 @@ abstract class $InvitationEntityCopyWith<$Res> {
     ClinicRole role,
     InvitationStatus status,
     String invitedByUserId,
+    List<ClinicRole> roles,
+    String? inviteeName,
+    String? inviteeImageUrl,
+    String? inviteeSpecialty,
     String? invitedByName,
     String? message,
     String? clinicLogoUrl,
     DateTime? createdAt,
     DateTime? expiresAt,
     DateTime? respondedAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -87,12 +98,17 @@ class _$InvitationEntityCopyWithImpl<$Res, $Val extends InvitationEntity>
     Object? role = null,
     Object? status = null,
     Object? invitedByUserId = null,
+    Object? roles = null,
+    Object? inviteeName = freezed,
+    Object? inviteeImageUrl = freezed,
+    Object? inviteeSpecialty = freezed,
     Object? invitedByName = freezed,
     Object? message = freezed,
     Object? clinicLogoUrl = freezed,
     Object? createdAt = freezed,
     Object? expiresAt = freezed,
     Object? respondedAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _value.copyWith(
@@ -124,6 +140,22 @@ class _$InvitationEntityCopyWithImpl<$Res, $Val extends InvitationEntity>
                 ? _value.invitedByUserId
                 : invitedByUserId // ignore: cast_nullable_to_non_nullable
                       as String,
+            roles: null == roles
+                ? _value.roles
+                : roles // ignore: cast_nullable_to_non_nullable
+                      as List<ClinicRole>,
+            inviteeName: freezed == inviteeName
+                ? _value.inviteeName
+                : inviteeName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            inviteeImageUrl: freezed == inviteeImageUrl
+                ? _value.inviteeImageUrl
+                : inviteeImageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            inviteeSpecialty: freezed == inviteeSpecialty
+                ? _value.inviteeSpecialty
+                : inviteeSpecialty // ignore: cast_nullable_to_non_nullable
+                      as String?,
             invitedByName: freezed == invitedByName
                 ? _value.invitedByName
                 : invitedByName // ignore: cast_nullable_to_non_nullable
@@ -148,6 +180,10 @@ class _$InvitationEntityCopyWithImpl<$Res, $Val extends InvitationEntity>
                 ? _value.respondedAt
                 : respondedAt // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            audits: null == audits
+                ? _value.audits
+                : audits // ignore: cast_nullable_to_non_nullable
+                      as List<AuditEntry>,
           )
           as $Val,
     );
@@ -171,12 +207,17 @@ abstract class _$$InvitationEntityImplCopyWith<$Res>
     ClinicRole role,
     InvitationStatus status,
     String invitedByUserId,
+    List<ClinicRole> roles,
+    String? inviteeName,
+    String? inviteeImageUrl,
+    String? inviteeSpecialty,
     String? invitedByName,
     String? message,
     String? clinicLogoUrl,
     DateTime? createdAt,
     DateTime? expiresAt,
     DateTime? respondedAt,
+    List<AuditEntry> audits,
   });
 }
 
@@ -201,12 +242,17 @@ class __$$InvitationEntityImplCopyWithImpl<$Res>
     Object? role = null,
     Object? status = null,
     Object? invitedByUserId = null,
+    Object? roles = null,
+    Object? inviteeName = freezed,
+    Object? inviteeImageUrl = freezed,
+    Object? inviteeSpecialty = freezed,
     Object? invitedByName = freezed,
     Object? message = freezed,
     Object? clinicLogoUrl = freezed,
     Object? createdAt = freezed,
     Object? expiresAt = freezed,
     Object? respondedAt = freezed,
+    Object? audits = null,
   }) {
     return _then(
       _$InvitationEntityImpl(
@@ -238,6 +284,22 @@ class __$$InvitationEntityImplCopyWithImpl<$Res>
             ? _value.invitedByUserId
             : invitedByUserId // ignore: cast_nullable_to_non_nullable
                   as String,
+        roles: null == roles
+            ? _value._roles
+            : roles // ignore: cast_nullable_to_non_nullable
+                  as List<ClinicRole>,
+        inviteeName: freezed == inviteeName
+            ? _value.inviteeName
+            : inviteeName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        inviteeImageUrl: freezed == inviteeImageUrl
+            ? _value.inviteeImageUrl
+            : inviteeImageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        inviteeSpecialty: freezed == inviteeSpecialty
+            ? _value.inviteeSpecialty
+            : inviteeSpecialty // ignore: cast_nullable_to_non_nullable
+                  as String?,
         invitedByName: freezed == invitedByName
             ? _value.invitedByName
             : invitedByName // ignore: cast_nullable_to_non_nullable
@@ -262,6 +324,10 @@ class __$$InvitationEntityImplCopyWithImpl<$Res>
             ? _value.respondedAt
             : respondedAt // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        audits: null == audits
+            ? _value._audits
+            : audits // ignore: cast_nullable_to_non_nullable
+                  as List<AuditEntry>,
       ),
     );
   }
@@ -278,13 +344,19 @@ class _$InvitationEntityImpl implements _InvitationEntity {
     required this.role,
     required this.status,
     required this.invitedByUserId,
+    final List<ClinicRole> roles = const <ClinicRole>[],
+    this.inviteeName,
+    this.inviteeImageUrl,
+    this.inviteeSpecialty,
     this.invitedByName,
     this.message,
     this.clinicLogoUrl,
     this.createdAt,
     this.expiresAt,
     this.respondedAt,
-  });
+    final List<AuditEntry> audits = const [],
+  }) : _roles = roles,
+       _audits = audits;
 
   @override
   final String id;
@@ -301,6 +373,22 @@ class _$InvitationEntityImpl implements _InvitationEntity {
   final InvitationStatus status;
   @override
   final String invitedByUserId;
+  final List<ClinicRole> _roles;
+  @override
+  @JsonKey()
+  List<ClinicRole> get roles {
+    if (_roles is EqualUnmodifiableListView) return _roles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_roles);
+  }
+
+  @override
+  final String? inviteeName;
+  // Set on /sent — the invitee's full name
+  @override
+  final String? inviteeImageUrl;
+  @override
+  final String? inviteeSpecialty;
   @override
   final String? invitedByName;
   // Denormalized for display
@@ -315,10 +403,18 @@ class _$InvitationEntityImpl implements _InvitationEntity {
   final DateTime? expiresAt;
   @override
   final DateTime? respondedAt;
+  final List<AuditEntry> _audits;
+  @override
+  @JsonKey()
+  List<AuditEntry> get audits {
+    if (_audits is EqualUnmodifiableListView) return _audits;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_audits);
+  }
 
   @override
   String toString() {
-    return 'InvitationEntity(id: $id, clinicId: $clinicId, clinicName: $clinicName, inviteeEmail: $inviteeEmail, role: $role, status: $status, invitedByUserId: $invitedByUserId, invitedByName: $invitedByName, message: $message, clinicLogoUrl: $clinicLogoUrl, createdAt: $createdAt, expiresAt: $expiresAt, respondedAt: $respondedAt)';
+    return 'InvitationEntity(id: $id, clinicId: $clinicId, clinicName: $clinicName, inviteeEmail: $inviteeEmail, role: $role, status: $status, invitedByUserId: $invitedByUserId, roles: $roles, inviteeName: $inviteeName, inviteeImageUrl: $inviteeImageUrl, inviteeSpecialty: $inviteeSpecialty, invitedByName: $invitedByName, message: $message, clinicLogoUrl: $clinicLogoUrl, createdAt: $createdAt, expiresAt: $expiresAt, respondedAt: $respondedAt, audits: $audits)';
   }
 
   @override
@@ -337,6 +433,13 @@ class _$InvitationEntityImpl implements _InvitationEntity {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.invitedByUserId, invitedByUserId) ||
                 other.invitedByUserId == invitedByUserId) &&
+            const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.inviteeName, inviteeName) ||
+                other.inviteeName == inviteeName) &&
+            (identical(other.inviteeImageUrl, inviteeImageUrl) ||
+                other.inviteeImageUrl == inviteeImageUrl) &&
+            (identical(other.inviteeSpecialty, inviteeSpecialty) ||
+                other.inviteeSpecialty == inviteeSpecialty) &&
             (identical(other.invitedByName, invitedByName) ||
                 other.invitedByName == invitedByName) &&
             (identical(other.message, message) || other.message == message) &&
@@ -347,7 +450,8 @@ class _$InvitationEntityImpl implements _InvitationEntity {
             (identical(other.expiresAt, expiresAt) ||
                 other.expiresAt == expiresAt) &&
             (identical(other.respondedAt, respondedAt) ||
-                other.respondedAt == respondedAt));
+                other.respondedAt == respondedAt) &&
+            const DeepCollectionEquality().equals(other._audits, _audits));
   }
 
   @override
@@ -360,12 +464,17 @@ class _$InvitationEntityImpl implements _InvitationEntity {
     role,
     status,
     invitedByUserId,
+    const DeepCollectionEquality().hash(_roles),
+    inviteeName,
+    inviteeImageUrl,
+    inviteeSpecialty,
     invitedByName,
     message,
     clinicLogoUrl,
     createdAt,
     expiresAt,
     respondedAt,
+    const DeepCollectionEquality().hash(_audits),
   );
 
   /// Create a copy of InvitationEntity
@@ -389,12 +498,17 @@ abstract class _InvitationEntity implements InvitationEntity {
     required final ClinicRole role,
     required final InvitationStatus status,
     required final String invitedByUserId,
+    final List<ClinicRole> roles,
+    final String? inviteeName,
+    final String? inviteeImageUrl,
+    final String? inviteeSpecialty,
     final String? invitedByName,
     final String? message,
     final String? clinicLogoUrl,
     final DateTime? createdAt,
     final DateTime? expiresAt,
     final DateTime? respondedAt,
+    final List<AuditEntry> audits,
   }) = _$InvitationEntityImpl;
 
   @override
@@ -412,6 +526,14 @@ abstract class _InvitationEntity implements InvitationEntity {
   @override
   String get invitedByUserId;
   @override
+  List<ClinicRole> get roles;
+  @override
+  String? get inviteeName; // Set on /sent — the invitee's full name
+  @override
+  String? get inviteeImageUrl;
+  @override
+  String? get inviteeSpecialty;
+  @override
   String? get invitedByName; // Denormalized for display
   @override
   String? get message; // Optional personal message
@@ -423,6 +545,8 @@ abstract class _InvitationEntity implements InvitationEntity {
   DateTime? get expiresAt;
   @override
   DateTime? get respondedAt;
+  @override
+  List<AuditEntry> get audits;
 
   /// Create a copy of InvitationEntity
   /// with the given fields replaced by the non-null parameter values.

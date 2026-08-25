@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:dental_clinic_app/services/currency/currency_entity.dart';
 
+export 'package:dental_clinic_app/core/models/audit_entry.dart';
 export 'package:dental_clinic_app/services/currency/currency_entity.dart';
 
 part 'expense_entity.freezed.dart';
@@ -32,6 +34,7 @@ class ExpenseEntity with _$ExpenseEntity {
     required ExpenseCategoryEntity category,
     @Default([]) List<AttachmentEntity> attachments,
     @Default('') String createdAt,
+    @Default([]) List<AuditEntry> audits,
   }) = _ExpenseEntity;
 }
 

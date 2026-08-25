@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
@@ -71,7 +72,12 @@ class TreatmentDetailPopup extends StatelessWidget {
           // Content
           Flexible(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(20.w),
+              padding: EdgeInsets.fromLTRB(
+                20.w,
+                20.w,
+                20.w,
+                dockedBottomPadding(context, 20.w),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

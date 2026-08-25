@@ -65,6 +65,7 @@ class DioConsumer implements ApiConsumer {
   Future get(
     String path, {
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? body,
     Map<String, dynamic>? headers,
     CancelToken? cancelToken,
   }) async {
@@ -72,6 +73,7 @@ class DioConsumer implements ApiConsumer {
       final Response response = await _client.get(
         path,
         queryParameters: queryParameters,
+        data: body,
         cancelToken: cancelToken,
         options: headers != null ? Options(headers: headers) : null,
       );

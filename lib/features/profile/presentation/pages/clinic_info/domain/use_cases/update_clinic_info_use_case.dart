@@ -6,7 +6,8 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 import 'package:injectable/injectable.dart';
 
 @injectable
-class UpdateClinicInfoUseCase extends UseCase<ClinicInfoEntity, ClinicInfoEntity> {
+class UpdateClinicInfoUseCase
+    extends UseCase<ClinicInfoEntity, ClinicInfoEntity> {
   final ClinicInfoRepository _repository;
 
   UpdateClinicInfoUseCase(this._repository);

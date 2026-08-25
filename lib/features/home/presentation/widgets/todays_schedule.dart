@@ -1,190 +1,145 @@
 import 'package:dental_clinic_app/core/resources/resources.dart';
+import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_list_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AppointmentData {
-  final String initials;
-  final String name;
-  final String treatment;
-  final String time;
-  final String status;
-  final Color statusColor;
-
-  const AppointmentData({
-    required this.initials,
-    required this.name,
-    required this.treatment,
-    required this.time,
-    required this.status,
-    required this.statusColor,
-  });
-}
-
+/// The first thing on the home screen: what the day actually looks like.
+///
+/// Rows are [AppointmentListCard], the same card the appointments screen
+/// uses, so a row means the same thing in both places. All three list states
+/// - skeleton, empty, error - are designed rather than improvised, and the
+/// skeleton keeps the final card height so nothing jumps.
 class TodaysSchedule extends StatelessWidget {
-  const TodaysSchedule({super.key, this.onViewAllTap});
+  const TodaysSchedule({
+    super.key,
+    required this.appointments,
+    this.totalCount,
+    this.isLoading = false,
+    this.error,
+    this.onViewAllTap,
+    this.onNewAppointment,
+    this.onRetry,
+  });
 
+  final List<AppointmentEntity> appointments;
+
+  /// Full count for the day; [appointments] may be truncated for the home
+  /// screen, so the header still reports the real number.
+  final int? totalCount;
+  final bool isLoading;
+  final String? error;
   final VoidCallback? onViewAllTap;
-
-  List<AppointmentData> get _appointments => const [
-        AppointmentData(
-          initials: 'SJ',
-          name: 'Sarah Johnson',
-          treatment: 'Cleaning',
-          time: '09:00 AM',
-          status: 'Done',
-          statusColor: Color(0xFF22C55E),
-        ),
-        AppointmentData(
-          initials: 'MC',
-          name: 'Michael Chen',
-          treatment: 'Root Canal',
-          time: '10:30 AM',
-          status: 'Done',
-          statusColor: Color(0xFF22C55E),
-        ),
-        AppointmentData(
-          initials: 'ED',
-          name: 'Emily Davis',
-          treatment: 'Check-up',
-          time: '11:45 AM',
-          status: 'Now',
-          statusColor: Color(0xFF3B82F6),
-        ),
-        AppointmentData(
-          initials: 'JW',
-          name: 'James Wilson',
-          treatment: 'Filling',
-          time: '02:00 PM',
-          status: 'Next',
-          statusColor: Color(0xFFF97316),
-        ),
-      ];
+  final VoidCallback? onNewAppointment;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
-    var localizations = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
+    final count = totalCount ?? appointments.length;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              localizations.todaysSchedule,
+              l10n.todaysSchedule,
               style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 15.sp,
+                fontFamily: family,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w600,
-                color: ColorManager.of(context).textTertiary,
+                color: c.textPrimary,
               ),
             ),
-            GestureDetector(
-              onTap: onViewAllTap,
-              child: Text(
-                localizations.viewAll,
-                style: TextStyle(
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  color: ColorManager.primary,
+            if (!isLoading && error == null && count > 0) ...[
+              SizedBox(width: 6.w),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6.r),
+                ),
+                child: Text(
+                  '$count',
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                    color: ColorManager.primaryDarker,
+                  ),
                 ),
               ),
-            ),
+            ],
+            const Spacer(),
+            if (appointments.isNotEmpty)
+              GestureDetector(
+                onTap: onViewAllTap,
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                  child: Text(
+                    l10n.viewAll,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: ColorManager.primaryDarker,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
-        SizedBox(height: 12.h),
-
-        // Appointments list
-        ..._appointments.asMap().entries.map((entry) {
-          final data = entry.value;
-          final isLast = entry.key == _appointments.length - 1;
-          return Column(
-            children: [
-              _AppointmentRow(data: data),
-              if (!isLast) Divider(height: 1, color: Colors.grey.shade100),
-            ],
-          );
-        }),
+        SizedBox(height: 10.h),
+        _buildBody(context, l10n),
       ],
     );
   }
-}
 
-class _AppointmentRow extends StatelessWidget {
-  const _AppointmentRow({required this.data});
-
-  final AppointmentData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
+  Widget _buildBody(BuildContext context, AppLocalizations l10n) {
+    if (isLoading) {
+      return Column(
         children: [
-          // Time
-          SizedBox(
-            width: 65.w,
-            child: Text(
-              data.time,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                color: Colors.black45,
-              ),
-            ),
-          ),
-
-          
-          SizedBox(width: 10.w),
-
-          // Name + treatment
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.name,
-                  style: TextStyle(
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  data.treatment,
-                  style: TextStyle(
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 12.sp,
-                    color: ColorManager.of(context).textTertiary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Status badge
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: data.statusColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Text(
-              data.status,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w600,
-                color: data.statusColor,
-              ),
-            ),
-          ),
+          for (var i = 0; i < 3; i++) ...[
+            if (i > 0) SizedBox(height: 8.h),
+            const AppointmentCardSkeleton(),
+          ],
         ],
-      ),
+      );
+    }
+    if (error != null) {
+      return StateCard(
+        icon: Icons.cloud_off_rounded,
+        tone: ColorManager.error,
+        title: l10n.scheduleLoadFailed,
+        message: error,
+        detail: l10n.scheduleUnchangedHint,
+        actionLabel: l10n.retry,
+        onAction: onRetry,
+      );
+    }
+    if (appointments.isEmpty) {
+      return StateCard(
+        icon: Icons.calendar_today_outlined,
+        title: l10n.noAppointmentsToday,
+        message: l10n.noAppointmentsTodayHint,
+        actionLabel: '+ ${l10n.newAppointment}',
+        onAction: onNewAppointment,
+      );
+    }
+    return Column(
+      children: [
+        for (var i = 0; i < appointments.length; i++) ...[
+          if (i > 0) SizedBox(height: 8.h),
+          AppointmentListCard(appointment: appointments[i]),
+        ],
+      ],
     );
   }
 }

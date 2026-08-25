@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Adaptive launcher icon (Android 8+). The launcher masks these layers into
+    whatever shape the OEM uses, so the foreground artwork sits on the 56dp
+    square keyline of its 108dp canvas - well inside the 66dp safe zone, which
+    keeps a white margin visible under circle and squircle masks alike.
+
+    monochrome drives the Android 13+ "themed icon" - it is tinted by the
+    system using only its alpha, so it ships as a white silhouette with the
+    tooth knocked out rather than the full-colour mark.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_monochrome" />
+</adaptive-icon>

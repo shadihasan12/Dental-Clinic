@@ -319,7 +319,8 @@ class _ActiveSubscriptionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (subscription.planTier != PlanTier.advanced) ...[
+              if (subscription.planTier != PlanTier.practice &&
+                  subscription.planTier != PlanTier.custom) ...[
                 SizedBox(width: 10.w),
                 Expanded(
                   child: GestureDetector(
@@ -356,12 +357,16 @@ class _ActiveSubscriptionCard extends StatelessWidget {
     switch (tier) {
       case PlanTier.trial:
         return 'Trial';
-      case PlanTier.starter:
-        return 'Starter';
-      case PlanTier.growing:
-        return 'Growing';
-      case PlanTier.advanced:
-        return 'Advanced';
+      case PlanTier.solo:
+        return 'Solo';
+      case PlanTier.duo:
+        return 'Duo';
+      case PlanTier.clinic:
+        return 'Clinic';
+      case PlanTier.practice:
+        return 'Practice';
+      case PlanTier.custom:
+        return 'Custom';
     }
   }
 

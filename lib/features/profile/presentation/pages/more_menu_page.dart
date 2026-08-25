@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/constants/legal_urls.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
-import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
+import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
+import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
+import 'package:dental_clinic_app/features/profile/presentation/widgets/legal_links.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/theme_settings_dialog.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
@@ -51,17 +55,6 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Responsive.isDesktop(context)) {
-      return _buildDesktop(context);
-    }
-    return _buildMobile(context);
-  }
-
-  // ═════════════════════════════════════════════════════════════════════
-  // MOBILE
-  // ═════════════════════════════════════════════════════════════════════
-
-  Widget _buildMobile(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final userStorage = getIt<UserStorage>();
     final fullName = userStorage.getUserName() ?? '';
@@ -70,42 +63,114 @@ class _MenuPageState extends State<MenuPage> {
     final c = ColorManager.of(context);
     return Scaffold(
       backgroundColor: c.scaffoldBg,
+      appBar: PageHeader(title: l10n.settings, onBack: () => context.pop()),
       body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          14.w,
+          12.h,
+          14.w,
+          24.h + MediaQuery.viewPaddingOf(context).bottom,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // — Profile header
             _buildProfileHeader(context, fullName, profileImageUrl),
-            Divider(height: 1, color: c.divider),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 18.h),
 
                   // — Account Settings
                   _sectionLabel(context, l10n.accountSettings),
-                  SizedBox(height: 10.h),
-                  _buildMenuGroup(context, _accountItems(context, l10n)),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 8.h),
+                  _buildMenuGroup(
+                    context,
+                    _buildAccountItems(
+                      context,
+                      l10n,
+                      isAdmin: getIt<UserStorage>().isAdmin,
+                    ),
+                  ),
+                  SizedBox(height: 18.h),
 
                   // — App Settings
                   _sectionLabel(context, l10n.appSettings),
-                  SizedBox(height: 10.h),
-                  _buildMenuGroup(context, _appSettingsItems(context, l10n)),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 8.h),
+                  _buildMenuGroup(context, [
+                    MenuItem(
+                      icon: Icons.color_lens_outlined,
+                      title: l10n.appearance,
+                      subtitle: _getThemeLabel(l10n),
+                      onTap: () => showThemeSettingsDialog(context),
+                    ),
+                    MenuItem(
+                      icon: Icons.language_outlined,
+                      title: l10n.language,
+                      subtitle:
+                          context
+                                  .read<LanguageBloc>()
+                                  .state
+                                  .locale
+                                  .languageCode ==
+                              'ar'
+                          ? l10n.arabic
+                          : l10n.english,
+                      onTap: () => showLanguageSettingsDialog(context),
+                    ),
+                  ]),
+                  SizedBox(height: 18.h),
 
                   // — Support
                   _sectionLabel(context, l10n.support),
-                  SizedBox(height: 10.h),
-                  _buildMenuGroup(context, _supportItems(context, l10n)),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 8.h),
+                  _buildMenuGroup(context, [
+                    // TODO: Add help center page and uncomment this
+                    // MenuItem(
+                    //   icon: Icons.help_outline,
+                    //   title: l10n.helpCenter,
+                    //   onTap: () {
+                    //   },
+                    // ),
+                    MenuItem(
+                      icon: Icons.report_problem_outlined,
+                      title: l10n.reportIssue,
+                      onTap: () {
+                        context.pushNamed(AppRoutesNames.reportIssue);
+                      },
+                    ),
+                  ]),
+                  SizedBox(height: 18.h),
+
+                  // — Legal
+                  // Both stores require these to be reachable from inside the
+                  // app, not just from the store listing.
+                  _sectionLabel(context, l10n.legal),
+                  SizedBox(height: 8.h),
+                  _buildMenuGroup(context, [
+                    MenuItem(
+                      icon: Icons.privacy_tip_outlined,
+                      title: l10n.privacyPolicy,
+                      trailing: _externalLinkIcon(context),
+                      onTap: () =>
+                          openLegalUrl(context, LegalUrls.privacyPolicy),
+                    ),
+                    MenuItem(
+                      icon: Icons.description_outlined,
+                      title: l10n.termsOfService,
+                      trailing: _externalLinkIcon(context),
+                      onTap: () =>
+                          openLegalUrl(context, LegalUrls.termsOfService),
+                    ),
+                  ]),
+                  SizedBox(height: 18.h),
 
                   // — Logout
                   _buildLogoutRow(context, l10n),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 24.h),
 
                   // — Version
                   Center(
@@ -113,12 +178,12 @@ class _MenuPageState extends State<MenuPage> {
                       '${l10n.version} 1.0.0',
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
                         color: ColorManager.of(context).textSubtle,
                       ),
                     ),
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 18.h),
                 ],
               ),
             ),
@@ -128,420 +193,21 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // ═════════════════════════════════════════════════════════════════════
-  // DESKTOP
-  // ═════════════════════════════════════════════════════════════════════
-
-  Widget _buildDesktop(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final c = ColorManager.of(context);
-    final userStorage = getIt<UserStorage>();
-    final fullName = userStorage.getUserName() ?? '';
-    final profileImageUrl = userStorage.getProfileImageUrl();
-
-    return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDesktopProfileHero(context, fullName, profileImageUrl),
-                const SizedBox(height: 24),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left column: Account Settings (wider)
-                    Expanded(
-                      flex: 3,
-                      child: _buildDesktopSectionCard(
-                        context: context,
-                        icon: Icons.manage_accounts_outlined,
-                        title: l10n.accountSettings,
-                        items: _accountItems(context, l10n),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    // Right column: App Settings + Support + Logout + Version
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildDesktopSectionCard(
-                            context: context,
-                            icon: Icons.tune_outlined,
-                            title: l10n.appSettings,
-                            items: _appSettingsItems(context, l10n),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildDesktopSectionCard(
-                            context: context,
-                            icon: Icons.support_agent_outlined,
-                            title: l10n.support,
-                            items: _supportItems(context, l10n),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildDesktopLogoutCard(context, l10n),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: Text(
-                              '${l10n.version} 1.0.0',
-                              style: TextStyle(
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontSize: 12,
-                                color: c.textSubtle,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ─── Desktop: Profile Hero ──────────────────────────────────────────────
-
-  Widget _buildDesktopProfileHero(
+  /// Builds the Account-Settings group, hiding the admin-only items
+  /// (Clinic Info, Clinic Users, Working Days & Holidays) when the current
+  /// user's role doesn't include them. The role is cached on login.
+  List<MenuItem> _buildAccountItems(
     BuildContext context,
-    String fullName,
-    String? profileImageUrl,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    final fontFamily = FontHelper.fontFamily(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(28, 26, 28, 26),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  ColorManager.primary.withValues(alpha: 0.22),
-                  ColorManager.primary.withValues(alpha: 0.10),
-                ]
-              : [
-                  ColorManager.primary,
-                  ColorManager.primary.withValues(alpha: 0.75),
-                ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.primary.withValues(alpha: isDark ? 0.12 : 0.22),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Avatar with soft ring
-          Container(
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.35),
-            ),
-            child: CircleAvatar(
-              radius: 42,
-              backgroundColor: Colors.white,
-              backgroundImage:
-                  (profileImageUrl != null && profileImageUrl.isNotEmpty)
-                      ? NetworkImage(profileImageUrl)
-                      : null,
-              child: (profileImageUrl == null || profileImageUrl.isEmpty)
-                  ? Icon(Icons.person,
-                      size: 42, color: ColorManager.primary)
-                  : null,
-            ),
-          ),
-          const SizedBox(width: 24),
-
-          // Name + role + edit button
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fullName.isNotEmpty ? fullName : 'Doctor',
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.medical_services_outlined,
-                              size: 13, color: Colors.white),
-                          const SizedBox(width: 6),
-                          Text(
-                            l10n.dentist,
-                            style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Edit Profile button
-          Material(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            child: InkWell(
-              onTap: () => context.pushNamed(AppRoutesNames.editProfile),
-              borderRadius: BorderRadius.circular(10),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 18, vertical: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.edit_outlined,
-                        size: 16, color: ColorManager.primary),
-                    const SizedBox(width: 8),
-                    Text(
-                      l10n.editProfile,
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: ColorManager.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─── Desktop: Section Card ──────────────────────────────────────────────
-
-  Widget _buildDesktopSectionCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required List<MenuItem> items,
+    AppLocalizations l10n, {
+    required bool isAdmin,
   }) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: c.borderLight),
+    return [
+      MenuItem(
+        icon: Icons.person_outline,
+        title: l10n.editProfile,
+        onTap: () => context.pushNamed(AppRoutesNames.editProfile),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
-            child: Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, size: 17, color: ColorManager.primary),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: c.divider),
-          // Items
-          ...items.asMap().entries.map((entry) {
-            final idx = entry.key;
-            final item = entry.value;
-            return Column(
-              children: [
-                _buildDesktopMenuItem(context, item),
-                if (idx < items.length - 1)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 66),
-                    child: Divider(height: 1, color: c.divider),
-                  ),
-              ],
-            );
-          }),
-          const SizedBox(height: 6),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktopMenuItem(BuildContext context, MenuItem item) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: item.onTap,
-        hoverColor: ColorManager.primary.withValues(alpha: 0.04),
-        child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: c.menuIconBg,
-                  borderRadius: BorderRadius.circular(9),
-                  border: Border.all(color: c.borderLight),
-                ),
-                child: Icon(item.icon, size: 18, color: c.iconDefault),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    if (item.subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        item.subtitle!,
-                        style: TextStyle(
-                          fontFamily: fontFamily,
-                          fontSize: 12,
-                          color: c.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (item.trailing != null)
-                item.trailing!
-              else
-                Icon(Icons.chevron_right, size: 18, color: c.textSubtle),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDesktopLogoutCard(
-      BuildContext context, AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-    return Material(
-      color: c.errorBg,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: () => _showLogoutDialog(context, l10n),
-        borderRadius: BorderRadius.circular(14),
-        hoverColor: ColorManager.error.withValues(alpha: 0.08),
-        child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: c.menuIconBg,
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Icon(Icons.logout,
-                    size: 18, color: ColorManager.error),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  l10n.logout,
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: ColorManager.error,
-                  ),
-                ),
-              ),
-              Icon(Icons.chevron_right,
-                  size: 18, color: ColorManager.error.withValues(alpha: 0.6)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ═════════════════════════════════════════════════════════════════════
-  // SHARED MENU ITEM DEFINITIONS (same navigation/APIs on both layouts)
-  // ═════════════════════════════════════════════════════════════════════
-
-  List<MenuItem> _accountItems(BuildContext context, AppLocalizations l10n) => [
-        MenuItem(
-          icon: Icons.person_outline,
-          title: l10n.editProfile,
-          onTap: () => context.pushNamed(AppRoutesNames.editProfile),
-        ),
+      if (isAdmin) ...[
         MenuItem(
           icon: Icons.business_outlined,
           title: l10n.clinicInformation,
@@ -552,75 +218,52 @@ class _MenuPageState extends State<MenuPage> {
           title: l10n.clinicUsers,
           onTap: () {
             final clinicId = getIt<UserStorage>().getSelectedClinicId() ?? '';
-            context.pushNamed(
-              AppRoutesNames.clinicUsers,
-              extra: clinicId,
-            );
+            context.pushNamed(AppRoutesNames.clinicUsers, extra: clinicId);
           },
         ),
         MenuItem(
           icon: Icons.schedule_outlined,
-          title: l10n.workingHoursAndHolidays,
-          onTap: () => context.pushNamed(AppRoutesNames.workingHours),
+          title: l10n.workingDaysAndHolidays,
+          onTap: () => context.pushNamed(AppRoutesNames.workingDays),
         ),
+      ] else
         MenuItem(
-          icon: Icons.bar_chart_rounded,
-          title: l10n.analytics,
-          onTap: () => context.pushNamed(AppRoutesNames.statistics),
+          icon: Icons.schedule_outlined,
+          title: l10n.myWorkingHours,
+          onTap: () {
+            final userId = getIt<TokenStorage>().getUserId() ?? '';
+            if (userId.isEmpty) return;
+            context.pushNamed(
+              AppRoutesNames.userHours,
+              pathParameters: {'userId': userId},
+            );
+          },
         ),
-        MenuItem(
-          icon: Icons.notifications_outlined,
-          title: l10n.notifications,
-          trailing: _buildNotificationBadge(context),
-          onTap: () => context.pushNamed(AppRoutesNames.notificationsSettings),
-        ),
-      ];
-
-  List<MenuItem> _appSettingsItems(
-          BuildContext context, AppLocalizations l10n) =>
-      [
-        MenuItem(
-          icon: Icons.color_lens_outlined,
-          title: l10n.appearance,
-          subtitle: _getThemeLabel(l10n),
-          onTap: () => showThemeSettingsDialog(context),
-        ),
-        MenuItem(
-          icon: Icons.language_outlined,
-          title: l10n.language,
-          subtitle: context.read<LanguageBloc>().state.locale.languageCode ==
-                  'ar'
-              ? l10n.arabic
-              : l10n.english,
-          onTap: () => showLanguageSettingsDialog(context),
-        ),
-        MenuItem(
-          icon: Icons.security_outlined,
-          title: l10n.privacySecurity,
-          onTap: () {},
-        ),
-      ];
-
-  List<MenuItem> _supportItems(BuildContext context, AppLocalizations l10n) => [
-        MenuItem(
-          icon: Icons.chat_bubble_outline,
-          title: l10n.contactSupport,
-          onTap: () => context.pushNamed(AppRoutesNames.contactSupport),
-        ),
-        MenuItem(
-          icon: Icons.description_outlined,
-          title: l10n.termsPrivacy,
-          onTap: () {},
-        ),
-      ];
+      MenuItem(
+        icon: Icons.bar_chart_rounded,
+        title: l10n.analytics,
+        onTap: () => context.pushNamed(AppRoutesNames.statistics),
+      ),
+      MenuItem(
+        icon: Icons.receipt_long_outlined,
+        title: l10n.billingAndInvoices,
+        onTap: () => context.pushNamed(AppRoutesNames.billing),
+      ),
+      MenuItem(
+        icon: Icons.notifications_outlined,
+        title: l10n.notifications,
+        onTap: () => context.pushNamed(AppRoutesNames.notificationsSettings),
+      ),
+    ];
+  }
 
   Widget _sectionLabel(BuildContext context, String title) {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 15.sp,
+        fontSize: 13.sp,
         fontWeight: FontWeight.w600,
-        color: ColorManager.of(context).textSecondary,
+        color: ColorManager.of(context).textPrimary,
         fontFamily: FontHelper.fontFamily(context),
       ),
     );
@@ -633,54 +276,63 @@ class _MenuPageState extends State<MenuPage> {
     String fullName,
     String? profileImageUrl,
   ) {
-    return SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
-        child: Row(
-          children: [
-            // Avatar
-            CircleAvatar(
-              radius: 28.r,
-              backgroundColor: ColorManager.primary.withValues(alpha: 0.1),
-              backgroundImage:
-                  profileImageUrl != null && profileImageUrl.isNotEmpty
-                  ? NetworkImage(profileImageUrl)
-                  : null,
-              child: profileImageUrl == null || profileImageUrl.isEmpty
-                  ? Icon(Icons.person, size: 28.w, color: ColorManager.primary)
-                  : null,
-            ),
-            SizedBox(width: 14.w),
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    final hasImage = profileImageUrl != null && profileImageUrl.isNotEmpty;
 
-            // Name + role
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    fullName.isNotEmpty ? fullName : 'Doctor',
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: ColorManager.of(context).textPrimary,
-                    ),
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 22.r,
+            backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
+            backgroundImage: hasImage ? NetworkImage(profileImageUrl) : null,
+            child: hasImage
+                ? null
+                : Icon(
+                    Icons.person,
+                    size: 22.w,
+                    color: ColorManager.primaryDarker,
                   ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    AppLocalizations.of(context)!.dentist,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 13.sp,
-                      color: ColorManager.of(context).textTertiary,
-                    ),
+          ),
+          SizedBox(width: 11.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  fullName.isNotEmpty ? fullName : 'Doctor',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  AppLocalizations.of(context)!.dentist,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 11.sp,
+                    color: c.textTertiary,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -689,11 +341,16 @@ class _MenuPageState extends State<MenuPage> {
 
   Widget _buildMenuGroup(BuildContext context, List<MenuItem> items) {
     final c = ColorManager.of(context);
+    // Elevation is the hairline, not a fill: menuGroupBg is gray50 in the
+    // light theme, the same value as the page, so the group had no edge at
+    // all. Separators start where the label does, not at the card edge.
     return Container(
       decoration: BoxDecoration(
-        color: c.menuGroupBg,
-        borderRadius: BorderRadius.circular(12.r),
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: c.borderLight),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: items.asMap().entries.map((entry) {
           final index = entry.key;
@@ -703,13 +360,22 @@ class _MenuPageState extends State<MenuPage> {
               _buildMenuItem(context, item),
               if (index < items.length - 1)
                 Padding(
-                  padding: EdgeInsets.only(left: 56.w),
-                  child: Divider(height: 1, color: c.divider),
+                  padding: EdgeInsetsDirectional.only(start: 53.w),
+                  child: Divider(height: 1, color: c.borderLight),
                 ),
             ],
           );
         }).toList(),
       ),
+    );
+  }
+
+  /// Marks a row as leaving the app for the browser.
+  Widget _externalLinkIcon(BuildContext context, {Color? color}) {
+    return Icon(
+      Icons.open_in_new,
+      size: 16.w,
+      color: color ?? ColorManager.of(context).textSubtle,
     );
   }
 
@@ -719,41 +385,58 @@ class _MenuPageState extends State<MenuPage> {
       color: Colors.transparent,
       child: InkWell(
         onTap: item.onTap,
-        borderRadius: BorderRadius.circular(12.r),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
           child: Row(
             children: [
+              // Tinted tile in the brand hue; destructive rows take red.
               Container(
-                width: 34.w,
-                height: 34.w,
+                width: 32.w,
+                height: 32.w,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: c.menuIconBg,
-                  borderRadius: BorderRadius.circular(10.r),
+                  color:
+                      (item.isDestructive
+                              ? ColorManager.error
+                              : ColorManager.primary)
+                          .withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(11.r),
                 ),
-                child: Icon(item.icon, size: 18.w, color: c.iconDefault),
+                child: Icon(
+                  item.icon,
+                  size: 17.w,
+                  color: item.isDestructive
+                      ? ColorManager.error
+                      : ColorManager.primaryDarker,
+                ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: 11.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: c.textPrimary,
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: item.isDestructive
+                            ? ColorManager.error
+                            : c.textPrimary,
                       ),
                     ),
                     if (item.subtitle != null) ...[
-                      SizedBox(height: 1.h),
+                      SizedBox(height: 2.h),
                       Text(
                         item.subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: FontHelper.fontFamily(context),
-                          fontSize: 12.sp,
+                          fontSize: 11.sp,
                           color: c.textTertiary,
                         ),
                       ),
@@ -761,33 +444,13 @@ class _MenuPageState extends State<MenuPage> {
                   ],
                 ),
               ),
+              SizedBox(width: 8.w),
               if (item.trailing != null)
                 item.trailing!
               else
-                Icon(Icons.chevron_right, size: 18.w, color: c.textSubtle),
+                DirectionalChevron(size: 18.w, color: c.textSubtle),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  // ─── Notification Badge ─────────────────────────────────────────────────
-
-  Widget _buildNotificationBadge(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Text(
-        '3',
-        style: TextStyle(
-          fontFamily: FontHelper.fontFamily(context),
-          fontSize: 11.sp,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -797,96 +460,197 @@ class _MenuPageState extends State<MenuPage> {
 
   Widget _buildLogoutRow(BuildContext context, AppLocalizations l10n) {
     final c = ColorManager.of(context);
-    return GestureDetector(
-      onTap: () => _showLogoutDialog(context, l10n),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
-        decoration: BoxDecoration(
-          color: c.errorBg,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 34.w,
-              height: 34.w,
-              decoration: BoxDecoration(
-                color: c.menuIconBg,
-                borderRadius: BorderRadius.circular(10.r),
+    final radius = BorderRadius.circular(16.r);
+    // A card with a red hairline, matching the groups above it. The solid
+    // red fill made sign-out look like the loudest thing on the screen.
+    return Material(
+      color: c.cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: () => _showLogoutDialog(context, l10n),
+        borderRadius: radius,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(color: ColorManager.errorBorder),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32.w,
+                height: 32.w,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: ColorManager.error.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(11.r),
+                ),
+                child: Icon(
+                  Icons.logout,
+                  size: 17.w,
+                  color: ColorManager.error,
+                ),
               ),
-              child: Icon(Icons.logout, size: 18.w, color: ColorManager.error),
-            ),
-            SizedBox(width: 12.w),
-            Text(
-              l10n.logout,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: ColorManager.error,
+              SizedBox(width: 11.w),
+              Text(
+                l10n.logout,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 12.5.sp,
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.error,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  /// Centre dialog, because signing out is destructive and irreversible in
+  /// the session sense. The consequence is stated in a tinted box rather
+  /// than left implied, and the confirm button carries the destructive fill.
   void _showLogoutDialog(BuildContext context, AppLocalizations l10n) {
     final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(
-          l10n.logout,
-          style: TextStyle(
-            color: ColorManager.error,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
-            fontFamily: FontHelper.fontFamily(context),
-          ),
+        backgroundColor: c.cardBg,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
         ),
-        content: Text(
-          l10n.areYouSureLogout,
-          style: TextStyle(
-            color: c.textPrimary,
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-          ),
+        titlePadding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
+        contentPadding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 0),
+        actionsPadding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 16.h),
+        title: Row(
+          children: [
+            Container(
+              width: 32.w,
+              height: 32.w,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: ColorManager.error.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(11.r),
+              ),
+              child: Icon(Icons.logout, size: 17.w, color: ColorManager.error),
+            ),
+            SizedBox(width: 11.w),
+            Expanded(
+              child: Text(
+                l10n.logout,
+                style: TextStyle(
+                  color: c.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.sp,
+                  fontFamily: family,
+                ),
+              ),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              l10n.cancel,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.areYouSureLogout,
               style: TextStyle(
                 color: c.textSecondary,
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
+                fontSize: 12.sp,
+                height: 1.5,
+                fontFamily: family,
               ),
             ),
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 9.h),
+              decoration: BoxDecoration(
+                color: c.errorBg,
+                borderRadius: BorderRadius.circular(11.r),
+                border: Border.all(color: ColorManager.errorBorder),
+              ),
+              child: Text(
+                l10n.logoutConsequence,
+                style: TextStyle(
+                  color: ColorManager.error,
+                  fontSize: 11.sp,
+                  height: 1.45,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: family,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          _DialogButton(
+            label: l10n.cancel,
+            onTap: () => Navigator.pop(dialogContext),
           ),
-          TextButton(
-            onPressed: () async {
+          _DialogButton(
+            label: l10n.logout,
+            filled: true,
+            tone: ColorManager.destructive,
+            onTap: () async {
               Navigator.pop(dialogContext);
-              await getIt<TokenStorage>().clearAuthData();
-              await getIt<UserStorage>().clear();
-              if (context.mounted) {
-                context.goNamed(AppRoutesNames.login);
-              }
+              // Shares the wipe-and-redirect path with the forced sign-out on
+              // a 401, so both clear exactly the same state.
+              await getIt<SessionManager>().endSession();
             },
-            child: Text(
-              l10n.logout,
-              style: TextStyle(
-                color: ColorManager.error,
-                fontWeight: FontWeight.w600,
-                fontSize: 14.sp,
-                fontFamily: FontHelper.fontFamily(context),
-              ),
-            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Dialog action: outlined by default, filled in its own hue when it is the
+/// one that commits the change.
+class _DialogButton extends StatelessWidget {
+  const _DialogButton({
+    required this.label,
+    required this.onTap,
+    this.filled = false,
+    this.tone,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+  final bool filled;
+  final Color? tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(11.r);
+    final accent = tone ?? ColorManager.primary;
+
+    return Material(
+      color: filled ? accent : c.cardBg,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.h),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: filled ? null : Border.all(color: c.border),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: filled ? ColorManager.white : c.textSecondary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12.5.sp,
+              fontFamily: FontHelper.fontFamily(context),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -897,6 +661,9 @@ class MenuItem {
   final String title;
   final String? subtitle;
   final Widget? trailing;
+
+  /// Renders the icon and title in the error color (account deletion).
+  final bool isDestructive;
   final VoidCallback onTap;
 
   MenuItem({
@@ -904,6 +671,7 @@ class MenuItem {
     required this.title,
     this.subtitle,
     this.trailing,
+    this.isDestructive = false,
     required this.onTap,
   });
 }

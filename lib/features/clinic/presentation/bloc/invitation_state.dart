@@ -8,6 +8,8 @@ class InvitationState with _$InvitationState {
     @Default(false) bool isUpdating,
     @Default([]) List<InvitationEntity> sentInvitations,
     @Default([]) List<InvitationEntity> receivedInvitations,
+    @Default(InvitationStatus.pending) InvitationStatus receivedFilter,
+    @Default(InvitationStatus.pending) InvitationStatus sentFilter,
     String? error,
 
     // Invite form fields
