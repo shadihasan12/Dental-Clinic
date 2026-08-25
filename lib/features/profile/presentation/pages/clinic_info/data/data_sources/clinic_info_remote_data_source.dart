@@ -70,10 +70,7 @@ class ClinicInfoRemoteDataSourceImpl implements ClinicInfoRemoteDataSource {
   ) async {
     final response = await _apiConsumer.get(
       '/locations/search',
-      queryParameters: {
-        'query': query,
-        'country_code': countryCode,
-      },
+      queryParameters: {'query': query, 'country_code': countryCode},
     );
     final data = response['data'] as List;
     return data

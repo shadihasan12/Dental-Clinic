@@ -13,7 +13,6 @@ import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dar
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -312,7 +311,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           ),
         ),
         Expanded(
-          child: filtered.isEmpty
+          child: DentaRefresh(
+            onRefresh: _onRefresh,
+            child: filtered.isEmpty
               ? _buildEmptyState(l10n, allPatients.isEmpty)
               // Keeps only one row's swipe pane open at a time, matched by
               // PatientCard.groupTag.
@@ -320,7 +321,6 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                   child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
-                    CupertinoSliverRefreshControl(onRefresh: _onRefresh),
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
                       // Cards carry their own hairline and 8.h gap, so no
@@ -355,6 +355,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                   ],
                   ),
                 ),
+          ),
         ),
       ],
     );
@@ -367,7 +368,6 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   /// button - the fix is editing the search, which is already on screen.
   Widget _buildEmptyState(AppLocalizations l10n, bool isCompletelyEmpty) {
     return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
       child: StateCard(
         icon: isCompletelyEmpty
@@ -401,16 +401,19 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         ),
         Divider(height: 1, color: ColorManager.of(context).borderLight),
         Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-            child: StateCard(
-              icon: Icons.cloud_off_rounded,
-              tone: ColorManager.error,
-              title: l10n.patientsLoadFailed,
-              message: message,
-              actionLabel: l10n.retry,
-              onAction: () => context.read<PatientsListBloc>().add(
-                const PatientsListEvent.loadPatients(),
+          child: DentaRefresh(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+              child: StateCard(
+                icon: Icons.cloud_off_rounded,
+                tone: ColorManager.error,
+                title: l10n.patientsLoadFailed,
+                message: message,
+                actionLabel: l10n.retry,
+                onAction: () => context.read<PatientsListBloc>().add(
+                  const PatientsListEvent.loadPatients(),
+                ),
               ),
             ),
           ),

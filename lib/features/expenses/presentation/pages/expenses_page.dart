@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/manager/expense_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -80,6 +81,16 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   void _loadMonth() {
     context.read<ExpenseBloc>().add(
       ExpenseEvent.loadExpenses(queryParameters: _buildDateFilter()),
+    );
+  }
+
+  /// Pull-to-refresh: the same query [_loadMonth] runs, held open until the
+  /// bloc leaves its loading state so the band tracks the request itself.
+  Future<void> _refresh() async {
+    final bloc = context.read<ExpenseBloc>();
+    _loadMonth();
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
 
@@ -204,22 +215,25 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                     _buildMonthSelector(context),
                     Divider(height: 1, color: ColorManager.of(context).divider),
                     Expanded(
-                      child: expenses.isEmpty
-                          ? _buildEmptyState(context)
-                          : ListView.separated(
-                              padding:
-                                  EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
-                              itemCount: expenses.length,
-                              separatorBuilder: (_, _) =>
-                                  SizedBox(height: 8.h),
-                              itemBuilder: (_, index) => ExpenseRow(
-                                expense: expenses[index],
-                                onTap: () => _showExpenseDetails(
-                                  context,
-                                  expenses[index],
+                      child: DentaRefresh(
+                        onRefresh: _refresh,
+                        child: expenses.isEmpty
+                            ? _buildEmptyState(context)
+                            : ListView.separated(
+                                padding:
+                                    EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+                                itemCount: expenses.length,
+                                separatorBuilder: (_, _) =>
+                                    SizedBox(height: 8.h),
+                                itemBuilder: (_, index) => ExpenseRow(
+                                  expense: expenses[index],
+                                  onTap: () => _showExpenseDetails(
+                                    context,
+                                    expenses[index],
+                                  ),
                                 ),
                               ),
-                            ),
+                      ),
                     ),
                   ],
                 );
@@ -229,7 +243,12 @@ class _ExpensesContentState extends State<_ExpensesContent> {
                   _buildHeader(context, [], 0),
                   _buildMonthSelector(context),
                   Divider(height: 1, color: ColorManager.of(context).divider),
-                  Expanded(child: _buildErrorState(context, message)),
+                  Expanded(
+                    child: DentaRefresh(
+                      onRefresh: _refresh,
+                      child: _buildErrorState(context, message),
+                    ),
+                  ),
                 ],
               ),
             );

@@ -12,9 +12,7 @@ class GetClinicInfoUseCase extends UseCase<ClinicInfoEntity, NoParams> {
   GetClinicInfoUseCase(this._repository);
 
   @override
-  Future<Either<NetworkExceptions, ClinicInfoEntity>> call(
-    NoParams params,
-  ) {
+  Future<Either<NetworkExceptions, ClinicInfoEntity>> call(NoParams params) {
     return _repository.getClinicInfo();
   }
 }

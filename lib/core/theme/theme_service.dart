@@ -20,7 +20,10 @@ class ThemeService {
       case 'system':
         return ThemeMode.system;
       default:
-        return ThemeMode.light;
+        // No preference saved yet: follow the OS. The native splash window is
+        // themed off the same OS flag (res/values-night), so this is the only
+        // default that lets the splash and the first Flutter frame agree.
+        return ThemeMode.system;
     }
   }
 

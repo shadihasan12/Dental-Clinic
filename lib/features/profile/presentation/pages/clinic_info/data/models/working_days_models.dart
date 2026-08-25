@@ -47,9 +47,9 @@ class TimeRangeModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'start_time': startTime,
-        'end_time': endTime,
-      };
+    'start_time': startTime,
+    'end_time': endTime,
+  };
 
   /// API may return "09:00:00" or "09:00" — normalize to "HH:mm"
   static String _normalizeTime(String time) {

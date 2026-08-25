@@ -62,8 +62,7 @@ class ClinicInfoModel {
       workingDays: entity.workingDays
           .map((d) => WorkingDayModel.fromEntity(d))
           .toList(),
-      holidays:
-          entity.holidays.map((h) => HolidayModel.fromEntity(h)).toList(),
+      holidays: entity.holidays.map((h) => HolidayModel.fromEntity(h)).toList(),
     );
   }
 
@@ -146,10 +145,7 @@ class ShiftModel {
   const ShiftModel({required this.from, required this.to});
 
   factory ShiftModel.fromJson(Map<String, dynamic> json) {
-    return ShiftModel(
-      from: json['from'] as String,
-      to: json['to'] as String,
-    );
+    return ShiftModel(from: json['from'] as String, to: json['to'] as String);
   }
 
   Map<String, dynamic> toJson() => {'from': from, 'to': to};
@@ -205,12 +201,7 @@ class HolidayModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'date': date,
-      'recurring': recurring,
-    };
+    return {'id': id, 'name': name, 'date': date, 'recurring': recurring};
   }
 
   factory HolidayModel.fromEntity(HolidayEntity entity) {

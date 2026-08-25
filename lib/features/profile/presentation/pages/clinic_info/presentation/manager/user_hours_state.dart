@@ -4,6 +4,7 @@ part of 'user_hours_bloc.dart';
 class UserHoursState with _$UserHoursState {
   const factory UserHoursState.initial() = _UHInitial;
   const factory UserHoursState.loading() = _UHLoading;
+
   /// [isSeed] is true when [days] came from the clinic-hours seed (the
   /// user has no working hours saved yet, but we pre-filled the form
   /// from the clinic's working days so they can save in one tap). The

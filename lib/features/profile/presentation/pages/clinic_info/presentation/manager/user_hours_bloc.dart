@@ -21,8 +21,8 @@ class UserHoursBloc extends Bloc<UserHoursEvent, UserHoursState> {
     this._repository,
     this._userStorage, {
     @factoryParam required String userId,
-  })  : _userId = userId,
-        super(const UserHoursState.initial()) {
+  }) : _userId = userId,
+       super(const UserHoursState.initial()) {
     on<_Load>(_onLoad);
     on<_Save>(_onSave);
   }

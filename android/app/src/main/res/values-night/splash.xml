@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dark-mode splash values. Selected by the OS night flag - the same signal
+    ThemeService now defaults to (ThemeMode.system), which is what keeps the
+    splash and the first Flutter frame the same brightness.
+-->
+<resources>
+    <!-- AppColors._dark.scaffoldBg, so the splash hands off to the dark app
+         without a step in brightness. Not pure black. -->
+    <color name="splash_background">#121212</color>
+
+    <bool name="splash_light_status_bar">false</bool>
+</resources>

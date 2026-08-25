@@ -41,9 +41,7 @@ class ShiftCountControl extends StatelessWidget {
               child: Icon(
                 Icons.remove,
                 size: 16.w,
-                color: canDecrement
-                    ? c.textPrimary
-                    : c.textTertiary,
+                color: canDecrement ? c.textPrimary : c.textTertiary,
               ),
             ),
           ),
@@ -71,9 +69,7 @@ class ShiftCountControl extends StatelessWidget {
               child: Icon(
                 Icons.add,
                 size: 16.w,
-                color: canIncrement
-                    ? ColorManager.primary
-                    : c.textTertiary,
+                color: canIncrement ? ColorManager.primary : c.textTertiary,
               ),
             ),
           ),

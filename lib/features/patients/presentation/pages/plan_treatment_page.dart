@@ -31,8 +31,7 @@ class PlanTreatmentPage extends StatefulWidget {
   });
 
   @override
-  State<PlanTreatmentPage> createState() =>
-      _PlanTreatmentPageState();
+  State<PlanTreatmentPage> createState() => _PlanTreatmentPageState();
 }
 
 class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
@@ -67,29 +66,49 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
       context,
       toothNumber: toothNumber,
       existingTreatmentIds: existingIds,
-      toothSpecificTypes:
-          widget.categories.isNotEmpty ? widget.categories[0].treatments : [],
+      toothSpecificTypes: widget.categories.isNotEmpty
+          ? widget.categories[0].treatments
+          : [],
     );
 
     if (selected != null && selected.isNotEmpty) {
       setState(() {
         for (final type in selected) {
-          _newTreatments.add(PlannedTreatment(
-            id: 'new_${_idCounter++}',
-            type: type,
-            toothNumber: toothNumber,
-          ));
+          // The sheet opens with nothing ticked, so picking a treatment that
+          // is already queued for this tooth would otherwise queue it twice.
+          final alreadyQueued = _newTreatments.any(
+            (t) => t.toothNumber == toothNumber && t.type.id == type.id,
+          );
+          if (alreadyQueued) continue;
+          _newTreatments.add(
+            PlannedTreatment(
+              id: 'new_${_idCounter++}',
+              type: type,
+              toothNumber: toothNumber,
+            ),
+          );
         }
       });
     }
   }
 
-  void _addGeneralTreatment(TreatmentTypeInfo type) {
+  /// Tap to add, tap again to remove.
+  ///
+  /// A general treatment carries no tooth, so the grid marks the tile as
+  /// selected the moment one is queued. Appending on a second tap queued a
+  /// duplicate the tile could never un-select.
+  void _toggleGeneralTreatment(TreatmentTypeInfo type) {
     setState(() {
-      _newTreatments.add(PlannedTreatment(
-        id: 'new_${_idCounter++}',
-        type: type,
-      ));
+      final index = _newTreatments.indexWhere(
+        (t) => t.toothNumber == null && t.type.id == type.id,
+      );
+      if (index >= 0) {
+        _newTreatments.removeAt(index);
+        return;
+      }
+      _newTreatments.add(
+        PlannedTreatment(id: 'new_${_idCounter++}', type: type),
+      );
     });
   }
 
@@ -143,7 +162,9 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                             SizedBox(width: 10.w),
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context)!.tapToothToAddTreatments,
+                                AppLocalizations.of(
+                                  context,
+                                )!.tapToothToAddTreatments,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   fontFamily: FontHelper.fontFamily(context),
@@ -194,7 +215,7 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                                   .where((t) => t.toothNumber == null)
                                   .map((t) => t.type.id)
                                   .toSet(),
-                              onSelect: _addGeneralTreatment,
+                              onSelect: _toggleGeneralTreatment,
                             ),
                           ],
                         ),
@@ -225,8 +246,9 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                               vertical: 4.h,
                             ),
                             decoration: BoxDecoration(
-                              color: ColorManager.primary
-                                  .withValues(alpha: 0.1),
+                              color: ColorManager.primary.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             child: Text(
@@ -249,34 +271,32 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                         children: _newTreatments
                             .asMap()
                             .entries
-                            .map((e) => Padding(
-                                  padding: EdgeInsets.only(bottom: 6.h),
-                                  child: Dismissible(
-                                    key: Key(e.value.id),
-                                    direction: DismissDirection.endToStart,
-                                    onDismissed: (_) =>
-                                        _removeTreatment(e.key),
-                                    background: Container(
-                                      alignment: Alignment.centerRight,
-                                      padding:
-                                          EdgeInsets.only(right: 16.w),
-                                      decoration: BoxDecoration(
-                                        color: ColorManager.error
-                                            .withValues(alpha: 0.1),
-                                        borderRadius:
-                                            BorderRadius.circular(12.r),
+                            .map(
+                              (e) => Padding(
+                                padding: EdgeInsets.only(bottom: 6.h),
+                                child: Dismissible(
+                                  key: Key(e.value.id),
+                                  direction: DismissDirection.endToStart,
+                                  onDismissed: (_) => _removeTreatment(e.key),
+                                  background: Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(right: 16.w),
+                                    decoration: BoxDecoration(
+                                      color: ColorManager.error.withValues(
+                                        alpha: 0.1,
                                       ),
-                                      child: Icon(
-                                        Icons.delete_outline,
-                                        color: ColorManager.error,
-                                        size: 22.w,
-                                      ),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
-                                    child: TreatmentPlanCard(
-                                      treatment: e.value,
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: ColorManager.error,
+                                      size: 22.w,
                                     ),
                                   ),
-                                ))
+                                  child: TreatmentPlanCard(treatment: e.value),
+                                ),
+                              ),
+                            )
                             .toList(),
                       ),
                     ),
@@ -330,7 +350,9 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
+            color: isSelected
+                ? ColorManager.of(context).cardBg
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(10.r),
             boxShadow: isSelected
                 ? [
@@ -474,10 +496,7 @@ class _InteractiveToothChart extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: ColorManager.primary.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: ColorManager.primary,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: ColorManager.primary, width: 1.5),
                 ),
               ),
               SizedBox(width: 6.w),
@@ -519,12 +538,14 @@ class _InteractiveToothChart extends StatelessWidget {
     for (int q = 1; q <= 4; q++) {
       for (int t = 1; t <= 8; t++) {
         final code = '$q$t';
-        teeth.add(Tooth(
-          id: code,
-          name: 'Tooth $code',
-          universalCode: code,
-          quadrant: '$q',
-        ));
+        teeth.add(
+          Tooth(
+            id: code,
+            name: 'Tooth $code',
+            universalCode: code,
+            quadrant: '$q',
+          ),
+        );
       }
     }
     return teeth;

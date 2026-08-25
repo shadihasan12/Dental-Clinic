@@ -14,7 +14,7 @@ class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
 
   @override
   Future<Either<NetworkExceptions, List<WorkingDayApiModel>>>
-      getWorkingDays() async {
+  getWorkingDays() async {
     try {
       final result = await _remoteDataSource.getWorkingDays();
       return Right(result);
@@ -36,8 +36,7 @@ class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
   }
 
   @override
-  Future<Either<NetworkExceptions, List<HolidayApiModel>>>
-      getHolidays() async {
+  Future<Either<NetworkExceptions, List<HolidayApiModel>>> getHolidays() async {
     try {
       final result = await _remoteDataSource.getHolidays();
       return Right(result);
@@ -60,7 +59,7 @@ class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
 
   @override
   Future<Either<NetworkExceptions, List<UserWorkingDayApiModel>>>
-      getMyHours() async {
+  getMyHours() async {
     try {
       final result = await _remoteDataSource.getMyHours();
       return Right(result);

@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -53,12 +54,25 @@ class _AppointmentsContent extends StatelessWidget {
                 child: _buildViewToggle(context, state),
               ),
               SizedBox(height: 12.h),
-              Expanded(child: _buildBody(context, state)),
+              Expanded(
+                child: DentaRefresh(
+                  onRefresh: () => _refresh(context),
+                  child: _buildBody(context, state),
+                ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  /// Re-runs the day/week query. The band stays open until the bloc settles on
+  /// a non-loading state, so the spinner tracks the request rather than a timer.
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<AppointmentBloc>();
+    bloc.add(const AppointmentEvent.loadAppointments());
+    await bloc.stream.firstWhere((state) => !state.isLoading);
   }
 
   Widget _buildBody(BuildContext context, AppointmentState state) {

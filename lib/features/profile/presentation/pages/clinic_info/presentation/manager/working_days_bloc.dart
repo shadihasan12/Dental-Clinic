@@ -14,16 +14,13 @@ class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
   final WorkingDaysRepository _repository;
 
   WorkingDaysBloc({required WorkingDaysRepository repository})
-      : _repository = repository,
-        super(const WorkingDaysState.initial()) {
+    : _repository = repository,
+      super(const WorkingDaysState.initial()) {
     on<_Load>(_onLoad);
     on<_SaveAll>(_onSaveAll);
   }
 
-  Future<void> _onLoad(
-    _Load event,
-    Emitter<WorkingDaysState> emit,
-  ) async {
+  Future<void> _onLoad(_Load event, Emitter<WorkingDaysState> emit) async {
     emit(const WorkingDaysState.loading());
 
     final workingDaysResult = await _repository.getWorkingDays();
@@ -45,14 +42,9 @@ class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
     final holidaysResult = await _repository.getHolidays();
 
     holidaysResult.fold(
-      (e) => emit(
-        WorkingDaysState.error(NetworkExceptions.getErrorMessage(e)),
-      ),
+      (e) => emit(WorkingDaysState.error(NetworkExceptions.getErrorMessage(e))),
       (holidays) => emit(
-        WorkingDaysState.loaded(
-          workingDays: workingDays,
-          holidays: holidays,
-        ),
+        WorkingDaysState.loaded(workingDays: workingDays, holidays: holidays),
       ),
     );
   }
@@ -78,9 +70,7 @@ class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
     final holidaysResult = await _repository.upsertHolidays(event.holidays);
 
     holidaysResult.fold(
-      (e) => emit(
-        WorkingDaysState.error(NetworkExceptions.getErrorMessage(e)),
-      ),
+      (e) => emit(WorkingDaysState.error(NetworkExceptions.getErrorMessage(e))),
       (_) => emit(const WorkingDaysState.saved()),
     );
   }

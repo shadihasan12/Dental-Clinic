@@ -62,8 +62,9 @@ class PatientDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<PatientDetailsBloc>()
-        ..add(PatientDetailsEvent.loadPatientDetails(patientId)),
+      create: (context) =>
+          getIt<PatientDetailsBloc>()
+            ..add(PatientDetailsEvent.loadPatientDetails(patientId)),
       child: _PatientDetailsContent(
         patientId: patientId,
         patientName: patientName,
@@ -138,9 +139,22 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     });
   }
 
-  void _reload() => context
-      .read<PatientDetailsBloc>()
-      .add(PatientDetailsEvent.loadPatientDetails(widget.patientId));
+  void _reload() => context.read<PatientDetailsBloc>().add(
+    PatientDetailsEvent.loadPatientDetails(widget.patientId),
+  );
+
+  /// Pull-to-refresh: the case, its attachments and the treatment catalogue
+  /// all come from separate calls, so all three are re-run together.
+  Future<void> _refresh() async {
+    final bloc = context.read<PatientDetailsBloc>();
+    _reload();
+    await Future.wait([
+      _loadCoreTreatments(),
+      bloc.stream.firstWhere(
+        (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+      ),
+    ]);
+  }
 
   void _error(Object e) {
     if (!mounted) return;
@@ -256,11 +270,12 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
 
     setState(() => _doneOverrides[itemId] = !wasDone);
 
-    final result = await getIt<PatientRepository>().toggleTreatmentPlanItemStatus(
-      patientId: widget.patientId,
-      caseId: c.id,
-      itemId: itemId,
-    );
+    final result = await getIt<PatientRepository>()
+        .toggleTreatmentPlanItemStatus(
+          patientId: widget.patientId,
+          caseId: c.id,
+          itemId: itemId,
+        );
     if (!mounted) return;
     result.fold((e) {
       // Put the check back where it was rather than leaving a lie on screen.
@@ -269,21 +284,21 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     }, (_) {});
   }
 
-  Future<void> _addNote(
-    DentalCase c,
-    PlannedTreatment t,
-    String note,
-  ) async {
+  Future<void> _addNote(DentalCase c, PlannedTreatment t, String note) async {
     final now = DateTime.now();
     final notes = [
-      ...t.visitNotes.map((n) => {
-            'note': n.text,
-            'date': '${n.date.year}-${n.date.month.toString().padLeft(2, '0')}'
-                '-${n.date.day.toString().padLeft(2, '0')}',
-          }),
+      ...t.visitNotes.map(
+        (n) => {
+          'note': n.text,
+          'date':
+              '${n.date.year}-${n.date.month.toString().padLeft(2, '0')}'
+              '-${n.date.day.toString().padLeft(2, '0')}',
+        },
+      ),
       {
         'note': note,
-        'date': '${now.year}-${now.month.toString().padLeft(2, '0')}'
+        'date':
+            '${now.year}-${now.month.toString().padLeft(2, '0')}'
             '-${now.day.toString().padLeft(2, '0')}',
       },
     ];
@@ -306,13 +321,16 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       caseId: c.id,
       itemId: _itemId(t),
     );
-    result.fold((e) {
-      _error(e);
-      _reload();
-    }, (_) {
-      _ok(AppLocalizations.of(context)!.treatmentRemoved);
-      _reload();
-    });
+    result.fold(
+      (e) {
+        _error(e);
+        _reload();
+      },
+      (_) {
+        _ok(AppLocalizations.of(context)!.treatmentRemoved);
+        _reload();
+      },
+    );
   }
 
   Future<void> _addTreatment(DentalCase activeCase) async {
@@ -387,26 +405,33 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       paidAmount: c.paidAmount,
       caseCurrencyId: c.totalCostCurrencyId,
       caseCurrencyCode: c.totalCostCurrencyCode,
-      onSave: (amount, currencyId, caseCurrencyId, amountInCaseCurrency,
-          exchangeRate, notes) async {
-        final result = await getIt<AddPaymentUseCase>()(
-          AddPaymentParams(
-            patientId: widget.patientId,
-            caseId: c.id,
-            amount: amount,
-            currencyId: currencyId,
-            caseCurrencyId: caseCurrencyId,
-            amountInCaseCurrency: amountInCaseCurrency,
-            exchangeRate: exchangeRate,
-            notes: notes,
-          ),
-        );
-        final err = result.fold<NetworkExceptions?>((l) => l, (_) => null);
-        if (err != null) {
-          throw Exception(NetworkExceptions.getErrorMessage(err));
-        }
-        if (mounted) _reload();
-      },
+      onSave:
+          (
+            amount,
+            currencyId,
+            caseCurrencyId,
+            amountInCaseCurrency,
+            exchangeRate,
+            notes,
+          ) async {
+            final result = await getIt<AddPaymentUseCase>()(
+              AddPaymentParams(
+                patientId: widget.patientId,
+                caseId: c.id,
+                amount: amount,
+                currencyId: currencyId,
+                caseCurrencyId: caseCurrencyId,
+                amountInCaseCurrency: amountInCaseCurrency,
+                exchangeRate: exchangeRate,
+                notes: notes,
+              ),
+            );
+            final err = result.fold<NetworkExceptions?>((l) => l, (_) => null);
+            if (err != null) {
+              throw Exception(NetworkExceptions.getErrorMessage(err));
+            }
+            if (mounted) _reload();
+          },
     );
   }
 
@@ -453,12 +478,12 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     );
     if (!confirmed || !mounted) return;
     context.read<PatientDetailsBloc>().add(
-          PatientDetailsEvent.markCaseAsFinished(
-            patientId: widget.patientId,
-            caseId: c.id,
-            title: null,
-          ),
-        );
+      PatientDetailsEvent.markCaseAsFinished(
+        patientId: widget.patientId,
+        caseId: c.id,
+        title: null,
+      ),
+    );
   }
 
   // ── attachments ─────────────────────────────────────────────────────────
@@ -477,10 +502,10 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     // latter. Delete stays hidden on a seeded item until the authoritative
     // read below replaces it with a row that carries a real id.
     _attachments = c.attachments
-        .map((id) => CaseAttachment(
-              id: id,
-              url: id.startsWith('http') ? id : null,
-            ))
+        .map(
+          (id) =>
+              CaseAttachment(id: id, url: id.startsWith('http') ? id : null),
+        )
         .toList();
     // Called from build(), so the network read has to wait for the frame.
     Future.microtask(() => _fetchAttachments(c.id));
@@ -496,15 +521,18 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     // toast on every page open would be noise rather than information.
     result.fold((_) {}, (rows) {
       setState(() {
-        final pending =
-            _attachments.where((a) => a.uploading || a.failed).toList();
+        final pending = _attachments
+            .where((a) => a.uploading || a.failed)
+            .toList();
         _attachments = [
-          ...rows.map((r) => CaseAttachment(
-                id: r.mediaId ?? r.id,
-                remoteId: r.attachmentId,
-                url: r.url,
-                name: r.name,
-              )),
+          ...rows.map(
+            (r) => CaseAttachment(
+              id: r.mediaId ?? r.id,
+              remoteId: r.attachmentId,
+              url: r.url,
+              name: r.name,
+            ),
+          ),
           ...pending,
         ];
       });
@@ -514,9 +542,11 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
   void _markFailed(String placeholderId) {
     setState(() {
       _attachments = _attachments
-          .map((a) => a.id != placeholderId
-              ? a
-              : a.copyWith(uploading: false, failed: true))
+          .map(
+            (a) => a.id != placeholderId
+                ? a
+                : a.copyWith(uploading: false, failed: true),
+          )
           .toList();
     });
   }
@@ -554,8 +584,10 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
         // in-flight items, so this lets the server row take its place.
         setState(() {
           _attachments = _attachments
-              .map((a) =>
-                  a.id != placeholder.id ? a : a.copyWith(uploading: false))
+              .map(
+                (a) =>
+                    a.id != placeholder.id ? a : a.copyWith(uploading: false),
+              )
               .toList();
         });
         await _fetchAttachments(c.id);
@@ -595,13 +627,10 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       attachmentId: remoteId,
     );
     if (!mounted) return;
-    result.fold(
-      (e) {
-        setState(() => _attachments = snapshot);
-        _error(e);
-      },
-      (_) => _ok(AppLocalizations.of(context)!.fileRemoved),
-    );
+    result.fold((e) {
+      setState(() => _attachments = snapshot);
+      _error(e);
+    }, (_) => _ok(AppLocalizations.of(context)!.fileRemoved));
   }
 
   // ── navigation ──────────────────────────────────────────────────────────
@@ -747,7 +776,9 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
 
     if (activeCase != null) _syncAttachments(activeCase);
 
-    final planned = activeCase == null ? <PlannedTreatment>[] : _mapPlanned(activeCase);
+    final planned = activeCase == null
+        ? <PlannedTreatment>[]
+        : _mapPlanned(activeCase);
     final unfinished = planned
         .where((t) => t.status != TreatmentPlanStatus.completed)
         .length;
@@ -755,6 +786,18 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     final outstanding = activeCase == null
         ? '-'
         : '${_money(activeCase.pendingAmount)}${currency.isEmpty ? '' : ' $currency'}';
+
+    // A chip that scrolls to a section which is not on screen reads as
+    // broken, so only the sections that exist get one. Case and Info are
+    // always present - Case carries its own empty state, Info is never empty.
+    final anchors = <({PatientAnchor anchor, String label})>[
+      (anchor: PatientAnchor.caseSection, label: l10n.currentCaseAnchor),
+      if (planned.isNotEmpty)
+        (anchor: PatientAnchor.treatments, label: l10n.treatments),
+      if (_attachments.isNotEmpty)
+        (anchor: PatientAnchor.files, label: l10n.filesTitle),
+      (anchor: PatientAnchor.info, label: l10n.patientInfo),
+    ];
 
     return Scaffold(
       backgroundColor: c.scaffoldBg,
@@ -766,114 +809,130 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
             ),
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
-          controller: _scroll,
-          slivers: [
-            SliverToBoxAdapter(
-              child: PatientIdentityBar(
-                name: patient.name,
-                subtitle: _subtitle(patient),
-                onBack: _back,
-                onEdit: () => _editPatient(patient),
-              ),
+        // The identity bar and the vitals/anchor rail both sit outside the
+        // scroll view, so the pull opens its band *under* the rail instead of
+        // shoving the patient's name and the chips down the screen. It also
+        // lines this state up with the loading and error ones, which already
+        // put the identity bar above an Expanded.
+        child: Column(
+          children: [
+            PatientIdentityBar(
+              name: patient.name,
+              subtitle: _subtitle(patient),
+              onBack: _back,
+              onEdit: () => _editPatient(patient),
             ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: PatientVitalsHeader(
-                context: context,
-                outstandingLabel: l10n.outstanding,
-                outstandingValue: outstanding,
-                remainingLabel: l10n.remainingWork,
-                remainingValue: '$unfinished',
-                // Both figures describe the open case, so with none there is
-                // nothing for them to report.
-                showVitals: activeCase != null,
-                activeAnchor: _active,
-                onAnchorTap: _jumpTo,
-                anchors: [
-                  (anchor: PatientAnchor.caseSection, label: l10n.currentCaseAnchor),
-                  (anchor: PatientAnchor.treatments, label: l10n.treatments),
-                  (anchor: PatientAnchor.files, label: l10n.filesTitle),
-                  (anchor: PatientAnchor.info, label: l10n.patientInfo),
-                ],
-              ),
+            PatientVitalsBar(
+              outstandingLabel: l10n.outstanding,
+              outstandingValue: outstanding,
+              remainingLabel: l10n.remainingWork,
+              remainingValue: '$unfinished',
+              // Both figures describe the open case, so with none there is
+              // nothing for them to report.
+              showVitals: activeCase != null,
+              // Deleting the last file or treatment can strip the chip the
+              // user is standing on; fall back so the rail always has a
+              // selection.
+              activeAnchor: anchors.any((a) => a.anchor == _active)
+                  ? _active
+                  : PatientAnchor.caseSection,
+              onAnchorTap: _jumpTo,
+              anchors: anchors,
             ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  ClinicalAlertsStrip(
-                    allergies: patient.allergies,
-                    medicalHistory: patient.medicalHistory,
-                    onEditAllergies: () => _editPatient(patient),
-                    onReviewHistory: () => _editPatient(patient),
-                  ),
+            Expanded(
+              child: DentaRefresh(
+                onRefresh: _refresh,
+                // Longer than the app default on this screen alone: the rail
+                // sits directly above the content, and a short flick meant to
+                // nudge the list was firing a full reload of the case.
+                triggerExtent: 150.h,
+                child: CustomScrollView(
+                  controller: _scroll,
+                  slivers: [
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          ClinicalAlertsStrip(
+                            allergies: patient.allergies,
+                            medicalHistory: patient.medicalHistory,
+                            onEditAllergies: () => _editPatient(patient),
+                            onReviewHistory: () => _editPatient(patient),
+                          ),
 
-                  Container(key: _caseKey),
-                  if (activeCase == null)
-                    PatientDetailPlaceholder(
-                      icon: Icons.medical_services_outlined,
-                      title: l10n.noOngoingCase,
-                      message: l10n.patientNoActiveTreatment,
-                      primaryLabel: l10n.createNew,
-                      onPrimary: _createNewCase,
-                    )
-                  else
-                    CaseMoneyCard(
-                      totalCost: activeCase.totalCost,
-                      paidAmount: activeCase.paidAmount,
-                      pendingAmount: activeCase.pendingAmount,
-                      labFees: activeCase.labFees,
-                      paymentCount: 0,
-                      onPayments: () => _paymentHistory(activeCase),
-                      onEditCosts: () => _editCosts(activeCase),
-                      onFinishCase: () => _finishCase(activeCase, unfinished),
-                    ),
+                          Container(key: _caseKey),
+                          if (activeCase == null)
+                            PatientDetailPlaceholder(
+                              icon: Icons.medical_services_outlined,
+                              title: l10n.noOngoingCase,
+                              message: l10n.patientNoActiveTreatment,
+                              primaryLabel: l10n.createNew,
+                              onPrimary: _createNewCase,
+                            )
+                          else
+                            CaseMoneyCard(
+                              totalCost: activeCase.totalCost,
+                              paidAmount: activeCase.paidAmount,
+                              pendingAmount: activeCase.pendingAmount,
+                              labFees: activeCase.labFees,
+                              paymentCount: 0,
+                              onPayments: () => _paymentHistory(activeCase),
+                              onEditCosts: () => _editCosts(activeCase),
+                              onFinishCase: () =>
+                                  _finishCase(activeCase, unfinished),
+                            ),
 
-                  if (activeCase != null) ...[
-                    SizedBox(height: 20.h),
-                    Container(key: _treatmentsKey),
-                    TreatmentsSection(
-                      treatments: planned,
-                      outstandingLabel: activeCase.pendingAmount > 0
-                          ? '$outstanding ${l10n.pendingLabel}'
-                          : null,
-                      onToggleDone: (t) => _toggleDone(activeCase, t),
-                      onAddNote: (t, note) => _addNote(activeCase, t, note),
-                      onRemove: (t) => _removeTreatment(activeCase, t),
-                      onAddTreatment: () => _addTreatment(activeCase),
-                      onFinishCase: () => _finishCase(activeCase, unfinished),
-                    ),
-                    SizedBox(height: 20.h),
-                    Container(key: _filesKey),
-                    CaseFilesSection(
-                      attachments: _attachments,
-                      onAdd: () => _addFile(activeCase),
-                      onOpen: (i) => CaseFileViewer.open(
-                        context,
-                        attachments: _attachments,
-                        initialIndex: i,
-                        onDelete: (a) => _deleteAttachment(activeCase, a),
+                          if (activeCase != null) ...[
+                            SizedBox(height: 20.h),
+                            Container(key: _treatmentsKey),
+                            TreatmentsSection(
+                              treatments: planned,
+                              outstandingLabel: activeCase.pendingAmount > 0
+                                  ? '$outstanding ${l10n.pendingLabel}'
+                                  : null,
+                              onToggleDone: (t) => _toggleDone(activeCase, t),
+                              onAddNote: (t, note) =>
+                                  _addNote(activeCase, t, note),
+                              onRemove: (t) => _removeTreatment(activeCase, t),
+                              onAddTreatment: () => _addTreatment(activeCase),
+                              onFinishCase: () =>
+                                  _finishCase(activeCase, unfinished),
+                            ),
+                            SizedBox(height: 20.h),
+                            Container(key: _filesKey),
+                            CaseFilesSection(
+                              attachments: _attachments,
+                              onAdd: () => _addFile(activeCase),
+                              onOpen: (i) => CaseFileViewer.open(
+                                context,
+                                attachments: _attachments,
+                                initialIndex: i,
+                                onDelete: (a) =>
+                                    _deleteAttachment(activeCase, a),
+                              ),
+                              onRetry: (a) => _retryUpload(activeCase, a),
+                            ),
+                          ],
+
+                          SizedBox(height: 20.h),
+                          Container(key: _infoKey),
+                          PatientInfoCard(
+                            patient: patient,
+                            onEdit: () => _editPatient(patient),
+                          ),
+
+                          if (completedCases.isNotEmpty) ...[
+                            SizedBox(height: 20.h),
+                            PastCasesSection(
+                              cases: completedCases,
+                              onOpenCase: _openPastCase,
+                            ),
+                          ],
+                        ]),
                       ),
-                      onRetry: (a) => _retryUpload(activeCase, a),
                     ),
                   ],
-
-                  SizedBox(height: 20.h),
-                  Container(key: _infoKey),
-                  PatientInfoCard(
-                    patient: patient,
-                    onEdit: () => _editPatient(patient),
-                  ),
-
-                  if (completedCases.isNotEmpty) ...[
-                    SizedBox(height: 20.h),
-                    PastCasesSection(
-                      cases: completedCases,
-                      onOpenCase: _openPastCase,
-                    ),
-                  ],
-                ]),
+                ),
               ),
             ),
           ],

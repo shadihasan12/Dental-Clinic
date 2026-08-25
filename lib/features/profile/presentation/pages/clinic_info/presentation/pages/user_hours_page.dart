@@ -363,34 +363,51 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   /// The clinic has no schedule yet, so per-user hours cannot be set. An
   /// admin gets the fix as a button; everyone else gets told who to ask.
   Widget _buildNeedsClinicHours(bool isAdmin, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-      child: StateCard(
-        icon: Icons.schedule_outlined,
-        title: l10n.clinicWorkingDaysMissingTitle,
-        message: isAdmin
-            ? l10n.clinicWorkingDaysMissingAdminMessage
-            : l10n.clinicWorkingDaysMissingNonAdminMessage,
-        actionLabel: isAdmin ? l10n.setClinicWorkingDays : null,
-        onAction: isAdmin
-            ? () => context.pushNamed(AppRoutesNames.workingDays)
-            : null,
+    return DentaRefresh(
+      onRefresh: _refresh,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+        child: StateCard(
+          icon: Icons.schedule_outlined,
+          title: l10n.clinicWorkingDaysMissingTitle,
+          message: isAdmin
+              ? l10n.clinicWorkingDaysMissingAdminMessage
+              : l10n.clinicWorkingDaysMissingNonAdminMessage,
+          actionLabel: isAdmin ? l10n.setClinicWorkingDays : null,
+          onAction: isAdmin
+              ? () => context.pushNamed(AppRoutesNames.workingDays)
+              : null,
+        ),
       ),
     );
   }
 
   Widget _buildError(String message, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-      child: StateCard(
-        icon: Icons.cloud_off_rounded,
-        tone: ColorManager.error,
-        title: l10n.workingHoursLoadFailed,
-        message: message,
-        actionLabel: l10n.retry,
-        onAction: () =>
-            context.read<UserHoursBloc>().add(const UserHoursEvent.load()),
+    return DentaRefresh(
+      onRefresh: _refresh,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+        child: StateCard(
+          icon: Icons.cloud_off_rounded,
+          tone: ColorManager.error,
+          title: l10n.workingHoursLoadFailed,
+          message: message,
+          actionLabel: l10n.retry,
+          onAction: () =>
+              context.read<UserHoursBloc>().add(const UserHoursEvent.load()),
+        ),
       ),
+    );
+  }
+
+  /// Pull-to-refresh is offered on the two states with nothing to lose - the
+  /// failure card and the "clinic has no schedule yet" card. Once the form is
+  /// populated it may hold unsaved edits a refetch would throw away.
+  Future<void> _refresh() async {
+    final bloc = context.read<UserHoursBloc>();
+    bloc.add(const UserHoursEvent.load());
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
 
@@ -439,9 +456,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(
