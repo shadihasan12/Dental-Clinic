@@ -73,14 +73,21 @@ Future<void> main() async {
   // Notification service: requests permission, wires FCM listeners, registers
   // the device token. Fire-and-forget so we don't block first frame on a
   // network round-trip; failures will retry on the next sign-in.
-  unawaited(
+  unawaited(() async {
     // The poller waits for initialize(): it announces through the local
     // notifications plugin, which is set up in there. A no-op on every
     // platform that receives real pushes.
-    getIt<NotificationService>()
-        .initialize()
-        .then((_) => getIt<NotificationPoller>().start()),
-  );
+    try {
+      await getIt<NotificationService>().initialize();
+    } catch (e) {
+      // A failure in here is almost always the FCM half, which Windows does
+      // not use anyway. Start the poller regardless - individual show() calls
+      // are already guarded - rather than leave desktop with no delivery at
+      // all because an unrelated subsystem failed.
+      if (kDebugMode) debugPrint('[notifications] initialize failed: $e');
+    }
+    getIt<NotificationPoller>().start();
+  }());
 
   // Both of these need a session. On a cold start with one already in storage
   // nothing else re-asserts them:
