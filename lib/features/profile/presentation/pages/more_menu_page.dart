@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,14 +54,116 @@ class _MenuPageState extends State<MenuPage> {
     }
   }
 
+  /// The menu as data, so the mobile column and the desktop grid render the
+  /// same sections in the same order and a new section only has to be added
+  /// once.
+  List<({String label, List<MenuItem> items})> _sections(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    return [
+      (
+        label: l10n.accountSettings,
+        items: _buildAccountItems(
+          context,
+          l10n,
+          isAdmin: getIt<UserStorage>().isAdmin,
+        ),
+      ),
+      (
+        label: l10n.appSettings,
+        items: [
+          MenuItem(
+            icon: Icons.color_lens_outlined,
+            title: l10n.appearance,
+            subtitle: _getThemeLabel(l10n),
+            onTap: () => showThemeSettingsDialog(context),
+          ),
+          MenuItem(
+            icon: Icons.language_outlined,
+            title: l10n.language,
+            subtitle:
+                context.read<LanguageBloc>().state.locale.languageCode == 'ar'
+                ? l10n.arabic
+                : l10n.english,
+            onTap: () => showLanguageSettingsDialog(context),
+          ),
+        ],
+      ),
+      (
+        label: l10n.support,
+        items: [
+          // TODO: Add help center page and uncomment this
+          // MenuItem(
+          //   icon: Icons.help_outline,
+          //   title: l10n.helpCenter,
+          //   onTap: () {
+          //   },
+          // ),
+          MenuItem(
+            icon: Icons.report_problem_outlined,
+            title: l10n.reportIssue,
+            onTap: () {
+              context.pushNamed(AppRoutesNames.reportIssue);
+            },
+          ),
+        ],
+      ),
+      (
+        // Both stores require these to be reachable from inside the app, not
+        // just from the store listing.
+        label: l10n.legal,
+        items: [
+          MenuItem(
+            icon: Icons.privacy_tip_outlined,
+            title: l10n.privacyPolicy,
+            trailing: _externalLinkIcon(context),
+            onTap: () => openLegalUrl(context, LegalUrls.privacyPolicy),
+          ),
+          MenuItem(
+            icon: Icons.description_outlined,
+            title: l10n.termsOfService,
+            trailing: _externalLinkIcon(context),
+            onTap: () => openLegalUrl(context, LegalUrls.termsOfService),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  Widget _versionLabel(BuildContext context, AppLocalizations l10n) {
+    return Center(
+      child: Text(
+        '${l10n.version} 1.0.0',
+        style: TextStyle(
+          fontFamily: FontHelper.fontFamily(context),
+          fontSize: 11.sp,
+          color: ColorManager.of(context).textSubtle,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final userStorage = getIt<UserStorage>();
     final fullName = userStorage.getUserName() ?? '';
     final profileImageUrl = userStorage.getProfileImageUrl();
-
     final c = ColorManager.of(context);
+    final sections = _sections(context, l10n);
+
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktop(
+        context,
+        l10n,
+        c,
+        fullName,
+        profileImageUrl,
+        sections,
+      );
+    }
+
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       appBar: PageHeader(title: l10n.settings, onBack: () => context.pop()),
@@ -74,121 +177,103 @@ class _MenuPageState extends State<MenuPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // — Profile header
             _buildProfileHeader(context, fullName, profileImageUrl),
-
-            Padding(
-              padding: EdgeInsets.zero,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 18.h),
-
-                  // — Account Settings
-                  _sectionLabel(context, l10n.accountSettings),
-                  SizedBox(height: 8.h),
-                  _buildMenuGroup(
-                    context,
-                    _buildAccountItems(
-                      context,
-                      l10n,
-                      isAdmin: getIt<UserStorage>().isAdmin,
-                    ),
-                  ),
-                  SizedBox(height: 18.h),
-
-                  // — App Settings
-                  _sectionLabel(context, l10n.appSettings),
-                  SizedBox(height: 8.h),
-                  _buildMenuGroup(context, [
-                    MenuItem(
-                      icon: Icons.color_lens_outlined,
-                      title: l10n.appearance,
-                      subtitle: _getThemeLabel(l10n),
-                      onTap: () => showThemeSettingsDialog(context),
-                    ),
-                    MenuItem(
-                      icon: Icons.language_outlined,
-                      title: l10n.language,
-                      subtitle:
-                          context
-                                  .read<LanguageBloc>()
-                                  .state
-                                  .locale
-                                  .languageCode ==
-                              'ar'
-                          ? l10n.arabic
-                          : l10n.english,
-                      onTap: () => showLanguageSettingsDialog(context),
-                    ),
-                  ]),
-                  SizedBox(height: 18.h),
-
-                  // — Support
-                  _sectionLabel(context, l10n.support),
-                  SizedBox(height: 8.h),
-                  _buildMenuGroup(context, [
-                    // TODO: Add help center page and uncomment this
-                    // MenuItem(
-                    //   icon: Icons.help_outline,
-                    //   title: l10n.helpCenter,
-                    //   onTap: () {
-                    //   },
-                    // ),
-                    MenuItem(
-                      icon: Icons.report_problem_outlined,
-                      title: l10n.reportIssue,
-                      onTap: () {
-                        context.pushNamed(AppRoutesNames.reportIssue);
-                      },
-                    ),
-                  ]),
-                  SizedBox(height: 18.h),
-
-                  // — Legal
-                  // Both stores require these to be reachable from inside the
-                  // app, not just from the store listing.
-                  _sectionLabel(context, l10n.legal),
-                  SizedBox(height: 8.h),
-                  _buildMenuGroup(context, [
-                    MenuItem(
-                      icon: Icons.privacy_tip_outlined,
-                      title: l10n.privacyPolicy,
-                      trailing: _externalLinkIcon(context),
-                      onTap: () =>
-                          openLegalUrl(context, LegalUrls.privacyPolicy),
-                    ),
-                    MenuItem(
-                      icon: Icons.description_outlined,
-                      title: l10n.termsOfService,
-                      trailing: _externalLinkIcon(context),
-                      onTap: () =>
-                          openLegalUrl(context, LegalUrls.termsOfService),
-                    ),
-                  ]),
-                  SizedBox(height: 18.h),
-
-                  // — Logout
-                  _buildLogoutRow(context, l10n),
-                  SizedBox(height: 24.h),
-
-                  // — Version
-                  Center(
-                    child: Text(
-                      '${l10n.version} 1.0.0',
-                      style: TextStyle(
-                        fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 11.sp,
-                        color: ColorManager.of(context).textSubtle,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 18.h),
-                ],
-              ),
-            ),
+            SizedBox(height: 18.h),
+            for (final section in sections) ...[
+              _sectionLabel(context, section.label),
+              SizedBox(height: 8.h),
+              _buildMenuGroup(context, section.items),
+              SizedBox(height: 18.h),
+            ],
+            _buildLogoutRow(context, l10n),
+            SizedBox(height: 24.h),
+            _versionLabel(context, l10n),
+            SizedBox(height: 18.h),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Desktop reaches this page as the fifth side-nav tab rather than as a
+  /// pushed route, so it gets no header and no back button - the side nav is
+  /// the chrome. The sections tile into two columns instead of one long
+  /// scroll, which is the whole point of the extra width.
+  Widget _buildDesktop(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppColors c,
+    String fullName,
+    String? profileImageUrl,
+    List<({String label, List<MenuItem> items})> sections,
+  ) {
+    return Scaffold(
+      backgroundColor: c.scaffoldBg,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final twoColumn = width >= 1000;
+          const contentMaxWidth = 1100.0;
+          final outerPadding = width > contentMaxWidth
+              ? (width - contentMaxWidth) / 2 + 32
+              : 32.0;
+
+          Widget group(({String label, List<MenuItem> items}) section) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _sectionLabel(context, section.label),
+                SizedBox(height: 8.h),
+                _buildMenuGroup(context, section.items),
+              ],
+            );
+          }
+
+          Widget column(List<({String label, List<MenuItem> items})> items) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final section in items) ...[
+                  group(section),
+                  const SizedBox(height: 22),
+                ],
+              ],
+            );
+          }
+
+          final left = <({String label, List<MenuItem> items})>[];
+          final right = <({String label, List<MenuItem> items})>[];
+          for (var i = 0; i < sections.length; i++) {
+            (i.isEven ? left : right).add(sections[i]);
+          }
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(outerPadding, 28, outerPadding, 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildProfileHeader(context, fullName, profileImageUrl),
+                const SizedBox(height: 28),
+                if (!twoColumn)
+                  column(sections)
+                else
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: column(left)),
+                      const SizedBox(width: 24),
+                      Expanded(child: column(right)),
+                    ],
+                  ),
+                const SizedBox(height: 6),
+                _buildLogoutRow(context, l10n),
+                const SizedBox(height: 24),
+                _versionLabel(context, l10n),
+                const SizedBox(height: 18),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

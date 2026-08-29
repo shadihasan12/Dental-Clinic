@@ -1,49 +1,72 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class DesktopNavItem {
-  final String svgPath;
+  /// An SVG path `d` string from [DentaNavIcons] - the same icon
+  /// vocabulary the mobile nav pill draws, so a destination reads
+  /// identically on both layouts.
+  final String iconPath;
   final String label;
-  final String shortcut;
+
+  /// 1-5: the digit in the Ctrl/Cmd+N chord this row answers to.
+  final int shortcutDigit;
 
   const DesktopNavItem({
-    required this.svgPath,
+    required this.iconPath,
     required this.label,
-    required this.shortcut,
+    required this.shortcutDigit,
   });
+
+  /// The chord spelled out for the host platform. Tooltip only - the badge
+  /// carries the bare digit, since the modifier is the same for every row
+  /// and only eats width next to the label.
+  String get shortcutLabel => desktopTabShortcut(shortcutDigit);
 }
+
+/// Label for the Ctrl/Cmd+N badge on a nav row.
+///
+/// RootPage binds both Control and Meta, so the badge has to name whichever
+/// modifier the platform actually uses. It also has to stay in the Latin
+/// range off macOS: the bundled font families carry no U+2318 glyph, so a
+/// hardcoded command symbol rendered as tofu next to the digit on Windows.
+String desktopTabShortcut(int digit) =>
+    defaultTargetPlatform == TargetPlatform.macOS
+    ? '\u2318$digit'
+    : 'Ctrl $digit';
 
 List<DesktopNavItem> buildDesktopNavItems(AppLocalizations l10n) {
   return [
     DesktopNavItem(
-      svgPath: Assets.iconsRootHome,
+      iconPath: DentaNavIcons.home,
       label: l10n.home,
-      shortcut: '\u23181',
+      shortcutDigit: 1,
     ),
     DesktopNavItem(
-      svgPath: Assets.iconsRootPatient,
+      iconPath: DentaNavIcons.patients,
       label: l10n.patients,
-      shortcut: '\u23182',
+      shortcutDigit: 2,
     ),
     DesktopNavItem(
-      svgPath: Assets.iconsRootAppointment,
+      iconPath: DentaNavIcons.calendar,
       label: l10n.appointments,
-      shortcut: '\u23183',
+      shortcutDigit: 3,
     ),
     DesktopNavItem(
-      svgPath: Assets.iconsRootMoney,
+      iconPath: DentaNavIcons.payments,
       label: l10n.expenses,
-      shortcut: '\u23184',
+      shortcutDigit: 4,
     ),
     DesktopNavItem(
-      svgPath: Assets.iconsRootMenu,
+      iconPath: DentaNavIcons.more,
       label: l10n.more,
-      shortcut: '\u23185',
+      shortcutDigit: 5,
     ),
   ];
 }
@@ -139,6 +162,8 @@ class _BrandHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
       child: Row(
@@ -147,27 +172,28 @@ class _BrandHeader extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  ColorManager.primary,
-                  ColorManager.primary.withValues(alpha: 0.78),
-                ],
-              ),
+              // The mark is a blue D around a white tooth, so it needs a
+              // light ground - on a primary tile the D sank into its own
+              // background and only the tooth read. Same treatment as the
+              // auth split panel.
+              color: ColorManager.white,
               borderRadius: BorderRadius.circular(12),
+              // In light mode the sidebar is white too, so the tile needs an
+              // edge; in dark mode the surface already provides one.
+              border: isDark ? null : Border.all(color: c.borderLight),
               boxShadow: [
                 BoxShadow(
-                  color: ColorManager.primary.withValues(alpha: 0.28),
+                  color: ColorManager.black.withValues(alpha: 0.08),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.medical_services_rounded,
-              color: Colors.white,
-              size: 22,
+            // The brand mark, matching the auth split panel and the mobile
+            // login header rather than a stand-in glyph.
+            child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Assets.imagesLogoDentaMark.image(fit: BoxFit.contain),
             ),
           ),
           const SizedBox(width: 12),
@@ -177,7 +203,7 @@ class _BrandHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'SmylOS',
+                  l10n.appName,
                   style: TextStyle(
                     fontFamily: fontFamily,
                     fontSize: 20,
@@ -189,7 +215,9 @@ class _BrandHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Clinic OS',
+                  l10n.professionalClinicManagement,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: fontFamily,
                     fontSize: 11,
@@ -269,24 +297,33 @@ class _SideMenuItemState extends State<_SideMenuItem> {
     final c = ColorManager.of(context);
     final selected = widget.isSelected;
 
+    // The hover fill has to read against the sidebar's own `cardBg`, which
+    // rules out `menuGroupBg` - that token is identical to `cardBg` in dark
+    // mode and a 2% step from it in light, so it landed as no feedback at
+    // all. A low primary tint is the selected row's language one step down,
+    // and it holds in both themes.
     final Color bgColor;
     if (selected) {
       bgColor = ColorManager.primary.withValues(alpha: 0.10);
     } else if (_hovered) {
-      bgColor = c.menuGroupBg;
+      bgColor = ColorManager.primary.withValues(alpha: 0.06);
     } else {
       bgColor = Colors.transparent;
     }
 
-    final Color iconColor =
-        selected ? ColorManager.primary : c.iconDefault;
-    final Color textColor =
-        selected ? ColorManager.primary : c.textSecondary;
+    // Foreground lifts with the fill so the row still reads as hovered for
+    // anyone who cannot pick up a 6% background shift.
+    final Color iconColor = selected
+        ? ColorManager.primary
+        : (_hovered ? c.textPrimary : c.iconDefault);
+    final Color textColor = selected
+        ? ColorManager.primary
+        : (_hovered ? c.textPrimary : c.textSecondary);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Tooltip(
-        message: '${widget.item.label}  ·  ${widget.item.shortcut}',
+        message: '${widget.item.label}  ·  ${widget.item.shortcutLabel}',
         waitDuration: const Duration(milliseconds: 600),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
@@ -305,6 +342,10 @@ class _SideMenuItemState extends State<_SideMenuItem> {
               child: InkWell(
                 onTap: widget.onTap,
                 borderRadius: BorderRadius.circular(12),
+                // The MouseRegion above owns the hover fill; the material
+                // default would layer a second tint on a different curve and
+                // make the row look like it settles twice.
+                hoverColor: Colors.transparent,
                 child: Stack(
                   children: [
                     if (selected)
@@ -327,8 +368,8 @@ class _SideMenuItemState extends State<_SideMenuItem> {
                       ),
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            widget.item.svgPath,
+                          SvgPicture.string(
+                            DentaNavIcons.wrap(widget.item.iconPath),
                             width: 20,
                             height: 20,
                             colorFilter: ColorFilter.mode(
@@ -351,11 +392,6 @@ class _SideMenuItemState extends State<_SideMenuItem> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          _ShortcutBadge(
-                            label: widget.item.shortcut,
-                            highlighted: selected || _hovered,
-                            fontFamily: widget.fontFamily,
-                          ),
                         ],
                       ),
                     ),
@@ -363,45 +399,6 @@ class _SideMenuItemState extends State<_SideMenuItem> {
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ShortcutBadge extends StatelessWidget {
-  const _ShortcutBadge({
-    required this.label,
-    required this.highlighted,
-    required this.fontFamily,
-  });
-
-  final String label;
-  final bool highlighted;
-  final String fontFamily;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 150),
-      opacity: highlighted ? 1 : 0.55,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: c.cardBgSecondary,
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: c.borderLight),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: fontFamily,
-            fontSize: 10.5,
-            fontWeight: FontWeightManager.semiBold,
-            color: c.textTertiary,
-            letterSpacing: 0.3,
           ),
         ),
       ),

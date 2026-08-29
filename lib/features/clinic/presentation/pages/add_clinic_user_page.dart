@@ -1,7 +1,9 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_content_width.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_page_scaffold.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
@@ -96,17 +98,17 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
 
   void _submit() {
     context.read<ClinicUsersBloc>().add(
-      ClinicUsersEvent.addUser(
-        firstName: _firstNameCtrl.text.trim(),
-        lastName: _lastNameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-        mobileNumber: _mobileCtrl.text.trim(),
-        password: _passwordCtrl.text,
-        passwordConfirmation: _confirmCtrl.text,
-        roles: _selectedRoles.toList(),
-        specialtyId: _selectedSpecialty?.id,
-      ),
-    );
+          ClinicUsersEvent.addUser(
+            firstName: _firstNameCtrl.text.trim(),
+            lastName: _lastNameCtrl.text.trim(),
+            email: _emailCtrl.text.trim(),
+            mobileNumber: _mobileCtrl.text.trim(),
+            password: _passwordCtrl.text,
+            passwordConfirmation: _confirmCtrl.text,
+            roles: _selectedRoles.toList(),
+            specialtyId: _selectedSpecialty?.id,
+          ),
+        );
   }
 
   @override
@@ -129,198 +131,223 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
             orElse: () => false,
           );
 
-          return Scaffold(
+          final wide = Responsive.isDesktop(context);
+
+          // Was a bare Scaffold with the mobile PageHeader, which on desktop
+          // meant a phone title bar and no side nav - the page dropped out of
+          // the shell the rest of the app lives in. AdaptivePageScaffold hands
+          // desktop the real top bar and leaves mobile exactly as it was.
+          return AdaptivePageScaffold(
+            title: l10n.addUser,
+            breadcrumb: l10n.clinicUsers,
             backgroundColor: c.scaffoldBg,
-            appBar: PageHeader(
-              title: l10n.addUser,
-              onBack: () => context.pop(),
-            ),
+            onBack: () => context.pop(),
             bottomNavigationBar: FormActionBar(
               label: l10n.addUser,
               busy: isSubmitting,
               onPressed: _canSubmit ? _submit : null,
             ),
             body: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FormSectionCard(
-                    title: l10n.personalInformation,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: FormTextField(
+              padding: wide
+                  ? const EdgeInsets.fromLTRB(24, 20, 24, 28)
+                  : EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+              child: AdaptiveContentWidth(
+                // Narrower than a list page: this is six short controls, and
+                // an email box half a metre wide is harder to read, not easier.
+                maxWidth: 720,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FormSectionCard(
+                      title: l10n.personalInformation,
+                      children: [
+                        // Was a raw Row, so the two boxes stayed pinned side by
+                        // side however little room they had. Same 8px gap on a
+                        // phone, but it can stack now if the box gets tight.
+                        FormFieldRow(
+                          minFieldWidth: 140,
+                          spacing: 8,
+                          children: [
+                            FormTextField(
                               label: l10n.firstName,
                               required: true,
                               controller: _firstNameCtrl,
                               textCapitalization: TextCapitalization.words,
                               onChanged: () => setState(() {}),
                             ),
-                          ),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: FormTextField(
+                            FormTextField(
                               label: l10n.lastName,
                               required: true,
                               controller: _lastNameCtrl,
                               textCapitalization: TextCapitalization.words,
                               onChanged: () => setState(() {}),
                             ),
-                          ),
-                        ],
-                      ),
-                      FormTextField(
-                        label: l10n.emailAddress,
-                        required: true,
-                        controller: _emailCtrl,
-                        keyboardType: TextInputType.emailAddress,
-                        textDirection: TextDirection.ltr,
-                        onChanged: () => setState(() {}),
-                      ),
-                      FormTextField(
-                        label: l10n.mobileNumber,
-                        controller: _mobileCtrl,
-                        keyboardType: TextInputType.phone,
-                        textDirection: TextDirection.ltr,
-                        onChanged: () => setState(() {}),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  FormSectionCard(
-                    title: l10n.password,
-                    children: [
-                      FormTextField(
-                        label: l10n.password,
-                        required: true,
-                        controller: _passwordCtrl,
-                        obscureText: _obscurePassword,
-                        onChanged: () => setState(() {}),
-                        suffix: _RevealToggle(
-                          obscured: _obscurePassword,
-                          onTap: () => setState(
-                            () => _obscurePassword = !_obscurePassword,
-                          ),
+                          ],
                         ),
-                      ),
-                      FormTextField(
-                        label: l10n.confirmPassword,
-                        required: true,
-                        controller: _confirmCtrl,
-                        obscureText: _obscureConfirm,
-                        onChanged: () => setState(() {}),
-                        suffix: _RevealToggle(
-                          obscured: _obscureConfirm,
-                          onTap: () => setState(
-                            () => _obscureConfirm = !_obscureConfirm,
-                          ),
+                        // Contact details pair up on desktop and stay stacked on
+                        // a phone, where an email address needs the full width.
+                        FormFieldRow(
+                          minFieldWidth: 240,
+                          children: [
+                            FormTextField(
+                              label: l10n.emailAddress,
+                              required: true,
+                              controller: _emailCtrl,
+                              keyboardType: TextInputType.emailAddress,
+                              textDirection: TextDirection.ltr,
+                              onChanged: () => setState(() {}),
+                            ),
+                            FormTextField(
+                              label: l10n.mobileNumber,
+                              controller: _mobileCtrl,
+                              keyboardType: TextInputType.phone,
+                              textDirection: TextDirection.ltr,
+                              onChanged: () => setState(() {}),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  FormSectionCard(
-                    title: l10n.selectRoles,
-                    children: [
-                      Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: _allRoles.map((role) {
-                          final selected = _selectedRoles.contains(role);
-                          final disabled = _isRoleDisabled(role);
-                          return GestureDetector(
-                            onTap: disabled
-                                ? null
-                                : () => setState(() {
-                                    selected
-                                        ? _selectedRoles.remove(role)
-                                        : _selectedRoles.add(role);
-                                    if (!_isDentistSelected) {
-                                      _selectedSpecialty = null;
-                                    }
-                                  }),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 14.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: disabled
-                                    ? c.cardBgSecondary
-                                    : selected
-                                    ? ColorManager.primary.withValues(
-                                        alpha: 0.12,
-                                      )
-                                    : c.cardBg,
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(
-                                  color: disabled
-                                      ? c.borderLight
-                                      : selected
-                                      ? ColorManager.primary
-                                      : c.borderLight,
-                                  width: selected && !disabled ? 1.5 : 1,
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    FormSectionCard(
+                      title: l10n.password,
+                      children: [
+                        // The two password boxes are a natural pair to compare
+                        // side by side once there is room for both.
+                        FormFieldRow(
+                          minFieldWidth: 240,
+                          children: [
+                            FormTextField(
+                              label: l10n.password,
+                              required: true,
+                              controller: _passwordCtrl,
+                              obscureText: _obscurePassword,
+                              onChanged: () => setState(() {}),
+                              suffix: _RevealToggle(
+                                obscured: _obscurePassword,
+                                onTap: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
                                 ),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (disabled) ...[
-                                    Icon(
-                                      Icons.lock_outline_rounded,
-                                      size: 12.w,
-                                      color: c.textTertiary,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                  ],
-                                  Text(
-                                    _roleLabel(l10n, role),
-                                    style: TextStyle(
-                                      fontSize: 11.5.sp,
-                                      fontFamily: FontHelper.fontFamily(
-                                        context,
-                                      ),
-                                      fontWeight: selected
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
-                                      color: disabled
-                                          ? c.textTertiary
-                                          : selected
-                                          ? ColorManager.primaryDarker
-                                          : c.textSecondary,
-                                    ),
-                                  ),
-                                ],
+                            ),
+                            FormTextField(
+                              label: l10n.confirmPassword,
+                              required: true,
+                              controller: _confirmCtrl,
+                              obscureText: _obscureConfirm,
+                              onChanged: () => setState(() {}),
+                              suffix: _RevealToggle(
+                                obscured: _obscureConfirm,
+                                onTap: () => setState(
+                                  () => _obscureConfirm = !_obscureConfirm,
+                                ),
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                      if (widget.dentistsReached || widget.secretariesReached)
-                        _RoleLimitNote(
-                          dentists: widget.dentistsReached,
-                          secretaries: widget.secretariesReached,
+                          ],
                         ),
-                      // Only a dentist has a specialty, so the field appears
-                      // with the role rather than sitting there greyed out.
-                      if (_isDentistSelected)
-                        FormPickerField(
-                          label: l10n.specialization,
-                          value: _selectedSpecialty?.name,
-                          placeholder: _loadingSpecialties
-                              ? '...'
-                              : l10n.selectSpecialization,
-                          onTap: _loadingSpecialties || _specialties.isEmpty
-                              ? null
-                              : _pickSpecialty,
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    FormSectionCard(
+                      title: l10n.selectRoles,
+                      children: [
+                        Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children: _allRoles.map((role) {
+                            final selected = _selectedRoles.contains(role);
+                            final disabled = _isRoleDisabled(role);
+                            return GestureDetector(
+                              onTap: disabled
+                                  ? null
+                                  : () => setState(() {
+                                        selected
+                                            ? _selectedRoles.remove(role)
+                                            : _selectedRoles.add(role);
+                                        if (!_isDentistSelected) {
+                                          _selectedSpecialty = null;
+                                        }
+                                      }),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 14.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: disabled
+                                      ? c.cardBgSecondary
+                                      : selected
+                                          ? ColorManager.primary.withValues(
+                                              alpha: 0.12,
+                                            )
+                                          : c.cardBg,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  border: Border.all(
+                                    color: disabled
+                                        ? c.borderLight
+                                        : selected
+                                            ? ColorManager.primary
+                                            : c.borderLight,
+                                    width: selected && !disabled ? 1.5 : 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (disabled) ...[
+                                      Icon(
+                                        Icons.lock_outline_rounded,
+                                        size: 12.w,
+                                        color: c.textTertiary,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                    ],
+                                    Text(
+                                      _roleLabel(l10n, role),
+                                      style: TextStyle(
+                                        fontSize: 11.5.sp,
+                                        fontFamily: FontHelper.fontFamily(
+                                          context,
+                                        ),
+                                        fontWeight: selected
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                        color: disabled
+                                            ? c.textTertiary
+                                            : selected
+                                                ? ColorManager.primaryDarker
+                                                : c.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                    ],
-                  ),
-                ],
+                        if (widget.dentistsReached || widget.secretariesReached)
+                          _RoleLimitNote(
+                            dentists: widget.dentistsReached,
+                            secretaries: widget.secretariesReached,
+                          ),
+                        // Only a dentist has a specialty, so the field appears
+                        // with the role rather than sitting there greyed out.
+                        if (_isDentistSelected)
+                          FormPickerField(
+                            label: l10n.specialization,
+                            value: _selectedSpecialty?.name,
+                            placeholder: _loadingSpecialties
+                                ? '...'
+                                : l10n.selectSpecialization,
+                            onTap: _loadingSpecialties || _specialties.isEmpty
+                                ? null
+                                : _pickSpecialty,
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );

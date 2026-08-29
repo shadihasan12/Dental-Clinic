@@ -3,7 +3,6 @@ import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
@@ -11,6 +10,7 @@ import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_m
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_details_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -127,45 +127,13 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
     final dc = widget.dentalCase;
     final treatments = _mapTreatments();
 
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: AppLocalizations.of(context)!.completedCase,
+      onBack: () => context.pop(),
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: Column(
-        children: [
-          PageHeader(
-            title: AppLocalizations.of(context)!.completedCase,
-            onBack: () => context.pop(),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title card (editable)
-                  _buildTitleCard(context),
-                  SizedBox(height: 8.h),
-                  AddedByLabel(audits: dc.audits, createdAt: dc.createdAt),
-                  SizedBox(height: 12.h),
-
-                  // Info card
-                  _buildInfoCard(context, dc),
-                  SizedBox(height: 12.h),
-
-                  // Financial card
-                  _buildFinancialCard(context, dc),
-                  SizedBox(height: 16.h),
-
-                  // Treatments list
-                  _buildTreatmentsList(context, treatments),
-                  SizedBox(height: 24.h),
-                ],
-              ),
-            ),
-          ),
-
-          // Sticky "Reopen Case" button
-          if (widget.onReopenCase != null)
-            Container(
+      // Sticky "Reopen Case" button
+      bottomNavigationBar: widget.onReopenCase != null
+          ? Container(
               padding: EdgeInsets.fromLTRB(
                 16.w,
                 12.h,
@@ -213,8 +181,32 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                   ),
                 ),
               ),
-            ),
-        ],
+            )
+          : null,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title card (editable)
+            _buildTitleCard(context),
+            SizedBox(height: 8.h),
+            AddedByLabel(audits: dc.audits, createdAt: dc.createdAt),
+            SizedBox(height: 12.h),
+
+            // Info card
+            _buildInfoCard(context, dc),
+            SizedBox(height: 12.h),
+
+            // Financial card
+            _buildFinancialCard(context, dc),
+            SizedBox(height: 16.h),
+
+            // Treatments list
+            _buildTreatmentsList(context, treatments),
+            SizedBox(height: 24.h),
+          ],
+        ),
       ),
     );
   }

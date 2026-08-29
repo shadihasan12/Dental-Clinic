@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 
 class EmailEntryPage extends StatefulWidget {
@@ -51,7 +52,7 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
     // primary is the one that reads.
     final accent = isDark ? ColorManager.primary : ColorManager.primaryDarker;
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 1, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: MultiBlocListener(
         listeners: [
@@ -267,6 +268,6 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
         },
         ),
       ),
-    );
+    ),);
   }
 }

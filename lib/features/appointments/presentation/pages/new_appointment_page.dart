@@ -18,6 +18,7 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_pat
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -47,6 +48,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   List<ClinicDoctorEntity> _doctors = [];
   ClinicDoctorEntity? _selectedDoctor;
   bool _isDoctorsLoading = true;
+
+  /// How deep the available-times strip stacks before it scrolls sideways.
+  static const int _slotRows = 3;
 
   // Date / duration / slots
   DateTime _selectedDate = DateTime.now();
@@ -100,9 +104,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     result.fold(
       (error) {
         setState(() => _isDoctorsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: AppLocalizations.of(context)!.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (doctors) {
         setState(() {
@@ -134,9 +140,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     result.fold(
       (error) {
         setState(() => _isPatientsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: AppLocalizations.of(context)!.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (response) {
         setState(() {
@@ -184,9 +192,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     final failure = result.fold((l) => l, (_) => null);
     if (failure != null) {
       setState(() => _isSlotsLoading = false);
-      AppSnackbar.showError(context,
-          title: AppLocalizations.of(context)!.error,
-          message: NetworkExceptions.getErrorMessage(failure));
+      AppSnackbar.showError(
+        context,
+        title: AppLocalizations.of(context)!.error,
+        message: NetworkExceptions.getErrorMessage(failure),
+      );
       return;
     }
 
@@ -204,7 +214,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     // appointment is being booked for another doctor we fall back to
     // the generic "no slots" message without the CTA.
     final currentUserId = getIt<TokenStorage>().getUserId();
-    final isSelf = currentUserId != null &&
+    final isSelf =
+        currentUserId != null &&
         currentUserId.isNotEmpty &&
         _selectedDoctor!.id == currentUserId;
     if (!isSelf) {
@@ -214,23 +225,20 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     final hoursResult = await getIt<WorkingDaysRepository>().getMyHours();
     if (!mounted) return;
-    hoursResult.fold(
-      (_) => setState(() => _isSlotsLoading = false),
-      (hours) {
-        // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
-        // working-days API uses, so we can compare directly.
-        final selectedDow = _selectedDate.weekday;
-        final hasAnyWorkingHours = hours.any((h) => h.isWorking);
-        final worksOnDay = hours.any(
-          (h) => h.dayOfWeek == selectedDow && h.isWorking,
-        );
-        setState(() {
-          _isSlotsLoading = false;
-          _hasNoWorkingHours = !hasAnyWorkingHours;
-          _doesNotWorkSelectedDay = hasAnyWorkingHours && !worksOnDay;
-        });
-      },
-    );
+    hoursResult.fold((_) => setState(() => _isSlotsLoading = false), (hours) {
+      // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
+      // working-days API uses, so we can compare directly.
+      final selectedDow = _selectedDate.weekday;
+      final hasAnyWorkingHours = hours.any((h) => h.isWorking);
+      final worksOnDay = hours.any(
+        (h) => h.dayOfWeek == selectedDow && h.isWorking,
+      );
+      setState(() {
+        _isSlotsLoading = false;
+        _hasNoWorkingHours = !hasAnyWorkingHours;
+        _doesNotWorkSelectedDay = hasAnyWorkingHours && !worksOnDay;
+      });
+    });
   }
 
   /// Routes the user to the page that actually fixes the empty-slots
@@ -255,12 +263,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   _AppointmentErrors _validate() {
     final l10n = AppLocalizations.of(context)!;
     return _AppointmentErrors(
-      patient:
-          _selectedPatientEntity == null ? l10n.pleaseSelectAPatient : null,
-      doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
-      slot: _selectedSlot == null
-          ? l10n.pleaseSelectAnAvailableTimeSlot
+      patient: _selectedPatientEntity == null
+          ? l10n.pleaseSelectAPatient
           : null,
+      doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
+      slot: _selectedSlot == null ? l10n.pleaseSelectAnAvailableTimeSlot : null,
     );
   }
 
@@ -304,8 +311,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           curve: Curves.easeOut,
         );
       }
-      AppSnackbar.showWarning(context,
-          title: l10n.missingData, message: l10n.checkHighlightedFields);
+      AppSnackbar.showWarning(
+        context,
+        title: l10n.missingData,
+        message: l10n.checkHighlightedFields,
+      );
       return;
     }
 
@@ -330,14 +340,18 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     result.fold(
       (error) {
-        AppSnackbar.showError(context,
-            title: l10n.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: l10n.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (_) {
-        AppSnackbar.showSuccess(context,
-            title: l10n.appointmentScheduled,
-            message: l10n.successfullyAddedToCalendar);
+        AppSnackbar.showSuccess(
+          context,
+          title: l10n.appointmentScheduled,
+          message: l10n.successfullyAddedToCalendar,
+        );
         NewAppointmentPage.created.value++;
         context.pop();
       },
@@ -364,108 +378,138 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
+    final isDesktop = Responsive.isDesktop(context);
 
-    return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            FormTopBar(
-              title: l10n.newAppointment,
-              onBack: () => context.pop(),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        FormSectionCard(
-                          title: l10n.patient,
-                          children: [
-                            if (_isPatientsLoading)
-                              _buildPatientPickerSkeleton()
-                            else
-                              PatientPicker(
-                                patients:
-                                    _patients.map((p) => p.name).toList(),
-                                selectedPatient: _selectedPatientEntity?.name,
-                                onPatientChanged: (name) {
-                                  final entity = name != null
-                                      ? _patients
-                                          .firstWhere((p) => p.name == name)
-                                      : null;
-                                  setState(
-                                      () => _selectedPatientEntity = entity);
-                                  _revalidate();
-                                },
-                                onAddNewPatient: () => context
-                                    .pushNamed(AppRoutesNames.addPatient),
-                              ),
-                            if (_errors.patient != null)
-                              FormErrorLine(message: _errors.patient!),
-                          ],
-                        ),
-                        SizedBox(height: 8.h),
-                        FormSectionCard(
-                          title: l10n.doctor,
-                          children: [
-                            _buildDoctorChips(l10n),
-                            if (_errors.doctor != null)
-                              FormErrorLine(message: _errors.doctor!),
-                          ],
-                        ),
-                        SizedBox(height: 8.h),
-                        FormSectionCard(
-                          title: l10n.schedule,
-                          children: [
-                            FormDateField(
-                              label: l10n.date,
-                              value: _selectedDate,
-                              onTap: _selectDate,
-                            ),
-                            FormFieldShell(
-                              label: l10n.duration,
-                              child: _buildDurationChips(),
-                            ),
-                            _buildVipSwitch(l10n),
-                            FormFieldShell(
-                              label: l10n.availableSlots,
-                              required: true,
-                              errorText: _errors.slot,
-                              child: _buildSlots(l10n),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8.h),
-                        FormSectionCard(
-                          title: l10n.notes,
-                          children: [
-                            FormTextField(
-                              label: '',
-                              controller: _notesController,
-                              maxLines: 3,
-                              hintText: l10n.addNotesForAppointment,
-                            ),
-                            _buildReminderRow(l10n),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+    // The four sections are built once and then arranged per form factor:
+    // one column on a phone, two side by side on a desktop window. Only the
+    // arrangement differs, so a field cannot exist in one layout and not the
+    // other.
+    final patientSection = FormSectionCard(
+      title: l10n.patient,
+      children: [
+        if (_isPatientsLoading)
+          _buildPatientPickerSkeleton()
+        else
+          PatientPicker(
+            patients: _patients.map((p) => p.name).toList(),
+            selectedPatient: _selectedPatientEntity?.name,
+            onPatientChanged: (name) {
+              final entity = name != null
+                  ? _patients.firstWhere((p) => p.name == name)
+                  : null;
+              setState(() => _selectedPatientEntity = entity);
+              _revalidate();
+            },
+            onAddNewPatient: () => context.pushNamed(AppRoutesNames.addPatient),
+          ),
+        if (_errors.patient != null) FormErrorLine(message: _errors.patient!),
+      ],
+    );
+
+    final doctorSection = FormSectionCard(
+      title: l10n.doctor,
+      children: [
+        _buildDoctorChips(l10n),
+        if (_errors.doctor != null) FormErrorLine(message: _errors.doctor!),
+      ],
+    );
+
+    final scheduleSection = FormSectionCard(
+      title: l10n.schedule,
+      children: [
+        FormDateField(
+          label: l10n.date,
+          value: _selectedDate,
+          onTap: _selectDate,
+        ),
+        FormFieldShell(label: l10n.duration, child: _buildDurationChips()),
+        _buildVipSwitch(l10n),
+        FormFieldShell(
+          label: l10n.availableSlots,
+          required: true,
+          errorText: _errors.slot,
+          child: _buildSlots(l10n),
+        ),
+      ],
+    );
+
+    final notesSection = FormSectionCard(
+      title: l10n.notes,
+      children: [
+        FormTextField(
+          label: '',
+          controller: _notesController,
+          maxLines: 3,
+          hintText: l10n.addNotesForAppointment,
+        ),
+        _buildReminderRow(l10n),
+      ],
+    );
+
+    // Who and what on one side, when on the other. The slot grid is by far
+    // the tallest block, so pairing it against the three short sections is
+    // what actually removes the scroll rather than just narrowing it.
+    final Widget formBody = isDesktop
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    patientSection,
+                    const SizedBox(height: 12),
+                    doctorSection,
+                    const SizedBox(height: 12),
+                    notesSection,
+                  ],
                 ),
               ),
+              const SizedBox(width: 16),
+              Expanded(child: scheduleSection),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              patientSection,
+              SizedBox(height: 8.h),
+              doctorSection,
+              SizedBox(height: 8.h),
+              scheduleSection,
+              SizedBox(height: 8.h),
+              notesSection,
+            ],
+          );
+
+    return AdaptivePageScaffold(
+      title: l10n.newAppointment,
+      onBack: () => context.pop(),
+      backgroundColor: c.scaffoldBg,
+      breadcrumb: l10n.appointments,
+      mobileHeader: FormTopBar(
+        title: l10n.newAppointment,
+        onBack: () => context.pop(),
+      ),
+      body: SafeArea(
+        bottom: false,
+        top: false,
+        child: AdaptiveContentWidth(
+          maxWidth: isDesktop ? 1080 : 780,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: isDesktop
+                  ? const EdgeInsets.fromLTRB(24, 20, 24, 24)
+                  : EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+              child: Form(key: _formKey, child: formBody),
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: FormActionBar(
+        maxWidth: isDesktop ? 1080 : 780,
         label: l10n.save,
         onPressed: _saveAppointment,
       ),
@@ -518,8 +562,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       },
       child: Row(
         children: [
-          Icon(Icons.workspace_premium_outlined,
-              size: 16.w, color: c.textTertiary),
+          Icon(
+            Icons.workspace_premium_outlined,
+            size: 16.w,
+            color: c.textTertiary,
+          ),
           SizedBox(width: 8.w),
           Expanded(
             child: Column(
@@ -580,7 +627,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   Widget _buildSlots(AppLocalizations l10n) {
     if (_isSlotsLoading) {
-      return _buildChipRowSkeleton(count: 6, chipWidth: 64.w, radius: 10);
+      return _buildSlotGridSkeleton();
     }
     if (_availableSlots.isEmpty) {
       // Three empty states, most specific first:
@@ -600,8 +647,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           message: isAdmin
               ? l10n.clinicWorkingDaysMissingAdminMessage
               : l10n.noWorkingHoursMessage,
-          buttonLabel:
-              isAdmin ? l10n.setClinicWorkingDays : l10n.setWorkingHours,
+          buttonLabel: isAdmin
+              ? l10n.setClinicWorkingDays
+              : l10n.setWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }
@@ -609,8 +657,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         return _SlotsEmptyHoursCta(
           title: l10n.notWorkingOnThisDayTitle,
           message: l10n.notWorkingOnThisDayMessage,
-          buttonLabel:
-              isAdmin ? l10n.setClinicWorkingDays : l10n.updateWorkingHours,
+          buttonLabel: isAdmin
+              ? l10n.setClinicWorkingDays
+              : l10n.updateWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }
@@ -625,22 +674,51 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       );
     }
 
+    // Desktop has the width a phone does not: every slot wraps into view at
+    // once, so nothing is hidden behind a sideways scroll the mouse has no
+    // obvious way to drive.
+    if (Responsive.isDesktop(context)) {
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final slot in _availableSlots) _slotChip(slot),
+        ],
+      );
+    }
+
+    // A full working day is 30-odd slots. On one row that is a long scroll
+    // whose far end is easy to miss, so they stack three deep and the strip
+    // scrolls a third as far. Each column holds three consecutive times, so
+    // the sequence still reads down-then-across in order.
+    final columns = <List<String>>[];
+    for (var i = 0; i < _availableSlots.length; i += _slotRows) {
+      final end = (i + _slotRows).clamp(0, _availableSlots.length);
+      columns.add(_availableSlots.sublist(i, end));
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (var i = 0; i < _availableSlots.length; i++) ...[
-            if (i > 0) SizedBox(width: 8.w),
-            FormChip(
-              label: _availableSlots[i],
-              selected: _selectedSlot == _availableSlots[i],
-              onTap: () {
-                setState(() => _selectedSlot = _availableSlots[i]);
-                _revalidate();
-              },
-              radius: 10,
+          for (var col = 0; col < columns.length; col++) ...[
+            if (col > 0) SizedBox(width: 8.w),
+            // A short column - the last one, when the count is not a
+            // multiple of three - keeps its chips the width of the rest.
+            IntrinsicWidth(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var row = 0; row < columns[col].length; row++) ...[
+                    if (row > 0) SizedBox(height: 8.h),
+                    _slotChip(columns[col][row]),
+                  ],
+                ],
+              ),
             ),
           ],
         ],
@@ -653,8 +731,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       onTap: () => setState(() => _sendReminder = !_sendReminder),
       child: Row(
         children: [
-          Icon(Icons.notifications_outlined,
-              size: 16.w, color: ColorManager.of(context).textTertiary),
+          Icon(
+            Icons.notifications_outlined,
+            size: 16.w,
+            color: ColorManager.of(context).textTertiary,
+          ),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -705,6 +786,71 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _slotChip(String slot) => FormChip(
+    label: slot,
+    selected: _selectedSlot == slot,
+    onTap: () {
+      setState(() => _selectedSlot = slot);
+      _revalidate();
+    },
+    radius: 10,
+  );
+
+  /// Same three-row strip as the real chips, so the block does not resize
+  /// under the user when the slots land.
+  Widget _buildSlotGridSkeleton() {
+    final fill = ColorManager.of(context).shimmerBase;
+    if (Responsive.isDesktop(context)) {
+      return AppShimmer(
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (var i = 0; i < 12; i++)
+              Container(
+                width: 64.w,
+                height: 34.h,
+                decoration: BoxDecoration(
+                  color: fill,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+    return AppShimmer(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var col = 0; col < 5; col++) ...[
+              if (col > 0) SizedBox(width: 8.w),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var row = 0; row < _slotRows; row++) ...[
+                    if (row > 0) SizedBox(height: 8.h),
+                    Container(
+                      width: 64.w,
+                      height: 34.h,
+                      decoration: BoxDecoration(
+                        color: fill,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -767,9 +913,7 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorManager.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(13.r),
-        border: Border.all(
-          color: ColorManager.primary.withValues(alpha: 0.20),
-        ),
+        border: Border.all(color: ColorManager.primary.withValues(alpha: 0.20)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

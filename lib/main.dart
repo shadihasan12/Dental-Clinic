@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -192,48 +193,70 @@ class _DentalClinicAppState extends State<DentalClinicApp>
           return BlocBuilder<ThemeBloc, ThemeState>(
             bloc: getIt<ThemeBloc>(),
             builder: (context, themeState) {
-              return ScreenUtilInit(
-                designSize: const Size(375, 812),
-                minTextAdapt: true,
-                splitScreenMode: true,
-                builder: (context, child) {
-                  return MaterialApp.router(
-                    title: AppConstants.appName,
-                    debugShowCheckedModeBanner: false,
-                    theme: getApplicationThemeData(),
-                    darkTheme: getDarkThemeData(),
-                    themeMode: themeState.themeMode,
-                    locale: languageState.locale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: const [Locale('en'), Locale('ar')],
-                    routerConfig: routesManager.router,
-                    builder: (context, child) {
-                      // The Windows poller raises banners from outside the
-                      // widget tree, so it has no BuildContext of its own.
-                      // Hand it the localised summary copy from here, where
-                      // AppLocalizations is resolved and re-resolved whenever
-                      // the locale changes.
-                      _bindPollerStrings(context);
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  // ScreenUtil scales every .w/.h/.sp by screen ÷ design size,
+                  // and it keeps that ratio in one global singleton. On
+                  // desktop the design size IS the window, so the ratio is 1
+                  // and the desktop layouts render at the sizes they are
+                  // written in.
+                  //
+                  // Deciding it here, at the only ScreenUtilInit in the app,
+                  // is what makes it reliable: the shells used to re-configure
+                  // the singleton themselves, and any rebuild that landed
+                  // between the root's write and theirs painted at the phone
+                  // ratio - which on a 1900px window is text at 5x. One writer,
+                  // no race.
+                  final isDesktop =
+                      constraints.hasBoundedWidth &&
+                      constraints.maxWidth >= Responsive.desktopBreakpoint;
 
-                      // ScreenUtil already scales every .sp by the device's
-                      // width ratio; the OS font-size setting then multiplies
-                      // on top of that, so a device set above default compounds
-                      // twice and the whole UI reads oversized. Clamp the upper
-                      // end while still honouring users who need larger text.
-                      final mq = MediaQuery.of(context);
-                      return MediaQuery(
-                        data: mq.copyWith(
-                          textScaler: mq.textScaler.clamp(
-                            minScaleFactor: 1.0,
-                            maxScaleFactor: 1.2,
-                          ),
-                        ),
-                        child: child ?? const SizedBox.shrink(),
+                  return ScreenUtilInit(
+                    designSize: isDesktop
+                        ? constraints.biggest
+                        : const Size(375, 812),
+                    minTextAdapt: true,
+                    splitScreenMode: true,
+                    builder: (context, child) {
+                      return MaterialApp.router(
+                        title: AppConstants.appName,
+                        debugShowCheckedModeBanner: false,
+                        theme: getApplicationThemeData(),
+                        darkTheme: getDarkThemeData(),
+                        themeMode: themeState.themeMode,
+                        locale: languageState.locale,
+                        localizationsDelegates: const [
+                          AppLocalizations.delegate,
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                        ],
+                        supportedLocales: const [Locale('en'), Locale('ar')],
+                        routerConfig: routesManager.router,
+                        builder: (context, child) {
+                          // The Windows poller raises banners from outside the
+                          // widget tree, so it has no BuildContext of its own.
+                          // Hand it the localised summary copy from here, where
+                          // AppLocalizations is resolved and re-resolved whenever
+                          // the locale changes.
+                          _bindPollerStrings(context);
+
+                          // ScreenUtil already scales every .sp by the device's
+                          // width ratio; the OS font-size setting then multiplies
+                          // on top of that, so a device set above default compounds
+                          // twice and the whole UI reads oversized. Clamp the upper
+                          // end while still honouring users who need larger text.
+                          final mq = MediaQuery.of(context);
+                          return MediaQuery(
+                            data: mq.copyWith(
+                              textScaler: mq.textScaler.clamp(
+                                minScaleFactor: 1.0,
+                                maxScaleFactor: 1.2,
+                              ),
+                            ),
+                            child: child ?? const SizedBox.shrink(),
+                          );
+                        },
                       );
                     },
                   );

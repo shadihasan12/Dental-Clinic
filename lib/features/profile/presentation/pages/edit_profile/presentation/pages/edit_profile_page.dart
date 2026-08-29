@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
@@ -215,10 +216,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   ),
                 ),
                 SizedBox(height: 18.h),
-                const IconTile(
-                  icon: Icons.photo_library_outlined,
-                  size: 44,
-                ),
+                const IconTile(icon: Icons.photo_library_outlined, size: 44),
                 SizedBox(height: 14.h),
                 Text(
                   l10n.photoPermissionRequired,
@@ -450,52 +448,47 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
-        return Scaffold(
+        return AdaptivePageScaffold(
+          title: l10n.editProfile,
+          body: state.maybeWhen(
+            loading: () => const _EditProfileSkeleton(),
+            error: (message) {
+              // The form stays usable once populated: a failed refresh
+              // must not throw away what the user has already typed.
+              if (_formPopulated) return _buildForm(l10n);
+              return SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                child: StateCard(
+                  icon: Icons.cloud_off_rounded,
+                  tone: ColorManager.error,
+                  title: l10n.profileLoadFailed,
+                  message: message,
+                  actionLabel: l10n.retry,
+                  onAction: () => context.read<EditProfileBloc>().add(
+                    const EditProfileEvent.loadProfile(),
+                  ),
+                ),
+              );
+            },
+            loaded: (profile) {
+              if (!_formPopulated) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() => _populateFromEntity(profile));
+                });
+                return const _EditProfileSkeleton();
+              }
+              return _buildForm(l10n);
+            },
+            orElse: () {
+              if (!_formPopulated) {
+                return const SizedBox.shrink();
+              }
+              return _buildForm(l10n);
+            },
+          ),
+          onBack: () => context.pop(),
           backgroundColor: c.scaffoldBg,
           bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
-          body: Column(
-            children: [
-              PageHeader(title: l10n.editProfile, onBack: () => context.pop()),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _EditProfileSkeleton(),
-                  error: (message) {
-                    // The form stays usable once populated: a failed refresh
-                    // must not throw away what the user has already typed.
-                    if (_formPopulated) return _buildForm(l10n);
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                      child: StateCard(
-                        icon: Icons.cloud_off_rounded,
-                        tone: ColorManager.error,
-                        title: l10n.profileLoadFailed,
-                        message: message,
-                        actionLabel: l10n.retry,
-                        onAction: () => context
-                            .read<EditProfileBloc>()
-                            .add(const EditProfileEvent.loadProfile()),
-                      ),
-                    );
-                  },
-                  loaded: (profile) {
-                    if (!_formPopulated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromEntity(profile));
-                      });
-                      return const _EditProfileSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_formPopulated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
-                ),
-              ),
-            ],
-          ),
         );
       },
     );
@@ -561,6 +554,11 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   }
 
   Widget _buildForm(AppLocalizations l10n) {
+    // Desktop is a genuinely different shape, not the phone column stretched:
+    // the avatar moves out of the scroll flow into its own aside, and the
+    // short fields pair up. Below the breakpoint nothing changes.
+    if (Responsive.isDesktop(context)) return _buildDesktopForm(l10n);
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: Column(
@@ -568,59 +566,144 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         children: [
           _buildProfileImage(),
           SizedBox(height: 14.h),
-          // Same section card, shell and input surface as Add Patient: label
-          // above the control, hairline at rest, 1.5px primary on focus.
-          FormSectionCard(
-            title: l10n.personalInformation,
-            children: [
-              FormTextField(
-                label: l10n.firstName,
-                controller: _firstNameController,
-                textCapitalization: TextCapitalization.words,
-              ),
-              FormTextField(
-                label: l10n.lastName,
-                controller: _lastNameController,
-                textCapitalization: TextCapitalization.words,
-              ),
-              FormPickerField(
-                label: l10n.specialization,
-                value: _selectedSpecialtyName,
-                placeholder: l10n.specialization,
-                onTap: _showSpecializationPicker,
-              ),
-            ],
-          ),
+          _personalCard(l10n, wide: false),
           SizedBox(height: 8.h),
-          FormSectionCard(
-            title: l10n.contactInformation,
-            children: [
-              // The address is changed through its own verification flow, so
-              // the field is locked here and carries the link instead.
-              ListenableBuilder(
-                listenable: _emailController,
-                builder: (context, _) => FormPickerField(
-                  label: l10n.email,
-                  value: _emailController.text.trim(),
-                  textDirection: TextDirection.ltr,
-                  action: FormInlineAction(
-                    label: l10n.edit,
-                    onTap: () => context.pushNamed(
-                      AppRoutesNames.changeEmail,
-                      extra: {'currentEmail': _emailController.text.trim()},
-                    ),
-                  ),
-                ),
-              ),
-              FormTextField(
-                label: l10n.phone,
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-              ),
-            ],
-          ),
+          _contactCard(l10n, wide: false),
         ],
       ),
+    );
+  }
+
+  /// Two columns: the photo and its caption on the left, the field cards on
+  /// the right.
+  ///
+  /// The width cap matters as much as the split — a text field spanning a
+  /// 1080p window is a long way to drag the eye for a first name, and the
+  /// paired fields below only make sense inside a column that is already a
+  /// sane reading width.
+  Widget _buildDesktopForm(AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+      child: AdaptiveContentWidth(
+        // 920, not 880: after the 248 aside and the cards' own 20px padding
+        // this leaves the contact pair ~38px of headroom over its 280px
+        // floor. At 880 it missed by two pixels and stacked, which reads as
+        // a bug rather than a breakpoint.
+        maxWidth: 920,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(width: 248, child: _buildPhotoAside(l10n)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _personalCard(l10n, wide: true),
+                  const SizedBox(height: 12),
+                  _contactCard(l10n, wide: true),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotoAside(AppLocalizations l10n) {
+    final c = ColorManager.of(context);
+    return FormSectionCard(
+      title: l10n.profilePhoto,
+      children: [
+        _buildProfileImage(),
+        Text(
+          l10n.profilePhotoHint,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 11.sp,
+            height: 1.4,
+            fontFamily: FontHelper.fontFamily(context),
+            color: c.textTertiary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// [wide] pairs the two name fields on one line. They are short enough that
+  /// a full-width box for each is mostly empty, and reading them side by side
+  /// matches how the name is actually written.
+  Widget _personalCard(AppLocalizations l10n, {required bool wide}) {
+    final firstName = FormTextField(
+      label: l10n.firstName,
+      controller: _firstNameController,
+      textCapitalization: TextCapitalization.words,
+    );
+    final lastName = FormTextField(
+      label: l10n.lastName,
+      controller: _lastNameController,
+      textCapitalization: TextCapitalization.words,
+    );
+
+    // Same section card, shell and input surface as Add Patient: label
+    // above the control, hairline at rest, 1.5px primary on focus.
+    return FormSectionCard(
+      title: l10n.personalInformation,
+      children: [
+        if (wide)
+          FormFieldRow(children: [firstName, lastName])
+        else ...[
+          firstName,
+          lastName,
+        ],
+        FormPickerField(
+          label: l10n.specialization,
+          value: _selectedSpecialtyName,
+          placeholder: l10n.specialization,
+          onTap: _showSpecializationPicker,
+        ),
+      ],
+    );
+  }
+
+  Widget _contactCard(AppLocalizations l10n, {required bool wide}) {
+    // The address is changed through its own verification flow, so the field
+    // is locked here and carries the link instead.
+    final email = ListenableBuilder(
+      listenable: _emailController,
+      builder: (context, _) => FormPickerField(
+        label: l10n.email,
+        value: _emailController.text.trim(),
+        textDirection: TextDirection.ltr,
+        action: FormInlineAction(
+          label: l10n.edit,
+          onTap: () => context.pushNamed(
+            AppRoutesNames.changeEmail,
+            extra: {'currentEmail': _emailController.text.trim()},
+          ),
+        ),
+      ),
+    );
+    final phone = FormTextField(
+      label: l10n.phone,
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+    );
+
+    return FormSectionCard(
+      title: l10n.contactInformation,
+      children: [
+        // An address plus its inline "edit" link needs more room than a name
+        // does, so this pair is given a wider floor before it will sit on one
+        // line - it stacks again on a narrow window rather than cramping.
+        if (wide)
+          FormFieldRow(minFieldWidth: 280, children: [email, phone])
+        else ...[
+          email,
+          phone,
+        ],
+      ],
     );
   }
 
@@ -633,9 +716,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(
@@ -657,13 +738,13 @@ class _EditProfileSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: c.cardBg,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: c.borderLight),
-          ),
-        );
+      height: height,
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: c.borderLight),
+      ),
+    );
 
     return AppShimmer(
       child: ListView(

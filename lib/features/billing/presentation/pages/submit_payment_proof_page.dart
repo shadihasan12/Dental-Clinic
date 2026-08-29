@@ -1,7 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/presentation/bloc/billing_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -60,9 +59,9 @@ class _SubmitPaymentProofViewState extends State<_SubmitPaymentProofView> {
     final c = ColorManager.of(context);
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: l10n.submitProofTitle,
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.submitProofTitle),
       body: BlocConsumer<BillingBloc, BillingState>(
         listener: (context, state) {
           if (state.error != null) {

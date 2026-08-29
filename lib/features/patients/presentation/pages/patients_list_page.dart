@@ -2,6 +2,8 @@ import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
@@ -221,6 +223,24 @@ class _PatientsListContentState extends State<_PatientsListContent> {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return _DesktopPatientsView(
+        searchController: _searchController,
+        scrollController: _scrollController,
+        selectedFilterIndex: _selectedFilterIndex,
+        onFilterChanged: (i) => setState(() => _selectedFilterIndex = i),
+        onSearchChanged: () => setState(() {}),
+        onAddPatient: _navigateToAddPatient,
+        onEditPatient: _onEditPatient,
+        onDeletePatient: _onDeletePatient,
+        mapToDisplay: _mapToDisplayModel,
+        applyFilters: _applyFilters,
+      );
+    }
+    return _buildMobile(context);
+  }
+
+  Widget _buildMobile(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final filters = [l10n.allFilter, l10n.newFilter];
 
@@ -467,6 +487,1188 @@ class _PatientCardSkeleton extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP VIEW
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopPatientsView extends StatelessWidget {
+  const _DesktopPatientsView({
+    required this.searchController,
+    required this.scrollController,
+    required this.selectedFilterIndex,
+    required this.onFilterChanged,
+    required this.onSearchChanged,
+    required this.onAddPatient,
+    required this.onEditPatient,
+    required this.onDeletePatient,
+    required this.mapToDisplay,
+    required this.applyFilters,
+  });
+
+  final TextEditingController searchController;
+  final ScrollController scrollController;
+  final int selectedFilterIndex;
+  final ValueChanged<int> onFilterChanged;
+  final VoidCallback onSearchChanged;
+  final VoidCallback onAddPatient;
+  final ValueChanged<Patient> onEditPatient;
+  final ValueChanged<Patient> onDeletePatient;
+  final List<Patient> Function(List<PatientEntity>) mapToDisplay;
+  final List<Patient> Function(List<Patient>) applyFilters;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    return Scaffold(
+      backgroundColor: c.scaffoldBg,
+      body: BlocBuilder<PatientsListBloc, PatientsListState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => const SizedBox.shrink(),
+            loading: () =>
+                _buildScaffold(context, patients: const [], isLoading: true),
+            loaded: (entities, hasMore) => _buildScaffold(
+              context,
+              patients: mapToDisplay(entities),
+              hasMore: hasMore,
+            ),
+            loadingMore: (entities) => _buildScaffold(
+              context,
+              patients: mapToDisplay(entities),
+              isLoadingMore: true,
+            ),
+            error: (message) => _buildScaffold(
+              context,
+              patients: const [],
+              errorMessage: message,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context, {
+    required List<Patient> patients,
+    bool isLoading = false,
+    bool isLoadingMore = false,
+    bool hasMore = false,
+    String? errorMessage,
+  }) {
+    final filtered = applyFilters(patients);
+
+    return SingleChildScrollView(
+      controller: scrollController,
+      padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _DesktopHeader(total: patients.length, onAddPatient: onAddPatient),
+          const SizedBox(height: 20),
+          _DesktopStatsRow(patients: patients),
+          const SizedBox(height: 20),
+          _DesktopToolbar(
+            searchController: searchController,
+            onSearchChanged: onSearchChanged,
+            selectedFilterIndex: selectedFilterIndex,
+            onFilterChanged: onFilterChanged,
+          ),
+          const SizedBox(height: 16),
+          if (errorMessage != null)
+            _DesktopErrorState(message: errorMessage)
+          else if (isLoading)
+            const _DesktopLoadingTable()
+          else if (filtered.isEmpty)
+            _DesktopEmptyState(
+              isCompletelyEmpty: patients.isEmpty,
+              onAddPatient: onAddPatient,
+            )
+          else
+            _DesktopTable(
+              patients: filtered,
+              showLoader: hasMore || isLoadingMore,
+              onEditPatient: onEditPatient,
+              onDeletePatient: onDeletePatient,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: HEADER
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopHeader extends StatelessWidget {
+  const _DesktopHeader({required this.total, required this.onAddPatient});
+
+  final int total;
+  final VoidCallback onAddPatient;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.patients,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: c.textPrimary,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '$total',
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '$total ${l10n.total.toLowerCase()}',
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13,
+                  color: c.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        DesktopPrimaryButton(
+          icon: Icons.add,
+          label: '${l10n.add} ${l10n.patient.toLowerCase()}',
+          onPressed: onAddPatient,
+        ),
+      ],
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: STATS ROW
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopStatsRow extends StatelessWidget {
+  const _DesktopStatsRow({required this.patients});
+
+  final List<Patient> patients;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final withBalance = patients.where((p) => p.balance > 0).toList();
+    final upcoming = patients.where((p) => p.nextVisit != null).length;
+    final newPatients = patients.where((p) => p.balance == 0).length;
+    final outstandingTotal = withBalance.fold<double>(
+      0,
+      (sum, p) => sum + p.balance,
+    );
+
+    return Row(
+      children: [
+        Expanded(
+          child: _StatCard(
+            icon: Icons.people_outline,
+            iconColor: ColorManager.primary,
+            iconBg: ColorManager.primary.withValues(alpha: 0.12),
+            value: '${patients.length}',
+            label: l10n.patients,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _StatCard(
+            icon: Icons.auto_awesome_outlined,
+            iconColor: ColorManager.success,
+            iconBg: ColorManager.success.withValues(alpha: 0.12),
+            value: '$newPatients',
+            label: l10n.newFilter,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _StatCard(
+            icon: Icons.account_balance_wallet_outlined,
+            iconColor: ColorManager.warning,
+            iconBg: ColorManager.warning.withValues(alpha: 0.12),
+            value: '\$${outstandingTotal.toInt()}',
+            label: l10n.outstandingBalance,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _StatCard(
+            icon: Icons.calendar_today_outlined,
+            iconColor: const Color(0xFF3B82F6),
+            iconBg: const Color(0xFF3B82F6).withValues(alpha: 0.12),
+            value: '$upcoming',
+            label: l10n.nextVisit,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  const _StatCard({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: iconColor, size: 18),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: c.textPrimary,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 12.5,
+              color: c.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: TOOLBAR
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopToolbar extends StatelessWidget {
+  const _DesktopToolbar({
+    required this.searchController,
+    required this.onSearchChanged,
+    required this.selectedFilterIndex,
+    required this.onFilterChanged,
+  });
+
+  final TextEditingController searchController;
+  final VoidCallback onSearchChanged;
+  final int selectedFilterIndex;
+  final ValueChanged<int> onFilterChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+    final filters = [l10n.allFilter, l10n.newFilter];
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          // Search
+          Expanded(
+            child: Container(
+              height: 42,
+              decoration: BoxDecoration(
+                color: c.inputBg,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: c.borderLight),
+              ),
+              child: TextField(
+                controller: searchController,
+                onChanged: (_) => onSearchChanged(),
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13.5,
+                  color: c.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  hintText: '${l10n.search} ${l10n.patients.toLowerCase()}...',
+                  hintStyle: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 13.5,
+                    color: c.textSubtle,
+                  ),
+                  prefixIcon: Icon(Icons.search, size: 18, color: c.textSubtle),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Filter pill group
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: c.inputBg,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: c.borderLight),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(filters.length, (i) {
+                return _DesktopSegmentedButton(
+                  label: filters[i],
+                  isSelected: selectedFilterIndex == i,
+                  onTap: () => onFilterChanged(i),
+                  fontFamily: fontFamily,
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopSegmentedButton extends StatelessWidget {
+  const _DesktopSegmentedButton({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.fontFamily,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? ColorManager.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: ColorManager.primary.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : c.textSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: TABLE
+// ═══════════════════════════════════════════════════════════════════════
+
+/// Column flexes and the reserved widths beside them, shared by the header
+/// and every row so the two cannot drift apart the way two independently
+/// laid-out Rows would.
+class _PatientCols {
+  const _PatientCols._();
+
+  static const int patient = 4;
+  static const int phone = 3;
+  static const int nextVisit = 3;
+  static const int balance = 2;
+
+  /// Reserved whether or not the row menu is visible, so names do not shift
+  /// sideways as the pointer travels down the table.
+  static const double actions = 44;
+
+  /// Which columns a given table width can carry. The patient cell is never
+  /// dropped - it is the thing being scanned for.
+  static bool showPhone(double w) => w >= 620;
+  static bool showBalance(double w) => w >= 780;
+  static bool showNextVisit(double w) => w >= 980;
+}
+
+const double _tableRowHeight = 60;
+const double _tableHeaderHeight = 44;
+const EdgeInsets _tableCellPadding = EdgeInsets.symmetric(horizontal: 18);
+
+class _DesktopTable extends StatelessWidget {
+  const _DesktopTable({
+    required this.patients,
+    required this.showLoader,
+    required this.onEditPatient,
+    required this.onDeletePatient,
+  });
+
+  final List<Patient> patients;
+  final bool showLoader;
+  final ValueChanged<Patient> onEditPatient;
+  final ValueChanged<Patient> onDeletePatient;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final showPhone = _PatientCols.showPhone(w);
+        final showNextVisit = _PatientCols.showNextVisit(w);
+        final showBalance = _PatientCols.showBalance(w);
+
+        return Column(
+          children: [
+            Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: c.cardBg,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: c.borderLight),
+              ),
+              child: Column(
+                children: [
+                  _TableHeader(
+                    showPhone: showPhone,
+                    showNextVisit: showNextVisit,
+                    showBalance: showBalance,
+                  ),
+                  for (var i = 0; i < patients.length; i++)
+                    _PatientRow(
+                      key: ValueKey(patients[i].id),
+                      patient: patients[i],
+                      // The header already draws a rule beneath itself, so
+                      // the first row must not add a second one.
+                      topDivider: i > 0,
+                      showPhone: showPhone,
+                      showNextVisit: showNextVisit,
+                      showBalance: showBalance,
+                      onEdit: () => onEditPatient(patients[i]),
+                      onDelete: () => onDeletePatient(patients[i]),
+                    ),
+                ],
+              ),
+            ),
+            if (showLoader)
+              const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _TableHeader extends StatelessWidget {
+  const _TableHeader({
+    required this.showPhone,
+    required this.showNextVisit,
+    required this.showBalance,
+  });
+
+  final bool showPhone;
+  final bool showNextVisit;
+  final bool showBalance;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+    // Tracking pulls Arabic letters apart at their joins and casing is a
+    // no-op there, so the small-caps treatment stays Latin-only.
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    final style = TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 11,
+      fontWeight: FontWeight.w600,
+      color: c.textTertiary,
+      letterSpacing: isRtl ? 0 : 0.6,
+    );
+
+    Widget cell(int flex, String label) => Expanded(
+      flex: flex,
+      child: Text(
+        isRtl ? label : label.toUpperCase(),
+        style: style,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    return Container(
+      height: _tableHeaderHeight,
+      padding: _tableCellPadding,
+      decoration: BoxDecoration(
+        color: c.cardBgSecondary,
+        border: Border(bottom: BorderSide(color: c.borderLight)),
+      ),
+      child: Row(
+        children: [
+          cell(_PatientCols.patient, l10n.patientName),
+          if (showPhone) cell(_PatientCols.phone, l10n.phone),
+          if (showNextVisit) cell(_PatientCols.nextVisit, l10n.nextVisit),
+          if (showBalance) cell(_PatientCols.balance, l10n.outstandingBalance),
+          // Deliberately unlabelled: the row menu needs the width reserved,
+          // not a heading over it.
+          const SizedBox(width: _PatientCols.actions),
+        ],
+      ),
+    );
+  }
+}
+
+class _PatientRow extends StatefulWidget {
+  const _PatientRow({
+    super.key,
+    required this.patient,
+    required this.topDivider,
+    required this.showPhone,
+    required this.showNextVisit,
+    required this.showBalance,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final Patient patient;
+  final bool topDivider;
+  final bool showPhone;
+  final bool showNextVisit;
+  final bool showBalance;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  State<_PatientRow> createState() => _PatientRowState();
+}
+
+class _PatientRowState extends State<_PatientRow> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+    final p = widget.patient;
+    final genderLabel = p.gender.toLowerCase() == 'female'
+        ? l10n.female
+        : l10n.male;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.pushNamed(
+          AppRoutesNames.patientDetails,
+          extra: <String, dynamic>{
+            "patientId": p.id,
+            "patientName": p.name,
+            "tabIndex": 1,
+          },
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          height: _tableRowHeight,
+          padding: _tableCellPadding,
+          decoration: BoxDecoration(
+            color: _hovering
+                ? ColorManager.primary.withValues(alpha: 0.05)
+                : Colors.transparent,
+            border: widget.topDivider
+                ? Border(top: BorderSide(color: c.divider))
+                : null,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: _PatientCols.patient,
+                child: _identityCell(c, fontFamily, l10n, genderLabel),
+              ),
+              if (widget.showPhone)
+                Expanded(
+                  flex: _PatientCols.phone,
+                  child: Text(
+                    p.phone,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 13,
+                      color: c.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              if (widget.showNextVisit)
+                Expanded(
+                  flex: _PatientCols.nextVisit,
+                  child: _nextVisitCell(c, fontFamily),
+                ),
+              if (widget.showBalance)
+                Expanded(
+                  flex: _PatientCols.balance,
+                  child: _balanceCell(c, fontFamily),
+                ),
+              SizedBox(
+                width: _PatientCols.actions,
+                child: _actionsCell(c, fontFamily, l10n),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _identityCell(
+    AppColors c,
+    String fontFamily,
+    AppLocalizations l10n,
+    String genderLabel,
+  ) {
+    final p = widget.patient;
+    return Row(
+      children: [
+        Container(
+          width: 34,
+          height: 34,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: ColorManager.primary.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: ColorManager.primary.withValues(alpha: 0.22),
+            ),
+          ),
+          child: Text(
+            p.initials,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: ColorManager.primary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                p.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: c.textPrimary,
+                  letterSpacing: -0.1,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${p.age} ${l10n.years} • $genderLabel',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 11.5,
+                  color: c.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+      ],
+    );
+  }
+
+  Widget _nextVisitCell(AppColors c, String fontFamily) {
+    final next = widget.patient.nextVisit;
+    if (next == null) return _placeholder(c, fontFamily);
+
+    return Row(
+      children: [
+        Icon(
+          Icons.calendar_today_outlined,
+          size: 13,
+          color: ColorManager.primary,
+        ),
+        const SizedBox(width: 7),
+        Flexible(
+          child: Text(
+            next,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: ColorManager.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _balanceCell(AppColors c, String fontFamily) {
+    final balance = widget.patient.balance;
+    if (balance <= 0) return _placeholder(c, fontFamily);
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: ColorManager.warning.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          '\$${balance.toInt()}',
+          style: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: ColorManager.warning,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// An em dash rather than a blank cell, so an empty column still reads as
+  /// "nothing recorded" instead of a rendering gap.
+  Widget _placeholder(AppColors c, String fontFamily) => Text(
+    '—',
+    style: TextStyle(fontFamily: fontFamily, fontSize: 13, color: c.textSubtle),
+  );
+
+  Widget _actionsCell(AppColors c, String fontFamily, AppLocalizations l10n) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 120),
+      opacity: _hovering ? 1 : 0,
+      child: IgnorePointer(
+        ignoring: !_hovering,
+        child: PopupMenuButton<int>(
+          tooltip: '',
+          padding: EdgeInsets.zero,
+          iconSize: 18,
+          icon: Icon(Icons.more_horiz, color: c.textTertiary),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          onSelected: (value) {
+            if (value == 0) widget.onEdit();
+            if (value == 1) widget.onDelete();
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem<int>(
+              value: 0,
+              child: Row(
+                children: [
+                  Icon(Icons.edit_outlined, size: 16, color: c.textSecondary),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.edit,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: fontFamily,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            PopupMenuItem<int>(
+              value: 1,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 16,
+                    color: ColorManager.error,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.delete,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: fontFamily,
+                      color: ColorManager.error,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: LOADING / EMPTY / ERROR
+// ═══════════════════════════════════════════════════════════════════════
+
+/// The skeleton mirrors the table's own chrome - same header, same row
+/// height - so nothing shifts when the real rows arrive.
+class _DesktopLoadingTable extends StatelessWidget {
+  const _DesktopLoadingTable();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final showPhone = _PatientCols.showPhone(w);
+        final showNextVisit = _PatientCols.showNextVisit(w);
+        final showBalance = _PatientCols.showBalance(w);
+
+        return Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Column(
+            children: [
+              _TableHeader(
+                showPhone: showPhone,
+                showNextVisit: showNextVisit,
+                showBalance: showBalance,
+              ),
+              for (var i = 0; i < 6; i++)
+                _ShimmerRow(
+                  topDivider: i > 0,
+                  showPhone: showPhone,
+                  showNextVisit: showNextVisit,
+                  showBalance: showBalance,
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ShimmerRow extends StatelessWidget {
+  const _ShimmerRow({
+    required this.topDivider,
+    required this.showPhone,
+    required this.showNextVisit,
+    required this.showBalance,
+  });
+
+  final bool topDivider;
+  final bool showPhone;
+  final bool showNextVisit;
+  final bool showBalance;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    return Container(
+      height: _tableRowHeight,
+      padding: _tableCellPadding,
+      decoration: BoxDecoration(
+        border: topDivider ? Border(top: BorderSide(color: c.divider)) : null,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: _PatientCols.patient,
+            child: Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: c.shimmerBase,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _bar(c, 130, 11),
+                      const SizedBox(height: 6),
+                      _bar(c, 80, 9),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+          ),
+          if (showPhone)
+            Expanded(flex: _PatientCols.phone, child: _bar(c, 110, 10)),
+          if (showNextVisit)
+            Expanded(flex: _PatientCols.nextVisit, child: _bar(c, 90, 10)),
+          if (showBalance)
+            Expanded(flex: _PatientCols.balance, child: _bar(c, 54, 10)),
+          const SizedBox(width: _PatientCols.actions),
+        ],
+      ),
+    );
+  }
+
+  Widget _bar(AppColors c, double w, double h) => Container(
+    width: w,
+    height: h,
+    decoration: BoxDecoration(
+      color: c.shimmerBase,
+      borderRadius: BorderRadius.circular(4),
+    ),
+  );
+}
+
+class _DesktopEmptyState extends StatelessWidget {
+  const _DesktopEmptyState({
+    required this.isCompletelyEmpty,
+    required this.onAddPatient,
+  });
+
+  final bool isCompletelyEmpty;
+  final VoidCallback onAddPatient;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final fontFamily = FontHelper.fontFamily(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 68,
+            height: 68,
+            decoration: BoxDecoration(
+              color: ColorManager.primary.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isCompletelyEmpty
+                  ? Icons.person_add_outlined
+                  : Icons.search_off_outlined,
+              size: 30,
+              color: ColorManager.primary,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            isCompletelyEmpty ? l10n.noPatientsYet : l10n.noMatchingPatients,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: c.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            isCompletelyEmpty
+                ? l10n.noPatientsYetDesc
+                : l10n.noMatchingPatientsDesc,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 13,
+              color: c.textTertiary,
+            ),
+          ),
+          if (isCompletelyEmpty) ...[
+            const SizedBox(height: 20),
+            DesktopPrimaryButton(
+              icon: Icons.add,
+              label: '${l10n.add} ${l10n.patient.toLowerCase()}',
+              onPressed: onAddPatient,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DesktopErrorState extends StatelessWidget {
+  const _DesktopErrorState({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final fontFamily = FontHelper.fontFamily(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 32),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: ColorManager.error.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.error_outline,
+              color: ColorManager.error,
+              size: 28,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 13.5,
+              color: c.textSecondary,
+            ),
+          ),
+        ],
       ),
     );
   }

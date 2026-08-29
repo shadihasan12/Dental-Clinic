@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
@@ -23,6 +24,7 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -46,6 +48,15 @@ class _HomePageState extends State<HomePage> {
   String? _scheduleError;
 
   static const int _maxScheduleRows = 5;
+
+  /// Desktop puts the schedule in its own full-height column, so it can show
+  /// materially more of the day before the user has to jump to Appointments.
+  static const int _maxScheduleRowsDesktop = 10;
+
+  /// Fixed rather than flex: the quick-action rows and the plan card have a
+  /// natural width, and letting them grow with the window only stretches the
+  /// labels away from their icons. The schedule absorbs the rest.
+  static const double _sidebarWidth = 320;
 
   String get _firstName {
     final s = getIt<UserStorage>();
@@ -138,8 +149,216 @@ class _HomePageState extends State<HomePage> {
     context.pushNamed(AppRoutesNames.addPatient);
   }
 
+  // ── Shared section builders ────────────────────────────────────────
+  // Both layouts render the same widgets against the same live data; only
+  // the arrangement differs, so nothing here may branch on real vs mock.
+
+  Widget _schedule({required int maxRows}) => TodaysSchedule(
+        appointments: _todayAppointments.take(maxRows).toList(),
+        totalCount: _todayAppointments.length,
+        isLoading: _scheduleLoading,
+        error: _scheduleError,
+        onViewAllTap: () => RootPage.selectedTab.value = 2,
+        onNewAppointment: _openNewAppointment,
+        onRetry: () {
+          setState(() => _scheduleLoading = true);
+          _loadTodaysSchedule();
+        },
+      );
+
+  Widget get _quickActions => QuickActions(
+        onAddPatient: _openAddPatient,
+        onScheduleVisit: _openNewAppointment,
+        onNewCase: () {},
+        onRecordPayment: () {
+          RootPage.selectedTab.value = 3;
+          ExpensesPage.openAddExpenseRequest.value++;
+        },
+      );
+
+  Widget get _subscriptionCard => HomeSubscriptionCard(
+        status: _status,
+        usage: _usage,
+        isLoading: _subscriptionLoading,
+        onViewPlans: () => context.pushNamed(AppRoutesNames.pricing),
+        onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),
+        onClose: _hideSubscriptionCard,
+      );
+
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) return _buildDesktop(context);
+    return _buildMobile(context);
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  //
+  // Two columns instead of one stack. RootPage's desktop top bar already
+  // carries the greeting, clinic switcher, notifications and profile, so
+  // HomeHeader is deliberately omitted here rather than duplicated.
+  // ═════════════════════════════════════════════════════════════════════
+
+  /// Real figures only — the schedule is already loaded for the day, and the
+  /// usage metrics come from the subscription endpoint. Nothing here is a
+  /// placeholder; a dashboard that invents numbers is worse than no dashboard.
+  List<DesktopStatCard> _statCards(AppLocalizations l10n) {
+    final now = DateTime.now();
+    final remaining =
+        _todayAppointments.where((a) => a.dateTime.isAfter(now)).length;
+    final done = _todayAppointments.length - remaining;
+
+    final cards = <DesktopStatCard>[
+      DesktopStatCard(
+        icon: Icons.calendar_today_outlined,
+        iconColor: const Color(0xFF3B82F6),
+        value: '${_todayAppointments.length}',
+        label: l10n.todaysAppointments,
+      ),
+      DesktopStatCard(
+        icon: Icons.schedule_outlined,
+        iconColor: ColorManager.warning,
+        value: '$remaining',
+        label: l10n.upcoming,
+      ),
+      DesktopStatCard(
+        icon: Icons.task_alt_rounded,
+        iconColor: ColorManager.success,
+        value: '$done',
+        label: l10n.completed,
+      ),
+    ];
+
+    // Fourth tile is the plan, or the first usage metric when the plan name
+    // is not loaded yet. Both are real values or the tile is dropped.
+    final planName = _status?.planName;
+    if (planName != null && planName.isNotEmpty) {
+      final days = _status?.remainingDays;
+      cards.add(
+        DesktopStatCard(
+          icon: Icons.workspace_premium_outlined,
+          iconColor: ColorManager.primary,
+          value: planName,
+          label:
+              days == null ? l10n.currentPlan : '$days ${l10n.daysRemaining}',
+        ),
+      );
+    } else {
+      final metric =
+          _usage?.metrics.isNotEmpty == true ? _usage!.metrics.first : null;
+      if (metric != null) {
+        cards.add(
+          DesktopStatCard(
+            icon: Icons.storage_outlined,
+            iconColor: ColorManager.primary,
+            value: metric.isUnlimited
+                ? '${metric.used}${metric.unit}'
+                : '${metric.used}/${metric.limit}${metric.unit}',
+            label: metric.key,
+          ),
+        );
+      }
+    }
+
+    return cards;
+  }
+
+  Widget _buildDesktop(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      backgroundColor: c.scaffoldBg,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          // Below this the two columns get too narrow to be worth splitting.
+          final isSingleColumn = width < 1100;
+          const contentMaxWidth = 1440.0;
+          final outerPadding = width > contentMaxWidth
+              ? (width - contentMaxWidth) / 2 + 32
+              : 32.0;
+
+          final schedule = _schedule(
+            maxRows:
+                isSingleColumn ? _maxScheduleRows : _maxScheduleRowsDesktop,
+          );
+
+          final sidebar = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _SectionHeading(title: l10n.quickActions),
+              const SizedBox(height: 10),
+              _quickActions,
+              if (!_isSubscriptionCardHidden) ...[
+                const SizedBox(height: 24),
+                _subscriptionCard,
+              ],
+            ],
+          );
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(outerPadding, 28, outerPadding, 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Same header / stats / content rhythm as the patients page,
+                // so the two tabs read as one product on desktop.
+                // No trailing action: Quick Actions below already offers
+                // Appointment, and the schedule card has its own entry point.
+                DesktopPageHeader(
+                  title: _firstName.isEmpty
+                      ? l10n.welcomeBack
+                      : '${l10n.welcomeBack}, $_firstName',
+                  subtitle: _clinicName.isEmpty ? null : _clinicName,
+                  // Same destination the mobile header's clinic chip opens.
+                  // It was plain grey text here, so nothing said it could be
+                  // clicked - and on desktop there is no tap-and-see.
+                  onSubtitleTap: () =>
+                      context.pushNamed(AppRoutesNames.myClinics),
+                ),
+                const SizedBox(height: 20),
+
+                if (_scheduleLoading)
+                  const _StatsRowSkeleton()
+                else
+                  DesktopStatsRow(
+                    cards: _statCards(l10n),
+                    compact: isSingleColumn,
+                  ),
+                const SizedBox(height: 24),
+
+                if (isSingleColumn)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [sidebar, const SizedBox(height: 24), schedule],
+                  )
+                else
+                  // Row lays out from the reading start edge, which is the
+                  // side the nav rail is on in both LTR and RTL. Quick
+                  // actions therefore sit against the rail and the schedule
+                  // takes the far side, where the wide column suits it.
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: _sidebarWidth, child: sidebar),
+                      const SizedBox(width: 24),
+                      Expanded(child: schedule),
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT
+  // ═════════════════════════════════════════════════════════════════════
+
+  Widget _buildMobile(BuildContext context) {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
 
@@ -171,45 +390,17 @@ class _HomePageState extends State<HomePage> {
               // the next few hours outranks the plan banner and the
               // shortcuts, both of which used to sit above it.
               SizedBox(height: 20.h),
-              TodaysSchedule(
-                appointments: _todayAppointments
-                    .take(_maxScheduleRows)
-                    .toList(),
-                totalCount: _todayAppointments.length,
-                isLoading: _scheduleLoading,
-                error: _scheduleError,
-                onViewAllTap: () => RootPage.selectedTab.value = 2,
-                onNewAppointment: _openNewAppointment,
-                onRetry: () {
-                  setState(() => _scheduleLoading = true);
-                  _loadTodaysSchedule();
-                },
-              ),
+              _schedule(maxRows: _maxScheduleRows),
 
               SizedBox(height: 20.h),
 
               _SectionHeading(title: l10n.quickActions),
               SizedBox(height: 10.h),
-              QuickActions(
-                onAddPatient: _openAddPatient,
-                onScheduleVisit: _openNewAppointment,
-                onNewCase: () {},
-                onRecordPayment: () {
-                  RootPage.selectedTab.value = 3;
-                  ExpensesPage.openAddExpenseRequest.value++;
-                },
-              ),
+              _quickActions,
 
               if (!_isSubscriptionCardHidden) ...[
                 SizedBox(height: 20.h),
-                HomeSubscriptionCard(
-                  status: _status,
-                  usage: _usage,
-                  isLoading: _subscriptionLoading,
-                  onViewPlans: () => context.pushNamed(AppRoutesNames.pricing),
-                  onUpgrade: () => context.pushNamed(AppRoutesNames.pricing),
-                  onClose: _hideSubscriptionCard,
-                ),
+                _subscriptionCard,
               ],
 
               SizedBox(height: 16.h),
@@ -238,6 +429,34 @@ class _SectionHeading extends StatelessWidget {
         fontFamily: FontHelper.fontFamily(context),
         color: ColorManager.of(context).textPrimary,
       ),
+    );
+  }
+}
+
+/// Placeholder tiles so the stats row reserves its height while the day's
+/// appointments are still loading, instead of the page jumping once they land.
+class _StatsRowSkeleton extends StatelessWidget {
+  const _StatsRowSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Row(
+      children: [
+        for (var i = 0; i < 4; i++) ...[
+          Expanded(
+            child: Container(
+              height: 118,
+              decoration: BoxDecoration(
+                color: c.cardBg,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: c.borderLight),
+              ),
+            ),
+          ),
+          if (i != 3) const SizedBox(width: 14),
+        ],
+      ],
     );
   }
 }

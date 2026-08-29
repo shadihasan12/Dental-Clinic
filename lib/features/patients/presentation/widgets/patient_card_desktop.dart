@@ -11,10 +11,17 @@ class PatientCardDesktop extends StatefulWidget {
     super.key,
     required this.patient,
     required this.onTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   final Patient patient;
   final VoidCallback onTap;
+
+  /// Desktop parity with the mobile card's slide actions. The overflow menu
+  /// is only rendered when a handler is supplied.
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   State<PatientCardDesktop> createState() => _PatientCardDesktopState();
@@ -171,7 +178,84 @@ class _PatientCardDesktopState extends State<PatientCardDesktop> {
               ),
             ),
           ),
+        if (widget.onEdit != null || widget.onDelete != null)
+          _buildActionsMenu(c, fontFamily, l10n),
       ],
+    );
+  }
+
+  /// Kept at a constant width whether or not it is visible, so the name and
+  /// balance badge do not shift sideways as the pointer enters the card.
+  Widget _buildActionsMenu(
+    AppColors c,
+    String fontFamily,
+    AppLocalizations l10n,
+  ) {
+    return SizedBox(
+      width: 28,
+      height: 28,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 140),
+        opacity: _hovering ? 1 : 0,
+        child: IgnorePointer(
+          ignoring: !_hovering,
+          child: PopupMenuButton<int>(
+            tooltip: '',
+            padding: EdgeInsets.zero,
+            iconSize: 18,
+            icon: Icon(Icons.more_horiz, color: c.textTertiary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            onSelected: (value) {
+              if (value == 0) widget.onEdit?.call();
+              if (value == 1) widget.onDelete?.call();
+            },
+            itemBuilder: (context) => [
+              if (widget.onEdit != null)
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit_outlined, size: 16, color: c.textSecondary),
+                      const SizedBox(width: 10),
+                      Text(
+                        l10n.edit,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontFamily: fontFamily,
+                          color: c.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (widget.onDelete != null)
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline,
+                        size: 16,
+                        color: ColorManager.error,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        l10n.delete,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontFamily: fontFamily,
+                          color: ColorManager.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

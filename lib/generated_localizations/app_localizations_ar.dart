@@ -481,6 +481,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get todaysSchedule => 'جدول اليوم';
 
   @override
+  String get todaysAppointments => 'مواعيد اليوم';
+
+  @override
+  String get upcoming => 'القادمة';
+
+  @override
   String get viewAll => 'عرض الكل';
 
   @override
@@ -2908,4 +2914,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get renewAction => 'تجديد';
+
+  @override
+  String get profilePhoto => 'الصورة الشخصية';
+
+  @override
+  String get profilePhotoHint => 'اضغط على الصورة لرفع صورة جديدة.';
 }

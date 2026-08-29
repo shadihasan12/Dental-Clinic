@@ -10,7 +10,9 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/features/billing/presentation/bloc/billing_bloc.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/presentation/bloc/subscription_bloc.dart';
@@ -51,158 +53,164 @@ class _PricingContent extends StatelessWidget {
     // nav bar (edge-to-edge is enabled globally in main.dart).
     final bottomInset = systemBottomInset(context);
 
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      // The body fills the screen including under the status bar so the
-      // gradient header reaches edge-to-edge. We wrap the scrollable in a
-      // SafeArea(top: false, bottom: false) so we can manage insets per
-      // section ourselves.
-      extendBodyBehindAppBar: true,
-      body: MultiBlocListener(
-        listeners: [
-          // Subscription bloc only handles the trial flow on this page —
-          // the paid subscribe path goes through the invoice flow below.
-          BlocListener<SubscriptionBloc, SubscriptionState>(
-            listener: (context, state) {
-              final l10n = AppLocalizations.of(context)!;
-              if (state.trialStarted) {
-                AppSnackbar.showSuccess(
-                  context,
-                  title: l10n.pricingTrialStartedTitle,
-                  message: l10n.pricingTrialStartedMessage,
-                );
-                context.pop();
+    // Wrapped rather than handed to AdaptivePageScaffold: this page draws its
+    // own edge-to-edge header inside the scroll view, so it keeps its Scaffold
+    // and only borrows the desktop side nav and top bar.
+    return DesktopShell(
+      title: AppLocalizations.of(context)!.pricingTitle,
+      body: Scaffold(
+        backgroundColor: ColorManager.of(context).scaffoldBg,
+        // The body fills the screen including under the status bar so the
+        // gradient header reaches edge-to-edge. We wrap the scrollable in a
+        // SafeArea(top: false, bottom: false) so we can manage insets per
+        // section ourselves.
+        extendBodyBehindAppBar: true,
+        body: MultiBlocListener(
+          listeners: [
+            // Subscription bloc only handles the trial flow on this page —
+            // the paid subscribe path goes through the invoice flow below.
+            BlocListener<SubscriptionBloc, SubscriptionState>(
+              listener: (context, state) {
+                final l10n = AppLocalizations.of(context)!;
+                if (state.trialStarted) {
+                  AppSnackbar.showSuccess(
+                    context,
+                    title: l10n.pricingTrialStartedTitle,
+                    message: l10n.pricingTrialStartedMessage,
+                  );
+                  context.pop();
+                }
+                if (state.error != null) {
+                  AppSnackbar.showError(
+                    context,
+                    title: l10n.errorTitle,
+                    message: state.error,
+                  );
+                }
+              },
+            ),
+            // When the dentist taps Subscribe we create an invoice and route
+            // them to the invoice details page so they can see payment
+            // instructions and upload proof. Activation only happens once
+            // an admin approves the invoice.
+            BlocListener<BillingBloc, BillingState>(
+              listener: (context, state) {
+                final l10n = AppLocalizations.of(context)!;
+                if (state.error != null) {
+                  AppSnackbar.showError(
+                    context,
+                    title: l10n.errorTitle,
+                    message: state.error!,
+                  );
+                  context.read<BillingBloc>().add(
+                    const BillingEvent.clearFlags(),
+                  );
+                }
+                if (state.createdInvoice != null) {
+                  final invoice = state.createdInvoice!;
+                  context.read<BillingBloc>().add(
+                    const BillingEvent.clearFlags(),
+                  );
+                  context.pushReplacementNamed(
+                    AppRoutesNames.invoiceDetails,
+                    extra: invoice,
+                  );
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<SubscriptionBloc, SubscriptionState>(
+            builder: (context, state) {
+              if (state.isLoadingPlans) {
+                return const Center(child: CircularProgressIndicator());
               }
-              if (state.error != null) {
-                AppSnackbar.showError(
-                  context,
-                  title: l10n.errorTitle,
-                  message: state.error,
-                );
-              }
-            },
-          ),
-          // When the dentist taps Subscribe we create an invoice and route
-          // them to the invoice details page so they can see payment
-          // instructions and upload proof. Activation only happens once
-          // an admin approves the invoice.
-          BlocListener<BillingBloc, BillingState>(
-            listener: (context, state) {
-              final l10n = AppLocalizations.of(context)!;
-              if (state.error != null) {
-                AppSnackbar.showError(
-                  context,
-                  title: l10n.errorTitle,
-                  message: state.error!,
-                );
-                context.read<BillingBloc>().add(
-                  const BillingEvent.clearFlags(),
-                );
-              }
-              if (state.createdInvoice != null) {
-                final invoice = state.createdInvoice!;
-                context.read<BillingBloc>().add(
-                  const BillingEvent.clearFlags(),
-                );
-                context.pushReplacementNamed(
-                  AppRoutesNames.invoiceDetails,
-                  extra: invoice,
-                );
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<SubscriptionBloc, SubscriptionState>(
-          builder: (context, state) {
-            if (state.isLoadingPlans) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return DentaRefresh(
-              onRefresh: () => _refresh(context),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _Header(),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                      child: _BillingToggle(
-                        selectedCycle: state.selectedBillingCycle,
-                        onChanged: (cycle) {
-                          context.read<SubscriptionBloc>().add(
-                            SubscriptionEvent.changeBillingCycle(cycle),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    ...state.availablePlans.map(
-                      (plan) => Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
-                        child: _PlanCard(
-                          plan: plan,
-                          billingCycle: state.selectedBillingCycle,
-                          isSelected: state.selectedPlan?.id == plan.id,
-                          isCurrentPlan:
-                              state.currentSubscription?.planTier == plan.tier,
-                          onSelect: () {
-                            context.read<SubscriptionBloc>().add(
-                              SubscriptionEvent.selectPlan(plan),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    if (!state.hasActiveSubscription)
+              return DentaRefresh(
+                onRefresh: () => _refresh(context),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _Header(),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
-                        child: _TrialBanner(
-                          onStartTrial: () {
+                        padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                        child: _BillingToggle(
+                          selectedCycle: state.selectedBillingCycle,
+                          onChanged: (cycle) {
                             context.read<SubscriptionBloc>().add(
-                              const SubscriptionEvent.startTrial('user_id'),
+                              SubscriptionEvent.changeBillingCycle(cycle),
                             );
                           },
                         ),
                       ),
-                    // Subscribe CTA only for paid tiers — Custom uses its own
-                    // in-card "Contact Us" button instead.
-                    if (state.selectedPlan != null &&
-                        !state.selectedPlan!.isCustom)
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
-                        child: BlocBuilder<BillingBloc, BillingState>(
-                          builder: (context, billingState) {
-                            return _SubscribeButton(
-                              plan: state.selectedPlan!,
-                              billingCycle: state.selectedBillingCycle,
-                              // Show the spinner while the invoice is being
-                              // created — this is what blocks the user from
-                              // double-tapping into two pending invoices.
-                              isProcessing: billingState.isProcessing,
-                              onSubscribe: () {
-                                final clinicId =
-                                    getIt<UserStorage>()
-                                        .getSelectedClinicId() ??
-                                    '';
-                                context.read<BillingBloc>().add(
-                                  BillingEvent.createInvoice(
-                                    clinicId: clinicId,
-                                    plan: state.selectedPlan!,
-                                    cycle: state.selectedBillingCycle,
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                      SizedBox(height: 20.h),
+                      ...state.availablePlans.map(
+                        (plan) => Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
+                          child: _PlanCard(
+                            plan: plan,
+                            billingCycle: state.selectedBillingCycle,
+                            isSelected: state.selectedPlan?.id == plan.id,
+                            isCurrentPlan:
+                                state.currentSubscription?.planTier == plan.tier,
+                            onSelect: () {
+                              context.read<SubscriptionBloc>().add(
+                                SubscriptionEvent.selectPlan(plan),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    // Bottom inset = system nav bar on Android + breathing room.
-                    SizedBox(height: 24.h + bottomInset),
-                  ],
+                      if (!state.hasActiveSubscription)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+                          child: _TrialBanner(
+                            onStartTrial: () {
+                              context.read<SubscriptionBloc>().add(
+                                const SubscriptionEvent.startTrial('user_id'),
+                              );
+                            },
+                          ),
+                        ),
+                      // Subscribe CTA only for paid tiers — Custom uses its own
+                      // in-card "Contact Us" button instead.
+                      if (state.selectedPlan != null &&
+                          !state.selectedPlan!.isCustom)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                          child: BlocBuilder<BillingBloc, BillingState>(
+                            builder: (context, billingState) {
+                              return _SubscribeButton(
+                                plan: state.selectedPlan!,
+                                billingCycle: state.selectedBillingCycle,
+                                // Show the spinner while the invoice is being
+                                // created — this is what blocks the user from
+                                // double-tapping into two pending invoices.
+                                isProcessing: billingState.isProcessing,
+                                onSubscribe: () {
+                                  final clinicId =
+                                      getIt<UserStorage>()
+                                          .getSelectedClinicId() ??
+                                      '';
+                                  context.read<BillingBloc>().add(
+                                    BillingEvent.createInvoice(
+                                      clinicId: clinicId,
+                                      plan: state.selectedPlan!,
+                                      cycle: state.selectedBillingCycle,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      // Bottom inset = system nav bar on Android + breathing room.
+                      SizedBox(height: 24.h + bottomInset),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -224,7 +232,8 @@ class _Header extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PageHeader(title: l10n.pricingTitle, onBack: () => context.pop()),
+        if (!Responsive.isDesktop(context))
+          PageHeader(title: l10n.pricingTitle, onBack: () => context.pop()),
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 4.h),
           child: Text(

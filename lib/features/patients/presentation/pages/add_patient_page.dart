@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
@@ -126,7 +127,8 @@ class _AddPatientContentState extends State<_AddPatientContent> {
 
     final dob = _dateOfBirth!;
     final now = DateTime.now();
-    final age = now.year -
+    final age =
+        now.year -
         dob.year -
         ((now.month < dob.month ||
                 (now.month == dob.month && now.day < dob.day))
@@ -135,7 +137,8 @@ class _AddPatientContentState extends State<_AddPatientContent> {
 
     final patient = PatientEntity(
       id: '',
-      name: '${_firstNameController.text.trim()} '
+      name:
+          '${_firstNameController.text.trim()} '
           '${_lastNameController.text.trim()}',
       age: age,
       gender: _gender,
@@ -158,13 +161,17 @@ class _AddPatientContentState extends State<_AddPatientContent> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
+    final wide = Responsive.isDesktop(context);
 
     return BlocListener<AddPatientBloc, AddPatientState>(
       listener: (context, state) {
         state.when(
           initial: () {},
           saving: () {
-            AppLoadingDialog.show(context: context, message: l10n.savingPatient);
+            AppLoadingDialog.show(
+              context: context,
+              message: l10n.savingPatient,
+            );
           },
           success: (patient) async {
             AppLoadingDialog.dismiss(context);
@@ -190,44 +197,42 @@ class _AddPatientContentState extends State<_AddPatientContent> {
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: message,
-            );
+            AppSnackbar.showError(context, title: l10n.error, message: message);
           },
         );
       },
-      child: Scaffold(
+      child: AdaptivePageScaffold(
+        title: l10n.addPatient,
+        onBack: () => context.pop(),
         backgroundColor: c.scaffoldBg,
+        mobileHeader: FormTopBar(
+          title: l10n.addPatient,
+          onBack: () => context.pop(),
+        ),
         body: SafeArea(
           bottom: false,
-          child: Column(
-            children: [
-              FormTopBar(
-                title: l10n.addPatient,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
-                  child: PatientInfoForm(
-                    firstNameController: _firstNameController,
-                    lastNameController: _lastNameController,
-                    phoneController: _phoneController,
-                    medicalHistoryController: _medicalHistoryController,
-                    allergiesController: _allergiesController,
-                    gender: _gender,
-                    dateOfBirth: _dateOfBirth,
-                    errors: _errors,
-                    onGenderChanged: (v) => setState(() => _gender = v),
-                    onDateOfBirthTap: _pickDateOfBirth,
-                    onFieldChanged: _revalidate,
-                  ),
-                ),
-              ),
-            ],
+          top: false,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            // The window is the column on desktop: a phone-width form
+            // floating in the middle of a monitor reads as a mistake, and the
+            // fields pair up rather than stretch, so the width buys content.
+            padding: wide
+                ? const EdgeInsets.fromLTRB(24, 20, 24, 32)
+                : EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+            child: PatientInfoForm(
+              firstNameController: _firstNameController,
+              lastNameController: _lastNameController,
+              phoneController: _phoneController,
+              medicalHistoryController: _medicalHistoryController,
+              allergiesController: _allergiesController,
+              gender: _gender,
+              dateOfBirth: _dateOfBirth,
+              errors: _errors,
+              onGenderChanged: (v) => setState(() => _gender = v),
+              onDateOfBirthTap: _pickDateOfBirth,
+              onFieldChanged: _revalidate,
+            ),
           ),
         ),
         bottomNavigationBar: FormActionBar(

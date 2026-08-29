@@ -4,7 +4,6 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/presentation/bloc/billing_bloc.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/invoice_status_badge.dart';
@@ -44,9 +43,9 @@ class _InvoiceDetailsView extends StatelessWidget {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: l10n.invoiceDetailsTitle,
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.invoiceDetailsTitle),
       body: BlocBuilder<BillingBloc, BillingState>(
         builder: (context, state) {
           final invoice = state.activeInvoice;

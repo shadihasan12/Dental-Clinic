@@ -3,12 +3,12 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/manager/notification_settings_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/widgets/notification_settings_tile.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,85 +47,70 @@ class _NotificationsSettingsContent extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      body: Column(
-        children: [
-          PageHeader(
-            title: l10n.notificationsSettings,
-            onBack: () => context.canPop() ? context.pop() : context.go('/'),
-          ),
-          Expanded(
-            child: DentaRefresh(
-              onRefresh: () => _refresh(context),
-              child:
-                  BlocConsumer<
-                    NotificationSettingsBloc,
-                    NotificationSettingsState
-                  >(
-                    // A rejected toggle has already rolled the switch back; the
-                    // snackbar is the only thing that tells the user why.
-                    listenWhen: (prev, curr) =>
-                        curr.errorMessage != null &&
-                        curr.errorMessage != prev.errorMessage &&
-                        curr.status == NotificationSettingsStatus.success,
-                    listener: (context, state) {
-                      AppSnackbar.showError(
-                        context,
-                        title: state.errorMessage!,
+    return AdaptivePageScaffold(
+      title: l10n.notificationsSettings,
+      body: DentaRefresh(
+        onRefresh: () => _refresh(context),
+        child:
+            BlocConsumer<NotificationSettingsBloc, NotificationSettingsState>(
+              // A rejected toggle has already rolled the switch back; the
+              // snackbar is the only thing that tells the user why.
+              listenWhen: (prev, curr) =>
+                  curr.errorMessage != null &&
+                  curr.errorMessage != prev.errorMessage &&
+                  curr.status == NotificationSettingsStatus.success,
+              listener: (context, state) {
+                AppSnackbar.showError(context, title: state.errorMessage!);
+              },
+              builder: (context, state) {
+                switch (state.status) {
+                  case NotificationSettingsStatus.initial:
+                  case NotificationSettingsStatus.loading:
+                    return const _SettingsSkeleton();
+
+                  case NotificationSettingsStatus.failure:
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        dentaGutter,
+                        14.h,
+                        dentaGutter,
+                        28.h,
+                      ),
+                      child: StateCard(
+                        icon: Icons.cloud_off_rounded,
+                        tone: ColorManager.error,
+                        title: l10n.notificationSettingsLoadFailed,
+                        message: state.errorMessage ?? l10n.somethingWentWrong,
+                        actionLabel: l10n.retry,
+                        onAction: () => context
+                            .read<NotificationSettingsBloc>()
+                            .add(const NotificationSettingsEvent.load()),
+                      ),
+                    );
+
+                  case NotificationSettingsStatus.success:
+                    if (state.settings.isEmpty) {
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(
+                          dentaGutter,
+                          14.h,
+                          dentaGutter,
+                          28.h,
+                        ),
+                        child: StateCard(
+                          icon: Icons.notifications_off_outlined,
+                          title: l10n.noNotificationSettings,
+                          message: l10n.noNotificationSettingsHint,
+                        ),
                       );
-                    },
-                    builder: (context, state) {
-                      switch (state.status) {
-                        case NotificationSettingsStatus.initial:
-                        case NotificationSettingsStatus.loading:
-                          return const _SettingsSkeleton();
-
-                        case NotificationSettingsStatus.failure:
-                          return SingleChildScrollView(
-                            padding: EdgeInsets.fromLTRB(
-                              dentaGutter,
-                              14.h,
-                              dentaGutter,
-                              28.h,
-                            ),
-                            child: StateCard(
-                              icon: Icons.cloud_off_rounded,
-                              tone: ColorManager.error,
-                              title: l10n.notificationSettingsLoadFailed,
-                              message:
-                                  state.errorMessage ?? l10n.somethingWentWrong,
-                              actionLabel: l10n.retry,
-                              onAction: () => context
-                                  .read<NotificationSettingsBloc>()
-                                  .add(const NotificationSettingsEvent.load()),
-                            ),
-                          );
-
-                        case NotificationSettingsStatus.success:
-                          if (state.settings.isEmpty) {
-                            return SingleChildScrollView(
-                              padding: EdgeInsets.fromLTRB(
-                                dentaGutter,
-                                14.h,
-                                dentaGutter,
-                                28.h,
-                              ),
-                              child: StateCard(
-                                icon: Icons.notifications_off_outlined,
-                                title: l10n.noNotificationSettings,
-                                message: l10n.noNotificationSettingsHint,
-                              ),
-                            );
-                          }
-                          return _buildList(context, state);
-                      }
-                    },
-                  ),
+                    }
+                    return _buildList(context, state);
+                }
+              },
             ),
-          ),
-        ],
       ),
+      onBack: () => context.canPop() ? context.pop() : context.go('/'),
+      backgroundColor: c.scaffoldBg,
     );
   }
 

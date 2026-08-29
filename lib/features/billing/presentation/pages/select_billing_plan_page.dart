@@ -3,7 +3,6 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/billing/presentation/bloc/billing_bloc.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -35,9 +34,9 @@ class _SelectBillingPlanPageState extends State<SelectBillingPlanPage> {
     return BlocProvider(
       create: (_) => getIt<BillingBloc>(),
       child: Builder(builder: (context) {
-        return Scaffold(
+        return AdaptivePageScaffold(
+          title: l10n.selectPlanTitle,
           backgroundColor: c.scaffoldBg,
-          appBar: PageHeader(title: l10n.selectPlanTitle),
           body: BlocConsumer<BillingBloc, BillingState>(
             listener: (context, state) {
               if (state.error != null) {

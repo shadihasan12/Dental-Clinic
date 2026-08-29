@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/features/patients/presentation/widgets/details
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/plan_summary_header.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,9 +75,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
     final result = await Navigator.push<List<PlannedTreatment>>(
       context,
       MaterialPageRoute(
-        builder: (_) => PlanTreatmentPage(
-          existingTreatments: _plan.treatments,
-        ),
+        builder: (_) => PlanTreatmentPage(existingTreatments: _plan.treatments),
       ),
     );
     if (result != null && result.isNotEmpty) {
@@ -86,9 +85,11 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
 
   void _showEditCostSheet() {
     final totalCostController = TextEditingController(
-        text: _plan.totalCost > 0 ? _plan.totalCost.toStringAsFixed(0) : '');
+      text: _plan.totalCost > 0 ? _plan.totalCost.toStringAsFixed(0) : '',
+    );
     final labFeesController = TextEditingController(
-        text: _plan.labFees > 0 ? _plan.labFees.toStringAsFixed(0) : '');
+      text: _plan.labFees > 0 ? _plan.labFees.toStringAsFixed(0) : '',
+    );
 
     showModalBottomSheet(
       context: context,
@@ -192,8 +193,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                 setState(() {
                   _plan.totalCost =
                       double.tryParse(totalCostController.text) ?? 0;
-                  _plan.labFees =
-                      double.tryParse(labFeesController.text) ?? 0;
+                  _plan.labFees = double.tryParse(labFeesController.text) ?? 0;
                 });
                 Navigator.pop(ctx);
               },
@@ -225,9 +225,11 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
   /// Desktop version: uses a regular dialog instead of a bottom sheet.
   void _showEditCostDesktop() {
     final totalCostController = TextEditingController(
-        text: _plan.totalCost > 0 ? _plan.totalCost.toStringAsFixed(0) : '');
+      text: _plan.totalCost > 0 ? _plan.totalCost.toStringAsFixed(0) : '',
+    );
     final labFeesController = TextEditingController(
-        text: _plan.labFees > 0 ? _plan.labFees.toStringAsFixed(0) : '');
+      text: _plan.labFees > 0 ? _plan.labFees.toStringAsFixed(0) : '',
+    );
     final c = ColorManager.of(context);
     final fontFamily = FontHelper.fontFamily(context);
     final l10n = AppLocalizations.of(context)!;
@@ -236,8 +238,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
       context: context,
       builder: (ctx) => Dialog(
         backgroundColor: c.cardBg,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Padding(
@@ -454,8 +455,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
       context: context,
       builder: (ctx) => Dialog(
         backgroundColor: c.cardBg,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Padding(
@@ -502,8 +502,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                       label: l10n.recordPaymentTitle,
                       color: ColorManager.success,
                       onPressed: () {
-                        final amount =
-                            double.tryParse(controller.text) ?? 0;
+                        final amount = double.tryParse(controller.text) ?? 0;
                         if (amount > 0) {
                           setState(() => _plan.paid += amount);
                         }
@@ -551,11 +550,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    final sorted = [
-      ..._plan.planned,
-      ..._plan.inProgress,
-      ..._plan.completed,
-    ];
+    final sorted = [..._plan.planned, ..._plan.inProgress, ..._plan.completed];
 
     final content = SingleChildScrollView(
       padding: widget.embedded
@@ -602,10 +597,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
 
     return DesktopShell(
       title: l10n.treatmentPlan,
-      body: Scaffold(
-        backgroundColor: c.scaffoldBg,
-        body: content,
-      ),
+      body: Scaffold(backgroundColor: c.scaffoldBg, body: content),
     );
   }
 
@@ -678,7 +670,9 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                     onTap: _showEditCostDesktop,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 7),
+                        horizontal: 12,
+                        vertical: 7,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
@@ -686,8 +680,11 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.edit_outlined,
-                              color: Colors.white, size: 14),
+                          Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: 14,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             l10n.editCosts,
@@ -749,7 +746,10 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
   }
 
   Widget _desktopTreatmentsCard(
-      AppLocalizations l10n, AppColors c, List<PlannedTreatment> sorted) {
+    AppLocalizations l10n,
+    AppColors c,
+    List<PlannedTreatment> sorted,
+  ) {
     final fontFamily = FontHelper.fontFamily(context);
     return DesktopSectionCard(
       title: l10n.treatments,
@@ -759,8 +759,11 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
                 children: [
-                  Icon(Icons.assignment_outlined,
-                      size: 36, color: c.textSubtle),
+                  Icon(
+                    Icons.assignment_outlined,
+                    size: 36,
+                    color: c.textSubtle,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     l10n.noTreatmentsRecorded,
@@ -785,7 +788,9 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                       onTap: () => _showTreatmentDetailsSheet(t),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 12),
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: c.inputBg,
                           borderRadius: BorderRadius.circular(10),
@@ -797,12 +802,16 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                               width: 36,
                               height: 36,
                               decoration: BoxDecoration(
-                                color: ColorManager.primary
-                                    .withValues(alpha: 0.12),
+                                color: ColorManager.primary.withValues(
+                                  alpha: 0.12,
+                                ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(Icons.medical_services_outlined,
-                                  color: ColorManager.primary, size: 18),
+                              child: Icon(
+                                Icons.medical_services_outlined,
+                                color: ColorManager.primary,
+                                size: 18,
+                              ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -834,7 +843,9 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: statusColor.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(999),
@@ -891,10 +902,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
-          PlanSummaryHeader(
-            plan: _plan,
-            onTap: _showEditCostSheet,
-          ),
+          PlanSummaryHeader(plan: _plan, onTap: _showEditCostSheet),
           SizedBox(height: 16.h),
           _buildTreatmentsList(context),
           SizedBox(height: 80.h),
@@ -933,11 +941,7 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
   }
 
   Widget _buildTreatmentsList(BuildContext context) {
-    final sorted = [
-      ..._plan.planned,
-      ..._plan.inProgress,
-      ..._plan.completed,
-    ];
+    final sorted = [..._plan.planned, ..._plan.inProgress, ..._plan.completed];
 
     if (sorted.isEmpty) {
       return _emptyState(AppLocalizations.of(context)!.noTreatmentsRecorded);

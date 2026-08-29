@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/added_by_label.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_files_section.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -90,16 +91,47 @@ class ExpenseDetailSheet extends StatelessWidget {
           _DetailRow(icon: Icons.notes_outlined, text: expense.notes),
         ],
         if (expense.attachments.isNotEmpty) ...[
-          SizedBox(height: 10.h),
-          _DetailRow(
-            icon: Icons.attach_file,
-            text: '${expense.attachments.length} ${l10n.attachments}',
+          SizedBox(height: 14.h),
+          Text(
+            l10n.attachments,
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 11.5.sp,
+              fontWeight: FontWeight.w600,
+              color: c.textSecondary,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          // A receipt is the whole reason an attachment is on an expense, so
+          // it shows as something openable rather than as a count.
+          SizedBox(
+            height: 72.w,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: expense.attachments.length,
+              separatorBuilder: (_, _) => SizedBox(width: 8.w),
+              itemBuilder: (_, i) => _AttachmentThumb(
+                url: expense.attachments[i].viewUrl,
+                onTap: () => CaseFileViewer.open(
+                  context,
+                  attachments: _viewerItems(),
+                  initialIndex: i,
+                ),
+              ),
+            ),
           ),
         ],
         SizedBox(height: 8.h),
       ],
     );
   }
+
+  /// The shared full-screen viewer speaks [CaseAttachment], so the expense's
+  /// signed URLs are wrapped rather than duplicating the viewer here.
+  List<CaseAttachment> _viewerItems() => [
+    for (final a in expense.attachments)
+      CaseAttachment(id: a.viewUrl, url: a.viewUrl, downloadUrl: a.downloadUrl),
+  ];
 
   void _confirmDelete(BuildContext context, AppLocalizations l10n) {
     showDialog(
@@ -136,6 +168,55 @@ class ExpenseDetailSheet extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One receipt as a 72x72 tile. The API hands back a signed URL with no
+/// extension, so the decode is attempted and a file glyph stands in when it
+/// turns out to be a PDF.
+class _AttachmentThumb extends StatelessWidget {
+  const _AttachmentThumb({required this.url, required this.onTap});
+
+  final String url;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final radius = BorderRadius.circular(12.r);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Container(
+          width: 72.w,
+          height: 72.w,
+          color: c.cardBgSecondary,
+          child: Image.network(
+            url,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Icon(
+              Icons.insert_drive_file_outlined,
+              size: 24.w,
+              color: c.textSecondary,
+            ),
+            loadingBuilder: (_, child, progress) => progress == null
+                ? child
+                : Center(
+                    child: SizedBox(
+                      width: 18.w,
+                      height: 18.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }

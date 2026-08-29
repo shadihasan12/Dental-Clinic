@@ -212,56 +212,48 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
-        return Scaffold(
-          backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
-          body: Column(
-            children: [
-              PageHeader(
-                title: l10n.clinicInformation,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _ClinicInfoSkeleton(),
-                  // Pull-to-refresh is offered on the failure state only. Once
-                  // the form is populated it may hold unsaved edits, and a
-                  // refetch would silently throw them away.
-                  error: (message) => DentaRefresh(
-                    onRefresh: () => _refresh(context),
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                      child: StateCard(
-                        icon: Icons.cloud_off_rounded,
-                        tone: ColorManager.error,
-                        title: l10n.clinicInfoLoadFailed,
-                        message: message,
-                        actionLabel: l10n.retry,
-                        onAction: () => context.read<ClinicInfoBloc>().add(
-                          const ClinicInfoEvent.loadClinicInfo(),
-                        ),
-                      ),
-                    ),
+        return AdaptivePageScaffold(
+          title: l10n.clinicInformation,
+          body: state.maybeWhen(
+            loading: () => const _ClinicInfoSkeleton(),
+            // Pull-to-refresh is offered on the failure state only. Once
+            // the form is populated it may hold unsaved edits, and a
+            // refetch would silently throw them away.
+            error: (message) => DentaRefresh(
+              onRefresh: () => _refresh(context),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                child: StateCard(
+                  icon: Icons.cloud_off_rounded,
+                  tone: ColorManager.error,
+                  title: l10n.clinicInfoLoadFailed,
+                  message: message,
+                  actionLabel: l10n.retry,
+                  onAction: () => context.read<ClinicInfoBloc>().add(
+                    const ClinicInfoEvent.loadClinicInfo(),
                   ),
-                  loaded: (clinicInfo) {
-                    if (!_formPopulated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromEntity(clinicInfo));
-                      });
-                      return const _ClinicInfoSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_formPopulated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
                 ),
               ),
-            ],
+            ),
+            loaded: (clinicInfo) {
+              if (!_formPopulated) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() => _populateFromEntity(clinicInfo));
+                });
+                return const _ClinicInfoSkeleton();
+              }
+              return _buildForm(l10n);
+            },
+            orElse: () {
+              if (!_formPopulated) {
+                return const SizedBox.shrink();
+              }
+              return _buildForm(l10n);
+            },
           ),
+          onBack: () => context.pop(),
+          backgroundColor: c.scaffoldBg,
+          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
         );
       },
     );

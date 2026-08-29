@@ -11,6 +11,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
@@ -29,9 +30,8 @@ class ClinicUsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          getIt<ClinicUsersBloc>(param1: clinicId)
-            ..add(const ClinicUsersEvent.load()),
+      create: (_) => getIt<ClinicUsersBloc>(param1: clinicId)
+        ..add(const ClinicUsersEvent.load()),
       child: const _ClinicUsersContent(),
     );
   }
@@ -87,105 +87,140 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            submitSuccess: (_, message) {
-              String text;
-              if (message == 'userAddedSuccess') {
-                text = l10n.userAddedSuccess;
-                // Refetch usage so the limit reflects the new count
-                _loadUsage();
-              } else if (message == 'userRemovedSuccess') {
-                text = l10n.userRemovedSuccess;
-                _loadUsage();
-              } else {
-                text = l10n.rolesUpdatedSuccess;
-              }
-              AppSnackbar.showSuccess(
-                context,
-                title: l10n.success,
-                message: text,
-              );
-              context.read<ClinicUsersBloc>().add(
-                const ClinicUsersEvent.load(),
-              );
-            },
-            submitError: (_, message) {
-              AppSnackbar.showError(
-                context,
-                title: l10n.error,
-                message: message,
-              );
-            },
-            orElse: () {},
-          );
-        },
-        builder: (context, state) {
-          final users = state.maybeWhen(
-            loaded: (u) => u,
-            submitting: (u) => u,
-            submitSuccess: (u, _) => u,
-            submitError: (u, _) => u,
-            orElse: () => <ClinicUserEntity>[],
-          );
-          final isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
-          final isSubmitting = state.maybeWhen(
-            submitting: (_) => true,
-            orElse: () => false,
-          );
+    return BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          submitSuccess: (_, message) {
+            String text;
+            if (message == 'userAddedSuccess') {
+              text = l10n.userAddedSuccess;
+              // Refetch usage so the limit reflects the new count
+              _loadUsage();
+            } else if (message == 'userRemovedSuccess') {
+              text = l10n.userRemovedSuccess;
+              _loadUsage();
+            } else {
+              text = l10n.rolesUpdatedSuccess;
+            }
+            AppSnackbar.showSuccess(
+              context,
+              title: l10n.success,
+              message: text,
+            );
+            context.read<ClinicUsersBloc>().add(const ClinicUsersEvent.load());
+          },
+          submitError: (_, message) {
+            AppSnackbar.showError(context, title: l10n.error, message: message);
+          },
+          orElse: () {},
+        );
+      },
+      builder: (context, state) {
+        final users = state.maybeWhen(
+          loaded: (u) => u,
+          submitting: (u) => u,
+          submitSuccess: (u, _) => u,
+          submitError: (u, _) => u,
+          orElse: () => <ClinicUserEntity>[],
+        );
+        final isLoading = state.maybeWhen(
+          loading: () => true,
+          orElse: () => false,
+        );
+        final isSubmitting = state.maybeWhen(
+          submitting: (_) => true,
+          orElse: () => false,
+        );
 
-          return Column(
-            children: [
-              PageHeader(
-                title: l10n.clinicUsers,
-                onBack: () => context.pop(),
-                actions: [
-                  if (!isLoading && !isSubmitting)
-                    Padding(
-                      padding: EdgeInsetsDirectional.only(end: 10.w),
-                      child: DentaButton(
-                        label: l10n.newButton,
-                        icon: Icons.add,
-                        onTap: () => _onAddUser(context, l10n),
-                      ),
-                    ),
-                  if (isSubmitting)
-                    Padding(
-                      padding: EdgeInsets.only(right: 8.w),
-                      child: SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              Expanded(
-                child: DentaRefresh(
-                  onRefresh: _refresh,
-                  child: isLoading
-                      ? const _UsersSkeleton()
-                      : state.maybeWhen(
-                          error: (msg) => _buildError(context, l10n, msg),
-                          orElse: () => users.isEmpty
-                              ? _buildEmpty(context, l10n)
-                              : _buildList(context, l10n, users),
-                        ),
+        return AdaptivePageScaffold(
+          title: l10n.clinicUsers,
+          backgroundColor: ColorManager.of(context).scaffoldBg,
+          onBack: () => context.pop(),
+          actions: [
+            if (!isLoading && !isSubmitting)
+              Padding(
+                padding: EdgeInsetsDirectional.only(end: 10.w),
+                child: DentaButton(
+                  label: l10n.newButton,
+                  icon: Icons.add,
+                  onTap: () => _onAddUser(context, l10n),
                 ),
               ),
+            if (isSubmitting)
+              Padding(
+                padding: EdgeInsets.only(right: 8.w),
+                child: SizedBox(
+                  width: 20.w,
+                  height: 20.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: ColorManager.primary,
+                  ),
+                ),
+              ),
+          ],
+          body: _buildBody(
+            context,
+            l10n,
+            users: users,
+            isLoading: isLoading,
+            isSubmitting: isSubmitting,
+            state: state,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required List<ClinicUserEntity> users,
+    required bool isLoading,
+    required bool isSubmitting,
+    required ClinicUsersState state,
+  }) {
+    final content = DentaRefresh(
+      onRefresh: _refresh,
+      child: isLoading
+          ? const _UsersSkeleton()
+          : state.maybeWhen(
+              error: (msg) => _buildError(context, l10n, msg),
+              orElse: () => users.isEmpty
+                  ? _buildEmpty(context, l10n)
+                  : _buildList(context, l10n, users),
+            ),
+    );
+
+    if (!Responsive.isDesktop(context)) return content;
+
+    // AdaptivePageScaffold's `actions` are mobile-only - the desktop top bar
+    // owns its trailing area for the bell and profile - so on desktop the
+    // "New" button has to live in the page itself or it simply disappears.
+    //
+    // It sits above the list rather than inside it: pinned, so it stays
+    // reachable however far the list is scrolled, and outside DentaRefresh so
+    // pulling the list does not drag the primary action around with it. The
+    // title is deliberately not repeated here; the top bar already carries it.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 18, 24, 10),
+          child: Row(
+            children: [
+              const Spacer(),
+              DesktopPrimaryButton(
+                label: l10n.addUser,
+                icon: Icons.add,
+                isLoading: isSubmitting,
+                onPressed: isLoading ? null : () => _onAddUser(context, l10n),
+              ),
             ],
-          );
-        },
-      ),
+          ),
+        ),
+        Expanded(child: content),
+      ],
     );
   }
 
@@ -456,8 +491,8 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
             onTap: () {
               Navigator.pop(dialogContext);
               context.read<ClinicUsersBloc>().add(
-                ClinicUsersEvent.removeUser(user.id),
-              );
+                    ClinicUsersEvent.removeUser(user.id),
+                  );
             },
           ),
         ],
@@ -642,9 +677,8 @@ class _ActionsHeader extends StatelessWidget {
           CircleAvatar(
             radius: 20.r,
             backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
-            backgroundImage: user.imageUrl != null
-                ? NetworkImage(user.imageUrl!)
-                : null,
+            backgroundImage:
+                user.imageUrl != null ? NetworkImage(user.imageUrl!) : null,
             child: user.imageUrl == null
                 ? Text(
                     _initials(user.fullName),
@@ -866,11 +900,11 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
                 ? null
                 : () {
                     context.read<ClinicUsersBloc>().add(
-                      ClinicUsersEvent.updateRoles(
-                        userId: widget.user.id,
-                        roles: _selectedRoles.toList(),
-                      ),
-                    );
+                          ClinicUsersEvent.updateRoles(
+                            userId: widget.user.id,
+                            roles: _selectedRoles.toList(),
+                          ),
+                        );
                     Navigator.pop(context);
                   },
           ),
@@ -936,9 +970,8 @@ class _RoleRow extends StatelessWidget {
                     fontSize: 12.5.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    color: selected
-                        ? ColorManager.primaryDarker
-                        : c.textPrimary,
+                    color:
+                        selected ? ColorManager.primaryDarker : c.textPrimary,
                   ),
                 ),
               ),

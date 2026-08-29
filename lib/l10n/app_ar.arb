@@ -168,6 +168,8 @@
   "newAppointment": "موعد جديد",
   "addTreatment": "اضافة معالجة",
   "todaysSchedule": "جدول اليوم",
+  "todaysAppointments": "مواعيد اليوم",
+  "upcoming": "القادمة",
   "viewAll": "عرض الكل",
   "analytics": "الإحصائيات",
   "schedule": "الجدول",
@@ -1164,5 +1166,7 @@
   "noPlanActiveBody": "لا توجد خطة مفعّلة لهذه العيادة.",
   "subscriptionGraceBody": "الدفعة متأخرة. تبقى الخطة قابلة للاستخدام حتى انتهاء مهلة السماح.",
   "subscriptionExpiredBody": "انتهت هذه الخطة. جدّدها للمتابعة.",
-  "renewAction": "تجديد"
+  "renewAction": "تجديد",
+  "profilePhoto": "الصورة الشخصية",
+  "profilePhotoHint": "اضغط على الصورة لرفع صورة جديدة."
 }

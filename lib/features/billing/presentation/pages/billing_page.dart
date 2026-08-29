@@ -49,9 +49,9 @@ class _BillingView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: l10n.billingPageTitle,
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.billingPageTitle),
       body: BlocBuilder<SubscriptionBloc, SubscriptionState>(
         builder: (context, subState) {
           return BlocConsumer<BillingBloc, BillingState>(

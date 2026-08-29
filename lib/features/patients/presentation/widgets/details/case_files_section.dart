@@ -11,6 +11,7 @@ import 'package:dental_clinic_app/services/media/media_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// One attachment as the UI needs it. The API stores bare media ids, so a
 /// freshly picked file lives here with a local path until its upload lands.
@@ -19,6 +20,7 @@ class CaseAttachment {
     required this.id,
     this.remoteId,
     this.url,
+    this.downloadUrl,
     this.name,
     this.localFile,
     this.uploading = false,
@@ -32,6 +34,10 @@ class CaseAttachment {
   /// Null while an upload is in flight, so the delete action stays hidden.
   final String? remoteId;
   final String? url;
+
+  /// Signed URL that saves the file rather than rendering it. Present only
+  /// where the API hands one back; drives the viewer's download action.
+  final String? downloadUrl;
   final String? name;
   final File? localFile;
   final bool uploading;
@@ -64,6 +70,7 @@ class CaseAttachment {
         id: id ?? this.id,
         remoteId: remoteId ?? this.remoteId,
         url: url,
+        downloadUrl: downloadUrl,
         name: name,
         localFile: localFile,
         uploading: uploading ?? this.uploading,
@@ -622,6 +629,14 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
     super.dispose();
   }
 
+  /// Hands the signed URL to the platform, which downloads or opens it in
+  /// whatever the user already uses for that file type.
+  Future<void> _download(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
   Future<void> _confirmDelete(CaseAttachment item) async {
     final l10n = AppLocalizations.of(context)!;
     final family = FontHelper.fontFamily(context);
@@ -676,7 +691,22 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
       appBar: AppBar(
         backgroundColor: ColorManager.black,
         foregroundColor: ColorManager.white,
+        // The app-wide AppBarTheme pins icons to textPrimary, and a theme
+        // iconTheme outranks a widget foregroundColor - which left the close
+        // button near-black on this black bar. Both themes are overridden
+        // here so the way out of the viewer is always visible.
+        iconTheme: const IconThemeData(color: ColorManager.white),
+        actionsIconTheme: const IconThemeData(color: ColorManager.white),
         elevation: 0,
+        leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: Icon(
+            Icons.close_rounded,
+            size: 22.w,
+            color: ColorManager.white,
+          ),
+        ),
         title: Text(
           '${_index + 1} / ${a.length}',
           style: TextStyle(
@@ -686,6 +716,16 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
           ),
         ),
         actions: [
+          if (current?.downloadUrl != null)
+            IconButton(
+              tooltip: AppLocalizations.of(context)!.download,
+              onPressed: () => _download(current!.downloadUrl!),
+              icon: Icon(
+                Icons.file_download_outlined,
+                size: 22.w,
+                color: ColorManager.white,
+              ),
+            ),
           if (canDelete)
             IconButton(
               tooltip: AppLocalizations.of(context)!.removeAction,

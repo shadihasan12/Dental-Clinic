@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
@@ -8,6 +9,7 @@ import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
@@ -82,149 +84,157 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      // The one action on this screen that creates something. Docked in the
-      // thumb arc rather than hidden behind a header icon.
-      bottomNavigationBar: widget.isAdmin
-          ? _DockedInviteBar(
-              label: l10n.sendInvite,
-              onTap: () => SendInviteSheet.show(context),
-            )
-          : null,
-      body: BlocConsumer<InvitationBloc, InvitationState>(
-        listenWhen: (prev, curr) =>
-            prev.sendSuccess != curr.sendSuccess ||
-            prev.acceptSuccess != curr.acceptSuccess ||
-            prev.rejectSuccess != curr.rejectSuccess ||
-            prev.error != curr.error,
-        listener: (context, state) {
-          if (state.sendSuccess) {
-            AppSnackbar.showSuccess(
-              context,
-              title: l10n.success,
-              message: l10n.inviteSentSuccess,
-            );
-          }
-          if (state.acceptSuccess) {
-            AppSnackbar.showSuccess(
-              context,
-              title: l10n.invitationAccepted,
-              message: l10n.invitationAcceptedMessage,
-            );
-            // Joining the clinic means a new membership row — refetch.
-            context.read<MyClinicsBloc>().add(const MyClinicsEvent.load());
-          }
-          if (state.rejectSuccess) {
-            AppSnackbar.showSuccess(
-              context,
-              title: l10n.invitationDeclined,
-              message: l10n.invitationDeclinedMessage,
-            );
-          }
-          if (state.error != null) {
-            AppSnackbar.showError(
-              context,
-              title: l10n.error,
-              message: state.error,
-            );
-          }
-        },
-        builder: (context, invitationState) {
-          if (invitationState.receivedFilter == InvitationStatus.pending &&
-              !invitationState.isLoading) {
-            _pendingReceived = invitationState.receivedInvitations
-                .where((i) => i.status == InvitationStatus.pending)
-                .length;
-          }
-
-          return BlocBuilder<MyClinicsBloc, MyClinicsState>(
-            builder: (context, clinicsState) {
-              final clinics = clinicsState.maybeWhen(
-                loaded: (clinics) => clinics,
-                orElse: () => const <ClinicMembershipEntity>[],
+    // Wrapped rather than handed to AdaptivePageScaffold: the header sits
+    // inside a bloc builder here, alongside the summary bar, so the page keeps
+    // its Scaffold and only borrows the desktop side nav and top bar.
+    return DesktopShell(
+      title: l10n.myClinics,
+      body: Scaffold(
+        backgroundColor: c.scaffoldBg,
+        // The one action on this screen that creates something. Docked in the
+        // thumb arc rather than hidden behind a header icon.
+        bottomNavigationBar: widget.isAdmin
+            ? _DockedInviteBar(
+                label: l10n.sendInvite,
+                onTap: () => SendInviteSheet.show(context),
+              )
+            : null,
+        body: BlocConsumer<InvitationBloc, InvitationState>(
+          listenWhen: (prev, curr) =>
+              prev.sendSuccess != curr.sendSuccess ||
+              prev.acceptSuccess != curr.acceptSuccess ||
+              prev.rejectSuccess != curr.rejectSuccess ||
+              prev.error != curr.error,
+          listener: (context, state) {
+            if (state.sendSuccess) {
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.success,
+                message: l10n.inviteSentSuccess,
               );
+            }
+            if (state.acceptSuccess) {
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.invitationAccepted,
+                message: l10n.invitationAcceptedMessage,
+              );
+              // Joining the clinic means a new membership row — refetch.
+              context.read<MyClinicsBloc>().add(const MyClinicsEvent.load());
+            }
+            if (state.rejectSuccess) {
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.invitationDeclined,
+                message: l10n.invitationDeclinedMessage,
+              );
+            }
+            if (state.error != null) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.error,
+                message: state.error,
+              );
+            }
+          },
+          builder: (context, invitationState) {
+            if (invitationState.receivedFilter == InvitationStatus.pending &&
+                !invitationState.isLoading) {
+              _pendingReceived = invitationState.receivedInvitations
+                  .where((i) => i.status == InvitationStatus.pending)
+                  .length;
+            }
 
-              String activeName = '';
-              for (final m in clinics) {
-                if (m.clinicId == _activeClinicId) {
-                  activeName = m.clinicName;
-                  break;
+            return BlocBuilder<MyClinicsBloc, MyClinicsState>(
+              builder: (context, clinicsState) {
+                final clinics = clinicsState.maybeWhen(
+                  loaded: (clinics) => clinics,
+                  orElse: () => const <ClinicMembershipEntity>[],
+                );
+
+                String activeName = '';
+                for (final m in clinics) {
+                  if (m.clinicId == _activeClinicId) {
+                    activeName = m.clinicName;
+                    break;
+                  }
                 }
-              }
-              if (activeName.isEmpty) {
-                activeName = getIt<UserStorage>().getClinicName() ?? '';
-              }
+                if (activeName.isEmpty) {
+                  activeName = getIt<UserStorage>().getClinicName() ?? '';
+                }
 
-              final sentMode = widget.isAdmin && _activeTab == 1;
+                final sentMode = widget.isAdmin && _activeTab == 1;
 
-              return Column(
-                children: [
-                  PageHeader(
-                    title: l10n.myClinics,
-                    onBack: () => context.pop(),
-                  ),
+                return Column(
+                  children: [
+                    // The desktop top bar already carries the title and back.
+                    if (!Responsive.isDesktop(context))
+                      PageHeader(
+                        title: l10n.myClinics,
+                        onBack: () => context.pop(),
+                      ),
 
-                  // The two values that must never require scrolling.
-                  _ClinicsSummaryBar(
-                    activeLabel: l10n.activeClinic,
-                    activeValue: activeName.isEmpty
-                        ? l10n.noneSelected
-                        : activeName,
-                    invitationsLabel: l10n.invitations,
-                    invitationsValue: '$_pendingReceived',
-                  ),
+                    // The two values that must never require scrolling.
+                    _ClinicsSummaryBar(
+                      activeLabel: l10n.activeClinic,
+                      activeValue: activeName.isEmpty
+                          ? l10n.noneSelected
+                          : activeName,
+                      invitationsLabel: l10n.invitations,
+                      invitationsValue: '$_pendingReceived',
+                    ),
 
-                  Expanded(
-                    child: DentaRefresh(
-                      onRefresh: _refresh,
-                      child: ListView(
-                        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                        children: [
-                          // No heading over the clinics: the screen is already
-                          // called My Clinics.
-                          _buildClinics(context, clinicsState),
-                          SizedBox(height: 22.h),
-                          _SectionHeading(
-                            label: l10n.invitations,
-                            count: _pendingReceived,
-                          ),
-                          SizedBox(height: 10.h),
-                          // One row, not two: direction on the leading side,
-                          // status as a menu on the trailing side.
-                          _InvitationFilterRow(
-                            isAdmin: widget.isAdmin,
-                            sentMode: sentMode,
-                            onModeChanged: (i) =>
-                                setState(() => _activeTab = i),
-                            status: sentMode
-                                ? invitationState.sentFilter
-                                : invitationState.receivedFilter,
-                          ),
-                          SizedBox(height: 12.h),
-                          InvitationsList(
-                            mode: sentMode
-                                ? InvitationCardMode.sent
-                                : InvitationCardMode.received,
-                            invitations: sentMode
-                                ? invitationState.sentInvitations
-                                : invitationState.receivedInvitations,
-                            filter: sentMode
-                                ? invitationState.sentFilter
-                                : invitationState.receivedFilter,
-                            isLoading: invitationState.isLoading,
-                            isUpdating: invitationState.isUpdating,
-                            error: invitationState.error,
-                          ),
-                        ],
+                    Expanded(
+                      child: DentaRefresh(
+                        onRefresh: _refresh,
+                        child: ListView(
+                          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                          children: [
+                            // No heading over the clinics: the screen is already
+                            // called My Clinics.
+                            _buildClinics(context, clinicsState),
+                            SizedBox(height: 22.h),
+                            _SectionHeading(
+                              label: l10n.invitations,
+                              count: _pendingReceived,
+                            ),
+                            SizedBox(height: 10.h),
+                            // One row, not two: direction on the leading side,
+                            // status as a menu on the trailing side.
+                            _InvitationFilterRow(
+                              isAdmin: widget.isAdmin,
+                              sentMode: sentMode,
+                              onModeChanged: (i) =>
+                                  setState(() => _activeTab = i),
+                              status: sentMode
+                                  ? invitationState.sentFilter
+                                  : invitationState.receivedFilter,
+                            ),
+                            SizedBox(height: 12.h),
+                            InvitationsList(
+                              mode: sentMode
+                                  ? InvitationCardMode.sent
+                                  : InvitationCardMode.received,
+                              invitations: sentMode
+                                  ? invitationState.sentInvitations
+                                  : invitationState.receivedInvitations,
+                              filter: sentMode
+                                  ? invitationState.sentFilter
+                                  : invitationState.receivedFilter,
+                              isLoading: invitationState.isLoading,
+                              isUpdating: invitationState.isUpdating,
+                              error: invitationState.error,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

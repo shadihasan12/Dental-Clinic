@@ -350,57 +350,49 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
-        return Scaffold(
+        return AdaptivePageScaffold(
+          title: l10n.workingDaysAndHolidays,
+          onBack: () => context.pop(),
           backgroundColor: c.scaffoldBg,
           bottomNavigationBar: _workingDays.isNotEmpty
               ? _buildSaveButton(l10n)
               : null,
-          body: Column(
-            children: [
-              PageHeader(
-                title: l10n.workingDaysAndHolidays,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _WorkingDaysSkeleton(),
-                  // Pull-to-refresh is offered on the failure state only. Once
-                  // the form is populated it may hold unsaved edits, and a
-                  // refetch would silently throw them away.
-                  error: (message) => DentaRefresh(
-                    onRefresh: () => _refresh(context),
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                      child: StateCard(
-                        icon: Icons.cloud_off_rounded,
-                        tone: ColorManager.error,
-                        title: l10n.workingDaysLoadFailed,
-                        message: message,
-                        actionLabel: l10n.retry,
-                        onAction: () => context.read<WorkingDaysBloc>().add(
-                          const WorkingDaysEvent.load(),
-                        ),
-                      ),
-                    ),
+          body: state.maybeWhen(
+            loading: () => const _WorkingDaysSkeleton(),
+            // Pull-to-refresh is offered on the failure state only. Once
+            // the form is populated it may hold unsaved edits, and a
+            // refetch would silently throw them away.
+            error: (message) => DentaRefresh(
+              onRefresh: () => _refresh(context),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                child: StateCard(
+                  icon: Icons.cloud_off_rounded,
+                  tone: ColorManager.error,
+                  title: l10n.workingDaysLoadFailed,
+                  message: message,
+                  actionLabel: l10n.retry,
+                  onAction: () => context.read<WorkingDaysBloc>().add(
+                    const WorkingDaysEvent.load(),
                   ),
-                  loaded: (workingDays, holidays) {
-                    if (!_populated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromApi(workingDays, holidays));
-                      });
-                      return const _WorkingDaysSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_populated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
                 ),
               ),
-            ],
+            ),
+            loaded: (workingDays, holidays) {
+              if (!_populated) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() => _populateFromApi(workingDays, holidays));
+                });
+                return const _WorkingDaysSkeleton();
+              }
+              return _buildForm(l10n);
+            },
+            orElse: () {
+              if (!_populated) {
+                return const SizedBox.shrink();
+              }
+              return _buildForm(l10n);
+            },
           ),
         );
       },

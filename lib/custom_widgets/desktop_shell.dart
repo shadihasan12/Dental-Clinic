@@ -3,71 +3,48 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
-import 'package:dental_clinic_app/custom_widgets/desktop_side_nav.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/core/widgets/unread_badge.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-/// Wraps a page with the desktop side menu + top bar.
-/// On mobile, just renders the [body] directly.
+/// Gives a sub-page its desktop top bar - back affordance, title, and the
+/// account controls. On mobile it renders [body] directly.
 ///
-/// Use this for pages that navigate away from the root (patient details,
-/// add patient, etc.) but should still show the shell on desktop.
+/// The side menu is deliberately not here: [AppShell] draws it once for the
+/// whole app, above the navigator, so it stays put while pages come and go.
+/// This widget only fills the content pane.
 ///
-/// [selectedTabIndex] highlights a nav item (e.g. 2 for appointments) so
-/// users keep their sense of place while on a sub-page. Pass null to leave
-/// all items unhighlighted.
-/// [breadcrumb] is shown as a small path above the page title in the top
-/// bar, e.g. "Appointments" for the New Appointment page.
+/// [breadcrumb] is shown as a small path above the title, e.g. "Appointments"
+/// for the New Appointment page.
 class DesktopShell extends StatelessWidget {
   const DesktopShell({
     super.key,
     required this.body,
     this.title,
-    this.selectedTabIndex,
     this.breadcrumb,
   });
 
   final Widget body;
   final String? title;
-  final int? selectedTabIndex;
   final String? breadcrumb;
 
   @override
   Widget build(BuildContext context) {
     if (!Responsive.isDesktop(context)) return body;
 
-    ScreenUtil.configure(
-      data: MediaQuery.of(context).copyWith(
-        size: const Size(375, 812),
-      ),
-    );
-
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
-      body: Row(
-        children: [
-          DesktopSideNav(
-            selectedIndex: selectedTabIndex,
-            onTabSelected: null,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                _SubpageTopBar(
-                  fontFamily: fontFamily,
-                  title: title,
-                  breadcrumb: breadcrumb,
-                ),
-                Expanded(child: body),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        _SubpageTopBar(
+          fontFamily: fontFamily,
+          title: title,
+          breadcrumb: breadcrumb,
+        ),
+        Expanded(child: body),
+      ],
     );
   }
 }
@@ -87,6 +64,25 @@ class _SubpageTopBar extends StatelessWidget {
   final String? title;
   final String? breadcrumb;
 
+  /// Path of the notification inbox, as go_router knows it.
+  ///
+  /// Kept as a literal rather than reaching for NotificationRouting: this is
+  /// a layout widget, and importing the notification service here would drag
+  /// RootPage and the whole feature graph into every page's shell.
+  static const String _notificationsPath = '/notifications';
+
+  /// Whether the inbox is the route currently on top.
+  ///
+  /// Reads the delegate rather than `GoRouterState.of`, which throws when the
+  /// shell is built under a route pushed with a plain [Navigator] - the add
+  /// user form does exactly that.
+  static bool _isOnNotificationsPage(BuildContext context) {
+    final router = GoRouter.maybeOf(context);
+    if (router == null) return false;
+    return router.routerDelegate.currentConfiguration.uri.path ==
+        _notificationsPath;
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -104,8 +100,12 @@ class _SubpageTopBar extends StatelessWidget {
         children: [
           _BackButton(fontFamily: fontFamily),
           const SizedBox(width: 6),
+          // Expanded, not Flexible: a loose Flexible competes with the
+          // Spacer for the free space and only ever gives half of it away,
+          // which strands the rest *after* the profile pill and drags the
+          // trailing controls in towards the title.
           if (title != null)
-            Flexible(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -135,18 +135,25 @@ class _SubpageTopBar extends StatelessWidget {
                   ),
                 ],
               ),
+            )
+          else
+            const Spacer(),
+
+          // Hidden while the inbox itself is on screen. The bell pushes a
+          // route unconditionally, so on that page it stacked a second and
+          // third copy of the page the user was already looking at - and a
+          // shortcut to where you already are is noise even when it works.
+          if (!_isOnNotificationsPage(context)) ...[
+            _TopBarIconButton(
+              icon: Icons.notifications_outlined,
+              tooltip: AppLocalizations.of(context)!.notifications,
+              // Live count, not a decorative dot: it was previously pinned on
+              // and told the user nothing.
+              hasBadge: true,
+              onTap: () => context.pushNamed(AppRoutesNames.notifications),
             ),
-
-          const Spacer(),
-
-          _TopBarIconButton(
-            icon: Icons.notifications_outlined,
-            tooltip: AppLocalizations.of(context)!.notifications,
-            hasBadge: true,
-            onTap: () =>
-                context.pushNamed(AppRoutesNames.notifications),
-          ),
-          const SizedBox(width: 4),
+            const SizedBox(width: 4),
+          ],
           _ProfilePill(
             fontFamily: fontFamily,
             userName: userName,
@@ -174,7 +181,9 @@ class _BackButtonState extends State<_BackButton> {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return Tooltip(
-      message: '\u2190  ${AppLocalizations.of(context)!.back}',
+      // No arrow glyph: the bundled fonts have no U+2190, so it drew as
+      // tofu on Windows - and nothing is bound to the arrow key anyway.
+      message: AppLocalizations.of(context)!.back,
       waitDuration: const Duration(milliseconds: 500),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
@@ -185,15 +194,17 @@ class _BackButtonState extends State<_BackButton> {
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            onTap: () =>
-                context.canPop() ? context.pop() : context.go('/'),
+            onTap: () => context.canPop() ? context.pop() : context.go('/'),
             child: Container(
               width: 40,
               height: 40,
               alignment: Alignment.center,
+              // The same chevron the mobile PageHeader uses, so back reads
+              // the same on both form factors. It carries
+              // matchTextDirection, so it points the right way in Arabic.
               child: Icon(
-                Icons.arrow_back_rounded,
-                size: 20,
+                Icons.arrow_back_ios_new,
+                size: 17,
                 color: c.textPrimary,
               ),
             ),
@@ -215,6 +226,8 @@ class _TopBarIconButton extends StatefulWidget {
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
+
+  /// Whether this button carries the live unread-count pill.
   final bool hasBadge;
 
   @override
@@ -249,17 +262,9 @@ class _TopBarIconButtonState extends State<_TopBarIconButton> {
                   Icon(widget.icon, color: c.textSecondary, size: 20),
                   if (widget.hasBadge)
                     Positioned(
-                      right: 10,
-                      top: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: c.cardBg, width: 1.5),
-                        ),
-                      ),
+                      right: 4,
+                      top: 4,
+                      child: UnreadBadge(borderColor: c.cardBg),
                     ),
                 ],
               ),
@@ -303,8 +308,7 @@ class _ProfilePillState extends State<_ProfilePill> {
           borderRadius: BorderRadius.circular(10),
           onTap: widget.onTap,
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               children: [
                 CircleAvatar(

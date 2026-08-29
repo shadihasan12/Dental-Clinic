@@ -169,13 +169,16 @@ class NotificationService {
     );
     // Windows toasts are addressed by an AppUserModelID; the GUID identifies
     // the COM activation callback that delivers taps back to us.
-    const windows = WindowsInitializationSettings(
+    final windows = WindowsInitializationSettings(
       appName: 'Denta',
       appUserModelId: 'Skew.Denta.DentalClinic',
       guid: '9a3f1f6c-6b2e-4f0e-9c1b-2f7a7d3c6f21',
+      // Names the app in the toast's header row. Without it Windows falls back
+      // to a generic placeholder and the banner reads as coming from nowhere.
+      iconPath: _windowsAssetPath(_appIconAsset),
     );
     await _localNotifications.initialize(
-      settings: const InitializationSettings(
+      settings: InitializationSettings(
         android: android,
         iOS: darwin,
         windows: windows,
@@ -510,11 +513,63 @@ class NotificationService {
           presentBadge: true,
           presentSound: true,
         ),
-        windows: const WindowsNotificationDetails(),
+        windows: WindowsNotificationDetails(images: _windowsLogo()),
       ),
       // Carry the routing payload through the tap round-trip.
       payload: jsonEncode(data),
     );
+  }
+
+  /// The brand mark, padded into a transparent square so it sits *inside* the
+  /// toast's logo slot rather than filling it edge to edge.
+  ///
+  /// Windows gives no size control over `appLogoOverride` — the slot is a
+  /// fixed box in the toast template — so the only way to make the logo read
+  /// smaller is to leave margin in the image itself. `denta_mark.png` fills
+  /// ~95% of its own canvas and looked oversized here; this variant sits at
+  /// 62%. The wordmark is not an option at this size, and the slot is
+  /// circle-cropped besides.
+  static const String _logoAsset = 'assets/images/logo/denta_mark_toast.png';
+
+  /// The unpadded mark, for the toast header's app icon. That slot is already
+  /// tiny, so it wants the tighter crop rather than this one's margin.
+  static const String _appIconAsset = 'assets/images/logo/denta_mark.png';
+
+  /// The Denta mark in the toast's app-logo slot, so a banner is recognisably
+  /// ours at a glance rather than a bare block of text.
+  ///
+  /// Empty on every other platform: resolving the URI touches dart:io paths
+  /// that only make sense for a Windows build, and nothing else reads this.
+  List<WindowsImage> _windowsLogo() {
+    if (!usesPolling) return const [];
+    final uri = _windowsAssetUri(_logoAsset);
+    if (uri == null) return const [];
+    return [
+      WindowsImage(
+        uri,
+        altText: 'Denta',
+        placement: WindowsImagePlacement.appLogoOverride,
+        crop: WindowsImageCrop.circle,
+      ),
+    ];
+  }
+
+  /// Asset paths differ between a debug run, a plain release build, and an
+  /// MSIX package; the plugin's helper knows all three. It throws on anything
+  /// but Windows, so every caller is guarded and a failure degrades to a
+  /// logo-less toast rather than losing the notification.
+  static Uri? _windowsAssetUri(String asset) {
+    try {
+      return WindowsImage.getAssetUri(asset);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[notifications] asset uri failed: $e');
+      return null;
+    }
+  }
+
+  static String? _windowsAssetPath(String asset) {
+    if (!usesPolling) return null;
+    return _windowsAssetUri(asset)?.toFilePath(windows: true);
   }
 
   /// Stable-ish 32-bit id for the local notification. Deriving it from the

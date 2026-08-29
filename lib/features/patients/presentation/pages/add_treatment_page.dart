@@ -3,7 +3,6 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
@@ -80,10 +79,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
 
   Future<void> _loadTeeth() async {
     final result = await getIt<GetAllTeethUseCase>()(NoParams());
-    result.fold(
-      (_) {},
-      (teeth) => setState(() => _teeth = teeth),
-    );
+    result.fold((_) {}, (teeth) => setState(() => _teeth = teeth));
   }
 
   Future<void> _loadCoreTreatments() async {
@@ -136,53 +132,53 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
         child: Padding(
           padding: EdgeInsets.only(bottom: systemBottomInset(context)),
           child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _visitDate = tempDate);
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      l10n.close,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
+                    TextButton(
+                      onPressed: () {
+                        setState(() => _visitDate = tempDate);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.close,
+                        style: TextStyle(
+                          color: ColorManager.primary,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: FontHelper.fontFamily(context),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Divider(height: 1, color: Colors.grey.shade200),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _visitDate,
-                minimumDate: DateTime(2020),
-                maximumDate: DateTime.now().add(const Duration(days: 365)),
-                onDateTimeChanged: (date) => tempDate = date,
+              Divider(height: 1, color: Colors.grey.shade200),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _visitDate,
+                  minimumDate: DateTime(2020),
+                  maximumDate: DateTime.now().add(const Duration(days: 365)),
+                  onDateTimeChanged: (date) => tempDate = date,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -227,50 +223,38 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
           },
         );
       },
-      child: Scaffold(
-        backgroundColor: ColorManager.white,
-        body: Column(
-          children: [
-            PageHeader(
-              title: localizations.addTreatment,
-              onBack: () => context.pop(),
+      child: AdaptivePageScaffold(
+        title: localizations.addTreatment,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          child: VisitInfoForm(
+            isInitial: widget.isInitial,
+            visitDate: _visitDate,
+            onVisitDateTap: _selectDate,
+            selectedTreatmentTypes: _selectedTreatmentTypes,
+            availableTreatmentTypes: _coreTreatments,
+            onTreatmentToggle: (t) => setState(
+              () => _selectedTreatmentTypes.contains(t)
+                  ? _selectedTreatmentTypes.remove(t)
+                  : _selectedTreatmentTypes.add(t),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: VisitInfoForm(
-                  isInitial: widget.isInitial,
-                  visitDate: _visitDate,
-                  onVisitDateTap: _selectDate,
-                  selectedTreatmentTypes: _selectedTreatmentTypes,
-                  availableTreatmentTypes: _coreTreatments,
-                  onTreatmentToggle: (t) => setState(
-                    () => _selectedTreatmentTypes.contains(t)
-                        ? _selectedTreatmentTypes.remove(t)
-                        : _selectedTreatmentTypes.add(t),
-                  ),
-                  teeth: _teeth,
-                  selectedTeeth: _selectedTeeth,
-                  onTeethChanged: (teeth) =>
-                      setState(() => _selectedTeeth = teeth),
-                  visitSummaryController: _visitSummaryController,
-                  totalCostController: _totalCostController,
-                  labFeesController: _labFeesController,
-                  attachments: _attachments,
-                  onUploadTap: () {},
-                  onAttachmentRemove: (i) =>
-                      setState(() => _attachments.removeAt(i)),
-                ),
-              ),
-            ),
-          ],
+            teeth: _teeth,
+            selectedTeeth: _selectedTeeth,
+            onTeethChanged: (teeth) => setState(() => _selectedTeeth = teeth),
+            visitSummaryController: _visitSummaryController,
+            totalCostController: _totalCostController,
+            labFeesController: _labFeesController,
+            attachments: _attachments,
+            onUploadTap: () {},
+            onAttachmentRemove: (i) => setState(() => _attachments.removeAt(i)),
+          ),
         ),
+        onBack: () => context.pop(),
+        backgroundColor: ColorManager.white,
         bottomNavigationBar: Padding(
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
           child: Padding(
-            padding: EdgeInsets.only(
-              bottom: scaffoldBottomInset(context),
-            ),
+            padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
             child: ElevatedButton(
               onPressed: _saveTreatment,
               style: ElevatedButton.styleFrom(

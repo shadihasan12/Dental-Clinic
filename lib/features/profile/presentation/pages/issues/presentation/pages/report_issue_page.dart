@@ -3,7 +3,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_page_scaffold.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/manager/issues_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/widgets/issue_card.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/widgets/issues_list_states.dart';
@@ -55,60 +55,54 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: l10n.reportIssue,
       backgroundColor: c.scaffoldBg,
-      body: Column(
-        children: [
-          PageHeader(title: l10n.reportIssue),
-          Expanded(
-            child: BlocConsumer<IssuesBloc, IssuesState>(
-              listenWhen: (prev, curr) => !prev.justCreated && curr.justCreated,
-              listener: (context, state) {
-                // The bloc raises justCreated for one emission; clear the
-                // fields and confirm, then let it fall away on its own.
-                _formKey.currentState?.reset();
-                AppSnackbar.showSuccess(
-                  context,
-                  title: l10n.success,
-                  message: l10n.reportSent,
-                );
-              },
-              builder: (context, state) {
-                return DentaRefresh(
-                  onRefresh: () => _refresh(context),
-                  child: ListView(
-                    // 14px screen gutters.
-                    padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                    children: [
-                      NewIssueForm(
-                        key: _formKey,
-                        isSubmitting: state.isSubmitting,
-                        errorMessage: state.submitError,
-                        onSubmit: (title, description) {
-                          context.read<IssuesBloc>().add(
-                            IssuesEvent.submit(
-                              title: title,
-                              description: description,
-                            ),
-                          );
-                        },
+      body: BlocConsumer<IssuesBloc, IssuesState>(
+        listenWhen: (prev, curr) => !prev.justCreated && curr.justCreated,
+        listener: (context, state) {
+          // The bloc raises justCreated for one emission; clear the
+          // fields and confirm, then let it fall away on its own.
+          _formKey.currentState?.reset();
+          AppSnackbar.showSuccess(
+            context,
+            title: l10n.success,
+            message: l10n.reportSent,
+          );
+        },
+        builder: (context, state) {
+          return DentaRefresh(
+            onRefresh: () => _refresh(context),
+            child: ListView(
+              // 14px screen gutters.
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+              children: [
+                NewIssueForm(
+                  key: _formKey,
+                  isSubmitting: state.isSubmitting,
+                  errorMessage: state.submitError,
+                  onSubmit: (title, description) {
+                    context.read<IssuesBloc>().add(
+                      IssuesEvent.submit(
+                        title: title,
+                        description: description,
                       ),
-                      SizedBox(height: 22.h),
-                      SectionLabel(
-                        l10n.yourReports,
-                        trailing: state.hasIssues
-                            ? CountPill(state.issues.length)
-                            : null,
-                      ),
-                      SizedBox(height: 10.h),
-                      _ReportsList(state: state),
-                    ],
-                  ),
-                );
-              },
+                    );
+                  },
+                ),
+                SizedBox(height: 22.h),
+                SectionLabel(
+                  l10n.yourReports,
+                  trailing: state.hasIssues
+                      ? CountPill(state.issues.length)
+                      : null,
+                ),
+                SizedBox(height: 10.h),
+                _ReportsList(state: state),
+              ],
             ),
-          ),
-        ],
+          );
+  },
       ),
     );
   }

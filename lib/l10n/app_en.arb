@@ -168,6 +168,8 @@
   "newAppointment": "New Appointment",
   "addTreatment": "Add Treatment",
   "todaysSchedule": "Today's Schedule",
+  "todaysAppointments": "Today's Appointments",
+  "upcoming": "Upcoming",
   "viewAll": "View All",
   "analytics": "Analytics",
   "schedule": "Schedule",
@@ -1174,5 +1176,7 @@
   "noPlanActiveBody": "No plan is active on this clinic.",
   "subscriptionGraceBody": "Payment is overdue. The plan keeps working until the grace period ends.",
   "subscriptionExpiredBody": "This plan has ended. Renew to keep using it.",
-  "renewAction": "Renew"
+  "renewAction": "Renew",
+  "profilePhoto": "Profile Photo",
+  "profilePhotoHint": "Click the avatar to upload a new picture."
 }

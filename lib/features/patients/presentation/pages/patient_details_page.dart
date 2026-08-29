@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
@@ -33,6 +35,7 @@ import 'package:dental_clinic_app/features/patients/presentation/widgets/payment
 import 'package:dental_clinic_app/features/patients/presentation/widgets/payment/record_payment_popup.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -697,49 +700,61 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
 
-    return BlocBuilder<PatientDetailsBloc, PatientDetailsState>(
-      builder: (context, state) {
-        return state.when(
-          initial: () => Scaffold(
-            backgroundColor: c.scaffoldBg,
-            body: const SizedBox.shrink(),
-          ),
-          loading: () => Scaffold(
-            backgroundColor: c.scaffoldBg,
-            body: SafeArea(
-              bottom: false,
-              child: Column(
-                children: [
-                  PatientIdentityBar(
-                    name: widget.patientName,
-                    subtitle: '',
-                    onBack: _back,
-                  ),
-                  const Expanded(child: PatientDetailSkeleton()),
-                ],
+    // The side nav is the only desktop chrome this page needs: its own
+    // PatientIdentityBar already carries the name, subtitle and Edit action,
+    // so DesktopShell is given no title rather than repeating the name in the
+    // top bar. Patients (index 1) stays highlighted so the user keeps their
+    // sense of place while drilled into a record.
+    return DesktopShell(
+      body: BlocBuilder<PatientDetailsBloc, PatientDetailsState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => Scaffold(
+              backgroundColor: c.scaffoldBg,
+              body: const SizedBox.shrink(),
+            ),
+            loading: () => Scaffold(
+              backgroundColor: c.scaffoldBg,
+              body: SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    PatientIdentityBar(
+                      name: widget.patientName,
+                      subtitle: '',
+                      onBack: _identityBarBack(context),
+                    ),
+                    const Expanded(child: PatientDetailSkeleton()),
+                  ],
+                ),
               ),
             ),
-          ),
-          error: (message) => Scaffold(
-            backgroundColor: c.scaffoldBg,
-            body: SafeArea(
-              child: PatientDetailErrorState(
-                message: message,
-                onRetry: _reload,
+            error: (message) => Scaffold(
+              backgroundColor: c.scaffoldBg,
+              body: SafeArea(
+                child: PatientDetailErrorState(
+                  message: message,
+                  onRetry: _reload,
+                ),
               ),
             ),
-          ),
-          loaded: (patient, activeCase, completedCases) => _buildLoaded(
-            patient: patient,
-            activeCase: activeCase,
-            completedCases: completedCases,
-          ),
-        );
-      },
+            loaded: (patient, activeCase, completedCases) => _buildLoaded(
+              patient: patient,
+              activeCase: activeCase,
+              completedCases: completedCases,
+            ),
+          );
+        },
+      ),
     );
   }
 
   void _back() => context.canPop() ? context.pop() : context.go('/');
+
+  /// The identity bar's own arrow, or null on desktop where DesktopShell's
+  /// top bar already provides one.
+  VoidCallback? _identityBarBack(BuildContext context) =>
+      Responsive.isDesktop(context) ? null : _back;
 
   Widget _buildLoaded({
     required PatientEntity patient,
@@ -760,7 +775,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
               PatientIdentityBar(
                 name: patient.name,
                 subtitle: _subtitle(patient),
-                onBack: _back,
+                onBack: _identityBarBack(context),
                 onEdit: () => _editPatient(patient),
               ),
               Expanded(
@@ -787,6 +802,17 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     final outstanding = activeCase == null
         ? '-'
         : '${_money(activeCase.pendingAmount)}${currency.isEmpty ? '' : ' $currency'}';
+
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktopLoaded(
+        patient: patient,
+        activeCase: activeCase,
+        completedCases: completedCases,
+        planned: planned,
+        unfinished: unfinished,
+        outstanding: outstanding,
+      );
+    }
 
     // A chip that scrolls to a section which is not on screen reads as
     // broken, so only the sections that exist get one. Case and Info are
@@ -820,7 +846,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
             PatientIdentityBar(
               name: patient.name,
               subtitle: _subtitle(patient),
-              onBack: _back,
+              onBack: _identityBarBack(context),
               onEdit: () => _editPatient(patient),
             ),
             PatientVitalsBar(
@@ -942,6 +968,157 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     );
   }
 
+  /// Desktop rearrangement of the same sections.
+  ///
+  /// Mobile stacks everything in one column behind an anchor rail because it
+  /// has one column to give. A desktop window has three, so the case, the
+  /// record and the files sit side by side and the rail goes away - it can
+  /// only jump to things that are already on screen.
+  Widget _buildDesktopLoaded({
+    required PatientEntity patient,
+    required DentalCase? activeCase,
+    required List<DentalCase> completedCases,
+    required List<PlannedTreatment> planned,
+    required int unfinished,
+    required String outstanding,
+  }) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    final alerts = ClinicalAlertsStrip(
+      allergies: patient.allergies,
+      medicalHistory: patient.medicalHistory,
+      onEditAllergies: () => _editPatient(patient),
+      onReviewHistory: () => _editPatient(patient),
+    );
+
+    // Left: who the patient is, and what has already been closed for them.
+    final infoColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        PatientInfoCard(patient: patient, onEdit: () => _editPatient(patient)),
+        if (completedCases.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          PastCasesSection(cases: completedCases, onOpenCase: _openPastCase),
+        ],
+      ],
+    );
+
+    // Middle: the open case - the money, then the work it pays for.
+    final caseColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (activeCase == null)
+          PatientDetailPlaceholder(
+            icon: Icons.medical_services_outlined,
+            title: l10n.noOngoingCase,
+            message: l10n.patientNoActiveTreatment,
+            primaryLabel: l10n.createNew,
+            onPrimary: _createNewCase,
+          )
+        else ...[
+          CaseMoneyCard(
+            totalCost: activeCase.totalCost,
+            paidAmount: activeCase.paidAmount,
+            pendingAmount: activeCase.pendingAmount,
+            labFees: activeCase.labFees,
+            paymentCount: 0,
+            onPayments: () => _paymentHistory(activeCase),
+            onEditCosts: () => _editCosts(activeCase),
+            onFinishCase: () => _finishCase(activeCase, unfinished),
+          ),
+          const SizedBox(height: 20),
+          TreatmentsSection(
+            treatments: planned,
+            outstandingLabel: activeCase.pendingAmount > 0
+                ? '$outstanding ${l10n.pendingLabel}'
+                : null,
+            onToggleDone: (t) => _toggleDone(activeCase, t),
+            onAddNote: (t, note) => _addNote(activeCase, t, note),
+            onRemove: (t) => _removeTreatment(activeCase, t),
+            onAddTreatment: () => _addTreatment(activeCase),
+            onFinishCase: () => _finishCase(activeCase, unfinished),
+          ),
+        ],
+      ],
+    );
+
+    return Scaffold(
+      backgroundColor: c.scaffoldBg,
+      bottomNavigationBar: activeCase == null
+          ? null
+          : DockedCaseActions(
+              onAddTreatment: () => _addTreatment(activeCase),
+              onRecordPayment: () => _recordPayment(activeCase),
+            ),
+      body: Column(
+        children: [
+          _DesktopPatientHeader(
+            name: patient.name,
+            subtitle: _subtitle(patient),
+            // Both figures describe the open case, so with none there is
+            // nothing for them to report.
+            showVitals: activeCase != null,
+            outstandingLabel: l10n.outstanding,
+            outstandingValue: outstanding,
+            remainingLabel: l10n.remainingWork,
+            remainingValue: '$unfinished',
+            onEdit: () => _editPatient(patient),
+          ),
+          Expanded(
+            child: DentaRefresh(
+              onRefresh: _refresh,
+              child: SingleChildScrollView(
+                controller: _scroll,
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Full width: an allergy warning is not a column-three
+                    // concern.
+                    if (alerts.hasAlerts) ...[
+                      alerts,
+                      const SizedBox(height: 20),
+                    ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 3, child: infoColumn),
+                        const SizedBox(width: 20),
+                        Expanded(flex: 5, child: caseColumn),
+                        // The files column exists only while a case does -
+                        // an empty third of the window is worse than two
+                        // wider columns.
+                        if (activeCase != null) ...[
+                          const SizedBox(width: 20),
+                          Expanded(
+                            flex: 3,
+                            child: CaseFilesSection(
+                              attachments: _attachments,
+                              onAdd: () => _addFile(activeCase),
+                              onOpen: (i) => CaseFileViewer.open(
+                                context,
+                                attachments: _attachments,
+                                initialIndex: i,
+                                onDelete: (a) =>
+                                    _deleteAttachment(activeCase, a),
+                              ),
+                              onRetry: (a) => _retryUpload(activeCase, a),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _subtitle(PatientEntity p) {
     final bits = <String>[];
     if (p.age > 0) bits.add('${p.age}');
@@ -962,5 +1139,186 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       buf.write(whole[i]);
     }
     return '$buf$rest';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: IDENTITY HEADER
+// ═══════════════════════════════════════════════════════════════════════
+
+/// One row carrying everything mobile splits between the identity bar and the
+/// vitals rail: who the patient is, what they owe, how much work is left, and
+/// the actions for the open case.
+class _DesktopPatientHeader extends StatelessWidget {
+  const _DesktopPatientHeader({
+    required this.name,
+    required this.subtitle,
+    required this.showVitals,
+    required this.outstandingLabel,
+    required this.outstandingValue,
+    required this.remainingLabel,
+    required this.remainingValue,
+    required this.onEdit,
+  });
+
+  final String name;
+  final String subtitle;
+  final bool showVitals;
+  final String outstandingLabel;
+  final String outstandingValue;
+  final String remainingLabel;
+  final String remainingValue;
+  final VoidCallback onEdit;
+
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
+    if (parts.isEmpty) return '?';
+    return parts.take(2).map((p) => p.characters.first).join().toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      decoration: BoxDecoration(
+        color: c.surfaceBg,
+        border: Border(bottom: BorderSide(color: c.borderLight)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ColorManager.primary.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              _initials,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                fontFamily: family,
+                color: ColorManager.primaryDarker,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Expanded, not Flexible: a loose Flexible would split the free
+          // space with the trailing cluster instead of pushing it to the end.
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: family,
+                    color: c.textPrimary,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                if (subtitle.isNotEmpty)
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: family,
+                      color: c.textSecondary,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (showVitals) ...[
+            const SizedBox(width: 16),
+            _HeaderStat(
+              label: outstandingLabel,
+              value: outstandingValue,
+              tone: ColorManager.warning,
+              family: family,
+            ),
+            const SizedBox(width: 10),
+            _HeaderStat(
+              label: remainingLabel,
+              value: remainingValue,
+              tone: ColorManager.primary,
+              family: family,
+            ),
+          ],
+          const SizedBox(width: 6),
+          IconButton(
+            onPressed: onEdit,
+            tooltip: l10n.edit,
+            icon: Icon(Icons.edit_outlined, size: 20, color: c.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One of the two figures the mobile vitals rail pins above the scroll view.
+class _HeaderStat extends StatelessWidget {
+  const _HeaderStat({
+    required this.label,
+    required this.value,
+    required this.tone,
+    required this.family,
+  });
+
+  final String label;
+  final String value;
+  final Color tone;
+  final String family;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: tone.withValues(alpha: 0.22)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w500,
+              fontFamily: family,
+              color: c.textTertiary,
+            ),
+          ),
+          const SizedBox(height: 1),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              fontFamily: family,
+              color: tone,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

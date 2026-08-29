@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_list_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -125,12 +126,17 @@ class TodaysSchedule extends StatelessWidget {
       );
     }
     if (appointments.isEmpty) {
+      // Desktop already carries a New Appointment button in the page header,
+      // so repeating it here would be the same action twice on one screen.
+      // The card fills the column instead, rather than leaving dead space.
+      final isDesktop = Responsive.isDesktop(context);
       return StateCard(
         icon: Icons.calendar_today_outlined,
         title: l10n.noAppointmentsToday,
         message: l10n.noAppointmentsTodayHint,
-        actionLabel: '+ ${l10n.newAppointment}',
-        onAction: onNewAppointment,
+        minHeight: isDesktop ? 340 : null,
+        actionLabel: isDesktop ? null : '+ ${l10n.newAppointment}',
+        onAction: isDesktop ? null : onNewAppointment,
       );
     }
     return Column(

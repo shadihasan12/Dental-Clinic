@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -196,7 +197,11 @@ class _PatientPickerState extends State<PatientPicker> {
         if (_isSearching && _filtered.isNotEmpty)
           Container(
             margin: EdgeInsets.only(top: 6.h),
-            constraints: BoxConstraints(maxHeight: 180.h),
+            // A desktop window has the vertical room to show roughly twice
+            // as many matches before the list starts scrolling.
+            constraints: BoxConstraints(
+              maxHeight: Responsive.isDesktop(context) ? 240 : 180.h,
+            ),
             decoration: BoxDecoration(
               color: c.cardBg,
               borderRadius: BorderRadius.circular(12.r),
