@@ -32,3 +32,24 @@ Runner/GeneratedPluginRegistrant.*
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+# ── Signing secrets ─────────────────────────────────────────────────────────
+# The App Store Connect API key downloads exactly once and can never be
+# re-downloaded. Anyone holding it can upload builds to your account, so it
+# must never reach the repository.
+*.p8
+AuthKey_*.p8
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
+.env
+.env.local
+
+# ── fastlane ────────────────────────────────────────────────────────────────
+# Generated per-run; noise in diffs and can embed account details.
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/README.md

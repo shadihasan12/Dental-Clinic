@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+		Release entitlements: APNs production.
+
+		TestFlight and App Store builds talk to the production APNs gateway.
+		A build signed with "development" here still installs, but every push
+		silently fails to deliver — the classic "works in Xcode, dead in
+		TestFlight" symptom.
+
+		Note this is orthogonal to the Firebase APNs *auth key* (.p8), which is
+		environment-agnostic and serves both gateways. Only the entitlement
+		picks the gateway.
+	-->
+	<key>aps-environment</key>
+	<string>production</string>
+</dict>
+</plist>

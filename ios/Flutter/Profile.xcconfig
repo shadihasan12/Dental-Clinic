@@ -1,0 +1,6 @@
+// The Profile configuration previously borrowed Release.xcconfig, which pulls
+// in Pods-Runner.release.xcconfig — the wrong variant. CocoaPods warned that
+// it "did not set the base configuration" for this configuration as a result,
+// and profile-mode builds linked against release pod settings.
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+#include "Generated.xcconfig"

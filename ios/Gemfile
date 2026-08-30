@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+# Project-local fastlane so every machine and CI runner uses the same version.
+# Run `bundle install` once in ios/, then drive everything through
+# `bundle exec fastlane <lane>`.
+gem "fastlane", "~> 2.228"
+gem "cocoapods", "~> 1.16"

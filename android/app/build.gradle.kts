@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dental_clinic_app"
+    namespace = "tech.runbit.dentas"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -26,8 +26,10 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.dental_clinic_app"
+        // Must match the package_name of the Android app registered in the
+        // Firebase project, or the google-services plugin fails the build with
+        // "No matching client found for package name".
+        applicationId = "tech.runbit.dentas"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

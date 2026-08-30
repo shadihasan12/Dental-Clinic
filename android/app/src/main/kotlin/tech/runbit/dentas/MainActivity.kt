@@ -1,4 +1,4 @@
-package com.example.dental_clinic_app
+package tech.runbit.dentas
 
 import io.flutter.embedding.android.FlutterActivity
 

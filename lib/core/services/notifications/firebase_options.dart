@@ -59,29 +59,32 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA6IyewWCDWjG0oeqKJS9fCiSsYcWlo4MU',
-    appId: '1:971977021027:android:311de2da8d046b64e30a56',
-    messagingSenderId: '971977021027',
-    projectId: 'tech-runbit-denta',
-    storageBucket: 'tech-runbit-denta.firebasestorage.app',
+    apiKey: 'AIzaSyAVbSuwXy0Twc0soziJQduzEjgd6QBirKM',
+    appId: '1:868915508603:android:82683cb9b467ff3b48f9de',
+    messagingSenderId: '868915508603',
+    projectId: 'denta-app-60cc0',
+    storageBucket: 'denta-app-60cc0.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBeqdHmNve7t75qO4mF6C-rq0S4C9hI1Fw',
-    appId: '1:971977021027:ios:0f54d386342860fde30a56',
-    messagingSenderId: '971977021027',
-    projectId: 'tech-runbit-denta',
-    storageBucket: 'tech-runbit-denta.firebasestorage.app',
-    iosBundleId: 'com.example.dentalClinicApp',
+    apiKey: 'AIzaSyBmjPc1J-ltIIplpWNs3pUSxxiuqbl14ko',
+    appId: '1:868915508603:ios:27a52479c420a07148f9de',
+    messagingSenderId: '868915508603',
+    projectId: 'denta-app-60cc0',
+    storageBucket: 'denta-app-60cc0.firebasestorage.app',
+    iosBundleId: 'tech.runbit.dentas',
   );
 
+  // No separate macOS app is registered in denta-app-60cc0, so this mirrors
+  // the iOS registration — the same arrangement the previous generated file
+  // had. If macOS is ever shipped, register it in Firebase and regenerate.
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBeqdHmNve7t75qO4mF6C-rq0S4C9hI1Fw',
-    appId: '1:971977021027:ios:0f54d386342860fde30a56',
-    messagingSenderId: '971977021027',
-    projectId: 'tech-runbit-denta',
-    storageBucket: 'tech-runbit-denta.firebasestorage.app',
-    iosBundleId: 'com.example.dentalClinicApp',
+    apiKey: 'AIzaSyBmjPc1J-ltIIplpWNs3pUSxxiuqbl14ko',
+    appId: '1:868915508603:ios:27a52479c420a07148f9de',
+    messagingSenderId: '868915508603',
+    projectId: 'denta-app-60cc0',
+    storageBucket: 'denta-app-60cc0.firebasestorage.app',
+    iosBundleId: 'tech.runbit.dentas',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

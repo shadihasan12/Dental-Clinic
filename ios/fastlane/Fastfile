@@ -1,0 +1,102 @@
+default_platform(:ios)
+
+# Repo root, one level up from ios/
+FLUTTER_ROOT_DIR = File.expand_path("../..", __dir__)
+IPA_DIR          = File.join(FLUTTER_ROOT_DIR, "build", "ios", "ipa")
+
+platform :ios do
+  # ── Credentials ───────────────────────────────────────────────────────────
+  # An App Store Connect API key, not an Apple ID + password. 2FA makes
+  # password auth unusable for automation; the key is the supported path and
+  # carries no interactive prompt.
+  #
+  #   ASC_KEY_ID      — 10 chars, from the Keys page
+  #   ASC_ISSUER_ID   — UUID, shown above the key list
+  #   ASC_KEY_PATH    — path to the AuthKey_XXXXXXXXXX.p8 you downloaded
+  #
+  # The .p8 downloads exactly once and cannot be re-downloaded. Keep it out of
+  # git (see .gitignore) and treat it as a secret: it can upload builds and
+  # read your account.
+  def asc_key
+    app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: File.expand_path(ENV.fetch("ASC_KEY_PATH")),
+      duration: 1200,
+      in_house: false
+    )
+  end
+
+  desc "Confirm credentials and signing are wired up, without building anything"
+  lane :doctor do
+    key = asc_key
+    app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+
+    latest = latest_testflight_build_number(
+      api_key: key,
+      app_identifier: app_id,
+      initial_build_number: 0
+    )
+
+    UI.success("API key authenticated.")
+    UI.success("App identifier:      #{app_id}")
+    UI.success("Team:                #{CredentialsManager::AppfileConfig.try_fetch_value(:team_id)}")
+    UI.success("Latest TestFlight #:  #{latest}")
+  end
+
+  desc "Build a signed release IPA and upload it to TestFlight"
+  lane :beta do |options|
+    key = asc_key
+    app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+
+    # App Store Connect rejects an upload whose (version, build) pair already
+    # exists, so the build number has to strictly increase. Deriving it from
+    # what TestFlight already has means a fresh clone or a new CI runner can't
+    # collide — unlike a counter stored in the repo.
+    build_number = options[:build_number] || (
+      latest_testflight_build_number(
+        api_key: key,
+        app_identifier: app_id,
+        initial_build_number: 0
+      ) + 1
+    )
+    UI.important("Building build number #{build_number}")
+
+    # Signing assets. Automatic signing in Xcode covers local development, but
+    # an unattended run needs the distribution cert and profile fetched
+    # explicitly or the archive step fails with "no signing certificate found".
+    sync_code_signing(
+      api_key: key,
+      type: "appstore",
+      app_identifier: app_id,
+      readonly: options[:readonly] != false
+    ) if ENV["MATCH_GIT_URL"]
+
+    # Dart has to be compiled by Flutter's own toolchain, so the archive is
+    # driven by `flutter build ipa` rather than gym. Flutter invokes xcodebuild
+    # underneath and honours the signing settings in the pbxproj.
+    Dir.chdir(FLUTTER_ROOT_DIR) do
+      sh(
+        "flutter", "build", "ipa",
+        "--release",
+        "--build-number", build_number.to_s,
+        "--export-options-plist", File.join(__dir__, "..", "ExportOptions.plist")
+      )
+    end
+
+    ipa = Dir[File.join(IPA_DIR, "*.ipa")].max_by { |f| File.mtime(f) }
+    UI.user_error!("No .ipa produced in #{IPA_DIR}") if ipa.nil?
+    UI.success("Built #{ipa}")
+
+    upload_to_testflight(
+      api_key: key,
+      app_identifier: app_id,
+      ipa: ipa,
+      # The build still has to finish Apple-side processing before testers see
+      # it; waiting here turns a silent failure into a visible one.
+      skip_waiting_for_build_processing: false,
+      distribute_external: false,
+      changelog: options[:changelog] || "Internal build #{build_number}."
+    )
+  end
+end

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+		Debug/Profile entitlements: APNs sandbox.
+
+		Without this key iOS never issues an APNs device token, so
+		FirebaseMessaging.getToken() resolves to null forever and no push is
+		ever delivered — regardless of how correct the Dart side is.
+
+		"development" is correct for anything signed with an Apple Development
+		certificate (running from Xcode, `flutter run --release` on a device).
+		The App Store / TestFlight build must use "production" instead — that
+		lives in RunnerRelease.entitlements, which the Release configuration
+		points at. APNs sandbox tokens are rejected by the production APNs
+		gateway and vice versa, which is why these cannot be one shared file.
+	-->
+	<key>aps-environment</key>
+	<string>development</string>
+</dict>
+</plist>

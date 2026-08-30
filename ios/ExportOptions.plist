@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>method</key>
+	<string>app-store-connect</string>
+
+	<key>teamID</key>
+	<string>ZGRHSS85G3</string>
+
+	<!--
+		Let Xcode resolve the distribution certificate and provisioning profile
+		against the team above. Requires the Apple ID to be signed in under
+		Xcode > Settings > Accounts, or an API key present for a headless run.
+	-->
+	<key>signingStyle</key>
+	<string>automatic</string>
+
+	<!--
+		Strips the bitcode-era symbol upload prompt. Apple dropped bitcode in
+		Xcode 14; leaving this true only produces a warning on every export.
+	-->
+	<key>uploadBitcode</key>
+	<false/>
+
+	<!-- Upload dSYMs so TestFlight crash reports are symbolicated. -->
+	<key>uploadSymbols</key>
+	<true/>
+
+	<key>destination</key>
+	<string>export</string>
+</dict>
+</plist>

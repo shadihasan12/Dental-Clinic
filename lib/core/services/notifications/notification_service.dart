@@ -189,8 +189,18 @@ class NotificationService {
   }
 
   Future<void> _bootstrapInitialToken() async {
-    // iOS needs the APNs token before FCM will hand out a registration token.
-    // FirebaseMessaging waits for it internally; we just call getToken.
+    // iOS will not hand out an FCM registration token until APNs has issued a
+    // device token, and FirebaseMessaging does NOT wait for it — calling
+    // getToken() too early throws `apns-token-not-set`. Nothing recovers from
+    // that on its own: onTokenRefresh only fires when a token *rotates*, never
+    // for the first one, so a swallowed failure here means push is dead for
+    // the whole session.
+    if (!await _awaitApnsTokenIfNeeded()) {
+      // Left unsynced deliberately. syncTokenIfNeeded() runs again after
+      // sign-in and on later launches, which is where this recovers.
+      return;
+    }
+
     try {
       final token = await _messaging.getToken();
       if (token != null) {
@@ -201,6 +211,43 @@ class NotificationService {
         debugPrint('[FCM] getToken failed: $e / $st');
       }
     }
+  }
+
+  /// Blocks until APNs has issued a device token, or gives up.
+  ///
+  /// Returns true on every platform that isn't iOS — nothing else gates the
+  /// FCM token behind APNs.
+  ///
+  /// A cold start on a slow network can take a few seconds to register with
+  /// APNs. Returning false is not fatal: it means "not yet", and the next
+  /// [syncTokenIfNeeded] picks it up.
+  Future<bool> _awaitApnsTokenIfNeeded() async {
+    if (kIsWeb || !Platform.isIOS) return true;
+
+    // ~10s total: APNs registration normally lands in well under a second,
+    // but a first launch on a cold cellular connection is the slow case.
+    const attempts = 12;
+    const delay = Duration(milliseconds: 800);
+
+    for (var i = 0; i < attempts; i++) {
+      try {
+        if (await _messaging.getAPNSToken() != null) return true;
+      } catch (e) {
+        if (kDebugMode) debugPrint('[FCM] getAPNSToken failed: $e');
+      }
+      await Future<void>.delayed(delay);
+    }
+
+    if (kDebugMode) {
+      debugPrint(
+        '[FCM] no APNs token after ${attempts * delay.inMilliseconds}ms. '
+        'On a simulator this is expected. On a device it usually means the '
+        'aps-environment entitlement is missing, the provisioning profile '
+        'lacks the Push Notifications capability, or the user denied '
+        'notification permission.',
+      );
+    }
+    return false;
   }
 
   Future<void> _handleInitialMessage() async {
@@ -268,6 +315,10 @@ class NotificationService {
     if (token == null) {
       // No token cached yet (fresh install, or cleared on the last logout).
       // Ask Firebase for one and persist it on the way through.
+      //
+      // This is also the recovery path for an initialize() that ran before
+      // APNs was ready, so it has to clear the same iOS gate.
+      if (!await _awaitApnsTokenIfNeeded()) return;
       try {
         final fresh = await _messaging.getToken();
         if (fresh != null) await _onTokenRefreshed(fresh);

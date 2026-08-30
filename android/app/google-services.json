@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "971977021027",
-    "project_id": "tech-runbit-denta",
-    "storage_bucket": "tech-runbit-denta.firebasestorage.app"
+    "project_number": "868915508603",
+    "project_id": "denta-app-60cc0",
+    "storage_bucket": "denta-app-60cc0.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:971977021027:android:311de2da8d046b64e30a56",
+        "mobilesdk_app_id": "1:868915508603:android:82683cb9b467ff3b48f9de",
         "android_client_info": {
-          "package_name": "com.example.dental_clinic_app"
+          "package_name": "tech.runbit.dentas"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA6IyewWCDWjG0oeqKJS9fCiSsYcWlo4MU"
+          "current_key": "AIzaSyAVbSuwXy0Twc0soziJQduzEjgd6QBirKM"
         }
       ],
       "services": {
