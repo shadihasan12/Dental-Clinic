@@ -1,6 +1,8 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/notifications_settngs/presentation/manager/notification_settings_bloc.dart';
@@ -29,8 +31,9 @@ class NotificationsSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<NotificationSettingsBloc>()
-        ..add(const NotificationSettingsEvent.load()),
+      create: (_) =>
+          getIt<NotificationSettingsBloc>()
+            ..add(const NotificationSettingsEvent.load()),
       child: const _NotificationsSettingsContent(),
     );
   }
@@ -53,67 +56,86 @@ class _NotificationsSettingsContent extends StatelessWidget {
             onBack: () => context.canPop() ? context.pop() : context.go('/'),
           ),
           Expanded(
-            child: BlocConsumer<NotificationSettingsBloc,
-                NotificationSettingsState>(
-              // A rejected toggle has already rolled the switch back; the
-              // snackbar is the only thing that tells the user why.
-              listenWhen: (prev, curr) =>
-                  curr.errorMessage != null &&
-                  curr.errorMessage != prev.errorMessage &&
-                  curr.status == NotificationSettingsStatus.success,
-              listener: (context, state) {
-                AppSnackbar.showError(context, title: state.errorMessage!);
-              },
-              builder: (context, state) {
-                switch (state.status) {
-                  case NotificationSettingsStatus.initial:
-                  case NotificationSettingsStatus.loading:
-                    return const _SettingsSkeleton();
-
-                  case NotificationSettingsStatus.failure:
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        dentaGutter,
-                        14.h,
-                        dentaGutter,
-                        28.h,
-                      ),
-                      child: StateCard(
-                        icon: Icons.cloud_off_rounded,
-                        tone: ColorManager.error,
-                        title: l10n.notificationSettingsLoadFailed,
-                        message:
-                            state.errorMessage ?? l10n.somethingWentWrong,
-                        actionLabel: l10n.retry,
-                        onAction: () => context
-                            .read<NotificationSettingsBloc>()
-                            .add(const NotificationSettingsEvent.load()),
-                      ),
-                    );
-
-                  case NotificationSettingsStatus.success:
-                    if (state.settings.isEmpty) {
-                      return SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(
-                          dentaGutter,
-                          14.h,
-                          dentaGutter,
-                          28.h,
-                        ),
-                        child: StateCard(
-                          icon: Icons.notifications_off_outlined,
-                          title: l10n.noNotificationSettings,
-                          message: l10n.noNotificationSettingsHint,
-                        ),
+            child: DentaRefresh(
+              onRefresh: () => _refresh(context),
+              child:
+                  BlocConsumer<
+                    NotificationSettingsBloc,
+                    NotificationSettingsState
+                  >(
+                    // A rejected toggle has already rolled the switch back; the
+                    // snackbar is the only thing that tells the user why.
+                    listenWhen: (prev, curr) =>
+                        curr.errorMessage != null &&
+                        curr.errorMessage != prev.errorMessage &&
+                        curr.status == NotificationSettingsStatus.success,
+                    listener: (context, state) {
+                      AppSnackbar.showError(
+                        context,
+                        title: state.errorMessage!,
                       );
-                    }
-                    return _buildList(context, state);
-                }
-              },
+                    },
+                    builder: (context, state) {
+                      switch (state.status) {
+                        case NotificationSettingsStatus.initial:
+                        case NotificationSettingsStatus.loading:
+                          return const _SettingsSkeleton();
+
+                        case NotificationSettingsStatus.failure:
+                          return SingleChildScrollView(
+                            padding: EdgeInsets.fromLTRB(
+                              dentaGutter,
+                              14.h,
+                              dentaGutter,
+                              28.h,
+                            ),
+                            child: StateCard(
+                              icon: Icons.cloud_off_rounded,
+                              tone: ColorManager.error,
+                              title: l10n.notificationSettingsLoadFailed,
+                              message:
+                                  state.errorMessage ?? l10n.somethingWentWrong,
+                              actionLabel: l10n.retry,
+                              onAction: () => context
+                                  .read<NotificationSettingsBloc>()
+                                  .add(const NotificationSettingsEvent.load()),
+                            ),
+                          );
+
+                        case NotificationSettingsStatus.success:
+                          if (state.settings.isEmpty) {
+                            return SingleChildScrollView(
+                              padding: EdgeInsets.fromLTRB(
+                                dentaGutter,
+                                14.h,
+                                dentaGutter,
+                                28.h,
+                              ),
+                              child: StateCard(
+                                icon: Icons.notifications_off_outlined,
+                                title: l10n.noNotificationSettings,
+                                message: l10n.noNotificationSettingsHint,
+                              ),
+                            );
+                          }
+                          return _buildList(context, state);
+                      }
+                    },
+                  ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// Safe to pull at any time: each switch writes through on the spot, so
+  /// there is never an unsaved edit for a refetch to throw away.
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<NotificationSettingsBloc>();
+    bloc.add(const NotificationSettingsEvent.load());
+    await bloc.stream.settled(
+      (state) => state.status != NotificationSettingsStatus.loading,
     );
   }
 
@@ -148,11 +170,11 @@ class _NotificationsSettingsContent extends StatelessWidget {
               isPending: state.isPending(settings[i].key),
               onChanged: (enabled) =>
                   context.read<NotificationSettingsBloc>().add(
-                        NotificationSettingsEvent.toggle(
-                          key: settings[i].key,
-                          enabled: enabled,
-                        ),
-                      ),
+                    NotificationSettingsEvent.toggle(
+                      key: settings[i].key,
+                      enabled: enabled,
+                    ),
+                  ),
             ),
           ],
         ],

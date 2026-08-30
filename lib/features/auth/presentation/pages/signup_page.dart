@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 /// Unified signup page for all dental professionals
 /// Users can later create or join clinics from the dashboard
@@ -189,7 +190,7 @@ class _SignupContentState extends State<_SignupContent> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 1, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -482,7 +483,7 @@ class _SignupContentState extends State<_SignupContent> {
           );
         },
       ),
-    );
+    ),);
   }
 
   Widget _buildSpecialtyPicker(

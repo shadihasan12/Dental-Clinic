@@ -14,7 +14,7 @@ class NotificationSettingsRepositoryImpl
 
   @override
   Future<Either<NetworkExceptions, List<NotificationSettingEntity>>>
-      getSettings() async {
+  getSettings() async {
     try {
       final models = await _remoteDataSource.getSettings();
       return Right(models.map((m) => m.toEntity()).toList());

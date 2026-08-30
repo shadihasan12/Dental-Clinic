@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Light-mode splash values. The night copy of this file is the ONLY thing
+    that differs between modes - styles.xml is deliberately unqualified so the
+    two can never drift apart the way they did before.
+-->
+<resources>
+    <!-- Matches the adaptive icon plate. -->
+    <color name="splash_background">#FFFFFF</color>
+
+    <!-- android:windowLightStatusBar - "the status bar is light, so draw its
+         icons dark". True over the white splash, false over the dark one. -->
+    <bool name="splash_light_status_bar">true</bool>
+</resources>

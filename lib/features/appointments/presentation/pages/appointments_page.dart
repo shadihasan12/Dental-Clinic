@@ -1,5 +1,7 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -53,12 +55,25 @@ class _AppointmentsContent extends StatelessWidget {
                 child: _buildViewToggle(context, state),
               ),
               SizedBox(height: 12.h),
-              Expanded(child: _buildBody(context, state)),
+              Expanded(
+                child: DentaRefresh(
+                  onRefresh: () => _refresh(context),
+                  child: _buildBody(context, state),
+                ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  /// Re-runs the day/week query. The band stays open until the bloc settles on
+  /// a non-loading state, so the spinner tracks the request rather than a timer.
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<AppointmentBloc>();
+    bloc.add(const AppointmentEvent.loadAppointments());
+    await bloc.stream.settled((state) => !state.isLoading);
   }
 
   Widget _buildBody(BuildContext context, AppointmentState state) {
@@ -104,9 +119,8 @@ class _AppointmentsContent extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
       itemCount: state.filteredAppointments.length,
       separatorBuilder: (_, i) => SizedBox(height: 8.h),
-      itemBuilder: (context, index) => AppointmentListCard(
-        appointment: state.filteredAppointments[index],
-      ),
+      itemBuilder: (context, index) =>
+          AppointmentListCard(appointment: state.filteredAppointments[index]),
     );
   }
 
@@ -139,7 +153,8 @@ class _AppointmentsContent extends StatelessWidget {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
     final today = DateTime.now();
-    final isToday = day.year == today.year &&
+    final isToday =
+        day.year == today.year &&
         day.month == today.month &&
         day.day == today.day;
     final label =
@@ -193,8 +208,7 @@ class _AppointmentsContent extends StatelessWidget {
       final day = DateTime(a.dateTime.year, a.dateTime.month, a.dateTime.day);
       (map[day] ??= []).add(a);
     }
-    final sorted = map.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
+    final sorted = map.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
     for (final entry in sorted) {
       entry.value.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     }
@@ -284,10 +298,12 @@ class _AppointmentsContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: days.map((date) {
-              final isSelected = date.day == state.selectedDate.day &&
+              final isSelected =
+                  date.day == state.selectedDate.day &&
                   date.month == state.selectedDate.month &&
                   date.year == state.selectedDate.year;
-              final isToday = date.day == now.day &&
+              final isToday =
+                  date.day == now.day &&
                   date.month == now.month &&
                   date.year == now.year;
 
@@ -300,13 +316,16 @@ class _AppointmentsContent extends StatelessWidget {
                 ),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? ColorManager.primary
                         : isToday
-                            ? ColorManager.primary.withValues(alpha: 0.08)
-                            : Colors.transparent,
+                        ? ColorManager.primary.withValues(alpha: 0.08)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Column(
@@ -317,9 +336,7 @@ class _AppointmentsContent extends StatelessWidget {
                           fontFamily: family,
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w500,
-                          color: isSelected
-                              ? Colors.white70
-                              : c.textTertiary,
+                          color: isSelected ? Colors.white70 : c.textTertiary,
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -385,8 +402,9 @@ class _AppointmentsContent extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 12.sp,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                       color: isSelected
                           ? ColorManager.primaryDarker
                           : c.textTertiary,

@@ -27,7 +27,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final NotificationService _notificationService;
   final UnreadCountCubit _unreadCount;
 
-  StreamSubscription<PushPayload>? _pushSubscription;
+  StreamSubscription<NotificationEntity>? _arrivalSubscription;
 
   /// Server caps `limit` at 100; 30 is its own default and a comfortable
   /// screenful on every form factor.
@@ -55,16 +55,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<_MarkAllAsRead>(_onMarkAllAsRead);
     on<_PushReceived>(_onPushReceived);
 
-    // Forward foreground pushes into the bloc's event stream so the screen
-    // updates live while the bloc is mounted.
-    _pushSubscription = _notificationService.onPushReceived.listen(
-      (payload) => add(NotificationEvent.pushReceived(payload.toEntity())),
+    // Forward arrivals into the bloc's event stream so the screen updates live
+    // while it is mounted. Deliberately the delivery-agnostic stream, not
+    // onPushReceived: on Windows there is no push, and a polled row has to
+    // land in an open list exactly the way a push does on mobile.
+    _arrivalSubscription = _notificationService.onNotificationReceived.listen(
+      (notification) => add(NotificationEvent.pushReceived(notification)),
     );
   }
 
   @override
   Future<void> close() async {
-    await _pushSubscription?.cancel();
+    await _arrivalSubscription?.cancel();
     return super.close();
   }
 

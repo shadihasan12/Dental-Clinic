@@ -1,6 +1,8 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/manager/issues_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/widgets/issue_card.dart';
@@ -40,6 +42,14 @@ class _ReportIssueView extends StatefulWidget {
 class _ReportIssueViewState extends State<_ReportIssueView> {
   final _formKey = GlobalKey<NewIssueFormState>();
 
+  /// Only the reports list is refetched - the compose card above it holds
+  /// whatever the user has typed, and a pull must not clear that.
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<IssuesBloc>();
+    bloc.add(const IssuesEvent.load());
+    await bloc.stream.settled((state) => !state.isLoadingList);
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -52,8 +62,7 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
           PageHeader(title: l10n.reportIssue),
           Expanded(
             child: BlocConsumer<IssuesBloc, IssuesState>(
-              listenWhen: (prev, curr) =>
-                  !prev.justCreated && curr.justCreated,
+              listenWhen: (prev, curr) => !prev.justCreated && curr.justCreated,
               listener: (context, state) {
                 // The bloc raises justCreated for one emission; clear the
                 // fields and confirm, then let it fall away on its own.
@@ -65,15 +74,11 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                 );
               },
               builder: (context, state) {
-                return RefreshIndicator(
-                  color: ColorManager.primaryDarker,
-                  onRefresh: () async {
-                    context.read<IssuesBloc>().add(const IssuesEvent.load());
-                  },
+                return DentaRefresh(
+                  onRefresh: () => _refresh(context),
                   child: ListView(
                     // 14px screen gutters.
                     padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                    physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       NewIssueForm(
                         key: _formKey,
@@ -81,11 +86,11 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                         errorMessage: state.submitError,
                         onSubmit: (title, description) {
                           context.read<IssuesBloc>().add(
-                                IssuesEvent.submit(
-                                  title: title,
-                                  description: description,
-                                ),
-                              );
+                            IssuesEvent.submit(
+                              title: title,
+                              description: description,
+                            ),
+                          );
                         },
                       ),
                       SizedBox(height: 22.h),
@@ -121,8 +126,7 @@ class _ReportsList extends StatelessWidget {
     if (state.status == IssuesStatus.failure) {
       return IssuesErrorState(
         message: state.errorMessage ?? '',
-        onRetry: () =>
-            context.read<IssuesBloc>().add(const IssuesEvent.load()),
+        onRetry: () => context.read<IssuesBloc>().add(const IssuesEvent.load()),
       );
     }
 

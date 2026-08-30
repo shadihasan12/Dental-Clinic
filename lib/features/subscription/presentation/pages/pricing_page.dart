@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,8 +26,9 @@ class PricingPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => getIt<SubscriptionBloc>()
-            ..add(const SubscriptionEvent.loadPlans()),
+          create: (_) =>
+              getIt<SubscriptionBloc>()
+                ..add(const SubscriptionEvent.loadPlans()),
         ),
         // BillingBloc lives alongside SubscriptionBloc so the Subscribe
         // CTA can create an invoice and let the listener navigate to the
@@ -94,14 +96,14 @@ class _PricingContent extends StatelessWidget {
                   message: state.error!,
                 );
                 context.read<BillingBloc>().add(
-                      const BillingEvent.clearFlags(),
-                    );
+                  const BillingEvent.clearFlags(),
+                );
               }
               if (state.createdInvoice != null) {
                 final invoice = state.createdInvoice!;
                 context.read<BillingBloc>().add(
-                      const BillingEvent.clearFlags(),
-                    );
+                  const BillingEvent.clearFlags(),
+                );
                 context.pushReplacementNamed(
                   AppRoutesNames.invoiceDetails,
                   extra: invoice,
@@ -112,95 +114,104 @@ class _PricingContent extends StatelessWidget {
         ],
         child: BlocBuilder<SubscriptionBloc, SubscriptionState>(
           builder: (context, state) {
-          if (state.isLoadingPlans) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _Header(),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-                  child: _BillingToggle(
-                    selectedCycle: state.selectedBillingCycle,
-                    onChanged: (cycle) {
-                      context.read<SubscriptionBloc>().add(
+            if (state.isLoadingPlans) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return DentaRefresh(
+              onRefresh: () => _refresh(context),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _Header(),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
+                      child: _BillingToggle(
+                        selectedCycle: state.selectedBillingCycle,
+                        onChanged: (cycle) {
+                          context.read<SubscriptionBloc>().add(
                             SubscriptionEvent.changeBillingCycle(cycle),
                           );
-                    },
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                ...state.availablePlans.map(
-                  (plan) => Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
-                    child: _PlanCard(
-                      plan: plan,
-                      billingCycle: state.selectedBillingCycle,
-                      isSelected: state.selectedPlan?.id == plan.id,
-                      isCurrentPlan:
-                          state.currentSubscription?.planTier == plan.tier,
-                      onSelect: () {
-                        context.read<SubscriptionBloc>().add(
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    ...state.availablePlans.map(
+                      (plan) => Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
+                        child: _PlanCard(
+                          plan: plan,
+                          billingCycle: state.selectedBillingCycle,
+                          isSelected: state.selectedPlan?.id == plan.id,
+                          isCurrentPlan:
+                              state.currentSubscription?.planTier == plan.tier,
+                          onSelect: () {
+                            context.read<SubscriptionBloc>().add(
                               SubscriptionEvent.selectPlan(plan),
                             );
-                      },
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                if (!state.hasActiveSubscription)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
-                    child: _TrialBanner(
-                      onStartTrial: () {
-                        context.read<SubscriptionBloc>().add(
+                    if (!state.hasActiveSubscription)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+                        child: _TrialBanner(
+                          onStartTrial: () {
+                            context.read<SubscriptionBloc>().add(
                               const SubscriptionEvent.startTrial('user_id'),
                             );
-                      },
-                    ),
-                  ),
-                // Subscribe CTA only for paid tiers — Custom uses its own
-                // in-card "Contact Us" button instead.
-                if (state.selectedPlan != null &&
-                    !state.selectedPlan!.isCustom)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
-                    child: BlocBuilder<BillingBloc, BillingState>(
-                      builder: (context, billingState) {
-                        return _SubscribeButton(
-                          plan: state.selectedPlan!,
-                          billingCycle: state.selectedBillingCycle,
-                          // Show the spinner while the invoice is being
-                          // created — this is what blocks the user from
-                          // double-tapping into two pending invoices.
-                          isProcessing: billingState.isProcessing,
-                          onSubscribe: () {
-                            final clinicId = getIt<UserStorage>()
-                                    .getSelectedClinicId() ??
-                                '';
-                            context.read<BillingBloc>().add(
+                          },
+                        ),
+                      ),
+                    // Subscribe CTA only for paid tiers — Custom uses its own
+                    // in-card "Contact Us" button instead.
+                    if (state.selectedPlan != null &&
+                        !state.selectedPlan!.isCustom)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                        child: BlocBuilder<BillingBloc, BillingState>(
+                          builder: (context, billingState) {
+                            return _SubscribeButton(
+                              plan: state.selectedPlan!,
+                              billingCycle: state.selectedBillingCycle,
+                              // Show the spinner while the invoice is being
+                              // created — this is what blocks the user from
+                              // double-tapping into two pending invoices.
+                              isProcessing: billingState.isProcessing,
+                              onSubscribe: () {
+                                final clinicId =
+                                    getIt<UserStorage>()
+                                        .getSelectedClinicId() ??
+                                    '';
+                                context.read<BillingBloc>().add(
                                   BillingEvent.createInvoice(
                                     clinicId: clinicId,
                                     plan: state.selectedPlan!,
                                     cycle: state.selectedBillingCycle,
                                   ),
                                 );
+                              },
+                            );
                           },
-                        );
-                      },
-                    ),
-                  ),
-                // Bottom inset = system nav bar on Android + breathing room.
-                SizedBox(height: 24.h + bottomInset),
-              ],
-            ),
-          );
+                        ),
+                      ),
+                    // Bottom inset = system nav bar on Android + breathing room.
+                    SizedBox(height: 24.h + bottomInset),
+                  ],
+                ),
+              ),
+            );
           },
         ),
       ),
     );
+  }
+
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<SubscriptionBloc>();
+    bloc.add(const SubscriptionEvent.loadPlans());
+    await bloc.stream.settled((state) => !state.isLoadingPlans);
   }
 }
 
@@ -213,10 +224,7 @@ class _Header extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PageHeader(
-          title: l10n.pricingTitle,
-          onBack: () => context.pop(),
-        ),
+        PageHeader(title: l10n.pricingTitle, onBack: () => context.pop()),
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 4.h),
           child: Text(
@@ -240,10 +248,7 @@ class _BillingToggle extends StatelessWidget {
   final BillingCycle selectedCycle;
   final ValueChanged<BillingCycle> onChanged;
 
-  const _BillingToggle({
-    required this.selectedCycle,
-    required this.onChanged,
-  });
+  const _BillingToggle({required this.selectedCycle, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -282,8 +287,9 @@ class _BillingToggle extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: EdgeInsets.symmetric(vertical: 10.h),
           decoration: BoxDecoration(
-            color:
-                isSelected ? ColorManager.of(context).cardBg : Colors.transparent,
+            color: isSelected
+                ? ColorManager.of(context).cardBg
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(8.r),
             boxShadow: isSelected
                 ? [
@@ -291,7 +297,7 @@ class _BillingToggle extends StatelessWidget {
                       color: ColorManager.black.withValues(alpha: 0.08),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -312,8 +318,7 @@ class _BillingToggle extends StatelessWidget {
               if (badge != null) ...[
                 SizedBox(width: 6.w),
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: ColorManager.success,
                     borderRadius: BorderRadius.circular(4.r),
@@ -410,8 +415,8 @@ class _PlanCard extends StatelessWidget {
             color: isSelected
                 ? _accentColor
                 : plan.isPopular
-                    ? _accentColor.withValues(alpha: 0.35)
-                    : c.borderLight,
+                ? _accentColor.withValues(alpha: 0.35)
+                : c.borderLight,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -439,8 +444,7 @@ class _PlanCard extends StatelessWidget {
                       color: _accentColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Icon(_planIcon,
-                        color: _accentColor, size: 22.w),
+                    child: Icon(_planIcon, color: _accentColor, size: 22.w),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -557,7 +561,9 @@ class _PlanCard extends StatelessWidget {
                         if (isYearly && plan.yearlySavings > 0)
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 4.h),
+                              horizontal: 8.w,
+                              vertical: 4.h,
+                            ),
                             decoration: BoxDecoration(
                               color: ColorManager.successBackground,
                               borderRadius: BorderRadius.circular(6.r),
@@ -597,8 +603,11 @@ class _PlanCard extends StatelessWidget {
                               color: _accentColor.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.check_rounded,
-                                color: _accentColor, size: 11.w),
+                            child: Icon(
+                              Icons.check_rounded,
+                              color: _accentColor,
+                              size: 11.w,
+                            ),
                           ),
                           SizedBox(width: 10.w),
                           Expanded(
@@ -629,18 +638,15 @@ class _PlanCard extends StatelessWidget {
                   onPressed: isCurrentPlan
                       ? null
                       : plan.isCustom
-                          // Sales enquiry landing on Report an Issue —
-                          // see the note in select_billing_plan_page.
-                          ? () => context.pushNamed(
-                                AppRoutesNames.reportIssue,
-                              )
-                          : onSelect,
+                      // Sales enquiry landing on Report an Issue —
+                      // see the note in select_billing_plan_page.
+                      ? () => context.pushNamed(AppRoutesNames.reportIssue)
+                      : onSelect,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isSelected
                         ? _accentColor
                         : _accentColor.withValues(alpha: 0.1),
-                    foregroundColor:
-                        isSelected ? Colors.white : _accentColor,
+                    foregroundColor: isSelected ? Colors.white : _accentColor,
                     elevation: 0,
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     shape: RoundedRectangleBorder(
@@ -661,10 +667,10 @@ class _PlanCard extends StatelessWidget {
                         plan.isCustom
                             ? l10n.pricingContactUs
                             : isCurrentPlan
-                                ? l10n.pricingCurrentPlanLabel
-                                : isSelected
-                                    ? l10n.pricingSelectedLabel
-                                    : l10n.pricingChooseAction(localizedName),
+                            ? l10n.pricingCurrentPlanLabel
+                            : isSelected
+                            ? l10n.pricingSelectedLabel
+                            : l10n.pricingChooseAction(localizedName),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontFamily: fontFamily,

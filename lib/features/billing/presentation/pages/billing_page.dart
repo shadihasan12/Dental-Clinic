@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -81,55 +82,70 @@ class _BillingView extends StatelessWidget {
                 return const _BillingSkeleton();
               }
               final bottomInset = MediaQuery.of(context).viewPadding.bottom;
-              return ListView(
-                padding: EdgeInsets.fromLTRB(
-                  14.w,
-                  14.h,
-                  14.w,
-                  24.h + bottomInset,
-                ),
-                children: [
-                  SubscriptionStatusBanner(
-                    subscription: subState.currentSubscription,
-                    onAction: () => _onRenew(context),
+              return DentaRefresh(
+                onRefresh: () => _refresh(context),
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(
+                    14.w,
+                    14.h,
+                    14.w,
+                    24.h + bottomInset,
                   ),
-                  if (subState.currentSubscription != null &&
-                      (subState.currentSubscription!.isNearExpiry ||
-                          !subState.currentSubscription!.isValid))
-                    SizedBox(height: 8.h),
-                  _CurrentPlanCard(),
-                  SizedBox(height: 12.h),
-                  _BuyOrRenewButton(
-                    hasOpenInvoice: state.latestOpen != null,
-                    onTap: () => _onRenew(context),
-                  ),
-                  SizedBox(height: 20.h),
-                  SectionLabel(
-                    l10n.invoicesHistoryTitle,
-                    trailing: state.invoices.isEmpty
-                        ? null
-                        : CountPill(state.invoices.length),
-                  ),
-                  SizedBox(height: 10.h),
-                  if (state.invoices.isEmpty)
-                    _EmptyInvoices()
-                  else
-                    ...state.invoices.map(
-                      (invoice) => Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: InvoiceCard(
-                          invoice: invoice,
-                          onTap: () => _openInvoice(context, invoice),
+                  children: [
+                    SubscriptionStatusBanner(
+                      subscription: subState.currentSubscription,
+                      onAction: () => _onRenew(context),
+                    ),
+                    if (subState.currentSubscription != null &&
+                        (subState.currentSubscription!.isNearExpiry ||
+                            !subState.currentSubscription!.isValid))
+                      SizedBox(height: 8.h),
+                    _CurrentPlanCard(),
+                    SizedBox(height: 12.h),
+                    _BuyOrRenewButton(
+                      hasOpenInvoice: state.latestOpen != null,
+                      onTap: () => _onRenew(context),
+                    ),
+                    SizedBox(height: 20.h),
+                    SectionLabel(
+                      l10n.invoicesHistoryTitle,
+                      trailing: state.invoices.isEmpty
+                          ? null
+                          : CountPill(state.invoices.length),
+                    ),
+                    SizedBox(height: 10.h),
+                    if (state.invoices.isEmpty)
+                      _EmptyInvoices()
+                    else
+                      ...state.invoices.map(
+                        (invoice) => Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: InvoiceCard(
+                            invoice: invoice,
+                            onTap: () => _openInvoice(context, invoice),
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               );
             },
           );
         },
       ),
     );
+  }
+
+  /// Reloads the banner and the invoice list together; the band holds until
+  /// the invoice request lands, which is the slower of the two.
+  Future<void> _refresh(BuildContext context) async {
+    final clinicId = getIt<UserStorage>().getSelectedClinicId() ?? '';
+    final billing = context.read<BillingBloc>();
+    context.read<SubscriptionBloc>().add(
+      SubscriptionEvent.loadSubscription(clinicId),
+    );
+    billing.add(BillingEvent.loadInvoices(clinicId));
+    await billing.stream.settled((state) => !state.isLoading);
   }
 
   void _onRenew(BuildContext context) {

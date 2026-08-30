@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -13,7 +14,6 @@ import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dar
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -107,7 +107,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       const PatientsListEvent.loadPatients(),
     );
     // Wait for the bloc to emit a non-loading state
-    await context.read<PatientsListBloc>().stream.firstWhere(
+    await context.read<PatientsListBloc>().stream.settled(
       (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
@@ -312,49 +312,51 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           ),
         ),
         Expanded(
-          child: filtered.isEmpty
-              ? _buildEmptyState(l10n, allPatients.isEmpty)
-              // Keeps only one row's swipe pane open at a time, matched by
-              // PatientCard.groupTag.
-              : SlidableAutoCloseBehavior(
-                  child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    CupertinoSliverRefreshControl(onRefresh: _onRefresh),
-                    SliverPadding(
-                      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
-                      // Cards carry their own hairline and 8.h gap, so no
-                      // separator: a divider between bordered cards would
-                      // read as a double rule.
-                      sliver: SliverList.builder(
-                        itemCount:
-                            filtered.length +
-                            (isLoadingMore || hasMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == filtered.length) {
-                            return const _PatientCardSkeleton();
-                          }
+          child: DentaRefresh(
+            onRefresh: _onRefresh,
+            child: filtered.isEmpty
+                ? _buildEmptyState(l10n, allPatients.isEmpty)
+                // Keeps only one row's swipe pane open at a time, matched by
+                // PatientCard.groupTag.
+                : SlidableAutoCloseBehavior(
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverPadding(
+                          padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+                          // Cards carry their own hairline and 8.h gap, so no
+                          // separator: a divider between bordered cards would
+                          // read as a double rule.
+                          sliver: SliverList.builder(
+                            itemCount:
+                                filtered.length +
+                                (isLoadingMore || hasMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == filtered.length) {
+                                return const _PatientCardSkeleton();
+                              }
 
-                          final patient = filtered[index];
-                          return PatientCard(
-                            patient: patient,
-                            onTap: () => context.pushNamed(
-                              AppRoutesNames.patientDetails,
-                              extra: <String, dynamic>{
-                                "patientId": patient.id,
-                                "patientName": patient.name,
-                                "tabIndex": 1,
-                              },
-                            ),
-                            onEdit: () => _onEditPatient(patient),
-                            onDelete: () => _onDeletePatient(patient),
-                          );
-                        },
-                      ),
+                              final patient = filtered[index];
+                              return PatientCard(
+                                patient: patient,
+                                onTap: () => context.pushNamed(
+                                  AppRoutesNames.patientDetails,
+                                  extra: <String, dynamic>{
+                                    "patientId": patient.id,
+                                    "patientName": patient.name,
+                                    "tabIndex": 1,
+                                  },
+                                ),
+                                onEdit: () => _onEditPatient(patient),
+                                onDelete: () => _onDeletePatient(patient),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
                   ),
-                ),
+          ),
         ),
       ],
     );
@@ -367,7 +369,6 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   /// button - the fix is editing the search, which is already on screen.
   Widget _buildEmptyState(AppLocalizations l10n, bool isCompletelyEmpty) {
     return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
       child: StateCard(
         icon: isCompletelyEmpty
@@ -401,16 +402,19 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         ),
         Divider(height: 1, color: ColorManager.of(context).borderLight),
         Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-            child: StateCard(
-              icon: Icons.cloud_off_rounded,
-              tone: ColorManager.error,
-              title: l10n.patientsLoadFailed,
-              message: message,
-              actionLabel: l10n.retry,
-              onAction: () => context.read<PatientsListBloc>().add(
-                const PatientsListEvent.loadPatients(),
+          child: DentaRefresh(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+              child: StateCard(
+                icon: Icons.cloud_off_rounded,
+                tone: ColorManager.error,
+                title: l10n.patientsLoadFailed,
+                message: message,
+                actionLabel: l10n.retry,
+                onAction: () => context.read<PatientsListBloc>().add(
+                  const PatientsListEvent.loadPatients(),
+                ),
               ),
             ),
           ),

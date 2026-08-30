@@ -6,7 +6,7 @@ abstract class NotificationSettingsRepository {
   /// The complete screen definition. Render it as a flat list in the order
   /// received.
   Future<Either<NetworkExceptions, List<NotificationSettingEntity>>>
-      getSettings();
+  getSettings();
 
   /// Toggles one category. [category] must be a `key` the GET returned.
   Future<Either<NetworkExceptions, Unit>> updateSetting({

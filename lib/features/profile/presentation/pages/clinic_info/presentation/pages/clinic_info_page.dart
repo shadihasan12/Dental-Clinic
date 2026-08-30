@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -158,8 +159,16 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
       holidays: _originalEntity!.holidays,
     );
     context.read<ClinicInfoBloc>().add(
-          ClinicInfoEvent.updateClinicInfo(entity),
-        );
+      ClinicInfoEvent.updateClinicInfo(entity),
+    );
+  }
+
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<ClinicInfoBloc>();
+    bloc.add(const ClinicInfoEvent.loadClinicInfo());
+    await bloc.stream.settled(
+      (state) => state.maybeMap(loading: (_) => false, orElse: () => true),
+    );
   }
 
   @override
@@ -181,10 +190,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
       listener: (context, state) {
         state.maybeWhen(
           saving: (_) {
-            AppLoadingDialog.show(
-              context: context,
-              message: l10n.save,
-            );
+            AppLoadingDialog.show(context: context, message: l10n.save);
           },
           saved: (entity) {
             AppLoadingDialog.dismiss(context);
@@ -208,8 +214,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         final c = ColorManager.of(context);
         return Scaffold(
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar:
-              _formPopulated ? _buildSaveButton(l10n) : null,
+          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [
               PageHeader(
@@ -219,17 +224,23 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
               Expanded(
                 child: state.maybeWhen(
                   loading: () => const _ClinicInfoSkeleton(),
-                  error: (message) => SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                    child: StateCard(
-                      icon: Icons.cloud_off_rounded,
-                      tone: ColorManager.error,
-                      title: l10n.clinicInfoLoadFailed,
-                      message: message,
-                      actionLabel: l10n.retry,
-                      onAction: () => context
-                          .read<ClinicInfoBloc>()
-                          .add(const ClinicInfoEvent.loadClinicInfo()),
+                  // Pull-to-refresh is offered on the failure state only. Once
+                  // the form is populated it may hold unsaved edits, and a
+                  // refetch would silently throw them away.
+                  error: (message) => DentaRefresh(
+                    onRefresh: () => _refresh(context),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                      child: StateCard(
+                        icon: Icons.cloud_off_rounded,
+                        tone: ColorManager.error,
+                        title: l10n.clinicInfoLoadFailed,
+                        message: message,
+                        actionLabel: l10n.retry,
+                        onAction: () => context.read<ClinicInfoBloc>().add(
+                          const ClinicInfoEvent.loadClinicInfo(),
+                        ),
+                      ),
                     ),
                   ),
                   loaded: (clinicInfo) {
@@ -305,9 +316,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(
@@ -335,9 +344,8 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
           required: true,
           controller: _locationSearchController,
           hintText: l10n.searchForLocation,
-          onChanged: () => _onLocationSearchChanged(
-            _locationSearchController.text,
-          ),
+          onChanged: () =>
+              _onLocationSearchChanged(_locationSearchController.text),
           suffix: _isSearchingLocations
               ? SizedBox(
                   width: 14.w,
@@ -517,13 +525,13 @@ class _ClinicInfoSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: c.cardBg,
-            borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: c.borderLight),
-          ),
-        );
+      height: height,
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: c.borderLight),
+      ),
+    );
 
     return AppShimmer(
       child: ListView(

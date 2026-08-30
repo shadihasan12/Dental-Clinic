@@ -14,6 +14,8 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+const double _kDesktopBreakpoint = 900;
+
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
@@ -70,6 +72,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     context.goNamed(AppRoutesNames.login);
   }
 
+  bool _isDesktop(BuildContext context) =>
+      MediaQuery.of(context).size.width >= _kDesktopBreakpoint;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -77,6 +82,285 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final isLastPage = _currentPage == items.length - 1;
     final fontFamily = FontHelper.fontFamily(context);
 
+    if (_isDesktop(context)) {
+      return _buildDesktopLayout(items, isLastPage, fontFamily, l10n);
+    }
+    return _buildMobileLayout(items, isLastPage, fontFamily, l10n);
+  }
+
+  // ── Desktop: split view ────────────────────────────────────────────
+  Widget _buildDesktopLayout(
+    List<OnboardingItem> items,
+    bool isLastPage,
+    String fontFamily,
+    AppLocalizations l10n,
+  ) {
+    return Scaffold(
+      body: Row(
+        children: [
+          // Left: image carousel
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  itemCount: items.length,
+                  itemBuilder: (_, index) => _buildPage(items[index]),
+                ),
+                // Subtle bottom gradient for polish
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 120,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.4),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Right: content
+          Expanded(
+            child: Container(
+              color: ColorManager.of(context).scaffoldBg,
+              child: Column(
+                children: [
+                  // Top bar: language toggle + skip
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildDesktopLanguageToggle(fontFamily),
+                        _buildDesktopSkipButton(l10n, fontFamily),
+                      ],
+                    ),
+                  ),
+
+                  // Centred content
+                  Expanded(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Logo
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: ColorManager.primary10,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Icon(
+                                  Icons.medical_services_rounded,
+                                  color: ColorManager.primary,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+
+                              // Title
+                              Text(
+                                items[_currentPage].title,
+                                style: TextStyle(
+                                  color: ColorManager.of(context).textPrimary,
+                                  fontWeight: FontWeightManager.bold,
+                                  fontSize: 26,
+                                  fontFamily: fontFamily,
+                                  height: FontHeightsManager.h120,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 12),
+
+                              // Description
+                              Text(
+                                items[_currentPage].description,
+                                style: TextStyle(
+                                  color: ColorManager.of(context).textSecondary,
+                                  fontSize: 15,
+                                  fontFamily: fontFamily,
+                                  height: FontHeightsManager.h140,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 36),
+
+                              // Indicators
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  items.length,
+                                  (i) => _buildDesktopIndicator(i == _currentPage),
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+
+                              // Button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 48,
+                                child: ElevatedButton(
+                                  onPressed: () => _nextPage(items.length),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: ColorManager.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontFamily: fontFamily,
+                                      fontWeight: FontWeightManager.semiBold,
+                                      fontSize: 15,
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    isLastPage ? l10n.getStarted : l10n.next,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLanguageToggle(String fontFamily) {
+    return BlocBuilder<LanguageBloc, LanguageState>(
+      bloc: getIt<LanguageBloc>(),
+      builder: (context, state) {
+        final isEnglish = state.locale.languageCode == 'en';
+        final c = ColorManager.of(context);
+        return Container(
+          decoration: BoxDecoration(
+            color: c.cardBgSecondary,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildDesktopLangPill(
+                label: 'EN',
+                fontFamily: FontFamily.geist,
+                isSelected: isEnglish,
+                onTap: () =>
+                    getIt<LanguageBloc>().add(const ChangeLanguageEvent('en')),
+              ),
+              _buildDesktopLangPill(
+                label: 'عربي',
+                fontFamily: FontFamily.cairo,
+                isSelected: !isEnglish,
+                onTap: () =>
+                    getIt<LanguageBloc>().add(const ChangeLanguageEvent('ar')),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDesktopLangPill({
+    required String label,
+    required String fontFamily,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? ColorManager.primary.withValues(alpha: 0.12)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected
+                ? ColorManager.primary
+                : ColorManager.of(context).textSecondary,
+            fontWeight: isSelected
+                ? FontWeightManager.semiBold
+                : FontWeightManager.regular,
+            fontFamily: fontFamily,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopSkipButton(AppLocalizations l10n, String fontFamily) {
+    return TextButton(
+      onPressed: _navigateToLogin,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: Text(
+        l10n.skip,
+        style: TextStyle(
+          color: ColorManager.of(context).textSecondary,
+          fontWeight: FontWeightManager.medium,
+          fontFamily: fontFamily,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopIndicator(bool isActive) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: isActive ? 28 : 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: isActive
+            ? ColorManager.primary
+            : ColorManager.of(context).borderLight,
+        borderRadius: BorderRadiusManager.full,
+      ),
+    );
+  }
+
+  // ── Mobile: original layout ────────────────────────────────────────
+  Widget _buildMobileLayout(
+    List<OnboardingItem> items,
+    bool isLastPage,
+    String fontFamily,
+    AppLocalizations l10n,
+  ) {
     return Scaffold(
       body: Stack(
         children: [
@@ -112,10 +396,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Language toggle
                 _buildLanguageToggle(fontFamily),
-
-                // Skip button
                 GestureDetector(
                   onTap: _navigateToLogin,
                   child: Container(
@@ -152,23 +433,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
-      // loadingBuilder: (context, child, loadingProgress) {
-      //   if (loadingProgress == null) return child;
-      //   return Container(
-      //     color: ColorManager.primary.withValues(alpha: 0.1),
-      //     child: Center(
-      //       child: CircularProgressIndicator(
-      //         value: loadingProgress.expectedTotalBytes != null
-      //             ? loadingProgress.cumulativeBytesLoaded /
-      //                   loadingProgress.expectedTotalBytes!
-      //             : null,
-      //         color: ColorManager.primary,
-      //         strokeWidth: 2,
-      //       ),
-      //     ),
-      //   );
-      // },
-      errorBuilder: (context, error, stackTrace) {
+      errorBuilder: (_, __, ___) {
         return Container(
           color: ColorManager.primary.withValues(alpha: 0.15),
           child: Center(
@@ -213,7 +478,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Title
           Text(
             item.title,
             style: TextStyle(
@@ -225,10 +489,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
             textAlign: TextAlign.center,
           ),
-
           SizedBox(height: 12.h),
-
-          // Description
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: Text(
@@ -242,10 +503,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               textAlign: TextAlign.center,
             ),
           ),
-
           SizedBox(height: 28.h),
-
-          // Page indicators
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
@@ -253,10 +511,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               (index) => _buildIndicator(index == _currentPage),
             ),
           ),
-
           SizedBox(height: 24.h),
-
-          // Next / Get Started button
           PrimaryButton(
             text: isLastPage ? l10n.getStarted : l10n.next,
             onPressed: () => _nextPage(itemCount),

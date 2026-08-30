@@ -39,10 +39,7 @@ Future<void> showCupertinoPickerSheet({
                 onPressed: () => Navigator.pop(ctx),
                 child: Text(
                   cancelLabel,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    color: c.textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 15.sp, color: c.textSecondary),
                 ),
               ),
               CupertinoButton(

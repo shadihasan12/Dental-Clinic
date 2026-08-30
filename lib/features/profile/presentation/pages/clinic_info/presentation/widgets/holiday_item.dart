@@ -28,8 +28,7 @@ class HolidayItem extends StatelessWidget {
           ? null
           : BoxDecoration(
               border: Border(
-                bottom:
-                    BorderSide(color: c.borderLight, width: 1),
+                bottom: BorderSide(color: c.borderLight, width: 1),
               ),
             ),
       child: Padding(

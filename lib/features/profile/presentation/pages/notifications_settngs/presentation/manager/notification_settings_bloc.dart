@@ -23,10 +23,10 @@ class NotificationSettingsBloc
     required GetNotificationSettingsUseCase getSettings,
     required UpdateNotificationSettingUseCase updateSetting,
     required NotificationTopicsSynchronizer topics,
-  })  : _getSettings = getSettings,
-        _updateSetting = updateSetting,
-        _topics = topics,
-        super(const NotificationSettingsState()) {
+  }) : _getSettings = getSettings,
+       _updateSetting = updateSetting,
+       _topics = topics,
+       super(const NotificationSettingsState()) {
     on<_Load>(_onLoad);
     on<_Toggle>(_onToggle);
   }
@@ -35,24 +35,30 @@ class NotificationSettingsBloc
     _Load event,
     Emitter<NotificationSettingsState> emit,
   ) async {
-    emit(state.copyWith(
-      status: NotificationSettingsStatus.loading,
-      errorMessage: null,
-    ));
+    emit(
+      state.copyWith(
+        status: NotificationSettingsStatus.loading,
+        errorMessage: null,
+      ),
+    );
 
     final result = await _getSettings(NoParams());
 
     await result.fold(
-      (error) async => emit(state.copyWith(
-        status: NotificationSettingsStatus.failure,
-        errorMessage: NetworkExceptions.getErrorMessage(error),
-      )),
+      (error) async => emit(
+        state.copyWith(
+          status: NotificationSettingsStatus.failure,
+          errorMessage: NetworkExceptions.getErrorMessage(error),
+        ),
+      ),
       (settings) async {
-        emit(state.copyWith(
-          status: NotificationSettingsStatus.success,
-          settings: settings,
-          errorMessage: null,
-        ));
+        emit(
+          state.copyWith(
+            status: NotificationSettingsStatus.success,
+            settings: settings,
+            errorMessage: null,
+          ),
+        );
         // Opening the screen is a good moment to re-assert the subscriptions:
         // we have a fresh, authoritative list of audiences in hand.
         await _topics.applyFrom(settings);
@@ -74,10 +80,12 @@ class NotificationSettingsBloc
     // keeps the row from being toggled again while the PATCH is in flight.
     final optimistic = [...state.settings];
     optimistic[index] = previous.copyWith(enabled: event.enabled);
-    emit(state.copyWith(
-      settings: optimistic,
-      pendingKeys: {...state.pendingKeys, event.key},
-    ));
+    emit(
+      state.copyWith(
+        settings: optimistic,
+        pendingKeys: {...state.pendingKeys, event.key},
+      ),
+    );
 
     final result = await _updateSetting(
       UpdateNotificationSettingParams(
@@ -94,11 +102,13 @@ class NotificationSettingsBloc
         final reverted = [...state.settings];
         final i = reverted.indexWhere((s) => s.key == event.key);
         if (i != -1) reverted[i] = previous;
-        emit(state.copyWith(
-          settings: reverted,
-          pendingKeys: pending,
-          errorMessage: NetworkExceptions.getErrorMessage(error),
-        ));
+        emit(
+          state.copyWith(
+            settings: reverted,
+            pendingKeys: pending,
+            errorMessage: NetworkExceptions.getErrorMessage(error),
+          ),
+        );
       },
       (_) async {
         emit(state.copyWith(pendingKeys: pending, errorMessage: null));

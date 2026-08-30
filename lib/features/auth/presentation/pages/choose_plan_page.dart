@@ -10,6 +10,8 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 class ChoosePlanPage extends StatefulWidget {
   const ChoosePlanPage({super.key});
@@ -38,7 +40,7 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 0, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
         child: BlocBuilder<AuthBloc, AuthState>(
@@ -126,15 +128,20 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                   _buildBillingToggle(l10n, fontFamily),
                   SizedBox(height: 16.h),
                   ...state.plans.map((plan) => _buildPlanCard(plan, l10n, fontFamily)),
-                  SizedBox(height: 100.h),
+                  if (Responsive.isDesktop(context)) ...[
+                    SizedBox(height: 24.h),
+                    _buildInlineButton(l10n),
+                    SizedBox(height: 24.h),
+                  ] else
+                    SizedBox(height: 100.h),
                 ],
               ),
             );
           },
         ),
       ),
-      bottomNavigationBar: _buildBottomButton(l10n),
-    );
+      bottomNavigationBar: Responsive.isDesktop(context) ? null : _buildBottomButton(l10n),
+    ),);
   }
 
   Widget _buildTopBar(AppLocalizations l10n, String fontFamily) {
@@ -528,6 +535,32 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInlineButton(AppLocalizations l10n) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return PrimaryButton(
+          text: l10n.next,
+          isEnabled: _selectedPlanId != null,
+          onPressed: _selectedPlanId != null
+              ? () {
+                  final selectedPlan = state.plans.firstWhere(
+                    (plan) => plan.id == _selectedPlanId,
+                  );
+                  final authBloc = context.read<AuthBloc>();
+                  authBloc.add(
+                    AuthEvent.signupPlanEntitySelected(selectedPlan),
+                  );
+                  context.pushNamed(
+                    AppRoutesNames.register,
+                    extra: authBloc,
+                  );
+                }
+              : null,
+        );
+      },
     );
   }
 

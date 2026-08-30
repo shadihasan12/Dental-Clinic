@@ -1,6 +1,8 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
@@ -57,49 +59,74 @@ class _InvoiceDetailsView extends StatelessWidget {
           // edge-to-edge mode lets the body paint behind the nav bar.
           // Without this the Approve/Reject buttons sit underneath it.
           final bottomInset = MediaQuery.of(context).viewPadding.bottom;
-          return ListView(
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 24.h + bottomInset),
-            children: [
-              _Header(invoice: invoice),
-              SizedBox(height: 16.h),
-              _Summary(invoice: invoice),
-              SizedBox(height: 16.h),
-              if (invoice.status == InvoiceStatus.rejected &&
-                  invoice.rejection != null)
-                Padding(
-                  padding: EdgeInsets.only(bottom: 16.h),
-                  child: _RejectionCard(rejection: invoice.rejection!),
-                ),
-              if (invoice.awaitsProof && instructions != null) ...[
-                PaymentInstructionsCard(instructions: instructions),
+          return DentaRefresh(
+            onRefresh: () => _refresh(context, invoice),
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                20.w,
+                16.h,
+                20.w,
+                24.h + bottomInset,
+              ),
+              children: [
+                _Header(invoice: invoice),
                 SizedBox(height: 16.h),
-                PrimaryButton(
-                  text: l10n.uploadPaymentProof,
-                  onPressed: () => context.pushNamed(
-                    AppRoutesNames.submitPaymentProof,
-                    extra: invoice,
+                _Summary(invoice: invoice),
+                SizedBox(height: 16.h),
+                if (invoice.status == InvoiceStatus.rejected &&
+                    invoice.rejection != null)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: _RejectionCard(rejection: invoice.rejection!),
                   ),
-                ),
-              ],
-              if (invoice.awaitsAdmin) _UnderReviewCard(invoice: invoice),
-              if (invoice.isPaid) _PaidCard(invoice: invoice),
+                if (invoice.awaitsProof && instructions != null) ...[
+                  PaymentInstructionsCard(instructions: instructions),
+                  SizedBox(height: 16.h),
+                  PrimaryButton(
+                    text: l10n.uploadPaymentProof,
+                    onPressed: () => context.pushNamed(
+                      AppRoutesNames.submitPaymentProof,
+                      extra: invoice,
+                    ),
+                  ),
+                ],
+                if (invoice.awaitsAdmin) _UnderReviewCard(invoice: invoice),
+                if (invoice.isPaid) _PaidCard(invoice: invoice),
 
-              // Debug-only admin simulation panel. Lets us test the
-              // full approve/reject flow without a separate admin app.
-              // Stripped from release builds via kDebugMode.
-              if (kDebugMode &&
-                  (invoice.awaitsAdmin || invoice.awaitsProof)) ...[
-                SizedBox(height: 24.h),
-                _DebugAdminPanel(
-                  invoiceId: invoice.id,
-                  isProcessing: state.isProcessing,
-                ),
+                // Debug-only admin simulation panel. Lets us test the
+                // full approve/reject flow without a separate admin app.
+                // Stripped from release builds via kDebugMode.
+                if (kDebugMode &&
+                    (invoice.awaitsAdmin || invoice.awaitsProof)) ...[
+                  SizedBox(height: 24.h),
+                  _DebugAdminPanel(
+                    invoiceId: invoice.id,
+                    isProcessing: state.isProcessing,
+                  ),
+                ],
               ],
-            ],
+            ),
           );
         },
       ),
     );
+  }
+
+  /// This screen is a projection of the invoice list, so a pull refetches the
+  /// list and re-selects the same invoice out of it - that is what picks up an
+  /// approval or a rejection that landed while the screen was open.
+  Future<void> _refresh(BuildContext context, InvoiceEntity invoice) async {
+    final bloc = context.read<BillingBloc>();
+    final clinicId =
+        bloc.state.clinicId ?? getIt<UserStorage>().getSelectedClinicId() ?? '';
+    bloc.add(BillingEvent.loadInvoices(clinicId));
+    await bloc.stream.settled((state) => !state.isLoading);
+    for (final refreshed in bloc.state.invoices) {
+      if (refreshed.id == invoice.id) {
+        bloc.add(BillingEvent.selectInvoice(refreshed));
+        break;
+      }
+    }
   }
 }
 

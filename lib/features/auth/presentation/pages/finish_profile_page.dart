@@ -11,6 +11,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 
 class FinishProfilePage extends StatefulWidget {
@@ -139,7 +141,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(imageIndex: 2, child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -238,7 +240,12 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                       keyboardType: TextInputType.streetAddress,
                     ),
 
-                    SizedBox(height: 100.h),
+                    if (Responsive.isDesktop(context)) ...[
+                      SizedBox(height: 24.h),
+                      _buildInlineButton(l10n),
+                      SizedBox(height: 24.h),
+                    ] else
+                      SizedBox(height: 100.h),
                   ],
                 ),
               ),
@@ -246,8 +253,8 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
           );
         },
       ),
-      bottomNavigationBar: _buildBottomButton(l10n),
-    );
+      bottomNavigationBar: Responsive.isDesktop(context) ? null : _buildBottomButton(l10n),
+    ),);
   }
 
   Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
@@ -442,6 +449,22 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInlineButton(AppLocalizations l10n) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return PrimaryButton(
+          text: l10n.completeRegistration,
+          isEnabled:
+              _clinicNameController.text.trim().isNotEmpty &&
+              state.selectedLocation != null &&
+              !state.isSignupLoading,
+          isLoading: state.isSignupLoading,
+          onPressed: _handleCreate,
+        );
+      },
     );
   }
 

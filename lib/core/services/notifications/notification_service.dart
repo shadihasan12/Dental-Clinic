@@ -90,11 +90,23 @@ class NotificationService {
   static bool get usesPolling => !kIsWeb && Platform.isWindows;
 
   final _onPushReceivedController = StreamController<PushPayload>.broadcast();
+  final _onNotificationReceivedController =
+      StreamController<NotificationEntity>.broadcast();
   final _onNotificationTapController =
       StreamController<Map<String, dynamic>>.broadcast();
 
-  /// Foreground pushes — emitted right before we show the local banner.
+  /// Foreground **pushes**. FCM platforms only — nothing arrives here on
+  /// Windows, which has no push channel. Use [onNotificationReceived] for
+  /// anything that has to work on every platform.
   Stream<PushPayload> get onPushReceived => _onPushReceivedController.stream;
+
+  /// A notification just arrived and was announced to the user, however it got
+  /// here: an FCM push on mobile, or a polled `/unseen` row on Windows.
+  ///
+  /// This is the stream an open inbox listens to, because it is the only one
+  /// that fires on both delivery paths.
+  Stream<NotificationEntity> get onNotificationReceived =>
+      _onNotificationReceivedController.stream;
 
   /// User taps from foreground/background/terminated states, carrying the
   /// notification's `data` map. The router subscribes to this and navigates
@@ -113,7 +125,14 @@ class NotificationService {
     await _setupLocalNotifications();
     await _setupAndroidChannel();
 
-    if (!supportsPush) return;
+    if (!supportsPush) {
+      // No FCM here, so getInitialMessage() will never fire. A toast the user
+      // clicked while the app was closed reaches us through the local
+      // plugin's launch details instead - without this, a cold-start tap on
+      // Windows opens the app and then goes nowhere.
+      await _handleNotificationLaunch();
+      return;
+    }
 
     await _requestPermission();
     await _wireFcmListeners();
@@ -250,6 +269,18 @@ class NotificationService {
     return false;
   }
 
+  Future<void> _handleNotificationLaunch() async {
+    try {
+      final launch = await _localNotifications.getNotificationAppLaunchDetails();
+      if (launch?.didNotificationLaunchApp ?? false) {
+        _onNotificationTapController
+            .add(_decodePayload(launch!.notificationResponse?.payload));
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[notifications] launch details failed: $e');
+    }
+  }
+
   Future<void> _handleInitialMessage() async {
     // Cold-start path: user tapped a push from a fully-terminated state.
     final initial = await _messaging.getInitialMessage();
@@ -264,6 +295,7 @@ class NotificationService {
   Future<void> _onForegroundMessage(RemoteMessage message) async {
     final payload = PushPayload.fromRemoteMessage(message);
     _onPushReceivedController.add(payload);
+    _onNotificationReceivedController.add(payload.toEntity());
     await _showLocalNotification(
       id: _stableId(payload.id ?? payload.data.toString()),
       title: payload.title,
@@ -442,13 +474,18 @@ class NotificationService {
 
   /// Raises a banner for an inbox row. The Windows poller's only way to
   /// announce anything — there is no push channel to the desktop app.
-  Future<void> showNotification(NotificationEntity notification) {
-    return _showLocalNotification(
+  ///
+  /// Also publishes it on [onNotificationReceived], so an inbox that is open
+  /// in front of the user gains the row without waiting for a refresh — the
+  /// same thing a foreground push does on mobile.
+  Future<void> showNotification(NotificationEntity notification) async {
+    await _showLocalNotification(
       id: _stableId(notification.id),
       title: notification.title,
       body: notification.body,
       data: notification.data,
     );
+    _onNotificationReceivedController.add(notification);
   }
 
   /// A single summary banner standing in for notifications the server withheld
@@ -538,6 +575,7 @@ class NotificationService {
 
   Future<void> dispose() async {
     await _onPushReceivedController.close();
+    await _onNotificationReceivedController.close();
     await _onNotificationTapController.close();
   }
 }

@@ -9,6 +9,7 @@ abstract class WorkingDaysRemoteDataSource {
   Future<void> upsertWorkingDays(List<WorkingDayApiModel> days);
   Future<List<HolidayApiModel>> getHolidays();
   Future<void> upsertHolidays(List<HolidayApiModel> holidays);
+
   /// Reads the *current* user's working hours via the token-derived
   /// `/clinics/users/my-hours` endpoint. The server picks the user
   /// from the bearer token and the selected clinic from the
@@ -29,9 +30,7 @@ class WorkingDaysRemoteDataSourceImpl implements WorkingDaysRemoteDataSource {
 
   @override
   Future<List<WorkingDayApiModel>> getWorkingDays() async {
-    final response = await _apiConsumer.get(
-      WorkingDaysEndpoints.workingDays,
-    );
+    final response = await _apiConsumer.get(WorkingDaysEndpoints.workingDays);
     // Tolerate either `{ "data": [...] }` or `{ "data": { "days": [...] } }`.
     final raw = response['data'];
     final List rawDays;
@@ -57,9 +56,7 @@ class WorkingDaysRemoteDataSourceImpl implements WorkingDaysRemoteDataSource {
 
   @override
   Future<List<HolidayApiModel>> getHolidays() async {
-    final response = await _apiConsumer.get(
-      WorkingDaysEndpoints.holidays,
-    );
+    final response = await _apiConsumer.get(WorkingDaysEndpoints.holidays);
     final data = response['data'] as List;
     return data
         .map((e) => HolidayApiModel.fromJson(e as Map<String, dynamic>))
@@ -76,15 +73,11 @@ class WorkingDaysRemoteDataSourceImpl implements WorkingDaysRemoteDataSource {
 
   @override
   Future<List<UserWorkingDayApiModel>> getMyHours() async {
-    final response = await _apiConsumer.get(
-      WorkingDaysEndpoints.myHours,
-    );
+    final response = await _apiConsumer.get(WorkingDaysEndpoints.myHours);
     final data = response['data'] as Map<String, dynamic>;
     final days = data['days'] as List? ?? const [];
     return days
-        .map(
-          (e) => UserWorkingDayApiModel.fromJson(e as Map<String, dynamic>),
-        )
+        .map((e) => UserWorkingDayApiModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 

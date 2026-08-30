@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -67,6 +68,19 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     setState(() {
       result.fold((_) => _usage = null, (u) => _usage = u);
     });
+  }
+
+  /// Pulls the roster and the seat usage together - the limit chips read off
+  /// the usage call, so refreshing one without the other leaves them disagreeing.
+  Future<void> _refresh() async {
+    final bloc = context.read<ClinicUsersBloc>();
+    bloc.add(const ClinicUsersEvent.load());
+    await Future.wait([
+      _loadUsage(),
+      bloc.stream.settled(
+        (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+      ),
+    ]);
   }
 
   @override
@@ -156,14 +170,17 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
                 ],
               ),
               Expanded(
-                child: isLoading
-                    ? const _UsersSkeleton()
-                    : state.maybeWhen(
-                        error: (msg) => _buildError(context, l10n, msg),
-                        orElse: () => users.isEmpty
-                            ? _buildEmpty(context, l10n)
-                            : _buildList(context, l10n, users),
-                      ),
+                child: DentaRefresh(
+                  onRefresh: _refresh,
+                  child: isLoading
+                      ? const _UsersSkeleton()
+                      : state.maybeWhen(
+                          error: (msg) => _buildError(context, l10n, msg),
+                          orElse: () => users.isEmpty
+                              ? _buildEmpty(context, l10n)
+                              : _buildList(context, l10n, users),
+                        ),
+                ),
               ),
             ],
           );
@@ -268,9 +285,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       builder: (sheetContext) => Padding(
-        padding: EdgeInsets.only(
-          bottom: systemBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: systemBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
           child: Column(
@@ -483,8 +498,7 @@ class _UserCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20.r,
-                  backgroundColor:
-                      ColorManager.primary.withValues(alpha: 0.15),
+                  backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
                       : null,
@@ -826,11 +840,7 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
                 onTap: () => Navigator.pop(context),
                 child: Padding(
                   padding: EdgeInsets.all(4.w),
-                  child: Icon(
-                    Icons.close,
-                    size: 20.w,
-                    color: c.textSecondary,
-                  ),
+                  child: Icon(Icons.close, size: 20.w, color: c.textSecondary),
                 ),
               ),
             ],
@@ -903,9 +913,7 @@ class _RoleRow extends StatelessWidget {
     final radius = BorderRadius.circular(12.r);
 
     return Material(
-      color: selected
-          ? ColorManager.primary.withValues(alpha: 0.08)
-          : c.cardBg,
+      color: selected ? ColorManager.primary.withValues(alpha: 0.08) : c.cardBg,
       borderRadius: radius,
       child: InkWell(
         onTap: onTap,

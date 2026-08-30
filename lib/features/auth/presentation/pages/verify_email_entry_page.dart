@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 class VerifyEmailEntryPage extends StatelessWidget {
   const VerifyEmailEntryPage({super.key});
@@ -23,7 +24,7 @@ class VerifyEmailEntryPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return PopScope(
+    return AuthDesktopShell(imageIndex: 1, child: PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _cancel(context);
@@ -155,6 +156,6 @@ class VerifyEmailEntryPage extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ),);
   }
 }

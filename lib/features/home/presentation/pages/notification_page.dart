@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
@@ -7,6 +8,7 @@ import 'package:dental_clinic_app/features/home/presentation/widgets/notificatio
 import 'package:dental_clinic_app/features/home/presentation/widgets/notification_inbox_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/notification_list_states.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,6 +67,14 @@ class _NotificationContentState extends State<_NotificationContent> {
     }
   }
 
+  /// The refresh event deliberately emits no loading state, so the next state
+  /// of any kind is the one that says the page landed.
+  Future<void> _refresh() async {
+    final bloc = context.read<NotificationBloc>();
+    bloc.add(const NotificationEvent.refresh());
+    await bloc.stream.settled((_) => true);
+  }
+
   void _onNotificationTap(NotificationEntity notification) {
     final bloc = context.read<NotificationBloc>();
     if (!notification.isRead) {
@@ -114,13 +124,17 @@ class _NotificationContentState extends State<_NotificationContent> {
                       return const NotificationListSkeleton();
 
                     case NotificationStatus.failure:
-                      return SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 24.h),
-                        child: NotificationErrorState(
-                          message: state.errorMessage ?? l10n.somethingWentWrong,
-                          onRetry: () => context
-                              .read<NotificationBloc>()
-                              .add(const NotificationEvent.load()),
+                      return DentaRefresh(
+                        onRefresh: _refresh,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.fromLTRB(14.w, 16.h, 14.w, 24.h),
+                          child: NotificationErrorState(
+                            message:
+                                state.errorMessage ?? l10n.somethingWentWrong,
+                            onRetry: () => context.read<NotificationBloc>().add(
+                              const NotificationEvent.load(),
+                            ),
+                          ),
                         ),
                       );
 
@@ -153,19 +167,10 @@ class _NotificationContentState extends State<_NotificationContent> {
 
     return Stack(
       children: [
-        RefreshIndicator(
-          color: ColorManager.primary,
-          onRefresh: () async {
-            context
-                .read<NotificationBloc>()
-                .add(const NotificationEvent.refresh());
-            // Give the request a beat before retracting the spinner; the bloc
-            // emits again when it lands.
-            await Future<void>.delayed(const Duration(milliseconds: 400));
-          },
+        DentaRefresh(
+          onRefresh: _refresh,
           child: CustomScrollView(
             controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
@@ -246,9 +251,9 @@ class _NotificationContentState extends State<_NotificationContent> {
             bottom: 0,
             child: NotificationActionBar(
               label: l10n.markAllAsRead,
-              onPressed: () => context
-                  .read<NotificationBloc>()
-                  .add(const NotificationEvent.markAllAsRead()),
+              onPressed: () => context.read<NotificationBloc>().add(
+                const NotificationEvent.markAllAsRead(),
+              ),
             ),
           ),
       ],

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -175,44 +176,48 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
                   ),
 
                   Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                      children: [
-                        // No heading over the clinics: the screen is already
-                        // called My Clinics.
-                        _buildClinics(context, clinicsState),
-                        SizedBox(height: 22.h),
-                        _SectionHeading(
-                          label: l10n.invitations,
-                          count: _pendingReceived,
-                        ),
-                        SizedBox(height: 10.h),
-                        // One row, not two: direction on the leading side,
-                        // status as a menu on the trailing side.
-                        _InvitationFilterRow(
-                          isAdmin: widget.isAdmin,
-                          sentMode: sentMode,
-                          onModeChanged: (i) => setState(() => _activeTab = i),
-                          status: sentMode
-                              ? invitationState.sentFilter
-                              : invitationState.receivedFilter,
-                        ),
-                        SizedBox(height: 12.h),
-                        InvitationsList(
-                          mode: sentMode
-                              ? InvitationCardMode.sent
-                              : InvitationCardMode.received,
-                          invitations: sentMode
-                              ? invitationState.sentInvitations
-                              : invitationState.receivedInvitations,
-                          filter: sentMode
-                              ? invitationState.sentFilter
-                              : invitationState.receivedFilter,
-                          isLoading: invitationState.isLoading,
-                          isUpdating: invitationState.isUpdating,
-                          error: invitationState.error,
-                        ),
-                      ],
+                    child: DentaRefresh(
+                      onRefresh: _refresh,
+                      child: ListView(
+                        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                        children: [
+                          // No heading over the clinics: the screen is already
+                          // called My Clinics.
+                          _buildClinics(context, clinicsState),
+                          SizedBox(height: 22.h),
+                          _SectionHeading(
+                            label: l10n.invitations,
+                            count: _pendingReceived,
+                          ),
+                          SizedBox(height: 10.h),
+                          // One row, not two: direction on the leading side,
+                          // status as a menu on the trailing side.
+                          _InvitationFilterRow(
+                            isAdmin: widget.isAdmin,
+                            sentMode: sentMode,
+                            onModeChanged: (i) =>
+                                setState(() => _activeTab = i),
+                            status: sentMode
+                                ? invitationState.sentFilter
+                                : invitationState.receivedFilter,
+                          ),
+                          SizedBox(height: 12.h),
+                          InvitationsList(
+                            mode: sentMode
+                                ? InvitationCardMode.sent
+                                : InvitationCardMode.received,
+                            invitations: sentMode
+                                ? invitationState.sentInvitations
+                                : invitationState.receivedInvitations,
+                            filter: sentMode
+                                ? invitationState.sentFilter
+                                : invitationState.receivedFilter,
+                            isLoading: invitationState.isLoading,
+                            isUpdating: invitationState.isUpdating,
+                            error: invitationState.error,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -221,6 +226,21 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
           );
         },
       ),
+    );
+  }
+
+  /// Refetches the clinic list and whichever invitation directions this user
+  /// can see, and holds the band until the clinic list settles.
+  Future<void> _refresh() async {
+    final clinics = context.read<MyClinicsBloc>();
+    final invitations = context.read<InvitationBloc>();
+    clinics.add(const MyClinicsEvent.load());
+    invitations.add(const InvitationEvent.loadReceivedInvitations());
+    if (widget.isAdmin) {
+      invitations.add(const InvitationEvent.loadSentInvitations());
+    }
+    await clinics.stream.settled(
+      (state) => state.maybeWhen(loading: () => false, orElse: () => true),
     );
   }
 
@@ -285,9 +305,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
       builder: (sheetContext) => Padding(
-        padding: EdgeInsets.only(
-          bottom: systemBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: systemBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(0, 10.h, 0, 10.h),
           child: Column(
@@ -1074,9 +1092,7 @@ class _DockedInviteBar extends StatelessWidget {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: Material(

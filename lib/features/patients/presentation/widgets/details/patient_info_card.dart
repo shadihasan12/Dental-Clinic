@@ -82,8 +82,6 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
         // gap in the record, not a clear result.
         valueColor: _blank(p.allergies) ? c.textTertiary : ColorManager.error,
         maxLines: 3,
-        trailingIcon: Icons.edit_outlined,
-        onTrailing: widget.onEdit,
       ),
       _InfoRow(
         label: l10n.medicalHistory,
@@ -93,8 +91,6 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
         valueColor:
             _blank(p.medicalHistory) ? ColorManager.warning : c.textPrimary,
         maxLines: 4,
-        trailingIcon: Icons.edit_outlined,
-        onTrailing: widget.onEdit,
       ),
       if (!_blank(p.insuranceProvider) || !_blank(p.insuranceNumber))
         _InfoRow(

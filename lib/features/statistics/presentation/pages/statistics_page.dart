@@ -1,7 +1,9 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
@@ -99,39 +101,39 @@ class _Body extends StatelessWidget {
       case CatalogStatus.loading:
         return const _CatalogSkeleton();
       case CatalogStatus.failure:
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
-          child: StateCard(
-            icon: Icons.cloud_off_rounded,
-            tone: ColorManager.error,
-            title: l10n.statisticsLoadFailed,
-            message: state.catalogError,
-            actionLabel: l10n.retry,
-            onAction: () => context
-                .read<StatisticsDashboardBloc>()
-                .add(const DashboardStarted()),
+        return DentaRefresh(
+          onRefresh: () => _refresh(context),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
+            child: StateCard(
+              icon: Icons.cloud_off_rounded,
+              tone: ColorManager.error,
+              title: l10n.statisticsLoadFailed,
+              message: state.catalogError,
+              actionLabel: l10n.retry,
+              onAction: () => context.read<StatisticsDashboardBloc>().add(
+                const DashboardStarted(),
+              ),
+            ),
           ),
         );
       case CatalogStatus.success:
         if (state.metrics.isEmpty) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
-            child: StateCard(
-              icon: Icons.bar_chart_rounded,
-              title: l10n.noStatisticsYet,
-              message: l10n.noStatisticsYetHint,
+          return DentaRefresh(
+            onRefresh: () => _refresh(context),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 32.h),
+              child: StateCard(
+                icon: Icons.bar_chart_rounded,
+                title: l10n.noStatisticsYet,
+                message: l10n.noStatisticsYetHint,
+              ),
             ),
           );
         }
-        return RefreshIndicator(
-          color: ColorManager.primaryDarker,
-          onRefresh: () async {
-            context
-                .read<StatisticsDashboardBloc>()
-                .add(const DashboardStarted());
-          },
+        return DentaRefresh(
+          onRefresh: () => _refresh(context),
           child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 32.h),
             children: [
               const StatisticsFilterBar(),
@@ -142,6 +144,14 @@ class _Body extends StatelessWidget {
           ),
         );
     }
+  }
+
+  /// Re-runs the catalog fetch. Every card reloads off the back of it, so the
+  /// band only has to track the catalog call.
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<StatisticsDashboardBloc>();
+    bloc.add(const DashboardStarted());
+    await bloc.stream.settled((s) => s.catalogStatus != CatalogStatus.loading);
   }
 }
 

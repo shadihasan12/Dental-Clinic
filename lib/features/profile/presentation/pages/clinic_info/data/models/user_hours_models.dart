@@ -21,8 +21,7 @@ class UserWorkingDayApiModel {
     final rawRanges = json['ranges'] as List? ?? const [];
     return UserWorkingDayApiModel(
       id: json['id'] as String?,
-      clinicWorkingDayId:
-          (json['clinic_working_day_id'] ?? '').toString(),
+      clinicWorkingDayId: (json['clinic_working_day_id'] ?? '').toString(),
       dayOfWeek: (json['day_of_week'] as num?)?.toInt() ?? 1,
       isWorking: json['is_working'] as bool? ?? false,
       isFullTime: json['is_full_time'] as bool? ?? false,
@@ -33,10 +32,10 @@ class UserWorkingDayApiModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'clinic_working_day_id': clinicWorkingDayId,
-        'day_of_week': dayOfWeek,
-        'is_working': isWorking,
-        'is_full_time': isFullTime,
-        'ranges': ranges.map((r) => r.toJson()).toList(),
-      };
+    'clinic_working_day_id': clinicWorkingDayId,
+    'day_of_week': dayOfWeek,
+    'is_working': isWorking,
+    'is_full_time': isFullTime,
+    'ranges': ranges.map((r) => r.toJson()).toList(),
+  };
 }

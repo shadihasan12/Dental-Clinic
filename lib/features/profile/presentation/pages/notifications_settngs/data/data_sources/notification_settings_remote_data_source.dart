@@ -7,10 +7,7 @@ abstract class NotificationSettingsRemoteDataSource {
   Future<List<NotificationSettingModel>> getSettings();
 
   /// [category] must be a `key` the GET returned; anything else is a 400.
-  Future<void> updateSetting({
-    required String category,
-    required bool enabled,
-  });
+  Future<void> updateSetting({required String category, required bool enabled});
 }
 
 @Injectable(as: NotificationSettingsRemoteDataSource)
@@ -22,8 +19,9 @@ class NotificationSettingsRemoteDataSourceImpl
 
   @override
   Future<List<NotificationSettingModel>> getSettings() async {
-    final response =
-        await _apiConsumer.get(NotificationSettingsEndpoints.settings);
+    final response = await _apiConsumer.get(
+      NotificationSettingsEndpoints.settings,
+    );
 
     final data = response is Map ? response['data'] : null;
     if (data is! List) return const [];
@@ -32,8 +30,10 @@ class NotificationSettingsRemoteDataSourceImpl
     // there are no sections.
     return data
         .whereType<Map>()
-        .map((e) =>
-            NotificationSettingModel.fromJson(Map<String, dynamic>.from(e)))
+        .map(
+          (e) =>
+              NotificationSettingModel.fromJson(Map<String, dynamic>.from(e)),
+        )
         .toList();
   }
 

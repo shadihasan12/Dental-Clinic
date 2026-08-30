@@ -10,8 +10,9 @@ enum PatientAnchor { caseSection, treatments, files, info }
 
 /// Identity row: back, avatar, name + meta, edit.
 ///
-/// Scrolls away with the content; the money and the rail below it are what
-/// stay pinned, because those are what the dentist reads mid-appointment.
+/// Fixed at the top, above [PatientVitalsBar]. Between them they hold the
+/// patient's name, the money and the rail - what the dentist reads
+/// mid-appointment - so none of it is allowed to scroll away.
 class PatientIdentityBar extends StatelessWidget {
   const PatientIdentityBar({
     super.key,
@@ -102,7 +103,11 @@ class PatientIdentityBar extends StatelessWidget {
           if (onEdit != null)
             IconButton(
               onPressed: onEdit,
-              icon: Icon(Icons.edit_outlined, size: 20.w, color: c.textSecondary),
+              icon: Icon(
+                Icons.edit_outlined,
+                size: 20.w,
+                color: c.textSecondary,
+              ),
             ),
         ],
       ),
@@ -110,10 +115,16 @@ class PatientIdentityBar extends StatelessWidget {
   }
 }
 
-/// Pinned strip carrying the two numbers that used to sit two taps apart:
-/// what is owed, and how much work is left. The anchor rail rides underneath.
-class PatientVitalsHeader extends SliverPersistentHeaderDelegate {
-  PatientVitalsHeader({
+/// Fixed strip carrying the two numbers that used to sit two taps apart: what
+/// is owed, and how much work is left. The anchor rail rides underneath.
+///
+/// This was a pinned [SliverPersistentHeaderDelegate] inside the page's scroll
+/// view. It is a plain box now so the pull-to-refresh band opens *below* the
+/// rail rather than above it - and since its min and max extents were always
+/// equal it never actually shrank, so nothing about how it looks changed.
+class PatientVitalsBar extends StatelessWidget {
+  const PatientVitalsBar({
+    super.key,
     required this.outstandingLabel,
     required this.outstandingValue,
     required this.remainingLabel,
@@ -121,7 +132,6 @@ class PatientVitalsHeader extends SliverPersistentHeaderDelegate {
     required this.anchors,
     required this.activeAnchor,
     required this.onAnchorTap,
-    required this.context,
     this.showVitals = true,
   });
 
@@ -132,33 +142,19 @@ class PatientVitalsHeader extends SliverPersistentHeaderDelegate {
   final List<({PatientAnchor anchor, String label})> anchors;
   final PatientAnchor activeAnchor;
   final ValueChanged<PatientAnchor> onAnchorTap;
-  final BuildContext context;
 
   /// False when there is no open case. Both figures describe a case, so with
   /// none they would read "-" and "0" - two tiles claiming a state the
-  /// patient is not in. The rail alone is pinned instead.
+  /// patient is not in. The rail alone is kept in that case.
   final bool showVitals;
 
   /// Generous on purpose: the chips sit in a centred [Expanded] slot, so the
   /// slack absorbs the extra line height when the OS text scale is turned up
-  /// rather than overflowing a pinned header by a fraction of a pixel.
+  /// rather than overflowing the bar by a fraction of a pixel.
   double get _height => showVitals ? 108.h : 44.h;
 
   @override
-  double get minExtent => _height;
-
-  @override
-  double get maxExtent => _height;
-
-  @override
-  bool shouldRebuild(covariant PatientVitalsHeader old) =>
-      old.outstandingValue != outstandingValue ||
-      old.remainingValue != remainingValue ||
-      old.activeAnchor != activeAnchor ||
-      old.showVitals != showVitals;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlaps) {
+  Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
 
@@ -215,14 +211,17 @@ class PatientVitalsHeader extends SliverPersistentHeaderDelegate {
                       borderRadius: BorderRadius.circular(999.r),
                       onTap: () => onAnchorTap(a.anchor),
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 14.w, vertical: 7.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 7.h,
+                        ),
                         child: Text(
                           a.label,
                           style: TextStyle(
                             fontSize: 11.5.sp,
-                            fontWeight:
-                                active ? FontWeight.w600 : FontWeight.w500,
+                            fontWeight: active
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                             fontFamily: family,
                             color: active
                                 ? ColorManager.primaryDarker
@@ -240,7 +239,6 @@ class PatientVitalsHeader extends SliverPersistentHeaderDelegate {
       ),
     );
   }
-
 }
 
 /// One pinned figure. The outstanding balance is tinted amber so it reads as

@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/home/domain/use_cases/get_unseen_notifications_use_case.dart';
 import 'package:dental_clinic_app/features/home/domain/use_cases/mark_notifications_seen_use_case.dart';
+import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -32,15 +33,18 @@ class NotificationPoller {
     required GetUnseenNotificationsUseCase getUnseen,
     required MarkNotificationsSeenUseCase markSeen,
     required NotificationService notificationService,
+    required UnreadCountCubit unreadCount,
     required TokenStorage tokenStorage,
   })  : _getUnseen = getUnseen,
         _markSeen = markSeen,
         _notificationService = notificationService,
+        _unreadCount = unreadCount,
         _tokenStorage = tokenStorage;
 
   final GetUnseenNotificationsUseCase _getUnseen;
   final MarkNotificationsSeenUseCase _markSeen;
   final NotificationService _notificationService;
+  final UnreadCountCubit _unreadCount;
   final TokenStorage _tokenStorage;
 
   /// Only used when the server's `poll_after` is missing or unusable — the
@@ -115,6 +119,11 @@ class NotificationPoller {
                 ? unseen.pollAfter
                 : _fallbackInterval.inSeconds,
           );
+          // Every poll carries the badge number, and on Windows this is the
+          // only thing that keeps it current while the app is open - there is
+          // no push to bump it, so without this the bell stays stale until the
+          // next resume or a full inbox load.
+          _unreadCount.set(unseen.unreadCount);
           await _announce(unseen);
         },
       );

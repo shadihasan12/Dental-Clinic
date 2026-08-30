@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -293,6 +294,14 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
     );
   }
 
+  Future<void> _refresh(BuildContext context) async {
+    final bloc = context.read<WorkingDaysBloc>();
+    bloc.add(const WorkingDaysEvent.load());
+    await bloc.stream.settled(
+      (state) => state.maybeWhen(loading: () => false, orElse: () => true),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -355,16 +364,22 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
               Expanded(
                 child: state.maybeWhen(
                   loading: () => const _WorkingDaysSkeleton(),
-                  error: (message) => SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                    child: StateCard(
-                      icon: Icons.cloud_off_rounded,
-                      tone: ColorManager.error,
-                      title: l10n.workingDaysLoadFailed,
-                      message: message,
-                      actionLabel: l10n.retry,
-                      onAction: () => context.read<WorkingDaysBloc>().add(
-                        const WorkingDaysEvent.load(),
+                  // Pull-to-refresh is offered on the failure state only. Once
+                  // the form is populated it may hold unsaved edits, and a
+                  // refetch would silently throw them away.
+                  error: (message) => DentaRefresh(
+                    onRefresh: () => _refresh(context),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                      child: StateCard(
+                        icon: Icons.cloud_off_rounded,
+                        tone: ColorManager.error,
+                        title: l10n.workingDaysLoadFailed,
+                        message: message,
+                        actionLabel: l10n.retry,
+                        onAction: () => context.read<WorkingDaysBloc>().add(
+                          const WorkingDaysEvent.load(),
+                        ),
                       ),
                     ),
                   ),
@@ -415,9 +430,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(

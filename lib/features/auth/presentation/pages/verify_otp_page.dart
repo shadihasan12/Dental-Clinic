@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 
 class VerifyOTPPage extends StatefulWidget {
   const VerifyOTPPage({super.key});
@@ -131,7 +132,7 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return PopScope(
+    return AuthDesktopShell(imageIndex: 2, child: PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
@@ -438,6 +439,6 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
         ),
       ),
       ),
-    );
+    ),);
   }
 }

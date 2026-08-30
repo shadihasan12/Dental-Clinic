@@ -762,14 +762,6 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i154.AddTreatmentBloc(addTreatment: gh<_i208.AddTreatmentUseCase>()),
     );
-    gh.lazySingleton<_i614.NotificationPoller>(
-      () => _i614.NotificationPoller(
-        getUnseen: gh<_i453.GetUnseenNotificationsUseCase>(),
-        markSeen: gh<_i219.MarkNotificationsSeenUseCase>(),
-        notificationService: gh<_i40.NotificationService>(),
-        tokenStorage: gh<_i23.TokenStorage>(),
-      ),
-    );
     gh.factory<_i675.AppointmentBloc>(
       () => _i675.AppointmentBloc(
         getAllAppointments: gh<_i791.GetAllAppointmentsUseCase>(),
@@ -796,6 +788,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i934.LanguageService>(),
         gh<_i962.ApiConsumer>(),
         gh<_i132.NotificationTopicsSynchronizer>(),
+      ),
+    );
+    gh.lazySingleton<_i614.NotificationPoller>(
+      () => _i614.NotificationPoller(
+        getUnseen: gh<_i453.GetUnseenNotificationsUseCase>(),
+        markSeen: gh<_i219.MarkNotificationsSeenUseCase>(),
+        notificationService: gh<_i40.NotificationService>(),
+        unreadCount: gh<_i103.UnreadCountCubit>(),
+        tokenStorage: gh<_i23.TokenStorage>(),
       ),
     );
     gh.factory<_i363.AuthBloc>(
