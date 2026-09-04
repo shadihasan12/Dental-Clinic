@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 
@@ -12,9 +11,6 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 /// never covers the bottom navigation or a page's primary action button.
 class AppSnackbar {
   AppSnackbar._();
-
-  /// Distance from the very top of the screen to the toast.
-  static const double _topOffset = 50;
 
   static OverlayEntry? _entry;
 
@@ -80,7 +76,6 @@ class AppSnackbar {
         title: title,
         message: message,
         type: type,
-        topOffset: _topOffset,
         onDismissed: () {
           if (_entry == entry) _entry = null;
           if (entry.mounted) entry.remove();
@@ -108,7 +103,7 @@ extension on _SnackbarType {
     }
   }
 
-  /// Text and close-icon color, picked for contrast against [backgroundColor].
+  /// Text and icon color, picked for contrast against [backgroundColor].
   Color get foregroundColor {
     switch (this) {
       case _SnackbarType.warning:
@@ -119,23 +114,38 @@ extension on _SnackbarType {
         return ColorManager.white;
     }
   }
+
+  IconData get icon {
+    switch (this) {
+      case _SnackbarType.success:
+        return Icons.check_circle_rounded;
+      case _SnackbarType.error:
+        return Icons.error_rounded;
+      case _SnackbarType.warning:
+        return Icons.warning_rounded;
+      case _SnackbarType.info:
+        return Icons.info_rounded;
+    }
+  }
 }
 
-/// The pill itself: slides up into place as it fades in, and keeps drifting up
-/// as it fades out — so the whole motion reads as a single upward gesture.
+/// The card itself: drops in from above as it fades in, and lifts back out the
+/// same way — so the whole motion reads as a single gesture from the top edge.
+///
+/// Every dimension here is in logical pixels on purpose: this floats over the
+/// root overlay on phone *and* desktop, so ScreenUtil's phone-design scaling
+/// would blow it up to full-window size on a wide window.
 class _ToastCard extends StatefulWidget {
   const _ToastCard({
     required this.title,
     required this.message,
     required this.type,
-    required this.topOffset,
     required this.onDismissed,
   });
 
   final String title;
   final String? message;
   final _SnackbarType type;
-  final double topOffset;
   final VoidCallback onDismissed;
 
   @override
@@ -147,6 +157,10 @@ class _ToastCardState extends State<_ToastCard> {
   static const _exitDuration = Duration(milliseconds: 220);
   static const _visibleDuration = Duration(seconds: 3);
 
+  /// Gap between the status bar / window top and the card.
+  static const double _topGap = 12;
+  static const double _maxWidth = 420;
+
   bool _visible = false;
   bool _leaving = false;
   Timer? _autoDismiss;
@@ -154,8 +168,8 @@ class _ToastCardState extends State<_ToastCard> {
   @override
   void initState() {
     super.initState();
-    // The first frame paints it low and transparent; the next frame animates it
-    // up to its resting position.
+    // The first frame paints it high and transparent; the next frame animates
+    // it down to its resting position.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() => _visible = true);
     });
@@ -183,6 +197,7 @@ class _ToastCardState extends State<_ToastCard> {
     final type = widget.type;
     final fg = type.foregroundColor;
     final message = widget.message;
+    final fontFamily = FontHelper.fontFamily(context);
 
     final hasMessage = message != null && message.isNotEmpty;
     // Most call sites pass a short title ("Error") plus the real text as the
@@ -190,14 +205,12 @@ class _ToastCardState extends State<_ToastCard> {
     // gets the extra line the message would have used.
     final titleMaxLines = hasMessage ? 2 : 3;
 
-    final offset = _leaving
-        ? const Offset(0, -0.7)
-        : (_visible ? Offset.zero : const Offset(0, 0.6));
+    final offset = _visible ? Offset.zero : const Offset(0, -0.6);
 
     return Positioned(
-      top: widget.topOffset.h,
-      left: 20.w,
-      right: 20.w,
+      top: MediaQuery.paddingOf(context).top + _topGap,
+      left: 16,
+      right: 16,
       child: IgnorePointer(
         ignoring: _leaving,
         child: Align(
@@ -218,23 +231,25 @@ class _ToastCardState extends State<_ToastCard> {
                     if ((details.primaryVelocity ?? 0) < 0) _dismiss();
                   },
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: 320.w),
-                    padding: EdgeInsets.fromLTRB(16.w, 8.h, 8.w, 8.h),
+                    constraints: const BoxConstraints(maxWidth: _maxWidth),
+                    padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
                     decoration: BoxDecoration(
                       color: type.backgroundColor,
-                      // Fully rounded — a pill, whatever the text length.
-                      borderRadius: BorderRadius.circular(100.r),
+                      borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.12),
-                          blurRadius: 14,
-                          offset: const Offset(0, 4),
+                          color: Colors.black.withValues(alpha: 0.16),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6),
                         ),
                       ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Icon(type.icon, size: 20, color: fg),
+                        const SizedBox(width: 10),
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,22 +260,22 @@ class _ToastCardState extends State<_ToastCard> {
                                 style: TextStyle(
                                   color: fg,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 12.5.sp,
-                                  height: 1.25,
-                                  fontFamily: FontHelper.fontFamily(context),
+                                  fontSize: 14,
+                                  height: 1.3,
+                                  fontFamily: fontFamily,
                                 ),
                                 maxLines: titleMaxLines,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               if (hasMessage) ...[
-                                SizedBox(height: 1.h),
+                                const SizedBox(height: 2),
                                 Text(
                                   message,
                                   style: TextStyle(
-                                    color: fg.withValues(alpha: 0.85),
-                                    fontSize: 11.sp,
-                                    height: 1.25,
-                                    fontFamily: FontHelper.fontFamily(context),
+                                    color: fg.withValues(alpha: 0.9),
+                                    fontSize: 12.5,
+                                    height: 1.35,
+                                    fontFamily: fontFamily,
                                   ),
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
@@ -269,20 +284,20 @@ class _ToastCardState extends State<_ToastCard> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 10.w),
+                        const SizedBox(width: 8),
                         GestureDetector(
                           onTap: _dismiss,
                           behavior: HitTestBehavior.opaque,
                           child: Container(
-                            width: 22.w,
-                            height: 22.w,
+                            width: 22,
+                            height: 22,
                             decoration: BoxDecoration(
                               color: fg.withValues(alpha: 0.18),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.close_rounded,
-                              size: 14.w,
+                              size: 14,
                               color: fg,
                             ),
                           ),
