@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class TreatmentItemCard extends StatelessWidget {
   final TreatmentItem item;
@@ -61,7 +61,7 @@ class TreatmentItemCard extends StatelessWidget {
                       ),
                       if (item.completedAt != null) // Or created_at
                         Text(
-                          DateFormat('MMM d').format(item.completedAt!),
+                          AppDate.dayMonth(context, item.completedAt!),
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontFamily: FontHelper.fontFamily(context),

@@ -1299,6 +1299,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String durationMinutes(int count) {
+    return '$count min';
+  }
+
+  @override
+  String durationHours(int count) {
+    return '${count}h';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
   String get unread => 'Unread';
 
   @override
@@ -1349,6 +1364,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plan => 'Plan';
+
+  @override
+  String cancelsOn(String date) {
+    return 'Cancels $date';
+  }
 
   @override
   String renewsOn(String date) {

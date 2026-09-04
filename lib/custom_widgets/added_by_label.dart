@@ -3,7 +3,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 /// Small `Added by <name> · May 17` caption that detail pages render
 /// once, near the top of the content.
@@ -40,13 +40,12 @@ class AddedByLabel extends StatelessWidget {
 
     final c = ColorManager.of(context);
     final fontFamily = FontHelper.fontFamily(context);
-    final locale = Localizations.localeOf(context).toString();
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     final byPrefix = isArabic ? 'أضافه ' : 'Added by ';
     final date = createdAt;
     final dateLabel =
-        date == null ? null : DateFormat.MMMd(locale).format(date);
+        date == null ? null : AppDate.dayMonth(context, date);
 
     return Padding(
       padding: padding ?? EdgeInsets.zero,

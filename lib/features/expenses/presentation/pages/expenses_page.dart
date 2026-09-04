@@ -12,12 +12,12 @@ import 'package:dental_clinic_app/services/subscription_guard/subscription_guard
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../widgets/add_expense_sheet.dart';
 import '../widgets/expense_detail_sheet.dart';
 import '../widgets/expense_row.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
@@ -116,10 +116,8 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     return _currentMonth.year == now.year && _currentMonth.month == now.month;
   }
 
-  String _monthLabel(BuildContext context) {
-    final locale = Localizations.localeOf(context).toString();
-    return DateFormat.yMMMM(locale).format(_currentMonth);
-  }
+  String _monthLabel(BuildContext context) =>
+      AppDate.monthYear(context, _currentMonth);
 
   Future<void> _showAddExpense(BuildContext context) async {
     if (!await SubscriptionGuardHelper.requireActive(context)) return;

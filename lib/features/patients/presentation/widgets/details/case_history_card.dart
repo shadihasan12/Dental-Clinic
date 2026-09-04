@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/fonts.gen.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class CaseHistoryCard extends StatelessWidget {
   final DentalCase dentalCase;
@@ -73,7 +73,7 @@ class CaseHistoryCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        DateFormat('MMM d, yyyy').format(dentalCase.startDate),
+                        AppDate.medium(context, dentalCase.startDate),
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: FontFamily.geist,

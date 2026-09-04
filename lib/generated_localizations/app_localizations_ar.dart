@@ -1289,6 +1289,21 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String durationMinutes(int count) {
+    return '$count دقيقة';
+  }
+
+  @override
+  String durationHours(int count) {
+    return '$count ساعة';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours ساعة $minutes دقيقة';
+  }
+
+  @override
   String get unread => 'غير مقروء';
 
   @override
@@ -1339,6 +1354,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get plan => 'الباقة';
+
+  @override
+  String cancelsOn(String date) {
+    return 'يُلغى في $date';
+  }
 
   @override
   String renewsOn(String date) {

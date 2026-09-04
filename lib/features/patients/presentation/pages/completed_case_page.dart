@@ -14,8 +14,8 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class CompletedCasePage extends StatefulWidget {
   final DentalCase dentalCase;
@@ -358,7 +358,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
             context,
             icon: Icons.calendar_today_outlined,
             label: AppLocalizations.of(context)!.started,
-            value: DateFormat('MMM d, yyyy').format(dc.startDate),
+            value: AppDate.medium(context, dc.startDate),
           ),
           if (dc.endDate != null) ...[
             SizedBox(height: 10.h),
@@ -366,7 +366,7 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
               context,
               icon: Icons.check_circle_outline,
               label: AppLocalizations.of(context)!.completed,
-              value: DateFormat('MMM d, yyyy').format(dc.endDate!),
+              value: AppDate.medium(context, dc.endDate!),
             ),
           ],
           SizedBox(height: 10.h),

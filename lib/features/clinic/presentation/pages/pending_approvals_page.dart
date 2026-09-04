@@ -8,6 +8,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/approval_request_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/approvals_bloc.dart';
+import 'package:dental_clinic_app/core/localization/l10n_extension.dart';
 
 class PendingApprovalsPage extends StatelessWidget {
   final String clinicId;
@@ -276,7 +277,7 @@ class _ApprovalRequestCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  _formatTimeAgo(request.createdAt),
+                  _formatTimeAgo(context, request.createdAt),
                   style: TextStyleManager.labelSmall.copyWith(
                     color: ColorManager.of(context).textTertiary,
                   ),
@@ -389,19 +390,15 @@ class _ApprovalRequestCard extends StatelessWidget {
     );
   }
 
-  String _formatTimeAgo(DateTime? dateTime) {
+  String _formatTimeAgo(BuildContext context, DateTime? dateTime) {
     if (dateTime == null) return '';
 
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
+    final l10n = context.l10n;
+    final difference = DateTime.now().difference(dateTime);
 
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    }
-    return 'Just now';
+    if (difference.inDays > 0) return l10n.daysAgo(difference.inDays);
+    if (difference.inHours > 0) return l10n.hoursAgo(difference.inHours);
+    if (difference.inMinutes > 0) return l10n.minutesAgo(difference.inMinutes);
+    return l10n.justNow;
   }
 }

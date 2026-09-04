@@ -5,9 +5,9 @@ import 'package:dental_clinic_app/features/patients/presentation/widgets/add/too
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class VisitInfoForm extends StatefulWidget {
   const VisitInfoForm({
@@ -133,7 +133,7 @@ class _VisitInfoFormState extends State<VisitInfoForm> {
 
   // — Visit date as a simple inline row
   Widget _buildDateRow(BuildContext context, AppLocalizations l10n) {
-    final formatted = DateFormat('MMM d, yyyy').format(widget.visitDate);
+    final formatted = AppDate.medium(context, widget.visitDate);
     final isToday = DateUtils.isSameDay(widget.visitDate, DateTime.now());
 
     return GestureDetector(

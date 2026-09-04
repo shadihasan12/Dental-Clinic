@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class InvoiceDetailsPage extends StatelessWidget {
   const InvoiceDetailsPage({super.key, required this.invoice});
@@ -348,7 +348,6 @@ class _Summary extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat.yMMMd();
     final tier = invoice.planTier;
     final plan = tier == null ? null : SubscriptionPlans.getPlanByTier(tier);
     final cycle = invoice.billingCycle == BillingCycle.yearly
@@ -368,16 +367,16 @@ class _Summary extends StatelessWidget {
             _Row(label: l10n.plan, value: '${plan.name} · $cycle'),
           _Row(
             label: l10n.invoiceIssuedOn,
-            value: dateFormat.format(invoice.issuedAt),
+            value: AppDate.medium(context, invoice.issuedAt),
           ),
           _Row(
             label: l10n.invoiceDueOn,
-            value: dateFormat.format(invoice.dueAt),
+            value: AppDate.medium(context, invoice.dueAt),
           ),
           if (invoice.activatesUntil != null)
             _Row(
               label: l10n.activatesUntil,
-              value: dateFormat.format(invoice.activatesUntil!),
+              value: AppDate.medium(context, invoice.activatesUntil!),
             ),
           if (invoice.isRenewal)
             _Row(label: l10n.invoiceType, value: l10n.renewal),
@@ -436,7 +435,7 @@ class _UnderReviewCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
     final proof = invoice.proof;
-    final dateFormat = DateFormat.yMMMd().add_jm();
+    final dateFormat = AppDate.mediumFormat(context).add_jm();
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -512,7 +511,6 @@ class _PaidCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
-    final dateFormat = DateFormat.yMMMd();
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -545,7 +543,7 @@ class _PaidCard extends StatelessWidget {
           if (invoice.paidAt != null) ...[
             SizedBox(height: 6.h),
             Text(
-              '${l10n.invoicePaidOn}: ${dateFormat.format(invoice.paidAt!)}',
+              '${l10n.invoicePaidOn}: ${AppDate.medium(context, invoice.paidAt!)}',
               style: TextStyle(
                 fontSize: 12.sp,
                 fontFamily: fontFamily,

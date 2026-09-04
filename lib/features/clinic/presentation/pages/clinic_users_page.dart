@@ -280,7 +280,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),

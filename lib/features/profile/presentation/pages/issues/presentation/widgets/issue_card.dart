@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/issues/dom
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/presentation/widgets/issue_status_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 /// One filed report.
 ///
@@ -97,7 +98,7 @@ class IssueCard extends StatelessWidget {
                       if (issue.createdAt != null) ...[
                         SizedBox(height: 7.h),
                         Text(
-                          _formatDate(issue.createdAt!),
+                          _formatDate(context, issue.createdAt!),
                           style: TextStyle(
                             fontSize: 9.5.sp,
                             fontWeight: FontWeight.w500,
@@ -120,16 +121,8 @@ class IssueCard extends StatelessWidget {
 
   /// Short absolute date. Deliberately not "2 days ago" — a report's age
   /// matters when chasing support, and a relative label hides it.
-  static String _formatDate(DateTime date) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final local = date.toLocal();
-    final two = local.minute.toString().padLeft(2, '0');
-    return '${local.day} ${months[local.month - 1]} ${local.year} · '
-        '${local.hour.toString().padLeft(2, '0')}:$two';
-  }
+  static String _formatDate(BuildContext context, DateTime date) =>
+      AppDate.mediumWithTime24(context, date.toLocal());
 }
 
 class _StatusPill extends StatelessWidget {

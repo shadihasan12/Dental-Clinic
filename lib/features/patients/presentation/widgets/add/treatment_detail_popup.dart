@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class TreatmentDetailPopup extends StatelessWidget {
   final TreatmentItem item;
@@ -164,7 +164,7 @@ class TreatmentDetailPopup extends StatelessWidget {
                 ),
               ),
               Text(
-                '${AppLocalizations.of(context)!.created} ${DateFormat('MMM d, yyyy').format(item.createdAt)}',
+                '${AppLocalizations.of(context)!.created} ${AppDate.medium(context, item.createdAt)}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontFamily: FontHelper.fontFamily(context),
@@ -361,7 +361,7 @@ class TreatmentDetailPopup extends StatelessWidget {
           ),
         ),
         Text(
-          DateFormat('MMM d, yyyy • h:mm a').format(date),
+          AppDate.mediumWithTime12(context, date),
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: FontHelper.fontFamily(context),

@@ -3,7 +3,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 import '../bloc/statistics_dashboard_bloc.dart';
 
@@ -20,7 +20,6 @@ class StatisticsFilterBar extends StatelessWidget {
       buildWhen: (a, b) =>
           a.startDate != b.startDate || a.endDate != b.endDate,
       builder: (context, state) {
-        final fmt = DateFormat('MMM d, y');
         return InkWell(
           onTap: () => _pickRange(context, state),
           borderRadius: BorderRadius.circular(12.r),
@@ -41,8 +40,8 @@ class StatisticsFilterBar extends StatelessWidget {
                 SizedBox(width: 10.w),
                 Expanded(
                   child: Text(
-                    '${fmt.format(state.startDate)}  —  '
-                    '${fmt.format(state.endDate)}',
+                    '${AppDate.medium(context, state.startDate)}  —  '
+                    '${AppDate.medium(context, state.endDate)}',
                     style: TextStyle(
                       fontFamily: FontHelper.fontFamily(context),
                       fontSize: 12.5.sp,

@@ -18,10 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 import '../widgets/add_holiday_sheet.dart';
 import '../widgets/clinic_info_models.dart';
-import '../widgets/helpers.dart';
 import '../widgets/cupertino_picker_sheet.dart';
 
 class WorkingDaysPage extends StatelessWidget {
@@ -200,8 +200,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         ranges: day.enabled
             ? day.shifts.map((s) {
                 return TimeRangeModel(
-                  startTime: _formatTime(s.from),
-                  endTime: _formatTime(s.to),
+                  startTime: _apiTime(s.from),
+                  endTime: _apiTime(s.to),
                 );
               }).toList()
             : [],
@@ -221,7 +221,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
     }).toList();
   }
 
-  static String _formatTime(TimeOfDay t) {
+  /// Wire format for the working-hours payload — NOT for display. Times shown
+  /// to the user go through `AppDate`, which localises them.
+  static String _apiTime(TimeOfDay t) {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
@@ -232,7 +234,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
   String _daySummary(WorkingDay day) {
     if (day.shifts.length == 1) {
-      return '${formatTime(day.shifts[0].from)} – ${formatTime(day.shifts[0].to)}';
+      return '${AppDate.time12Of(context, day.shifts[0].from)} – '
+          '${AppDate.time12Of(context, day.shifts[0].to)}';
     }
     return '${day.shifts.length} ${AppLocalizations.of(context)!.shifts}';
   }

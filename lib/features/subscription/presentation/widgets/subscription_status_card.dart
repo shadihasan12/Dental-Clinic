@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_plan_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
+import 'package:dental_clinic_app/core/localization/l10n_extension.dart';
 
 class SubscriptionStatusCard extends StatelessWidget {
   const SubscriptionStatusCard({
@@ -282,8 +284,12 @@ class _ActiveSubscriptionCard extends StatelessWidget {
           // Renewal info
           Text(
             isCancelled
-                ? 'Cancels ${_formatDate(subscription.currentPeriodEnd)}'
-                : 'Renews ${_formatDate(subscription.currentPeriodEnd)}',
+                ? context.l10n.cancelsOn(
+                    AppDate.medium(context, subscription.currentPeriodEnd),
+                  )
+                : context.l10n.renewsOn(
+                    AppDate.medium(context, subscription.currentPeriodEnd),
+                  ),
             style: TextStyle(
               fontFamily: FontHelper.fontFamily(context),
               fontSize: 12.sp,
@@ -370,11 +376,4 @@ class _ActiveSubscriptionCard extends StatelessWidget {
     }
   }
 
-  String _formatDate(DateTime date) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
 }

@@ -38,19 +38,6 @@ class AppointmentEntity with _$AppointmentEntity {
 
   const AppointmentEntity._();
 
-  /// Get formatted time (e.g., "09:00")
-  String get formattedTime {
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
-
-  /// Get formatted date (e.g., "Dec 28, 2024")
-  String get formattedDate {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
-  }
-
   /// Check if appointment is today
   bool get isToday {
     final now = DateTime.now();

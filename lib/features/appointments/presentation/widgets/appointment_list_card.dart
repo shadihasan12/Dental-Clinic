@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/features/appointments/presentation/widgets/app
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 /// One appointment, drawn the same way on the home screen and on the
 /// appointments screen - the row a dentist learns to read once.
@@ -83,7 +84,7 @@ class AppointmentListCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            appointment.formattedTime,
+                            AppDate.time24(context, appointment.dateTime),
                             style: TextStyle(
                               fontFamily: family,
                               fontSize: 12.5.sp,

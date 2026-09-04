@@ -2576,6 +2576,24 @@ abstract class AppLocalizations {
   /// **'{count}d ago'**
   String daysAgo(int count);
 
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min'**
+  String durationMinutes(int count);
+
+  /// No description provided for @durationHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h'**
+  String durationHours(int count);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h {minutes}m'**
+  String durationHoursMinutes(int hours, int minutes);
+
   /// No description provided for @unread.
   ///
   /// In en, this message translates to:
@@ -2671,6 +2689,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan'**
   String get plan;
+
+  /// No description provided for @cancelsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancels {date}'**
+  String cancelsOn(String date);
 
   /// No description provided for @renewsOn.
   ///

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class PaymentHistoryPopup extends StatefulWidget {
   final String caseTitle;
@@ -191,7 +191,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
                 Row(
                   children: [
                     Text(
-                      DateFormat('MMM d, yyyy').format(payment.createdAt),
+                      AppDate.medium(context, payment.createdAt),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontHelper.fontFamily(context),

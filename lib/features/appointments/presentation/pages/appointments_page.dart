@@ -14,7 +14,7 @@ import 'package:dental_clinic_app/features/appointments/domain/entities/appointm
 import 'package:dental_clinic_app/features/appointments/presentation/manager/appointment_bloc.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_list_card.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -215,10 +215,8 @@ class _AppointmentsContent extends StatelessWidget {
     return sorted;
   }
 
-  String _getMonthName(BuildContext context, DateTime date) {
-    final locale = Localizations.localeOf(context).toString();
-    return DateFormat('MMM', locale).format(date);
-  }
+  String _getMonthName(BuildContext context, DateTime date) =>
+      AppDate.monthAbbr(context, date);
 
   Future<void> _openNewAppointment(BuildContext context) async {
     if (!await SubscriptionGuardHelper.requireActive(context)) return;
@@ -432,10 +430,8 @@ class _AppointmentsContent extends StatelessWidget {
 
   // ─── Helpers ────────────────────────────────────────────────────────────
 
-  String _getDayName(BuildContext context, DateTime date) {
-    final locale = Localizations.localeOf(context).toString();
-    return DateFormat('EEE', locale).format(date);
-  }
+  String _getDayName(BuildContext context, DateTime date) =>
+      AppDate.weekdayAbbr(context, date);
 }
 
 /// The count that belongs next to a title, in the primary tint.

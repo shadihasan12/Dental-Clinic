@@ -11,7 +11,6 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_inf
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/user_hours_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/cupertino_picker_sheet.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/day_toggle.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/helpers.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/shift_count_control.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/time_picker_field.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class UserHoursPage extends StatelessWidget {
   final String userId;
@@ -191,8 +191,8 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             ? d.shifts
                   .map(
                     (s) => TimeRangeModel(
-                      startTime: _formatTime(s.from),
-                      endTime: _formatTime(s.to),
+                      startTime: _apiTime(s.from),
+                      endTime: _apiTime(s.to),
                     ),
                   )
                   .toList()
@@ -201,7 +201,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     }).toList();
   }
 
-  static String _formatTime(TimeOfDay t) {
+  /// Wire format for the working-hours payload — NOT for display. Times shown
+  /// to the user go through `AppDate`, which localises them.
+  static String _apiTime(TimeOfDay t) {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
@@ -214,7 +216,8 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     if (!day.isWorking) return l10n.closed;
     if (day.isFullTime) return l10n.fullClinicHours;
     if (day.shifts.length == 1) {
-      return '${formatTime(day.shifts[0].from)} – ${formatTime(day.shifts[0].to)}';
+      return '${AppDate.time12Of(context, day.shifts[0].from)} – '
+          '${AppDate.time12Of(context, day.shifts[0].to)}';
     }
     return '${day.shifts.length} ${l10n.shifts}';
   }

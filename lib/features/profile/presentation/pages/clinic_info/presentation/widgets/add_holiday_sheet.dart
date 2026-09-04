@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'clinic_info_models.dart';
-import 'helpers.dart';
 import 'cupertino_picker_sheet.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 void showAddHolidaySheet(
   BuildContext context, {
@@ -141,7 +141,7 @@ void showAddHolidaySheet(
                         ),
                         SizedBox(width: 8.w),
                         Text(
-                          formatDate(selectedDate),
+                          AppDate.medium(context, selectedDate),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: FontHelper.fontFamily(context),

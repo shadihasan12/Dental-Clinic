@@ -6,7 +6,7 @@ import 'package:dental_clinic_app/features/subscription/domain/entities/subscrip
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 /// Subscription state on Home, rebuilt against DENTA_STYLE.md.
 ///
@@ -872,7 +872,7 @@ String _planTitle(SubscriptionStatusEntity s, AppLocalizations l10n) {
 /// Locale-aware. The old card hardcoded `MMM d, yyyy`, which rendered an
 /// English month name inside the Arabic build.
 String _shortDate(BuildContext context, DateTime d) =>
-    DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(d);
+    AppDate.medium(context, d);
 
 class _DashedBorderPainter extends CustomPainter {
   const _DashedBorderPainter({required this.color, required this.radius});

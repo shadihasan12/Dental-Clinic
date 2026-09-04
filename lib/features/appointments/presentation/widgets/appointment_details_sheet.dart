@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
+import 'package:dental_clinic_app/core/localization/l10n_extension.dart';
 
 class AppointmentDetailsSheet extends StatelessWidget {
   final AppointmentEntity appointment;
@@ -91,7 +93,7 @@ class AppointmentDetailsSheet extends StatelessWidget {
                     child: _StatTile(
                       icon: Icons.calendar_today_outlined,
                       label: l10n.date,
-                      value: appointment.formattedDate,
+                      value: AppDate.medium(context, appointment.dateTime),
                     ),
                   ),
                   SizedBox(width: 10.w),
@@ -100,7 +102,8 @@ class AppointmentDetailsSheet extends StatelessWidget {
                       icon: Icons.access_time_rounded,
                       label: l10n.time,
                       value:
-                          '${appointment.formattedTime} – ${_formatTime(endTime)}',
+                          '${AppDate.time24(context, appointment.dateTime)} – '
+                          '${AppDate.time24(context, endTime)}',
                     ),
                   ),
                 ],
@@ -196,18 +199,13 @@ class AppointmentDetailsSheet extends StatelessWidget {
     );
   }
 
-  static String _formatTime(DateTime d) {
-    final h = d.hour.toString().padLeft(2, '0');
-    final m = d.minute.toString().padLeft(2, '0');
-    return '$h:$m';
-  }
-
   static String _formatDuration(BuildContext context, int minutes) {
-    if (minutes < 60) return '$minutes min';
+    final l10n = context.l10n;
+    if (minutes < 60) return l10n.durationMinutes(minutes);
     final hours = minutes ~/ 60;
     final remaining = minutes % 60;
-    if (remaining == 0) return '${hours}h';
-    return '${hours}h ${remaining}m';
+    if (remaining == 0) return l10n.durationHours(hours);
+    return l10n.durationHoursMinutes(hours, remaining);
   }
 }
 

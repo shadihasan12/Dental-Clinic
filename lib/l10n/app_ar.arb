@@ -454,6 +454,9 @@
     }
   },
   "daysAgo": "منذ {count} يوم",
+  "durationMinutes": "{count} دقيقة",
+  "durationHours": "{count} ساعة",
+  "durationHoursMinutes": "{hours} ساعة {minutes} دقيقة",
   "@daysAgo": {
     "placeholders": {
       "count": {
@@ -494,6 +497,7 @@
   },
   "viewAllPlans": "عرض جميع الباقات",
   "plan": "الباقة",
+  "cancelsOn": "يُلغى في {date}",
   "renewsOn": "يتجدد في {date}",
   "@renewsOn": {
     "placeholders": {

@@ -6,7 +6,7 @@ import 'package:dental_clinic_app/features/subscription/domain/entities/subscrip
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class InvoiceCard extends StatelessWidget {
   const InvoiceCard({
@@ -23,7 +23,6 @@ class InvoiceCard extends StatelessWidget {
     final c = ColorManager.of(context);
     final fontFamily = FontHelper.fontFamily(context);
     final l10n = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat.yMMMd();
 
     return Material(
       color: Colors.transparent,
@@ -84,7 +83,7 @@ class InvoiceCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    dateFormat.format(invoice.issuedAt),
+                    AppDate.medium(context, invoice.issuedAt),
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontFamily: fontFamily,

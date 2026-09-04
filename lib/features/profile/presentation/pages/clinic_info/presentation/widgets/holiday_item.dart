@@ -1,10 +1,10 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/clinic_info_models.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/helpers.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class HolidayItem extends StatelessWidget {
   const HolidayItem({
@@ -57,7 +57,7 @@ class HolidayItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    monthAbbr(holiday.date.month),
+                    AppDate.monthAbbr(context, holiday.date),
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontFamily: FontHelper.fontFamily(context),

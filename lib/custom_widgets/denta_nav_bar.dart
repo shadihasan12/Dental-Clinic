@@ -204,25 +204,30 @@ class _NavItem extends StatelessWidget {
                     ),
                     // Widened from zero rather than inserted, so the icon
                     // slides off centre at the same rate the capsule opens.
+                    // Flexible so a label wider than the capsule loses its
+                    // tail to the clip instead of overflowing the Row - the
+                    // reveal is driven by widthFactor, not by free space.
                     if (t > 0)
-                      ClipRect(
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          widthFactor: t,
-                          child: Opacity(
-                            opacity: t,
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.only(start: 7.w),
-                              child: Text(
-                                item.label,
-                                maxLines: 1,
-                                softWrap: false,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                  fontSize: 12.5.sp,
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  color: fg,
+                      Flexible(
+                        child: ClipRect(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            widthFactor: t,
+                            child: Opacity(
+                              opacity: t,
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.only(start: 7.w),
+                                child: Text(
+                                  item.label,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    fontSize: 12.5.sp,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: FontHelper.fontFamily(context),
+                                    color: fg,
+                                  ),
                                 ),
                               ),
                             ),

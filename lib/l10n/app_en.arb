@@ -461,6 +461,33 @@
       }
     }
   },
+  "durationMinutes": "{count} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHours": "{count}h",
+  "@durationHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "durationHoursMinutes": "{hours}h {minutes}m",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "unread": "Unread",
   "noUnreadNotifications": "No unread notifications",
   "noUnreadNotificationsDesc": "Everything here has been read.",
@@ -494,6 +521,14 @@
   },
   "viewAllPlans": "View All Plans",
   "plan": "Plan",
+  "cancelsOn": "Cancels {date}",
+  "@cancelsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "renewsOn": "Renews {date}",
   "@renewsOn": {
     "placeholders": {
