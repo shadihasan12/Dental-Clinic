@@ -2,7 +2,7 @@ name: dental_clinic_app
 description: "A dental clinic management Flutter application."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: ^3.10.0

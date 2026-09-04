@@ -46,6 +46,17 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<!--
+		Privacy purpose strings. image_picker/file_picker reference the photo
+		library and camera APIs, so Apple requires these even for flows a given
+		user never opens - App Store Connect rejects the binary with ITMS-90683
+		when they are missing. Attaching case files and payment proofs is the
+		only feature that uses them.
+	-->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Denta needs access to your photo library so you can attach photos and documents to patient cases and payment receipts.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Denta needs access to your camera so you can take photos of patient cases and attach them directly.</string>
+	<!--
 		Background modes required by Firebase Cloud Messaging:
 		  remote-notification  - lets data-only pushes wake the app
 		  fetch                - lets the OS poll for content updates
@@ -66,5 +77,14 @@
 	-->
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
+	<!--
+		Export compliance. The app uses only standard HTTPS/TLS, which is
+		exempt under the encryption regulations, so declaring this here means
+		App Store Connect stops asking the question on every upload. Without
+		the key each TestFlight build sits in "Missing Compliance" and testers
+		cannot install it until someone answers by hand.
+	-->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
