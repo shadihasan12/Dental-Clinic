@@ -194,6 +194,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final active = _pickActiveMembership(loginResult.memberships);
     if (active != null) {
       await _userStorage.saveUserRole(active.role.name);
+      await _userStorage.saveIsClinicOwner(active.isOwner);
       await _userStorage.saveSelectedClinicId(active.clinicId);
       await _tokenStorage.saveClinicId(active.clinicId);
     }
@@ -623,6 +624,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // A fresh signup always owns the clinic they just created, so
     // we cache role + clinic id the same way login does.
     await _userStorage.saveUserRole(membership.role.name);
+    await _userStorage.saveIsClinicOwner(membership.isOwner);
     await _userStorage.saveSelectedClinicId(membership.clinicId);
     await _tokenStorage.saveClinicId(membership.clinicId);
 

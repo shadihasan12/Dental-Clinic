@@ -445,13 +445,44 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yourReports => 'بلاغاتك';
 
   @override
-  String get issueStatusPending => 'قيد الانتظار';
+  String get issueCategoryLabel => 'الفئة';
+
+  @override
+  String get issueCategoryHint => 'اختر فئة';
+
+  @override
+  String get issueCategoryRequired => 'الفئة مطلوبة';
+
+  @override
+  String get couldNotLoadCategories => 'تعذّر تحميل الفئات';
+
+  @override
+  String get addScreenshot => 'إضافة لقطة شاشة';
+
+  @override
+  String get screenshotsOnly => 'يمكنك إرفاق صور JPG أو PNG فقط.';
+
+  @override
+  String get fileTooLarge => 'يجب أن يكون حجم كل ملف أقل من 50 ميغابايت.';
+
+  @override
+  String get attachmentsNotAllowed =>
+      'صلاحيتك لا تسمح بإرفاق الملفات. لا يزال بإمكانك إرسال البلاغ.';
+
+  @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
+  String get issueStatusOpen => 'مفتوحة';
 
   @override
   String get issueStatusInProgress => 'قيد المعالجة';
 
   @override
-  String get issueStatusDone => 'تم';
+  String get issueStatusResolved => 'تم الحل';
+
+  @override
+  String get issueStatusClosed => 'مغلقة';
 
   @override
   String get noReportsYet => 'لا توجد بلاغات بعد';
@@ -1080,6 +1111,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appointmentsLoadFailed => 'تعذر تحميل المواعيد';
+
+  @override
+  String get statusChangeFailed => 'تعذّر تغيير حالة الموعد';
 
   @override
   String get noAppointmentsToday => 'لا مواعيد اليوم';
@@ -2819,7 +2853,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachDocumentAction => 'إرفاق مستند';
 
   @override
-  String get attachDocumentSub => 'PDF، تقرير مخبري، إحالة';
+  String get attachDocumentSub => 'PDF أو Word أو PowerPoint أو نص أو صورة';
 
   @override
   String get offlineQueuedNote =>
@@ -2829,8 +2863,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeFileTitle => 'حذف هذا الملف؟';
 
   @override
-  String get removeFileBody =>
-      'سيتم فصله عن هذه الحالة. يبقى الملف نفسه في مكتبة الوسائط.';
+  String get removeFileBody => 'سيتم حذف الملف نهائيًا ولا يمكن استرجاعه.';
 
   @override
   String get fileRemoved => 'تم حذف الملف';
@@ -2928,4 +2961,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get renewAction => 'تجديد';
+
+  @override
+  String get unsupportedFileTitle => 'نوع الملف غير مدعوم';
+
+  @override
+  String get unsupportedFileMessage =>
+      'يمكنك إرفاق صور أو ملفات PDF أو PowerPoint أو Excel.';
+
+  @override
+  String get cameraUnavailable => 'الكاميرا غير متوفرة على هذا الجهاز';
+
+  @override
+  String get dayClinicClosed => 'العيادة مغلقة في هذا اليوم';
+
+  @override
+  String get dayEndBeforeStart => 'يجب أن يكون وقت الانتهاء بعد وقت البدء';
+
+  @override
+  String get dayShiftsOverlap => 'الفترات في هذا اليوم متداخلة';
+
+  @override
+  String get dayOutsideClinicHours => 'هذه الأوقات خارج ساعات عمل العيادة';
+
+  @override
+  String get workingHoursInvalidTitle => 'راجع ساعات العمل';
+
+  @override
+  String get workingHoursSaveFailed => 'تعذر حفظ ساعات العمل';
+
+  @override
+  String get workingHoursReadOnlyNote =>
+      'يتم تحديد ساعات عملك من قبل مسؤول العيادة.';
 }

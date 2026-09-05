@@ -12,10 +12,13 @@ class IssueRepositoryImpl implements IssueRepository {
   IssueRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<Either<NetworkExceptions, List<IssueEntity>>> getIssues() async {
+  Future<Either<NetworkExceptions, IssuePageEntity>> getIssues({
+    int page = 1,
+    int size = 15,
+  }) async {
     try {
-      final models = await _remoteDataSource.getIssues();
-      return Right(models.map((m) => m.toEntity()).toList());
+      final result = await _remoteDataSource.getIssues(page: page, size: size);
+      return Right(result.toEntity());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }
@@ -23,15 +26,41 @@ class IssueRepositoryImpl implements IssueRepository {
 
   @override
   Future<Either<NetworkExceptions, IssueEntity>> createIssue({
+    required String category,
     required String title,
     required String description,
+    List<String> mediaItemIds = const [],
   }) async {
     try {
       final model = await _remoteDataSource.createIssue(
+        category: category,
         title: title,
         description: description,
+        mediaItemIds: mediaItemIds,
       );
       return Right(model.toEntity());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<IssueOptionEntity>>>
+  getCategories() async {
+    try {
+      final models = await _remoteDataSource.getCategories();
+      return Right(models.map((m) => m.toEntity()).toList());
+    } catch (e) {
+      return Left(NetworkExceptions.getException(e));
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, List<IssueOptionEntity>>>
+  getStatuses() async {
+    try {
+      final models = await _remoteDataSource.getStatuses();
+      return Right(models.map((m) => m.toEntity()).toList());
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }

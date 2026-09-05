@@ -956,11 +956,65 @@ abstract class AppLocalizations {
   /// **'Your reports'**
   String get yourReports;
 
-  /// No description provided for @issueStatusPending.
+  /// No description provided for @issueCategoryLabel.
   ///
   /// In en, this message translates to:
-  /// **'Pending'**
-  String get issueStatusPending;
+  /// **'Category'**
+  String get issueCategoryLabel;
+
+  /// No description provided for @issueCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get issueCategoryHint;
+
+  /// No description provided for @issueCategoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Category is required'**
+  String get issueCategoryRequired;
+
+  /// No description provided for @couldNotLoadCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the categories'**
+  String get couldNotLoadCategories;
+
+  /// No description provided for @addScreenshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a screenshot'**
+  String get addScreenshot;
+
+  /// No description provided for @screenshotsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'You can attach JPG or PNG images only.'**
+  String get screenshotsOnly;
+
+  /// No description provided for @fileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Each file must be under 50 MB.'**
+  String get fileTooLarge;
+
+  /// No description provided for @attachmentsNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role cannot attach files. You can still send the report.'**
+  String get attachmentsNotAllowed;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMore;
+
+  /// No description provided for @issueStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get issueStatusOpen;
 
   /// No description provided for @issueStatusInProgress.
   ///
@@ -968,11 +1022,17 @@ abstract class AppLocalizations {
   /// **'In progress'**
   String get issueStatusInProgress;
 
-  /// No description provided for @issueStatusDone.
+  /// No description provided for @issueStatusResolved.
   ///
   /// In en, this message translates to:
-  /// **'Done'**
-  String get issueStatusDone;
+  /// **'Resolved'**
+  String get issueStatusResolved;
+
+  /// No description provided for @issueStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get issueStatusClosed;
 
   /// No description provided for @noReportsYet.
   ///
@@ -2185,6 +2245,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appointments could not be loaded'**
   String get appointmentsLoadFailed;
+
+  /// No description provided for @statusChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment status could not be changed'**
+  String get statusChangeFailed;
 
   /// No description provided for @noAppointmentsToday.
   ///
@@ -5453,7 +5519,7 @@ abstract class AppLocalizations {
   /// No description provided for @attachDocumentSub.
   ///
   /// In en, this message translates to:
-  /// **'PDF, lab report, referral'**
+  /// **'PDF, Word, PowerPoint, text or image'**
   String get attachDocumentSub;
 
   /// No description provided for @offlineQueuedNote.
@@ -5465,13 +5531,13 @@ abstract class AppLocalizations {
   /// No description provided for @removeFileTitle.
   ///
   /// In en, this message translates to:
-  /// **'Remove this file?'**
+  /// **'Delete this file?'**
   String get removeFileTitle;
 
   /// No description provided for @removeFileBody.
   ///
   /// In en, this message translates to:
-  /// **'It will be detached from this case. The file itself stays in your media library.'**
+  /// **'The file is deleted permanently and cannot be recovered.'**
   String get removeFileBody;
 
   /// No description provided for @fileRemoved.
@@ -5659,6 +5725,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Renew'**
   String get renewAction;
+
+  /// No description provided for @unsupportedFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File type not supported'**
+  String get unsupportedFileTitle;
+
+  /// No description provided for @unsupportedFileMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can attach images, PDF, PowerPoint or Excel files.'**
+  String get unsupportedFileMessage;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera is not available on this device'**
+  String get cameraUnavailable;
+
+  /// No description provided for @dayClinicClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'The clinic is closed on this day'**
+  String get dayClinicClosed;
+
+  /// No description provided for @dayEndBeforeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'The end time must be after the start time'**
+  String get dayEndBeforeStart;
+
+  /// No description provided for @dayShiftsOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Shifts on this day overlap'**
+  String get dayShiftsOverlap;
+
+  /// No description provided for @dayOutsideClinicHours.
+  ///
+  /// In en, this message translates to:
+  /// **'These hours fall outside the clinic hours'**
+  String get dayOutsideClinicHours;
+
+  /// No description provided for @workingHoursInvalidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the working hours'**
+  String get workingHoursInvalidTitle;
+
+  /// No description provided for @workingHoursSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours could not be saved'**
+  String get workingHoursSaveFailed;
+
+  /// No description provided for @workingHoursReadOnlyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your working hours are set by your clinic administrator.'**
+  String get workingHoursReadOnlyNote;
 }
 
 class _AppLocalizationsDelegate

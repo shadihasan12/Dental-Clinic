@@ -78,40 +78,39 @@ class _$ClinicInfoEntityCopyWithImpl<$Res, $Val extends ClinicInfoEntity>
   }) {
     return _then(
       _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            locationId: null == locationId
-                ? _value.locationId
-                : locationId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            locationName: null == locationName
-                ? _value.locationName
-                : locationName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            locationFullName: null == locationFullName
-                ? _value.locationFullName
-                : locationFullName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            address: null == address
-                ? _value.address
-                : address // ignore: cast_nullable_to_non_nullable
-                      as String,
-            workingDays: null == workingDays
-                ? _value.workingDays
-                : workingDays // ignore: cast_nullable_to_non_nullable
-                      as List<WorkingDayEntity>,
-            holidays: null == holidays
-                ? _value.holidays
-                : holidays // ignore: cast_nullable_to_non_nullable
-                      as List<HolidayEntity>,
-          )
-          as $Val,
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                as String,
+        locationId: null == locationId
+            ? _value.locationId
+            : locationId // ignore: cast_nullable_to_non_nullable
+                as String,
+        locationName: null == locationName
+            ? _value.locationName
+            : locationName // ignore: cast_nullable_to_non_nullable
+                as String,
+        locationFullName: null == locationFullName
+            ? _value.locationFullName
+            : locationFullName // ignore: cast_nullable_to_non_nullable
+                as String,
+        address: null == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                as String,
+        workingDays: null == workingDays
+            ? _value.workingDays
+            : workingDays // ignore: cast_nullable_to_non_nullable
+                as List<WorkingDayEntity>,
+        holidays: null == holidays
+            ? _value.holidays
+            : holidays // ignore: cast_nullable_to_non_nullable
+                as List<HolidayEntity>,
+      ) as $Val,
     );
   }
 }
@@ -165,35 +164,35 @@ class __$$ClinicInfoEntityImplCopyWithImpl<$Res>
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         locationId: null == locationId
             ? _value.locationId
             : locationId // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         locationName: null == locationName
             ? _value.locationName
             : locationName // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         locationFullName: null == locationFullName
             ? _value.locationFullName
             : locationFullName // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         address: null == address
             ? _value.address
             : address // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         workingDays: null == workingDays
             ? _value._workingDays
             : workingDays // ignore: cast_nullable_to_non_nullable
-                  as List<WorkingDayEntity>,
+                as List<WorkingDayEntity>,
         holidays: null == holidays
             ? _value._holidays
             : holidays // ignore: cast_nullable_to_non_nullable
-                  as List<HolidayEntity>,
+                as List<HolidayEntity>,
       ),
     );
   }
@@ -211,8 +210,8 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
     this.address = '',
     required final List<WorkingDayEntity> workingDays,
     final List<HolidayEntity> holidays = const [],
-  }) : _workingDays = workingDays,
-       _holidays = holidays;
+  })  : _workingDays = workingDays,
+        _holidays = holidays;
 
   @override
   final String id;
@@ -275,16 +274,16 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    name,
-    locationId,
-    locationName,
-    locationFullName,
-    address,
-    const DeepCollectionEquality().hash(_workingDays),
-    const DeepCollectionEquality().hash(_holidays),
-  );
+        runtimeType,
+        id,
+        name,
+        locationId,
+        locationName,
+        locationFullName,
+        address,
+        const DeepCollectionEquality().hash(_workingDays),
+        const DeepCollectionEquality().hash(_holidays),
+      );
 
   /// Create a copy of ClinicInfoEntity
   /// with the given fields replaced by the non-null parameter values.

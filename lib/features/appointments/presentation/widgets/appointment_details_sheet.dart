@@ -78,7 +78,12 @@ class AppointmentDetailsSheet extends StatelessWidget {
                 statusColor: statusColor,
                 statusLabel:
                     AppointmentStatusStyles.label(context, appointment.status),
-                onStatusTap: () => _openStatusPicker(context, appointment),
+                // A final status has nothing to offer, so the pill drops its
+                // pencil and stops responding rather than opening a picker
+                // whose every row would be refused.
+                onStatusTap: appointment.status.isFinal
+                    ? null
+                    : () => _openStatusPicker(context, appointment),
               ),
               SizedBox(height: 10.h),
               AddedByLabel(
@@ -227,7 +232,9 @@ class _Header extends StatelessWidget {
   final AppointmentEntity appointment;
   final Color statusColor;
   final String statusLabel;
-  final VoidCallback onStatusTap;
+
+  /// Null when the status cannot be changed from here.
+  final VoidCallback? onStatusTap;
 
   const _Header({
     required this.appointment,
@@ -311,12 +318,14 @@ class _Header extends StatelessWidget {
                     color: statusColor,
                   ),
                 ),
-                SizedBox(width: 4.w),
-                Icon(
-                  Icons.edit_outlined,
-                  size: 12.w,
-                  color: statusColor,
-                ),
+                if (onStatusTap != null) ...[
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 12.w,
+                    color: statusColor,
+                  ),
+                ],
               ],
             ),
           ),
@@ -568,6 +577,14 @@ class _StatusPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
+    // The current status leads, greyed as the selected row, so the sheet still
+    // says where the appointment stands before it lists where it can go.
+    final options = <AppointmentStatus>[
+      current,
+      ...AppointmentStatusStyles.all.where(current.canMoveTo),
+    ];
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: systemBottomInset(context),
@@ -605,13 +622,16 @@ class _StatusPickerSheet extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Divider(height: 1, color: ColorManager.of(context).borderLight),
-            for (var i = 0; i < AppointmentStatusStyles.all.length; i++) ...[
+            // Only the moves the workflow permits. Listing the rest and
+            // letting the server refuse them is how a routine correction
+            // turned into an unexplained failure.
+            for (var i = 0; i < options.length; i++) ...[
               _StatusRow(
-                status: AppointmentStatusStyles.all[i],
-                selected: AppointmentStatusStyles.all[i] == current,
-                onTap: () => onSelected(AppointmentStatusStyles.all[i]),
+                status: options[i],
+                selected: options[i] == current,
+                onTap: () => onSelected(options[i]),
               ),
-              if (i < AppointmentStatusStyles.all.length - 1)
+              if (i < options.length - 1)
                 Divider(
                   height: 1,
                   indent: 16.w,

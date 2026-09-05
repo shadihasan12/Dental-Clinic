@@ -290,11 +290,11 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
 
   void _onSave() {
     context.read<WorkingDaysBloc>().add(
-      WorkingDaysEvent.saveAll(
-        workingDays: _buildWorkingDaysPayload(),
-        holidays: _buildHolidaysPayload(),
-      ),
-    );
+          WorkingDaysEvent.saveAll(
+            workingDays: _buildWorkingDaysPayload(),
+            holidays: _buildHolidaysPayload(),
+          ),
+        );
   }
 
   Future<void> _refresh(BuildContext context) async {
@@ -355,9 +355,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         final c = ColorManager.of(context);
         return Scaffold(
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: _workingDays.isNotEmpty
-              ? _buildSaveButton(l10n)
-              : null,
+          bottomNavigationBar:
+              _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
           body: Column(
             children: [
               PageHeader(
@@ -381,8 +380,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                         message: message,
                         actionLabel: l10n.retry,
                         onAction: () => context.read<WorkingDaysBloc>().add(
-                          const WorkingDaysEvent.load(),
-                        ),
+                              const WorkingDaysEvent.load(),
+                            ),
                       ),
                     ),
                   ),
@@ -463,9 +462,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         ),
         SizedBox(height: 8.h),
         ..._workingDays.asMap().entries.map(
-          (e) =>
-              _buildDayRow(e.value, isLast: e.key == _workingDays.length - 1),
-        ),
+              (e) => _buildDayRow(e.value,
+                  isLast: e.key == _workingDays.length - 1),
+            ),
       ],
     );
   }
@@ -489,7 +488,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
             behavior: HitTestBehavior.opaque,
             onTap: day.enabled
                 ? () =>
-                      setState(() => _expandedDay = isExpanded ? null : day.id)
+                    setState(() => _expandedDay = isExpanded ? null : day.id)
                 : null,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -707,19 +706,19 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           ] else ...[
             SizedBox(height: 8.h),
             ..._holidays.asMap().entries.map(
-              (e) => HolidayItem(
-                holiday: e.value,
-                isLast: e.key == _holidays.length - 1,
-                onEdit: () => showAddHolidaySheet(
-                  context,
-                  existing: e.value,
-                  index: e.key,
-                  onSave: (entry, idx) =>
-                      setState(() => _holidays[idx!] = entry),
+                  (e) => HolidayItem(
+                    holiday: e.value,
+                    isLast: e.key == _holidays.length - 1,
+                    onEdit: () => showAddHolidaySheet(
+                      context,
+                      existing: e.value,
+                      index: e.key,
+                      onSave: (entry, idx) =>
+                          setState(() => _holidays[idx!] = entry),
+                    ),
+                    onDelete: () => setState(() => _holidays.removeAt(e.key)),
+                  ),
                 ),
-                onDelete: () => setState(() => _holidays.removeAt(e.key)),
-              ),
-            ),
           ],
         ],
       ),
@@ -803,13 +802,13 @@ class _WorkingDaysSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: c.borderLight),
-      ),
-    );
+          height: height,
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: c.borderLight),
+          ),
+        );
 
     return AppShimmer(
       child: ListView(

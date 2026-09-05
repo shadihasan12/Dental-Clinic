@@ -12,6 +12,8 @@ import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/use_cases/get_my_clinics_use_case.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
@@ -31,6 +33,30 @@ class _MenuPageState extends State<MenuPage> {
   void initState() {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
+    _refreshClinicOwnership();
+  }
+
+  /// Ownership is cached at login and at every clinic switch, but an install
+  /// that predates the flag - or a transfer of ownership done elsewhere -
+  /// would otherwise keep a stale answer until the next login. The menu is
+  /// the only place the flag is read, so it refreshes it on the way in.
+  Future<void> _refreshClinicOwnership() async {
+    final result = await getIt<GetMyClinicsUseCase>()();
+    final clinics = result.getOrElse(() => const []);
+    if (clinics.isEmpty) return;
+
+    final activeId = getIt<UserStorage>().getSelectedClinicId();
+    ClinicMembershipEntity active = clinics.first;
+    for (final c in clinics) {
+      if (c.clinicId == activeId) {
+        active = c;
+        break;
+      }
+    }
+    if (active.isOwner == getIt<UserStorage>().isClinicOwner) return;
+
+    await getIt<UserStorage>().saveIsClinicOwner(active.isOwner);
+    if (mounted) setState(() {});
   }
 
   @override
@@ -92,7 +118,8 @@ class _MenuPageState extends State<MenuPage> {
                     _buildAccountItems(
                       context,
                       l10n,
-                      isAdmin: getIt<UserStorage>().isAdmin,
+                      isAdmin: userStorage.isAdmin,
+                      isOwner: userStorage.isClinicOwner,
                     ),
                   ),
                   SizedBox(height: 18.h),
@@ -200,6 +227,7 @@ class _MenuPageState extends State<MenuPage> {
     BuildContext context,
     AppLocalizations l10n, {
     required bool isAdmin,
+    required bool isOwner,
   }) {
     return [
       MenuItem(
@@ -244,11 +272,15 @@ class _MenuPageState extends State<MenuPage> {
         title: l10n.analytics,
         onTap: () => context.pushNamed(AppRoutesNames.statistics),
       ),
-      MenuItem(
-        icon: Icons.receipt_long_outlined,
-        title: l10n.billingAndInvoices,
-        onTap: () => context.pushNamed(AppRoutesNames.billing),
-      ),
+      // Invoices and the subscription belong to whoever owns the clinic and
+      // pays for it - an admin who merely works here has no business seeing
+      // them, so this is gated on ownership rather than on the admin role.
+      if (isOwner)
+        MenuItem(
+          icon: Icons.receipt_long_outlined,
+          title: l10n.billingAndInvoices,
+          onTap: () => context.pushNamed(AppRoutesNames.billing),
+        ),
       MenuItem(
         icon: Icons.notifications_outlined,
         title: l10n.notifications,

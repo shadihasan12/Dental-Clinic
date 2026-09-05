@@ -8,7 +8,6 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
-import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
@@ -22,8 +21,11 @@ import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_sub
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -42,7 +44,17 @@ class _HomePageState extends State<HomePage> {
   bool _isSubscriptionCardHidden = false;
 
   List<AppointmentEntity> _todayAppointments = const [];
+
+  /// True only until the first load resolves. Drives the skeleton, so a
+  /// background revalidation never blanks a schedule that is already on
+  /// screen - the whole point of refetching more often is that the user
+  /// stops noticing it happen.
   bool _scheduleLoading = true;
+
+  /// A refetch is in flight over data that is already displayed. Used to
+  /// avoid stacking duplicate requests, not to show a spinner.
+  bool _scheduleInFlight = false;
+
   String? _scheduleError;
 
   static const int _maxScheduleRows = 5;
@@ -59,7 +71,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
-    NewAppointmentPage.created.addListener(_onAppointmentCreated);
+    // Anything that creates an appointment or edits its status raises this,
+    // wherever in the app it happened.
+    UserStorage.appointmentsChangedNotifier.addListener(_refreshSchedule);
+    // Plus a refresh on returning to the Home tab, which also catches edits
+    // made through paths that do not raise the signal.
+    RootPage.selectedTab.addListener(_onTabChanged);
     _loadSubscription();
     _loadTodaysSchedule();
 
@@ -70,7 +87,13 @@ class _HomePageState extends State<HomePage> {
     unawaited(getIt<NotificationService>().syncTokenIfNeeded());
   }
 
-  void _onAppointmentCreated() {
+  void _onTabChanged() {
+    if (RootPage.selectedTab.value != 0) return;
+    _refreshSchedule();
+  }
+
+  /// Revalidate without disturbing what is on screen.
+  void _refreshSchedule() {
     if (!mounted) return;
     _loadTodaysSchedule();
   }
@@ -78,7 +101,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     UserStorage.profileUpdateNotifier.removeListener(_onProfileUpdated);
-    NewAppointmentPage.created.removeListener(_onAppointmentCreated);
+    UserStorage.appointmentsChangedNotifier.removeListener(_refreshSchedule);
+    RootPage.selectedTab.removeListener(_onTabChanged);
     super.dispose();
   }
 
@@ -99,18 +123,36 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Fetches today's appointments and swaps them in only once they arrive.
+  ///
+  /// The list on screen is never cleared first, so a refetch triggered by a
+  /// status change or by returning to the tab is invisible when it succeeds
+  /// and harmless when it fails - the user keeps the last good schedule
+  /// either way. Only the very first load, when there is genuinely nothing
+  /// to show, surfaces the skeleton or the error card.
   Future<void> _loadTodaysSchedule() async {
+    if (_scheduleInFlight) return;
+    _scheduleInFlight = true;
+
     final today = DateTime.now();
     final result = await getIt<GetAllAppointmentsUseCase>()(
       GetAppointmentsParams.day(today),
     );
-    if (!mounted) return;
+
+    if (!mounted) {
+      _scheduleInFlight = false;
+      return;
+    }
 
     setState(() {
       result.fold(
         (e) {
-          _scheduleError = NetworkExceptions.getErrorMessage(e);
-          _todayAppointments = const [];
+          // A failed revalidation keeps the data already displayed; only a
+          // failed first load has nothing better to offer than the error.
+          if (_scheduleLoading) {
+            _scheduleError = NetworkExceptions.getErrorMessage(e);
+            _todayAppointments = const [];
+          }
         },
         (list) {
           final sorted = [...list]
@@ -121,6 +163,8 @@ class _HomePageState extends State<HomePage> {
       );
       _scheduleLoading = false;
     });
+
+    _scheduleInFlight = false;
   }
 
   void _hideSubscriptionCard() =>
@@ -190,13 +234,25 @@ class _HomePageState extends State<HomePage> {
 
               _SectionHeading(title: l10n.quickActions),
               SizedBox(height: 10.h),
-              QuickActions(
-                onAddPatient: _openAddPatient,
-                onScheduleVisit: _openNewAppointment,
-                onNewCase: () {},
-                onRecordPayment: () {
-                  RootPage.selectedTab.value = 3;
-                  ExpensesPage.openAddExpenseRequest.value++;
+              // Recording a payment lands on the expenses tab, so it is shown
+              // on the same terms the tab itself is: a secretary has neither.
+              BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
+                bloc: getIt<ClinicPermissionsBloc>(),
+                builder: (context, permissionsState) {
+                  final canRecordPayment = visibleRootTabs(
+                    permissionsState,
+                  ).contains(RootTab.expenses);
+                  return QuickActions(
+                    onAddPatient: _openAddPatient,
+                    onScheduleVisit: _openNewAppointment,
+                    onNewCase: () {},
+                    onRecordPayment: canRecordPayment
+                        ? () {
+                            RootPage.selectedTab.value = RootTab.expenses.index;
+                            ExpensesPage.openAddExpenseRequest.value++;
+                          }
+                        : null,
+                  );
                 },
               ),
 

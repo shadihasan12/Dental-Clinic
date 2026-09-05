@@ -1,37 +1,20 @@
-/// Endpoints backing the Report an Issue screen.
+/// Endpoints backing the Report an Issue screen (the tickets API).
 ///
-/// The backend for this feature is still being built, so the paths are
-/// intentionally blank. Fill both in once they exist — nothing else in the
-/// feature needs to change, because [IssueRemoteDataSource] already shapes
-/// the request and response around the contract documented below.
-///
-/// Expected contract:
-///
-/// `GET <issues>` → the caller's own reports, newest first.
-/// ```json
-/// { "data": [
-///     { "id": "…", "title": "…", "description": "…",
-///       "status": "pending" | "in_progress" | "done",
-///       "created_at": "2026-08-22T14:03:00Z" }
-/// ] }
-/// ```
-///
-/// `POST <issues>` → creates one. Body `{ "title": "…", "description": "…" }`.
-/// Responds with the created record in the same shape, under `data`.
-/// The server owns `status`; a new report is expected back as `pending`.
+/// `Authorization`, `Accept-Language` and `X-Selected-Clinic-id` are all
+/// attached by [AuthInterceptor] on every request, so nothing here has to
+/// pass them by hand. The clinic header is *required* on create and merely
+/// ignored on the reads, which is why sending it everywhere is safe.
 class IssueEndpoints {
   IssueEndpoints._();
 
-  /// GET - list the current user's reports.
-  // TODO(backend): set to the real path, e.g. '/support/issues'.
-  static const String issues = '';
+  /// GET - the caller's own reports, paginated, `updated_at` descending.
+  /// POST - files a new one.
+  static const String tickets = '/tickets';
 
-  /// POST - create a report. Same path as the list in a REST design; kept
-  /// separate so a different create route needs no code change.
-  // TODO(backend): set to the real path, e.g. '/support/issues'.
-  static const String createIssue = '';
+  /// GET - `{value, label}` pairs for the category dropdown. Labels arrive
+  /// already translated to `Accept-Language`.
+  static const String categories = '/tickets/categories';
 
-  /// Guard used by the data source so a blank path fails loudly and early
-  /// instead of firing a request at the API root.
-  static bool get isConfigured => issues.isNotEmpty && createIssue.isNotEmpty;
+  /// GET - `{value, label}` pairs used to label a report's status.
+  static const String statuses = '/tickets/statuses';
 }

@@ -32,10 +32,10 @@ class UserWorkingDayApiModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'clinic_working_day_id': clinicWorkingDayId,
-    'day_of_week': dayOfWeek,
-    'is_working': isWorking,
-    'is_full_time': isFullTime,
-    'ranges': ranges.map((r) => r.toJson()).toList(),
-  };
+        'clinic_working_day_id': clinicWorkingDayId,
+        'day_of_week': dayOfWeek,
+        'is_working': isWorking,
+        'is_full_time': isFullTime,
+        'ranges': ranges.map((r) => r.toJson()).toList(),
+      };
 }

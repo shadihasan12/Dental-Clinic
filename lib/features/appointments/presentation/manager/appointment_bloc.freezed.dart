@@ -27,6 +27,7 @@ mixin _$AppointmentEvent {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -38,6 +39,7 @@ mixin _$AppointmentEvent {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -49,6 +51,7 @@ mixin _$AppointmentEvent {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -61,6 +64,7 @@ mixin _$AppointmentEvent {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -71,6 +75,7 @@ mixin _$AppointmentEvent {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -81,6 +86,7 @@ mixin _$AppointmentEvent {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -158,6 +164,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return loadAppointments();
   }
@@ -173,6 +180,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return loadAppointments?.call();
   }
@@ -188,6 +196,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (loadAppointments != null) {
@@ -207,6 +216,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return loadAppointments(this);
   }
@@ -221,6 +231,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return loadAppointments?.call(this);
   }
@@ -235,6 +246,7 @@ class _$LoadAppointmentsImpl implements _LoadAppointments {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (loadAppointments != null) {
@@ -329,6 +341,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return changeViewMode(mode);
   }
@@ -344,6 +357,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return changeViewMode?.call(mode);
   }
@@ -359,6 +373,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (changeViewMode != null) {
@@ -378,6 +393,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return changeViewMode(this);
   }
@@ -392,6 +408,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return changeViewMode?.call(this);
   }
@@ -406,6 +423,7 @@ class _$ChangeViewModeImpl implements _ChangeViewMode {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (changeViewMode != null) {
@@ -506,6 +524,7 @@ class _$SelectDateImpl implements _SelectDate {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return selectDate(date);
   }
@@ -521,6 +540,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return selectDate?.call(date);
   }
@@ -536,6 +556,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (selectDate != null) {
@@ -555,6 +576,7 @@ class _$SelectDateImpl implements _SelectDate {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return selectDate(this);
   }
@@ -569,6 +591,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return selectDate?.call(this);
   }
@@ -583,6 +606,7 @@ class _$SelectDateImpl implements _SelectDate {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (selectDate != null) {
@@ -655,6 +679,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return filterAppointments();
   }
@@ -670,6 +695,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return filterAppointments?.call();
   }
@@ -685,6 +711,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (filterAppointments != null) {
@@ -704,6 +731,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return filterAppointments(this);
   }
@@ -718,6 +746,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return filterAppointments?.call(this);
   }
@@ -732,6 +761,7 @@ class _$FilterAppointmentsImpl implements _FilterAppointments {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (filterAppointments != null) {
@@ -826,6 +856,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return createAppointment(params);
   }
@@ -841,6 +872,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return createAppointment?.call(params);
   }
@@ -856,6 +888,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (createAppointment != null) {
@@ -875,6 +908,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return createAppointment(this);
   }
@@ -889,6 +923,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return createAppointment?.call(this);
   }
@@ -903,6 +938,7 @@ class _$CreateAppointmentImpl implements _CreateAppointment {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (createAppointment != null) {
@@ -1014,6 +1050,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return updateAppointmentStatus(appointmentId, status);
   }
@@ -1029,6 +1066,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return updateAppointmentStatus?.call(appointmentId, status);
   }
@@ -1044,6 +1082,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (updateAppointmentStatus != null) {
@@ -1063,6 +1102,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return updateAppointmentStatus(this);
   }
@@ -1077,6 +1117,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return updateAppointmentStatus?.call(this);
   }
@@ -1091,6 +1132,7 @@ class _$UpdateAppointmentStatusImpl implements _UpdateAppointmentStatus {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (updateAppointmentStatus != null) {
@@ -1198,6 +1240,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     required TResult Function(String appointmentId, AppointmentStatus status)
     updateAppointmentStatus,
     required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
   }) {
     return cancelAppointment(appointmentId);
   }
@@ -1213,6 +1256,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult? Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
   }) {
     return cancelAppointment?.call(appointmentId);
   }
@@ -1228,6 +1272,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult Function(String appointmentId, AppointmentStatus status)?
     updateAppointmentStatus,
     TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
     required TResult orElse(),
   }) {
     if (cancelAppointment != null) {
@@ -1247,6 +1292,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     required TResult Function(_UpdateAppointmentStatus value)
     updateAppointmentStatus,
     required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
   }) {
     return cancelAppointment(this);
   }
@@ -1261,6 +1307,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult? Function(_CreateAppointment value)? createAppointment,
     TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
   }) {
     return cancelAppointment?.call(this);
   }
@@ -1275,6 +1322,7 @@ class _$CancelAppointmentImpl implements _CancelAppointment {
     TResult Function(_CreateAppointment value)? createAppointment,
     TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
     TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
     required TResult orElse(),
   }) {
     if (cancelAppointment != null) {
@@ -1298,6 +1346,153 @@ abstract class _CancelAppointment implements AppointmentEvent {
 }
 
 /// @nodoc
+abstract class _$$ClearActionErrorImplCopyWith<$Res> {
+  factory _$$ClearActionErrorImplCopyWith(
+    _$ClearActionErrorImpl value,
+    $Res Function(_$ClearActionErrorImpl) then,
+  ) = __$$ClearActionErrorImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ClearActionErrorImplCopyWithImpl<$Res>
+    extends _$AppointmentEventCopyWithImpl<$Res, _$ClearActionErrorImpl>
+    implements _$$ClearActionErrorImplCopyWith<$Res> {
+  __$$ClearActionErrorImplCopyWithImpl(
+    _$ClearActionErrorImpl _value,
+    $Res Function(_$ClearActionErrorImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AppointmentEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$ClearActionErrorImpl implements _ClearActionError {
+  const _$ClearActionErrorImpl();
+
+  @override
+  String toString() {
+    return 'AppointmentEvent.clearActionError()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ClearActionErrorImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadAppointments,
+    required TResult Function(AppointmentViewMode mode) changeViewMode,
+    required TResult Function(DateTime date) selectDate,
+    required TResult Function() filterAppointments,
+    required TResult Function(CreateAppointmentParams params) createAppointment,
+    required TResult Function(String appointmentId, AppointmentStatus status)
+    updateAppointmentStatus,
+    required TResult Function(String appointmentId) cancelAppointment,
+    required TResult Function() clearActionError,
+  }) {
+    return clearActionError();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadAppointments,
+    TResult? Function(AppointmentViewMode mode)? changeViewMode,
+    TResult? Function(DateTime date)? selectDate,
+    TResult? Function()? filterAppointments,
+    TResult? Function(CreateAppointmentParams params)? createAppointment,
+    TResult? Function(String appointmentId, AppointmentStatus status)?
+    updateAppointmentStatus,
+    TResult? Function(String appointmentId)? cancelAppointment,
+    TResult? Function()? clearActionError,
+  }) {
+    return clearActionError?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadAppointments,
+    TResult Function(AppointmentViewMode mode)? changeViewMode,
+    TResult Function(DateTime date)? selectDate,
+    TResult Function()? filterAppointments,
+    TResult Function(CreateAppointmentParams params)? createAppointment,
+    TResult Function(String appointmentId, AppointmentStatus status)?
+    updateAppointmentStatus,
+    TResult Function(String appointmentId)? cancelAppointment,
+    TResult Function()? clearActionError,
+    required TResult orElse(),
+  }) {
+    if (clearActionError != null) {
+      return clearActionError();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadAppointments value) loadAppointments,
+    required TResult Function(_ChangeViewMode value) changeViewMode,
+    required TResult Function(_SelectDate value) selectDate,
+    required TResult Function(_FilterAppointments value) filterAppointments,
+    required TResult Function(_CreateAppointment value) createAppointment,
+    required TResult Function(_UpdateAppointmentStatus value)
+    updateAppointmentStatus,
+    required TResult Function(_CancelAppointment value) cancelAppointment,
+    required TResult Function(_ClearActionError value) clearActionError,
+  }) {
+    return clearActionError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadAppointments value)? loadAppointments,
+    TResult? Function(_ChangeViewMode value)? changeViewMode,
+    TResult? Function(_SelectDate value)? selectDate,
+    TResult? Function(_FilterAppointments value)? filterAppointments,
+    TResult? Function(_CreateAppointment value)? createAppointment,
+    TResult? Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
+    TResult? Function(_CancelAppointment value)? cancelAppointment,
+    TResult? Function(_ClearActionError value)? clearActionError,
+  }) {
+    return clearActionError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadAppointments value)? loadAppointments,
+    TResult Function(_ChangeViewMode value)? changeViewMode,
+    TResult Function(_SelectDate value)? selectDate,
+    TResult Function(_FilterAppointments value)? filterAppointments,
+    TResult Function(_CreateAppointment value)? createAppointment,
+    TResult Function(_UpdateAppointmentStatus value)? updateAppointmentStatus,
+    TResult Function(_CancelAppointment value)? cancelAppointment,
+    TResult Function(_ClearActionError value)? clearActionError,
+    required TResult orElse(),
+  }) {
+    if (clearActionError != null) {
+      return clearActionError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ClearActionError implements AppointmentEvent {
+  const factory _ClearActionError() = _$ClearActionErrorImpl;
+}
+
+/// @nodoc
 mixin _$AppointmentState {
   List<AppointmentEntity> get appointments =>
       throw _privateConstructorUsedError;
@@ -1308,7 +1503,15 @@ mixin _$AppointmentState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isCreating => throw _privateConstructorUsedError;
   bool get isUpdating => throw _privateConstructorUsedError;
+
+  /// A failed *load*. The page renders this in place of the list.
   String? get error => throw _privateConstructorUsedError;
+
+  /// A failed status change or cancellation. Kept apart from [error]
+  /// because the list on screen is still valid and still worth showing -
+  /// folding the two together replaced the whole day with a "couldn't load
+  /// appointments" card whenever a status was rejected.
+  String? get actionError => throw _privateConstructorUsedError;
 
   /// Create a copy of AppointmentState
   /// with the given fields replaced by the non-null parameter values.
@@ -1333,6 +1536,7 @@ abstract class $AppointmentStateCopyWith<$Res> {
     bool isCreating,
     bool isUpdating,
     String? error,
+    String? actionError,
   });
 }
 
@@ -1359,6 +1563,7 @@ class _$AppointmentStateCopyWithImpl<$Res, $Val extends AppointmentState>
     Object? isCreating = null,
     Object? isUpdating = null,
     Object? error = freezed,
+    Object? actionError = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1394,6 +1599,10 @@ class _$AppointmentStateCopyWithImpl<$Res, $Val extends AppointmentState>
                 ? _value.error
                 : error // ignore: cast_nullable_to_non_nullable
                       as String?,
+            actionError: freezed == actionError
+                ? _value.actionError
+                : actionError // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -1418,6 +1627,7 @@ abstract class _$$AppointmentStateImplCopyWith<$Res>
     bool isCreating,
     bool isUpdating,
     String? error,
+    String? actionError,
   });
 }
 
@@ -1443,6 +1653,7 @@ class __$$AppointmentStateImplCopyWithImpl<$Res>
     Object? isCreating = null,
     Object? isUpdating = null,
     Object? error = freezed,
+    Object? actionError = freezed,
   }) {
     return _then(
       _$AppointmentStateImpl(
@@ -1478,6 +1689,10 @@ class __$$AppointmentStateImplCopyWithImpl<$Res>
             ? _value.error
             : error // ignore: cast_nullable_to_non_nullable
                   as String?,
+        actionError: freezed == actionError
+            ? _value.actionError
+            : actionError // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -1495,6 +1710,7 @@ class _$AppointmentStateImpl extends _AppointmentState {
     this.isCreating = false,
     this.isUpdating = false,
     this.error,
+    this.actionError,
   }) : _appointments = appointments,
        _filteredAppointments = filteredAppointments,
        super._();
@@ -1532,12 +1748,21 @@ class _$AppointmentStateImpl extends _AppointmentState {
   @override
   @JsonKey()
   final bool isUpdating;
+
+  /// A failed *load*. The page renders this in place of the list.
   @override
   final String? error;
 
+  /// A failed status change or cancellation. Kept apart from [error]
+  /// because the list on screen is still valid and still worth showing -
+  /// folding the two together replaced the whole day with a "couldn't load
+  /// appointments" card whenever a status was rejected.
+  @override
+  final String? actionError;
+
   @override
   String toString() {
-    return 'AppointmentState(appointments: $appointments, filteredAppointments: $filteredAppointments, viewMode: $viewMode, selectedDate: $selectedDate, isLoading: $isLoading, isCreating: $isCreating, isUpdating: $isUpdating, error: $error)';
+    return 'AppointmentState(appointments: $appointments, filteredAppointments: $filteredAppointments, viewMode: $viewMode, selectedDate: $selectedDate, isLoading: $isLoading, isCreating: $isCreating, isUpdating: $isUpdating, error: $error, actionError: $actionError)';
   }
 
   @override
@@ -1563,7 +1788,9 @@ class _$AppointmentStateImpl extends _AppointmentState {
                 other.isCreating == isCreating) &&
             (identical(other.isUpdating, isUpdating) ||
                 other.isUpdating == isUpdating) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.actionError, actionError) ||
+                other.actionError == actionError));
   }
 
   @override
@@ -1577,6 +1804,7 @@ class _$AppointmentStateImpl extends _AppointmentState {
     isCreating,
     isUpdating,
     error,
+    actionError,
   );
 
   /// Create a copy of AppointmentState
@@ -1601,6 +1829,7 @@ abstract class _AppointmentState extends AppointmentState {
     final bool isCreating,
     final bool isUpdating,
     final String? error,
+    final String? actionError,
   }) = _$AppointmentStateImpl;
   const _AppointmentState._() : super._();
 
@@ -1618,8 +1847,17 @@ abstract class _AppointmentState extends AppointmentState {
   bool get isCreating;
   @override
   bool get isUpdating;
+
+  /// A failed *load*. The page renders this in place of the list.
   @override
   String? get error;
+
+  /// A failed status change or cancellation. Kept apart from [error]
+  /// because the list on screen is still valid and still worth showing -
+  /// folding the two together replaced the whole day with a "couldn't load
+  /// appointments" card whenever a status was rejected.
+  @override
+  String? get actionError;
 
   /// Create a copy of AppointmentState
   /// with the given fields replaced by the non-null parameter values.

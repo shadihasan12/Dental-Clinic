@@ -25,4 +25,8 @@ class AppointmentEvent with _$AppointmentEvent {
 
   /// Cancel an appointment
   const factory AppointmentEvent.cancelAppointment(String appointmentId) = _CancelAppointment;
+
+  /// Drops [AppointmentState.actionError] once it has been shown, so the same
+  /// failure cannot be raised twice by a later rebuild.
+  const factory AppointmentEvent.clearActionError() = _ClearActionError;
 }

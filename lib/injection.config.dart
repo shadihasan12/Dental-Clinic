@@ -218,6 +218,10 @@ import 'features/profile/presentation/pages/issues/domain/repositories/issue_rep
     as _i426;
 import 'features/profile/presentation/pages/issues/domain/use_cases/create_issue_use_case.dart'
     as _i839;
+import 'features/profile/presentation/pages/issues/domain/use_cases/get_issue_categories_use_case.dart'
+    as _i671;
+import 'features/profile/presentation/pages/issues/domain/use_cases/get_issue_statuses_use_case.dart'
+    as _i666;
 import 'features/profile/presentation/pages/issues/domain/use_cases/get_issues_use_case.dart'
     as _i239;
 import 'features/profile/presentation/pages/issues/presentation/manager/issues_bloc.dart'
@@ -472,9 +476,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i239.GetIssuesUseCase>(
       () => _i239.GetIssuesUseCase(gh<_i426.IssueRepository>()),
     );
+    gh.factory<_i671.GetIssueCategoriesUseCase>(
+      () => _i671.GetIssueCategoriesUseCase(gh<_i426.IssueRepository>()),
+    );
+    gh.factory<_i666.GetIssueStatusesUseCase>(
+      () => _i666.GetIssueStatusesUseCase(gh<_i426.IssueRepository>()),
+    );
     gh.factory<_i900.SubscriptionRepository>(
       () => _i155.SubscriptionRepositoryImpl(
         gh<_i151.SubscriptionRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i732.IssuesBloc>(
+      () => _i732.IssuesBloc(
+        getIssues: gh<_i239.GetIssuesUseCase>(),
+        createIssue: gh<_i839.CreateIssueUseCase>(),
+        getCategories: gh<_i671.GetIssueCategoriesUseCase>(),
+        getStatuses: gh<_i666.GetIssueStatusesUseCase>(),
       ),
     );
     gh.lazySingleton<_i46.CurrencyBloc>(
@@ -549,6 +567,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i315.UpdateExpenseUseCase>(
       () => _i315.UpdateExpenseUseCase(gh<_i18.ExpenseRepository>()),
     );
+    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
+      (userId, _) => _i13.UserHoursBloc(
+        gh<_i971.WorkingDaysRepository>(),
+        gh<_i663.UserStorage>(),
+        gh<_i23.TokenStorage>(),
+        userId: userId,
+      ),
+    );
     gh.factory<_i166.AddClinicUserUseCase>(
       () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
     );
@@ -578,12 +604,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i972.UpdateUserRolesUseCase>(
       () => _i972.UpdateUserRolesUseCase(gh<_i818.ClinicRepository>()),
-    );
-    gh.factory<_i732.IssuesBloc>(
-      () => _i732.IssuesBloc(
-        getIssues: gh<_i239.GetIssuesUseCase>(),
-        createIssue: gh<_i839.CreateIssueUseCase>(),
-      ),
     );
     gh.factory<_i25.StatisticsDashboardBloc>(
       () =>
@@ -683,13 +703,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1011.SubscriptionBloc(
         getPlans: gh<_i779.GetPlansUseCase>(),
         guard: gh<_i821.SubscriptionGuard>(),
-      ),
-    );
-    gh.factoryParam<_i13.UserHoursBloc, String, dynamic>(
-      (userId, _) => _i13.UserHoursBloc(
-        gh<_i971.WorkingDaysRepository>(),
-        gh<_i663.UserStorage>(),
-        userId: userId,
       ),
     );
     gh.factory<_i890.EditProfileBloc>(

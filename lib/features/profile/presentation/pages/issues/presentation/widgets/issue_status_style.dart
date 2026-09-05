@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 /// Colour, icon and label for a report's status, in one place so the
 /// leading strip, the icon tile and the pill can never drift apart.
 ///
-/// Hues follow the house rule — planned is the brand blue, in progress is
-/// orange, done is green.
+/// The label is the server's — it arrives already translated with the
+/// statuses list — and the local strings are only the fallback for a list
+/// that has not loaded yet. Colour and icon stay client-side; the API has no
+/// opinion on those.
 class IssueStatusStyle {
   const IssueStatusStyle({
     required this.color,
@@ -19,26 +21,51 @@ class IssueStatusStyle {
   final IconData icon;
   final String label;
 
-  factory IssueStatusStyle.of(BuildContext context, IssueStatus status) {
+  /// [serverLabel] is what `GET /tickets/statuses` called this value. For a
+  /// status this build has never heard of it is the raw wire value, which is
+  /// still better than an empty pill.
+  factory IssueStatusStyle.of(
+    BuildContext context,
+    IssueStatus status, {
+    String? serverLabel,
+  }) {
     final l10n = AppLocalizations.of(context)!;
+    final label = (serverLabel != null && serverLabel.isNotEmpty)
+        ? serverLabel
+        : null;
+
     switch (status) {
-      case IssueStatus.pending:
+      case IssueStatus.open:
         return IssueStatusStyle(
           color: ColorManager.primary,
           icon: Icons.schedule_rounded,
-          label: l10n.issueStatusPending,
+          label: label ?? l10n.issueStatusOpen,
         );
       case IssueStatus.inProgress:
         return IssueStatusStyle(
           color: ColorManager.warning,
           icon: Icons.sync_rounded,
-          label: l10n.issueStatusInProgress,
+          label: label ?? l10n.issueStatusInProgress,
         );
-      case IssueStatus.done:
+      case IssueStatus.resolved:
         return IssueStatusStyle(
           color: ColorManager.success,
           icon: Icons.check_rounded,
-          label: l10n.issueStatusDone,
+          label: label ?? l10n.issueStatusResolved,
+        );
+      case IssueStatus.closed:
+        return IssueStatusStyle(
+          color: ColorManager.textTertiary,
+          icon: Icons.inbox_rounded,
+          label: label ?? l10n.issueStatusClosed,
+        );
+      case IssueStatus.unknown:
+        // A status added server-side after this build shipped: shown, not
+        // hidden, in neutral grey with whatever the server calls it.
+        return IssueStatusStyle(
+          color: ColorManager.textTertiary,
+          icon: Icons.flag_outlined,
+          label: label ?? '',
         );
     }
   }

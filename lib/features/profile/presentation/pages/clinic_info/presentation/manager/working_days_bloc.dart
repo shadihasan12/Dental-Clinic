@@ -14,8 +14,8 @@ class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
   final WorkingDaysRepository _repository;
 
   WorkingDaysBloc({required WorkingDaysRepository repository})
-    : _repository = repository,
-      super(const WorkingDaysState.initial()) {
+      : _repository = repository,
+        super(const WorkingDaysState.initial()) {
     on<_Load>(_onLoad);
     on<_SaveAll>(_onSaveAll);
   }

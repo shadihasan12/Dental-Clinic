@@ -1,18 +1,23 @@
+import 'dart:io' show Platform;
+
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/data/endpoints/issue_endpoints.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/issues/data/models/issue_model.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class IssueRemoteDataSource {
-  /// The caller's own reports, in the order the server returns them
-  /// (expected newest first).
-  Future<List<IssueModel>> getIssues();
+  Future<IssuePageModel> getIssues({int page, int size});
 
-  /// Creates a report. The server assigns the id and the status.
   Future<IssueModel> createIssue({
+    required String category,
     required String title,
     required String description,
+    List<String> mediaItemIds,
   });
+
+  Future<List<IssueOptionModel>> getCategories();
+
+  Future<List<IssueOptionModel>> getStatuses();
 }
 
 @Injectable(as: IssueRemoteDataSource)
@@ -21,42 +26,80 @@ class IssueRemoteDataSourceImpl implements IssueRemoteDataSource {
 
   IssueRemoteDataSourceImpl(this._apiConsumer);
 
-  /// The endpoints are blank until the backend lands. Firing a request at
-  /// an empty path would resolve to the API root and come back as a
-  /// confusing 404 or, worse, a 200 for something unrelated — so fail here
-  /// with a message that says what is actually wrong.
-  void _assertConfigured() {
-    if (!IssueEndpoints.isConfigured) {
-      throw StateError(
-        'Issue endpoints are not configured yet — set IssueEndpoints.issues '
-        'and IssueEndpoints.createIssue once the backend is available.',
-      );
-    }
+  /// Which build filed the report. Support needs this to tell an Android bug
+  /// from a Windows one, and the user is never asked — there is no picker,
+  /// and an answer they typed would be worth less than what the build knows.
+  ///
+  /// These are not the push-notification platform constants: that endpoint
+  /// has no `WINDOWS` at all, and reusing its list here would fail every
+  /// desktop report.
+  static String get _platform {
+    if (Platform.isAndroid) return 'ANDROID';
+    if (Platform.isIOS) return 'IOS';
+    if (Platform.isWindows) return 'WINDOWS';
+    throw UnsupportedError(
+      'Reporting an issue is not supported on this platform',
+    );
   }
 
   @override
-  Future<List<IssueModel>> getIssues() async {
-    _assertConfigured();
-    final response = await _apiConsumer.get(IssueEndpoints.issues);
+  Future<IssuePageModel> getIssues({int page = 1, int size = 15}) async {
+    // No clinic filter, on purpose: a report belongs to the person who filed
+    // it, not to a workplace, so switching clinic must not look like the
+    // user's reports were deleted.
+    final response = await _apiConsumer.get(
+      IssueEndpoints.tickets,
+      // The server caps size at 100 silently; asking for more is pointless.
+      queryParameters: {'page': page, 'size': size.clamp(1, 100)},
+    );
 
-    final data = response is Map ? response['data'] : null;
-    if (data is! List) return const [];
+    final map = response is Map ? Map<String, dynamic>.from(response) : null;
+    final data = map?['data'];
+    final items = data is List
+        ? data
+              .whereType<Map>()
+              .map((e) => IssueModel.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+        : <IssueModel>[];
 
-    return data
-        .whereType<Map>()
-        .map((e) => IssueModel.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+    final pagination = map?['meta'] is Map
+        ? (Map<String, dynamic>.from(map!['meta'] as Map))['pagination']
+        : null;
+
+    return IssuePageModel(
+      items: items,
+      pagination: pagination is Map
+          ? IssuePaginationModel.fromJson(Map<String, dynamic>.from(pagination))
+          // A response without meta is still a usable single page.
+          : IssuePaginationModel(
+              page: page,
+              size: size,
+              count: items.length,
+              total: items.length,
+              lastPage: page,
+            ),
+    );
   }
 
   @override
   Future<IssueModel> createIssue({
+    required String category,
     required String title,
     required String description,
+    List<String> mediaItemIds = const [],
   }) async {
-    _assertConfigured();
+    // `status`, `user_id`, `clinic_id` and `roles` are all server-owned and
+    // deliberately absent: the clinic comes from the header the interceptor
+    // attaches, never from the body.
     final response = await _apiConsumer.post(
-      IssueEndpoints.createIssue,
-      body: {'title': title, 'description': description},
+      IssueEndpoints.tickets,
+      body: {
+        'category': category,
+        'title': title,
+        'description': description,
+        'platform': _platform,
+        if (mediaItemIds.isNotEmpty) 'media_item_ids': mediaItemIds,
+      },
     );
 
     final data = response is Map ? response['data'] : null;
@@ -64,5 +107,26 @@ class IssueRemoteDataSourceImpl implements IssueRemoteDataSource {
       throw const FormatException('Create issue returned no record');
     }
     return IssueModel.fromJson(Map<String, dynamic>.from(data));
+  }
+
+  @override
+  Future<List<IssueOptionModel>> getCategories() =>
+      _options(IssueEndpoints.categories);
+
+  @override
+  Future<List<IssueOptionModel>> getStatuses() =>
+      _options(IssueEndpoints.statuses);
+
+  Future<List<IssueOptionModel>> _options(String path) async {
+    final response = await _apiConsumer.get(path);
+
+    final data = response is Map ? response['data'] : null;
+    if (data is! List) return const [];
+
+    return data
+        .whereType<Map>()
+        .map((e) => IssueOptionModel.fromJson(Map<String, dynamic>.from(e)))
+        .where((o) => o.value.isNotEmpty)
+        .toList();
   }
 }

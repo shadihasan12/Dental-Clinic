@@ -37,7 +37,7 @@ class ErrorHelper {
       canceledByUser: () => NetworkFailure(message),
       badRequest: (reason) => ValidationFailure(reason),
       unauthorizedRequest: (reason) => NetworkFailure(reason),
-      forbidden: () => NetworkFailure(message),
+      forbidden: (_) => NetworkFailure(message),
       notFound: (reason) => NetworkFailure(reason),
       methodNotAllowed: () => ServerFailure(message),
       notAcceptable: () => ServerFailure(message),

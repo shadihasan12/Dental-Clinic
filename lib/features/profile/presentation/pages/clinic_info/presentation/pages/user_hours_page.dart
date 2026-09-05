@@ -3,6 +3,8 @@ import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -28,20 +30,37 @@ class UserHoursPage extends StatelessWidget {
 
   const UserHoursPage({super.key, required this.userId, this.userName});
 
+  /// Who may change a schedule: the clinic owner, or anyone holding the admin
+  /// role. A member cannot edit their own hours - they open this same screen
+  /// from the menu to *see* what has been set for them.
+  ///
+  /// Decided here rather than by each caller, so a new entry point cannot
+  /// forget the rule and hand a member an editable form the API will refuse.
+  bool get _canEdit => getIt<UserStorage>().isAdmin;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          getIt<UserHoursBloc>(param1: userId)
-            ..add(const UserHoursEvent.load()),
-      child: _UserHoursContent(userName: userName),
+      create: (_) => getIt<UserHoursBloc>(param1: userId)
+        ..add(const UserHoursEvent.load()),
+      child: _UserHoursContent(
+        userName: userName,
+        readOnly: !_canEdit,
+        isSelf: getIt<TokenStorage>().getUserId() == userId,
+      ),
     );
   }
 }
 
 class _UserHoursContent extends StatefulWidget {
   final String? userName;
-  const _UserHoursContent({this.userName});
+  final bool readOnly;
+  final bool isSelf;
+  const _UserHoursContent({
+    this.userName,
+    this.readOnly = false,
+    this.isSelf = false,
+  });
 
   @override
   State<_UserHoursContent> createState() => _UserHoursContentState();
@@ -55,6 +74,11 @@ class _UserDay {
   bool isFullTime;
   List<WorkingShift> shifts;
 
+  /// Whether [shifts] came back from the server, as opposed to the default
+  /// the form falls back to when a day has no stored ranges. A read-only view
+  /// must not present a placeholder as though it were the real schedule.
+  final bool hasStoredRanges;
+
   _UserDay({
     this.id,
     required this.clinicWorkingDayId,
@@ -62,6 +86,7 @@ class _UserDay {
     required this.isWorking,
     required this.isFullTime,
     required this.shifts,
+    this.hasStoredRanges = false,
   });
 
   static const _dayLabelsEn = [
@@ -100,6 +125,17 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   bool _populated = false;
 
   List<_DaySnapshot> _initialSnapshot = [];
+
+  /// The clinic's own schedule, keyed by the working-day id the user rows
+  /// point at. Drives three things: the ranges a full-time day is saved with,
+  /// the times a new shift starts from, and the bounds an edit is checked
+  /// against. Empty when the schedule could not be read.
+  Map<String, WorkingDayApiModel> _clinicById = {};
+  Map<int, WorkingDayApiModel> _clinicByDow = {};
+
+  /// Per-day validation messages, keyed the same way the rows are. Populated
+  /// on save and cleared as the user edits.
+  Map<int, String> _dayErrors = {};
 
   static const int _maxShifts = 3;
 
@@ -147,6 +183,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         dayOfWeek: d.dayOfWeek,
         isWorking: d.isWorking,
         isFullTime: d.isFullTime,
+        hasStoredRanges: d.ranges.isNotEmpty,
         shifts: d.ranges.isEmpty
             ? [
                 WorkingShift(
@@ -179,6 +216,104 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     _initialSnapshot = isSeed ? const [] : _snapshot(_days);
   }
 
+  void _indexClinicDays(List<WorkingDayApiModel> clinicDays) {
+    _clinicById = {for (final d in clinicDays) d.id: d};
+    _clinicByDow = {for (final d in clinicDays) d.dayOfWeek: d};
+  }
+
+  /// The clinic row a user row belongs to. Matched on the working-day id the
+  /// server anchors each user row to, falling back to the weekday for a row
+  /// seeded before those ids existed.
+  WorkingDayApiModel? _clinicDayFor(_UserDay day) =>
+      _clinicById[day.clinicWorkingDayId] ?? _clinicByDow[day.dayOfWeek];
+
+  static int _minutes(TimeOfDay t) => t.hour * 60 + t.minute;
+
+  static int _minutesOfApi(String hhmm) {
+    final parts = hhmm.split(':');
+    return int.parse(parts[0]) * 60 + int.parse(parts[1]);
+  }
+
+  /// Everything wrong with the form, by weekday. Empty means it is safe to
+  /// send.
+  ///
+  /// The server enforces all of this too, but it answers with one error for
+  /// the whole request and no clue which day it meant. Checking here means the
+  /// user is told which row to fix, before anything is sent.
+  Map<int, String> _validate(AppLocalizations l10n) {
+    final errors = <int, String>{};
+
+    for (final day in _days) {
+      if (!day.isWorking) continue;
+
+      final clinic = _clinicDayFor(day);
+      // The clinic schedule is admin-only, so a non-admin form has nothing to
+      // check against - leave those days to the server.
+      if (clinic == null) continue;
+
+      if (!clinic.isOpen) {
+        errors[day.dayOfWeek] = l10n.dayClinicClosed;
+        continue;
+      }
+      // A full-time day is saved with the clinic's own ranges, so it is inside
+      // them by construction.
+      if (day.isFullTime) continue;
+
+      final shifts = [...day.shifts]
+        ..sort((a, b) => _minutes(a.from).compareTo(_minutes(b.from)));
+
+      String? error;
+      for (var i = 0; i < shifts.length; i++) {
+        final from = _minutes(shifts[i].from);
+        final to = _minutes(shifts[i].to);
+
+        if (to <= from) {
+          error = l10n.dayEndBeforeStart;
+          break;
+        }
+        // Sorted by start, so an overlap can only be with the one before it.
+        if (i > 0 && from < _minutes(shifts[i - 1].to)) {
+          error = l10n.dayShiftsOverlap;
+          break;
+        }
+        final insideClinic = clinic.ranges.any(
+          (r) =>
+              from >= _minutesOfApi(r.startTime) &&
+              to <= _minutesOfApi(r.endTime),
+        );
+        if (!insideClinic) {
+          error = l10n.dayOutsideClinicHours;
+          break;
+        }
+      }
+
+      if (error != null) errors[day.dayOfWeek] = error;
+    }
+
+    return errors;
+  }
+
+  /// A shift to start from when a day is switched on or a shift is added.
+  /// The clinic's first range where we know it - 9-to-5 was a guess that
+  /// often fell outside the clinic's own hours and was rejected on save.
+  WorkingShift _defaultShift(_UserDay day) {
+    final clinic = _clinicDayFor(day);
+    if (clinic != null && clinic.ranges.isNotEmpty) {
+      final r = clinic.ranges.first;
+      return WorkingShift(
+          from: _timeOfApi(r.startTime), to: _timeOfApi(r.endTime));
+    }
+    return WorkingShift(
+      from: const TimeOfDay(hour: 9, minute: 0),
+      to: const TimeOfDay(hour: 17, minute: 0),
+    );
+  }
+
+  static TimeOfDay _timeOfApi(String hhmm) {
+    final parts = hhmm.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
   List<UserWorkingDayApiModel> _buildPayload() {
     return _days.map((d) {
       return UserWorkingDayApiModel(
@@ -187,16 +322,21 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         dayOfWeek: d.dayOfWeek,
         isWorking: d.isWorking,
         isFullTime: d.isFullTime,
-        ranges: (d.isWorking && !d.isFullTime)
-            ? d.shifts
-                  .map(
-                    (s) => TimeRangeModel(
-                      startTime: _apiTime(s.from),
-                      endTime: _apiTime(s.to),
-                    ),
-                  )
-                  .toList()
-            : [],
+        // A full-time day is not just a flag: the API stores the times too,
+        // and sending the toggle with an empty list saved a working day with
+        // no hours in it. Send the clinic's own ranges for that day.
+        ranges: !d.isWorking
+            ? const []
+            : d.isFullTime
+                ? (_clinicDayFor(d)?.ranges ?? const [])
+                : d.shifts
+                    .map(
+                      (s) => TimeRangeModel(
+                        startTime: _apiTime(s.from),
+                        endTime: _apiTime(s.to),
+                      ),
+                    )
+                    .toList(),
       );
     }).toList();
   }
@@ -242,6 +382,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         } else {
           shift.to = selected;
         }
+        // The row is being worked on; drop the stale complaint rather than
+        // leaving it under a value the user has just changed.
+        _dayErrors.remove(day.dayOfWeek);
       }),
       picker: CupertinoDatePicker(
         mode: CupertinoDatePickerMode.time,
@@ -255,22 +398,39 @@ class _UserHoursContentState extends State<_UserHoursContent> {
 
   void _addShift(_UserDay day) {
     if (day.shifts.length >= _maxShifts) return;
-    setState(
-      () => day.shifts.add(
-        WorkingShift(
-          from: const TimeOfDay(hour: 9, minute: 0),
-          to: const TimeOfDay(hour: 17, minute: 0),
-        ),
-      ),
-    );
+    setState(() {
+      day.shifts.add(_defaultShift(day));
+      _dayErrors.remove(day.dayOfWeek);
+    });
   }
 
   void _removeShift(_UserDay day) {
     if (day.shifts.length <= 1) return;
-    setState(() => day.shifts.removeLast());
+    setState(() {
+      day.shifts.removeLast();
+      _dayErrors.remove(day.dayOfWeek);
+    });
   }
 
   void _onSave() {
+    final l10n = AppLocalizations.of(context)!;
+    final errors = _validate(l10n);
+
+    setState(() => _dayErrors = errors);
+    if (errors.isNotEmpty) {
+      // Every offending row is marked inline; the snackbar names the first so
+      // the user knows to go looking without having to scan the list.
+      final firstDay = _days.firstWhere(
+        (d) => errors.containsKey(d.dayOfWeek),
+      );
+      AppSnackbar.showError(
+        context,
+        title: l10n.workingHoursInvalidTitle,
+        message: '${_dayLabel(firstDay)}: ${errors[firstDay.dayOfWeek]}',
+      );
+      return;
+    }
+
     context.read<UserHoursBloc>().add(UserHoursEvent.save(_buildPayload()));
   }
 
@@ -286,12 +446,15 @@ class _UserHoursContentState extends State<_UserHoursContent> {
       buildWhen: (prev, curr) => curr.maybeMap(
         saving: (_) => false,
         saved: (_) => false,
+        // The listener owns this one too; rebuilding would drop the form back
+        // to the state the bloc last emitted and lose the edits.
+        saveFailed: (_) => false,
         orElse: () => true,
       ),
       listenWhen: (prev, curr) => curr.maybeMap(
         saving: (_) => true,
         saved: (_) => true,
-        error: (_) => true,
+        saveFailed: (_) => true,
         orElse: () => false,
       ),
       listener: (context, state) {
@@ -308,9 +471,17 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               message: l10n.saveChanges,
             );
           },
-          error: (message) {
+          // A rejected save reports itself in one place and leaves the form
+          // alone. It used to also flip the body to the load-failure card,
+          // which threw away the user's edits and told them the wrong thing -
+          // "could not load working hours" - for a save that failed.
+          saveFailed: (message) {
             AppLoadingDialog.dismiss(context);
-            AppSnackbar.showError(context, title: l10n.error, message: message);
+            AppSnackbar.showError(
+              context,
+              title: l10n.workingHoursSaveFailed,
+              message: message,
+            );
           },
           orElse: () {},
         );
@@ -319,7 +490,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         final c = ColorManager.of(context);
         // Hide the bottom save bar on the "no clinic hours yet" empty
         // state — the CTA inside the body is the only action there.
-        final showSaveBar =
+        final showSaveBar = !widget.readOnly &&
             _days.isNotEmpty &&
             state.maybeWhen(needsClinicHours: (_) => false, orElse: () => true);
         return Scaffold(
@@ -330,7 +501,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               PageHeader(
                 title: widget.userName != null && widget.userName!.isNotEmpty
                     ? '${l10n.workingHours} · ${widget.userName!}'
-                    : l10n.workingHours,
+                    : widget.isSelf
+                        ? l10n.myWorkingHours
+                        : l10n.workingHours,
                 onBack: () => context.pop(),
               ),
               Expanded(
@@ -339,10 +512,13 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                   error: (msg) => _buildError(msg, l10n),
                   needsClinicHours: (isAdmin) =>
                       _buildNeedsClinicHours(isAdmin, l10n),
-                  loaded: (days, isSeed) {
+                  loaded: (days, isSeed, clinicDays) {
                     if (!_populated) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromApi(days, isSeed: isSeed));
+                        setState(() {
+                          _indexClinicDays(clinicDays);
+                          _populateFromApi(days, isSeed: isSeed);
+                        });
                       });
                       return const _UserHoursSkeleton();
                     }
@@ -424,29 +600,40 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     }
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-      child: CustomCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.workingHours,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
-                color: ColorManager.of(context).textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            ..._days.asMap().entries.map(
-              (e) => _buildDayRow(
-                e.value,
-                isLast: e.key == _days.length - 1,
-                l10n: l10n,
-              ),
-            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // A member sees this screen without a save bar or a live control on
+          // it; say why, or it just looks broken.
+          if (widget.readOnly) ...[
+            _ReadOnlyNote(message: l10n.workingHoursReadOnlyNote),
+            SizedBox(height: 10.h),
           ],
-        ),
+          CustomCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.workingHours,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.of(context).textPrimary,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                ..._days.asMap().entries.map(
+                      (e) => _buildDayRow(
+                        e.value,
+                        isLast: e.key == _days.length - 1,
+                        l10n: l10n,
+                      ),
+                    ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -473,11 +660,127 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     );
   }
 
+  /// One day, as a line of text: whether it is worked, and the hours if so.
+  ///
+  /// No expander either - everything the row has to say fits on it, so there
+  /// is nothing behind a disclosure to go looking for.
+  Widget _buildReadOnlyDayRow(
+    _UserDay day, {
+    required bool isLast,
+    required AppLocalizations l10n,
+  }) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    final working = day.isWorking;
+
+    // Full-time days follow the clinic, so show the clinic's own ranges
+    // rather than the placeholder shifts the form keeps for editing.
+    final clinic = _clinicDayFor(day);
+    final List<String> lines;
+    if (!working) {
+      lines = [l10n.closed];
+    } else if (day.isFullTime) {
+      // The member's own record already carries the times, and reading the
+      // clinic schedule is admin-only - so their row is the source here, with
+      // the clinic's as a fallback for an admin looking at a legacy row that
+      // was saved before full-time days stored any ranges.
+      final ranges = day.hasStoredRanges
+          ? day.shifts
+              .map((sh) => '${AppDate.time12Of(context, sh.from)} - '
+                  '${AppDate.time12Of(context, sh.to)}')
+              .toList()
+          : (clinic?.ranges ?? const [])
+              .map(
+                (r) =>
+                    '${AppDate.time12Of(context, _timeOfApi(r.startTime))} - '
+                    '${AppDate.time12Of(context, _timeOfApi(r.endTime))}',
+              )
+              .toList();
+      lines = ranges.isEmpty ? [l10n.fullClinicHours] : ranges;
+    } else {
+      lines = day.shifts
+          .map(
+            (sh) => '${AppDate.time12Of(context, sh.from)} - '
+                '${AppDate.time12Of(context, sh.to)}',
+          )
+          .toList();
+    }
+
+    return Container(
+      decoration: isLast
+          ? null
+          : BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: c.borderLight, width: 1),
+              ),
+            ),
+      padding: EdgeInsets.symmetric(vertical: 13.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // A filled dot for a working day, a hollow one for a day off - the
+          // state a toggle used to carry, without pretending to be one.
+          Padding(
+            padding: EdgeInsets.only(top: 5.h),
+            child: Container(
+              width: 8.w,
+              height: 8.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: working ? ColorManager.success : Colors.transparent,
+                border: working
+                    ? null
+                    : Border.all(color: c.textSubtle, width: 1.5),
+              ),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              _dayLabel(day),
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                fontWeight: FontWeight.w600,
+                fontFamily: family,
+                color: working ? c.textPrimary : c.textTertiary,
+              ),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              for (var i = 0; i < lines.length; i++) ...[
+                if (i > 0) SizedBox(height: 3.h),
+                Text(
+                  lines[i],
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontSize: 11.5.sp,
+                    fontFamily: family,
+                    color: working ? c.textSecondary : c.textTertiary,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDayRow(
     _UserDay day, {
     required bool isLast,
     required AppLocalizations l10n,
   }) {
+    // A member gets a different row, not the editable one with its controls
+    // switched off. A greyed toggle still reads as a toggle - it invites a tap
+    // and then ignores it. This one has nothing to press.
+    if (widget.readOnly) {
+      return _buildReadOnlyDayRow(day, isLast: isLast, l10n: l10n);
+    }
+
     final key = day.clinicWorkingDayId.isNotEmpty
         ? day.clinicWorkingDayId
         : 'd${day.dayOfWeek}';
@@ -505,12 +808,15 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => setState(() {
-                      day.isWorking = !day.isWorking;
-                      if (!day.isWorking && _expandedKey == key) {
-                        _expandedKey = null;
-                      }
-                    }),
+                    onTap: widget.readOnly
+                        ? null
+                        : () => setState(() {
+                              day.isWorking = !day.isWorking;
+                              if (!day.isWorking && _expandedKey == key) {
+                                _expandedKey = null;
+                              }
+                              _dayErrors.remove(day.dayOfWeek);
+                            }),
                     child: DayToggle(enabled: day.isWorking),
                   ),
                   SizedBox(width: 12.w),
@@ -549,6 +855,35 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               ),
             ),
           ),
+          // Sits outside the expander on purpose: a row can fail validation
+          // while collapsed, and an error the user has to open a panel to see
+          // is an error they will not find.
+          if (_dayErrors.containsKey(day.dayOfWeek))
+            Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 14.w,
+                    color: ColorManager.error,
+                  ),
+                  SizedBox(width: 6.w),
+                  Expanded(
+                    child: Text(
+                      _dayErrors[day.dayOfWeek]!,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        height: 1.4,
+                        fontFamily: FontHelper.fontFamily(context),
+                        color: ColorManager.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           AnimatedCrossFade(
             firstChild: const SizedBox.shrink(),
             secondChild: _buildPanel(day, l10n),
@@ -585,7 +920,12 @@ class _UserHoursContentState extends State<_UserHoursContent> {
               ),
               Switch.adaptive(
                 value: day.isFullTime,
-                onChanged: (val) => setState(() => day.isFullTime = val),
+                onChanged: widget.readOnly
+                    ? null
+                    : (val) => setState(() {
+                          day.isFullTime = val;
+                          _dayErrors.remove(day.dayOfWeek);
+                        }),
                 activeThumbColor: ColorManager.primary,
                 activeTrackColor: ColorManager.primary.withValues(alpha: 0.4),
               ),
@@ -605,13 +945,14 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                   ),
                 ),
                 const Spacer(),
-                ShiftCountControl(
-                  count: day.shifts.length,
-                  canDecrement: day.shifts.length > 1,
-                  canIncrement: day.shifts.length < _maxShifts,
-                  onDecrement: () => _removeShift(day),
-                  onIncrement: () => _addShift(day),
-                ),
+                if (!widget.readOnly)
+                  ShiftCountControl(
+                    count: day.shifts.length,
+                    canDecrement: day.shifts.length > 1,
+                    canIncrement: day.shifts.length < _maxShifts,
+                    onDecrement: () => _removeShift(day),
+                    onIncrement: () => _addShift(day),
+                  ),
               ],
             ),
             SizedBox(height: 12.h),
@@ -634,7 +975,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                     child: TimePickerField(
                       label: l10n.from,
                       time: day.shifts[i].from,
-                      onTap: () => _pickShiftTime(day, i, isFrom: true),
+                      onTap: widget.readOnly
+                          ? () {}
+                          : () => _pickShiftTime(day, i, isFrom: true),
                     ),
                   ),
                   Padding(
@@ -648,7 +991,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                     child: TimePickerField(
                       label: l10n.to,
                       time: day.shifts[i].to,
-                      onTap: () => _pickShiftTime(day, i, isFrom: false),
+                      onTap: widget.readOnly
+                          ? () {}
+                          : () => _pickShiftTime(day, i, isFrom: false),
                     ),
                   ),
                 ],
@@ -713,6 +1058,45 @@ class _DaySnapshot {
 }
 
 /// Holds the hours card at full height while the schedule loads.
+/// Quiet explanation shown to a member: the screen has no controls because
+/// only the clinic's admin may change a schedule.
+class _ReadOnlyNote extends StatelessWidget {
+  const _ReadOnlyNote({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+      decoration: BoxDecoration(
+        color: c.cardBgSecondary,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.lock_outline_rounded, size: 16.w, color: c.textTertiary),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                height: 1.4,
+                fontFamily: FontHelper.fontFamily(context),
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _UserHoursSkeleton extends StatelessWidget {
   const _UserHoursSkeleton();
 

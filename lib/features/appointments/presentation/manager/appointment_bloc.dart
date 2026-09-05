@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -23,10 +24,10 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     required GetAllAppointmentsUseCase getAllAppointments,
     required CreateAppointmentUseCase createAppointment,
     required UpdateAppointmentStatusUseCase updateStatus,
-  })  : _getAllAppointments = getAllAppointments,
-        _createAppointment = createAppointment,
-        _updateStatus = updateStatus,
-        super(AppointmentState.initial()) {
+  }) : _getAllAppointments = getAllAppointments,
+       _createAppointment = createAppointment,
+       _updateStatus = updateStatus,
+       super(AppointmentState.initial()) {
     on<_LoadAppointments>(_onLoadAppointments);
     on<_ChangeViewMode>(_onChangeViewMode);
     on<_SelectDate>(_onSelectDate);
@@ -34,6 +35,9 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<_CreateAppointment>(_onCreateAppointment);
     on<_UpdateAppointmentStatus>(_onUpdateAppointmentStatus);
     on<_CancelAppointment>(_onCancelAppointment);
+    on<_ClearActionError>(
+      (event, emit) => emit(state.copyWith(actionError: null)),
+    );
   }
 
   Future<void> _onLoadAppointments(
@@ -80,15 +84,19 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     final result = await _getAllAppointments(params);
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isLoading: false,
-        error: NetworkExceptions.getErrorMessage(error),
-      )),
-      (appointments) => emit(state.copyWith(
-        isLoading: false,
-        appointments: appointments,
-        filteredAppointments: appointments,
-      )),
+      (error) => emit(
+        state.copyWith(
+          isLoading: false,
+          error: NetworkExceptions.getErrorMessage(error),
+        ),
+      ),
+      (appointments) => emit(
+        state.copyWith(
+          isLoading: false,
+          appointments: appointments,
+          filteredAppointments: appointments,
+        ),
+      ),
     );
   }
 
@@ -101,17 +109,22 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     final result = await _createAppointment(event.params);
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isCreating: false,
-        error: NetworkExceptions.getErrorMessage(error),
-      )),
+      (error) => emit(
+        state.copyWith(
+          isCreating: false,
+          error: NetworkExceptions.getErrorMessage(error),
+        ),
+      ),
       (created) {
         final updated = [...state.appointments, created];
-        emit(state.copyWith(
-          isCreating: false,
-          appointments: updated,
-          filteredAppointments: updated,
-        ));
+        emit(
+          state.copyWith(
+            isCreating: false,
+            appointments: updated,
+            filteredAppointments: updated,
+          ),
+        );
+        UserStorage.notifyAppointmentsChanged();
       },
     );
   }
@@ -140,26 +153,36 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     AppointmentStatus status,
     Emitter<AppointmentState> emit,
   ) async {
-    emit(state.copyWith(isUpdating: true, error: null));
+    emit(state.copyWith(isUpdating: true, actionError: null));
 
     final result = await _updateStatus(
       UpdateAppointmentStatusParams(id: id, status: status),
     );
 
     result.fold(
-      (error) => emit(state.copyWith(
-        isUpdating: false,
-        error: NetworkExceptions.getErrorMessage(error),
-      )),
+      // Reported as an action failure, not a load failure: the day on screen
+      // is still accurate, so it stays put, and the reason the server gave -
+      // "invalid status transition" and the like - is what reaches the user.
+      (error) => emit(
+        state.copyWith(
+          isUpdating: false,
+          actionError: NetworkExceptions.getErrorMessage(error),
+        ),
+      ),
       (updatedEntity) {
         final updated = state.appointments
             .map((a) => a.id == id ? updatedEntity : a)
             .toList();
-        emit(state.copyWith(
-          isUpdating: false,
-          appointments: updated,
-          filteredAppointments: updated,
-        ));
+        emit(
+          state.copyWith(
+            isUpdating: false,
+            appointments: updated,
+            filteredAppointments: updated,
+          ),
+        );
+        // Covers status changes and cancellations - the case the bug report
+        // was about, where Home kept showing the pre-edit appointment.
+        UserStorage.notifyAppointmentsChanged();
       },
     );
   }

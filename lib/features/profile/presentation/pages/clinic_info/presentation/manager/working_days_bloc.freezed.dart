@@ -23,44 +23,47 @@ mixin _$WorkingDaysEvent {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    saveAll,
-  }) => throw _privateConstructorUsedError;
+    ) saveAll,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? load,
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
-  }) => throw _privateConstructorUsedError;
+    )? saveAll,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? load,
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
+    )? saveAll,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Load value) load,
     required TResult Function(_SaveAll value) saveAll,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Load value)? load,
     TResult? Function(_SaveAll value)? saveAll,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Load value)? load,
     TResult Function(_SaveAll value)? saveAll,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -98,7 +101,7 @@ class __$$LoadImplCopyWithImpl<$Res>
     extends _$WorkingDaysEventCopyWithImpl<$Res, _$LoadImpl>
     implements _$$LoadImplCopyWith<$Res> {
   __$$LoadImplCopyWithImpl(_$LoadImpl _value, $Res Function(_$LoadImpl) _then)
-    : super(_value, _then);
+      : super(_value, _then);
 
   /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -130,8 +133,7 @@ class _$LoadImpl implements _Load {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    saveAll,
+    ) saveAll,
   }) {
     return load();
   }
@@ -143,8 +145,7 @@ class _$LoadImpl implements _Load {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
+    )? saveAll,
   }) {
     return load?.call();
   }
@@ -156,8 +157,7 @@ class _$LoadImpl implements _Load {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
+    )? saveAll,
     required TResult orElse(),
   }) {
     if (load != null) {
@@ -234,11 +234,11 @@ class __$$SaveAllImplCopyWithImpl<$Res>
         workingDays: null == workingDays
             ? _value._workingDays
             : workingDays // ignore: cast_nullable_to_non_nullable
-                  as List<WorkingDayApiModel>,
+                as List<WorkingDayApiModel>,
         holidays: null == holidays
             ? _value._holidays
             : holidays // ignore: cast_nullable_to_non_nullable
-                  as List<HolidayApiModel>,
+                as List<HolidayApiModel>,
       ),
     );
   }
@@ -250,8 +250,8 @@ class _$SaveAllImpl implements _SaveAll {
   const _$SaveAllImpl({
     required final List<WorkingDayApiModel> workingDays,
     required final List<HolidayApiModel> holidays,
-  }) : _workingDays = workingDays,
-       _holidays = holidays;
+  })  : _workingDays = workingDays,
+        _holidays = holidays;
 
   final List<WorkingDayApiModel> _workingDays;
   @override
@@ -288,10 +288,10 @@ class _$SaveAllImpl implements _SaveAll {
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    const DeepCollectionEquality().hash(_workingDays),
-    const DeepCollectionEquality().hash(_holidays),
-  );
+        runtimeType,
+        const DeepCollectionEquality().hash(_workingDays),
+        const DeepCollectionEquality().hash(_holidays),
+      );
 
   /// Create a copy of WorkingDaysEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -308,8 +308,7 @@ class _$SaveAllImpl implements _SaveAll {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    saveAll,
+    ) saveAll,
   }) {
     return saveAll(workingDays, holidays);
   }
@@ -321,8 +320,7 @@ class _$SaveAllImpl implements _SaveAll {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
+    )? saveAll,
   }) {
     return saveAll?.call(workingDays, holidays);
   }
@@ -334,8 +332,7 @@ class _$SaveAllImpl implements _SaveAll {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    saveAll,
+    )? saveAll,
     required TResult orElse(),
   }) {
     if (saveAll != null) {
@@ -401,12 +398,12 @@ mixin _$WorkingDaysState {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
@@ -414,12 +411,12 @@ mixin _$WorkingDaysState {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
@@ -427,13 +424,13 @@ mixin _$WorkingDaysState {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_WDInitial value) initial,
@@ -442,7 +439,8 @@ mixin _$WorkingDaysState {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_WDInitial value)? initial,
@@ -451,7 +449,8 @@ mixin _$WorkingDaysState {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_WDInitial value)? initial,
@@ -461,7 +460,8 @@ mixin _$WorkingDaysState {
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -534,8 +534,7 @@ class _$WDInitialImpl implements _WDInitial {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -551,8 +550,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -568,8 +566,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
@@ -677,8 +674,7 @@ class _$WDLoadingImpl implements _WDLoading {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -694,8 +690,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -711,8 +706,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
@@ -804,11 +798,11 @@ class __$$WDLoadedImplCopyWithImpl<$Res>
         workingDays: null == workingDays
             ? _value._workingDays
             : workingDays // ignore: cast_nullable_to_non_nullable
-                  as List<WorkingDayApiModel>,
+                as List<WorkingDayApiModel>,
         holidays: null == holidays
             ? _value._holidays
             : holidays // ignore: cast_nullable_to_non_nullable
-                  as List<HolidayApiModel>,
+                as List<HolidayApiModel>,
       ),
     );
   }
@@ -820,8 +814,8 @@ class _$WDLoadedImpl implements _WDLoaded {
   const _$WDLoadedImpl({
     required final List<WorkingDayApiModel> workingDays,
     required final List<HolidayApiModel> holidays,
-  }) : _workingDays = workingDays,
-       _holidays = holidays;
+  })  : _workingDays = workingDays,
+        _holidays = holidays;
 
   final List<WorkingDayApiModel> _workingDays;
   @override
@@ -858,10 +852,10 @@ class _$WDLoadedImpl implements _WDLoaded {
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    const DeepCollectionEquality().hash(_workingDays),
-    const DeepCollectionEquality().hash(_holidays),
-  );
+        runtimeType,
+        const DeepCollectionEquality().hash(_workingDays),
+        const DeepCollectionEquality().hash(_holidays),
+      );
 
   /// Create a copy of WorkingDaysState
   /// with the given fields replaced by the non-null parameter values.
@@ -879,8 +873,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -896,8 +889,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -913,8 +905,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
@@ -1034,8 +1025,7 @@ class _$WDSavingImpl implements _WDSaving {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -1051,8 +1041,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -1068,8 +1057,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
@@ -1177,8 +1165,7 @@ class _$WDSavedImpl implements _WDSaved {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -1194,8 +1181,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -1211,8 +1197,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
@@ -1301,7 +1286,7 @@ class __$$WDErrorImplCopyWithImpl<$Res>
         null == message
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
       ),
     );
   }
@@ -1347,8 +1332,7 @@ class _$WDErrorImpl implements _WDError {
     required TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )
-    loaded,
+    ) loaded,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
@@ -1364,8 +1348,7 @@ class _$WDErrorImpl implements _WDError {
     TResult? Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
@@ -1381,8 +1364,7 @@ class _$WDErrorImpl implements _WDError {
     TResult Function(
       List<WorkingDayApiModel> workingDays,
       List<HolidayApiModel> holidays,
-    )?
-    loaded,
+    )? loaded,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,

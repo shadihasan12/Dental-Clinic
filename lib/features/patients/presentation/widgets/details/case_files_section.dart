@@ -2,12 +2,14 @@ import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_detail_states.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart';
 import 'package:dental_clinic_app/services/media/media_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -350,9 +352,16 @@ const Color _noteText = Color(0xFF854D0E);
 class AddFileSheet extends StatelessWidget {
   const AddFileSheet._();
 
-  /// Returns the picked files, or null if dismissed. A list because the
-  /// gallery path allows a multi-select.
+  /// Returns the picked files, or null if dismissed. A list because both the
+  /// gallery and the desktop file dialog allow a multi-select.
+  ///
+  /// Desktop never sees the sheet. Two of its three rows are mobile-only -
+  /// there is no camera, and "gallery" there is just a file dialog filtered to
+  /// images, which the attachment picker already covers - so a sheet would be
+  /// one real row and two dead ends. The file dialog opens directly instead.
   static Future<List<File>?> show(BuildContext context) async {
+    if (!_hasMobileSources) return _pickAttachments(context);
+
     final c = ColorManager.of(context);
     return showModalBottomSheet<List<File>>(
       context: context,
@@ -365,14 +374,46 @@ class AddFileSheet extends StatelessWidget {
     );
   }
 
-  Future<void> _pickDocument(BuildContext context) async {
-    final picked = await getIt<FilePickerService>().pickFile();
-    if (picked == null) return;
-    if (context.mounted) Navigator.pop(context, [picked.file]);
+  /// Camera and photo-library pickers only exist on the phone platforms.
+  static bool get _hasMobileSources =>
+      !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+
+  /// The one path desktop uses: documents and images in a single dialog,
+  /// multi-select allowed.
+  static Future<List<File>?> _pickAttachments(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final pick = await getIt<FilePickerService>().pickDocuments(
+      allowMultiple: true,
+    );
+    if (!context.mounted) return null;
+
+    if (pick.rejectedName != null) {
+      AppSnackbar.showError(
+        context,
+        title: l10n.unsupportedFileTitle,
+        message: l10n.unsupportedFileMessage,
+      );
+    }
+    return pick.files.isEmpty ? null : pick.files.map((f) => f.file).toList();
   }
 
+  Future<void> _pickDocument(BuildContext context) async {
+    final files = await _pickAttachments(context);
+    // Nothing usable: the sheet stays open rather than closing on a file that
+    // would only fail at upload, so the user can pick again.
+    if (files == null || !context.mounted) return;
+    Navigator.pop(context, files);
+  }
+
+  /// Straight to the system photo picker - images only, and no browsing
+  /// through folders to reach them.
   Future<void> _pickFromGallery(BuildContext context) async {
-    final shots = await ImagePicker().pickMultiImage(imageQuality: 85);
+    final shots = await ImagePicker().pickMultiImage(
+      imageQuality: 85,
+      // iOS only: skips the full-metadata fetch, which is what makes the
+      // system ask for full photo-library access before showing anything.
+      requestFullMetadata: false,
+    );
     if (shots.isEmpty) return;
     if (context.mounted) {
       Navigator.pop(context, shots.map((x) => File(x.path)).toList());
@@ -380,12 +421,21 @@ class AddFileSheet extends StatelessWidget {
   }
 
   Future<void> _takePhoto(BuildContext context) async {
-    final shot = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
-    if (shot == null) return;
-    if (context.mounted) Navigator.pop(context, [File(shot.path)]);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final shot = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (shot == null) return;
+      if (context.mounted) Navigator.pop(context, [File(shot.path)]);
+    } catch (_) {
+      // A device with no usable camera, or a denied permission the plugin
+      // surfaces as a throw. Either way, say so instead of dying.
+      if (context.mounted) {
+        AppSnackbar.showError(context, title: l10n.cameraUnavailable);
+      }
+    }
   }
 
   @override
@@ -426,6 +476,8 @@ class AddFileSheet extends StatelessWidget {
             ),
           ),
           SizedBox(height: 18.h),
+          // The whole sheet only renders where these two sources exist, so
+          // there is no per-row platform check to make here.
           _Option(
             icon: Icons.photo_camera_outlined,
             title: l10n.takePhotoAction,
@@ -646,8 +698,10 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
             style: FilledButton.styleFrom(
               backgroundColor: ColorManager.destructive,
             ),
+            // "Delete", not "Remove": the file is gone for good, there is
+            // no media library it falls back into.
             child: Text(
-              l10n.removeAction,
+              l10n.delete,
               style: TextStyle(
                 fontFamily: family,
                 color: ColorManager.white,
@@ -688,7 +742,7 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
         actions: [
           if (canDelete)
             IconButton(
-              tooltip: AppLocalizations.of(context)!.removeAction,
+              tooltip: AppLocalizations.of(context)!.delete,
               onPressed: () => _confirmDelete(current),
               icon: Icon(
                 Icons.delete_outline_rounded,

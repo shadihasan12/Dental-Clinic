@@ -445,13 +445,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourReports => 'Your reports';
 
   @override
-  String get issueStatusPending => 'Pending';
+  String get issueCategoryLabel => 'Category';
+
+  @override
+  String get issueCategoryHint => 'Choose a category';
+
+  @override
+  String get issueCategoryRequired => 'Category is required';
+
+  @override
+  String get couldNotLoadCategories => 'Could not load the categories';
+
+  @override
+  String get addScreenshot => 'Add a screenshot';
+
+  @override
+  String get screenshotsOnly => 'You can attach JPG or PNG images only.';
+
+  @override
+  String get fileTooLarge => 'Each file must be under 50 MB.';
+
+  @override
+  String get attachmentsNotAllowed =>
+      'Your role cannot attach files. You can still send the report.';
+
+  @override
+  String get loadMore => 'Load more';
+
+  @override
+  String get issueStatusOpen => 'Open';
 
   @override
   String get issueStatusInProgress => 'In progress';
 
   @override
-  String get issueStatusDone => 'Done';
+  String get issueStatusResolved => 'Resolved';
+
+  @override
+  String get issueStatusClosed => 'Closed';
 
   @override
   String get noReportsYet => 'No reports yet';
@@ -1087,6 +1118,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appointmentsLoadFailed => 'Appointments could not be loaded';
+
+  @override
+  String get statusChangeFailed => 'Appointment status could not be changed';
 
   @override
   String get noAppointmentsToday => 'No appointments today';
@@ -2841,18 +2875,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attachDocumentAction => 'Attach a document';
 
   @override
-  String get attachDocumentSub => 'PDF, lab report, referral';
+  String get attachDocumentSub => 'PDF, Word, PowerPoint, text or image';
 
   @override
   String get offlineQueuedNote =>
       'If the connection drops, files are queued on the device and upload when the clinic network returns.';
 
   @override
-  String get removeFileTitle => 'Remove this file?';
+  String get removeFileTitle => 'Delete this file?';
 
   @override
   String get removeFileBody =>
-      'It will be detached from this case. The file itself stays in your media library.';
+      'The file is deleted permanently and cannot be recovered.';
 
   @override
   String get fileRemoved => 'File removed';
@@ -2952,4 +2986,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get renewAction => 'Renew';
+
+  @override
+  String get unsupportedFileTitle => 'File type not supported';
+
+  @override
+  String get unsupportedFileMessage =>
+      'You can attach images, PDF, PowerPoint or Excel files.';
+
+  @override
+  String get cameraUnavailable => 'Camera is not available on this device';
+
+  @override
+  String get dayClinicClosed => 'The clinic is closed on this day';
+
+  @override
+  String get dayEndBeforeStart => 'The end time must be after the start time';
+
+  @override
+  String get dayShiftsOverlap => 'Shifts on this day overlap';
+
+  @override
+  String get dayOutsideClinicHours =>
+      'These hours fall outside the clinic hours';
+
+  @override
+  String get workingHoursInvalidTitle => 'Check the working hours';
+
+  @override
+  String get workingHoursSaveFailed => 'Working hours could not be saved';
+
+  @override
+  String get workingHoursReadOnlyNote =>
+      'Your working hours are set by your clinic administrator.';
 }

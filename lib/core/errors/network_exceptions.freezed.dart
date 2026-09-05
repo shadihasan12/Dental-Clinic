@@ -23,7 +23,7 @@ mixin _$NetworkExceptions {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -47,7 +47,7 @@ mixin _$NetworkExceptions {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -71,7 +71,7 @@ mixin _$NetworkExceptions {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -234,7 +234,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -262,7 +262,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -290,7 +290,7 @@ class _$RequestCancelledImpl implements RequestCancelled {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -455,7 +455,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -483,7 +483,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -511,7 +511,7 @@ class _$CanceledByUserImpl implements CanceledByUser {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -703,7 +703,7 @@ class _$BadRequestImpl implements BadRequest {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -731,7 +731,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -759,7 +759,7 @@ class _$BadRequestImpl implements BadRequest {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -962,7 +962,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -990,7 +990,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -1018,7 +1018,7 @@ class _$UnauthorizedRequestImpl implements UnauthorizedRequest {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -1151,6 +1151,8 @@ abstract class _$$ForbiddenImplCopyWith<$Res> {
     _$ForbiddenImpl value,
     $Res Function(_$ForbiddenImpl) then,
   ) = __$$ForbiddenImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String reason});
 }
 
 /// @nodoc
@@ -1164,26 +1166,51 @@ class __$$ForbiddenImplCopyWithImpl<$Res>
 
   /// Create a copy of NetworkExceptions
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? reason = null}) {
+    return _then(
+      _$ForbiddenImpl(
+        null == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$ForbiddenImpl implements Forbidden {
-  const _$ForbiddenImpl();
+  const _$ForbiddenImpl(this.reason);
+
+  @override
+  final String reason;
 
   @override
   String toString() {
-    return 'NetworkExceptions.forbidden()';
+    return 'NetworkExceptions.forbidden(reason: $reason)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ForbiddenImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$ForbiddenImpl &&
+            (identical(other.reason, reason) || other.reason == reason));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, reason);
+
+  /// Create a copy of NetworkExceptions
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ForbiddenImplCopyWith<_$ForbiddenImpl> get copyWith =>
+      __$$ForbiddenImplCopyWithImpl<_$ForbiddenImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1192,7 +1219,7 @@ class _$ForbiddenImpl implements Forbidden {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -1210,7 +1237,7 @@ class _$ForbiddenImpl implements Forbidden {
     required TResult Function(String error) defaultError,
     required TResult Function() unexpectedError,
   }) {
-    return forbidden();
+    return forbidden(reason);
   }
 
   @override
@@ -1220,7 +1247,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -1238,7 +1265,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult? Function(String error)? defaultError,
     TResult? Function()? unexpectedError,
   }) {
-    return forbidden?.call();
+    return forbidden?.call(reason);
   }
 
   @override
@@ -1248,7 +1275,7 @@ class _$ForbiddenImpl implements Forbidden {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -1268,7 +1295,7 @@ class _$ForbiddenImpl implements Forbidden {
     required TResult orElse(),
   }) {
     if (forbidden != null) {
-      return forbidden();
+      return forbidden(reason);
     }
     return orElse();
   }
@@ -1363,7 +1390,15 @@ class _$ForbiddenImpl implements Forbidden {
 }
 
 abstract class Forbidden implements NetworkExceptions {
-  const factory Forbidden() = _$ForbiddenImpl;
+  const factory Forbidden(final String reason) = _$ForbiddenImpl;
+
+  String get reason;
+
+  /// Create a copy of NetworkExceptions
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ForbiddenImplCopyWith<_$ForbiddenImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1440,7 +1475,7 @@ class _$NotFoundImpl implements NotFound {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -1468,7 +1503,7 @@ class _$NotFoundImpl implements NotFound {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -1496,7 +1531,7 @@ class _$NotFoundImpl implements NotFound {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -1669,7 +1704,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -1697,7 +1732,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -1725,7 +1760,7 @@ class _$MethodNotAllowedImpl implements MethodNotAllowed {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -1890,7 +1925,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -1918,7 +1953,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -1946,7 +1981,7 @@ class _$NotAcceptableImpl implements NotAcceptable {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -2111,7 +2146,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -2139,7 +2174,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -2167,7 +2202,7 @@ class _$RequestTimeoutImpl implements RequestTimeout {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -2332,7 +2367,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -2360,7 +2395,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -2388,7 +2423,7 @@ class _$SendTimeoutImpl implements SendTimeout {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -2583,7 +2618,7 @@ class _$TooManyRequestsImpl implements TooManyRequests {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -2611,7 +2646,7 @@ class _$TooManyRequestsImpl implements TooManyRequests {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -2639,7 +2674,7 @@ class _$TooManyRequestsImpl implements TooManyRequests {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -2842,7 +2877,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -2870,7 +2905,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -2898,7 +2933,7 @@ class _$UnprocessableEntityImpl implements UnprocessableEntity {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -3072,7 +3107,7 @@ class _$ConflictImpl implements Conflict {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -3100,7 +3135,7 @@ class _$ConflictImpl implements Conflict {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -3128,7 +3163,7 @@ class _$ConflictImpl implements Conflict {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -3294,7 +3329,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -3322,7 +3357,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -3350,7 +3385,7 @@ class _$InternalServerErrorImpl implements InternalServerError {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -3515,7 +3550,7 @@ class _$NotImplementedImpl implements NotImplemented {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -3543,7 +3578,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -3571,7 +3606,7 @@ class _$NotImplementedImpl implements NotImplemented {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -3736,7 +3771,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -3764,7 +3799,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -3792,7 +3827,7 @@ class _$ServiceUnavailableImpl implements ServiceUnavailable {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -3958,7 +3993,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -3986,7 +4021,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -4014,7 +4049,7 @@ class _$NoInternetConnectionImpl implements NoInternetConnection {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -4179,7 +4214,7 @@ class _$FormatExceptionImpl implements FormatException {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -4207,7 +4242,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -4235,7 +4270,7 @@ class _$FormatExceptionImpl implements FormatException {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -4400,7 +4435,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -4428,7 +4463,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -4456,7 +4491,7 @@ class _$UnableToProcessImpl implements UnableToProcess {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -4648,7 +4683,7 @@ class _$DefaultErrorImpl implements DefaultError {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -4676,7 +4711,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -4704,7 +4739,7 @@ class _$DefaultErrorImpl implements DefaultError {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,
@@ -4877,7 +4912,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     required TResult Function() canceledByUser,
     required TResult Function(String reason) badRequest,
     required TResult Function(String reason) unauthorizedRequest,
-    required TResult Function() forbidden,
+    required TResult Function(String reason) forbidden,
     required TResult Function(String reason) notFound,
     required TResult Function() methodNotAllowed,
     required TResult Function() notAcceptable,
@@ -4905,7 +4940,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult? Function()? canceledByUser,
     TResult? Function(String reason)? badRequest,
     TResult? Function(String reason)? unauthorizedRequest,
-    TResult? Function()? forbidden,
+    TResult? Function(String reason)? forbidden,
     TResult? Function(String reason)? notFound,
     TResult? Function()? methodNotAllowed,
     TResult? Function()? notAcceptable,
@@ -4933,7 +4968,7 @@ class _$UnexpectedErrorImpl implements UnexpectedError {
     TResult Function()? canceledByUser,
     TResult Function(String reason)? badRequest,
     TResult Function(String reason)? unauthorizedRequest,
-    TResult Function()? forbidden,
+    TResult Function(String reason)? forbidden,
     TResult Function(String reason)? notFound,
     TResult Function()? methodNotAllowed,
     TResult Function()? notAcceptable,

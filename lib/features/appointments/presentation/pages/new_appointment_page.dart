@@ -100,9 +100,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     result.fold(
       (error) {
         setState(() => _isDoctorsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: AppLocalizations.of(context)!.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (doctors) {
         setState(() {
@@ -134,9 +136,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     result.fold(
       (error) {
         setState(() => _isPatientsLoading = false);
-        AppSnackbar.showError(context,
-            title: AppLocalizations.of(context)!.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: AppLocalizations.of(context)!.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (response) {
         setState(() {
@@ -184,9 +188,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     final failure = result.fold((l) => l, (_) => null);
     if (failure != null) {
       setState(() => _isSlotsLoading = false);
-      AppSnackbar.showError(context,
-          title: AppLocalizations.of(context)!.error,
-          message: NetworkExceptions.getErrorMessage(failure));
+      AppSnackbar.showError(
+        context,
+        title: AppLocalizations.of(context)!.error,
+        message: NetworkExceptions.getErrorMessage(failure),
+      );
       return;
     }
 
@@ -204,7 +210,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     // appointment is being booked for another doctor we fall back to
     // the generic "no slots" message without the CTA.
     final currentUserId = getIt<TokenStorage>().getUserId();
-    final isSelf = currentUserId != null &&
+    final isSelf =
+        currentUserId != null &&
         currentUserId.isNotEmpty &&
         _selectedDoctor!.id == currentUserId;
     if (!isSelf) {
@@ -214,23 +221,20 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     final hoursResult = await getIt<WorkingDaysRepository>().getMyHours();
     if (!mounted) return;
-    hoursResult.fold(
-      (_) => setState(() => _isSlotsLoading = false),
-      (hours) {
-        // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
-        // working-days API uses, so we can compare directly.
-        final selectedDow = _selectedDate.weekday;
-        final hasAnyWorkingHours = hours.any((h) => h.isWorking);
-        final worksOnDay = hours.any(
-          (h) => h.dayOfWeek == selectedDow && h.isWorking,
-        );
-        setState(() {
-          _isSlotsLoading = false;
-          _hasNoWorkingHours = !hasAnyWorkingHours;
-          _doesNotWorkSelectedDay = hasAnyWorkingHours && !worksOnDay;
-        });
-      },
-    );
+    hoursResult.fold((_) => setState(() => _isSlotsLoading = false), (hours) {
+      // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
+      // working-days API uses, so we can compare directly.
+      final selectedDow = _selectedDate.weekday;
+      final hasAnyWorkingHours = hours.any((h) => h.isWorking);
+      final worksOnDay = hours.any(
+        (h) => h.dayOfWeek == selectedDow && h.isWorking,
+      );
+      setState(() {
+        _isSlotsLoading = false;
+        _hasNoWorkingHours = !hasAnyWorkingHours;
+        _doesNotWorkSelectedDay = hasAnyWorkingHours && !worksOnDay;
+      });
+    });
   }
 
   /// Routes the user to the page that actually fixes the empty-slots
@@ -255,12 +259,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   _AppointmentErrors _validate() {
     final l10n = AppLocalizations.of(context)!;
     return _AppointmentErrors(
-      patient:
-          _selectedPatientEntity == null ? l10n.pleaseSelectAPatient : null,
-      doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
-      slot: _selectedSlot == null
-          ? l10n.pleaseSelectAnAvailableTimeSlot
+      patient: _selectedPatientEntity == null
+          ? l10n.pleaseSelectAPatient
           : null,
+      doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
+      slot: _selectedSlot == null ? l10n.pleaseSelectAnAvailableTimeSlot : null,
     );
   }
 
@@ -304,8 +307,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           curve: Curves.easeOut,
         );
       }
-      AppSnackbar.showWarning(context,
-          title: l10n.missingData, message: l10n.checkHighlightedFields);
+      AppSnackbar.showWarning(
+        context,
+        title: l10n.missingData,
+        message: l10n.checkHighlightedFields,
+      );
       return;
     }
 
@@ -330,15 +336,20 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     result.fold(
       (error) {
-        AppSnackbar.showError(context,
-            title: l10n.error,
-            message: NetworkExceptions.getErrorMessage(error));
+        AppSnackbar.showError(
+          context,
+          title: l10n.error,
+          message: NetworkExceptions.getErrorMessage(error),
+        );
       },
       (_) {
-        AppSnackbar.showSuccess(context,
-            title: l10n.appointmentScheduled,
-            message: l10n.successfullyAddedToCalendar);
+        AppSnackbar.showSuccess(
+          context,
+          title: l10n.appointmentScheduled,
+          message: l10n.successfullyAddedToCalendar,
+        );
         NewAppointmentPage.created.value++;
+        UserStorage.notifyAppointmentsChanged();
         context.pop();
       },
     );
@@ -371,10 +382,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         bottom: false,
         child: Column(
           children: [
-            FormTopBar(
-              title: l10n.newAppointment,
-              onBack: () => context.pop(),
-            ),
+            FormTopBar(title: l10n.newAppointment, onBack: () => context.pop()),
             Expanded(
               child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
@@ -393,20 +401,22 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
                               _buildPatientPickerSkeleton()
                             else
                               PatientPicker(
-                                patients:
-                                    _patients.map((p) => p.name).toList(),
+                                patients: _patients.map((p) => p.name).toList(),
                                 selectedPatient: _selectedPatientEntity?.name,
                                 onPatientChanged: (name) {
                                   final entity = name != null
-                                      ? _patients
-                                          .firstWhere((p) => p.name == name)
+                                      ? _patients.firstWhere(
+                                          (p) => p.name == name,
+                                        )
                                       : null;
                                   setState(
-                                      () => _selectedPatientEntity = entity);
+                                    () => _selectedPatientEntity = entity,
+                                  );
                                   _revalidate();
                                 },
-                                onAddNewPatient: () => context
-                                    .pushNamed(AppRoutesNames.addPatient),
+                                onAddNewPatient: () => context.pushNamed(
+                                  AppRoutesNames.addPatient,
+                                ),
                               ),
                             if (_errors.patient != null)
                               FormErrorLine(message: _errors.patient!),
@@ -518,8 +528,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       },
       child: Row(
         children: [
-          Icon(Icons.workspace_premium_outlined,
-              size: 16.w, color: c.textTertiary),
+          Icon(
+            Icons.workspace_premium_outlined,
+            size: 16.w,
+            color: c.textTertiary,
+          ),
           SizedBox(width: 8.w),
           Expanded(
             child: Column(
@@ -600,8 +613,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           message: isAdmin
               ? l10n.clinicWorkingDaysMissingAdminMessage
               : l10n.noWorkingHoursMessage,
-          buttonLabel:
-              isAdmin ? l10n.setClinicWorkingDays : l10n.setWorkingHours,
+          buttonLabel: isAdmin
+              ? l10n.setClinicWorkingDays
+              : l10n.setWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }
@@ -609,8 +623,9 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         return _SlotsEmptyHoursCta(
           title: l10n.notWorkingOnThisDayTitle,
           message: l10n.notWorkingOnThisDayMessage,
-          buttonLabel:
-              isAdmin ? l10n.setClinicWorkingDays : l10n.updateWorkingHours,
+          buttonLabel: isAdmin
+              ? l10n.setClinicWorkingDays
+              : l10n.updateWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }
@@ -653,8 +668,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       onTap: () => setState(() => _sendReminder = !_sendReminder),
       child: Row(
         children: [
-          Icon(Icons.notifications_outlined,
-              size: 16.w, color: ColorManager.of(context).textTertiary),
+          Icon(
+            Icons.notifications_outlined,
+            size: 16.w,
+            color: ColorManager.of(context).textTertiary,
+          ),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
@@ -767,9 +785,7 @@ class _SlotsEmptyHoursCta extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorManager.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(13.r),
-        border: Border.all(
-          color: ColorManager.primary.withValues(alpha: 0.20),
-        ),
+        border: Border.all(color: ColorManager.primary.withValues(alpha: 0.20)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

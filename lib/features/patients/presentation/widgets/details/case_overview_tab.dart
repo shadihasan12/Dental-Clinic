@@ -27,7 +27,8 @@ class CaseOverviewWidget extends StatefulWidget {
     double amountInCaseCurrency,
     double exchangeRate,
     String? notes,
-  )? onPaymentRecorded;
+  )?
+  onPaymentRecorded;
   final VoidCallback? onMarkAsFinished;
   final Future<List<Payment>> Function()? onLoadPayments;
   final VoidCallback? onAddTreatment;
@@ -148,6 +149,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       paid: widget.dentalCase.paidAmount,
       pendingAmount: widget.dentalCase.pendingAmount,
       currencyCode: widget.dentalCase.totalCostCurrencyCode,
+      labFeesCurrencyCode: widget.dentalCase.labFeesCurrencyCode,
     );
   }
 
@@ -160,9 +162,24 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       paidAmount: widget.dentalCase.paidAmount,
       caseCurrencyId: widget.dentalCase.totalCostCurrencyId,
       caseCurrencyCode: widget.dentalCase.totalCostCurrencyCode,
-      onSave: (amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes) async {
-        await widget.onPaymentRecorded?.call(amount, currencyId, caseCurrencyId, amountInCaseCurrency, exchangeRate, notes);
-      },
+      onSave:
+          (
+            amount,
+            currencyId,
+            caseCurrencyId,
+            amountInCaseCurrency,
+            exchangeRate,
+            notes,
+          ) async {
+            await widget.onPaymentRecorded?.call(
+              amount,
+              currencyId,
+              caseCurrencyId,
+              amountInCaseCurrency,
+              exchangeRate,
+              notes,
+            );
+          },
     );
   }
 
@@ -173,6 +190,7 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
       onLoadPayments: widget.onLoadPayments ?? () async => [],
       totalCost: widget.dentalCase.totalCost,
       paidAmount: widget.dentalCase.paidAmount,
+      caseCurrencyCode: widget.dentalCase.totalCostCurrencyCode,
     );
   }
 
@@ -241,7 +259,8 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
                 ? () => _showEditCostsSheet(context)
                 : null,
             onViewPaymentHistory: () => _showPaymentHistoryPopup(context),
-            onMarkAsFinished: (!widget.isReadOnly && widget.onMarkAsFinished != null)
+            onMarkAsFinished:
+                (!widget.isReadOnly && widget.onMarkAsFinished != null)
                 ? widget.onMarkAsFinished
                 : null,
           ),
@@ -294,7 +313,11 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add_circle_outline, size: 17.w, color: ColorManager.primary),
+                    Icon(
+                      Icons.add_circle_outline,
+                      size: 17.w,
+                      color: ColorManager.primary,
+                    ),
                     SizedBox(width: 6.w),
                     Text(
                       l10n.addTreatmentButton,
@@ -310,7 +333,11 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
               ),
             ),
           ),
-          Container(width: 1, height: 36.h, color: ColorManager.of(context).borderLight),
+          Container(
+            width: 1,
+            height: 36.h,
+            color: ColorManager.of(context).borderLight,
+          ),
           Expanded(
             child: InkWell(
               onTap: () => _showRecordPaymentPopup(context),
@@ -323,7 +350,11 @@ class _CaseOverviewWidgetState extends State<CaseOverviewWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.payments_outlined, size: 17.w, color: ColorManager.primary),
+                    Icon(
+                      Icons.payments_outlined,
+                      size: 17.w,
+                      color: ColorManager.primary,
+                    ),
                     SizedBox(width: 6.w),
                     Text(
                       l10n.addPaymentButton,

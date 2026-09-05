@@ -16,7 +16,15 @@ class AppointmentState with _$AppointmentState {
     @Default(false) bool isLoading,
     @Default(false) bool isCreating,
     @Default(false) bool isUpdating,
+
+    /// A failed *load*. The page renders this in place of the list.
     String? error,
+
+    /// A failed status change or cancellation. Kept apart from [error]
+    /// because the list on screen is still valid and still worth showing -
+    /// folding the two together replaced the whole day with a "couldn't load
+    /// appointments" card whenever a status was rejected.
+    String? actionError,
   }) = _AppointmentState;
 
   const AppointmentState._();

@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
@@ -84,11 +85,19 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                         key: _formKey,
                         isSubmitting: state.isSubmitting,
                         errorMessage: state.submitError,
-                        onSubmit: (title, description) {
+                        categories: state.categories,
+                        isLoadingCategories: state.isLoadingCategories,
+                        categoriesError: state.categoriesError,
+                        onRetryCategories: () => context
+                            .read<IssuesBloc>()
+                            .add(const IssuesEvent.reloadCategories()),
+                        onSubmit: (category, title, description, mediaIds) {
                           context.read<IssuesBloc>().add(
                             IssuesEvent.submit(
+                              category: category,
                               title: title,
                               description: description,
+                              mediaItemIds: mediaIds,
                             ),
                           );
                         },
@@ -96,6 +105,8 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                       SizedBox(height: 22.h),
                       SectionLabel(
                         l10n.yourReports,
+                        // What is on screen, which is a page at a time until
+                        // the user asks for more.
                         trailing: state.hasIssues
                             ? CountPill(state.issues.length)
                             : null,
@@ -140,9 +151,76 @@ class _ReportsList extends StatelessWidget {
       children: [
         for (var i = 0; i < state.issues.length; i++) ...[
           if (i > 0) SizedBox(height: 8.h),
-          IssueCard(issue: state.issues[i]),
+          IssueCard(
+            issue: state.issues[i],
+            statusLabel: state.labelForStatus(state.issues[i].status),
+            categoryLabel: state.labelForCategory(state.issues[i].category),
+          ),
+        ],
+        // Paged 15 at a time. Rather than an infinite scroll inside a page
+        // that is already one long scroll, the next page is asked for.
+        if (state.hasMore) ...[
+          SizedBox(height: 10.h),
+          // A page that failed to load leaves what is already on screen
+          // alone and says why above the button, which is still the retry.
+          if (state.errorMessage != null && !state.isLoadingMore) ...[
+            Text(
+              state.errorMessage!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10.5.sp,
+                height: 1.35,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.warning,
+              ),
+            ),
+            SizedBox(height: 4.h),
+          ],
+          _LoadMoreButton(isLoading: state.isLoadingMore),
         ],
       ],
+    );
+  }
+}
+
+class _LoadMoreButton extends StatelessWidget {
+  const _LoadMoreButton({required this.isLoading});
+
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return TextButton(
+      onPressed: isLoading
+          ? null
+          : () => context.read<IssuesBloc>().add(const IssuesEvent.loadMore()),
+      style: TextButton.styleFrom(
+        minimumSize: Size(double.infinity, 40.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+      child: isLoading
+          ? SizedBox(
+              width: 16.w,
+              height: 16.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: c.textTertiary,
+              ),
+            )
+          : Text(
+              l10n.loadMore,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.primaryDarker,
+              ),
+            ),
     );
   }
 }

@@ -14,12 +14,17 @@ class PaymentHistoryPopup extends StatefulWidget {
   final double totalCost;
   final double paidAmount;
 
+  /// Used only when a payment does not carry its own currency, so an older
+  /// record still reads as money rather than as a bare number.
+  final String? caseCurrencyCode;
+
   const PaymentHistoryPopup({
     super.key,
     required this.caseTitle,
     required this.onLoadPayments,
     required this.totalCost,
     required this.paidAmount,
+    this.caseCurrencyCode,
   });
 
   static Future<void> show(
@@ -28,6 +33,7 @@ class PaymentHistoryPopup extends StatefulWidget {
     required Future<List<Payment>> Function() onLoadPayments,
     required double totalCost,
     required double paidAmount,
+    String? caseCurrencyCode,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -39,6 +45,7 @@ class PaymentHistoryPopup extends StatefulWidget {
         onLoadPayments: onLoadPayments,
         totalCost: totalCost,
         paidAmount: paidAmount,
+        caseCurrencyCode: caseCurrencyCode,
       ),
     );
   }
@@ -130,16 +137,16 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             child: _isLoading
                 ? const _PaymentHistorySkeleton()
                 : _payments!.isEmpty
-                    ? _buildEmptyState(context)
-                    : ListView.separated(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.all(16.w),
-                        itemCount: _payments!.length,
-                        separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                        itemBuilder: (context, index) {
-                          return _buildPaymentItem(context, _payments![index]);
-                        },
-                      ),
+                ? _buildEmptyState(context)
+                : ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(16.w),
+                    itemCount: _payments!.length,
+                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                    itemBuilder: (context, index) {
+                      return _buildPaymentItem(context, _payments![index]);
+                    },
+                  ),
           ),
         ],
       ),
@@ -205,15 +212,34 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             ),
           ),
 
-          // Amount
-          Text(
-            '\$${payment.amount.toStringAsFixed(0)}',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w500,
-              color: ColorManager.healthGreen,
-            ),
+          // Amount, in the currency it was actually taken in. A case priced
+          // in USD can be settled in SYP, so a hardcoded $ mislabelled the
+          // figure by whatever the exchange rate happened to be.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _formatAmount(payment),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w500,
+                  color: ColorManager.healthGreen,
+                ),
+              ),
+              if (_conversionLabel(payment) != null) ...[
+                SizedBox(height: 2.h),
+                Text(
+                  _conversionLabel(payment)!,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: ColorManager.of(context).textTertiary,
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),
@@ -243,6 +269,25 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
         ],
       ),
     );
+  }
+
+  /// `1,350 SYP` - the code trails the figure so it reads the same in Arabic
+  /// and English, where a leading symbol would sit on the wrong side.
+  String _formatAmount(Payment payment) {
+    final code = payment.currencyCode ?? widget.caseCurrencyCode;
+    final figure = payment.amount.toStringAsFixed(0);
+    return code == null || code.isEmpty ? figure : '$figure $code';
+  }
+
+  /// Only shown when the payment was taken in something other than the case
+  /// currency - otherwise the conversion says nothing the row does not.
+  String? _conversionLabel(Payment payment) {
+    final caseCode = widget.caseCurrencyCode;
+    final paidCode = payment.currencyCode;
+    final converted = payment.amountInCaseCurrency;
+    if (caseCode == null || paidCode == null) return null;
+    if (converted == null || paidCode == caseCode) return null;
+    return '≈ ${converted.toStringAsFixed(0)} $caseCode';
   }
 }
 

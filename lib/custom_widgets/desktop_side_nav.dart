@@ -2,7 +2,11 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +22,10 @@ class DesktopNavItem {
   });
 }
 
+/// Every nav item, in the canonical order [RootTab] defines, with "More"
+/// appended. A position in this list is the tab id that [DesktopShell]
+/// callers pass as `selectedTabIndex`, so items are hidden by skipping them,
+/// never by rebuilding the list without them.
 List<DesktopNavItem> buildDesktopNavItems(AppLocalizations l10n) {
   return [
     DesktopNavItem(
@@ -65,6 +73,28 @@ class DesktopSideNav extends StatelessWidget {
     final fontFamily = FontHelper.fontFamily(context);
     final items = buildDesktopNavItems(l10n);
 
+    return BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
+      bloc: getIt<ClinicPermissionsBloc>(),
+      builder: (context, permissionsState) {
+        // The tabs this user is allowed, plus "More" — which sits after the
+        // root tabs and is open to everyone.
+        final shown = <int>[
+          for (final tab in visibleRootTabs(permissionsState)) tab.index,
+          RootTab.values.length,
+        ];
+        return _buildNav(context, c, l10n, fontFamily, items, shown);
+      },
+    );
+  }
+
+  Widget _buildNav(
+    BuildContext context,
+    AppColors c,
+    AppLocalizations l10n,
+    String fontFamily,
+    List<DesktopNavItem> items,
+    List<int> shown,
+  ) {
     return Container(
       width: 260,
       decoration: BoxDecoration(
@@ -105,15 +135,19 @@ class DesktopSideNav extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: items.length,
+              itemCount: shown.length,
               itemBuilder: (context, index) {
+                // Rows are drawn from the filtered list but keep speaking
+                // canonical tab ids, so a hidden tab never shifts what
+                // `selectedIndex` highlights or what a tap reports.
+                final tabIndex = shown[index];
                 return _SideMenuItem(
-                  item: items[index],
-                  isSelected: selectedIndex == index,
+                  item: items[tabIndex],
+                  isSelected: selectedIndex == tabIndex,
                   fontFamily: fontFamily,
                   onTap: () {
                     if (onTabSelected != null) {
-                      onTabSelected!(index);
+                      onTabSelected!(tabIndex);
                     } else {
                       // Subpage navigation: back to root, consumer picks
                       // up the tab via selectedIndex prop.

@@ -59,9 +59,8 @@ class ClinicInfoModel {
       locationName: entity.locationName,
       locationFullName: entity.locationFullName,
       address: entity.address,
-      workingDays: entity.workingDays
-          .map((d) => WorkingDayModel.fromEntity(d))
-          .toList(),
+      workingDays:
+          entity.workingDays.map((d) => WorkingDayModel.fromEntity(d)).toList(),
       holidays: entity.holidays.map((h) => HolidayModel.fromEntity(h)).toList(),
     );
   }

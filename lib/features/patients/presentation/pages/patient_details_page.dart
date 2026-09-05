@@ -443,6 +443,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       onLoadPayments: () => _loadPayments(c.id),
       totalCost: c.totalCost,
       paidAmount: c.paidAmount,
+      caseCurrencyCode: c.totalCostCurrencyCode,
     );
   }
 
@@ -510,6 +511,21 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
         .toList();
     // Called from build(), so the network read has to wait for the frame.
     Future.microtask(() => _fetchAttachments(c.id));
+  }
+
+  /// Drops the local mirror once the patient has no open case.
+  ///
+  /// [_syncAttachments] only ever runs with a case in hand, so finishing or
+  /// deleting one used to leave its files sitting in [_attachments]. The Files
+  /// section is gated on the case and disappeared; the rail's Files chip read
+  /// the stale list and stayed, pointing at nothing.
+  void _forgetAttachments() {
+    if (_attachmentsCaseId == null && _attachments.isEmpty) return;
+    // Clearing the id also makes any in-flight [_fetchAttachments] discard
+    // its result instead of repopulating the list.
+    _attachmentsCaseId = null;
+    _attachments = [];
+    _doneOverrides.clear();
   }
 
   Future<void> _fetchAttachments(String caseId) async {
@@ -775,7 +791,11 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       );
     }
 
-    if (activeCase != null) _syncAttachments(activeCase);
+    if (activeCase != null) {
+      _syncAttachments(activeCase);
+    } else {
+      _forgetAttachments();
+    }
 
     final planned = activeCase == null
         ? <PlannedTreatment>[]
@@ -789,13 +809,16 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
         : '${_money(activeCase.pendingAmount)}${currency.isEmpty ? '' : ' $currency'}';
 
     // A chip that scrolls to a section which is not on screen reads as
-    // broken, so only the sections that exist get one. Case and Info are
+    // broken, so only the sections that exist get one. Treatments and Files
+    // are rendered alongside an open case and nowhere else, so they are gated
+    // on the case as well as on their own contents - a patient with no case
+    // has neither, whatever the local mirrors still hold. Case and Info are
     // always present - Case carries its own empty state, Info is never empty.
     final anchors = <({PatientAnchor anchor, String label})>[
       (anchor: PatientAnchor.caseSection, label: l10n.currentCaseAnchor),
-      if (planned.isNotEmpty)
+      if (activeCase != null && planned.isNotEmpty)
         (anchor: PatientAnchor.treatments, label: l10n.treatments),
-      if (_attachments.isNotEmpty)
+      if (activeCase != null && _attachments.isNotEmpty)
         (anchor: PatientAnchor.files, label: l10n.filesTitle),
       (anchor: PatientAnchor.info, label: l10n.patientInfo),
     ];
@@ -877,6 +900,9 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
                               pendingAmount: activeCase.pendingAmount,
                               labFees: activeCase.labFees,
                               paymentCount: 0,
+                              currencyCode: activeCase.totalCostCurrencyCode,
+                              labFeesCurrencyCode:
+                                  activeCase.labFeesCurrencyCode,
                               onPayments: () => _paymentHistory(activeCase),
                               onEditCosts: () => _editCosts(activeCase),
                               onFinishCase: () =>

@@ -14,6 +14,8 @@ class CaseMoneyCard extends StatelessWidget {
     required this.pendingAmount,
     required this.labFees,
     required this.paymentCount,
+    this.currencyCode,
+    this.labFeesCurrencyCode,
     this.onPayments,
     this.onEditCosts,
     this.onFinishCase,
@@ -24,6 +26,16 @@ class CaseMoneyCard extends StatelessWidget {
   final double pendingAmount;
   final double labFees;
   final int paymentCount;
+
+  /// The case currency, shown beside every figure on this card. Without it a
+  /// bare "350,000" is unreadable in a clinic that prices some cases in USD
+  /// and settles others in SYP.
+  final String? currencyCode;
+
+  /// Lab fees are recorded with their own currency, which is not always the
+  /// case currency - so this figure gets its own code rather than borrowing
+  /// the one above it.
+  final String? labFeesCurrencyCode;
   final VoidCallback? onPayments;
   final VoidCallback? onEditCosts;
   final VoidCallback? onFinishCase;
@@ -40,6 +52,13 @@ class CaseMoneyCard extends StatelessWidget {
       buf.write(whole[i]);
     }
     return '$buf$rest';
+  }
+
+  /// `350,000 SYP`, or just the figure when no code is known.
+  String _moneyWithCode(double v, [String? code]) {
+    final suffix = code ?? currencyCode;
+    final amount = _money(v);
+    return suffix == null || suffix.isEmpty ? amount : '$amount $suffix';
   }
 
   @override
@@ -65,14 +84,30 @@ class CaseMoneyCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Hero number is what is still owed - the figure a dentist
-                // is asked about at the desk. The case title and currency
-                // code are both already on screen above this card.
+                // is asked about at the desk, carrying its currency so the
+                // amount is never ambiguous on a mixed-currency case.
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text(
-                      _money(settled ? totalCost : pendingAmount),
+                    Text.rich(
+                      TextSpan(
+                        text: _money(settled ? totalCost : pendingAmount),
+                        children: [
+                          if (currencyCode != null && currencyCode!.isNotEmpty)
+                            TextSpan(
+                              // Half the size and a step lighter, so it reads
+                              // as a unit on the figure rather than as a
+                              // second number competing with it.
+                              text: ' $currencyCode',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: c.textTertiary,
+                              ),
+                            ),
+                        ],
+                      ),
                       style: TextStyle(
                         fontSize: 26.sp,
                         fontWeight: FontWeight.w700,
@@ -86,7 +121,7 @@ class CaseMoneyCard extends StatelessWidget {
                       child: Text(
                         settled
                             ? l10n.paidLabel
-                            : '${l10n.leftOfTotal} ${_money(totalCost)}',
+                            : '${l10n.leftOfTotal} ${_moneyWithCode(totalCost)}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -110,7 +145,7 @@ class CaseMoneyCard extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        '${_money(paidAmount)} ${l10n.paidLabel.toLowerCase()}'
+                        '${_moneyWithCode(paidAmount)} ${l10n.paidLabel.toLowerCase()}'
                         '${paymentCount > 0 ? ' - $paymentCount ${l10n.paymentsCountLabel}' : ''}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -126,7 +161,8 @@ class CaseMoneyCard extends StatelessWidget {
                       SizedBox(width: 12.w),
                       Flexible(
                         child: Text(
-                          '${l10n.labFees} ${_money(labFees)}',
+                          '${l10n.labFees} '
+                          '${_moneyWithCode(labFees, labFeesCurrencyCode)}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.end,
@@ -150,15 +186,9 @@ class CaseMoneyCard extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 14.h),
             child: Row(
               children: [
-                _CardAction(
-                  label: l10n.paymentsAction,
-                  onTap: onPayments,
-                ),
+                _CardAction(label: l10n.paymentsAction, onTap: onPayments),
                 SizedBox(width: 8.w),
-                _CardAction(
-                  label: l10n.editCostsAction,
-                  onTap: onEditCosts,
-                ),
+                _CardAction(label: l10n.editCostsAction, onTap: onEditCosts),
                 SizedBox(width: 8.w),
                 _CardAction(
                   label: l10n.finishCaseAction,

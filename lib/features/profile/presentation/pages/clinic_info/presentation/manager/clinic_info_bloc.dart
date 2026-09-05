@@ -19,9 +19,9 @@ class ClinicInfoBloc extends Bloc<ClinicInfoEvent, ClinicInfoState> {
   ClinicInfoBloc({
     required GetClinicInfoUseCase getClinicInfo,
     required UpdateClinicInfoUseCase updateClinicInfo,
-  }) : _getClinicInfo = getClinicInfo,
-       _updateClinicInfo = updateClinicInfo,
-       super(const ClinicInfoState.initial()) {
+  })  : _getClinicInfo = getClinicInfo,
+        _updateClinicInfo = updateClinicInfo,
+        super(const ClinicInfoState.initial()) {
     on<_LoadClinicInfo>(_onLoad);
     on<_UpdateClinicInfo>(_onUpdate);
   }

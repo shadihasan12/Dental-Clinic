@@ -93,6 +93,7 @@ class DentalCase {
   final String? totalCostCurrencyCode;
   final String? totalCostCurrencyName;
   final String? labFeesCurrencyId;
+  final String? labFeesCurrencyCode;
   final List<TreatmentItem> treatmentItems;
 
   /// Case-level media ids returned by the API. Uploads go through
@@ -119,6 +120,7 @@ class DentalCase {
     this.totalCostCurrencyCode,
     this.totalCostCurrencyName,
     this.labFeesCurrencyId,
+    this.labFeesCurrencyCode,
     this.treatmentItems = const [],
     this.createdAt,
     this.audits = const [],
@@ -142,6 +144,8 @@ class DentalCase {
       totalCostCurrencyCode: _parseCurrencyField(json, 'total_cost_currency', 'currency_code'),
       totalCostCurrencyName: _parseCurrencyField(json, 'total_cost_currency', 'currency_name'),
       labFeesCurrencyId: _parseCurrencyId(json, 'lab_fees_currency'),
+      labFeesCurrencyCode:
+          _parseCurrencyField(json, 'lab_fees_currency', 'currency_code'),
       attachments: _parseAttachments(json['attachments']),
       createdAt: _parseNullableDate(json['created_at']),
       audits: AuditEntry.listFromJson(json['audits']),
@@ -228,7 +232,9 @@ class DentalCase {
     double? paidAmount,
     double? pendingAmount,
     String? totalCostCurrencyId,
+    String? totalCostCurrencyCode,
     String? labFeesCurrencyId,
+    String? labFeesCurrencyCode,
     List<TreatmentItem>? treatmentItems,
     List<String>? attachments,
   }) {
@@ -245,7 +251,13 @@ class DentalCase {
       paidAmount: paidAmount ?? this.paidAmount,
       pendingAmount: pendingAmount ?? this.pendingAmount,
       totalCostCurrencyId: totalCostCurrencyId ?? this.totalCostCurrencyId,
+      // Carried through explicitly: a copy that dropped these left an edited
+      // case showing bare figures with no currency at all.
+      totalCostCurrencyCode:
+          totalCostCurrencyCode ?? this.totalCostCurrencyCode,
+      totalCostCurrencyName: totalCostCurrencyName,
       labFeesCurrencyId: labFeesCurrencyId ?? this.labFeesCurrencyId,
+      labFeesCurrencyCode: labFeesCurrencyCode ?? this.labFeesCurrencyCode,
       treatmentItems: treatmentItems ?? this.treatmentItems,
       attachments: attachments ?? this.attachments,
     );

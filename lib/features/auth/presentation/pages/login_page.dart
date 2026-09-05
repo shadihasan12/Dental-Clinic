@@ -209,7 +209,9 @@ class _LoginPageContentState extends State<_LoginPageContent> {
       hint: l10n.emailOrPhoneHint,
       controller: _emailController,
       prefixIcon: Icons.person_outline,
-      keyboardType: TextInputType.text,
+      // Either half of "email or phone" is typed on the email keyboard, and
+      // it is what earns the field its whitespace guard.
+      keyboardType: TextInputType.emailAddress,
       textDirection: TextDirection.ltr,
       validator: _validateEmailOrPhone,
       onChanged: (value) {

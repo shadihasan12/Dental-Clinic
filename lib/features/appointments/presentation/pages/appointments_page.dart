@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -40,7 +41,23 @@ class _AppointmentsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocBuilder<AppointmentBloc, AppointmentState>(
+      body: BlocConsumer<AppointmentBloc, AppointmentState>(
+        // A rejected status change has to say so. The list itself is still
+        // valid, so this is a snackbar over the day rather than an error
+        // state replacing it - and it carries the server's own reason, which
+        // is the part that used to be swallowed.
+        listenWhen: (prev, curr) =>
+            prev.actionError != curr.actionError && curr.actionError != null,
+        listener: (context, state) {
+          AppSnackbar.showError(
+            context,
+            title: AppLocalizations.of(context)!.statusChangeFailed,
+            message: state.actionError,
+          );
+          context.read<AppointmentBloc>().add(
+            const AppointmentEvent.clearActionError(),
+          );
+        },
         builder: (context, state) {
           return Column(
             children: [

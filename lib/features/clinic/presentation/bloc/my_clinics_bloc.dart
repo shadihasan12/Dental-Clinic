@@ -42,6 +42,7 @@ class MyClinicsBloc extends Bloc<MyClinicsEvent, MyClinicsState> {
             _userStorage.saveSelectedClinicId(active.clinicId);
           }
           _userStorage.saveUserRole(active.role.name);
+          _userStorage.saveIsClinicOwner(active.isOwner);
         }
         emit(MyClinicsState.loaded(clinics));
       },

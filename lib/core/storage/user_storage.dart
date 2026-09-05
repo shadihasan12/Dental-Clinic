@@ -26,11 +26,24 @@ class UserStorage {
   /// Notifier that increments whenever a patient is added, updated, or
   /// detached. The patients list listens to this so multi-step flows (e.g.
   /// add patient → auto-jump to add treatment → back) still refresh.
-  static final ValueNotifier<int> patientsChangedNotifier =
-      ValueNotifier<int>(0);
+  static final ValueNotifier<int> patientsChangedNotifier = ValueNotifier<int>(
+    0,
+  );
 
   static void notifyPatientsChanged() {
     patientsChangedNotifier.value++;
+  }
+
+  /// Notifier that increments whenever an appointment is created, or has its
+  /// status changed or cancelled, from anywhere in the app. Home's Today's
+  /// Schedule listens to this so a status edited on the Appointments tab is
+  /// reflected the moment the user goes back, instead of the section holding
+  /// its first load until the app is killed and reopened.
+  static final ValueNotifier<int> appointmentsChangedNotifier =
+      ValueNotifier<int>(0);
+
+  static void notifyAppointmentsChanged() {
+    appointmentsChangedNotifier.value++;
   }
 
   static const String _userNameKey = 'user_name';
@@ -45,6 +58,10 @@ class UserStorage {
   static const String _profileImageUrlKey = 'profile_image_url';
   static const String _selectedClinicIdKey = 'selected_clinic_id';
   static const String _userRoleKey = 'user_role';
+  // Whether the user is the *owner* of the active clinic, not merely an
+  // admin in it. Billing is the owner's alone, so the menu needs this
+  // synchronously and per active clinic, exactly like the cached role.
+  static const String _isClinicOwnerKey = 'is_clinic_owner';
   // Snapshot of the user's clinic membership count, persisted on login
   // so the share card can read it synchronously without an extra
   // network round-trip when the share sheet opens.
@@ -113,6 +130,13 @@ class UserStorage {
   String? getUserRole() => _prefs.getString(_userRoleKey);
   bool get isAdmin => getUserRole() == 'admin';
 
+  /// Cache whether the user owns the active clinic. Saved next to the role
+  /// at every point the active clinic can change, so a switch from a clinic
+  /// the user owns to one they only work in flips this too.
+  Future<void> saveIsClinicOwner(bool isOwner) async =>
+      _prefs.setBool(_isClinicOwnerKey, isOwner);
+  bool get isClinicOwner => _prefs.getBool(_isClinicOwnerKey) ?? false;
+
   Future<void> saveClinicCount(int count) async =>
       _prefs.setInt(_clinicCountKey, count);
   int? getClinicCount() => _prefs.getInt(_clinicCountKey);
@@ -156,6 +180,7 @@ class UserStorage {
     await _prefs.remove(_profileImageUrlKey);
     await _prefs.remove(_selectedClinicIdKey);
     await _prefs.remove(_userRoleKey);
+    await _prefs.remove(_isClinicOwnerKey);
     await _prefs.remove(_clinicCountKey);
     // Deliberately *not* clearing _firstSeenAtKey on logout — the
     // "days on platform" metric should reflect the install age, not

@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Text field for the auth pages.
@@ -74,6 +75,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         controller: widget.controller,
         focusNode: _focusNode,
         keyboardType: widget.keyboardType,
+        inputFormatters: formattersForKeyboard(widget.keyboardType),
         obscureText: widget.obscureText,
         validator: widget.validator,
         onChanged: widget.onChanged,

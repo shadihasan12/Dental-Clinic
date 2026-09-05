@@ -14,7 +14,7 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   const factory NetworkExceptions.badRequest(String reason) = BadRequest;
   const factory NetworkExceptions.unauthorizedRequest(String reason) =
       UnauthorizedRequest;
-  const factory NetworkExceptions.forbidden() = Forbidden;
+  const factory NetworkExceptions.forbidden(String reason) = Forbidden;
 
   const factory NetworkExceptions.notFound(String reason) = NotFound;
 
@@ -116,7 +116,13 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
           _extractMessage(response, 'Unauthorized'),
         );
       case 403:
-        return const NetworkExceptions.forbidden();
+        // Same treatment as 400/401/422: the backend explains *why* access
+        // was refused (wrong clinic, disabled account, plan expired), and
+        // that sentence is the only useful thing to put in front of the
+        // user. The bare word "Forbidden" told them nothing.
+        return NetworkExceptions.forbidden(
+          _extractMessage(response, 'Forbidden'),
+        );
       case 404:
         return NetworkExceptions.notFound(
           _extractMessage(response, 'Not found'),
@@ -264,8 +270,8 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       notAcceptable: () {
         errorMessage = 'Not acceptable';
       },
-      forbidden: () {
-        errorMessage = 'Forbidden';
+      forbidden: (String reason) {
+        errorMessage = reason;
       },
       canceledByUser: () {
         errorMessage = 'Canceled by the user';

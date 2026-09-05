@@ -21,34 +21,40 @@ mixin _$ClinicInfoEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() loadClinicInfo,
     required TResult Function(ClinicInfoEntity clinicInfo) updateClinicInfo,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadClinicInfo,
     TResult? Function(ClinicInfoEntity clinicInfo)? updateClinicInfo,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadClinicInfo,
     TResult Function(ClinicInfoEntity clinicInfo)? updateClinicInfo,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_LoadClinicInfo value) loadClinicInfo,
     required TResult Function(_UpdateClinicInfo value) updateClinicInfo,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadClinicInfo value)? loadClinicInfo,
     TResult? Function(_UpdateClinicInfo value)? updateClinicInfo,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadClinicInfo value)? loadClinicInfo,
     TResult Function(_UpdateClinicInfo value)? updateClinicInfo,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -211,7 +217,7 @@ class __$$UpdateClinicInfoImplCopyWithImpl<$Res>
         null == clinicInfo
             ? _value.clinicInfo
             : clinicInfo // ignore: cast_nullable_to_non_nullable
-                  as ClinicInfoEntity,
+                as ClinicInfoEntity,
       ),
     );
   }
@@ -349,7 +355,8 @@ mixin _$ClinicInfoState {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
@@ -358,7 +365,8 @@ mixin _$ClinicInfoState {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
@@ -368,7 +376,8 @@ mixin _$ClinicInfoState {
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
@@ -377,7 +386,8 @@ mixin _$ClinicInfoState {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
@@ -386,7 +396,8 @@ mixin _$ClinicInfoState {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
@@ -396,7 +407,8 @@ mixin _$ClinicInfoState {
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -714,7 +726,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
         null == clinicInfo
             ? _value.clinicInfo
             : clinicInfo // ignore: cast_nullable_to_non_nullable
-                  as ClinicInfoEntity,
+                as ClinicInfoEntity,
       ),
     );
   }
@@ -893,7 +905,7 @@ class __$$SavingImplCopyWithImpl<$Res>
         null == clinicInfo
             ? _value.clinicInfo
             : clinicInfo // ignore: cast_nullable_to_non_nullable
-                  as ClinicInfoEntity,
+                as ClinicInfoEntity,
       ),
     );
   }
@@ -1072,7 +1084,7 @@ class __$$SavedImplCopyWithImpl<$Res>
         null == clinicInfo
             ? _value.clinicInfo
             : clinicInfo // ignore: cast_nullable_to_non_nullable
-                  as ClinicInfoEntity,
+                as ClinicInfoEntity,
       ),
     );
   }
@@ -1249,7 +1261,7 @@ class __$$ErrorImplCopyWithImpl<$Res>
         null == message
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
       ),
     );
   }

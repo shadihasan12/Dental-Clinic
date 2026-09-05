@@ -21,34 +21,40 @@ mixin _$UserHoursEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() load,
     required TResult Function(List<UserWorkingDayApiModel> days) save,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? load,
     TResult? Function(List<UserWorkingDayApiModel> days)? save,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? load,
     TResult Function(List<UserWorkingDayApiModel> days)? save,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Load value) load,
     required TResult Function(_Save value) save,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Load value)? load,
     TResult? Function(_Save value)? save,
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Load value)? load,
     TResult Function(_Save value)? save,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -86,7 +92,7 @@ class __$$LoadImplCopyWithImpl<$Res>
     extends _$UserHoursEventCopyWithImpl<$Res, _$LoadImpl>
     implements _$$LoadImplCopyWith<$Res> {
   __$$LoadImplCopyWithImpl(_$LoadImpl _value, $Res Function(_$LoadImpl) _then)
-    : super(_value, _then);
+      : super(_value, _then);
 
   /// Create a copy of UserHoursEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -193,7 +199,7 @@ class __$$SaveImplCopyWithImpl<$Res>
     extends _$UserHoursEventCopyWithImpl<$Res, _$SaveImpl>
     implements _$$SaveImplCopyWith<$Res> {
   __$$SaveImplCopyWithImpl(_$SaveImpl _value, $Res Function(_$SaveImpl) _then)
-    : super(_value, _then);
+      : super(_value, _then);
 
   /// Create a copy of UserHoursEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -205,7 +211,7 @@ class __$$SaveImplCopyWithImpl<$Res>
         null == days
             ? _value._days
             : days // ignore: cast_nullable_to_non_nullable
-                  as List<UserWorkingDayApiModel>,
+                as List<UserWorkingDayApiModel>,
       ),
     );
   }
@@ -330,34 +336,51 @@ mixin _$UserHoursState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
-  }) => throw _privateConstructorUsedError;
+    required TResult Function(String message) saveFailed,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
-  }) => throw _privateConstructorUsedError;
+    TResult? Function(String message)? saveFailed,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_UHInitial value) initial,
@@ -367,7 +390,9 @@ mixin _$UserHoursState {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
-  }) => throw _privateConstructorUsedError;
+    required TResult Function(_UHSaveFailed value) saveFailed,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_UHInitial value)? initial,
@@ -377,7 +402,9 @@ mixin _$UserHoursState {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
-  }) => throw _privateConstructorUsedError;
+    TResult? Function(_UHSaveFailed value)? saveFailed,
+  }) =>
+      throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_UHInitial value)? initial,
@@ -387,8 +414,10 @@ mixin _$UserHoursState {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+  }) =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -458,12 +487,16 @@ class _$UHInitialImpl implements _UHInitial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return initial();
   }
@@ -473,11 +506,16 @@ class _$UHInitialImpl implements _UHInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return initial?.call();
   }
@@ -487,11 +525,16 @@ class _$UHInitialImpl implements _UHInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -510,6 +553,7 @@ class _$UHInitialImpl implements _UHInitial {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return initial(this);
   }
@@ -524,6 +568,7 @@ class _$UHInitialImpl implements _UHInitial {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return initial?.call(this);
   }
@@ -538,6 +583,7 @@ class _$UHInitialImpl implements _UHInitial {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -596,12 +642,16 @@ class _$UHLoadingImpl implements _UHLoading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return loading();
   }
@@ -611,11 +661,16 @@ class _$UHLoadingImpl implements _UHLoading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return loading?.call();
   }
@@ -625,11 +680,16 @@ class _$UHLoadingImpl implements _UHLoading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -648,6 +708,7 @@ class _$UHLoadingImpl implements _UHLoading {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return loading(this);
   }
@@ -662,6 +723,7 @@ class _$UHLoadingImpl implements _UHLoading {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return loading?.call(this);
   }
@@ -676,6 +738,7 @@ class _$UHLoadingImpl implements _UHLoading {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -696,7 +759,11 @@ abstract class _$$UHLoadedImplCopyWith<$Res> {
     $Res Function(_$UHLoadedImpl) then,
   ) = __$$UHLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<UserWorkingDayApiModel> days, bool isSeed});
+  $Res call({
+    List<UserWorkingDayApiModel> days,
+    bool isSeed,
+    List<WorkingDayApiModel> clinicDays,
+  });
 }
 
 /// @nodoc
@@ -712,17 +779,25 @@ class __$$UHLoadedImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? days = null, Object? isSeed = null}) {
+  $Res call({
+    Object? days = null,
+    Object? isSeed = null,
+    Object? clinicDays = null,
+  }) {
     return _then(
       _$UHLoadedImpl(
         null == days
             ? _value._days
             : days // ignore: cast_nullable_to_non_nullable
-                  as List<UserWorkingDayApiModel>,
+                as List<UserWorkingDayApiModel>,
         isSeed: null == isSeed
             ? _value.isSeed
             : isSeed // ignore: cast_nullable_to_non_nullable
-                  as bool,
+                as bool,
+        clinicDays: null == clinicDays
+            ? _value._clinicDays
+            : clinicDays // ignore: cast_nullable_to_non_nullable
+                as List<WorkingDayApiModel>,
       ),
     );
   }
@@ -734,7 +809,9 @@ class _$UHLoadedImpl implements _UHLoaded {
   const _$UHLoadedImpl(
     final List<UserWorkingDayApiModel> days, {
     this.isSeed = false,
-  }) : _days = days;
+    final List<WorkingDayApiModel> clinicDays = const <WorkingDayApiModel>[],
+  })  : _days = days,
+        _clinicDays = clinicDays;
 
   final List<UserWorkingDayApiModel> _days;
   @override
@@ -747,10 +824,18 @@ class _$UHLoadedImpl implements _UHLoaded {
   @override
   @JsonKey()
   final bool isSeed;
+  final List<WorkingDayApiModel> _clinicDays;
+  @override
+  @JsonKey()
+  List<WorkingDayApiModel> get clinicDays {
+    if (_clinicDays is EqualUnmodifiableListView) return _clinicDays;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_clinicDays);
+  }
 
   @override
   String toString() {
-    return 'UserHoursState.loaded(days: $days, isSeed: $isSeed)';
+    return 'UserHoursState.loaded(days: $days, isSeed: $isSeed, clinicDays: $clinicDays)';
   }
 
   @override
@@ -759,15 +844,20 @@ class _$UHLoadedImpl implements _UHLoaded {
         (other.runtimeType == runtimeType &&
             other is _$UHLoadedImpl &&
             const DeepCollectionEquality().equals(other._days, _days) &&
-            (identical(other.isSeed, isSeed) || other.isSeed == isSeed));
+            (identical(other.isSeed, isSeed) || other.isSeed == isSeed) &&
+            const DeepCollectionEquality().equals(
+              other._clinicDays,
+              _clinicDays,
+            ));
   }
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    const DeepCollectionEquality().hash(_days),
-    isSeed,
-  );
+        runtimeType,
+        const DeepCollectionEquality().hash(_days),
+        isSeed,
+        const DeepCollectionEquality().hash(_clinicDays),
+      );
 
   /// Create a copy of UserHoursState
   /// with the given fields replaced by the non-null parameter values.
@@ -782,14 +872,18 @@ class _$UHLoadedImpl implements _UHLoaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
-    return loaded(days, isSeed);
+    return loaded(days, isSeed, clinicDays);
   }
 
   @override
@@ -797,13 +891,18 @@ class _$UHLoadedImpl implements _UHLoaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
-    return loaded?.call(days, isSeed);
+    return loaded?.call(days, isSeed, clinicDays);
   }
 
   @override
@@ -811,15 +910,20 @@ class _$UHLoadedImpl implements _UHLoaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(days, isSeed);
+      return loaded(days, isSeed, clinicDays);
     }
     return orElse();
   }
@@ -834,6 +938,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return loaded(this);
   }
@@ -848,6 +953,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return loaded?.call(this);
   }
@@ -862,6 +968,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -875,10 +982,12 @@ abstract class _UHLoaded implements UserHoursState {
   const factory _UHLoaded(
     final List<UserWorkingDayApiModel> days, {
     final bool isSeed,
+    final List<WorkingDayApiModel> clinicDays,
   }) = _$UHLoadedImpl;
 
   List<UserWorkingDayApiModel> get days;
   bool get isSeed;
+  List<WorkingDayApiModel> get clinicDays;
 
   /// Create a copy of UserHoursState
   /// with the given fields replaced by the non-null parameter values.
@@ -916,7 +1025,7 @@ class __$$UHNeedsClinicHoursImplCopyWithImpl<$Res>
         isAdmin: null == isAdmin
             ? _value.isAdmin
             : isAdmin // ignore: cast_nullable_to_non_nullable
-                  as bool,
+                as bool,
       ),
     );
   }
@@ -962,12 +1071,16 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return needsClinicHours(isAdmin);
   }
@@ -977,11 +1090,16 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return needsClinicHours?.call(isAdmin);
   }
@@ -991,11 +1109,16 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (needsClinicHours != null) {
@@ -1014,6 +1137,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return needsClinicHours(this);
   }
@@ -1028,6 +1152,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return needsClinicHours?.call(this);
   }
@@ -1042,6 +1167,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (needsClinicHours != null) {
@@ -1109,12 +1235,16 @@ class _$UHSavingImpl implements _UHSaving {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saving();
   }
@@ -1124,11 +1254,16 @@ class _$UHSavingImpl implements _UHSaving {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saving?.call();
   }
@@ -1138,11 +1273,16 @@ class _$UHSavingImpl implements _UHSaving {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1161,6 +1301,7 @@ class _$UHSavingImpl implements _UHSaving {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return saving(this);
   }
@@ -1175,6 +1316,7 @@ class _$UHSavingImpl implements _UHSaving {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return saving?.call(this);
   }
@@ -1189,6 +1331,7 @@ class _$UHSavingImpl implements _UHSaving {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1247,12 +1390,16 @@ class _$UHSavedImpl implements _UHSaved {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saved();
   }
@@ -1262,11 +1409,16 @@ class _$UHSavedImpl implements _UHSaved {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saved?.call();
   }
@@ -1276,11 +1428,16 @@ class _$UHSavedImpl implements _UHSaved {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1299,6 +1456,7 @@ class _$UHSavedImpl implements _UHSaved {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return saved(this);
   }
@@ -1313,6 +1471,7 @@ class _$UHSavedImpl implements _UHSaved {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return saved?.call(this);
   }
@@ -1327,6 +1486,7 @@ class _$UHSavedImpl implements _UHSaved {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1369,7 +1529,7 @@ class __$$UHErrorImplCopyWithImpl<$Res>
         null == message
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
       ),
     );
   }
@@ -1412,12 +1572,16 @@ class _$UHErrorImpl implements _UHError {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)
-    loaded,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
     required TResult Function(bool isAdmin) needsClinicHours,
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return error(message);
   }
@@ -1427,11 +1591,16 @@ class _$UHErrorImpl implements _UHError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult? Function(bool isAdmin)? needsClinicHours,
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return error?.call(message);
   }
@@ -1441,11 +1610,16 @@ class _$UHErrorImpl implements _UHError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<UserWorkingDayApiModel> days, bool isSeed)? loaded,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
     TResult Function(bool isAdmin)? needsClinicHours,
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1464,6 +1638,7 @@ class _$UHErrorImpl implements _UHError {
     required TResult Function(_UHSaving value) saving,
     required TResult Function(_UHSaved value) saved,
     required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
   }) {
     return error(this);
   }
@@ -1478,6 +1653,7 @@ class _$UHErrorImpl implements _UHError {
     TResult? Function(_UHSaving value)? saving,
     TResult? Function(_UHSaved value)? saved,
     TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
   }) {
     return error?.call(this);
   }
@@ -1492,6 +1668,7 @@ class _$UHErrorImpl implements _UHError {
     TResult Function(_UHSaving value)? saving,
     TResult Function(_UHSaved value)? saved,
     TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1510,5 +1687,195 @@ abstract class _UHError implements UserHoursState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UHErrorImplCopyWith<_$UHErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UHSaveFailedImplCopyWith<$Res> {
+  factory _$$UHSaveFailedImplCopyWith(
+    _$UHSaveFailedImpl value,
+    $Res Function(_$UHSaveFailedImpl) then,
+  ) = __$$UHSaveFailedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$UHSaveFailedImplCopyWithImpl<$Res>
+    extends _$UserHoursStateCopyWithImpl<$Res, _$UHSaveFailedImpl>
+    implements _$$UHSaveFailedImplCopyWith<$Res> {
+  __$$UHSaveFailedImplCopyWithImpl(
+    _$UHSaveFailedImpl _value,
+    $Res Function(_$UHSaveFailedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of UserHoursState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? message = null}) {
+    return _then(
+      _$UHSaveFailedImpl(
+        null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$UHSaveFailedImpl implements _UHSaveFailed {
+  const _$UHSaveFailedImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'UserHoursState.saveFailed(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UHSaveFailedImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of UserHoursState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UHSaveFailedImplCopyWith<_$UHSaveFailedImpl> get copyWith =>
+      __$$UHSaveFailedImplCopyWithImpl<_$UHSaveFailedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    ) loaded,
+    required TResult Function(bool isAdmin) needsClinicHours,
+    required TResult Function() saving,
+    required TResult Function() saved,
+    required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
+  }) {
+    return saveFailed(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
+    TResult? Function(bool isAdmin)? needsClinicHours,
+    TResult? Function()? saving,
+    TResult? Function()? saved,
+    TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
+  }) {
+    return saveFailed?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+      List<UserWorkingDayApiModel> days,
+      bool isSeed,
+      List<WorkingDayApiModel> clinicDays,
+    )? loaded,
+    TResult Function(bool isAdmin)? needsClinicHours,
+    TResult Function()? saving,
+    TResult Function()? saved,
+    TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_UHInitial value) initial,
+    required TResult Function(_UHLoading value) loading,
+    required TResult Function(_UHLoaded value) loaded,
+    required TResult Function(_UHNeedsClinicHours value) needsClinicHours,
+    required TResult Function(_UHSaving value) saving,
+    required TResult Function(_UHSaved value) saved,
+    required TResult Function(_UHError value) error,
+    required TResult Function(_UHSaveFailed value) saveFailed,
+  }) {
+    return saveFailed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_UHInitial value)? initial,
+    TResult? Function(_UHLoading value)? loading,
+    TResult? Function(_UHLoaded value)? loaded,
+    TResult? Function(_UHNeedsClinicHours value)? needsClinicHours,
+    TResult? Function(_UHSaving value)? saving,
+    TResult? Function(_UHSaved value)? saved,
+    TResult? Function(_UHError value)? error,
+    TResult? Function(_UHSaveFailed value)? saveFailed,
+  }) {
+    return saveFailed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_UHInitial value)? initial,
+    TResult Function(_UHLoading value)? loading,
+    TResult Function(_UHLoaded value)? loaded,
+    TResult Function(_UHNeedsClinicHours value)? needsClinicHours,
+    TResult Function(_UHSaving value)? saving,
+    TResult Function(_UHSaved value)? saved,
+    TResult Function(_UHError value)? error,
+    TResult Function(_UHSaveFailed value)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UHSaveFailed implements UserHoursState {
+  const factory _UHSaveFailed(final String message) = _$UHSaveFailedImpl;
+
+  String get message;
+
+  /// Create a copy of UserHoursState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UHSaveFailedImplCopyWith<_$UHSaveFailedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

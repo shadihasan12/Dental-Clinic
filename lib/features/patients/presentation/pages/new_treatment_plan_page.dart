@@ -137,6 +137,11 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
           _plan.labFees = labFees;
           _totalCostCurrency = totalCostCurrency;
           _labFeesCurrency = labFeesCurrency;
+          // The summary card reads its currencies off the plan, so the two
+          // have to move together - the ids go to the API, the codes are what
+          // the card shows.
+          _plan.currencyCode = totalCostCurrency?.currencyCode;
+          _plan.labFeesCurrencyCode = labFeesCurrency?.currencyCode;
         });
       },
     );
@@ -344,8 +349,25 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  '\$${total.toStringAsFixed(0)}',
+                // The currency is whatever was picked, not a dollar sign: a
+                // plan priced in SYP read as USD is off by three orders of
+                // magnitude.
+                Text.rich(
+                  TextSpan(
+                    text: total.toStringAsFixed(0),
+                    children: [
+                      if (_totalCostCurrency != null)
+                        TextSpan(
+                          text: '\u00A0${_totalCostCurrency!.currencyCode}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white.withValues(alpha: 0.75),
+                            letterSpacing: 0,
+                          ),
+                        ),
+                    ],
+                  ),
                   style: TextStyle(
                     fontFamily: fontFamily,
                     fontSize: 32,
@@ -409,8 +431,21 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            '\$${value.toStringAsFixed(0)}',
+          Text.rich(
+            TextSpan(
+              text: value.toStringAsFixed(0),
+              children: [
+                if (_totalCostCurrency != null)
+                  TextSpan(
+                    text: '\u00A0${_totalCostCurrency!.currencyCode}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.75),
+                    ),
+                  ),
+              ],
+            ),
             style: TextStyle(
               fontFamily: fontFamily,
               fontSize: 18,

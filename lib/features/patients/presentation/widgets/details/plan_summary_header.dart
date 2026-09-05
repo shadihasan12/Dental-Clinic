@@ -61,39 +61,99 @@ class PlanSummaryHeader extends StatelessWidget {
     );
   }
 
-  String _formatAmount(double amount) {
-    final formatted = amount.toStringAsFixed(0);
-    if (plan.currencyCode != null && plan.currencyCode!.isNotEmpty) {
-      return '$formatted ${plan.currencyCode}';
-    }
-    return formatted;
+  /// The figure keeps the weight; the currency rides beside it small and
+  /// muted. A glance reads the number, a second look confirms the money it is
+  /// in - which matters on this card, where the lab is routinely billed in a
+  /// different currency than the case itself.
+  Widget _amount(
+    BuildContext context, {
+    required double value,
+    required String? code,
+    required Color valueColor,
+  }) {
+    final family = FontHelper.fontFamily(context);
+    final hasCode = code != null && code.trim().isNotEmpty;
+
+    return Text.rich(
+      TextSpan(
+        text: value.toStringAsFixed(0),
+        children: [
+          if (hasCode)
+            TextSpan(
+              // Non-breaking, so the code can never wrap away from the figure
+              // it qualifies.
+              text: '\u00A0${code.trim()}',
+              style: TextStyle(
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w600,
+                color: ColorManager.of(context).textTertiary,
+              ),
+            ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: 17.sp,
+        fontFamily: family,
+        fontWeight: FontWeight.w700,
+        color: valueColor,
+      ),
+    );
   }
+
+  /// An amount that has not been set yet. No currency: there is no figure for
+  /// it to qualify.
+  Widget _noAmount(BuildContext context, Color valueColor) => Text(
+        '—',
+        style: TextStyle(
+          fontSize: 17.sp,
+          fontFamily: FontHelper.fontFamily(context),
+          fontWeight: FontWeight.w700,
+          color: valueColor,
+        ),
+      );
 
   Widget _buildSavedStats(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Paid and pending are settled in the case currency, so all three read
+    // the same code - the lab's is the only one that can differ.
     return Row(
       children: [
         _stat(
           context,
           label: l10n.totalLabel,
-          value: _formatAmount(plan.grandTotal),
-          valueColor: ColorManager.of(context).textPrimary,
+          value: _amount(
+            context,
+            value: plan.grandTotal,
+            code: plan.currencyCode,
+            valueColor: ColorManager.of(context).textPrimary,
+          ),
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.paidLabel,
-          value: _formatAmount(plan.paid),
-          valueColor: const Color(0xFF2E9E5B),
+          value: _amount(
+            context,
+            value: plan.paid,
+            code: plan.currencyCode,
+            valueColor: const Color(0xFF2E9E5B),
+          ),
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.pendingLabel,
-          value: _formatAmount(plan.pending),
-          valueColor: plan.pending > 0
-              ? const Color(0xFFE07B2A)
-              : const Color(0xFF2E9E5B),
+          value: _amount(
+            context,
+            value: plan.pending,
+            code: plan.currencyCode,
+            valueColor: plan.pending > 0
+                ? const Color(0xFFE07B2A)
+                : const Color(0xFF2E9E5B),
+          ),
         ),
       ],
     );
@@ -101,20 +161,36 @@ class PlanSummaryHeader extends StatelessWidget {
 
   Widget _buildInitialStats(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+
     return Row(
       children: [
         _stat(
           context,
           label: l10n.totalCost,
-          value: plan.totalCost > 0 ? _formatAmount(plan.totalCost) : '—',
-          valueColor: ColorManager.of(context).textPrimary,
+          value: plan.totalCost > 0
+              ? _amount(
+                  context,
+                  value: plan.totalCost,
+                  code: plan.currencyCode,
+                  valueColor: c.textPrimary,
+                )
+              : _noAmount(context, c.textPrimary),
         ),
         _verticalDivider(context),
         _stat(
           context,
           label: l10n.labFees,
-          value: plan.labFees > 0 ? _formatAmount(plan.labFees) : '—',
-          valueColor: ColorManager.of(context).textSecondary,
+          value: plan.labFees > 0
+              ? _amount(
+                  context,
+                  value: plan.labFees,
+                  // Falls back to the case currency only when the lab has none
+                  // of its own, so 350000 can never be read as dollars.
+                  code: plan.labFeesCurrencyCode ?? plan.currencyCode,
+                  valueColor: c.textSecondary,
+                )
+              : _noAmount(context, c.textSecondary),
         ),
       ],
     );
@@ -123,8 +199,7 @@ class PlanSummaryHeader extends StatelessWidget {
   Widget _stat(
     BuildContext context, {
     required String label,
-    required String value,
-    required Color valueColor,
+    required Widget value,
   }) {
     return Expanded(
       child: Column(
@@ -138,15 +213,7 @@ class PlanSummaryHeader extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4.h),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w700,
-              color: valueColor,
-            ),
-          ),
+          value,
         ],
       ),
     );

@@ -13,13 +13,15 @@ class QuickActions extends StatelessWidget {
     required this.onAddPatient,
     required this.onScheduleVisit,
     required this.onNewCase,
-    required this.onRecordPayment,
+    this.onRecordPayment,
   });
 
   final VoidCallback onAddPatient;
   final VoidCallback onScheduleVisit;
   final VoidCallback onNewCase;
-  final VoidCallback onRecordPayment;
+  /// Null for a user with no expenses permission — the tile is dropped
+  /// rather than left to jump at a tab that isn't there.
+  final VoidCallback? onRecordPayment;
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +39,14 @@ class QuickActions extends StatelessWidget {
           label: l10n.appointment,
           onTap: onScheduleVisit,
         ),
-        SizedBox(width: 8.w),
-        _ActionItem(
-          icon: Icons.payments_outlined,
-          label: l10n.payment,
-          onTap: onRecordPayment,
-        ),
+        if (onRecordPayment != null) ...[
+          SizedBox(width: 8.w),
+          _ActionItem(
+            icon: Icons.payments_outlined,
+            label: l10n.payment,
+            onTap: onRecordPayment!,
+          ),
+        ],
       ],
     );
   }

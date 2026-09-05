@@ -89,7 +89,16 @@ class TreatmentPlan {
   double labFees;
   double paid;
   double pendingAmount;
+
+  /// Currency of [totalCost], and of everything derived from it - paid and
+  /// pending are settled in the same money the case is priced in.
   String? currencyCode;
+
+  /// Lab fees are billed by the lab, so they are routinely in another
+  /// currency than the case: a plan priced in USD with the lab invoicing in
+  /// SYP is the normal arrangement, not an edge case. Null falls back to
+  /// [currencyCode].
+  String? labFeesCurrencyCode;
 
   TreatmentPlan({
     required this.id,
@@ -101,6 +110,7 @@ class TreatmentPlan {
     this.paid = 0,
     this.pendingAmount = 0,
     this.currencyCode,
+    this.labFeesCurrencyCode,
   });
 
   double get grandTotal => totalCost;

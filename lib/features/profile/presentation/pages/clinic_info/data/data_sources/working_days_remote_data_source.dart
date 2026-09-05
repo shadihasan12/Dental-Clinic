@@ -16,6 +16,13 @@ abstract class WorkingDaysRemoteDataSource {
   /// X-Selected-Clinic-id header — both auto-injected by the auth
   /// interceptor — so no path params are required.
   Future<List<UserWorkingDayApiModel>> getMyHours();
+
+  /// Reads one specific member's hours. The admin screens manage other
+  /// people's schedules, so they cannot use [getMyHours] - that endpoint
+  /// resolves the user from the bearer token and would hand back the
+  /// *admin's* hours no matter whose page was open.
+  Future<List<UserWorkingDayApiModel>> getUserHours(String userId);
+
   Future<void> upsertUserHours(
     String userId,
     List<UserWorkingDayApiModel> days,
@@ -74,11 +81,35 @@ class WorkingDaysRemoteDataSourceImpl implements WorkingDaysRemoteDataSource {
   @override
   Future<List<UserWorkingDayApiModel>> getMyHours() async {
     final response = await _apiConsumer.get(WorkingDaysEndpoints.myHours);
-    final data = response['data'] as Map<String, dynamic>;
-    final days = data['days'] as List? ?? const [];
-    return days
-        .map((e) => UserWorkingDayApiModel.fromJson(e as Map<String, dynamic>))
+    return _parseUserDays(response);
+  }
+
+  /// Tolerates either `{ "data": [...] }` or `{ "data": { "days": [...] } }`,
+  /// the same two shapes the clinic working-days endpoint returns.
+  List<UserWorkingDayApiModel> _parseUserDays(dynamic response) {
+    final raw = response is Map ? response['data'] : null;
+    final List rawDays;
+    if (raw is List) {
+      rawDays = raw;
+    } else if (raw is Map) {
+      rawDays = (raw['days'] as List?) ?? const [];
+    } else {
+      rawDays = const [];
+    }
+    return rawDays
+        .whereType<Map>()
+        .map(
+          (e) => UserWorkingDayApiModel.fromJson(Map<String, dynamic>.from(e)),
+        )
         .toList();
+  }
+
+  @override
+  Future<List<UserWorkingDayApiModel>> getUserHours(String userId) async {
+    final response = await _apiConsumer.get(
+      WorkingDaysEndpoints.userHours(userId),
+    );
+    return _parseUserDays(response);
   }
 
   @override

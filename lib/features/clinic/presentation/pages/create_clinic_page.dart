@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -216,6 +217,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        inputFormatters: emailInputFormatters,
                         validator: _validateEmail,
                         onChanged: (_) {
                           if (_showValidationErrors) {

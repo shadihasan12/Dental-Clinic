@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -79,7 +80,12 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       textCapitalization: textCapitalization,
-      inputFormatters: inputFormatters,
+      // The email guard leads so a caller's own formatters still get
+      // the last word on whatever they care about.
+      inputFormatters: [
+        ...?formattersForKeyboard(keyboardType),
+        ...?inputFormatters,
+      ],
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,

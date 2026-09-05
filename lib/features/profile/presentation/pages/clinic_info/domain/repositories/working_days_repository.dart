@@ -13,6 +13,12 @@ abstract class WorkingDaysRepository {
     List<HolidayApiModel> holidays,
   );
   Future<Either<NetworkExceptions, List<UserWorkingDayApiModel>>> getMyHours();
+
+  /// One specific member's hours - see the data source for why the admin
+  /// screens must not reach for [getMyHours] instead.
+  Future<Either<NetworkExceptions, List<UserWorkingDayApiModel>>> getUserHours(
+    String userId,
+  );
   Future<Either<NetworkExceptions, void>> upsertUserHours(
     String userId,
     List<UserWorkingDayApiModel> days,

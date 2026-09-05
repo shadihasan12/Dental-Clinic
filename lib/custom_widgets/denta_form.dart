@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
@@ -374,6 +375,9 @@ class _FormTextFieldState extends State<FormTextField> {
                 controller: widget.controller,
                 focusNode: _focusNode,
                 keyboardType: widget.keyboardType,
+                inputFormatters: formattersForKeyboard(
+                  widget.keyboardType,
+                ),
                 maxLines: widget.obscureText ? 1 : widget.maxLines,
                 obscureText: widget.obscureText,
                 textCapitalization: widget.textCapitalization,

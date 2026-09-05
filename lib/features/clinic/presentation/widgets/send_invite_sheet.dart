@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
@@ -124,6 +125,7 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
           TextField(
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
+            inputFormatters: emailInputFormatters,
             autofocus: true,
             onChanged: (_) => setState(() {}),
             style: TextStyle(

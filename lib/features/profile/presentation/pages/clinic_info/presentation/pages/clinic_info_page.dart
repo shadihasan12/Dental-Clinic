@@ -159,8 +159,8 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
       holidays: _originalEntity!.holidays,
     );
     context.read<ClinicInfoBloc>().add(
-      ClinicInfoEvent.updateClinicInfo(entity),
-    );
+          ClinicInfoEvent.updateClinicInfo(entity),
+        );
   }
 
   Future<void> _refresh(BuildContext context) async {
@@ -238,8 +238,8 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                         message: message,
                         actionLabel: l10n.retry,
                         onAction: () => context.read<ClinicInfoBloc>().add(
-                          const ClinicInfoEvent.loadClinicInfo(),
-                        ),
+                              const ClinicInfoEvent.loadClinicInfo(),
+                            ),
                       ),
                     ),
                   ),
@@ -525,13 +525,13 @@ class _ClinicInfoSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: c.borderLight),
-      ),
-    );
+          height: height,
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: c.borderLight),
+          ),
+        );
 
     return AppShimmer(
       child: ListView(
