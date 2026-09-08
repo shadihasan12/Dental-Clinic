@@ -18,6 +18,10 @@ class PatientModel {
   final String? avatarUrl;
   final String? nextVisit;
   final double balance;
+
+  /// Currency of [balance], from the case it was derived from. Null when the
+  /// server sent none - the amount is then shown bare rather than guessed at.
+  final String? balanceCurrencyCode;
   final DateTime? createdAt;
   final List<AuditEntry> audits;
 
@@ -39,6 +43,7 @@ class PatientModel {
     this.avatarUrl,
     this.nextVisit,
     this.balance = 0,
+    this.balanceCurrencyCode,
     this.createdAt,
     this.audits = const [],
   });
@@ -83,9 +88,8 @@ class PatientModel {
       avatarUrl: json['avatar_url'] as String?,
       nextVisit: json['next_visit_date'] as String? ??
           json['next_visit'] as String?,
-      balance: (json['outstanding_balance'] as num?)?.toDouble() ??
-          (json['balance'] as num?)?.toDouble() ??
-          0,
+      balance: _balanceFrom(json),
+      balanceCurrencyCode: _currencyCodeFrom(json),
       createdAt: _parseNullableDate(json['created_at']),
       audits: AuditEntry.listFromJson(json['audits']),
     );
@@ -94,6 +98,53 @@ class PatientModel {
   static DateTime? _parseNullableDate(dynamic value) {
     if (value == null) return null;
     return DateTime.tryParse(value.toString());
+  }
+
+  /// What the patient still owes.
+  ///
+  /// `outstanding_balance` is the field to trust, but the API currently sends
+  /// 0 for every patient while their own cases report a non-zero
+  /// `pending_amount` - so the list showed nothing owed on a patient the
+  /// details screen showed as owing. Until the server aggregates it, the
+  /// cases are added up here. A real non-zero `outstanding_balance` still
+  /// wins, so this heals itself when the backend is fixed.
+  static double _balanceFrom(Map<String, dynamic> json) {
+    final reported = (json['outstanding_balance'] as num?)?.toDouble() ??
+        (json['balance'] as num?)?.toDouble();
+    if (reported != null && reported > 0) return reported;
+
+    var pending = 0.0;
+    for (final c in _cases(json)) {
+      final v = c['pending_amount'];
+      if (v is num) pending += v.toDouble();
+      if (v is String) pending += double.tryParse(v) ?? 0;
+    }
+    return pending > 0 ? pending : (reported ?? 0);
+  }
+
+  /// The currency the balance is denominated in, taken from the case it came
+  /// from. Never defaulted: a clinic billing in SYP must not have its total
+  /// rendered with a dollar sign, so a missing code means the amount is shown
+  /// without one.
+  static String? _currencyCodeFrom(Map<String, dynamic> json) {
+    for (final c in _cases(json)) {
+      final currency = c['total_cost_currency'];
+      if (currency is Map && currency['currency_code'] is String) {
+        return currency['currency_code'] as String;
+      }
+    }
+    return null;
+  }
+
+  /// The open case first, then any others - the open one is what a balance on
+  /// the list is almost always about.
+  static List<Map<String, dynamic>> _cases(Map<String, dynamic> json) {
+    return [
+      if (json['opened_case'] is Map<String, dynamic>)
+        json['opened_case'] as Map<String, dynamic>,
+      for (final c in (json['other_cases'] as List? ?? const []))
+        if (c is Map<String, dynamic>) c,
+    ];
   }
 
   PatientEntity toEntity() {
@@ -115,6 +166,7 @@ class PatientModel {
       avatarUrl: avatarUrl,
       nextVisit: nextVisit,
       balance: balance,
+      balanceCurrencyCode: balanceCurrencyCode,
       createdAt: createdAt,
       audits: audits,
     );
@@ -139,6 +191,7 @@ class PatientModel {
       avatarUrl: entity.avatarUrl,
       nextVisit: entity.nextVisit,
       balance: entity.balance,
+      balanceCurrencyCode: entity.balanceCurrencyCode,
     );
   }
 }

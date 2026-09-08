@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -41,46 +42,52 @@ class _AppointmentsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<AppointmentBloc, AppointmentState>(
-        // A rejected status change has to say so. The list itself is still
-        // valid, so this is a snackbar over the day rather than an error
-        // state replacing it - and it carries the server's own reason, which
-        // is the part that used to be swallowed.
-        listenWhen: (prev, curr) =>
-            prev.actionError != curr.actionError && curr.actionError != null,
-        listener: (context, state) {
-          AppSnackbar.showError(
-            context,
-            title: AppLocalizations.of(context)!.statusChangeFailed,
-            message: state.actionError,
-          );
-          context.read<AppointmentBloc>().add(
-            const AppointmentEvent.clearActionError(),
-          );
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              _buildHeader(context, state),
-              Divider(height: 1, color: ColorManager.of(context).borderLight),
-              Padding(
-                padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
-                child: _buildDateSelector(context, state),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
-                child: _buildViewToggle(context, state),
-              ),
-              SizedBox(height: 12.h),
-              Expanded(
-                child: DentaRefresh(
-                  onRefresh: () => _refresh(context),
-                  child: _buildBody(context, state),
+      // Full-bleed gives up the 8pt of top padding RootPage applies to an
+      // unconverted tab; kept here so converting the tab does not also nudge
+      // the header up. The bottom is left open for the pill to float over.
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: BlocConsumer<AppointmentBloc, AppointmentState>(
+          // A rejected status change has to say so. The list itself is still
+          // valid, so this is a snackbar over the day rather than an error
+          // state replacing it - and it carries the server's own reason, which
+          // is the part that used to be swallowed.
+          listenWhen: (prev, curr) =>
+              prev.actionError != curr.actionError && curr.actionError != null,
+          listener: (context, state) {
+            AppSnackbar.showError(
+              context,
+              title: AppLocalizations.of(context)!.statusChangeFailed,
+              message: state.actionError,
+            );
+            context.read<AppointmentBloc>().add(
+              const AppointmentEvent.clearActionError(),
+            );
+          },
+          builder: (context, state) {
+            return Column(
+              children: [
+                _buildHeader(context, state),
+                Divider(height: 1, color: ColorManager.of(context).borderLight),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
+                  child: _buildDateSelector(context, state),
                 ),
-              ),
-            ],
-          );
-        },
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: _buildViewToggle(context, state),
+                ),
+                SizedBox(height: 12.h),
+                Expanded(
+                  child: DentaRefresh(
+                    onRefresh: () => _refresh(context),
+                    child: _buildBody(context, state),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -100,7 +107,12 @@ class _AppointmentsContent extends StatelessWidget {
 
     if (state.error != null) {
       return SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+        padding: EdgeInsets.fromLTRB(
+          14.w,
+          0,
+          14.w,
+          DentaNavBar.contentBottomInset(context),
+        ),
         child: StateCard(
           icon: Icons.cloud_off_rounded,
           tone: ColorManager.error,
@@ -117,7 +129,12 @@ class _AppointmentsContent extends StatelessWidget {
 
     if (state.filteredAppointments.isEmpty) {
       return SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+        padding: EdgeInsets.fromLTRB(
+          14.w,
+          0,
+          14.w,
+          DentaNavBar.contentBottomInset(context),
+        ),
         child: StateCard(
           icon: Icons.calendar_today_outlined,
           title: l10n.noAppointmentsScheduled,
@@ -133,7 +150,12 @@ class _AppointmentsContent extends StatelessWidget {
     }
 
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        0,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       itemCount: state.filteredAppointments.length,
       separatorBuilder: (_, i) => SizedBox(height: 8.h),
       itemBuilder: (context, index) =>
@@ -147,7 +169,12 @@ class _AppointmentsContent extends StatelessWidget {
   ) {
     final groups = _groupByDay(appointments);
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        0,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       itemCount: groups.length,
       itemBuilder: (context, index) {
         final entry = groups[index];
@@ -438,7 +465,12 @@ class _AppointmentsContent extends StatelessWidget {
 
   Widget _buildLoadingSkeleton(BuildContext context) {
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        0,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       itemCount: 6,
       separatorBuilder: (_, i) => SizedBox(height: 8.h),
       itemBuilder: (context, index) => const AppointmentCardSkeleton(),

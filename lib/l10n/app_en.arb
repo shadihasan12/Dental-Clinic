@@ -1230,5 +1230,49 @@
   "dayOutsideClinicHours": "These hours fall outside the clinic hours",
   "workingHoursInvalidTitle": "Check the working hours",
   "workingHoursSaveFailed": "Working hours could not be saved",
-  "workingHoursReadOnlyNote": "Your working hours are set by your clinic administrator."
+  "workingHoursReadOnlyNote": "Your working hours are set by your clinic administrator.",
+  "nextUp": "Next",
+  "nowLabel": "Now",
+  "startingNow": "Starting now",
+  "inTime": "in {time}",
+  "@inTime": {
+    "description": "Countdown to the next appointment. {time} is an already-formatted duration such as \"25 min\" or \"1h 10m\".",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doneOfTotal": "{done} of {total} done",
+  "@doneOfTotal": {
+    "description": "Progress through today's appointments. Cancelled appointments are left out of both numbers.",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayComplete": "Day complete",
+  "dayCompleteHint": "Nothing left on today's schedule.",
+  "goodMorning": "Good morning",
+  "goodAfternoon": "Good afternoon",
+  "goodEvening": "Good evening",
+  "thisMonth": "This month",
+  "errorNotImplemented": "Not implemented",
+  "errorRequestCancelled": "The request was cancelled",
+  "errorInternalServer": "Something went wrong on the server",
+  "errorServiceUnavailable": "The service is unavailable",
+  "errorMethodNotAllowed": "That action is not allowed",
+  "errorUnexpected": "An unexpected error occurred",
+  "errorRequestTimeout": "The connection timed out",
+  "errorNoInternet": "No internet connection",
+  "errorConflict": "This conflicts with data already saved",
+  "errorSendTimeout": "The server took too long to respond",
+  "errorUnableToProcess": "The data could not be processed",
+  "errorNotAcceptable": "The server rejected the request",
+  "errorCanceledByUser": "Cancelled",
+  "lastSevenDays": "Last 7 days"
 }

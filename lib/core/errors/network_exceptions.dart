@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -26,7 +28,8 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
   const factory NetworkExceptions.sendTimeout() = SendTimeout;
 
-  const factory NetworkExceptions.tooManyRequests(String message) = TooManyRequests;
+  const factory NetworkExceptions.tooManyRequests(String message) =
+      TooManyRequests;
 
   const factory NetworkExceptions.unprocessableEntity(String reason) =
       UnprocessableEntity;
@@ -143,7 +146,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
         return const NetworkExceptions.serviceUnavailable();
       default:
         return NetworkExceptions.defaultError(
-          _extractMessage(response, 'Received invalid status code: $statusCode'),
+          _extractMessage(
+            response,
+            'Received invalid status code: $statusCode',
+          ),
         );
     }
   }
@@ -176,8 +182,9 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
               networkExceptions = const NetworkExceptions.sendTimeout();
               break;
             case DioExceptionType.badResponse:
-              networkExceptions =
-                  NetworkExceptions.handleResponse(error.response);
+              networkExceptions = NetworkExceptions.handleResponse(
+                error.response,
+              );
               break;
             case DioExceptionType.sendTimeout:
               networkExceptions = const NetworkExceptions.sendTimeout();
@@ -210,6 +217,51 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
     }
   }
 
+  /// The user-facing text for [exception], in the app's language.
+  ///
+  /// Prefer this over [getErrorMessage] anywhere the string is shown on
+  /// screen: [getErrorMessage] is context-free and therefore hardcoded
+  /// English, which is how "Connection request timeout" ended up inside an
+  /// Arabic error card.
+  ///
+  /// The cases carrying a `String` are passed through untouched. Those are
+  /// the server's own words - a validation message, a 403 reason - and the
+  /// API is the only thing that knows what they say; replacing them with a
+  /// generic local string would throw away the only specific information the
+  /// user gets. Only the fixed client-side messages are translated here.
+  static String localizedMessage(
+    BuildContext context,
+    NetworkExceptions exception,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return exception.when(
+      notImplemented: () => l10n.errorNotImplemented,
+      requestCancelled: () => l10n.errorRequestCancelled,
+      internalServerError: () => l10n.errorInternalServer,
+      notFound: (reason) => reason,
+      serviceUnavailable: () => l10n.errorServiceUnavailable,
+      methodNotAllowed: () => l10n.errorMethodNotAllowed,
+      badRequest: (message) => message,
+      unauthorizedRequest: (error) => error,
+      unprocessableEntity: (error) => error,
+      unexpectedError: () => l10n.errorUnexpected,
+      requestTimeout: () => l10n.errorRequestTimeout,
+      noInternetConnection: () => l10n.errorNoInternet,
+      conflict: () => l10n.errorConflict,
+      tooManyRequests: (message) => message,
+      sendTimeout: () => l10n.errorSendTimeout,
+      unableToProcess: () => l10n.errorUnableToProcess,
+      defaultError: (error) => error,
+      formatException: () => l10n.errorUnexpected,
+      notAcceptable: () => l10n.errorNotAcceptable,
+      forbidden: (reason) => reason,
+      canceledByUser: () => l10n.errorCanceledByUser,
+    );
+  }
+
+  /// Context-free English. Use it for logs and for the handful of call sites
+  /// with no [BuildContext]; anything the user reads wants
+  /// [localizedMessage].
   static String getErrorMessage(NetworkExceptions networkExceptions) {
     String errorMessage = '';
     networkExceptions.when(

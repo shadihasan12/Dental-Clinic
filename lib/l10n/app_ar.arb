@@ -1189,5 +1189,47 @@
   "dayOutsideClinicHours": "هذه الأوقات خارج ساعات عمل العيادة",
   "workingHoursInvalidTitle": "راجع ساعات العمل",
   "workingHoursSaveFailed": "تعذر حفظ ساعات العمل",
-  "workingHoursReadOnlyNote": "يتم تحديد ساعات عملك من قبل مسؤول العيادة."
+  "workingHoursReadOnlyNote": "يتم تحديد ساعات عملك من قبل مسؤول العيادة.",
+  "nextUp": "التالي",
+  "nowLabel": "الآن",
+  "startingNow": "يبدأ الآن",
+  "inTime": "بعد {time}",
+  "@inTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doneOfTotal": "{done} من {total} مكتمل",
+  "@doneOfTotal": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayComplete": "اكتمل اليوم",
+  "dayCompleteHint": "لم يتبقَّ شيء في جدول اليوم.",
+  "goodMorning": "صباح الخير",
+  "goodAfternoon": "طاب يومك",
+  "goodEvening": "مساء الخير",
+  "thisMonth": "هذا الشهر",
+  "errorNotImplemented": "غير مطبق",
+  "errorRequestCancelled": "تم إلغاء الطلب",
+  "errorInternalServer": "حدث خطأ في الخادم",
+  "errorServiceUnavailable": "الخدمة غير متاحة",
+  "errorMethodNotAllowed": "هذا الإجراء غير مسموح",
+  "errorUnexpected": "حدث خطأ غير متوقع",
+  "errorRequestTimeout": "انتهت مهلة الاتصال",
+  "errorNoInternet": "لا يوجد اتصال بالإنترنت",
+  "errorConflict": "يتعارض هذا مع بيانات محفوظة مسبقًا",
+  "errorSendTimeout": "استغرق الخادم وقتًا طويلًا للرد",
+  "errorUnableToProcess": "تعذرت معالجة البيانات",
+  "errorNotAcceptable": "رفض الخادم الطلب",
+  "errorCanceledByUser": "تم الإلغاء",
+  "lastSevenDays": "آخر ٧ أيام"
 }

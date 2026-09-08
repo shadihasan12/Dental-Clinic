@@ -24,7 +24,10 @@ class PatientFullDetailsResponse {
 }
 
 abstract class PatientRemoteDataSource {
-  Future<PaginatedResponse<PatientModel>> getAllPatients({int page = 1});
+  Future<PaginatedResponse<PatientModel>> getAllPatients({
+    int page = 1,
+    String? search,
+  });
   Future<PatientFullDetailsResponse> getPatientFullDetails(String patientId);
   Future<PatientModel> getPatientDetails(String patientId);
   Future<DentalCase?> getActiveCase(String patientId);
@@ -120,7 +123,11 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   @override
   Future<PaginatedResponse<PatientModel>> getAllPatients({
     int page = 1,
+    String? search,
   }) async {
+    final query = search?.trim() ?? '';
+    if (query.isNotEmpty) return _searchByName(query);
+
     final response = await _apiConsumer.get(
       PatientEndpoints.patients,
       queryParameters: {'page': page},
@@ -139,6 +146,58 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       currentPage: pagination['page'] as int,
       lastPage: pagination['last_page'] as int,
     );
+  }
+
+  /// How many matches one search pulls back. Generous enough that a clinic
+  /// never sees a truncated result for a normal name, without asking the
+  /// server for its whole roster on every keystroke.
+  static const int _searchPageSize = 100;
+
+  /// Server-side name search.
+  ///
+  /// This used to be done in the page, over whatever had been scrolled into
+  /// memory - so searching for a patient on page 3 of an infinite list
+  /// answered "no matching patients" until you happened to scroll far
+  /// enough. It has to be the server's job.
+  ///
+  /// The API filters `first_name` and `last_name` separately and ANDs the
+  /// filters it is given, so no single request matches either half of a
+  /// name. Two go out and are merged on id. That is also why the result is
+  /// reported as a single page: a merged set has no page number the server
+  /// would agree with, and paging it would drop or repeat rows.
+  Future<PaginatedResponse<PatientModel>> _searchByName(String query) async {
+    final responses = await Future.wait([
+      _apiConsumer.get(
+        PatientEndpoints.patients,
+        queryParameters: {
+          'filters[first_name][like]': query,
+          'size': _searchPageSize,
+        },
+      ),
+      _apiConsumer.get(
+        PatientEndpoints.patients,
+        queryParameters: {
+          'filters[last_name][like]': query,
+          'size': _searchPageSize,
+        },
+      ),
+    ]);
+
+    final byId = <String, PatientModel>{};
+    for (final response in responses) {
+      for (final e in (response['data'] as List? ?? const [])) {
+        if (e is! Map<String, dynamic>) continue;
+        final model = PatientModel.fromJson(e);
+        byId[model.id] = model;
+      }
+    }
+
+    final merged = byId.values.toList()
+      ..sort(
+        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      );
+
+    return PaginatedResponse(data: merged, currentPage: 1, lastPage: 1);
   }
 
   @override

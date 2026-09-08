@@ -29,6 +29,21 @@ class StatisticResult {
   /// [data] as a list, or an empty list when it isn't one.
   List<dynamic> get dataList => data is List ? data as List<dynamic> : const [];
 
+  /// The first row of a list payload.
+  ///
+  /// KPI metrics send one object per currency rather than a bare object —
+  /// `[{currency: USD, value: 17010, …}]` — so a reader that only looks at
+  /// [dataMap] finds nothing and the tile hides itself despite the server
+  /// having answered. Clinics in this app bill in a single currency, so the
+  /// first row is the figure; a multi-currency clinic would need the row
+  /// picked by code rather than by position.
+  Map<String, dynamic> get primaryRow {
+    final d = data;
+    if (d is! List || d.isEmpty) return const {};
+    final first = d.first;
+    return first is Map<String, dynamic> ? first : const {};
+  }
+
   /// True when the server returned no usable data for this metric
   /// (`null`, `[]` or `{}`).
   bool get isEmpty {

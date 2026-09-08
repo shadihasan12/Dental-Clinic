@@ -213,7 +213,11 @@ class _KpiValues {
   final double? changePercent;
 
   factory _KpiValues.from(StatisticResult result) {
-    final sources = <Map<String, dynamic>>[result.dataMap, result.meta];
+    final sources = <Map<String, dynamic>>[
+      result.dataMap,
+      result.primaryRow,
+      result.meta,
+    ];
 
     double? pick(List<String> keys) {
       for (final src in sources) {
@@ -245,6 +249,9 @@ class _KpiValues {
         'comparison',
       ]),
       changePercent: pick(const [
+        // The live backend sends `percentage_change`; the two spellings below
+        // it are the ones earlier catalogs used.
+        'percentage_change',
         'change_percentage',
         'change_percent',
         'percentage',

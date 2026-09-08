@@ -162,7 +162,7 @@ class _PatientCardDesktopState extends State<PatientCardDesktop> {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              '\$${widget.patient.balance.toInt()}',
+              widget.patient.balanceLabel,
               style: TextStyle(
                 fontSize: 11,
                 fontFamily: fontFamily,

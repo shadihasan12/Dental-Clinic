@@ -25,6 +25,9 @@ class PatientEntity with _$PatientEntity {
     String? avatarUrl,
     String? nextVisit,
     @Default(0) double balance,
+    /// Currency of [balance]. Null when the server sent none, in which case
+    /// the amount is rendered without a symbol rather than assuming dollars.
+    String? balanceCurrencyCode,
     DateTime? createdAt,
     @Default([]) List<AuditEntry> audits,
   }) = _PatientEntity;

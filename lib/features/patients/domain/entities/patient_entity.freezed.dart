@@ -34,6 +34,10 @@ mixin _$PatientEntity {
   String? get avatarUrl => throw _privateConstructorUsedError;
   String? get nextVisit => throw _privateConstructorUsedError;
   double get balance => throw _privateConstructorUsedError;
+
+  /// Currency of [balance]. Null when the server sent none, in which case
+  /// the amount is rendered without a symbol rather than assuming dollars.
+  String? get balanceCurrencyCode => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
@@ -69,6 +73,7 @@ abstract class $PatientEntityCopyWith<$Res> {
     String? avatarUrl,
     String? nextVisit,
     double balance,
+    String? balanceCurrencyCode,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -106,6 +111,7 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
     Object? avatarUrl = freezed,
     Object? nextVisit = freezed,
     Object? balance = null,
+    Object? balanceCurrencyCode = freezed,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -179,6 +185,10 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.balance
                 : balance // ignore: cast_nullable_to_non_nullable
                       as double,
+            balanceCurrencyCode: freezed == balanceCurrencyCode
+                ? _value.balanceCurrencyCode
+                : balanceCurrencyCode // ignore: cast_nullable_to_non_nullable
+                      as String?,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -220,6 +230,7 @@ abstract class _$$PatientEntityImplCopyWith<$Res>
     String? avatarUrl,
     String? nextVisit,
     double balance,
+    String? balanceCurrencyCode,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -256,6 +267,7 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
     Object? avatarUrl = freezed,
     Object? nextVisit = freezed,
     Object? balance = null,
+    Object? balanceCurrencyCode = freezed,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -329,6 +341,10 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.balance
             : balance // ignore: cast_nullable_to_non_nullable
                   as double,
+        balanceCurrencyCode: freezed == balanceCurrencyCode
+            ? _value.balanceCurrencyCode
+            : balanceCurrencyCode // ignore: cast_nullable_to_non_nullable
+                  as String?,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -363,6 +379,7 @@ class _$PatientEntityImpl implements _PatientEntity {
     this.avatarUrl,
     this.nextVisit,
     this.balance = 0,
+    this.balanceCurrencyCode,
     this.createdAt,
     final List<AuditEntry> audits = const [],
   }) : _audits = audits;
@@ -403,6 +420,11 @@ class _$PatientEntityImpl implements _PatientEntity {
   @override
   @JsonKey()
   final double balance;
+
+  /// Currency of [balance]. Null when the server sent none, in which case
+  /// the amount is rendered without a symbol rather than assuming dollars.
+  @override
+  final String? balanceCurrencyCode;
   @override
   final DateTime? createdAt;
   final List<AuditEntry> _audits;
@@ -416,7 +438,7 @@ class _$PatientEntityImpl implements _PatientEntity {
 
   @override
   String toString() {
-    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance, createdAt: $createdAt, audits: $audits)';
+    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance, balanceCurrencyCode: $balanceCurrencyCode, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -449,6 +471,8 @@ class _$PatientEntityImpl implements _PatientEntity {
             (identical(other.nextVisit, nextVisit) ||
                 other.nextVisit == nextVisit) &&
             (identical(other.balance, balance) || other.balance == balance) &&
+            (identical(other.balanceCurrencyCode, balanceCurrencyCode) ||
+                other.balanceCurrencyCode == balanceCurrencyCode) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             const DeepCollectionEquality().equals(other._audits, _audits));
@@ -474,6 +498,7 @@ class _$PatientEntityImpl implements _PatientEntity {
     avatarUrl,
     nextVisit,
     balance,
+    balanceCurrencyCode,
     createdAt,
     const DeepCollectionEquality().hash(_audits),
   ]);
@@ -506,6 +531,7 @@ abstract class _PatientEntity implements PatientEntity {
     final String? avatarUrl,
     final String? nextVisit,
     final double balance,
+    final String? balanceCurrencyCode,
     final DateTime? createdAt,
     final List<AuditEntry> audits,
   }) = _$PatientEntityImpl;
@@ -544,6 +570,11 @@ abstract class _PatientEntity implements PatientEntity {
   String? get nextVisit;
   @override
   double get balance;
+
+  /// Currency of [balance]. Null when the server sent none, in which case
+  /// the amount is rendered without a symbol rather than assuming dollars.
+  @override
+  String? get balanceCurrencyCode;
   @override
   DateTime? get createdAt;
   @override

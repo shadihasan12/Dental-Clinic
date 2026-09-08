@@ -130,25 +130,56 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     super.dispose();
   }
 
+  /// Stops a clinic with a huge roster from issuing unbounded requests here.
+  /// At the API's page size this is several thousand patients.
+  static const int _maxPatientPages = 20;
+
+  /// Every patient, not the first page of them.
+  ///
+  /// This picker has no "load more" - it is a single dropdown - so stopping
+  /// after page one silently made most of the roster unbookable: with 31
+  /// patients on the clinic, 16 of them simply were not in the list. The
+  /// pages are walked until the server says there are no more.
   Future<void> _loadPatients() async {
-    final result = await getIt<GetAllPatientsUseCase>()(1);
-    if (!mounted) return;
-    result.fold(
-      (error) {
-        setState(() => _isPatientsLoading = false);
-        AppSnackbar.showError(
-          context,
-          title: AppLocalizations.of(context)!.error,
-          message: NetworkExceptions.getErrorMessage(error),
-        );
-      },
-      (response) {
+    final loaded = <PatientEntity>[];
+    var page = 1;
+
+    while (page <= _maxPatientPages) {
+      final result = await getIt<GetAllPatientsUseCase>()(
+        GetAllPatientsParams(page: page),
+      );
+      if (!mounted) return;
+
+      final failure = result.fold((e) => e, (_) => null);
+      if (failure != null) {
+        // A later page failing still leaves the earlier ones worth showing;
+        // only a first-page failure means there is nothing to pick from.
         setState(() {
-          _patients = response.data;
+          _patients = loaded;
           _isPatientsLoading = false;
         });
-      },
-    );
+        if (loaded.isEmpty) {
+          AppSnackbar.showError(
+            context,
+            title: AppLocalizations.of(context)!.error,
+            message: NetworkExceptions.getErrorMessage(failure),
+          );
+        }
+        return;
+      }
+
+      final response = result.getOrElse(
+        () => throw StateError('unreachable'),
+      );
+      loaded.addAll(response.data);
+      if (!response.hasMore) break;
+      page++;
+    }
+
+    setState(() {
+      _patients = loaded;
+      _isPatientsLoading = false;
+    });
   }
 
   Future<void> _loadAvailableSlots() async {

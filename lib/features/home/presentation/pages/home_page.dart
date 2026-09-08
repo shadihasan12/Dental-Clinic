@@ -1,19 +1,26 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_header.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
+import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/clinic_date_row.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/home_revenue_card.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/quick_actions.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/section_heading.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/todays_schedule.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
+import 'package:dental_clinic_app/features/statistics/domain/entities/revenue_summary.dart';
+import 'package:dental_clinic_app/features/statistics/domain/use_cases/get_revenue_summary_use_case.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_status_use_case.dart';
@@ -43,6 +50,12 @@ class _HomePageState extends State<HomePage> {
   bool _subscriptionLoading = true;
   bool _isSubscriptionCardHidden = false;
 
+  /// Null both while loading and whenever there is no revenue to report -
+  /// no catalog metric, no permission, a failed call. The tile reads that as
+  /// "show nothing", which is the right answer to all three.
+  RevenueSummary? _revenue;
+  bool _revenueLoading = true;
+
   List<AppointmentEntity> _todayAppointments = const [];
 
   /// True only until the first load resolves. Drives the skeleton, so a
@@ -55,7 +68,11 @@ class _HomePageState extends State<HomePage> {
   /// avoid stacking duplicate requests, not to show a spinner.
   bool _scheduleInFlight = false;
 
-  String? _scheduleError;
+  /// The failure itself, not a rendered string. Turning it into text needs
+  /// a BuildContext to reach the translations, and doing that at fetch time
+  /// is what put an English "Connection request timeout" inside an Arabic
+  /// error card. Held as the exception, localised in build.
+  NetworkExceptions? _scheduleError;
 
   static const int _maxScheduleRows = 5;
 
@@ -78,13 +95,27 @@ class _HomePageState extends State<HomePage> {
     // made through paths that do not raise the signal.
     RootPage.selectedTab.addListener(_onTabChanged);
     _loadSubscription();
-    _loadTodaysSchedule();
+    unawaited(_loadInitialContent());
 
     // Safety net for the "already signed in" cold start: AuthBloc only fires
     // on a fresh login/register, so a session restored from storage - or one
     // whose registration POST failed while offline - would otherwise never
     // register. No-ops in ~1 shared-prefs read once the token is synced.
     unawaited(getIt<NotificationService>().syncTokenIfNeeded());
+  }
+
+  /// Cold start, in priority order.
+  ///
+  /// The revenue lookup costs two round trips of its own - the statistics
+  /// catalog, then the metric - and it is the one thing on this screen the
+  /// user did not open the app for. Firing it alongside the schedule put
+  /// five requests on the wire at launch and left the schedule competing
+  /// with them for the connection; it now goes second, once the day is on
+  /// screen.
+  Future<void> _loadInitialContent() async {
+    await _loadTodaysSchedule();
+    if (!mounted) return;
+    await _loadRevenue();
   }
 
   void _onTabChanged() {
@@ -150,7 +181,7 @@ class _HomePageState extends State<HomePage> {
           // A failed revalidation keeps the data already displayed; only a
           // failed first load has nothing better to offer than the error.
           if (_scheduleLoading) {
-            _scheduleError = NetworkExceptions.getErrorMessage(e);
+            _scheduleError = e;
             _todayAppointments = const [];
           }
         },
@@ -165,6 +196,32 @@ class _HomePageState extends State<HomePage> {
     });
 
     _scheduleInFlight = false;
+  }
+
+  /// Month-to-date revenue, discovered through the statistics catalog.
+  ///
+  /// A failure is deliberately silent. The number is a bonus on this screen,
+  /// not the reason the user opened it, and the backend refuses the call
+  /// outright for a role that may not see clinic money - so an error card
+  /// here would be noise for some users and a permissions leak for others.
+  Future<void> _loadRevenue() async {
+    final result = await getIt<GetRevenueSummaryUseCase>()(NoParams());
+    if (!mounted) return;
+    setState(() {
+      result.fold((_) => _revenue = null, (summary) => _revenue = summary);
+      _revenueLoading = false;
+    });
+  }
+
+  /// Pull-to-refresh. Reloads everything the screen shows and holds the
+  /// spinner until both are back, so the gesture reports on the whole page
+  /// rather than on whichever request happened to finish first.
+  Future<void> _refreshAll() async {
+    await Future.wait([
+      _loadSubscription(),
+      _loadTodaysSchedule(),
+      _loadRevenue(),
+    ]);
   }
 
   void _hideSubscriptionCard() =>
@@ -184,23 +241,35 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final c = ColorManager.of(context);
+    final t = HomeTokens.of(context);
     final l10n = AppLocalizations.of(context)!;
 
+    // The revenue card draws nothing when there is no revenue metric at all,
+    // so the page asks first rather than reserving a 20pt gap above an empty
+    // box.
+    final showsRevenue = _revenueLoading || _revenue != null;
+
     return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      body: SafeArea(
-        bottom: false,
+      backgroundColor: t.pageBg,
+      body: DentaRefresh(
+        onRefresh: _refreshAll,
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+          // Handoff: 20 horizontal, 58 top (clear of the status bar), 120
+          // bottom so the last card clears the floating tab bar. The page
+          // runs full-bleed behind that bar, so the floor is whatever the
+          // pill actually occupies on this device - a large home indicator
+          // makes it taller than the design's 120.
+          padding: EdgeInsets.fromLTRB(
+            20.w,
+            58.h,
+            20.w,
+            math.max(120.h, DentaNavBar.reservedHeight(context) + 14.h),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 12.h),
-
               HomeHeader(
                 userName: _firstName.isNotEmpty ? _firstName : 'Dr. Smith',
-                clinicName: _clinicName,
                 profileImageUrl: _profileImageUrl,
                 isLoading: _firstName.isEmpty,
                 onNotificationTap: () {
@@ -211,31 +280,30 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
 
-              // The day comes first: what the clinic is actually doing in
-              // the next few hours outranks the plan banner and the
-              // shortcuts, both of which used to sit above it.
               SizedBox(height: 20.h),
-              TodaysSchedule(
-                appointments: _todayAppointments
-                    .take(_maxScheduleRows)
-                    .toList(),
-                totalCount: _todayAppointments.length,
-                isLoading: _scheduleLoading,
-                error: _scheduleError,
-                onViewAllTap: () => RootPage.selectedTab.value = 2,
-                onNewAppointment: _openNewAppointment,
-                onRetry: () {
-                  setState(() => _scheduleLoading = true);
-                  _loadTodaysSchedule();
-                },
+              ClinicDateRow(
+                clinicName: _clinicName,
+                isLoading: _clinicName.isEmpty,
               ),
 
-              SizedBox(height: 20.h),
+              if (showsRevenue) ...[
+                SizedBox(height: 20.h),
+                HomeRevenueCard(
+                  summary: _revenue,
+                  isLoading: _revenueLoading,
+                  onTap: () => context.pushNamed(AppRoutesNames.statistics),
+                ),
+              ],
 
-              _SectionHeading(title: l10n.quickActions),
-              SizedBox(height: 10.h),
-              // Recording a payment lands on the expenses tab, so it is shown
-              // on the same terms the tab itself is: a secretary has neither.
+              // Quick Actions sits above the schedule on purpose: the three
+              // things the user starts most are then reachable without
+              // scrolling past a day that may be long.
+              SizedBox(height: 20.h),
+              SectionHeading(title: l10n.quickActions),
+              SizedBox(height: 12.h),
+              // Recording a payment lands on the expenses tab, so it is
+              // shown on the same terms the tab itself is: a secretary has
+              // neither.
               BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
                 bloc: getIt<ClinicPermissionsBloc>(),
                 builder: (context, permissionsState) {
@@ -245,7 +313,6 @@ class _HomePageState extends State<HomePage> {
                   return QuickActions(
                     onAddPatient: _openAddPatient,
                     onScheduleVisit: _openNewAppointment,
-                    onNewCase: () {},
                     onRecordPayment: canRecordPayment
                         ? () {
                             RootPage.selectedTab.value = RootTab.expenses.index;
@@ -253,6 +320,27 @@ class _HomePageState extends State<HomePage> {
                           }
                         : null,
                   );
+                },
+              ),
+
+              SizedBox(height: 20.h),
+              TodaysSchedule(
+                appointments: _todayAppointments
+                    .take(_maxScheduleRows)
+                    .toList(),
+                totalCount: _todayAppointments.length,
+                isLoading: _scheduleLoading,
+                error: _scheduleError == null
+                    ? null
+                    : NetworkExceptions.localizedMessage(
+                        context,
+                        _scheduleError!,
+                      ),
+                onViewAllTap: () => RootPage.selectedTab.value = 2,
+                onNewAppointment: _openNewAppointment,
+                onRetry: () {
+                  setState(() => _scheduleLoading = true);
+                  _loadTodaysSchedule();
                 },
               ),
 
@@ -267,32 +355,9 @@ class _HomePageState extends State<HomePage> {
                   onClose: _hideSubscriptionCard,
                 ),
               ],
-
-              SizedBox(height: 16.h),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// 13px/600 in the primary text colour - one heading weight for every group
-/// on the screen, matching the patient reference.
-class _SectionHeading extends StatelessWidget {
-  const _SectionHeading({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
-        fontFamily: FontHelper.fontFamily(context),
-        color: ColorManager.of(context).textPrimary,
       ),
     );
   }

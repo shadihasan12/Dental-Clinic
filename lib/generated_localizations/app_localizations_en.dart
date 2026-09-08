@@ -3019,4 +3019,83 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workingHoursReadOnlyNote =>
       'Your working hours are set by your clinic administrator.';
+
+  @override
+  String get nextUp => 'Next';
+
+  @override
+  String get nowLabel => 'Now';
+
+  @override
+  String get startingNow => 'Starting now';
+
+  @override
+  String inTime(String time) {
+    return 'in $time';
+  }
+
+  @override
+  String doneOfTotal(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get dayComplete => 'Day complete';
+
+  @override
+  String get dayCompleteHint => 'Nothing left on today\'s schedule.';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get errorNotImplemented => 'Not implemented';
+
+  @override
+  String get errorRequestCancelled => 'The request was cancelled';
+
+  @override
+  String get errorInternalServer => 'Something went wrong on the server';
+
+  @override
+  String get errorServiceUnavailable => 'The service is unavailable';
+
+  @override
+  String get errorMethodNotAllowed => 'That action is not allowed';
+
+  @override
+  String get errorUnexpected => 'An unexpected error occurred';
+
+  @override
+  String get errorRequestTimeout => 'The connection timed out';
+
+  @override
+  String get errorNoInternet => 'No internet connection';
+
+  @override
+  String get errorConflict => 'This conflicts with data already saved';
+
+  @override
+  String get errorSendTimeout => 'The server took too long to respond';
+
+  @override
+  String get errorUnableToProcess => 'The data could not be processed';
+
+  @override
+  String get errorNotAcceptable => 'The server rejected the request';
+
+  @override
+  String get errorCanceledByUser => 'Cancelled';
+
+  @override
+  String get lastSevenDays => 'Last 7 days';
 }

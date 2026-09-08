@@ -17,10 +17,10 @@ class ColorManager {
   // PRIMARY COLORS - Denta Blue (same in both themes)
   // ============================================
   // The logo blue (#199ED9) at full strength was too loud for large UI areas,
-// so the ramp keeps its hue but softens it to S62% L62%. The logo artwork
-// itself keeps the vivid original - this ramp is for UI surfaces only.
-// Swap these five values to retune; everything else derives from them.
-// The ramp keeps the
+  // so the ramp keeps its hue but softens it to S62% L62%. The logo artwork
+  // itself keeps the vivid original - this ramp is for UI surfaces only.
+  // Swap these five values to retune; everything else derives from them.
+  // The ramp keeps the
   // lightness relationships of the previous teal palette, so every existing
   // use of primaryLight/Dark/etc. holds its relative weight.
   static const Color primary = Color(0xFF62B4DA);
@@ -192,6 +192,8 @@ class ColorManager {
     errorBg: Color(0xFFFEE2E2),
     infoBg: Color(0xFFDBEAFE),
     purpleBg: Color(0xFFF3E8FF),
+    primaryTintBg: Color(0xFFE0F2FB),
+    primaryTintBorder: Color(0xFFC3E2F3),
   );
 
   static const _dark = AppColors(
@@ -219,6 +221,8 @@ class ColorManager {
     errorBg: Color(0xFF3A1A1A),
     infoBg: Color(0xFF1A2A3A),
     purpleBg: Color(0xFF2A1A3A),
+    primaryTintBg: Color(0xFF16262F),
+    primaryTintBorder: Color(0xFF244152),
   );
 }
 
@@ -249,6 +253,12 @@ class AppColors {
   final Color infoBg;
   final Color purpleBg;
 
+  /// The 50-level of the brand hue - the house tint for a surface
+  /// that carries a number rather than a status, and the only blue
+  /// fill that is not one of the semantic backgrounds above.
+  final Color primaryTintBg;
+  final Color primaryTintBorder;
+
   const AppColors({
     required this.scaffoldBg,
     required this.surfaceBg,
@@ -274,5 +284,7 @@ class AppColors {
     required this.errorBg,
     required this.infoBg,
     required this.purpleBg,
+    required this.primaryTintBg,
+    required this.primaryTintBorder,
   });
 }

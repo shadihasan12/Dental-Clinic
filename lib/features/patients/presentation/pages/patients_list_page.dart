@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -6,6 +8,7 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/detach_patient_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/manager/list_patients/patients_list_bloc.dart';
@@ -45,6 +48,11 @@ class _PatientsListContent extends StatefulWidget {
 
 class _PatientsListContentState extends State<_PatientsListContent> {
   final _searchController = TextEditingController();
+
+  /// Search runs on the server, so it waits for a pause in typing rather
+  /// than firing two requests per keystroke.
+  Timer? _searchDebounce;
+  static const Duration _searchDebounceDelay = Duration(milliseconds: 350);
   final _scrollController = ScrollController();
   int _selectedFilterIndex = 0;
 
@@ -60,6 +68,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   void dispose() {
     RootPage.selectedTab.removeListener(_onTabChanged);
     UserStorage.patientsChangedNotifier.removeListener(_onPatientsChanged);
+    _searchDebounce?.cancel();
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -185,6 +194,14 @@ class _PatientsListContentState extends State<_PatientsListContent> {
     );
   }
 
+  void _onSearchChanged(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(_searchDebounceDelay, () {
+      if (!mounted) return;
+      context.read<PatientsListBloc>().add(PatientsListEvent.search(query));
+    });
+  }
+
   List<Patient> _mapToDisplayModel(List<PatientEntity> entities) {
     return entities
         .map(
@@ -196,28 +213,35 @@ class _PatientsListContentState extends State<_PatientsListContent> {
             phone: e.phone,
             nextVisit: e.nextVisit,
             balance: e.balance,
+            balanceCurrencyCode: e.balanceCurrencyCode,
+            createdAt: e.createdAt,
           ),
         )
         .toList();
   }
 
+  /// How recently a patient must have been added to count as "New"
+  /// (`newFilter` / "الأحدث" - the newest).
+  static const Duration _newPatientWindow = Duration(days: 30);
+
+  /// Only the "New" chip is applied here. The name search is the server's
+  /// job now - doing it locally meant filtering the rows that happened to be
+  /// in memory, so a patient on page 3 of the roster could not be found.
   List<Patient> _applyFilters(List<Patient> patients) {
-    final query = _searchController.text.toLowerCase();
+    if (_selectedFilterIndex != 1) return patients;
 
-    var filtered = patients;
-    if (query.isNotEmpty) {
-      filtered = filtered
-          .where((p) => p.name.toLowerCase().contains(query))
-          .toList();
-    }
-
-    // Index 1 = "New" filter — show only patients with balance == 0
-    if (_selectedFilterIndex == 1) {
-      filtered = filtered.where((p) => p.balance == 0).toList();
-    }
-
-    return filtered;
+    // The chip used to filter `balance == 0`, which matched every patient
+    // once the balance itself was always zero - the filter did nothing at
+    // all. Both labels say recency, so recency is what it filters on.
+    final cutoff = DateTime.now().subtract(_newPatientWindow);
+    return patients
+        .where((p) => p.createdAt != null && p.createdAt!.isAfter(cutoff))
+        .toList();
   }
+
+  /// Room for the floating tab bar at the foot of every scroll view here.
+  /// This tab runs full-bleed - see `RootPage._fullBleedTabs`.
+  double get _bottomInset => DentaNavBar.contentBottomInset(context);
 
   @override
   Widget build(BuildContext context) {
@@ -226,26 +250,33 @@ class _PatientsListContentState extends State<_PatientsListContent> {
 
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocBuilder<PatientsListBloc, PatientsListState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const SizedBox.shrink(),
-            loading: () => _buildLoading(l10n, filters),
-            loaded: (entities, hasMore) => _buildLoaded(
-              l10n,
-              filters,
-              _mapToDisplayModel(entities),
-              hasMore: hasMore,
-            ),
-            loadingMore: (entities) => _buildLoaded(
-              l10n,
-              filters,
-              _mapToDisplayModel(entities),
-              isLoadingMore: true,
-            ),
-            error: (message) => _buildError(l10n, filters, message),
-          );
-        },
+      // Going full-bleed gives up the 8pt of top padding RootPage applies to
+      // every unconverted tab. The header sits directly under the status bar,
+      // so that gap is kept here rather than letting the conversion quietly
+      // move the search field up. The bottom stays open - that is the point.
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: BlocBuilder<PatientsListBloc, PatientsListState>(
+          builder: (context, state) {
+            return state.when(
+              initial: () => const SizedBox.shrink(),
+              loading: () => _buildLoading(l10n, filters),
+              loaded: (entities, hasMore) => _buildLoaded(
+                l10n,
+                filters,
+                _mapToDisplayModel(entities),
+                hasMore: hasMore,
+              ),
+              loadingMore: (entities) => _buildLoaded(
+                l10n,
+                filters,
+                _mapToDisplayModel(entities),
+                isLoadingMore: true,
+              ),
+              error: (message) => _buildError(l10n, filters, message),
+            );
+          },
+        ),
       ),
     );
   }
@@ -273,7 +304,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 14.w),
+            padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, _bottomInset),
             itemCount: 6,
             itemBuilder: (_, i) => const _PatientCardSkeleton(),
           ),
@@ -299,7 +330,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           patientCount: allPatients.length,
           searchController: _searchController,
           onAddTap: _navigateToAddPatient,
-          onSearchChanged: (_) => setState(() {}),
+          onSearchChanged: _onSearchChanged,
         ),
         Divider(height: 1, color: ColorManager.of(context).borderLight),
         Padding(
@@ -323,7 +354,12 @@ class _PatientsListContentState extends State<_PatientsListContent> {
                       controller: _scrollController,
                       slivers: [
                         SliverPadding(
-                          padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+                          padding: EdgeInsets.fromLTRB(
+                            14.w,
+                            0,
+                            14.w,
+                            _bottomInset,
+                          ),
                           // Cards carry their own hairline and 8.h gap, so no
                           // separator: a divider between bordered cards would
                           // read as a double rule.
@@ -369,7 +405,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
   /// button - the fix is editing the search, which is already on screen.
   Widget _buildEmptyState(AppLocalizations l10n, bool isCompletelyEmpty) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, _bottomInset),
       child: StateCard(
         icon: isCompletelyEmpty
             ? Icons.people_outline
@@ -405,7 +441,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           child: DentaRefresh(
             onRefresh: _onRefresh,
             child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, _bottomInset),
               child: StateCard(
                 icon: Icons.cloud_off_rounded,
                 tone: ColorManager.error,

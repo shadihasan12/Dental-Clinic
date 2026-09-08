@@ -15,6 +15,13 @@ class Patient {
   final String? nextVisit;
   final double balance;
 
+  /// Currency of [balance]. Null renders the amount bare - better than a
+  /// dollar sign on a clinic that bills in SYP.
+  final String? balanceCurrencyCode;
+
+  /// When the patient was added, for the "New" filter.
+  final DateTime? createdAt;
+
   const Patient({
     required this.id,
     required this.name,
@@ -23,7 +30,17 @@ class Patient {
     required this.phone,
     this.nextVisit,
     required this.balance,
+    this.balanceCurrencyCode,
+    this.createdAt,
   });
+
+  /// The owed amount with its own currency code, or bare when the server
+  /// sent none. Never a hardcoded '\$' - this clinic may bill in SYP.
+  String get balanceLabel {
+    final amount = balance.toInt().toString();
+    final code = balanceCurrencyCode;
+    return code == null || code.isEmpty ? amount : '$amount $code';
+  }
 
   String get initials {
     final parts =
@@ -271,7 +288,7 @@ class PatientCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Text(
-        '\$${patient.balance.toInt()}',
+        patient.balanceLabel,
         style: TextStyle(
           fontSize: 11.5.sp,
           height: 1.2,

@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/state_card.dart';
+import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/features/expenses/domain/entities/expense_entity.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/manager/expense_bloc.dart';
@@ -177,84 +178,93 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocListener<ExpenseBloc, ExpenseState>(
-        listenWhen: (prev, curr) {
-          String? prevError;
-          String? currError;
-          prev.whenOrNull(loaded: (_, _, e) => prevError = e);
-          curr.whenOrNull(loaded: (_, _, e) => currError = e);
-          return currError != null && currError != prevError;
-        },
-        listener: (context, state) {
-          state.whenOrNull(
-            loaded: (_, _, actionError) {
-              if (actionError != null) {
-                AppSnackbar.showError(context, title: actionError);
-              }
-            },
-          );
-        },
-        child: BlocBuilder<ExpenseBloc, ExpenseState>(
-          builder: (context, state) {
-            return state.when(
-              initial: () => const SizedBox.shrink(),
-              loading: () => Column(
-                children: [
-                  _buildHeader(context, [], 0),
-                  _buildMonthSelector(context),
-                  Divider(height: 1, color: ColorManager.of(context).divider),
-                  Expanded(child: _buildSkeletonList(context)),
-                ],
-              ),
-              loaded: (expenses, totals, _) {
-                return Column(
+      // Full-bleed gives up the 8pt of top padding RootPage applies to an
+      // unconverted tab; kept here so converting the tab does not also nudge
+      // the header up. The bottom is left open for the pill to float over.
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: BlocListener<ExpenseBloc, ExpenseState>(
+          listenWhen: (prev, curr) {
+            String? prevError;
+            String? currError;
+            prev.whenOrNull(loaded: (_, _, e) => prevError = e);
+            curr.whenOrNull(loaded: (_, _, e) => currError = e);
+            return currError != null && currError != prevError;
+          },
+          listener: (context, state) {
+            state.whenOrNull(
+              loaded: (_, _, actionError) {
+                if (actionError != null) {
+                  AppSnackbar.showError(context, title: actionError);
+                }
+              },
+            );
+          },
+          child: BlocBuilder<ExpenseBloc, ExpenseState>(
+            builder: (context, state) {
+              return state.when(
+                initial: () => const SizedBox.shrink(),
+                loading: () => Column(
                   children: [
-                    _buildHeader(context, totals, expenses.length),
+                    _buildHeader(context, [], 0),
+                    _buildMonthSelector(context),
+                    Divider(height: 1, color: ColorManager.of(context).divider),
+                    Expanded(child: _buildSkeletonList(context)),
+                  ],
+                ),
+                loaded: (expenses, totals, _) {
+                  return Column(
+                    children: [
+                      _buildHeader(context, totals, expenses.length),
+                      _buildMonthSelector(context),
+                      Divider(
+                        height: 1,
+                        color: ColorManager.of(context).divider,
+                      ),
+                      Expanded(
+                        child: DentaRefresh(
+                          onRefresh: _refresh,
+                          child: expenses.isEmpty
+                              ? _buildEmptyState(context)
+                              : ListView.separated(
+                                  padding: EdgeInsets.fromLTRB(
+                                    14.w,
+                                    8.h,
+                                    14.w,
+                                    DentaNavBar.contentBottomInset(context),
+                                  ),
+                                  itemCount: expenses.length,
+                                  separatorBuilder: (_, _) =>
+                                      SizedBox(height: 8.h),
+                                  itemBuilder: (_, index) => ExpenseRow(
+                                    expense: expenses[index],
+                                    onTap: () => _showExpenseDetails(
+                                      context,
+                                      expenses[index],
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                error: (message) => Column(
+                  children: [
+                    _buildHeader(context, [], 0),
                     _buildMonthSelector(context),
                     Divider(height: 1, color: ColorManager.of(context).divider),
                     Expanded(
                       child: DentaRefresh(
                         onRefresh: _refresh,
-                        child: expenses.isEmpty
-                            ? _buildEmptyState(context)
-                            : ListView.separated(
-                                padding: EdgeInsets.fromLTRB(
-                                  14.w,
-                                  8.h,
-                                  14.w,
-                                  24.h,
-                                ),
-                                itemCount: expenses.length,
-                                separatorBuilder: (_, _) =>
-                                    SizedBox(height: 8.h),
-                                itemBuilder: (_, index) => ExpenseRow(
-                                  expense: expenses[index],
-                                  onTap: () => _showExpenseDetails(
-                                    context,
-                                    expenses[index],
-                                  ),
-                                ),
-                              ),
+                        child: _buildErrorState(context, message),
                       ),
                     ),
                   ],
-                );
-              },
-              error: (message) => Column(
-                children: [
-                  _buildHeader(context, [], 0),
-                  _buildMonthSelector(context),
-                  Divider(height: 1, color: ColorManager.of(context).divider),
-                  Expanded(
-                    child: DentaRefresh(
-                      onRefresh: _refresh,
-                      child: _buildErrorState(context, message),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -436,7 +446,12 @@ class _ExpensesContentState extends State<_ExpensesContent> {
 
   Widget _buildSkeletonList(BuildContext context) {
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        0,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       itemCount: 6,
       separatorBuilder: (_, _) =>
           Divider(height: 1, color: ColorManager.of(context).divider),
@@ -449,7 +464,12 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Widget _buildEmptyState(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        14.h,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       child: StateCard(
         icon: Icons.receipt_long_outlined,
         title: l10n.noExpensesThisMonth,
@@ -465,7 +485,12 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   Widget _buildErrorState(BuildContext context, String message) {
     final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      padding: EdgeInsets.fromLTRB(
+        14.w,
+        14.h,
+        14.w,
+        DentaNavBar.contentBottomInset(context),
+      ),
       child: StateCard(
         icon: Icons.cloud_off_rounded,
         tone: ColorManager.error,

@@ -6,17 +6,34 @@ import 'package:dental_clinic_app/features/patients/domain/entities/patient_enti
 import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
 import 'package:injectable/injectable.dart';
 
+/// One page of the roster, or the matches for a name.
+///
+/// [search] is the whole reason this is a params object rather than a bare
+/// page number: filtering used to happen in the page over the rows already
+/// scrolled into memory, which quietly hid every patient past the first page.
+class GetAllPatientsParams {
+  const GetAllPatientsParams({this.page = 1, this.search});
+
+  final int page;
+
+  /// A name fragment. Null or blank fetches the roster page instead.
+  final String? search;
+}
+
 @injectable
 class GetAllPatientsUseCase
-    implements UseCase<PaginatedResponse<PatientEntity>, int> {
+    implements UseCase<PaginatedResponse<PatientEntity>, GetAllPatientsParams> {
   final PatientRepository _repository;
 
   GetAllPatientsUseCase(this._repository);
 
   @override
   Future<Either<NetworkExceptions, PaginatedResponse<PatientEntity>>> call(
-    int page,
+    GetAllPatientsParams params,
   ) {
-    return _repository.getAllPatients(page: page);
+    return _repository.getAllPatients(
+      page: params.page,
+      search: params.search,
+    );
   }
 }

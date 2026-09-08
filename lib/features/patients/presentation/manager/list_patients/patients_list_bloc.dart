@@ -17,25 +17,37 @@ class PatientsListBloc extends Bloc<PatientsListEvent, PatientsListState> {
   int _currentPage = 0;
   int _lastPage = 1;
 
+  /// The active search, applied to every load so a refresh or a tab return
+  /// does not silently drop back to the full roster while the field still
+  /// shows a query.
+  String _search = '';
+
   PatientsListBloc({
     required GetAllPatientsUseCase getAllPatients,
   })  : _getAllPatients = getAllPatients,
         super(const PatientsListState.initial()) {
     on<_LoadPatients>(_onLoadPatients);
     on<_LoadMore>(_onLoadMore);
+    on<_Search>(_onSearch);
   }
 
   Future<void> _onLoadPatients(
     _LoadPatients event,
     Emitter<PatientsListState> emit,
-  ) async {
+  ) => _reload(emit);
+
+  /// First page of whatever is currently being shown - the roster, or the
+  /// matches for [_search].
+  Future<void> _reload(Emitter<PatientsListState> emit) async {
     emit(const PatientsListState.loading());
 
     _allPatients = [];
     _currentPage = 0;
     _lastPage = 1;
 
-    final result = await _getAllPatients(1);
+    final result = await _getAllPatients(
+      GetAllPatientsParams(page: 1, search: _search),
+    );
 
     result.fold(
       (error) => emit(
@@ -61,7 +73,9 @@ class PatientsListBloc extends Bloc<PatientsListEvent, PatientsListState> {
 
     emit(PatientsListState.loadingMore(patients: _allPatients));
 
-    final result = await _getAllPatients(_currentPage + 1);
+    final result = await _getAllPatients(
+      GetAllPatientsParams(page: _currentPage + 1, search: _search),
+    );
 
     result.fold(
       (error) => emit(PatientsListState.loaded(
@@ -78,5 +92,17 @@ class PatientsListBloc extends Bloc<PatientsListEvent, PatientsListState> {
         ));
       },
     );
+  }
+
+  /// Re-queries the server for a name. Debounced by the page, so this runs
+  /// once the user stops typing rather than per keystroke.
+  Future<void> _onSearch(
+    _Search event,
+    Emitter<PatientsListState> emit,
+  ) async {
+    final next = event.query.trim();
+    if (next == _search) return;
+    _search = next;
+    await _reload(emit);
   }
 }

@@ -2993,4 +2993,83 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get workingHoursReadOnlyNote =>
       'يتم تحديد ساعات عملك من قبل مسؤول العيادة.';
+
+  @override
+  String get nextUp => 'التالي';
+
+  @override
+  String get nowLabel => 'الآن';
+
+  @override
+  String get startingNow => 'يبدأ الآن';
+
+  @override
+  String inTime(String time) {
+    return 'بعد $time';
+  }
+
+  @override
+  String doneOfTotal(int done, int total) {
+    return '$done من $total مكتمل';
+  }
+
+  @override
+  String get dayComplete => 'اكتمل اليوم';
+
+  @override
+  String get dayCompleteHint => 'لم يتبقَّ شيء في جدول اليوم.';
+
+  @override
+  String get goodMorning => 'صباح الخير';
+
+  @override
+  String get goodAfternoon => 'طاب يومك';
+
+  @override
+  String get goodEvening => 'مساء الخير';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get errorNotImplemented => 'غير مطبق';
+
+  @override
+  String get errorRequestCancelled => 'تم إلغاء الطلب';
+
+  @override
+  String get errorInternalServer => 'حدث خطأ في الخادم';
+
+  @override
+  String get errorServiceUnavailable => 'الخدمة غير متاحة';
+
+  @override
+  String get errorMethodNotAllowed => 'هذا الإجراء غير مسموح';
+
+  @override
+  String get errorUnexpected => 'حدث خطأ غير متوقع';
+
+  @override
+  String get errorRequestTimeout => 'انتهت مهلة الاتصال';
+
+  @override
+  String get errorNoInternet => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get errorConflict => 'يتعارض هذا مع بيانات محفوظة مسبقًا';
+
+  @override
+  String get errorSendTimeout => 'استغرق الخادم وقتًا طويلًا للرد';
+
+  @override
+  String get errorUnableToProcess => 'تعذرت معالجة البيانات';
+
+  @override
+  String get errorNotAcceptable => 'رفض الخادم الطلب';
+
+  @override
+  String get errorCanceledByUser => 'تم الإلغاء';
+
+  @override
+  String get lastSevenDays => 'آخر ٧ أيام';
 }

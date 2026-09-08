@@ -5785,6 +5785,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your working hours are set by your clinic administrator.'**
   String get workingHoursReadOnlyNote;
+
+  /// No description provided for @nextUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextUp;
+
+  /// No description provided for @nowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get nowLabel;
+
+  /// No description provided for @startingNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting now'**
+  String get startingNow;
+
+  /// Countdown to the next appointment. {time} is an already-formatted duration such as "25 min" or "1h 10m".
+  ///
+  /// In en, this message translates to:
+  /// **'in {time}'**
+  String inTime(String time);
+
+  /// Progress through today's appointments. Cancelled appointments are left out of both numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String doneOfTotal(int done, int total);
+
+  /// No description provided for @dayComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Day complete'**
+  String get dayComplete;
+
+  /// No description provided for @dayCompleteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing left on today\'s schedule.'**
+  String get dayCompleteHint;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEvening;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @errorNotImplemented.
+  ///
+  /// In en, this message translates to:
+  /// **'Not implemented'**
+  String get errorNotImplemented;
+
+  /// No description provided for @errorRequestCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'The request was cancelled'**
+  String get errorRequestCancelled;
+
+  /// No description provided for @errorInternalServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on the server'**
+  String get errorInternalServer;
+
+  /// No description provided for @errorServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The service is unavailable'**
+  String get errorServiceUnavailable;
+
+  /// No description provided for @errorMethodNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'That action is not allowed'**
+  String get errorMethodNotAllowed;
+
+  /// No description provided for @errorUnexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get errorUnexpected;
+
+  /// No description provided for @errorRequestTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection timed out'**
+  String get errorRequestTimeout;
+
+  /// No description provided for @errorNoInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get errorNoInternet;
+
+  /// No description provided for @errorConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This conflicts with data already saved'**
+  String get errorConflict;
+
+  /// No description provided for @errorSendTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The server took too long to respond'**
+  String get errorSendTimeout;
+
+  /// No description provided for @errorUnableToProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'The data could not be processed'**
+  String get errorUnableToProcess;
+
+  /// No description provided for @errorNotAcceptable.
+  ///
+  /// In en, this message translates to:
+  /// **'The server rejected the request'**
+  String get errorNotAcceptable;
+
+  /// No description provided for @errorCanceledByUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get errorCanceledByUser;
+
+  /// No description provided for @lastSevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get lastSevenDays;
 }
 
 class _AppLocalizationsDelegate

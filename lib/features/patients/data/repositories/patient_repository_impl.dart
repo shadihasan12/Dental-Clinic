@@ -21,9 +21,12 @@ class PatientRepositoryImpl implements PatientRepository {
 
   @override
   Future<Either<NetworkExceptions, PaginatedResponse<PatientEntity>>>
-      getAllPatients({int page = 1}) async {
+      getAllPatients({int page = 1, String? search}) async {
     try {
-      final result = await _remoteDataSource.getAllPatients(page: page);
+      final result = await _remoteDataSource.getAllPatients(
+        page: page,
+        search: search,
+      );
       return Right(PaginatedResponse(
         data: result.data.map((m) => m.toEntity()).toList(),
         currentPage: result.currentPage,

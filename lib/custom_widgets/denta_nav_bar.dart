@@ -79,6 +79,16 @@ class DentaNavBar extends StatelessWidget {
   static double reservedHeight(BuildContext context) =>
       _itemHeight.h + (_pillPadding * 2).h + bottomOffset(context) + 8.h;
 
+  /// Bottom padding for a scroll view on a full-bleed tab.
+  ///
+  /// A full-bleed page draws behind the pill instead of above it, so RootPage
+  /// reserves nothing and every scroll view on the page has to leave this room
+  /// itself - otherwise its last row parks under the glass. The floor keeps
+  /// the page's original 24pt breathing room on a device whose pill is short;
+  /// above that it tracks the bar, so a tall home indicator widens the gap.
+  static double contentBottomInset(BuildContext context) =>
+      math.max(24.h, reservedHeight(context) + 14.h);
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -92,11 +102,14 @@ class DentaNavBar extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
             padding: EdgeInsets.all(_pillPadding.w),
             decoration: BoxDecoration(
-              color: c.surfaceBg.withValues(alpha: 0.92),
+              // Glass, not paint: on a tab that runs full-bleed the page
+              // scrolls behind this, and at the old 0.92 the blur had almost
+              // nothing to show through it.
+              color: c.surfaceBg.withValues(alpha: 0.86),
               borderRadius: BorderRadius.circular(24.r),
               border: Border.all(color: c.borderLight),
               boxShadow: [

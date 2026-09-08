@@ -23,7 +23,7 @@ class PatientFullDetailsResult {
 
 abstract class PatientRepository {
   Future<Either<NetworkExceptions, PaginatedResponse<PatientEntity>>>
-      getAllPatients({int page = 1});
+      getAllPatients({int page = 1, String? search});
 
   Future<Either<NetworkExceptions, PatientFullDetailsResult>>
       getPatientFullDetails(String patientId);

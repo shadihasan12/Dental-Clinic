@@ -25,6 +25,19 @@ class RootPage extends StatefulWidget {
   State<RootPage> createState() => _RootPageState();
 }
 
+/// Tabs that run edge to edge behind the floating bar.
+///
+/// Opting in is a promise the page makes: it paints its own background over
+/// the full height and pads its own scroll view by
+/// [DentaNavBar.contentBottomInset] or more, so nothing it draws ends up
+/// stuck under the pill. Every tab now does.
+const Set<RootTab> _fullBleedTabs = {
+  RootTab.home,
+  RootTab.patients,
+  RootTab.appointments,
+  RootTab.expenses,
+};
+
 class _RootPageState extends State<RootPage> {
   // Held as a [RootTab], not a position: the bar drops the tabs this user has
   // no permission for, so a list index means nothing outside one build.
@@ -38,8 +51,7 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState() {
     super.initState();
-    getIt<ClinicPermissionsBloc>()
-        .add(const ClinicPermissionsEvent.load());
+    getIt<ClinicPermissionsBloc>().add(const ClinicPermissionsEvent.load());
     RootPage.selectedTab.addListener(_onExternalTabChange);
     UserStorage.clinicChangedNotifier.addListener(_onClinicChanged);
   }
@@ -67,8 +79,7 @@ class _RootPageState extends State<RootPage> {
 
   void _onClinicChanged() {
     if (!mounted) return;
-    getIt<ClinicPermissionsBloc>()
-        .add(const ClinicPermissionsEvent.load());
+    getIt<ClinicPermissionsBloc>().add(const ClinicPermissionsEvent.load());
     setState(() => _clinicVersion++);
   }
 
@@ -151,9 +162,10 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    // The pill floats, so the pages are pushed up by its full footprint. It
-    // still renders translucent over whatever scrolls into the gap beneath
-    // it, but nothing a page draws can end up hidden underneath it.
+    // Pages that have not been converted are pushed up by the pill's full
+    // footprint, so nothing they draw can end up hidden underneath it. A
+    // full-bleed tab reserves that room inside its own scroll view instead,
+    // and its content passes behind the glass.
     final reservedBarHeight = DentaNavBar.reservedHeight(context);
     const reservedTop = 8.0;
 
@@ -173,15 +185,26 @@ class _RootPageState extends State<RootPage> {
           body: Stack(
             children: [
               Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: reservedTop,
-                    bottom: reservedBarHeight,
-                  ),
-                  child: IndexedStack(
-                    index: index,
-                    children: [for (final tab in tabs) _pageFor(tab)],
-                  ),
+                child: IndexedStack(
+                  index: index,
+                  children: [
+                    for (final tab in tabs)
+                      Padding(
+                        // A full-bleed tab paints its own background to the
+                        // edges and leaves its own room at the bottom, so the
+                        // pill floats over its content - which is the whole
+                        // point of a translucent, blurred bar. Every other
+                        // tab still has the space reserved for it, and can
+                        // drop out of this padding as it is converted.
+                        padding: _fullBleedTabs.contains(tab)
+                            ? EdgeInsets.zero
+                            : EdgeInsets.only(
+                                top: reservedTop,
+                                bottom: reservedBarHeight,
+                              ),
+                        child: _pageFor(tab),
+                      ),
+                  ],
                 ),
               ),
               // One stroke weight and one bounding box across all of them,
