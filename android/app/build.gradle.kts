@@ -1,3 +1,14 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// Release signing lives in android/key.properties, which is gitignored - the
+// upload key must never be in the repo. A machine without that file (CI, a
+// fresh clone) still builds debug and profile; only `release` needs it.
+val keystoreProperties = Properties().apply {
+    val f = rootProject.file("key.properties")
+    if (f.exists()) load(FileInputStream(f))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -38,11 +49,34 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            // Left unconfigured when key.properties is absent; the release
+            // build type below then falls back to debug signing rather than
+            // failing the whole Gradle configuration phase.
+            val storePath = keystoreProperties.getProperty("storeFile")
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // A Play upload signed with the debug key is rejected, so the
+            // real config is used whenever key.properties is present.
+            signingConfig = if (keystoreProperties.getProperty("storeFile") != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            // Minify/shrink deliberately left off: enabling it needs keep
+            // rules for Firebase and the notification plugins, and a wrong
+            // rule fails at runtime in release only. Worth doing later, on
+            // its own, with a real device test.
         }
     }
 }

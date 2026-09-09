@@ -48,3 +48,8 @@ app.*.map.json
 .fvm/
 # Local seeding credentials - never commit
 .env.seed
+
+# Android release signing - never commit
+android/key.properties
+*.jks
+*.keystore
