@@ -61,6 +61,7 @@ class AppRoutesNames {
   static const String workingDays = 'workingDays';
   static const String userHours = 'userHours';
   static const String notificationsSettings = 'notificationsSettings';
+  static const String deleteAccount = 'deleteAccount';
 
   // Clinic Management Routes
   static const String pendingApprovals = 'pendingApprovals';

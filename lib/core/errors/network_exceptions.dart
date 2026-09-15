@@ -34,7 +34,13 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   const factory NetworkExceptions.unprocessableEntity(String reason) =
       UnprocessableEntity;
 
-  const factory NetworkExceptions.conflict() = Conflict;
+  /// Carries the server's sentence rather than a bare status.
+  ///
+  /// 409 is the app's "you cannot do that *yet*" - deleting an account while
+  /// you are the last owner of a clinic, say. The only thing that tells the
+  /// user what to do about it is the backend's own explanation, and a generic
+  /// "there was a conflict" throws exactly that away.
+  const factory NetworkExceptions.conflict(String reason) = Conflict;
 
   const factory NetworkExceptions.internalServerError() = InternalServerError;
 
@@ -80,34 +86,7 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   }
 
   static NetworkExceptions handleResponse(Response? response) {
-    int statusCode = response?.statusCode ?? 0;
-
-    // Try to extract error message from response body
-    String? errorMessage;
-    try {
-      if (response?.data != null) {
-        final dynamic data = response!.data;
-        Map<String, dynamic>? jsonData;
-
-        if (data is Map<String, dynamic>) {
-          jsonData = data;
-        } else if (data is String) {
-          // Try to parse JSON string
-          try {
-            jsonData = jsonDecode(data) as Map<String, dynamic>;
-          } catch (_) {
-            // Keep jsonData as null if parsing fails
-          }
-        }
-
-        // Extract message from parsed data
-        if (jsonData != null) {
-          errorMessage = jsonData['message'] as String?;
-        }
-      }
-    } catch (_) {
-      // Keep errorMessage as null
-    }
+    final int statusCode = response?.statusCode ?? 0;
 
     switch (statusCode) {
       case 400:
@@ -135,7 +114,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       case 408:
         return const NetworkExceptions.requestTimeout();
       case 409:
-        return const NetworkExceptions.conflict();
+        // Empty rather than a word: the caller falls back to a translated
+        // sentence when the server sent none, and a hard-coded 'Conflict'
+        // would beat it to it and put English in front of an Arabic user.
+        return NetworkExceptions.conflict(_extractMessage(response, ''));
       case 422:
         return NetworkExceptions.unprocessableEntity(
           _extractMessage(response, 'Invalid data'),
@@ -154,7 +136,7 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
     }
   }
 
-  static NetworkExceptions getException(error) {
+  static NetworkExceptions getException(Object error) {
     // Already converted — return as-is
     if (error is NetworkExceptions) return error;
 
@@ -247,7 +229,7 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       unexpectedError: () => l10n.errorUnexpected,
       requestTimeout: () => l10n.errorRequestTimeout,
       noInternetConnection: () => l10n.errorNoInternet,
-      conflict: () => l10n.errorConflict,
+      conflict: (reason) => reason.isEmpty ? l10n.errorConflict : reason,
       tooManyRequests: (message) => message,
       sendTimeout: () => l10n.errorSendTimeout,
       unableToProcess: () => l10n.errorUnableToProcess,
@@ -301,8 +283,8 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       noInternetConnection: () {
         errorMessage = 'No internet connection';
       },
-      conflict: () {
-        errorMessage = 'Error due to a conflict';
+      conflict: (String reason) {
+        errorMessage = reason.isEmpty ? 'Error due to a conflict' : reason;
       },
       tooManyRequests: (String message) {
         errorMessage = message;

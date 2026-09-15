@@ -1,6 +1,6 @@
 /// Barrel file for all design system resources
 /// Import this file to access all design tokens and managers
-library resources;
+library;
 
 export 'app_routes_names.dart';
 export 'border_radius_manager.dart';

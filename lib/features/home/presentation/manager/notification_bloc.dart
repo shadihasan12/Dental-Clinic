@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
-import 'package:dental_clinic_app/core/services/notifications/push_payload.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/home/domain/use_cases/get_notifications_use_case.dart';

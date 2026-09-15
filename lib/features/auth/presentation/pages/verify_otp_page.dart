@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -176,8 +177,14 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   title: l10n.emailVerified,
                   message: l10n.completeYourRegistration,
                 );
+                // With billing hidden there is no plan to choose, so the
+                // step is skipped rather than shown empty. AuthBloc still
+                // fills in a plan before registering - /auth/register
+                // requires plan_version_id either way.
                 context.pushNamed(
-                  AppRoutesNames.choosePlan,
+                  AppConfig.billingEnabled
+                      ? AppRoutesNames.choosePlan
+                      : AppRoutesNames.register,
                   extra: context.read<AuthBloc>(),
                 );
               }

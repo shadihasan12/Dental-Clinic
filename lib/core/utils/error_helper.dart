@@ -45,7 +45,8 @@ class ErrorHelper {
       sendTimeout: () => NetworkFailure(message),
       tooManyRequests: (msg) => NetworkFailure(msg),
       unprocessableEntity: (reason) => ValidationFailure(reason),
-      conflict: () => ServerFailure(message),
+      // `message` already carries the server's own sentence for a 409.
+      conflict: (_) => ServerFailure(message),
       internalServerError: () => ServerFailure(message),
       notImplemented: () => ServerFailure(message),
       serviceUnavailable: () => ServerFailure(message),

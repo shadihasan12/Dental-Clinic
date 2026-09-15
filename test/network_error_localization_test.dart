@@ -72,7 +72,9 @@ void main() {
       NetworkExceptions.unexpectedError(),
       NetworkExceptions.requestTimeout(),
       NetworkExceptions.noInternetConnection(),
-      NetworkExceptions.conflict(),
+      // Empty reason: the server sent no sentence, so this must still fall
+      // back to a translated one rather than rendering blank.
+      NetworkExceptions.conflict(''),
       NetworkExceptions.sendTimeout(),
       NetworkExceptions.unableToProcess(),
       NetworkExceptions.formatException(),

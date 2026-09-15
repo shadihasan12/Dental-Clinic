@@ -29,11 +29,11 @@ class LanguageInitialState extends LanguageState {
 }
 
 class LanguageLoadedState extends LanguageState {
-  const LanguageLoadedState(Locale locale) : super(locale);
+  const LanguageLoadedState(super.locale);
 }
 
 class LanguageChangedState extends LanguageState {
-  const LanguageChangedState(Locale locale) : super(locale);
+  const LanguageChangedState(super.locale);
 }
 
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {

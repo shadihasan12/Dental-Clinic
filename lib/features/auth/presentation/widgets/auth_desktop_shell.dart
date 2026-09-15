@@ -98,7 +98,7 @@ class _BrandingPanel extends StatelessWidget {
         Image.asset(
           _imagePath(),
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
+          errorBuilder: (_, _, _) => Container(
             decoration: BoxDecoration(gradient: GradientManager.primaryHeader),
           ),
         ),

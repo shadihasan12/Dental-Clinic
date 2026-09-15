@@ -279,25 +279,6 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     );
   }
 
-  Widget _buildDivider(AppLocalizations l10n, String fontFamily) {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: ColorManager.of(context).divider, thickness: 1)),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text(
-            l10n.orContinueWith,
-            style: TextStyle(
-              color: ColorManager.of(context).textTertiary,
-              fontSize: FontSizesManager.s12,
-              fontFamily: fontFamily,
-            ),
-          ),
-        ),
-        Expanded(child: Divider(color: ColorManager.of(context).divider, thickness: 1)),
-      ],
-    );
-  }
 
   Widget _buildSignUpLink(AppLocalizations l10n, String fontFamily) {
     return Row(

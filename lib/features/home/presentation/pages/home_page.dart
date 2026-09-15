@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
@@ -14,13 +15,13 @@ import 'package:dental_clinic_app/features/home/presentation/widgets/home_header
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/clinic_date_row.dart';
-import 'package:dental_clinic_app/features/home/presentation/widgets/home_revenue_card.dart';
+import 'package:dental_clinic_app/features/home/domain/entities/home_summary.dart';
+import 'package:dental_clinic_app/features/home/domain/use_cases/get_home_summary_use_case.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/home_stats_carousel.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/quick_actions.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/section_heading.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/todays_schedule.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
-import 'package:dental_clinic_app/features/statistics/domain/entities/revenue_summary.dart';
-import 'package:dental_clinic_app/features/statistics/domain/use_cases/get_revenue_summary_use_case.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_status_use_case.dart';
@@ -50,11 +51,11 @@ class _HomePageState extends State<HomePage> {
   bool _subscriptionLoading = true;
   bool _isSubscriptionCardHidden = false;
 
-  /// Null both while loading and whenever there is no revenue to report -
-  /// no catalog metric, no permission, a failed call. The tile reads that as
-  /// "show nothing", which is the right answer to all three.
-  RevenueSummary? _revenue;
-  bool _revenueLoading = true;
+  /// Null both while loading and whenever there is nothing to report - no
+  /// figures for this clinic, no permission, a failed call. The carousel
+  /// reads that as "show nothing", which is the right answer to all three.
+  HomeSummary? _summary;
+  bool _summaryLoading = true;
 
   List<AppointmentEntity> _todayAppointments = const [];
 
@@ -106,16 +107,14 @@ class _HomePageState extends State<HomePage> {
 
   /// Cold start, in priority order.
   ///
-  /// The revenue lookup costs two round trips of its own - the statistics
-  /// catalog, then the metric - and it is the one thing on this screen the
-  /// user did not open the app for. Firing it alongside the schedule put
-  /// five requests on the wire at launch and left the schedule competing
-  /// with them for the connection; it now goes second, once the day is on
-  /// screen.
+  /// The summary is one request now, but it is still not the thing the user
+  /// opened the app for. Firing it alongside the schedule left the day
+  /// competing for the connection at launch; it goes second, once the
+  /// schedule is on screen.
   Future<void> _loadInitialContent() async {
     await _loadTodaysSchedule();
     if (!mounted) return;
-    await _loadRevenue();
+    await _loadSummary();
   }
 
   void _onTabChanged() {
@@ -140,6 +139,13 @@ class _HomePageState extends State<HomePage> {
   void _onProfileUpdated() => setState(() {});
 
   Future<void> _loadSubscription() async {
+    // Nothing renders these when billing is off, so the two round trips are
+    // pure cost on a screen the user opens constantly.
+    if (!AppConfig.billingEnabled) {
+      if (mounted) setState(() => _subscriptionLoading = false);
+      return;
+    }
+
     final statusFuture = getIt<GetSubscriptionStatusUseCase>()(NoParams());
     final usageFuture = getIt<GetSubscriptionUsageUseCase>()(NoParams());
 
@@ -198,18 +204,18 @@ class _HomePageState extends State<HomePage> {
     _scheduleInFlight = false;
   }
 
-  /// Month-to-date revenue, discovered through the statistics catalog.
+  /// Month-to-date patient count and revenue, one card per currency.
   ///
-  /// A failure is deliberately silent. The number is a bonus on this screen,
-  /// not the reason the user opened it, and the backend refuses the call
-  /// outright for a role that may not see clinic money - so an error card
-  /// here would be noise for some users and a permissions leak for others.
-  Future<void> _loadRevenue() async {
-    final result = await getIt<GetRevenueSummaryUseCase>()(NoParams());
+  /// A failure is deliberately silent. The figures are a bonus on this
+  /// screen, not the reason the user opened it, and the backend withholds the
+  /// money cards from a role that may not see them - so an error card here
+  /// would be noise for some users and a permissions leak for others.
+  Future<void> _loadSummary() async {
+    final result = await getIt<GetHomeSummaryUseCase>()(NoParams());
     if (!mounted) return;
     setState(() {
-      result.fold((_) => _revenue = null, (summary) => _revenue = summary);
-      _revenueLoading = false;
+      result.fold((_) => _summary = null, (summary) => _summary = summary);
+      _summaryLoading = false;
     });
   }
 
@@ -220,7 +226,7 @@ class _HomePageState extends State<HomePage> {
     await Future.wait([
       _loadSubscription(),
       _loadTodaysSchedule(),
-      _loadRevenue(),
+      _loadSummary(),
     ]);
   }
 
@@ -244,10 +250,11 @@ class _HomePageState extends State<HomePage> {
     final t = HomeTokens.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    // The revenue card draws nothing when there is no revenue metric at all,
-    // so the page asks first rather than reserving a 20pt gap above an empty
+    // The carousel draws nothing when the clinic has no figures at all, so
+    // the page asks first rather than reserving a 20pt gap above an empty
     // box.
-    final showsRevenue = _revenueLoading || _revenue != null;
+    final showsStats =
+        _summaryLoading || (_summary != null && !_summary!.isEmpty);
 
     return Scaffold(
       backgroundColor: t.pageBg,
@@ -286,11 +293,11 @@ class _HomePageState extends State<HomePage> {
                 isLoading: _clinicName.isEmpty,
               ),
 
-              if (showsRevenue) ...[
+              if (showsStats) ...[
                 SizedBox(height: 20.h),
-                HomeRevenueCard(
-                  summary: _revenue,
-                  isLoading: _revenueLoading,
+                HomeStatsCarousel(
+                  summary: _summary,
+                  isLoading: _summaryLoading,
                   onTap: () => context.pushNamed(AppRoutesNames.statistics),
                 ),
               ],
@@ -344,7 +351,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
 
-              if (!_isSubscriptionCardHidden) ...[
+              if (AppConfig.billingEnabled && !_isSubscriptionCardHidden) ...[
                 SizedBox(height: 20.h),
                 HomeSubscriptionCard(
                   status: _status,

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/constants/legal_urls.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
@@ -275,7 +276,7 @@ class _MenuPageState extends State<MenuPage> {
       // Invoices and the subscription belong to whoever owns the clinic and
       // pays for it - an admin who merely works here has no business seeing
       // them, so this is gated on ownership rather than on the admin role.
-      if (isOwner)
+      if (isOwner && AppConfig.billingEnabled)
         MenuItem(
           icon: Icons.receipt_long_outlined,
           title: l10n.billingAndInvoices,
@@ -285,6 +286,17 @@ class _MenuPageState extends State<MenuPage> {
         icon: Icons.notifications_outlined,
         title: l10n.notifications,
         onTap: () => context.pushNamed(AppRoutesNames.notificationsSettings),
+      ),
+      // Last in the group and in red. Both stores require account deletion
+      // to be startable from inside the app, and it is an account setting -
+      // burying it under Legal, where it used to be a link to a web form,
+      // is what a reviewer looks for.
+      MenuItem(
+        icon: Icons.delete_outline,
+        title: l10n.deleteAccount,
+        subtitle: l10n.deleteAccountSubtitle,
+        isDestructive: true,
+        onTap: () => context.pushNamed(AppRoutesNames.deleteAccount),
       ),
     ];
   }

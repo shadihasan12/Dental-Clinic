@@ -47,12 +47,13 @@ class DioConsumer implements ApiConsumer {
 
     // Only bypass certificates in debug mode
     if (kDebugMode && !kIsWeb) {
-      (_client.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-          (HttpClient client) {
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
+      (_client.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
+          () {
+            final client = HttpClient();
+            client.badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+            return client;
+          };
     }
   }
 

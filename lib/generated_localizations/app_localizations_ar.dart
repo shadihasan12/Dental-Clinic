@@ -2878,7 +2878,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccount => 'حذف الحساب';
 
   @override
-  String get deleteAccountSubtitle => 'كيفية طلب حذف حسابك وبياناتك';
+  String get deleteAccountSubtitle => 'احذف حسابك وكل بياناته نهائياً';
 
   @override
   String get activeClinic => 'العيادة النشطة';
@@ -3072,4 +3072,89 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lastSevenDays => 'آخر ٧ أيام';
+
+  @override
+  String newPatientsThisMonth(int count) {
+    return '$count جديد هذا الشهر';
+  }
+
+  @override
+  String get deleteAccountIntro =>
+      'حذف حسابك يسجّل خروجك من كل الأجهزة ويحدّد موعداً للحذف النهائي لكل ما يلي.';
+
+  @override
+  String deleteAccountGrace(int days) {
+    return 'أمامك $days يوماً لتغيير رأيك. تسجيل الدخول مرة أخرى خلال هذه المدة يلغي الحذف، وبعدها لا يمكن استرجاع أي شيء.';
+  }
+
+  @override
+  String get deleteAccountWhatGoes => 'ما الذي سيُحذف';
+
+  @override
+  String get deleteAccountItemProfile =>
+      'ملفك الشخصي وبيانات الدخول وإعدادات الإشعارات';
+
+  @override
+  String get deleteAccountItemClinics =>
+      'العيادات التي تملكها، بمرضاها ومواعيدها وعلاجاتها ومدفوعاتها';
+
+  @override
+  String get deleteAccountItemAccess => 'وصولك إلى أي عيادة تمت دعوتك إليها';
+
+  @override
+  String get deleteAccountOwnerNote =>
+      'إذا كنت المالك الوحيد لعيادة ما زال فيها أعضاء آخرون، انقل الملكية أولاً. سيُرفض الحذف إلى أن تفعل ذلك.';
+
+  @override
+  String get deleteAccountConfirmWord => 'حذف';
+
+  @override
+  String deleteAccountConfirmPrompt(String word) {
+    return 'اكتب $word للتأكيد';
+  }
+
+  @override
+  String get deleteAccountCta => 'احذف حسابي';
+
+  @override
+  String get deleteAccountScheduled => 'تم تحديد موعد لحذف حسابك';
+
+  @override
+  String deleteAccountScheduledUntil(String date) {
+    return 'سجّل الدخول قبل $date لإلغاء الحذف.';
+  }
+
+  @override
+  String get deleteAccountFailed => 'تعذّر حذف حسابك';
+
+  @override
+  String get updateAvailableTitle => 'يتوفر تحديث';
+
+  @override
+  String get updateRequiredTitle => 'التحديث مطلوب';
+
+  @override
+  String get updateOptionalBody =>
+      'أصبحت نسخة أحدث من دنتا جاهزة، تتضمن آخر الإصلاحات والتحسينات.';
+
+  @override
+  String get updateForcedBody =>
+      'لم تعد هذه النسخة من دنتا مدعومة. حدّث التطبيق لمتابعة استخدامه.';
+
+  @override
+  String get updateNow => 'حدّث الآن';
+
+  @override
+  String get updateLater => 'ليس الآن';
+
+  @override
+  String get updateWhatsNew => 'الجديد في هذه النسخة';
+
+  @override
+  String updateVersionLabel(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get updateStoreUnavailable => 'تعذّر فتح المتجر على هذا الجهاز';
 }

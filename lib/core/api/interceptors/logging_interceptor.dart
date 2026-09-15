@@ -61,11 +61,11 @@ class LoggingInterceptor extends Interceptor {
     super.onResponse(response, handler);
   }
 
-  void _printKV(String key, v) {
+  void _printKV(String key, Object? v) {
     _logPrint('$key: $v');
   }
 
-  void _printResponse(msg) {
+  void _printResponse(Object? msg) {
     try {
       final object = json.decode(msg.toString());
       final String prettyString =
@@ -80,7 +80,7 @@ class LoggingInterceptor extends Interceptor {
     }
   }
 
-  void _printError(msg) {
+  void _printError(Object? msg) {
     try {
       final object = json.decode(msg.toString());
       final String prettyString =
@@ -95,7 +95,7 @@ class LoggingInterceptor extends Interceptor {
     }
   }
 
-  void _printRequest(msg) {
+  void _printRequest(Object? msg) {
     if (msg is FormData) {
       if (kDebugMode) {
         print(msg.fields);

@@ -1,5 +1,5 @@
 /// Barrel file for auth presentation widgets
-library auth_widgets;
+library;
 
 export 'auth_header.dart';
 export 'auth_text_field.dart';

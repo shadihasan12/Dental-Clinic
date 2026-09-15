@@ -1184,7 +1184,7 @@
   "paymentsAction": "Payments",
   "legal": "Legal",
   "deleteAccount": "Delete Account",
-  "deleteAccountSubtitle": "How to request deletion of your account and data",
+  "deleteAccountSubtitle": "Permanently delete your account and all its data",
   "activeClinic": "Active clinic",
   "noClinicsTitle": "No clinics yet",
   "noClinicsMessage": "Clinics you create or are invited to appear here.",
@@ -1274,5 +1274,71 @@
   "errorUnableToProcess": "The data could not be processed",
   "errorNotAcceptable": "The server rejected the request",
   "errorCanceledByUser": "Cancelled",
-  "lastSevenDays": "Last 7 days"
+  "lastSevenDays": "Last 7 days",
+  "newPatientsThisMonth": "{count} new this month",
+  "@newPatientsThisMonth": {
+    "description": "Sub-label beside the patient count on the Home carousel.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountIntro": "Deleting your account signs you out everywhere and schedules everything below for permanent deletion.",
+  "deleteAccountGrace": "You have {days} days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.",
+  "@deleteAccountGrace": {
+    "description": "The recovery window offered after an account deletion is requested.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountWhatGoes": "What gets deleted",
+  "deleteAccountItemProfile": "Your profile, sign-in details and notification settings",
+  "deleteAccountItemClinics": "Clinics you own, with their patients, appointments, treatments and payments",
+  "deleteAccountItemAccess": "Your access to any clinic you were invited to",
+  "deleteAccountOwnerNote": "If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.",
+  "deleteAccountConfirmWord": "DELETE",
+  "@deleteAccountConfirmWord": {
+    "description": "The word the user must type to confirm account deletion. Keep it short, upper case where the script has case, and do not translate it into something a user might type by accident."
+  },
+  "deleteAccountConfirmPrompt": "Type {word} to confirm",
+  "@deleteAccountConfirmPrompt": {
+    "description": "Label above the confirmation field on the delete-account screen.",
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountCta": "Delete my account",
+  "deleteAccountScheduled": "Your account is scheduled for deletion",
+  "deleteAccountScheduledUntil": "Sign in again before {date} to cancel it.",
+  "@deleteAccountScheduledUntil": {
+    "description": "Shown after a successful deletion request, naming the last day it can be undone.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountFailed": "Could not delete your account",
+  "updateAvailableTitle": "Update available",
+  "updateRequiredTitle": "Update required",
+  "updateOptionalBody": "A newer version of Denta is ready, with the latest fixes and improvements.",
+  "updateForcedBody": "This version of Denta is no longer supported. Update to carry on using the app.",
+  "updateNow": "Update now",
+  "updateLater": "Not now",
+  "updateWhatsNew": "What's new",
+  "updateVersionLabel": "Version {version}",
+  "@updateVersionLabel": {
+    "description": "Names the version being offered in the update prompt.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateStoreUnavailable": "Could not open the store on this device"
 }

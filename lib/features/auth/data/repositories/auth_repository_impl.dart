@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/network/network_info.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/auth/data/datasources/remote/auth_remote_data_source.dart';
@@ -236,6 +237,22 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         await _remoteDataSource.resetPassword(params.toJson());
         return const Right(null);
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, DeleteAccountResult>>
+  deleteAccount() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        return Right(await _remoteDataSource.deleteAccount());
       } on NetworkExceptions catch (e) {
         return Left(e);
       } catch (e) {

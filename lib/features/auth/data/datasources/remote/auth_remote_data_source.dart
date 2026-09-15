@@ -9,6 +9,7 @@ import 'package:dental_clinic_app/features/auth/data/models/location_model.dart'
 import 'package:dental_clinic_app/features/auth/data/models/plan_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/login_response_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/register_response_model.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 
 /// Abstract interface for auth remote data source
@@ -48,6 +49,9 @@ abstract class AuthRemoteDataSource {
 
   /// Reset password with session ID
   Future<void> resetPassword(Map<String, dynamic> body);
+
+  /// Schedule the signed-in account for deletion
+  Future<DeleteAccountResult> deleteAccount();
 }
 
 /// Implementation of auth remote data source using API consumer
@@ -322,6 +326,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     await _apiConsumer.post(
       AuthEndpoints.resetPassword,
       body: body,
+    );
+  }
+
+  @override
+  Future<DeleteAccountResult> deleteAccount() async {
+    final response = await _apiConsumer.delete(AuthEndpoints.deleteAccount);
+    // A backend that answers 200 with no body is still a success - the
+    // account is scheduled either way, and the dates only sharpen the
+    // wording of the confirmation.
+    return DeleteAccountResult.fromJson(
+      response is Map<String, dynamic> ? response : const {},
     );
   }
 }

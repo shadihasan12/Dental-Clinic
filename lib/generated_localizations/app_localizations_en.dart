@@ -2902,7 +2902,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSubtitle =>
-      'How to request deletion of your account and data';
+      'Permanently delete your account and all its data';
 
   @override
   String get activeClinic => 'Active clinic';
@@ -3098,4 +3098,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lastSevenDays => 'Last 7 days';
+
+  @override
+  String newPatientsThisMonth(int count) {
+    return '$count new this month';
+  }
+
+  @override
+  String get deleteAccountIntro =>
+      'Deleting your account signs you out everywhere and schedules everything below for permanent deletion.';
+
+  @override
+  String deleteAccountGrace(int days) {
+    return 'You have $days days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.';
+  }
+
+  @override
+  String get deleteAccountWhatGoes => 'What gets deleted';
+
+  @override
+  String get deleteAccountItemProfile =>
+      'Your profile, sign-in details and notification settings';
+
+  @override
+  String get deleteAccountItemClinics =>
+      'Clinics you own, with their patients, appointments, treatments and payments';
+
+  @override
+  String get deleteAccountItemAccess =>
+      'Your access to any clinic you were invited to';
+
+  @override
+  String get deleteAccountOwnerNote =>
+      'If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.';
+
+  @override
+  String get deleteAccountConfirmWord => 'DELETE';
+
+  @override
+  String deleteAccountConfirmPrompt(String word) {
+    return 'Type $word to confirm';
+  }
+
+  @override
+  String get deleteAccountCta => 'Delete my account';
+
+  @override
+  String get deleteAccountScheduled => 'Your account is scheduled for deletion';
+
+  @override
+  String deleteAccountScheduledUntil(String date) {
+    return 'Sign in again before $date to cancel it.';
+  }
+
+  @override
+  String get deleteAccountFailed => 'Could not delete your account';
+
+  @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateOptionalBody =>
+      'A newer version of Denta is ready, with the latest fixes and improvements.';
+
+  @override
+  String get updateForcedBody =>
+      'This version of Denta is no longer supported. Update to carry on using the app.';
+
+  @override
+  String get updateNow => 'Update now';
+
+  @override
+  String get updateLater => 'Not now';
+
+  @override
+  String get updateWhatsNew => 'What\'s new';
+
+  @override
+  String updateVersionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get updateStoreUnavailable =>
+      'Could not open the store on this device';
 }

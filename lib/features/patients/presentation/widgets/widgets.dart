@@ -1,5 +1,5 @@
 /// Barrel file for patients presentation widgets
-library patients_widgets;
+library;
 
 export 'add_patient_header.dart';
 export 'case_info_form.dart';

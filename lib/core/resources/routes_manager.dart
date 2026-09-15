@@ -8,7 +8,6 @@ import 'package:dental_clinic_app/features/auth/presentation/pages/choose_plan_p
 import 'package:dental_clinic_app/features/auth/presentation/pages/email_entry_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/verify_email_entry_page.dart';
 import 'package:dental_clinic_app/features/auth/presentation/pages/verify_otp_page.dart';
-import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/notification_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/add_treatment_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/clinic_info_page.dart'
@@ -22,6 +21,7 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/notificati
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_otp_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/change_email_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/presentation/pages/edit_profile_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/delete_account_page.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:dental_clinic_app/features/statistics/presentation/pages/statistics_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -529,6 +529,17 @@ class RoutesManager {
           pageBuilder: (context, state) {
             return CupertinoPage(
               child: const ReportIssuePage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/delete-account',
+          name: AppRoutesNames.deleteAccount,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const DeleteAccountPage(),
               key: state.pageKey,
               name: state.name,
             );

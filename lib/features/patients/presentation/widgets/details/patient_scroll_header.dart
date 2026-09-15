@@ -197,7 +197,7 @@ class PatientVitalsBar extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               itemCount: anchors.length,
-              separatorBuilder: (_, __) => SizedBox(width: 6.w),
+              separatorBuilder: (_, _) => SizedBox(width: 6.w),
               itemBuilder: (_, i) {
                 final a = anchors[i];
                 final active = a.anchor == activeAnchor;

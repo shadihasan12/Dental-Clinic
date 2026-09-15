@@ -20,6 +20,7 @@ import 'package:dental_clinic_app/core/services/notifications/notification_polle
 import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_topics_synchronizer.dart';
+import 'package:dental_clinic_app/features/app_update/presentation/widgets/app_update_gate.dart';
 import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
@@ -233,7 +234,12 @@ class _DentalClinicAppState extends State<DentalClinicApp>
                             maxScaleFactor: 1.2,
                           ),
                         ),
-                        child: child ?? const SizedBox.shrink(),
+                        // Above the router on purpose: a forced update has to
+                        // land wherever the app resumed, and replacing the
+                        // router outright leaves nothing behind the block.
+                        child: AppUpdateGate(
+                          child: child ?? const SizedBox.shrink(),
+                        ),
                       );
                     },
                   );

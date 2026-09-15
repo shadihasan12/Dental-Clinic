@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 
@@ -215,4 +216,11 @@ abstract class AuthRepository {
   Future<Either<NetworkExceptions, void>> resetPassword({
     required ResetPasswordParams params,
   });
+
+  /// Schedule the signed-in account for deletion.
+  ///
+  /// A [NetworkExceptions.conflict] here is not a bug: it is the backend
+  /// refusing because the user is the last owner of a clinic that still has
+  /// other members, and its message names the clinic. Show it as written.
+  Future<Either<NetworkExceptions, DeleteAccountResult>> deleteAccount();
 }

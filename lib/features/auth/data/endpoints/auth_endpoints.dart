@@ -50,6 +50,16 @@ class AuthEndpoints {
   /// Requires the Authorization header, so it can only be called once signed in.
   static const String deviceToken = '/auth/device-token';
 
+  /// DELETE /auth/account - Schedules the signed-in user's account for
+  /// deletion. Requires the Authorization header; the account it deletes is
+  /// always the token's own, never one named in the request, so there is no
+  /// id to get wrong.
+  ///
+  /// Both stores require this to be reachable from inside the app - Apple
+  /// guideline 5.1.1(v) and Play's Data deletion policy - which is why it is
+  /// a real call and not a link to the web form.
+  static const String deleteAccount = '/auth/account';
+
   /// POST /auth/logout - Ends the session and unregisters this device.
   /// Body: `{ "token": "<fcm-token>" }`, where `token` is optional - a client
   /// that never registered one can still log out. Send it when you have it, or

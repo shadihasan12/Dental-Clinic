@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -16,6 +17,10 @@ class SubscriptionGuardHelper {
   /// telling the user their subscription has expired and offering to take
   /// them to billing.
   static Future<bool> requireActive(BuildContext context) async {
+    // No billing in this build means nothing to expire - blocking an action
+    // behind a subscription the user was never offered would strand them.
+    if (!AppConfig.billingEnabled) return true;
+
     final guard = getIt<SubscriptionGuard>();
     if (guard.isActive) return true;
     await _showExpiredDialog(context);

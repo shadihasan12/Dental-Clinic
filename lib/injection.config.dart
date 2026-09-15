@@ -38,6 +38,15 @@ import 'core/storage/token_storage.dart' as _i23;
 import 'core/storage/user_storage.dart' as _i663;
 import 'core/theme/theme_bloc.dart' as _i909;
 import 'core/theme/theme_service.dart' as _i275;
+import 'features/app_update/data/app_update_storage.dart' as _i998;
+import 'features/app_update/data/data_sources/app_update_remote_data_source.dart'
+    as _i259;
+import 'features/app_update/data/repositories/app_update_repository_impl.dart'
+    as _i290;
+import 'features/app_update/domain/repositories/app_update_repository.dart'
+    as _i562;
+import 'features/app_update/domain/use_cases/check_app_update_use_case.dart'
+    as _i370;
 import 'features/appointments/data/data_sources/appointment_remote_data_source.dart'
     as _i41;
 import 'features/appointments/data/repositories/appointment_repository_impl.dart'
@@ -60,6 +69,7 @@ import 'features/auth/data/datasources/remote/auth_remote_data_source.dart'
     as _i689;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
+import 'features/auth/domain/use_cases/delete_account_use_case.dart' as _i304;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
 import 'features/billing/data/data_sources/billing_local_data_source.dart'
     as _i733;
@@ -116,14 +126,21 @@ import 'features/expenses/domain/use_cases/update_expense_use_case.dart'
 import 'features/expenses/presentation/manager/expense_bloc.dart' as _i763;
 import 'features/home/data/data_sources/fcm_token_remote_data_source.dart'
     as _i188;
+import 'features/home/data/data_sources/home_summary_remote_data_source.dart'
+    as _i862;
 import 'features/home/data/data_sources/notification_remote_data_source.dart'
     as _i573;
 import 'features/home/data/repositories/fcm_token_repository_impl.dart'
     as _i269;
+import 'features/home/data/repositories/home_summary_repository_impl.dart'
+    as _i214;
 import 'features/home/data/repositories/notification_repository_impl.dart'
     as _i20;
 import 'features/home/domain/repositories/fcm_token_repository.dart' as _i109;
+import 'features/home/domain/repositories/home_summary_repository.dart'
+    as _i773;
 import 'features/home/domain/repositories/notification_repository.dart' as _i4;
+import 'features/home/domain/use_cases/get_home_summary_use_case.dart' as _i493;
 import 'features/home/domain/use_cases/get_notifications_use_case.dart'
     as _i342;
 import 'features/home/domain/use_cases/get_unread_count_use_case.dart' as _i874;
@@ -311,6 +328,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i23.TokenStorage>(
       () => _i23.TokenStorage(gh<_i460.SharedPreferences>()),
     );
+    gh.factory<_i998.AppUpdateStorage>(
+      () => _i998.AppUpdateStorage(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i934.LanguageService>(
       () => blocInjection.languageService(gh<_i460.SharedPreferences>()),
     );
@@ -411,6 +431,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i536.PatientRemoteDataSource>(
       () => _i536.PatientRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
     );
+    gh.factory<_i862.HomeSummaryRemoteDataSource>(
+      () => _i862.HomeSummaryRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i259.AppUpdateRemoteDataSource>(
+      () => _i259.AppUpdateRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
     gh.lazySingleton<_i46.CurrencyBloc>(
       () => _i46.CurrencyBloc(gh<_i315.CurrencyService>()),
     );
@@ -425,6 +451,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i190.ClinicRemoteDataSource>(
       () => _i190.ClinicRemoteDataSourceImpl(gh<_i962.ApiConsumer>()),
+    );
+    gh.factory<_i562.AppUpdateRepository>(
+      () =>
+          _i290.AppUpdateRepositoryImpl(gh<_i259.AppUpdateRemoteDataSource>()),
     );
     gh.factory<_i455.NotificationSettingsRepository>(
       () => _i395.NotificationSettingsRepositoryImpl(
@@ -457,6 +487,11 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i111.AuthRepositoryImpl(
         gh<_i689.AuthRemoteDataSource>(),
         gh<_i75.NetworkInfo>(),
+      ),
+    );
+    gh.factory<_i773.HomeSummaryRepository>(
+      () => _i214.HomeSummaryRepositoryImpl(
+        gh<_i862.HomeSummaryRemoteDataSource>(),
       ),
     );
     gh.factory<_i4.NotificationRepository>(
@@ -518,6 +553,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i423.EditProfileRemoteDataSource>(),
       ),
     );
+    gh.factory<_i370.CheckAppUpdateUseCase>(
+      () => _i370.CheckAppUpdateUseCase(gh<_i562.AppUpdateRepository>()),
+    );
     gh.factory<_i779.GetPlansUseCase>(
       () => _i779.GetPlansUseCase(gh<_i900.SubscriptionRepository>()),
     );
@@ -557,6 +595,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i818.MarkNotificationAsReadUseCase>(
       () =>
           _i818.MarkNotificationAsReadUseCase(gh<_i4.NotificationRepository>()),
+    );
+    gh.factory<_i493.GetHomeSummaryUseCase>(
+      () => _i493.GetHomeSummaryUseCase(
+        gh<_i773.HomeSummaryRepository>(),
+        gh<_i278.GetRevenueSummaryUseCase>(),
+      ),
     );
     gh.factory<_i275.GetNotificationSettingsUseCase>(
       () => _i275.GetNotificationSettingsUseCase(
@@ -635,6 +679,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i166.AddClinicUserUseCase>(
       () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
+    );
+    gh.factory<_i304.DeleteAccountUseCase>(
+      () => _i304.DeleteAccountUseCase(gh<_i1015.AuthRepository>()),
     );
     gh.factory<_i66.GetAllExpensesUseCase>(
       () => _i66.GetAllExpensesUseCase(gh<_i18.ExpenseRepository>()),

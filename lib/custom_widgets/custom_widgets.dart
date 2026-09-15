@@ -1,5 +1,5 @@
 /// Barrel file for custom widgets
-library custom_widgets;
+library;
 
 export 'app_confirmation_dialog.dart';
 export 'app_form_field.dart';

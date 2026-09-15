@@ -29,7 +29,6 @@ class ToothChart extends StatefulWidget {
 
 class _ToothChartState extends State<ToothChart> {
   void _toggleTooth(String toothId) {
-    print(toothId);
     if (!widget.enabled || widget.onSelectionChanged == null) return;
 
     final newSelection = List<String>.from(widget.selectedTeeth);
@@ -124,7 +123,7 @@ class _ToothChartState extends State<ToothChart> {
         // Right side (Upper Right, quadrant 1) — mirrored
         Transform(
           alignment: Alignment.center,
-          transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+          transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, 1.0, 1.0),
           child: _buildHalf(quadrant: 1),
         ),
       ],
@@ -135,7 +134,7 @@ class _ToothChartState extends State<ToothChart> {
   Widget _buildLowerJaw() {
     return Transform(
       alignment: Alignment.center,
-      transform: Matrix4.identity()..scale(1.0, -1.0, 1.0),
+      transform: Matrix4.identity()..scaleByDouble(1.0, -1.0, 1.0, 1.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -144,7 +143,7 @@ class _ToothChartState extends State<ToothChart> {
           // Right side (Lower Right, quadrant 4) — mirrored
           Transform(
             alignment: Alignment.center,
-            transform: Matrix4.identity()..scale(-1.0, 1.0, -1.0),
+            transform: Matrix4.identity()..scaleByDouble(-1.0, 1.0, -1.0, 1.0),
             child: _buildHalf(quadrant: 4),
           ),
         ],

@@ -7,7 +7,6 @@ import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';

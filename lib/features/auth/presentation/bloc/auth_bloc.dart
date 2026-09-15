@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
@@ -322,6 +323,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
+  /// The plan a signup gets when the chooser is hidden.
+  ///
+  /// The API returns plans in `sort_order`, so the first is the entry tier -
+  /// the cheapest one, and the one that carries the free trial. Null when the
+  /// plans cannot be fetched at all, which surfaces as the normal error.
+  Future<PlanEntity?> _entryPlan() async {
+    if (state.plans.isNotEmpty) return state.plans.first;
+
+    final result = await _authRepository.getPlans();
+    return result.fold(
+      (_) => null,
+      (plans) => plans.isEmpty ? null : plans.first,
+    );
+  }
+
   Future<void> _onPlansRequested(
     _PlansRequested event,
     Emitter<AuthState> emit,
@@ -565,8 +581,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
     if (state.selectedPlan == null) {
-      emit(state.copyWith(signupError: 'Please select a subscription plan'));
-      return;
+      // The chooser is hidden in this build, so nothing has set a plan - but
+      // /auth/register still requires plan_version_id. Fall back to the entry
+      // plan, which is the one carrying the trial. Only a genuine signup with
+      // the chooser on screen should ever see the error.
+      final fallback = AppConfig.billingEnabled ? null : await _entryPlan();
+      if (fallback == null) {
+        emit(state.copyWith(signupError: 'Please select a subscription plan'));
+        return;
+      }
+      emit(state.copyWith(selectedPlan: fallback));
     }
     if (state.clinicName.trim().isEmpty) {
       emit(state.copyWith(signupError: 'Please enter clinic name'));

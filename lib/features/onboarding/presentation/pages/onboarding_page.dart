@@ -433,7 +433,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
-      errorBuilder: (_, __, ___) {
+      errorBuilder: (_, _, _) {
         return Container(
           color: ColorManager.primary.withValues(alpha: 0.15),
           child: Center(

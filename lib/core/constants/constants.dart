@@ -1,6 +1,6 @@
 /// Barrel file for all application constants
 /// Import this file to access all app-wide constants
-library constants;
+library;
 
 export 'app_constants.dart';
 export 'legal_urls.dart';

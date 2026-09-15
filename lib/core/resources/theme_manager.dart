@@ -310,7 +310,6 @@ class _DarkColors {
   static const textPrimary = Color(0xFFE8E8E8);
   static const textSecondary = Color(0xFFB0B0B0);
   static const divider = Color(0xFF2E2E2E);
-  static const border = Color(0xFF3A3A3A);
 }
 
 /// Get dark theme data

@@ -5567,7 +5567,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'How to request deletion of your account and data'**
+  /// **'Permanently delete your account and all its data'**
   String get deleteAccountSubtitle;
 
   /// No description provided for @activeClinic.
@@ -5935,6 +5935,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last 7 days'**
   String get lastSevenDays;
+
+  /// Sub-label beside the patient count on the Home carousel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new this month'**
+  String newPatientsThisMonth(int count);
+
+  /// No description provided for @deleteAccountIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account signs you out everywhere and schedules everything below for permanent deletion.'**
+  String get deleteAccountIntro;
+
+  /// The recovery window offered after an account deletion is requested.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {days} days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.'**
+  String deleteAccountGrace(int days);
+
+  /// No description provided for @deleteAccountWhatGoes.
+  ///
+  /// In en, this message translates to:
+  /// **'What gets deleted'**
+  String get deleteAccountWhatGoes;
+
+  /// No description provided for @deleteAccountItemProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile, sign-in details and notification settings'**
+  String get deleteAccountItemProfile;
+
+  /// No description provided for @deleteAccountItemClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinics you own, with their patients, appointments, treatments and payments'**
+  String get deleteAccountItemClinics;
+
+  /// No description provided for @deleteAccountItemAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your access to any clinic you were invited to'**
+  String get deleteAccountItemAccess;
+
+  /// No description provided for @deleteAccountOwnerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.'**
+  String get deleteAccountOwnerNote;
+
+  /// The word the user must type to confirm account deletion. Keep it short, upper case where the script has case, and do not translate it into something a user might type by accident.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get deleteAccountConfirmWord;
+
+  /// Label above the confirmation field on the delete-account screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String deleteAccountConfirmPrompt(String word);
+
+  /// No description provided for @deleteAccountCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountCta;
+
+  /// No description provided for @deleteAccountScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is scheduled for deletion'**
+  String get deleteAccountScheduled;
+
+  /// Shown after a successful deletion request, naming the last day it can be undone.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again before {date} to cancel it.'**
+  String deleteAccountScheduledUntil(String date);
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete your account'**
+  String get deleteAccountFailed;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateOptionalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version of Denta is ready, with the latest fixes and improvements.'**
+  String get updateOptionalBody;
+
+  /// No description provided for @updateForcedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This version of Denta is no longer supported. Update to carry on using the app.'**
+  String get updateForcedBody;
+
+  /// No description provided for @updateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get updateNow;
+
+  /// No description provided for @updateLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get updateLater;
+
+  /// No description provided for @updateWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new'**
+  String get updateWhatsNew;
+
+  /// Names the version being offered in the update prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String updateVersionLabel(String version);
+
+  /// No description provided for @updateStoreUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the store on this device'**
+  String get updateStoreUnavailable;
 }
 
 class _AppLocalizationsDelegate
