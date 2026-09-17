@@ -15,9 +15,6 @@ import 'package:dental_clinic_app/features/home/presentation/widgets/home_header
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_subscription_card.dart';
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/clinic_date_row.dart';
-import 'package:dental_clinic_app/features/home/domain/entities/home_summary.dart';
-import 'package:dental_clinic_app/features/home/domain/use_cases/get_home_summary_use_case.dart';
-import 'package:dental_clinic_app/features/home/presentation/widgets/home_stats_carousel.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/quick_actions.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/section_heading.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/todays_schedule.dart';
@@ -50,12 +47,6 @@ class _HomePageState extends State<HomePage> {
   SubscriptionUsageEntity? _usage;
   bool _subscriptionLoading = true;
   bool _isSubscriptionCardHidden = false;
-
-  /// Null both while loading and whenever there is nothing to report - no
-  /// figures for this clinic, no permission, a failed call. The carousel
-  /// reads that as "show nothing", which is the right answer to all three.
-  HomeSummary? _summary;
-  bool _summaryLoading = true;
 
   List<AppointmentEntity> _todayAppointments = const [];
 
@@ -96,25 +87,13 @@ class _HomePageState extends State<HomePage> {
     // made through paths that do not raise the signal.
     RootPage.selectedTab.addListener(_onTabChanged);
     _loadSubscription();
-    unawaited(_loadInitialContent());
+    unawaited(_loadTodaysSchedule());
 
     // Safety net for the "already signed in" cold start: AuthBloc only fires
     // on a fresh login/register, so a session restored from storage - or one
     // whose registration POST failed while offline - would otherwise never
     // register. No-ops in ~1 shared-prefs read once the token is synced.
     unawaited(getIt<NotificationService>().syncTokenIfNeeded());
-  }
-
-  /// Cold start, in priority order.
-  ///
-  /// The summary is one request now, but it is still not the thing the user
-  /// opened the app for. Firing it alongside the schedule left the day
-  /// competing for the connection at launch; it goes second, once the
-  /// schedule is on screen.
-  Future<void> _loadInitialContent() async {
-    await _loadTodaysSchedule();
-    if (!mounted) return;
-    await _loadSummary();
   }
 
   void _onTabChanged() {
@@ -204,30 +183,11 @@ class _HomePageState extends State<HomePage> {
     _scheduleInFlight = false;
   }
 
-  /// Month-to-date patient count and revenue, one card per currency.
-  ///
-  /// A failure is deliberately silent. The figures are a bonus on this
-  /// screen, not the reason the user opened it, and the backend withholds the
-  /// money cards from a role that may not see them - so an error card here
-  /// would be noise for some users and a permissions leak for others.
-  Future<void> _loadSummary() async {
-    final result = await getIt<GetHomeSummaryUseCase>()(NoParams());
-    if (!mounted) return;
-    setState(() {
-      result.fold((_) => _summary = null, (summary) => _summary = summary);
-      _summaryLoading = false;
-    });
-  }
-
   /// Pull-to-refresh. Reloads everything the screen shows and holds the
   /// spinner until both are back, so the gesture reports on the whole page
   /// rather than on whichever request happened to finish first.
   Future<void> _refreshAll() async {
-    await Future.wait([
-      _loadSubscription(),
-      _loadTodaysSchedule(),
-      _loadSummary(),
-    ]);
+    await Future.wait([_loadSubscription(), _loadTodaysSchedule()]);
   }
 
   void _hideSubscriptionCard() =>
@@ -249,12 +209,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final t = HomeTokens.of(context);
     final l10n = AppLocalizations.of(context)!;
-
-    // The carousel draws nothing when the clinic has no figures at all, so
-    // the page asks first rather than reserving a 20pt gap above an empty
-    // box.
-    final showsStats =
-        _summaryLoading || (_summary != null && !_summary!.isEmpty);
 
     return Scaffold(
       backgroundColor: t.pageBg,
@@ -292,15 +246,6 @@ class _HomePageState extends State<HomePage> {
                 clinicName: _clinicName,
                 isLoading: _clinicName.isEmpty,
               ),
-
-              if (showsStats) ...[
-                SizedBox(height: 20.h),
-                HomeStatsCarousel(
-                  summary: _summary,
-                  isLoading: _summaryLoading,
-                  onTap: () => context.pushNamed(AppRoutesNames.statistics),
-                ),
-              ],
 
               // Quick Actions sits above the schedule on purpose: the three
               // things the user starts most are then reachable without
