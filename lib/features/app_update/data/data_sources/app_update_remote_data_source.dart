@@ -9,7 +9,6 @@ abstract class AppUpdateRemoteDataSource {
   Future<AppUpdateInfo> checkForUpdate({
     required String platform,
     required String version,
-    required String build,
   });
 }
 
@@ -23,15 +22,14 @@ class AppUpdateRemoteDataSourceImpl implements AppUpdateRemoteDataSource {
   Future<AppUpdateInfo> checkForUpdate({
     required String platform,
     required String version,
-    required String build,
   }) async {
+    // Only these two. The route validates `version` against
+    // `^\d+(\.\d+){0,3}$` and answers 400 for anything else, so the build
+    // number is folded into the version string by the caller or left off -
+    // it is not a parameter of its own any more.
     final response = await _apiConsumer.get(
-      AppUpdateEndpoints.version,
-      queryParameters: {
-        'platform': platform,
-        'version': version,
-        'build': build,
-      },
+      AppUpdateEndpoints.versionCheck,
+      queryParameters: {'platform': platform, 'version': version},
     );
     final data = response['data'];
     if (data is! Map<String, dynamic>) return const AppUpdateInfo.none();

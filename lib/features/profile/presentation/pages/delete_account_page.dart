@@ -1,14 +1,13 @@
-import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
-import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/account_deletion_preview.dart';
 import 'package:dental_clinic_app/features/auth/domain/use_cases/delete_account_use_case.dart';
+import 'package:dental_clinic_app/features/auth/domain/use_cases/get_account_deletion_preview_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'dart:async';
@@ -23,13 +22,18 @@ import 'package:go_router/go_router.dart';
 /// A screen rather than a dialog on purpose. Both stores require the deletion
 /// to be *initiated* from inside the app, and a dialog cannot carry the list
 /// of what actually goes - which for a clinic owner includes their patients'
-/// records, not only their own profile. The user is entitled to read that
-/// before they agree to it.
+/// records and their colleagues' access, not only their own profile. The user
+/// is entitled to read that before they agree to it.
 ///
-/// The typed confirmation is the only gate. It is weak against someone
-/// holding an unlocked phone, which is exactly why the backend keeps the
-/// account recoverable for [AppConfig.accountDeletionGraceDays] days: signing
-/// back in cancels the whole thing.
+/// The numbers are not written here. They come from the server's preview,
+/// every time the screen opens, because "3 appointments will be cancelled" is
+/// a claim about a clinic other people are still working in and a stale one
+/// would understate what is about to happen.
+///
+/// The password is the only gate. There is no recovery window and no
+/// ownership transfer: on success the account and every clinic it owns are
+/// gone, so the thing standing between a borrowed phone and that outcome has
+/// to be something only the account holder knows. A typed word was not.
 class DeleteAccountPage extends StatefulWidget {
   const DeleteAccountPage({super.key});
 
@@ -38,65 +42,124 @@ class DeleteAccountPage extends StatefulWidget {
 }
 
 class _DeleteAccountPageState extends State<DeleteAccountPage> {
-  final TextEditingController _confirmController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
 
+  AccountDeletionPreview? _preview;
+  bool _loadingPreview = true;
+
+  /// Why the preview could not be read. Distinct from [_error]: one blocks the
+  /// screen and offers a retry, the other sits above a form the user can fix.
+  String? _previewError;
+
+  String? _selectedReason;
   bool _submitting = false;
+  bool _obscurePassword = true;
 
-  /// Held as text because the only source that can explain a refusal is the
-  /// backend's own sentence - "you are the last owner of Smile Clinic" is
-  /// actionable in a way that a status code is not. Shown in place, not in a
-  /// snackbar, because it asks the user to go and do something first.
+  /// The server's own sentence about a refused attempt - almost always the
+  /// password being wrong. Shown in place rather than in a snackbar, because
+  /// it asks the user to correct the field right below it.
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    _loadPreview();
+  }
+
+  @override
   void dispose() {
-    _confirmController.dispose();
+    _passwordController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
-  /// Case- and whitespace-insensitive: the user is agreeing to something, not
-  /// passing a spelling test, and an Arabic keyboard has no shift key to
-  /// match "DELETE" with anyway.
-  bool _matches(String word) =>
-      _confirmController.text.trim().toLowerCase() == word.trim().toLowerCase();
+  Future<void> _loadPreview() async {
+    setState(() {
+      _loadingPreview = true;
+      _previewError = null;
+    });
+
+    final result = await getIt<GetAccountDeletionPreviewUseCase>()(NoParams());
+    if (!mounted) return;
+
+    setState(() {
+      _loadingPreview = false;
+      result.fold(
+        (failure) => _previewError = NetworkExceptions.localizedMessage(
+          context,
+          failure,
+        ),
+        (preview) {
+          _preview = preview;
+          // Nothing is preselected. The reason is a question, and a form that
+          // answers it on the user's behalf collects noise.
+          _selectedReason = null;
+        },
+      );
+    });
+  }
+
+  AccountDeletionReason? get _reason {
+    final reasons = _preview?.reasons ?? const <AccountDeletionReason>[];
+    for (final r in reasons) {
+      if (r.value == _selectedReason) return r;
+    }
+    return null;
+  }
+
+  bool get _canSubmit =>
+      !_submitting &&
+      _selectedReason != null &&
+      _passwordController.text.isNotEmpty;
 
   Future<void> _submit() async {
-    if (_submitting) return;
+    if (!_canSubmit) return;
     setState(() {
       _submitting = true;
       _error = null;
     });
 
-    final result = await getIt<DeleteAccountUseCase>()(NoParams());
+    final result = await getIt<DeleteAccountUseCase>()(
+      DeleteAccountParams(
+        password: _passwordController.text,
+        reason: _selectedReason!,
+        reasonNote: _noteController.text,
+      ),
+    );
     if (!mounted) return;
 
     result.fold((failure) {
+      // A 401 means the token is already dead - a double tap whose first
+      // request succeeded, or another device that got there first. The
+      // account is gone either way, so this is the success path, not an
+      // error to argue with.
+      final gone = failure.maybeWhen(
+        unauthorizedRequest: (_) => true,
+        orElse: () => false,
+      );
+      if (gone) {
+        _onDeleted();
+        return;
+      }
       setState(() {
         _submitting = false;
         _error = NetworkExceptions.localizedMessage(context, failure);
       });
-    }, _onScheduled);
+    }, (_) => _onDeleted());
   }
 
-  /// The account is gone as far as this device is concerned, so the session
-  /// is wiped on the same path a normal logout takes. The notice goes up
-  /// first: [SessionManager] navigates on a post-frame callback, and the
-  /// snackbar renders in the root overlay, so it survives the trip back to
-  /// the login page and is the last thing the user reads.
-  void _onScheduled(DeleteAccountResult scheduled) {
-    final l10n = AppLocalizations.of(context)!;
-    final purgeAt = scheduled.purgeAt;
+  /// The account is gone, and this token with it. The session is wiped
+  /// locally - deliberately *not* through the logout endpoint, which would
+  /// answer 401 for an account that no longer exists.
+  ///
+  /// The notice goes up first: [SessionManager] navigates on a post-frame
+  /// callback and the snackbar renders in the root overlay, so it survives
+  /// the trip back to the login page and is the last thing the user reads.
+  void _onDeleted() {
     AppSnackbar.showSuccess(
       context,
-      title: l10n.deleteAccountScheduled,
-      message: purgeAt == null
-          ? null
-          : l10n.deleteAccountScheduledUntil(
-              // Through AppDate like every other date the user reads, so the
-              // month name is Arabic in Arabic. A raw DateFormat here was the
-              // one place in the app that decided that for itself.
-              AppDate.medium(context, purgeAt.toLocal()),
-            ),
+      title: AppLocalizations.of(context)!.deleteAccountDone,
     );
     unawaited(getIt<SessionManager>().endSession());
   }
@@ -105,128 +168,369 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
-    final family = FontHelper.fontFamily(context);
-    final word = l10n.deleteAccountConfirmWord;
-    final canSubmit = _matches(word) && !_submitting;
 
     return Scaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(
-        title: l10n.deleteAccount,
-        onBack: () => context.pop(),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          14.w,
-          14.h,
-          14.w,
-          24.h + MediaQuery.viewPaddingOf(context).bottom,
-        ),
+      appBar: PageHeader(title: l10n.deleteAccount, onBack: () => context.pop()),
+      body: _body(context, l10n, c),
+    );
+  }
+
+  Widget _body(BuildContext context, AppLocalizations l10n, AppColors c) {
+    if (_loadingPreview) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final padding = EdgeInsets.fromLTRB(
+      14.w,
+      14.h,
+      14.w,
+      24.h + MediaQuery.viewPaddingOf(context).bottom,
+    );
+
+    if (_previewError != null) {
+      return SingleChildScrollView(
+        padding: padding,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _IntroCard(text: l10n.deleteAccountIntro),
-            SizedBox(height: 12.h),
-
-            _SectionCard(
-              title: l10n.deleteAccountWhatGoes,
-              children: [
-                _Bullet(text: l10n.deleteAccountItemProfile),
-                _Bullet(text: l10n.deleteAccountItemClinics),
-                _Bullet(text: l10n.deleteAccountItemAccess),
-              ],
+            _NoteCard(
+              icon: Icons.error_outline,
+              tone: ColorManager.error,
+              text: '${l10n.deleteAccountPreviewFailed}\n$_previewError',
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 14.h),
+            OutlinedButton(onPressed: _loadPreview, child: Text(l10n.retry)),
+          ],
+        ),
+      );
+    }
 
-            // Stated before the field, not after a refusal: an owner who has
-            // to transfer a clinic first should find that out before they
-            // have typed the confirmation.
+    final preview = _preview;
+    if (preview == null || !preview.canDelete) {
+      return Padding(
+        padding: padding,
+        child: _NoteCard(
+          icon: Icons.info_outline,
+          tone: ColorManager.info,
+          text: l10n.deleteAccountUnavailable,
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _IntroCard(text: l10n.deleteAccountIntro),
+          SizedBox(height: 12.h),
+
+          _SectionCard(
+            title: l10n.deleteAccountWhatGoes,
+            children: [
+              for (final line in _consequences(l10n, preview))
+                _Bullet(text: line),
+            ],
+          ),
+          SizedBox(height: 12.h),
+
+          // Stated as its own note rather than a bullet: what survives a
+          // deletion is the half users are least likely to expect, and a
+          // clinician who assumed their records vanished with them would be
+          // wrong about something that matters.
+          _SectionCard(
+            title: l10n.deleteAccountWhatStays,
+            children: [_Bullet(text: l10n.deleteAccountItemRecordsKept)],
+          ),
+
+          // Only an owner needs telling, and they need telling *before* they
+          // start filling the form - it is the one fact that might make them
+          // stop.
+          if (preview.closesClinics) ...[
+            SizedBox(height: 12.h),
             _NoteCard(
               icon: Icons.info_outline,
               tone: ColorManager.info,
-              text: l10n.deleteAccountOwnerNote,
-            ),
-            SizedBox(height: 12.h),
-            _NoteCard(
-              icon: Icons.history_toggle_off,
-              tone: ColorManager.success,
-              text: l10n.deleteAccountGrace(AppConfig.accountDeletionGraceDays),
-            ),
-            SizedBox(height: 18.h),
-
-            Text(
-              l10n.deleteAccountConfirmPrompt(word),
-              style: TextStyle(
-                fontFamily: family,
-                fontSize: 12.5.sp,
-                fontWeight: FontWeight.w600,
-                color: c.textPrimary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            TextField(
-              controller: _confirmController,
-              enabled: !_submitting,
-              autocorrect: false,
-              enableSuggestions: false,
-              textCapitalization: TextCapitalization.characters,
-              inputFormatters: [LengthLimitingTextInputFormatter(32)],
-              onChanged: (_) => setState(() {}),
-              style: TextStyle(
-                fontFamily: family,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: c.textPrimary,
-              ),
-              decoration: InputDecoration(
-                hintText: word,
-                hintStyle: TextStyle(
-                  fontFamily: family,
-                  fontSize: 13.sp,
-                  color: c.textSubtle,
-                ),
-                filled: true,
-                fillColor: c.cardBg,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12.w,
-                  vertical: 12.h,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: c.border),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: c.border),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: const BorderSide(
-                    color: ColorManager.destructive,
-                    width: 1.5,
-                  ),
-                ),
-              ),
-            ),
-
-            if (_error != null) ...[
-              SizedBox(height: 12.h),
-              _NoteCard(
-                icon: Icons.error_outline,
-                tone: ColorManager.error,
-                text: _error!,
-              ),
-            ],
-
-            SizedBox(height: 18.h),
-            _DestructiveButton(
-              label: l10n.deleteAccountCta,
-              isLoading: _submitting,
-              onPressed: canSubmit ? _submit : null,
+              text: l10n.deleteAccountNoTransfer,
             ),
           ],
-        ),
+
+          SizedBox(height: 18.h),
+          _FieldLabel(text: l10n.deleteAccountReasonLabel),
+          SizedBox(height: 8.h),
+          _ReasonPicker(
+            reasons: preview.reasons,
+            selected: _selectedReason,
+            enabled: !_submitting,
+            onChanged: (value) => setState(() => _selectedReason = value),
+          ),
+
+          // Revealed by the reason rather than always present: it is a
+          // follow-up question, and an empty box under every answer invites
+          // the user to think it is required.
+          if (_reason?.needsNote ?? false) ...[
+            SizedBox(height: 14.h),
+            _FieldLabel(text: l10n.deleteAccountNoteLabel),
+            SizedBox(height: 8.h),
+            TextField(
+              controller: _noteController,
+              enabled: !_submitting,
+              maxLines: 3,
+              maxLength: 1000,
+              textInputAction: TextInputAction.newline,
+              style: _inputStyle(context),
+              decoration: _inputDecoration(
+                context,
+                hint: l10n.deleteAccountNoteHint,
+              ),
+            ),
+          ],
+
+          SizedBox(height: 14.h),
+          _FieldLabel(text: l10n.deleteAccountPasswordLabel),
+          SizedBox(height: 8.h),
+          TextField(
+            controller: _passwordController,
+            enabled: !_submitting,
+            obscureText: _obscurePassword,
+            autocorrect: false,
+            enableSuggestions: false,
+            textInputAction: TextInputAction.done,
+            inputFormatters: [LengthLimitingTextInputFormatter(128)],
+            onChanged: (_) => setState(() {}),
+            onSubmitted: (_) => _canSubmit ? _submit() : null,
+            style: _inputStyle(context),
+            decoration: _inputDecoration(
+              context,
+              hint: l10n.deleteAccountPasswordHint,
+              suffix: IconButton(
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  size: 18.w,
+                  color: c.textSubtle,
+                ),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
+              ),
+            ),
+          ),
+
+          if (_error != null) ...[
+            SizedBox(height: 12.h),
+            _NoteCard(
+              icon: Icons.error_outline,
+              tone: ColorManager.error,
+              text: _error!,
+            ),
+          ],
+
+          SizedBox(height: 18.h),
+          _DestructiveButton(
+            label: _ctaLabel(l10n, preview),
+            isLoading: _submitting,
+            onPressed: _canSubmit ? _submit : null,
+          ),
+        ],
       ),
+    );
+  }
+
+  /// What this particular account loses, in the order it matters.
+  ///
+  /// Built from the preview rather than from a fixed list: a secretary in
+  /// somebody else's clinic and the owner of a staffed centre are agreeing to
+  /// very different things, and one set of bullets cannot be honest to both.
+  List<String> _consequences(
+    AppLocalizations l10n,
+    AccountDeletionPreview preview,
+  ) {
+    final lines = <String>[];
+    final owned = preview.primaryOwnedClinic;
+
+    if (owned == null) {
+      lines.add(l10n.deleteAccountMemberIntro);
+    } else if (owned.isCenter && owned.otherMembers > 0) {
+      lines.add(
+        l10n.deleteAccountClosesCenter(owned.name, owned.otherMembers),
+      );
+    } else {
+      lines.add(l10n.deleteAccountClosesClinic(owned.name));
+    }
+
+    lines.add(l10n.deleteAccountItemProfile);
+    lines.add(
+      l10n.deleteAccountImpact(
+        preview.cancelledAppointments,
+        preview.archivedCases,
+      ),
+    );
+
+    if (preview.cancelledSentInvitations > 0) {
+      lines.add(
+        l10n.deleteAccountInvitationsWithdrawn(
+          preview.cancelledSentInvitations,
+        ),
+      );
+    }
+
+    if (preview.clinicsToLeave.isNotEmpty) {
+      lines.add(
+        l10n.deleteAccountAlsoLeave(
+          preview.clinicsToLeave.map((c) => c.name).join('، '),
+        ),
+      );
+    }
+
+    return lines;
+  }
+
+  /// The button says what it does. "Delete my account" is a lie on a screen
+  /// that also closes a centre and removes four colleagues from it.
+  String _ctaLabel(AppLocalizations l10n, AccountDeletionPreview preview) {
+    final owned = preview.primaryOwnedClinic;
+    if (owned == null) return l10n.deleteAccountCta;
+    return owned.isCenter
+        ? l10n.deleteAccountCtaCloseCentre
+        : l10n.deleteAccountCtaCloseClinic;
+  }
+
+  TextStyle _inputStyle(BuildContext context) => TextStyle(
+    fontFamily: FontHelper.fontFamily(context),
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w500,
+    color: ColorManager.of(context).textPrimary,
+  );
+
+  InputDecoration _inputDecoration(
+    BuildContext context, {
+    required String hint,
+    Widget? suffix,
+  }) {
+    final c = ColorManager.of(context);
+    OutlineInputBorder border(Color color, [double width = 1]) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: color, width: width),
+        );
+
+    return InputDecoration(
+      hintText: hint,
+      counterText: '',
+      hintStyle: TextStyle(
+        fontFamily: FontHelper.fontFamily(context),
+        fontSize: 13.sp,
+        color: c.textSubtle,
+      ),
+      filled: true,
+      fillColor: c.cardBg,
+      suffixIcon: suffix,
+      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      enabledBorder: border(c.border),
+      disabledBorder: border(c.border),
+      focusedBorder: border(ColorManager.destructive, 1.5),
+    );
+  }
+}
+
+class _FieldLabel extends StatelessWidget {
+  const _FieldLabel({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(
+      fontFamily: FontHelper.fontFamily(context),
+      fontSize: 12.5.sp,
+      fontWeight: FontWeight.w600,
+      color: ColorManager.of(context).textPrimary,
+    ),
+  );
+}
+
+/// The reason picker.
+///
+/// Rows rather than a dropdown: there are seven, they are short, and a
+/// dropdown would hide the one thing this screen asks the user to think about
+/// behind another tap. The labels are the server's - they arrive already
+/// translated, and a local copy would drift the first time one is reworded.
+class _ReasonPicker extends StatelessWidget {
+  const _ReasonPicker({
+    required this.reasons,
+    required this.selected,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final List<AccountDeletionReason> reasons;
+  final String? selected;
+  final bool enabled;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    return Column(
+      children: [
+        for (final reason in reasons) ...[
+          if (reason != reasons.first) SizedBox(height: 8.h),
+          Material(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(12.r),
+            child: InkWell(
+              onTap: enabled ? () => onChanged(reason.value) : null,
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 11.h,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: reason.value == selected
+                        ? ColorManager.destructive
+                        : c.border,
+                    width: reason.value == selected ? 1.5 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      reason.value == selected
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_unchecked,
+                      size: 18.w,
+                      color: reason.value == selected
+                          ? ColorManager.destructive
+                          : c.textSubtle,
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Text(
+                        reason.label,
+                        style: TextStyle(
+                          fontFamily: family,
+                          fontSize: 12.5.sp,
+                          height: 1.4,
+                          fontWeight: FontWeight.w500,
+                          color: c.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

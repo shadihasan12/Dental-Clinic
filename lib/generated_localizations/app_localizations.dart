@@ -5945,14 +5945,8 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountIntro.
   ///
   /// In en, this message translates to:
-  /// **'Deleting your account signs you out everywhere and schedules everything below for permanent deletion.'**
+  /// **'Deleting your account is permanent and takes effect immediately. It cannot be undone.'**
   String get deleteAccountIntro;
-
-  /// The recovery window offered after an account deletion is requested.
-  ///
-  /// In en, this message translates to:
-  /// **'You have {days} days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.'**
-  String deleteAccountGrace(int days);
 
   /// No description provided for @deleteAccountWhatGoes.
   ///
@@ -5978,47 +5972,131 @@ abstract class AppLocalizations {
   /// **'Your access to any clinic you were invited to'**
   String get deleteAccountItemAccess;
 
-  /// No description provided for @deleteAccountOwnerNote.
-  ///
-  /// In en, this message translates to:
-  /// **'If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.'**
-  String get deleteAccountOwnerNote;
-
-  /// The word the user must type to confirm account deletion. Keep it short, upper case where the script has case, and do not translate it into something a user might type by accident.
-  ///
-  /// In en, this message translates to:
-  /// **'DELETE'**
-  String get deleteAccountConfirmWord;
-
-  /// Label above the confirmation field on the delete-account screen.
-  ///
-  /// In en, this message translates to:
-  /// **'Type {word} to confirm'**
-  String deleteAccountConfirmPrompt(String word);
-
   /// No description provided for @deleteAccountCta.
   ///
   /// In en, this message translates to:
   /// **'Delete my account'**
   String get deleteAccountCta;
 
-  /// No description provided for @deleteAccountScheduled.
-  ///
-  /// In en, this message translates to:
-  /// **'Your account is scheduled for deletion'**
-  String get deleteAccountScheduled;
-
-  /// Shown after a successful deletion request, naming the last day it can be undone.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in again before {date} to cancel it.'**
-  String deleteAccountScheduledUntil(String date);
-
   /// No description provided for @deleteAccountFailed.
   ///
   /// In en, this message translates to:
   /// **'Could not delete your account'**
   String get deleteAccountFailed;
+
+  /// No description provided for @deleteAccountMemberIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and contact details will be permanently deleted and you will no longer be able to sign in.'**
+  String get deleteAccountMemberIntro;
+
+  /// Owner of a one-person clinic: what deleting the account does to it.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is your clinic. Deleting it closes “{clinic}” for good and cancels its subscription.'**
+  String deleteAccountClosesClinic(String clinic);
+
+  /// Owner of a staffed centre: what deleting the account does to it and its staff.
+  ///
+  /// In en, this message translates to:
+  /// **'You own “{clinic}”, which has {members} other members. Deleting your account closes the centre permanently, removes every member and cancels the subscription.'**
+  String deleteAccountClosesCenter(String clinic, int members);
+
+  /// Counts from the deletion preview: appointments cancelled and cases closed.
+  ///
+  /// In en, this message translates to:
+  /// **'{appointments} upcoming appointments will be cancelled and {cases} open cases closed.'**
+  String deleteAccountImpact(int appointments, int cases);
+
+  /// Sent invitations that will be withdrawn with the clinic.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sent invitations will be withdrawn.'**
+  String deleteAccountInvitationsWithdrawn(int count);
+
+  /// Names the clinics the user only works in, which carry on without them.
+  ///
+  /// In en, this message translates to:
+  /// **'You will also leave: {clinics}'**
+  String deleteAccountAlsoLeave(String clinics);
+
+  /// No description provided for @deleteAccountNoTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Ownership cannot be transferred. If you want the clinic to carry on, keep your account.'**
+  String get deleteAccountNoTransfer;
+
+  /// No description provided for @deleteAccountWhatStays.
+  ///
+  /// In en, this message translates to:
+  /// **'What stays'**
+  String get deleteAccountWhatStays;
+
+  /// No description provided for @deleteAccountItemRecordsKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical and financial records you created stay with the clinic, under your name, because it is legally required to keep them'**
+  String get deleteAccountItemRecordsKept;
+
+  /// No description provided for @deleteAccountReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you leaving?'**
+  String get deleteAccountReasonLabel;
+
+  /// No description provided for @deleteAccountNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything you would like to add?'**
+  String get deleteAccountNoteLabel;
+
+  /// No description provided for @deleteAccountNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get deleteAccountNoteHint;
+
+  /// No description provided for @deleteAccountPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password'**
+  String get deleteAccountPasswordLabel;
+
+  /// No description provided for @deleteAccountPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current password'**
+  String get deleteAccountPasswordHint;
+
+  /// No description provided for @deleteAccountCtaCloseClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Close clinic and delete account'**
+  String get deleteAccountCtaCloseClinic;
+
+  /// No description provided for @deleteAccountCtaCloseCentre.
+  ///
+  /// In en, this message translates to:
+  /// **'Close centre and delete account'**
+  String get deleteAccountCtaCloseCentre;
+
+  /// No description provided for @deleteAccountDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted'**
+  String get deleteAccountDone;
+
+  /// No description provided for @deleteAccountUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This account cannot be deleted from the app.'**
+  String get deleteAccountUnavailable;
+
+  /// No description provided for @deleteAccountPreviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your account details'**
+  String get deleteAccountPreviewFailed;
 
   /// No description provided for @updateAvailableTitle.
   ///

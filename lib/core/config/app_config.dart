@@ -43,16 +43,6 @@ class AppConfig {
   /// one; see AuthBloc, which picks the entry plan silently when this is off.
   static const bool billingEnabled = false;
 
-  // === Account deletion ===
-
-  /// How long a deleted account can still be recovered by signing back in.
-  ///
-  /// The authority on this is the backend - it owns the clock that actually
-  /// purges the rows. This constant only exists so the warning copy can name
-  /// the window *before* the call is made; the confirmation afterwards uses
-  /// the date the server sent back.
-  static const int accountDeletionGraceDays = 30;
-
   // === Subscription Configuration ===
 
   /// Free trial duration in days

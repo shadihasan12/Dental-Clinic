@@ -1,6 +1,6 @@
-# Backend contract — three endpoints the app now calls
+# Backend contract — two endpoints the app now calls
 
-Written for the backend team. The Flutter client for all three is already
+Written for the backend team. The Flutter client for both is already
 merged and calls these routes today; until they exist the app degrades on
 purpose (see **Behaviour before the route exists** under each one), so this can
 ship in any order.
@@ -13,85 +13,7 @@ to a clinic id sent by the client.
 
 ---
 
-## 1. `GET /clinics/home-summary`
-
-Feeds the three-card carousel at the top of Home (patient count, revenue in
-USD, revenue in SYP). Replaces the two-request dance the screen used to do
-against `/clinics/statistics` + `/clinics/statistics/fetch`.
-
-**Auth.** Required.
-
-**Query params**
-
-| Param | Type | Required | Notes |
-|---|---|---|---|
-| `start_date` | `YYYY-MM-DD` | yes | Inclusive. The app sends the first of the current month. |
-| `end_date` | `YYYY-MM-DD` | yes | Inclusive. The app sends today. |
-
-**Response 200**
-
-```json
-{
-  "result": "success",
-  "data": {
-    "patients": {
-      "total": 248,
-      "new_in_period": 12,
-      "change_percentage": 6.5,
-      "recent_daily": [1, 0, 3, 2, 5, 4, 2]
-    },
-    "revenues": [
-      {
-        "currency_code": "USD",
-        "total": 4180.50,
-        "change_percentage": 14.2,
-        "recent_daily": [120, 0, 340, 275, 500, 410, 260]
-      },
-      {
-        "currency_code": "SYP",
-        "total": 12500000,
-        "change_percentage": -3.1,
-        "recent_daily": [1200000, 0, 3400000, 2750000, 0, 4100000, 1050000]
-      }
-    ]
-  }
-}
-```
-
-**Field rules**
-
-| Field | Rule |
-|---|---|
-| `patients.total` | All patients at the clinic, not only those added in the period. This is the headline number on the card. |
-| `patients.new_in_period` | Patients added between `start_date` and `end_date`. Optional — omit it and the card shows the total alone. |
-| `patients.recent_daily` | New patients per day for the **last 7 days ending on `end_date`**, oldest first. Always 7 entries, zeros included; a missing day is not the same as a zero day and the bars are drawn per day. |
-| `revenues[]` | **One entry per currency the clinic actually bills in.** Do not merge currencies and do not convert between them — the app deliberately never adds these together. Order matters: the app renders the cards in the order sent, so put the currency the clinic prices in first. |
-| `revenues[].total` | Money **collected** in the period, in that currency. Not invoiced, not outstanding — the app's own copy calls this "Total revenue · this month" and outstanding balances would read as income. |
-| `revenues[].recent_daily` | Same rule as `patients.recent_daily`, in that currency. |
-| `change_percentage` | Movement against the immediately preceding period of the same length. Optional. |
-
-Numbers may be sent as JSON numbers or as decimal strings; the client parses
-both. `recent_daily` may be omitted or `[]`, and the trend bars then render
-flat rather than inventing a shape.
-
-**Permissions.** A role that may not see clinic money (secretary) gets the
-same 200 with `revenues` **omitted or empty** — not a 403. The app renders
-whatever cards are in the response, so an omitted `revenues` naturally
-produces a patients-only carousel. Returning 403 for the whole route would
-also remove the patient count, which that role *is* allowed to see.
-
-**Empty clinic.** A clinic with no patients and no takings still answers 200
-with zeros. Zero is a fact about the month; a missing card reads to the owner
-as a broken app.
-
-**Behaviour before the route exists.** A `404` (or `501`) makes the client fall
-back to the old statistics-catalog lookup and show a single revenue card, as
-Home did before. Any other status shows no carousel at all. So please answer
-404 rather than 200-with-an-error-body while this is unbuilt.
-
----
-
-## 2. `DELETE /auth/account`
+## 1. `DELETE /auth/account`
 
 In-app account deletion. Required by **Apple guideline 5.1.1(v)** and **Google
 Play's Data deletion policy** — a link to the web form is no longer sufficient
@@ -167,7 +89,7 @@ blocker for the store submission.
 
 ---
 
-## 3. `GET /app/version`
+## 2. `GET /app/version`
 
 The startup version check. Drives both the dismissible "update available"
 sheet and the non-dismissible force-update screen.
@@ -238,5 +160,3 @@ prevent the app from opening.
 1. `DELETE /auth/account` — the store submission is blocked on it.
 2. `GET /app/version` — cheap, and it is the switch you will want the first
    time a build goes out with a bad bug.
-3. `GET /clinics/home-summary` — the app keeps working without it, on the
-   older and slower path.

@@ -1,12 +1,12 @@
 import '../../domain/entities/app_update_info.dart';
 
-/// Parses `GET /app/version`.
+/// Parses `GET /app/version-check`.
 class AppUpdateModel {
   AppUpdateModel._();
 
   static AppUpdateInfo fromJson(Map<String, dynamic> json) {
     return AppUpdateInfo(
-      requirement: _requirement(json['update']),
+      requirement: _requirement(json['status']),
       latestVersion: _nonEmpty(json['latest_version']),
       storeUrl: _nonEmpty(json['store_url']),
       releaseNotes: _nonEmpty(json['release_notes']),
@@ -14,6 +14,10 @@ class AppUpdateModel {
   }
 
   /// An unrecognised value reads as "no update".
+  ///
+  /// The backend's vocabulary is `none` / `optional` / `force`; the older
+  /// spellings are kept because they cost one line each and a server that
+  /// says `forced` should not silently mean the opposite of what it said.
   ///
   /// This is the safe direction to fail in by a wide margin: a typo in a
   /// server config that read as `forced` would lock every user out of the

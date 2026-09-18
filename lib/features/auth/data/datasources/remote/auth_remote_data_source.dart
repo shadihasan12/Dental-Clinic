@@ -9,7 +9,7 @@ import 'package:dental_clinic_app/features/auth/data/models/location_model.dart'
 import 'package:dental_clinic_app/features/auth/data/models/plan_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/login_response_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/register_response_model.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/account_deletion_preview.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 
 /// Abstract interface for auth remote data source
@@ -51,7 +51,12 @@ abstract class AuthRemoteDataSource {
   Future<void> resetPassword(Map<String, dynamic> body);
 
   /// Schedule the signed-in account for deletion
-  Future<DeleteAccountResult> deleteAccount();
+  Future<AccountDeletionPreview> getAccountDeletionPreview();
+  Future<void> deleteAccount({
+    required String password,
+    required String reason,
+    String? reasonNote,
+  });
 }
 
 /// Implementation of auth remote data source using API consumer
@@ -330,13 +335,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<DeleteAccountResult> deleteAccount() async {
-    final response = await _apiConsumer.delete(AuthEndpoints.deleteAccount);
-    // A backend that answers 200 with no body is still a success - the
-    // account is scheduled either way, and the dates only sharpen the
-    // wording of the confirmation.
-    return DeleteAccountResult.fromJson(
-      response is Map<String, dynamic> ? response : const {},
+  Future<AccountDeletionPreview> getAccountDeletionPreview() async {
+    final response = await _apiConsumer.get(
+      AuthEndpoints.accountDeletionPreview,
     );
+    final data = response is Map<String, dynamic> ? response['data'] : null;
+    return AccountDeletionPreview.fromJson(
+      data is Map<String, dynamic> ? data : const {},
+    );
+  }
+
+  @override
+  Future<void> deleteAccount({
+    required String password,
+    required String reason,
+    String? reasonNote,
+  }) async {
+    final note = reasonNote?.trim();
+    await _apiConsumer.post(
+      AuthEndpoints.deleteAccount,
+      body: {
+        'password': password,
+        'reason': reason,
+        // Omitted rather than sent empty when the user typed nothing: the
+        // field is optional, and an empty string is stored as an empty note
+        // rather than as no note.
+        if (note != null && note.isNotEmpty) 'reason_note': note,
+      },
+    );
+    // Nothing to parse. The 200 body is `data: null`, and the only thing the
+    // caller needs to know - that the account is gone and this token with it
+    // - is carried by the absence of an exception.
   }
 }

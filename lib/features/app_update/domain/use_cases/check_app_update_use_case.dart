@@ -12,7 +12,7 @@ import '../repositories/app_update_repository.dart';
 
 /// Asks the backend whether this build may keep running.
 ///
-/// Sends what is running - platform, version, build number - and does no
+/// Sends what is running - platform and marketing version - and does no
 /// comparison of its own. See [AppUpdateInfo] for why the decision belongs
 /// on the server.
 @injectable
@@ -41,8 +41,7 @@ class CheckAppUpdateUseCase implements UseCase<AppUpdateInfo, NoParams> {
 
     final result = await _repository.checkForUpdate(
       platform: platform,
-      version: info.version,
-      build: info.buildNumber,
+      version: _marketingVersion(info.version),
     );
 
     return result.fold(
@@ -65,10 +64,32 @@ class CheckAppUpdateUseCase implements UseCase<AppUpdateInfo, NoParams> {
   }
 
   /// Null on every platform the app is not published to a store on.
+  ///
+  /// Upper case because the route validates against an exact enum -
+  /// `android` is rejected with a 400 where `ANDROID` is accepted.
   static String? _platform() {
     if (kIsWeb) return null;
-    if (Platform.isAndroid) return 'android';
-    if (Platform.isIOS) return 'ios';
+    if (Platform.isAndroid) return 'ANDROID';
+    if (Platform.isIOS) return 'IOS';
     return null;
+  }
+
+  /// Reduces whatever the platform reports to the digits-and-dots the route
+  /// accepts: one to four numeric parts, nothing else.
+  ///
+  /// `CFBundleShortVersionString` is already `1.0.1` on a normal build, but
+  /// nothing stops a version name carrying a suffix (`1.0.1-beta`, `1.0.1
+  /// (17)`), and the route answers 400 for those rather than ignoring them -
+  /// which would turn a cosmetic versioning choice into a launch that never
+  /// checks for updates again. An unusable string falls back to `0`, which
+  /// reads as "very old" and is the safe direction: the worst case is being
+  /// offered an update you already have.
+  static String _marketingVersion(String raw) {
+    final parts = RegExp(r'\d+')
+        .allMatches(raw)
+        .map((m) => m.group(0)!)
+        .take(4)
+        .toList();
+    return parts.isEmpty ? '0' : parts.join('.');
   }
 }

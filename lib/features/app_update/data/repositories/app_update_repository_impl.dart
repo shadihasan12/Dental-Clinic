@@ -16,14 +16,12 @@ class AppUpdateRepositoryImpl implements AppUpdateRepository {
   Future<Either<NetworkExceptions, AppUpdateInfo>> checkForUpdate({
     required String platform,
     required String version,
-    required String build,
   }) async {
     try {
       return Right(
         await _remoteDataSource.checkForUpdate(
           platform: platform,
           version: version,
-          build: build,
         ),
       );
     } catch (e) {

@@ -6,7 +6,7 @@ import 'package:dental_clinic_app/core/network/network_info.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/account_deletion_preview.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/auth/data/datasources/remote/auth_remote_data_source.dart';
@@ -248,11 +248,35 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<NetworkExceptions, DeleteAccountResult>>
-  deleteAccount() async {
+  Future<Either<NetworkExceptions, AccountDeletionPreview>>
+  getAccountDeletionPreview() async {
     if (await _networkInfo.isConnected) {
       try {
-        return Right(await _remoteDataSource.deleteAccount());
+        return Right(await _remoteDataSource.getAccountDeletionPreview());
+      } on NetworkExceptions catch (e) {
+        return Left(e);
+      } catch (e) {
+        return const Left(NetworkExceptions.unexpectedError());
+      }
+    } else {
+      return const Left(NetworkExceptions.noInternetConnection());
+    }
+  }
+
+  @override
+  Future<Either<NetworkExceptions, Unit>> deleteAccount({
+    required String password,
+    required String reason,
+    String? reasonNote,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.deleteAccount(
+          password: password,
+          reason: reason,
+          reasonNote: reasonNote,
+        );
+        return const Right(unit);
       } on NetworkExceptions catch (e) {
         return Left(e);
       } catch (e) {

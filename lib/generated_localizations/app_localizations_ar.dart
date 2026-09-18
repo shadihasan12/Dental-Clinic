@@ -3080,12 +3080,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteAccountIntro =>
-      'حذف حسابك يسجّل خروجك من كل الأجهزة ويحدّد موعداً للحذف النهائي لكل ما يلي.';
-
-  @override
-  String deleteAccountGrace(int days) {
-    return 'أمامك $days يوماً لتغيير رأيك. تسجيل الدخول مرة أخرى خلال هذه المدة يلغي الحذف، وبعدها لا يمكن استرجاع أي شيء.';
-  }
+      'حذف الحساب نهائي ويسري فوراً، ولا يمكن التراجع عنه.';
 
   @override
   String get deleteAccountWhatGoes => 'ما الذي سيُحذف';
@@ -3102,30 +3097,80 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccountItemAccess => 'وصولك إلى أي عيادة تمت دعوتك إليها';
 
   @override
-  String get deleteAccountOwnerNote =>
-      'إذا كنت المالك الوحيد لعيادة ما زال فيها أعضاء آخرون، انقل الملكية أولاً. سيُرفض الحذف إلى أن تفعل ذلك.';
-
-  @override
-  String get deleteAccountConfirmWord => 'حذف';
-
-  @override
-  String deleteAccountConfirmPrompt(String word) {
-    return 'اكتب $word للتأكيد';
-  }
-
-  @override
   String get deleteAccountCta => 'احذف حسابي';
 
   @override
-  String get deleteAccountScheduled => 'تم تحديد موعد لحذف حسابك';
+  String get deleteAccountFailed => 'تعذّر حذف حسابك';
 
   @override
-  String deleteAccountScheduledUntil(String date) {
-    return 'سجّل الدخول قبل $date لإلغاء الحذف.';
+  String get deleteAccountMemberIntro =>
+      'سيتم حذف حسابك وبيانات الاتصال الخاصة بك نهائياً، ولن تتمكن من تسجيل الدخول مجدداً.';
+
+  @override
+  String deleteAccountClosesClinic(String clinic) {
+    return 'حسابك هو عيادتك. حذفه يعني إغلاق عيادة «$clinic» نهائياً وإلغاء اشتراكها.';
   }
 
   @override
-  String get deleteAccountFailed => 'تعذّر حذف حسابك';
+  String deleteAccountClosesCenter(String clinic, int members) {
+    return 'أنت مالك «$clinic» وفيها $members أعضاء آخرون. حذف حسابك يعني إغلاق المركز نهائياً وإخراج جميع الأعضاء وإلغاء الاشتراك.';
+  }
+
+  @override
+  String deleteAccountImpact(int appointments, int cases) {
+    return 'سيتم إلغاء $appointments من المواعيد القادمة وإقفال $cases من الحالات المفتوحة.';
+  }
+
+  @override
+  String deleteAccountInvitationsWithdrawn(int count) {
+    return 'سيتم إلغاء $count من الدعوات المُرسلة.';
+  }
+
+  @override
+  String deleteAccountAlsoLeave(String clinics) {
+    return 'وكذلك ستغادر: $clinics';
+  }
+
+  @override
+  String get deleteAccountNoTransfer =>
+      'لا يمكن نقل ملكية العيادة. إن أردت أن تستمر، احتفظ بحسابك.';
+
+  @override
+  String get deleteAccountWhatStays => 'ما سيبقى';
+
+  @override
+  String get deleteAccountItemRecordsKept =>
+      'تبقى السجلات الطبية والمالية التي أنشأتها لدى العيادة ومرتبطة باسمك، لأن القانون يلزم بالاحتفاظ بها';
+
+  @override
+  String get deleteAccountReasonLabel => 'لماذا تغادر؟';
+
+  @override
+  String get deleteAccountNoteLabel => 'هل تود إضافة شيء؟';
+
+  @override
+  String get deleteAccountNoteHint => 'اختياري';
+
+  @override
+  String get deleteAccountPasswordLabel => 'أكّد كلمة المرور';
+
+  @override
+  String get deleteAccountPasswordHint => 'كلمة المرور الحالية';
+
+  @override
+  String get deleteAccountCtaCloseClinic => 'إغلاق العيادة وحذف الحساب';
+
+  @override
+  String get deleteAccountCtaCloseCentre => 'إغلاق المركز وحذف الحساب';
+
+  @override
+  String get deleteAccountDone => 'تم حذف حسابك';
+
+  @override
+  String get deleteAccountUnavailable => 'لا يمكن حذف هذا الحساب من التطبيق.';
+
+  @override
+  String get deleteAccountPreviewFailed => 'تعذّر تحميل بيانات حسابك';
 
   @override
   String get updateAvailableTitle => 'يتوفر تحديث';

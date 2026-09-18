@@ -1240,40 +1240,78 @@
       }
     }
   },
-  "deleteAccountIntro": "حذف حسابك يسجّل خروجك من كل الأجهزة ويحدّد موعداً للحذف النهائي لكل ما يلي.",
-  "deleteAccountGrace": "أمامك {days} يوماً لتغيير رأيك. تسجيل الدخول مرة أخرى خلال هذه المدة يلغي الحذف، وبعدها لا يمكن استرجاع أي شيء.",
-  "@deleteAccountGrace": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
+  "deleteAccountIntro": "حذف الحساب نهائي ويسري فوراً، ولا يمكن التراجع عنه.",
   "deleteAccountWhatGoes": "ما الذي سيُحذف",
   "deleteAccountItemProfile": "ملفك الشخصي وبيانات الدخول وإعدادات الإشعارات",
   "deleteAccountItemClinics": "العيادات التي تملكها، بمرضاها ومواعيدها وعلاجاتها ومدفوعاتها",
   "deleteAccountItemAccess": "وصولك إلى أي عيادة تمت دعوتك إليها",
-  "deleteAccountOwnerNote": "إذا كنت المالك الوحيد لعيادة ما زال فيها أعضاء آخرون، انقل الملكية أولاً. سيُرفض الحذف إلى أن تفعل ذلك.",
-  "deleteAccountConfirmWord": "حذف",
-  "deleteAccountConfirmPrompt": "اكتب {word} للتأكيد",
-  "@deleteAccountConfirmPrompt": {
-    "placeholders": {
-      "word": {
-        "type": "String"
-      }
-    }
-  },
   "deleteAccountCta": "احذف حسابي",
-  "deleteAccountScheduled": "تم تحديد موعد لحذف حسابك",
-  "deleteAccountScheduledUntil": "سجّل الدخول قبل {date} لإلغاء الحذف.",
-  "@deleteAccountScheduledUntil": {
+  "deleteAccountFailed": "تعذّر حذف حسابك",
+  "deleteAccountMemberIntro": "سيتم حذف حسابك وبيانات الاتصال الخاصة بك نهائياً، ولن تتمكن من تسجيل الدخول مجدداً.",
+  "deleteAccountClosesClinic": "حسابك هو عيادتك. حذفه يعني إغلاق عيادة «{clinic}» نهائياً وإلغاء اشتراكها.",
+  "@deleteAccountClosesClinic": {
+    "description": "Owner of a one-person clinic: what deleting the account does to it.",
     "placeholders": {
-      "date": {
+      "clinic": {
         "type": "String"
       }
     }
   },
-  "deleteAccountFailed": "تعذّر حذف حسابك",
+  "deleteAccountClosesCenter": "أنت مالك «{clinic}» وفيها {members} أعضاء آخرون. حذف حسابك يعني إغلاق المركز نهائياً وإخراج جميع الأعضاء وإلغاء الاشتراك.",
+  "@deleteAccountClosesCenter": {
+    "description": "Owner of a staffed centre: what deleting the account does to it and its staff.",
+    "placeholders": {
+      "clinic": {
+        "type": "String"
+      },
+      "members": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountImpact": "سيتم إلغاء {appointments} من المواعيد القادمة وإقفال {cases} من الحالات المفتوحة.",
+  "@deleteAccountImpact": {
+    "description": "Counts from the deletion preview: appointments cancelled and cases closed.",
+    "placeholders": {
+      "appointments": {
+        "type": "int"
+      },
+      "cases": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountInvitationsWithdrawn": "سيتم إلغاء {count} من الدعوات المُرسلة.",
+  "@deleteAccountInvitationsWithdrawn": {
+    "description": "Sent invitations that will be withdrawn with the clinic.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountAlsoLeave": "وكذلك ستغادر: {clinics}",
+  "@deleteAccountAlsoLeave": {
+    "description": "Names the clinics the user only works in, which carry on without them.",
+    "placeholders": {
+      "clinics": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountNoTransfer": "لا يمكن نقل ملكية العيادة. إن أردت أن تستمر، احتفظ بحسابك.",
+  "deleteAccountWhatStays": "ما سيبقى",
+  "deleteAccountItemRecordsKept": "تبقى السجلات الطبية والمالية التي أنشأتها لدى العيادة ومرتبطة باسمك، لأن القانون يلزم بالاحتفاظ بها",
+  "deleteAccountReasonLabel": "لماذا تغادر؟",
+  "deleteAccountNoteLabel": "هل تود إضافة شيء؟",
+  "deleteAccountNoteHint": "اختياري",
+  "deleteAccountPasswordLabel": "أكّد كلمة المرور",
+  "deleteAccountPasswordHint": "كلمة المرور الحالية",
+  "deleteAccountCtaCloseClinic": "إغلاق العيادة وحذف الحساب",
+  "deleteAccountCtaCloseCentre": "إغلاق المركز وحذف الحساب",
+  "deleteAccountDone": "تم حذف حسابك",
+  "deleteAccountUnavailable": "لا يمكن حذف هذا الحساب من التطبيق.",
+  "deleteAccountPreviewFailed": "تعذّر تحميل بيانات حسابك",
   "updateAvailableTitle": "يتوفر تحديث",
   "updateRequiredTitle": "التحديث مطلوب",
   "updateOptionalBody": "أصبحت نسخة أحدث من دنتا جاهزة، تتضمن آخر الإصلاحات والتحسينات.",

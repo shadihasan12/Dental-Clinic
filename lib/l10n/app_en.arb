@@ -1284,46 +1284,78 @@
       }
     }
   },
-  "deleteAccountIntro": "Deleting your account signs you out everywhere and schedules everything below for permanent deletion.",
-  "deleteAccountGrace": "You have {days} days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.",
-  "@deleteAccountGrace": {
-    "description": "The recovery window offered after an account deletion is requested.",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
+  "deleteAccountIntro": "Deleting your account is permanent and takes effect immediately. It cannot be undone.",
   "deleteAccountWhatGoes": "What gets deleted",
   "deleteAccountItemProfile": "Your profile, sign-in details and notification settings",
   "deleteAccountItemClinics": "Clinics you own, with their patients, appointments, treatments and payments",
   "deleteAccountItemAccess": "Your access to any clinic you were invited to",
-  "deleteAccountOwnerNote": "If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.",
-  "deleteAccountConfirmWord": "DELETE",
-  "@deleteAccountConfirmWord": {
-    "description": "The word the user must type to confirm account deletion. Keep it short, upper case where the script has case, and do not translate it into something a user might type by accident."
-  },
-  "deleteAccountConfirmPrompt": "Type {word} to confirm",
-  "@deleteAccountConfirmPrompt": {
-    "description": "Label above the confirmation field on the delete-account screen.",
-    "placeholders": {
-      "word": {
-        "type": "String"
-      }
-    }
-  },
   "deleteAccountCta": "Delete my account",
-  "deleteAccountScheduled": "Your account is scheduled for deletion",
-  "deleteAccountScheduledUntil": "Sign in again before {date} to cancel it.",
-  "@deleteAccountScheduledUntil": {
-    "description": "Shown after a successful deletion request, naming the last day it can be undone.",
+  "deleteAccountFailed": "Could not delete your account",
+  "deleteAccountMemberIntro": "Your account and contact details will be permanently deleted and you will no longer be able to sign in.",
+  "deleteAccountClosesClinic": "Your account is your clinic. Deleting it closes “{clinic}” for good and cancels its subscription.",
+  "@deleteAccountClosesClinic": {
+    "description": "Owner of a one-person clinic: what deleting the account does to it.",
     "placeholders": {
-      "date": {
+      "clinic": {
         "type": "String"
       }
     }
   },
-  "deleteAccountFailed": "Could not delete your account",
+  "deleteAccountClosesCenter": "You own “{clinic}”, which has {members} other members. Deleting your account closes the centre permanently, removes every member and cancels the subscription.",
+  "@deleteAccountClosesCenter": {
+    "description": "Owner of a staffed centre: what deleting the account does to it and its staff.",
+    "placeholders": {
+      "clinic": {
+        "type": "String"
+      },
+      "members": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountImpact": "{appointments} upcoming appointments will be cancelled and {cases} open cases closed.",
+  "@deleteAccountImpact": {
+    "description": "Counts from the deletion preview: appointments cancelled and cases closed.",
+    "placeholders": {
+      "appointments": {
+        "type": "int"
+      },
+      "cases": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountInvitationsWithdrawn": "{count} sent invitations will be withdrawn.",
+  "@deleteAccountInvitationsWithdrawn": {
+    "description": "Sent invitations that will be withdrawn with the clinic.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "deleteAccountAlsoLeave": "You will also leave: {clinics}",
+  "@deleteAccountAlsoLeave": {
+    "description": "Names the clinics the user only works in, which carry on without them.",
+    "placeholders": {
+      "clinics": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountNoTransfer": "Ownership cannot be transferred. If you want the clinic to carry on, keep your account.",
+  "deleteAccountWhatStays": "What stays",
+  "deleteAccountItemRecordsKept": "Clinical and financial records you created stay with the clinic, under your name, because it is legally required to keep them",
+  "deleteAccountReasonLabel": "Why are you leaving?",
+  "deleteAccountNoteLabel": "Anything you would like to add?",
+  "deleteAccountNoteHint": "Optional",
+  "deleteAccountPasswordLabel": "Confirm your password",
+  "deleteAccountPasswordHint": "Your current password",
+  "deleteAccountCtaCloseClinic": "Close clinic and delete account",
+  "deleteAccountCtaCloseCentre": "Close centre and delete account",
+  "deleteAccountDone": "Your account has been deleted",
+  "deleteAccountUnavailable": "This account cannot be deleted from the app.",
+  "deleteAccountPreviewFailed": "Could not load your account details",
   "updateAvailableTitle": "Update available",
   "updateRequiredTitle": "Update required",
   "updateOptionalBody": "A newer version of Denta is ready, with the latest fixes and improvements.",

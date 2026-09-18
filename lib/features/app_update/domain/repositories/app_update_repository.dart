@@ -7,6 +7,5 @@ abstract class AppUpdateRepository {
   Future<Either<NetworkExceptions, AppUpdateInfo>> checkForUpdate({
     required String platform,
     required String version,
-    required String build,
   });
 }

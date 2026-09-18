@@ -4,7 +4,7 @@ import 'package:dental_clinic_app/features/auth/domain/entities/specialty_entity
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/register_response_entity.dart';
-import 'package:dental_clinic_app/features/auth/domain/entities/delete_account_result.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/account_deletion_preview.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 
@@ -217,10 +217,20 @@ abstract class AuthRepository {
     required ResetPasswordParams params,
   });
 
-  /// Schedule the signed-in account for deletion.
+  /// What deleting the signed-in account would do, for the confirmation
+  /// screen to show before it asks for a password.
+  Future<Either<NetworkExceptions, AccountDeletionPreview>>
+  getAccountDeletionPreview();
+
+  /// Delete the signed-in account. There is no grace period and no ownership
+  /// transfer: on success the token is dead and every clinic the user owned
+  /// is closed.
   ///
-  /// A [NetworkExceptions.conflict] here is not a bug: it is the backend
-  /// refusing because the user is the last owner of a clinic that still has
-  /// other members, and its message names the clinic. Show it as written.
-  Future<Either<NetworkExceptions, DeleteAccountResult>> deleteAccount();
+  /// A [NetworkExceptions.badRequest] here is ordinarily the password being
+  /// wrong, and its message says so; nothing was changed when it happens.
+  Future<Either<NetworkExceptions, Unit>> deleteAccount({
+    required String password,
+    required String reason,
+    String? reasonNote,
+  });
 }

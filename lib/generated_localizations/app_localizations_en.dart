@@ -3106,12 +3106,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountIntro =>
-      'Deleting your account signs you out everywhere and schedules everything below for permanent deletion.';
-
-  @override
-  String deleteAccountGrace(int days) {
-    return 'You have $days days to change your mind. Signing back in during that window cancels the deletion; after it, nothing can be recovered.';
-  }
+      'Deleting your account is permanent and takes effect immediately. It cannot be undone.';
 
   @override
   String get deleteAccountWhatGoes => 'What gets deleted';
@@ -3129,30 +3124,82 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your access to any clinic you were invited to';
 
   @override
-  String get deleteAccountOwnerNote =>
-      'If you are the only owner of a clinic that still has other members, transfer ownership first. The deletion is refused until you do.';
-
-  @override
-  String get deleteAccountConfirmWord => 'DELETE';
-
-  @override
-  String deleteAccountConfirmPrompt(String word) {
-    return 'Type $word to confirm';
-  }
-
-  @override
   String get deleteAccountCta => 'Delete my account';
 
   @override
-  String get deleteAccountScheduled => 'Your account is scheduled for deletion';
+  String get deleteAccountFailed => 'Could not delete your account';
 
   @override
-  String deleteAccountScheduledUntil(String date) {
-    return 'Sign in again before $date to cancel it.';
+  String get deleteAccountMemberIntro =>
+      'Your account and contact details will be permanently deleted and you will no longer be able to sign in.';
+
+  @override
+  String deleteAccountClosesClinic(String clinic) {
+    return 'Your account is your clinic. Deleting it closes “$clinic” for good and cancels its subscription.';
   }
 
   @override
-  String get deleteAccountFailed => 'Could not delete your account';
+  String deleteAccountClosesCenter(String clinic, int members) {
+    return 'You own “$clinic”, which has $members other members. Deleting your account closes the centre permanently, removes every member and cancels the subscription.';
+  }
+
+  @override
+  String deleteAccountImpact(int appointments, int cases) {
+    return '$appointments upcoming appointments will be cancelled and $cases open cases closed.';
+  }
+
+  @override
+  String deleteAccountInvitationsWithdrawn(int count) {
+    return '$count sent invitations will be withdrawn.';
+  }
+
+  @override
+  String deleteAccountAlsoLeave(String clinics) {
+    return 'You will also leave: $clinics';
+  }
+
+  @override
+  String get deleteAccountNoTransfer =>
+      'Ownership cannot be transferred. If you want the clinic to carry on, keep your account.';
+
+  @override
+  String get deleteAccountWhatStays => 'What stays';
+
+  @override
+  String get deleteAccountItemRecordsKept =>
+      'Clinical and financial records you created stay with the clinic, under your name, because it is legally required to keep them';
+
+  @override
+  String get deleteAccountReasonLabel => 'Why are you leaving?';
+
+  @override
+  String get deleteAccountNoteLabel => 'Anything you would like to add?';
+
+  @override
+  String get deleteAccountNoteHint => 'Optional';
+
+  @override
+  String get deleteAccountPasswordLabel => 'Confirm your password';
+
+  @override
+  String get deleteAccountPasswordHint => 'Your current password';
+
+  @override
+  String get deleteAccountCtaCloseClinic => 'Close clinic and delete account';
+
+  @override
+  String get deleteAccountCtaCloseCentre => 'Close centre and delete account';
+
+  @override
+  String get deleteAccountDone => 'Your account has been deleted';
+
+  @override
+  String get deleteAccountUnavailable =>
+      'This account cannot be deleted from the app.';
+
+  @override
+  String get deleteAccountPreviewFailed =>
+      'Could not load your account details';
 
   @override
   String get updateAvailableTitle => 'Update available';
