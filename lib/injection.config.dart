@@ -71,7 +71,7 @@ import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
 import 'features/auth/domain/use_cases/delete_account_use_case.dart' as _i304;
 import 'features/auth/domain/use_cases/get_account_deletion_preview_use_case.dart'
-    as _i305;
+    as _i96;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
 import 'features/billing/data/data_sources/billing_local_data_source.dart'
     as _i733;
@@ -654,11 +654,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i166.AddClinicUserUseCase>(
       () => _i166.AddClinicUserUseCase(gh<_i818.ClinicRepository>()),
     );
-    gh.factory<_i305.GetAccountDeletionPreviewUseCase>(
-      () => _i305.GetAccountDeletionPreviewUseCase(gh<_i1015.AuthRepository>()),
-    );
     gh.factory<_i304.DeleteAccountUseCase>(
       () => _i304.DeleteAccountUseCase(gh<_i1015.AuthRepository>()),
+    );
+    gh.factory<_i96.GetAccountDeletionPreviewUseCase>(
+      () => _i96.GetAccountDeletionPreviewUseCase(gh<_i1015.AuthRepository>()),
     );
     gh.factory<_i66.GetAllExpensesUseCase>(
       () => _i66.GetAllExpensesUseCase(gh<_i18.ExpenseRepository>()),
