@@ -202,6 +202,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
       child: Scaffold(
         backgroundColor: c.scaffoldBg,
         body: SafeArea(
+          top: false,
           bottom: false,
           child: Column(
             children: [

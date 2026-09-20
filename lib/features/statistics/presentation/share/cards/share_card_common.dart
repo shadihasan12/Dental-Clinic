@@ -31,6 +31,12 @@ class ShareCardCanvas {
 
   static const String fontFamily = 'Geist';
 
+  /// Geist carries no Arabic glyphs, so an Arabic name rendered in it came out
+  /// as tofu boxes. Cairo picks up whatever Geist cannot draw, per glyph, so a
+  /// mixed line - an Arabic name beside Latin digits - still sets correctly
+  /// without the card having to know which language it is showing.
+  static const List<String> fontFamilyFallback = ['Cairo'];
+
   /// Tiling noise standing in for the CSS `feTurbulence` grain, which
   /// Flutter has no equivalent for. Generated to match fractalNoise at
   /// baseFrequency ~0.85 and composited with [BlendMode.overlay].
@@ -181,6 +187,7 @@ TextStyle cardText({
 }) {
   return TextStyle(
     fontFamily: ShareCardCanvas.fontFamily,
+    fontFamilyFallback: ShareCardCanvas.fontFamilyFallback,
     fontSize: size,
     fontWeight: weight,
     color: color,
@@ -194,7 +201,8 @@ TextStyle cardText({
 
 /// CSS `conic-gradient(from Ndeg, …)` measures clockwise from 12 o'clock;
 /// Flutter's [SweepGradient] starts at 3 o'clock.
-GradientRotation conicFrom(double degrees) => GradientRotation(deg(degrees - 90));
+GradientRotation conicFrom(double degrees) =>
+    GradientRotation(deg(degrees - 90));
 
 /// Shader for a CSS `linear-gradient(Ndeg, …)` across [rect].
 ///

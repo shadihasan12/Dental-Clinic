@@ -408,6 +408,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: Column(
           children: [

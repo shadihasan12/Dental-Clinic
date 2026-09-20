@@ -106,6 +106,7 @@ class _NotificationContentState extends State<_NotificationContent> {
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: Column(
           children: [

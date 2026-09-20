@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/english_picker.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
@@ -172,12 +173,14 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
               ),
               Divider(height: 1, color: Colors.grey.shade200),
               Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: _visitDate,
-                  minimumDate: DateTime(2020),
-                  maximumDate: DateTime.now().add(const Duration(days: 365)),
-                  onDateTimeChanged: (date) => tempDate = date,
+                child: EnglishPicker(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: _visitDate,
+                    minimumDate: DateTime(2020),
+                    maximumDate: DateTime.now().add(const Duration(days: 365)),
+                    onDateTimeChanged: (date) => tempDate = date,
+                  ),
                 ),
               ),
             ],

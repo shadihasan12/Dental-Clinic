@@ -4079,7 +4079,7 @@ abstract class AppLocalizations {
   /// No description provided for @noTreatmentsYetAddOne.
   ///
   /// In en, this message translates to:
-  /// **'No treatments yet — add one!'**
+  /// **'No added treatments'**
   String get noTreatmentsYetAddOne;
 
   /// No description provided for @toothLabel.
@@ -6175,6 +6175,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Members removed'**
   String get deleteAccountMembersLabel;
+
+  /// No description provided for @doctorTitlePrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr.'**
+  String get doctorTitlePrefix;
+
+  /// No description provided for @fileDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get fileDocument;
+
+  /// No description provided for @filePdfDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF document'**
+  String get filePdfDocument;
+
+  /// No description provided for @fileOpenExternally.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in another app'**
+  String get fileOpenExternally;
+
+  /// No description provided for @filePreviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This file can\'t be shown here'**
+  String get filePreviewFailed;
+
+  /// No description provided for @filePageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String filePageOf(int current, int total);
+
+  /// No description provided for @saveAndFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Finish'**
+  String get saveAndFinish;
+
+  /// No description provided for @workingHoursStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours'**
+  String get workingHoursStepTitle;
+
+  /// No description provided for @workingHoursRequiredNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Set {name}\'s working hours to finish adding them. Until these are saved they cannot be booked for appointments.'**
+  String workingHoursRequiredNote(String name);
+
+  /// No description provided for @workingHoursStepRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours are required to finish adding this user.'**
+  String get workingHoursStepRequired;
 }
 
 class _AppLocalizationsDelegate

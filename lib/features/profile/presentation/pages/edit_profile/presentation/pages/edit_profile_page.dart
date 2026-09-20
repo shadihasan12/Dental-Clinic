@@ -16,7 +16,6 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -146,10 +145,21 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     context.read<EditProfileBloc>().add(EditProfileEvent.updateProfile(entity));
   }
 
+  // No runtime permission is requested here on purpose, and adding one back
+  // breaks this screen on iOS.
+  //
+  // permission_handler gates every iOS strategy behind a PERMISSION_* macro
+  // that defaults to 0, and our Podfile defines none of them, so
+  // Permission.photos compiles down to UnknownPermissionStrategy - whose
+  // request() returns permanentlyDenied without ever showing a system dialog.
+  // A gate here therefore always failed on iPhone while passing on Android.
+  //
+  // None is needed anyway: file_picker's single-image mode presents
+  // UIImagePickerController on iOS (PHPicker is not compiled into the pod),
+  // which has run out of process since iOS 11, and the SAF picker on Android.
+  // Both return only the file the user chose. Payment proof and issue
+  // screenshots call the service the same ungated way.
   Future<void> _onPickImage() async {
-    final hasPermission = await _requestPhotoPermission();
-    if (!hasPermission || !mounted) return;
-
     final bloc = context.read<EditProfileBloc>();
     final result = await getIt<FilePickerService>().pickImage();
     if (result == null || !mounted) return;
@@ -160,108 +170,6 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     });
 
     bloc.add(EditProfileEvent.uploadImage(result.file));
-  }
-
-  Future<bool> _requestPhotoPermission() async {
-    PermissionStatus status;
-
-    // Android 13+ uses photos permission, older uses storage
-    if (Platform.isAndroid) {
-      status = await Permission.photos.status;
-      if (!status.isGranted) {
-        status = await Permission.photos.request();
-      }
-      // Fallback for older Android versions
-      if (status.isDenied) {
-        status = await Permission.storage.request();
-      }
-    } else {
-      status = await Permission.photos.status;
-      if (!status.isGranted) {
-        status = await Permission.photos.request();
-      }
-    }
-
-    if (status.isPermanentlyDenied && mounted) {
-      _showPermissionDeniedBottomSheet();
-      return false;
-    }
-
-    return status.isGranted || status.isLimited;
-  }
-
-  void _showPermissionDeniedBottomSheet() {
-    final l10n = AppLocalizations.of(context)!;
-    final c = ColorManager.of(context);
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: c.cardBg,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: c.borderLight,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-                SizedBox(height: 18.h),
-                const IconTile(
-                  icon: Icons.photo_library_outlined,
-                  size: 44,
-                ),
-                SizedBox(height: 14.h),
-                Text(
-                  l10n.photoPermissionRequired,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w700,
-                    color: c.textPrimary,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  l10n.photoPermissionMessage,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11.5.sp,
-                    height: 1.5,
-                    fontFamily: FontHelper.fontFamily(context),
-                    color: c.textSecondary,
-                  ),
-                ),
-                SizedBox(height: 18.h),
-                DentaButton(
-                  label: l10n.openSettings,
-                  expand: true,
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    openAppSettings();
-                  },
-                ),
-                SizedBox(height: 8.h),
-                DentaOutlineButton(
-                  label: l10n.cancel,
-                  expand: true,
-                  onTap: () => Navigator.pop(sheetContext),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Future<void> _showSpecializationPicker() async {

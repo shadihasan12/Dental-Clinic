@@ -920,7 +920,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roleAdmin => 'مسؤول';
 
   @override
-  String get roleDentist => 'طبيب ';
+  String get roleDentist => 'طبيب';
 
   @override
   String get roleReceptionist => 'مساعد';
@@ -2088,7 +2088,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get treatmentPlanSavedSuccessfully => 'تم حفظ خطة العلاج بنجاح';
 
   @override
-  String get noTreatmentsYetAddOne => 'لا توجد معالجات بعد — أضف معالجة!';
+  String get noTreatmentsYetAddOne => 'لا توجد معالجات مضافة';
 
   @override
   String toothLabel(String number) {
@@ -3214,4 +3214,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteAccountMembersLabel => 'أعضاء سيتم إزالتهم';
+
+  @override
+  String get doctorTitlePrefix => 'د.';
+
+  @override
+  String get fileDocument => 'مستند';
+
+  @override
+  String get filePdfDocument => 'ملف PDF';
+
+  @override
+  String get fileOpenExternally => 'فتح في تطبيق آخر';
+
+  @override
+  String get filePreviewFailed => 'لا يمكن عرض هذا الملف هنا';
+
+  @override
+  String filePageOf(int current, int total) {
+    return 'صفحة $current من $total';
+  }
+
+  @override
+  String get saveAndFinish => 'حفظ وإنهاء';
+
+  @override
+  String get workingHoursStepTitle => 'ساعات العمل';
+
+  @override
+  String workingHoursRequiredNote(String name) {
+    return 'حدد ساعات عمل $name لإكمال إضافته. لا يمكن حجز مواعيد له قبل حفظ هذه الساعات.';
+  }
+
+  @override
+  String get workingHoursStepRequired =>
+      'ساعات العمل مطلوبة لإكمال إضافة هذا المستخدم.';
 }

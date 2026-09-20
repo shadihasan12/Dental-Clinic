@@ -1,16 +1,39 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/cost_fields.dart';
+import 'package:dental_clinic_app/services/currency/currency_entity.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PlanSummaryHeader extends StatelessWidget {
+class PlanSummaryHeader extends StatefulWidget {
   final TreatmentPlan plan;
   final bool isInitial;
   final VoidCallback? onTap;
   final VoidCallback? onViewPaymentHistory;
   final VoidCallback? onMarkAsFinished;
+
+  /// Turns the card into its own editor: the cost row opens downwards into
+  /// the two fields instead of handing off to a bottom sheet, and reports
+  /// every edit as it happens.
+  ///
+  /// Null keeps the old behaviour, where the card is a button and [onTap]
+  /// owns what opens - which is still what the saved plan and the desktop
+  /// layout want.
+  final void Function(
+    double totalCost,
+    double labFees,
+    CurrencyEntity? totalCostCurrency,
+    CurrencyEntity? labFeesCurrency,
+  )?
+  onCostChanged;
+
+  /// Seeds the chips when the form opens. Currency lives on the page, not on
+  /// the plan, because the plan carries codes for display while the API
+  /// takes ids.
+  final CurrencyEntity? totalCostCurrency;
+  final CurrencyEntity? labFeesCurrency;
 
   const PlanSummaryHeader({
     super.key,
@@ -19,7 +42,26 @@ class PlanSummaryHeader extends StatelessWidget {
     this.onTap,
     this.onViewPaymentHistory,
     this.onMarkAsFinished,
+    this.onCostChanged,
+    this.totalCostCurrency,
+    this.labFeesCurrency,
   });
+
+  @override
+  State<PlanSummaryHeader> createState() => _PlanSummaryHeaderState();
+}
+
+class _PlanSummaryHeaderState extends State<PlanSummaryHeader> {
+  bool _expanded = false;
+
+  TreatmentPlan get plan => widget.plan;
+  bool get isInitial => widget.isInitial;
+  VoidCallback? get onTap => widget.onTap;
+  VoidCallback? get onViewPaymentHistory => widget.onViewPaymentHistory;
+  VoidCallback? get onMarkAsFinished => widget.onMarkAsFinished;
+
+  /// True when this card edits in place rather than handing off.
+  bool get _isInlineEditor => isInitial && widget.onCostChanged != null;
 
   @override
   Widget build(BuildContext context) {
@@ -40,16 +82,42 @@ class PlanSummaryHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Stats row ──────────────────────────────────────────
-          GestureDetector(
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              child: isInitial
-                  ? _buildInitialStats(context)
-                  : _buildSavedStats(context),
+          // ── Body ───────────────────────────────────────────────
+          // Material rather than a bare gesture: this row opens something,
+          // inline here and a sheet elsewhere, and the ripple is half of
+          // what says so.
+          Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16.r),
+            child: InkWell(
+              onTap: _isInlineEditor
+                  ? () => setState(() => _expanded = !_expanded)
+                  : onTap,
+              borderRadius: BorderRadius.circular(16.r),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                child: isInitial
+                    ? _buildInitialBody(context)
+                    : _buildSavedStats(context),
+              ),
             ),
           ),
+
+          // ── The form, opened in place ──────────────────────────
+          // Kept outside the InkWell above: a tap meant for a text field or
+          // a currency chip must not also collapse the thing it landed in.
+          if (_isInlineEditor)
+            AnimatedSize(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              alignment: Alignment.topCenter,
+              // Built only while open, rather than kept offstage: the fields
+              // then start from whatever the plan currently holds every time
+              // they are opened, and a closed card costs nothing.
+              child: _expanded
+                  ? _buildInlineEditor(context)
+                  : const SizedBox(width: double.infinity),
+            ),
 
           // ── Action buttons ─────────────────────────────────────
           if (onViewPaymentHistory != null || onMarkAsFinished != null) ...[
@@ -103,17 +171,197 @@ class PlanSummaryHeader extends StatelessWidget {
     );
   }
 
-  /// An amount that has not been set yet. No currency: there is no figure for
-  /// it to qualify.
-  Widget _noAmount(BuildContext context, Color valueColor) => Text(
-        '—',
-        style: TextStyle(
-          fontSize: 17.sp,
-          fontFamily: FontHelper.fontFamily(context),
-          fontWeight: FontWeight.w700,
-          color: valueColor,
+  Widget _buildInlineEditor(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, color: c.borderLight),
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 14.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              CostFields(
+                initialTotalCost: plan.totalCost,
+                initialLabFees: plan.labFees,
+                initialTotalCostCurrency: widget.totalCostCurrency,
+                initialLabFeesCurrency: widget.labFeesCurrency,
+                onChanged: widget.onCostChanged!,
+              ),
+              SizedBox(height: 14.h),
+              // Nothing to commit - the figures are already in the plan - so
+              // this only folds the form away again. Sized to its word
+              // rather than to the card: a full-width primary bar would read
+              // as the screen's main action, which Save in the header is.
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: GestureDetector(
+                  onTap: () => setState(() => _expanded = false),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 22.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Text(
+                      l10n.done,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+      ],
+    );
+  }
+
+  /// A plan being written is in one of two states, and the card shows only
+  /// the one it is in.
+  ///
+  /// Unpriced, it is a single invitation - the app's ordinary icon, title,
+  /// chevron row, which everyone already reads as "tap this". Priced, it is
+  /// the figures. What it replaced drew two labelled columns holding an em
+  /// dash each: a read-out of numbers that did not exist yet, where the dash
+  /// read as "nothing here" rather than "yours to fill in".
+  Widget _buildInitialBody(BuildContext context) {
+    if (plan.totalCost > 0) return _buildPricedLines(context);
+
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    return Row(
+      children: [
+        Container(
+          width: 32.w,
+          height: 32.w,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: ColorManager.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(11.r),
+          ),
+          child: Icon(
+            Icons.payments_outlined,
+            size: 17.w,
+            color: ColorManager.primaryDarker,
+          ),
+        ),
+        SizedBox(width: 11.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.setCost,
+                style: TextStyle(
+                  fontSize: 12.5.sp,
+                  fontFamily: family,
+                  fontWeight: FontWeight.w600,
+                  color: c.textPrimary,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              // The two figures the sheet asks for, named rather than mocked
+              // up - the row can say what it opens without the card drawing
+              // empty versions of them first.
+              Text(
+                '${l10n.totalCost} • ${l10n.labFees}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: family,
+                  color: c.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _ExpandChevron(expanded: _expanded),
+      ],
+    );
+  }
+
+  /// What has actually been priced.
+  ///
+  /// The lab line shows only when there is a lab fee: most cases have none,
+  /// and a row saying so is noise on a card the user is done with.
+  Widget _buildPricedLines(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    Widget line({
+      required String label,
+      required double value,
+      required String? code,
+      required Color valueColor,
+      required Widget trailing,
+    }) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontFamily: family,
+                fontWeight: FontWeight.w500,
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          _amount(context, value: value, code: code, valueColor: valueColor),
+          SizedBox(width: 8.w),
+          trailing,
+        ],
       );
+    }
+
+    return Column(
+      children: [
+        line(
+          label: l10n.totalCost,
+          value: plan.totalCost,
+          code: plan.currencyCode,
+          valueColor: c.textPrimary,
+          // One affordance for the pair: both figures are edited together.
+          trailing: _isInlineEditor
+              ? _ExpandChevron(expanded: _expanded)
+              : Icon(Icons.edit_outlined, size: 14.w, color: c.textTertiary),
+        ),
+        if (plan.labFees > 0) ...[
+          SizedBox(height: 8.h),
+          line(
+            label: l10n.labFees,
+            value: plan.labFees,
+            // Falls back to the case currency only when the lab has none of
+            // its own, so 350000 can never be read as dollars.
+            code: plan.labFeesCurrencyCode ?? plan.currencyCode,
+            valueColor: c.textSecondary,
+            // Holds the figures in one column, under the control above.
+            trailing: SizedBox(width: _isInlineEditor ? 18.w : 14.w),
+          ),
+        ],
+      ],
+    );
+  }
 
   Widget _buildSavedStats(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -154,43 +402,6 @@ class PlanSummaryHeader extends StatelessWidget {
                 ? const Color(0xFFE07B2A)
                 : const Color(0xFF2E9E5B),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInitialStats(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final c = ColorManager.of(context);
-
-    return Row(
-      children: [
-        _stat(
-          context,
-          label: l10n.totalCost,
-          value: plan.totalCost > 0
-              ? _amount(
-                  context,
-                  value: plan.totalCost,
-                  code: plan.currencyCode,
-                  valueColor: c.textPrimary,
-                )
-              : _noAmount(context, c.textPrimary),
-        ),
-        _verticalDivider(context),
-        _stat(
-          context,
-          label: l10n.labFees,
-          value: plan.labFees > 0
-              ? _amount(
-                  context,
-                  value: plan.labFees,
-                  // Falls back to the case currency only when the lab has none
-                  // of its own, so 350000 can never be read as dollars.
-                  code: plan.labFeesCurrencyCode ?? plan.currencyCode,
-                  valueColor: c.textSecondary,
-                )
-              : _noAmount(context, c.textSecondary),
         ),
       ],
     );
@@ -283,6 +494,28 @@ class PlanSummaryHeader extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+/// Points down when the form is folded away and up once it is open - the
+/// ordinary disclosure gesture, and direction-neutral, so it means the same
+/// thing in Arabic as in English.
+class _ExpandChevron extends StatelessWidget {
+  const _ExpandChevron({required this.expanded});
+
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedRotation(
+      turns: expanded ? 0.5 : 0,
+      duration: const Duration(milliseconds: 180),
+      child: Icon(
+        Icons.expand_more_rounded,
+        size: 18.w,
+        color: ColorManager.of(context).textTertiary,
+      ),
     );
   }
 }

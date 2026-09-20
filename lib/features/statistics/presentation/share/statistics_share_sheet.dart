@@ -1,4 +1,3 @@
-import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -78,19 +77,25 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
 
   /// Builds the doctor's display name from cached profile data. Falls back
   /// through first+last → username → a generic so the card never shows an
-  /// empty title. The cards are English-only, so the prefix is always "Dr.".
-  static String _composeDoctorName(UserStorage s) {
+  /// empty title.
+  ///
+  /// The title is localised: a card shared from the Arabic app reads "د."
+  /// rather than "Dr.", because the name beside it is Arabic too.
+  static String _composeDoctorName(UserStorage s, AppLocalizations l10n) {
     final first = (s.getFirstName() ?? '').trim();
     final last = (s.getLastName() ?? '').trim();
     final full = [first, last].where((p) => p.isNotEmpty).join(' ');
     final fallback = (s.getUserName() ?? '').trim();
     final base = full.isNotEmpty ? full : fallback;
-    if (base.isEmpty) return 'Doctor';
+    if (base.isEmpty) return l10n.doctor;
+    // Already titled, in either language - do not stack a second prefix on it.
     final lower = base.toLowerCase();
-    if (lower.startsWith('dr') || base.startsWith('د.') || base.startsWith('د ')) {
+    if (lower.startsWith('dr') ||
+        base.startsWith('د.') ||
+        base.startsWith('د ')) {
       return base;
     }
-    return 'Dr. $base';
+    return '${l10n.doctorTitlePrefix} $base';
   }
 
   ShareCardData _buildData() {
@@ -98,7 +103,7 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     final firstSeen = storage.getFirstSeenAt() ?? DateTime.now();
     return ShareCardData(
       stats: widget.stats,
-      doctorName: _composeDoctorName(storage),
+      doctorName: _composeDoctorName(storage, AppLocalizations.of(context)!),
       clinicName: storage.getClinicName() ?? '',
       doctorAvatarUrl: storage.getProfileImageUrl(),
       // Both values were seeded in UserStorage on login. clinicCount
@@ -161,77 +166,75 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     final pw = math.max(previewWidth, 180.0);
     final ph = math.max(previewHeight, pw * 16 / 9);
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: systemBottomInset(context),
+    // No bottom inset of our own: `useSafeArea: true` on the sheet already
+    // wraps it in a SafeArea, and reserving the navigation bar a second time
+    // left the sheet hovering above a dead strip of scrim - which read as the
+    // card being cut off rather than as deliberate spacing.
+    return Container(
+      decoration: BoxDecoration(
+        color: c.surfaceBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: c.surfaceBg,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-        ),
-        padding: EdgeInsets.fromLTRB(0, 12.h, 0, 24.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Grabber(color: c.borderLight),
-            SizedBox(height: 16.h),
-            const _Header(),
-            SizedBox(height: 16.h),
-            SizedBox(
-              height: ph,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: ShareCardTemplate.values.length,
-                // Keeps the off-screen neighbours built so swiping never
-                // lands on a blank card mid-decode.
-                allowImplicitScrolling: true,
-                onPageChanged: (i) {
-                  final next = ShareCardTemplate.values[i];
-                  setState(() => _selected = next);
-                  getIt<UserStorage>().saveShareCardTemplate(next.id);
-                },
-                itemBuilder: (context, i) {
-                  final template = ShareCardTemplate.values[i];
-                  return Center(
-                    child: _TemplatePreview(
-                      key: ValueKey(template),
-                      boundaryKey: _boundaryKeys[template]!,
-                      template: template,
-                      data: data,
-                      width: pw,
-                      height: ph,
-                      selected: template == _selected,
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 14.h),
-            _TemplateLabel(template: _selected),
-            SizedBox(height: 10.h),
-            _PageDots(
-              count: ShareCardTemplate.values.length,
-              index: ShareCardTemplate.values.indexOf(_selected),
-            ),
-            SizedBox(height: 18.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                children: [
-                  _ShareButton(
-                    loading: _sharing,
-                    onPressed: _sharing
-                        ? null
-                        : () => _onShare(data.doctorAvatarUrl),
+      padding: EdgeInsets.fromLTRB(0, 12.h, 0, 24.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _Grabber(color: c.borderLight),
+          SizedBox(height: 16.h),
+          const _Header(),
+          SizedBox(height: 16.h),
+          SizedBox(
+            height: ph,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: ShareCardTemplate.values.length,
+              // Keeps the off-screen neighbours built so swiping never
+              // lands on a blank card mid-decode.
+              allowImplicitScrolling: true,
+              onPageChanged: (i) {
+                final next = ShareCardTemplate.values[i];
+                setState(() => _selected = next);
+                getIt<UserStorage>().saveShareCardTemplate(next.id);
+              },
+              itemBuilder: (context, i) {
+                final template = ShareCardTemplate.values[i];
+                return Center(
+                  child: _TemplatePreview(
+                    key: ValueKey(template),
+                    boundaryKey: _boundaryKeys[template]!,
+                    template: template,
+                    data: data,
+                    width: pw,
+                    height: ph,
+                    selected: template == _selected,
                   ),
-                  SizedBox(height: 8.h),
-                  _CancelButton(onPressed: () => Navigator.of(context).pop()),
-                ],
-              ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: 14.h),
+          _TemplateLabel(template: _selected),
+          SizedBox(height: 10.h),
+          _PageDots(
+            count: ShareCardTemplate.values.length,
+            index: ShareCardTemplate.values.indexOf(_selected),
+          ),
+          SizedBox(height: 18.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                _ShareButton(
+                  loading: _sharing,
+                  onPressed:
+                      _sharing ? null : () => _onShare(data.doctorAvatarUrl),
+                ),
+                SizedBox(height: 8.h),
+                _CancelButton(onPressed: () => Navigator.of(context).pop()),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -291,8 +294,7 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
 
   Future<File> _writeToTemp(Uint8List bytes) async {
     final dir = await getTemporaryDirectory();
-    final filename =
-        'statistics_${DateTime.now().millisecondsSinceEpoch}.png';
+    final filename = 'statistics_${DateTime.now().millisecondsSinceEpoch}.png';
     final file = File('${dir.path}/$filename');
     await file.writeAsBytes(bytes, flush: true);
     return file;

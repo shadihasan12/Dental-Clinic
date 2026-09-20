@@ -40,8 +40,15 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
   bool _expanded = false;
   late final TextEditingController _noteController;
 
+  /// Expandable only when opening it would show something.
+  ///
+  /// The notes section holds a timeline of visit notes and, where the caller
+  /// allows it, a field to add one. A treatment queued on a plan that has
+  /// not been saved yet has neither - no notes, and no [onAddNote] to write
+  /// them with - so the arrow used to open onto an empty box.
   bool get _isExpandable =>
-      widget.treatment.visitNotes.isNotEmpty || !widget.readOnly;
+      widget.treatment.visitNotes.isNotEmpty ||
+      (!widget.readOnly && widget.onAddNote != null);
 
   Color get _statusColor {
     switch (widget.treatment.status) {

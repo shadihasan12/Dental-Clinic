@@ -658,6 +658,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       MaterialPageRoute(
         builder: (_) => CompletedCasePage(
           dentalCase: selected,
+          patientId: widget.patientId,
           teeth: _teeth,
           coreTreatments: _coreTreatments,
           onTitleChanged: (newTitle) async {
@@ -723,6 +724,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
           loading: () => Scaffold(
             backgroundColor: c.scaffoldBg,
             body: SafeArea(
+              top: false,
               bottom: false,
               child: Column(
                 children: [
@@ -770,6 +772,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
       return Scaffold(
         backgroundColor: c.scaffoldBg,
         body: SafeArea(
+          top: false,
           bottom: false,
           child: Column(
             children: [
@@ -832,6 +835,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
               onRecordPayment: () => _recordPayment(activeCase),
             ),
       body: SafeArea(
+        top: false,
         bottom: false,
         // The identity bar and the vitals/anchor rail both sit outside the
         // scroll view, so the pull opens its band *under* the rail instead of

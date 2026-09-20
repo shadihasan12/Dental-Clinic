@@ -24,33 +24,41 @@ class NotificationsTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    // The SafeArea sits *inside* the coloured Container, not around it, so the
+    // bar's own colour fills the status bar strip instead of leaving the
+    // scaffold background showing above a white header.
     return Container(
       color: c.surfaceBg,
-      padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onBack,
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              size: 18.w,
-              color: c.textPrimary,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textPrimary,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: onBack,
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 18.w,
+                  color: c.textPrimary,
+                ),
               ),
-            ),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: c.textPrimary,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -38,78 +38,86 @@ class PatientIdentityBar extends StatelessWidget {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
 
+    // The SafeArea sits *inside* the coloured Container, not around it, so the
+    // bar's own colour fills the status bar strip instead of leaving the
+    // scaffold background showing above a white header.
     return Container(
       color: c.surfaceBg,
-      padding: EdgeInsets.fromLTRB(4.w, 4.h, 12.w, 12.h),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onBack,
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              size: 20.w,
-              color: c.textPrimary,
-            ),
-          ),
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: ColorManager.primary.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              _initials,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                fontFamily: family,
-                color: ColorManager.primaryDarker,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(4.w, 4.h, 12.w, 12.h),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: onBack,
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20.w,
+                  color: c.textPrimary,
+                ),
               ),
-            ),
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _initials,
                   style: TextStyle(
-                    fontSize: 15.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     fontFamily: family,
-                    color: c.textPrimary,
+                    color: ColorManager.primaryDarker,
                   ),
                 ),
-                if (subtitle.isNotEmpty)
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontFamily: family,
-                      color: c.textSecondary,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          if (onEdit != null)
-            IconButton(
-              onPressed: onEdit,
-              icon: Icon(
-                Icons.edit_outlined,
-                size: 20.w,
-                color: c.textSecondary,
               ),
-            ),
-        ],
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: family,
+                        color: c.textPrimary,
+                      ),
+                    ),
+                    if (subtitle.isNotEmpty)
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontFamily: family,
+                          color: c.textSecondary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (onEdit != null)
+                IconButton(
+                  onPressed: onEdit,
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 20.w,
+                    color: c.textSecondary,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

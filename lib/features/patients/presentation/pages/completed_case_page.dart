@@ -8,7 +8,11 @@ import 'package:dental_clinic_app/features/patients/data/models/core_treatment.d
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
+import 'package:dental_clinic_app/features/patients/domain/repositories/patient_repository.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_files_section.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_details_sheet.dart';
+import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +28,11 @@ class CompletedCasePage extends StatefulWidget {
   final void Function(String newTitle)? onTitleChanged;
   final VoidCallback? onReopenCase;
 
+  /// The patient whose case this is, from the screen that already knows it.
+  /// `DentalCase.patientId` defaults to an empty string when the payload
+  /// leaves `patient_id` out, and the attachments route needs a real one.
+  final String? patientId;
+
   const CompletedCasePage({
     super.key,
     required this.dentalCase,
@@ -31,6 +40,7 @@ class CompletedCasePage extends StatefulWidget {
     required this.coreTreatments,
     this.onTitleChanged,
     this.onReopenCase,
+    this.patientId,
   });
 
   @override
@@ -42,11 +52,54 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
   bool _isEditingTitle = false;
   late TextEditingController _titleController;
 
+  /// X-rays, photos and lab reports attached while the case was open. They
+  /// outlive the case - what was taken is part of what happened - so the
+  /// finished view shows them, read-only.
+  List<CaseAttachment> _attachments = const [];
+  bool _attachmentsLoaded = false;
+
   @override
   void initState() {
     super.initState();
     _title = widget.dentalCase.title;
     _titleController = TextEditingController(text: _title);
+    _loadAttachments();
+  }
+
+  /// The case payload carries bare media ids, which cannot be rendered; the
+  /// attachments endpoint is what returns the signed `view` links, and it
+  /// does so for a finished case exactly as for an open one.
+  Future<void> _loadAttachments() async {
+    final patientId = (widget.patientId?.isNotEmpty ?? false)
+        ? widget.patientId!
+        : widget.dentalCase.patientId;
+    if (patientId.isEmpty || widget.dentalCase.id.isEmpty) {
+      setState(() => _attachmentsLoaded = true);
+      return;
+    }
+
+    final result = await getIt<PatientRepository>().getCaseAttachments(
+      patientId: patientId,
+      caseId: widget.dentalCase.id,
+    );
+    if (!mounted) return;
+    // Silent on failure, like the open case: the section simply stays empty
+    // rather than putting an error in front of a record the user opened to
+    // read.
+    result.fold(
+      (_) => setState(() => _attachmentsLoaded = true),
+      (rows) => setState(() {
+        _attachments = [
+          for (final r in rows)
+            CaseAttachment(
+              id: r.mediaId ?? r.id,
+              url: r.url,
+              name: r.name,
+            ),
+        ];
+        _attachmentsLoaded = true;
+      }),
+    );
   }
 
   @override
@@ -153,7 +206,24 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
 
                   // Financial card
                   _buildFinancialCard(context, dc),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
+
+                  // Files, view-only: nothing is added to or removed from a
+                  // case that is closed.
+                  if (_attachmentsLoaded && _attachments.isNotEmpty) ...[
+                    CustomCard(
+                      child: CaseFilesSection(
+                        attachments: _attachments,
+                        onOpen: (index) => CaseFileViewer.open(
+                          context,
+                          attachments: _attachments,
+                          initialIndex: index,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                  ],
+                  SizedBox(height: 4.h),
 
                   // Treatments list
                   _buildTreatmentsList(context, treatments),

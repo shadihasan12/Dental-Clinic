@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -58,9 +59,7 @@ Future<void> main() async {
   // Firebase — needed before the DI container resolves any FCM-touching
   // singletons. The background handler must be registered on the platform
   // channel BEFORE the app goes to background so the message isn't dropped.
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // firebase_core runs on Windows, but firebase_messaging does not ship a
   // Windows plugin - calling into it there throws MissingPluginException at
   // startup. Desktop gets its notifications over a different transport.
@@ -128,19 +127,20 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     // Deep-link push taps to the notifications screen. We use the GoRouter
     // instance directly (rather than `context.go`) because taps may fire
     // before any subtree has mounted (cold-start from a tapped push).
-    _notificationTapSubscription =
-        getIt<NotificationService>().onNotificationTap.listen((data) {
-      if (!getIt<TokenStorage>().hasToken()) return;
+    _notificationTapSubscription = getIt<NotificationService>()
+        .onNotificationTap
+        .listen((data) {
+          if (!getIt<TokenStorage>().hasToken()) return;
 
-      // Tapping several notifications in a row should not stack duplicates.
-      final current =
-          routesManager.router.routerDelegate.currentConfiguration.uri.path;
-      if (current == NotificationRouting.locationFor(data)) return;
+          // Tapping several notifications in a row should not stack duplicates.
+          final current =
+              routesManager.router.routerDelegate.currentConfiguration.uri.path;
+          if (current == NotificationRouting.locationFor(data)) return;
 
-      // The destination comes from `data['type']`, and an unknown type lands
-      // safely on the inbox rather than throwing.
-      NotificationRouting.navigate(routesManager.router, data);
-    });
+          // The destination comes from `data['type']`, and an unknown type lands
+          // safely on the inbox rather than throwing.
+          NotificationRouting.navigate(routesManager.router, data);
+        });
   }
 
   @override
@@ -198,11 +198,17 @@ class _DentalClinicAppState extends State<DentalClinicApp>
                 minTextAdapt: true,
                 splitScreenMode: true,
                 builder: (context, child) {
+                  // Drives the font for everything Material draws itself -
+                  // date pickers, dialogs, menus - which our per-widget
+                  // styles never reach.
+                  final fontFamily = FontHelper.fontFamilyForLocale(
+                    languageState.locale,
+                  );
                   return MaterialApp.router(
                     title: AppConstants.appName,
                     debugShowCheckedModeBanner: false,
-                    theme: getApplicationThemeData(),
-                    darkTheme: getDarkThemeData(),
+                    theme: getApplicationThemeData(fontFamily: fontFamily),
+                    darkTheme: getDarkThemeData(fontFamily: fontFamily),
                     themeMode: themeState.themeMode,
                     locale: languageState.locale,
                     localizationsDelegates: const [

@@ -370,20 +370,39 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         .toList();
   }
 
+  /// Splits a visit's chosen treatments into one plan item each.
+  ///
+  /// `is_done` lives on the plan item, not on the treatment inside it, so an
+  /// item carrying three `core_treatment_ids` can only ever be finished all
+  /// at once - ticking the root canal ticked the veneer beside it. The plan
+  /// screen has always sent one treatment per item, which is exactly why its
+  /// rows tick independently; this gives the case screen the same shape.
+  ///
+  /// Teeth stay on every item: the selection describes where that treatment
+  /// is being done, and splitting by tooth as well would change what a row
+  /// means, not just what it can be ticked to.
+  static List<Map<String, dynamic>> _itemPerTreatmentType(
+    AddTreatmentParams params,
+  ) {
+    final description = params.summary;
+    Map<String, dynamic> item(List<String> treatmentIds) => {
+      if (description != null && description.isNotEmpty)
+        'description': description,
+      'core_treatment_ids': treatmentIds,
+      'tooth_ids': params.selectedTeeth,
+    };
+
+    if (params.treatmentTypes.isEmpty) return [item(const [])];
+    return [for (final id in params.treatmentTypes) item([id])];
+  }
+
   @override
   Future<TreatmentItem> addTreatment(AddTreatmentParams params) async {
     if (params.isInitial) {
       // Build items list from treatmentPlanItems param
       final items = params.treatmentPlanItems.isNotEmpty
           ? params.treatmentPlanItems.map((item) => item.toJson()).toList()
-          : [
-              {
-                if (params.summary != null && params.summary!.isNotEmpty)
-                  'description': params.summary,
-                'core_treatment_ids': params.treatmentTypes,
-                'tooth_ids': params.selectedTeeth,
-              }
-            ];
+          : _itemPerTreatmentType(params);
 
       // Create a new case with treatment plan items
       final body = {
@@ -416,22 +435,24 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         audits: AuditEntry.listFromJson(data['audits']),
       );
     } else {
-      // Add treatment to existing case
-      final singleItem = {
-        if (params.summary != null && params.summary!.isNotEmpty)
-          'description': params.summary,
-        'core_treatment_ids': params.treatmentTypes,
-        'tooth_ids': params.selectedTeeth,
-      };
-      final response = await _apiConsumer.post(
-        PatientEndpoints.addTreatmentPlanItem(
-          params.patientId,
-          params.caseId!,
-        ),
-        body: singleItem,
-      );
-
-      final data = response['data'] as Map<String, dynamic>;
+      // Add treatment to an existing case, one plan item per treatment.
+      //
+      // This endpoint takes a single item, so several treatments mean
+      // several requests. They go in order and the last one's row is what
+      // comes back; a failure part-way leaves the earlier ones created,
+      // which is the same outcome as saving them one at a time by hand.
+      Map<String, dynamic>? data;
+      for (final item in _itemPerTreatmentType(params)) {
+        final response = await _apiConsumer.post(
+          PatientEndpoints.addTreatmentPlanItem(
+            params.patientId,
+            params.caseId!,
+          ),
+          body: item,
+        );
+        data = response['data'] as Map<String, dynamic>;
+      }
+      data ??= const <String, dynamic>{};
       return TreatmentItem(
         id: data['id'] as String? ?? '',
         description: params.summary ?? '',

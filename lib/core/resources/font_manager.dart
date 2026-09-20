@@ -123,140 +123,148 @@ class TextStyleManager {
 
   // Display styles
   static TextStyle get displayLarge => TextStyle(
-        fontSize: FontSizesManager.s36,
-        fontWeight: FontWeightManager.bold,
-        height: FontHeightsManager.tight,
-        letterSpacing: FontLetterSpacingManager.tighter,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s36,
+    fontWeight: FontWeightManager.bold,
+    height: FontHeightsManager.tight,
+    letterSpacing: FontLetterSpacingManager.tighter,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get displayMedium => TextStyle(
-        fontSize: FontSizesManager.s30,
-        fontWeight: FontWeightManager.bold,
-        height: FontHeightsManager.snug,
-        letterSpacing: FontLetterSpacingManager.tight,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s30,
+    fontWeight: FontWeightManager.bold,
+    height: FontHeightsManager.snug,
+    letterSpacing: FontLetterSpacingManager.tight,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get displaySmall => TextStyle(
-        fontSize: FontSizesManager.s24,
-        fontWeight: FontWeightManager.semiBold,
-        height: FontHeightsManager.snug,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s24,
+    fontWeight: FontWeightManager.semiBold,
+    height: FontHeightsManager.snug,
+    fontFamily: FontFamily.geist,
+  );
 
   // Headline styles
   static TextStyle get headlineLarge => TextStyle(
-        fontSize: FontSizesManager.s22,
-        fontWeight: FontWeightManager.semiBold,
-        height: FontHeightsManager.snug,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s22,
+    fontWeight: FontWeightManager.semiBold,
+    height: FontHeightsManager.snug,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get headlineMedium => TextStyle(
-        fontSize: FontSizesManager.s20,
-        fontWeight: FontWeightManager.semiBold,
-        height: FontHeightsManager.snug,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s20,
+    fontWeight: FontWeightManager.semiBold,
+    height: FontHeightsManager.snug,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get headlineSmall => TextStyle(
-        fontSize: FontSizesManager.s18,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.snug,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s18,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.snug,
+    fontFamily: FontFamily.geist,
+  );
 
   // Title styles
   static TextStyle get titleLarge => TextStyle(
-        fontSize: FontSizesManager.s18,
-        fontWeight: FontWeightManager.semiBold,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s18,
+    fontWeight: FontWeightManager.semiBold,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get titleMedium => TextStyle(
-        fontSize: FontSizesManager.s16,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s16,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get titleSmall => TextStyle(
-        fontSize: FontSizesManager.s14,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s14,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   // Body styles
   static TextStyle get bodyLarge => TextStyle(
-        fontSize: FontSizesManager.s16,
-        fontWeight: FontWeightManager.regular,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s16,
+    fontWeight: FontWeightManager.regular,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get bodyMedium => TextStyle(
-        fontSize: FontSizesManager.s14,
-        fontWeight: FontWeightManager.regular,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s14,
+    fontWeight: FontWeightManager.regular,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get bodySmall => TextStyle(
-        fontSize: FontSizesManager.s12,
-        fontWeight: FontWeightManager.regular,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s12,
+    fontWeight: FontWeightManager.regular,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   // Label styles
   static TextStyle get labelLarge => TextStyle(
-        fontSize: FontSizesManager.s14,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.normal,
-        letterSpacing: FontLetterSpacingManager.wide,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s14,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.normal,
+    letterSpacing: FontLetterSpacingManager.wide,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get labelMedium => TextStyle(
-        fontSize: FontSizesManager.s12,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.normal,
-        letterSpacing: FontLetterSpacingManager.wide,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s12,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.normal,
+    letterSpacing: FontLetterSpacingManager.wide,
+    fontFamily: FontFamily.geist,
+  );
 
   static TextStyle get labelSmall => TextStyle(
-        fontSize: FontSizesManager.s10,
-        fontWeight: FontWeightManager.medium,
-        height: FontHeightsManager.normal,
-        letterSpacing: FontLetterSpacingManager.wide,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s10,
+    fontWeight: FontWeightManager.medium,
+    height: FontHeightsManager.normal,
+    letterSpacing: FontLetterSpacingManager.wide,
+    fontFamily: FontFamily.geist,
+  );
 
   // Button text style
   static TextStyle get button => TextStyle(
-        fontSize: FontSizesManager.s16,
-        fontWeight: FontWeightManager.semiBold,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s16,
+    fontWeight: FontWeightManager.semiBold,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 
   // Caption style
   static TextStyle get caption => TextStyle(
-        fontSize: FontSizesManager.s12,
-        fontWeight: FontWeightManager.regular,
-        height: FontHeightsManager.normal,
-        fontFamily: FontFamily.geist
-      );
+    fontSize: FontSizesManager.s12,
+    fontWeight: FontWeightManager.regular,
+    height: FontHeightsManager.normal,
+    fontFamily: FontFamily.geist,
+  );
 }
 
-
 class FontHelper {
-  static String fontFamily(BuildContext context) {
-    final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? FontFamily.cairo : FontFamily.geist;
-  }
+  static String fontFamily(BuildContext context) =>
+      fontFamilyForLocale(Localizations.localeOf(context));
+
+  /// Same rule, for callers that hold a [Locale] but no [BuildContext] -
+  /// notably the theme builders in main, which run above Localizations.
+  ///
+  /// The app theme has to carry this: Material builds its own surfaces
+  /// (date pickers, dialogs, menus, tooltips, snackbars) from the theme's
+  /// textTheme, not from the per-widget styles our screens set by hand. A
+  /// theme pinned to the Latin face renders all of those in Latin glyphs
+  /// even when the app is in Arabic.
+  static String fontFamilyForLocale(Locale locale) =>
+      locale.languageCode == 'ar' ? FontFamily.cairo : FontFamily.geist;
 }

@@ -317,7 +317,7 @@
   "leaveClinicConfirmation": "هل أنت متأكد من رغبتك في مغادرة {clinicName}؟ سليحتاج إلى دعوة جديدة للالتحاق.",
   "joined": "الانضمام {date}",
   "roleAdmin": "مسؤول",
-  "roleDentist": "طبيب ",
+  "roleDentist": "طبيب",
   "roleReceptionist": "مساعد",
   "invitationAccepted": "تم قبول الدعوة",
   "invitationAcceptedMessage": "لقد انضممت للعيادة",
@@ -791,7 +791,7 @@
   "setCost": "تحديد التكلفة",
   "savingTreatmentPlan": "جاري حفظ خطة العلاج...",
   "treatmentPlanSavedSuccessfully": "تم حفظ خطة العلاج بنجاح",
-  "noTreatmentsYetAddOne": "لا توجد معالجات بعد — أضف معالجة!",
+  "noTreatmentsYetAddOne": "لا توجد معالجات مضافة",
   "toothLabel": "السن {number}",
   "@toothLabel": {
     "placeholders": {
@@ -1331,5 +1331,22 @@
   "updateStoreUnavailable": "تعذّر فتح المتجر على هذا الجهاز",
   "deleteAccountAppointmentsLabel": "مواعيد سيتم إلغاؤها",
   "deleteAccountCasesLabel": "حالات سيتم إغلاقها",
-  "deleteAccountMembersLabel": "أعضاء سيتم إزالتهم"
+  "deleteAccountMembersLabel": "أعضاء سيتم إزالتهم",
+  "doctorTitlePrefix": "د.",
+  "fileDocument": "مستند",
+  "filePdfDocument": "ملف PDF",
+  "fileOpenExternally": "فتح في تطبيق آخر",
+  "filePreviewFailed": "لا يمكن عرض هذا الملف هنا",
+  "filePageOf": "صفحة {current} من {total}",
+  "saveAndFinish": "حفظ وإنهاء",
+  "workingHoursStepTitle": "ساعات العمل",
+  "workingHoursRequiredNote": "حدد ساعات عمل {name} لإكمال إضافته. لا يمكن حجز مواعيد له قبل حفظ هذه الساعات.",
+  "@workingHoursRequiredNote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workingHoursStepRequired": "ساعات العمل مطلوبة لإكمال إضافة هذا المستخدم."
 }

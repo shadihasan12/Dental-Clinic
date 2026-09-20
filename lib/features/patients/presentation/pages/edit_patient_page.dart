@@ -1,6 +1,5 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
-import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/patients/domain/entities/patient_entity.dart';
@@ -181,37 +180,13 @@ class _EditPatientPageState extends State<EditPatientPage> {
     return Scaffold(
       backgroundColor: c.scaffoldBg,
       body: SafeArea(
+        top: false,
         bottom: false,
         child: Column(
           children: [
-            Container(
-              color: c.surfaceBg,
-              padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 18.w,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      l10n.editPatient,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
-                        color: c.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            FormTopBar(
+              title: l10n.editPatient,
+              onBack: () => context.pop(),
             ),
             Expanded(
               child: SingleChildScrollView(

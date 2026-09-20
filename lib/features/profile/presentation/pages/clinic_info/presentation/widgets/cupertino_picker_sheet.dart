@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/english_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,6 +10,9 @@ Future<void> showCupertinoPickerSheet({
   VoidCallback? onDone,
   required Widget picker,
 }) {
+  // Every wheel this sheet shows is a date or a time, and those stay in
+  // English digits app-wide - see [EnglishPicker].
+  final englishPicker = EnglishPicker(child: picker);
   final c = ColorManager.of(context);
   return showCupertinoModalPopup<void>(
     context: context,
@@ -59,7 +63,7 @@ Future<void> showCupertinoPickerSheet({
               ),
             ],
           ),
-          Expanded(child: picker),
+          Expanded(child: englishPicker),
         ],
       ),
     ),

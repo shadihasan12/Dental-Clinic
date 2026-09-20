@@ -2104,7 +2104,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Treatment plan saved successfully';
 
   @override
-  String get noTreatmentsYetAddOne => 'No treatments yet — add one!';
+  String get noTreatmentsYetAddOne => 'No added treatments';
 
   @override
   String toothLabel(String number) {
@@ -3244,4 +3244,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountMembersLabel => 'Members removed';
+
+  @override
+  String get doctorTitlePrefix => 'Dr.';
+
+  @override
+  String get fileDocument => 'Document';
+
+  @override
+  String get filePdfDocument => 'PDF document';
+
+  @override
+  String get fileOpenExternally => 'Open in another app';
+
+  @override
+  String get filePreviewFailed => 'This file can\'t be shown here';
+
+  @override
+  String filePageOf(int current, int total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String get saveAndFinish => 'Save & Finish';
+
+  @override
+  String get workingHoursStepTitle => 'Working hours';
+
+  @override
+  String workingHoursRequiredNote(String name) {
+    return 'Set $name\'s working hours to finish adding them. Until these are saved they cannot be booked for appointments.';
+  }
+
+  @override
+  String get workingHoursStepRequired =>
+      'Working hours are required to finish adding this user.';
 }

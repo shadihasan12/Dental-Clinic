@@ -2,6 +2,8 @@ import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_file_preview.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/patient_detail_states.dart';
@@ -11,6 +13,7 @@ import 'package:dental_clinic_app/services/file_picker/file_picker_service.dart'
 import 'package:dental_clinic_app/services/media/media_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -48,6 +51,23 @@ class CaseAttachment {
     );
   }
 
+  /// What the file name says this is, when it says anything.
+  ///
+  /// A guess, and the only one available in the strip: the strip draws a tile
+  /// per file and cannot download every one of them to read its bytes. The
+  /// viewer, which handles one file at a time, sniffs instead.
+  FileKind? get probableKind => FileKind.ofName(name) ?? FileKind.ofName(url);
+
+  /// What to call this file on screen. Never the id - an id names nothing,
+  /// and it is what the viewer used to fall back to.
+  String displayName(AppLocalizations l10n) {
+    final n = name?.trim();
+    if (n != null && n.isNotEmpty) return n;
+    return probableKind == FileKind.pdf
+        ? l10n.filePdfDocument
+        : l10n.fileDocument;
+  }
+
   /// Whether it is worth *attempting* an image render.
   ///
   /// A remote attachment arrives as `media_item.view` - a signed URL with no
@@ -82,15 +102,21 @@ class CaseFilesSection extends StatelessWidget {
   const CaseFilesSection({
     super.key,
     required this.attachments,
-    required this.onAdd,
     required this.onOpen,
-    required this.onRetry,
+    this.onAdd,
+    this.onRetry,
   });
 
   final List<CaseAttachment> attachments;
-  final VoidCallback onAdd;
   final void Function(int index) onOpen;
-  final ValueChanged<CaseAttachment> onRetry;
+
+  /// Null on a case nobody may add to any more - a finished one. The Add
+  /// text button, the trailing add tile and the empty state's action all
+  /// disappear with it, leaving the files themselves openable.
+  final VoidCallback? onAdd;
+
+  /// Retrying an upload only makes sense where uploading does.
+  final ValueChanged<CaseAttachment>? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -132,23 +158,24 @@ class CaseFilesSection extends StatelessWidget {
               ),
             ],
             const Spacer(),
-            TextButton(
-              onPressed: onAdd,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(
-                l10n.add,
-                style: TextStyle(
-                  fontSize: 12.5.sp,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: family,
-                  color: ColorManager.primaryDarker,
+            if (onAdd != null)
+              TextButton(
+                onPressed: onAdd,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  l10n.add,
+                  style: TextStyle(
+                    fontSize: 12.5.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: family,
+                    color: ColorManager.primaryDarker,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
         SizedBox(height: 10.h),
@@ -156,8 +183,10 @@ class CaseFilesSection extends StatelessWidget {
           PatientDetailPlaceholder(
             icon: Icons.attach_file_rounded,
             title: l10n.noFilesYet,
-            message: l10n.noFilesHint,
-            primaryLabel: l10n.add,
+            // Nothing to invite on a closed case: it is a statement of what
+            // the case holds, not an empty slot waiting to be filled.
+            message: onAdd == null ? null : l10n.noFilesHint,
+            primaryLabel: onAdd == null ? null : l10n.add,
             onPrimary: onAdd,
           )
         else
@@ -165,16 +194,16 @@ class CaseFilesSection extends StatelessWidget {
             height: 92.w,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: attachments.length + 1,
+              itemCount: attachments.length + (onAdd == null ? 0 : 1),
               separatorBuilder: (_, _) => SizedBox(width: 8.w),
               itemBuilder: (_, i) {
                 if (i == attachments.length) {
-                  return _AddTile(onTap: onAdd);
+                  return _AddTile(onTap: onAdd!);
                 }
                 return _Thumb(
                   attachment: attachments[i],
                   onTap: () => onOpen(i),
-                  onRetry: () => onRetry(attachments[i]),
+                  onRetry: () => onRetry?.call(attachments[i]),
                 );
               },
             ),
@@ -209,7 +238,7 @@ class _Thumb extends StatelessWidget {
         a.url!,
         fit: BoxFit.cover,
         // A PDF or lab report lands here too and simply fails to decode.
-        errorBuilder: (_, _, _) => _fileGlyph(c),
+        errorBuilder: (_, _, _) => _fileCard(context, c, l10n),
         loadingBuilder: (_, child, progress) => progress == null
             ? child
             : Center(
@@ -224,7 +253,7 @@ class _Thumb extends StatelessWidget {
               ),
       );
     } else {
-      body = _fileGlyph(c);
+      body = _fileCard(context, c, l10n);
     }
 
     return GestureDetector(
@@ -238,6 +267,17 @@ class _Thumb extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
               child: Container(color: c.cardBgSecondary, child: body),
+            ),
+            // Elevation is the border, here as everywhere. An image fills its
+            // tile edge to edge, so without this the strip had no edges at
+            // all against a pale page.
+            IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: c.borderLight),
+                ),
+              ),
             ),
             if (a.uploading)
               DecoratedBox(
@@ -291,13 +331,47 @@ class _Thumb extends StatelessWidget {
     );
   }
 
-  Widget _fileGlyph(AppColors c) => Center(
-        child: Icon(
-          Icons.insert_drive_file_outlined,
-          size: 26.w,
-          color: c.textTertiary,
-        ),
-      );
+  /// A document tile, rather than a grey glyph on a grey square.
+  ///
+  /// The type's own hue in a tinted icon tile - red for a PDF, the way every
+  /// file list marks one - and the file's name under it, so a case carrying
+  /// three lab reports does not show three identical squares.
+  Widget _fileCard(BuildContext context, AppColors c, AppLocalizations l10n) {
+    final isPdf = attachment.probableKind == FileKind.pdf;
+    final tone = isPdf ? ColorManager.error : ColorManager.info;
+    final label = attachment.displayName(l10n);
+
+    return Container(
+      color: c.cardBg,
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconTile(
+            icon: isPdf
+                ? Icons.picture_as_pdf_outlined
+                : Icons.description_outlined,
+            tone: tone,
+            size: 34.w,
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 9.5.sp,
+              height: 1.25,
+              fontWeight: FontWeight.w500,
+              fontFamily: FontHelper.fontFamily(context),
+              color: c.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _AddTile extends StatelessWidget {
@@ -668,6 +742,24 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
       PageController(initialPage: widget.initialIndex);
   late int _index = widget.initialIndex;
 
+  /// Pages in the PDF on screen, once it has loaded. Zero for anything that
+  /// is not one, which is what keeps the counter out of an image's way.
+  int _pdfPages = 0;
+
+  /// "2 of 7" for a PDF, "3 / 5" for a strip of files, and both when a
+  /// multi-page document sits inside a multi-file case.
+  String _subtitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final parts = <String>[
+      if (_pdfPages > 1) l10n.filePageOf(_pdfPage, _pdfPages),
+      if (widget.attachments.length > 1)
+        '${_index + 1} / ${widget.attachments.length}',
+    ];
+    return parts.join('  ·  ');
+  }
+
+  int _pdfPage = 1;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -731,13 +823,44 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
         backgroundColor: ColorManager.black,
         foregroundColor: ColorManager.white,
         elevation: 0,
-        title: Text(
-          '${_index + 1} / ${a.length}',
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontFamily: FontHelper.fontFamily(context),
-            color: ColorManager.white,
-          ),
+        // Set explicitly, because the app's AppBarTheme names an iconTheme
+        // and an explicit iconTheme wins over foregroundColor: the close
+        // button was inheriting near-black ink and disappearing into this
+        // bar. The status bar needs telling too - a black bar under dark
+        // system icons hides those the same way.
+        iconTheme: const IconThemeData(color: ColorManager.white),
+        actionsIconTheme: const IconThemeData(color: ColorManager.white),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        // The file's own name, with the position under it. The name is what
+        // the user is looking for; "3 / 7" was all the bar used to say.
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              current?.displayName(AppLocalizations.of(context)!) ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 13.sp,
+                height: 1.2,
+                fontWeight: FontWeight.w600,
+                fontFamily: FontHelper.fontFamily(context),
+                color: ColorManager.white,
+              ),
+            ),
+            if (a.length > 1 || _pdfPages > 1)
+              Text(
+                _subtitle(context),
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 10.5.sp,
+                  height: 1.3,
+                  fontFamily: FontHelper.fontFamily(context),
+                  color: ColorManager.white.withValues(alpha: 0.6),
+                ),
+              ),
+          ],
         ),
         actions: [
           if (canDelete)
@@ -755,31 +878,41 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
       body: PageView.builder(
         controller: _controller,
         itemCount: a.length,
-        onPageChanged: (i) => setState(() => _index = i),
+        onPageChanged: (i) => setState(() {
+          _index = i;
+          // The next file owns the page counter; carrying the last one's
+          // over would label an image "page 2 of 7".
+          _pdfPages = 0;
+          _pdfPage = 1;
+        }),
         itemBuilder: (_, i) {
           final item = a[i];
+          final url = item.url;
+
+          // Anything remote that is not an image goes through the type
+          // probe: a PDF renders, everything else offers the way out.
+          if (url != null && item.localFile == null && !item.isImage) {
+            return CaseRemoteFile(
+              key: ValueKey('remote-${item.id}'),
+              url: url,
+              name: item.name,
+              probableKind: item.probableKind,
+              onPdfPages: (page, pages) {
+                if (i != _index) return;
+                if (pages == _pdfPages && page == _pdfPage) return;
+                setState(() {
+                  _pdfPages = pages;
+                  _pdfPage = page;
+                });
+              },
+            );
+          }
+
           if (!item.canPreview) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.insert_drive_file_outlined,
-                    size: 48.w,
-                    color: ColorManager.white.withValues(alpha: 0.7),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    item.name ?? item.id,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontFamily: FontHelper.fontFamily(context),
-                      color: ColorManager.white,
-                    ),
-                  ),
-                ],
-              ),
+            return CaseFileFallback(
+              url: url ?? '',
+              name: item.name,
+              kind: item.probableKind ?? FileKind.other,
             );
           }
           return InteractiveViewer(
@@ -792,25 +925,10 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
                       item.url ?? '',
                       // Not an image after all - a document opened from the
                       // strip lands here.
-                      errorBuilder: (_, _, _) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.insert_drive_file_outlined,
-                            size: 48.w,
-                            color: ColorManager.white.withValues(alpha: 0.7),
-                          ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            item.name ?? item.id,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              color: ColorManager.white,
-                            ),
-                          ),
-                        ],
+                      errorBuilder: (_, _, _) => CaseFileFallback(
+                        url: item.url ?? '',
+                        name: item.name,
+                        kind: item.probableKind ?? FileKind.other,
                       ),
                       loadingBuilder: (_, child, progress) => progress == null
                           ? child

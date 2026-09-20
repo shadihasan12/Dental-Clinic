@@ -116,11 +116,19 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
 
     return BlocListener<ClinicUsersBloc, ClinicUsersState>(
       listenWhen: (prev, curr) => curr.maybeWhen(
-        submitSuccess: (_, message) => message == 'userAddedSuccess',
+        submitSuccess: (_, message, _) => message == 'userAddedSuccess',
         orElse: () => false,
       ),
+      // Hand the created user back to the roster rather than just closing.
+      // The roster owns what comes next - the required working-hours step -
+      // because this page is gone by then and cannot drive it.
       listener: (context, state) {
-        if (mounted) context.pop();
+        if (!mounted) return;
+        final created = state.maybeWhen(
+          submitSuccess: (_, _, createdUser) => createdUser,
+          orElse: () => null,
+        );
+        Navigator.of(context).pop(created);
       },
       child: BlocBuilder<ClinicUsersBloc, ClinicUsersState>(
         builder: (context, state) {

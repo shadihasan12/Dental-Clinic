@@ -38,7 +38,7 @@ class ClinicUsersBloc extends Bloc<ClinicUsersEvent, ClinicUsersState> {
     return state.maybeWhen(
       loaded: (users) => users,
       submitting: (users) => users,
-      submitSuccess: (users, _) => users,
+      submitSuccess: (users, _, _) => users,
       submitError: (users, _) => users,
       orElse: () => [],
     );
@@ -77,6 +77,7 @@ class ClinicUsersBloc extends Bloc<ClinicUsersEvent, ClinicUsersState> {
       (newUser) => emit(ClinicUsersState.submitSuccess(
         [...current, newUser],
         'userAddedSuccess',
+        createdUser: newUser,
       )),
     );
   }

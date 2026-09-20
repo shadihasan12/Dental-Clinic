@@ -4,7 +4,9 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
@@ -15,7 +17,6 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_tee
 import 'package:dental_clinic_app/features/patients/presentation/pages/plan_treatment_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/treatment_plan_view_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_form_widgets.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/details/manage_notes_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/plan_summary_header.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/set_cost_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
@@ -108,19 +109,25 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
     });
   }
 
-  void _showManageNotesSheet(PlannedTreatment treatment) {
-    ManageNotesSheet.show(
-      context,
-      treatmentName: treatment.type.name,
-      initialNotes: treatment.visitNotes,
-      onSave: (updatedNotes) {
-        setState(() {
-          treatment.visitNotes
-            ..clear()
-            ..addAll(updatedNotes);
-        });
-      },
-    );
+  /// Writes what the cost form reports into the plan.
+  ///
+  /// The plan carries currency *codes* because that is what the summary
+  /// shows; the entities are kept beside it because that is what the API
+  /// takes. The two have to move together.
+  void _applyCosts(
+    double totalCost,
+    double labFees,
+    CurrencyEntity? totalCostCurrency,
+    CurrencyEntity? labFeesCurrency,
+  ) {
+    setState(() {
+      _plan.totalCost = totalCost;
+      _plan.labFees = labFees;
+      _totalCostCurrency = totalCostCurrency;
+      _labFeesCurrency = labFeesCurrency;
+      _plan.currencyCode = totalCostCurrency?.currencyCode;
+      _plan.labFeesCurrencyCode = labFeesCurrency?.currencyCode;
+    });
   }
 
   void _showEditCostSheet() {
@@ -486,12 +493,8 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
   Widget _desktopTreatmentRow(
       PlannedTreatment t, AppLocalizations l10n, AppColors c) {
     final fontFamily = FontHelper.fontFamily(context);
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => _showManageNotesSheet(t),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: c.inputBg,
             borderRadius: BorderRadius.circular(10),
@@ -549,8 +552,6 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 
@@ -600,7 +601,7 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
     final c = ColorManager.of(context);
     return Scaffold(
       backgroundColor: c.scaffoldBg,
-      floatingActionButton: _buildFab(context),
+      bottomNavigationBar: _buildAddBar(context, l10n),
       body: Column(
         children: [
           PageHeader(
@@ -640,19 +641,23 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                     padding: EdgeInsets.all(16.w),
                     child: Column(
                       children: [
+                        // Edits in place: the card opens the two cost
+                        // fields under itself rather than handing off to a
+                        // sheet. Desktop keeps the sheet - there is room
+                        // beside the form there, and no keyboard climbing
+                        // over it.
                         PlanSummaryHeader(
                           plan: _plan,
                           isInitial: true,
-                          onTap: _showEditCostSheet,
+                          totalCostCurrency: _totalCostCurrency,
+                          labFeesCurrency: _labFeesCurrency,
+                          onCostChanged: _applyCosts,
                         ),
                         SizedBox(height: 16.h),
                         _buildTreatmentsList(context),
-                        // Buffer for FAB plus the Android 15 gesture inset so
-                        // the last treatment row scrolls clear of both.
-                        SizedBox(
-                          height: 80.h +
-                              MediaQuery.viewPaddingOf(context).bottom,
-                        ),
+                        // The action is docked now, so the list only needs
+                        // breathing room under its last row.
+                        SizedBox(height: 16.h),
                       ],
                     ),
                   ),
@@ -696,22 +701,42 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                 size: 22.w,
               ),
             ),
-            child: TreatmentPlanCard(
-              treatment: t,
-              onTap: () => _showManageNotesSheet(t),
-            ),
+            // No tap target: visit notes belong to a treatment that has
+            // been carried out, and nothing here has been saved yet - let
+            // alone done. The row is a queued line, removable by swipe.
+            child: TreatmentPlanCard(treatment: t),
           ),
         );
       }).toList(),
     );
   }
 
-  Widget _buildFab(BuildContext context) {
-    if (_isLoading) return const SizedBox.shrink();
-    return FloatingActionButton(
-      onPressed: _openPlanTreatment,
-      backgroundColor: ColorManager.primary,
-      child: const Icon(Icons.add, color: Colors.white),
+  /// Docked rather than floating, and labelled rather than a bare plus.
+  ///
+  /// A circle with a `+` on a screen that also has a Save in the header
+  /// never said which of the two it was, and it sat over the last row of the
+  /// list. This is the same bar every other form in the app docks its action
+  /// in - hairline on top, full-width button in the thumb arc.
+  Widget? _buildAddBar(BuildContext context, AppLocalizations l10n) {
+    if (_isLoading) return null;
+    final c = ColorManager.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(top: BorderSide(color: c.borderLight)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
+          child: DentaButton(
+            label: l10n.addTreatment,
+            icon: Icons.add_rounded,
+            expand: true,
+            onTap: _openPlanTreatment,
+          ),
+        ),
+      ),
     );
   }
 }

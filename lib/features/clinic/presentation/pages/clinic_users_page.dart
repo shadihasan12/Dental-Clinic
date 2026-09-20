@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_members
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/user_hours_page.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -92,12 +93,23 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
       body: BlocConsumer<ClinicUsersBloc, ClinicUsersState>(
         listener: (context, state) {
           state.maybeWhen(
-            submitSuccess: (_, message) {
+            submitSuccess: (_, message, createdUser) {
               String text;
               if (message == 'userAddedSuccess') {
                 text = l10n.userAddedSuccess;
                 // Refetch usage so the limit reflects the new count
                 _loadUsage();
+                // The add flow is not finished here: _onAddUser is still
+                // driving it into the required working-hours step, and it
+                // reports the success itself once the admin is back on this
+                // page. Announcing it now would fire the snackbar over the
+                // hours form.
+                if (createdUser != null) {
+                  context.read<ClinicUsersBloc>().add(
+                    const ClinicUsersEvent.load(),
+                  );
+                  return;
+                }
               } else if (message == 'userRemovedSuccess') {
                 text = l10n.userRemovedSuccess;
                 _loadUsage();
@@ -127,7 +139,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
           final users = state.maybeWhen(
             loaded: (u) => u,
             submitting: (u) => u,
-            submitSuccess: (u, _) => u,
+            submitSuccess: (u, _, _) => u,
             submitError: (u, _) => u,
             orElse: () => <ClinicUserEntity>[],
           );
@@ -238,7 +250,12 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     );
   }
 
-  void _onAddUser(BuildContext context, AppLocalizations l10n) {
+  /// Adding a user is two steps, not one: the account, then the schedule that
+  /// makes the account usable. The API can only take the hours once it has a
+  /// user id, so they cannot be collected on one form - but the admin should
+  /// not have to discover the second half on their own from the roster's
+  /// overflow menu either, so this drives them straight into it.
+  Future<void> _onAddUser(BuildContext context, AppLocalizations l10n) async {
     // Block entirely only when every limited role is full. If at least one
     // role still has capacity, let the user enter the form — the disabled
     // chips on that page will steer them to a role they can actually pick.
@@ -252,10 +269,11 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
       return;
     }
 
-    Navigator.of(context).push(
+    final bloc = context.read<ClinicUsersBloc>();
+    final created = await Navigator.of(context).push<ClinicUserEntity>(
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
-          value: context.read<ClinicUsersBloc>(),
+          value: bloc,
           child: AddClinicUserPage(
             dentistsReached: _dentistsReached,
             secretariesReached: _secretariesReached,
@@ -263,6 +281,25 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
         ),
       ),
     );
+    if (created == null || !mounted) return;
+
+    await Navigator.of(this.context).push(
+      MaterialPageRoute(
+        builder: (_) => UserHoursPage(
+          userId: created.id,
+          userName: created.fullName,
+          requireSetup: true,
+        ),
+      ),
+    );
+    if (!mounted) return;
+
+    AppSnackbar.showSuccess(
+      this.context,
+      title: l10n.success,
+      message: l10n.userAddedSuccess,
+    );
+    bloc.add(const ClinicUsersEvent.load());
   }
 
   void _showUserActionsSheet(

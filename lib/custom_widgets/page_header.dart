@@ -5,11 +5,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class PageHeader extends StatelessWidget implements PreferredSizeWidget {
-  const PageHeader({super.key, required this.title, this.onBack, this.actions});
+  const PageHeader({
+    super.key,
+    required this.title,
+    this.onBack,
+    this.actions,
+    this.showBack,
+  });
 
   final String title;
   final VoidCallback? onBack;
   final List<Widget>? actions;
+
+  /// Forces the back button on or off instead of inferring it. Pass `false`
+  /// on a step the user must complete before leaving - otherwise the arrow
+  /// appears simply because the route can be popped, and offers a way out
+  /// that the screen is deliberately not giving.
+  final bool? showBack;
 
   // Why kToolbarHeight + 9: IconButton's minimum interactive size is 48dp,
   // the row sits inside 8.h vertical padding (~16dp on a 1.0 scale), and
@@ -24,7 +36,7 @@ class PageHeader extends StatelessWidget implements PreferredSizeWidget {
     // Show the back button only when there's somewhere to go: a custom
     // [onBack] handler, or a route that can actually be popped. Calling
     // context.pop() on an empty stack throws "There is nothing to pop".
-    final showBack = onBack != null || context.canPop();
+    final showBack = this.showBack ?? (onBack != null || context.canPop());
     return Column(
       children: [
         Container(

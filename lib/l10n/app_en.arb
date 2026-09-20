@@ -822,7 +822,7 @@
   "setCost": "Set Cost",
   "savingTreatmentPlan": "Saving treatment plan...",
   "treatmentPlanSavedSuccessfully": "Treatment plan saved successfully",
-  "noTreatmentsYetAddOne": "No treatments yet — add one!",
+  "noTreatmentsYetAddOne": "No added treatments",
   "toothLabel": "Tooth {number}",
   "@toothLabel": {
     "placeholders": {
@@ -1376,5 +1376,32 @@
   "updateStoreUnavailable": "Could not open the store on this device",
   "deleteAccountAppointmentsLabel": "Appointments cancelled",
   "deleteAccountCasesLabel": "Cases closed",
-  "deleteAccountMembersLabel": "Members removed"
+  "deleteAccountMembersLabel": "Members removed",
+  "doctorTitlePrefix": "Dr.",
+  "fileDocument": "Document",
+  "filePdfDocument": "PDF document",
+  "fileOpenExternally": "Open in another app",
+  "filePreviewFailed": "This file can't be shown here",
+  "filePageOf": "Page {current} of {total}",
+  "@filePageOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "saveAndFinish": "Save & Finish",
+  "workingHoursStepTitle": "Working hours",
+  "workingHoursRequiredNote": "Set {name}'s working hours to finish adding them. Until these are saved they cannot be booked for appointments.",
+  "@workingHoursRequiredNote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workingHoursStepRequired": "Working hours are required to finish adding this user."
 }

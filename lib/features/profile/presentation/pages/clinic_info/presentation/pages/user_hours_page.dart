@@ -28,7 +28,21 @@ class UserHoursPage extends StatelessWidget {
   final String userId;
   final String? userName;
 
-  const UserHoursPage({super.key, required this.userId, this.userName});
+  /// Opens the screen as the closing step of "add clinic user" rather than as
+  /// a standalone edit: no back button, no system back, and saving is the only
+  /// way out. A user with no hours cannot be booked for anything, so the admin
+  /// who created them finishes the job here instead of finding their way back
+  /// through the roster's overflow menu later.
+  ///
+  /// The lock lifts only when the step is impossible - see [_UserHoursContent].
+  final bool requireSetup;
+
+  const UserHoursPage({
+    super.key,
+    required this.userId,
+    this.userName,
+    this.requireSetup = false,
+  });
 
   /// Who may change a schedule: the clinic owner, or anyone holding the admin
   /// role. A member cannot edit their own hours - they open this same screen
@@ -47,6 +61,7 @@ class UserHoursPage extends StatelessWidget {
         userName: userName,
         readOnly: !_canEdit,
         isSelf: getIt<TokenStorage>().getUserId() == userId,
+        requireSetup: requireSetup,
       ),
     );
   }
@@ -56,10 +71,12 @@ class _UserHoursContent extends StatefulWidget {
   final String? userName;
   final bool readOnly;
   final bool isSelf;
+  final bool requireSetup;
   const _UserHoursContent({
     this.userName,
     this.readOnly = false,
     this.isSelf = false,
+    this.requireSetup = false,
   });
 
   @override
@@ -465,6 +482,13 @@ class _UserHoursContentState extends State<_UserHoursContent> {
           saved: () {
             AppLoadingDialog.dismiss(context);
             setState(() => _initialSnapshot = _snapshot(_days));
+            // Saving is what completes the add-user flow, so hand control back
+            // to the roster - it owns the "user added" confirmation and would
+            // otherwise report it behind this screen.
+            if (widget.requireSetup) {
+              Navigator.of(context).pop();
+              return;
+            }
             AppSnackbar.showSuccess(
               context,
               title: l10n.success,
@@ -493,42 +517,68 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         final showSaveBar = !widget.readOnly &&
             _days.isNotEmpty &&
             state.maybeWhen(needsClinicHours: (_) => false, orElse: () => true);
-        return Scaffold(
-          backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
-          body: Column(
-            children: [
-              PageHeader(
-                title: widget.userName != null && widget.userName!.isNotEmpty
-                    ? '${l10n.workingHours} · ${widget.userName!}'
-                    : widget.isSelf
-                        ? l10n.myWorkingHours
-                        : l10n.workingHours,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _UserHoursSkeleton(),
-                  error: (msg) => _buildError(msg, l10n),
-                  needsClinicHours: (isAdmin) =>
-                      _buildNeedsClinicHours(isAdmin, l10n),
-                  loaded: (days, isSeed, clinicDays) {
-                    if (!_populated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() {
-                          _indexClinicDays(clinicDays);
-                          _populateFromApi(days, isSeed: isSeed);
-                        });
-                      });
-                      return const _UserHoursSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () =>
-                      _populated ? _buildForm(l10n) : const SizedBox.shrink(),
+
+        // The add-user flow holds the admin here until the schedule is saved -
+        // but only while saving it is actually possible. On the two dead ends
+        // (the clinic itself has no working days, so there is nothing to fill
+        // in; or the schedule could not be loaded at all) the lock would trap
+        // them in front of a form that cannot be completed, so it lifts and
+        // the back button comes back.
+        final stepBlocked = state.maybeWhen(
+          needsClinicHours: (_) => true,
+          error: (_) => true,
+          orElse: () => false,
+        );
+        final locked = widget.requireSetup && !stepBlocked;
+
+        return PopScope(
+          canPop: !locked,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            AppSnackbar.showError(
+              context,
+              title: l10n.workingHours,
+              message: l10n.workingHoursStepRequired,
+            );
+          },
+          child: Scaffold(
+            backgroundColor: c.scaffoldBg,
+            bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
+            body: Column(
+              children: [
+                PageHeader(
+                  title: widget.userName != null && widget.userName!.isNotEmpty
+                      ? '${l10n.workingHours} · ${widget.userName!}'
+                      : widget.isSelf
+                          ? l10n.myWorkingHours
+                          : l10n.workingHours,
+                  showBack: locked ? false : null,
+                  onBack: () => context.pop(),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: state.maybeWhen(
+                    loading: () => const _UserHoursSkeleton(),
+                    error: (msg) => _buildError(msg, l10n),
+                    needsClinicHours: (isAdmin) =>
+                        _buildNeedsClinicHours(isAdmin, l10n),
+                    loaded: (days, isSeed, clinicDays) {
+                      if (!_populated) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            _indexClinicDays(clinicDays);
+                            _populateFromApi(days, isSeed: isSeed);
+                          });
+                        });
+                        return const _UserHoursSkeleton();
+                      }
+                      return _buildForm(l10n);
+                    },
+                    orElse: () =>
+                        _populated ? _buildForm(l10n) : const SizedBox.shrink(),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -609,6 +659,18 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             _ReadOnlyNote(message: l10n.workingHoursReadOnlyNote),
             SizedBox(height: 10.h),
           ],
+          // The admin arrived here without asking to, and there is no back
+          // button; say what this step is and why it is not optional.
+          if (widget.requireSetup && !widget.readOnly) ...[
+            _SetupRequiredNote(
+              message: l10n.workingHoursRequiredNote(
+                widget.userName?.trim().isNotEmpty == true
+                    ? widget.userName!.trim()
+                    : l10n.addUser,
+              ),
+            ),
+            SizedBox(height: 10.h),
+          ],
           CustomCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -651,9 +713,12 @@ class _UserHoursContentState extends State<_UserHoursContent> {
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(
-            label: l10n.save,
+            // Saving is the only exit from the setup step, so it cannot be
+            // gated on _hasChanges: the seeded default schedule is a valid
+            // answer, and accepting it as-is means touching nothing.
+            label: widget.requireSetup ? l10n.saveAndFinish : l10n.save,
             expand: true,
-            onTap: _hasChanges ? _onSave : null,
+            onTap: widget.requireSetup || _hasChanges ? _onSave : null,
           ),
         ),
       ),
@@ -1055,6 +1120,52 @@ class _DaySnapshot {
   @override
   int get hashCode =>
       Object.hash(dayOfWeek, isWorking, isFullTime, Object.hashAll(shifts));
+}
+
+/// Says why the screen opened and why it has no way out. Carries the primary
+/// tint rather than [_ReadOnlyNote]'s grey - this one is a step to complete,
+/// not a restriction to accept.
+class _SetupRequiredNote extends StatelessWidget {
+  const _SetupRequiredNote({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+      decoration: BoxDecoration(
+        color: ColorManager.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: ColorManager.primary.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.schedule_outlined,
+            size: 16.w,
+            color: ColorManager.primaryDarker,
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                height: 1.4,
+                fontFamily: FontHelper.fontFamily(context),
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Holds the hours card at full height while the schedule loads.

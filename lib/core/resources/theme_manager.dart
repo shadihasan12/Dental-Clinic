@@ -5,10 +5,13 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 
 /// Get the application theme data - Light theme
-ThemeData getApplicationThemeData() {
+///
+/// [fontFamily] should follow the active locale so Material's own surfaces
+/// render in the right script; see [FontHelper.fontFamilyForLocale].
+ThemeData getApplicationThemeData({String? fontFamily}) {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: FontFamily.geist,
+    fontFamily: fontFamily ?? FontFamily.geist,
 
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
@@ -45,9 +48,7 @@ ThemeData getApplicationThemeData() {
       elevation: 0,
       shadowColor: ColorManager.black.withValues(alpha: 0.1),
       surfaceTintColor: ColorManager.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xl,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
       margin: EdgeInsets.zero,
     ),
 
@@ -89,9 +90,7 @@ ThemeData getApplicationThemeData() {
         disabledForegroundColor: ColorManager.gray500,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         minimumSize: const Size(88, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusManager.xl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
         elevation: 0,
       ),
     ),
@@ -104,9 +103,7 @@ ThemeData getApplicationThemeData() {
         side: const BorderSide(color: ColorManager.primary, width: 1.5),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         minimumSize: const Size(88, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusManager.xl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
       ),
     ),
 
@@ -125,16 +122,12 @@ ThemeData getApplicationThemeData() {
       foregroundColor: ColorManager.white,
       elevation: 4,
       highlightElevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
     ),
 
     // Icon Button Theme
     iconButtonTheme: IconButtonThemeData(
-      style: IconButton.styleFrom(
-        foregroundColor: ColorManager.textPrimary,
-      ),
+      style: IconButton.styleFrom(foregroundColor: ColorManager.textPrimary),
     ),
 
     // Bottom Navigation Bar Theme
@@ -144,10 +137,7 @@ ThemeData getApplicationThemeData() {
       unselectedItemColor: ColorManager.gray400,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
-      selectedLabelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-      ),
+      selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       unselectedLabelStyle: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w500,
@@ -160,7 +150,7 @@ ThemeData getApplicationThemeData() {
       indicatorColor: ColorManager.primary10,
       surfaceTintColor: ColorManager.transparent,
       elevation: 0,
-      
+
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return const IconThemeData(color: ColorManager.primary);
@@ -183,9 +173,7 @@ ThemeData getApplicationThemeData() {
       selectedColor: ColorManager.primary10,
       secondarySelectedColor: ColorManager.primaryLight,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.full,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.full),
     ),
 
     // Dialog Theme
@@ -193,10 +181,7 @@ ThemeData getApplicationThemeData() {
       backgroundColor: ColorManager.white,
       elevation: 0,
       surfaceTintColor: ColorManager.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xl,
-      ),
-     
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
     ),
 
     // Bottom Sheet Theme
@@ -214,9 +199,7 @@ ThemeData getApplicationThemeData() {
     // Snackbar Theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: ColorManager.gray800,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
       behavior: SnackBarBehavior.floating,
       elevation: 4,
     ),
@@ -274,9 +257,7 @@ ThemeData getApplicationThemeData() {
       }),
       checkColor: WidgetStateProperty.all(ColorManager.white),
       side: const BorderSide(color: ColorManager.gray400, width: 2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xs,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xs),
     ),
 
     // Radio Theme
@@ -293,12 +274,8 @@ ThemeData getApplicationThemeData() {
     listTileTheme: ListTileThemeData(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       iconColor: ColorManager.textSecondary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
     ),
-
-  
   );
 }
 
@@ -313,10 +290,10 @@ class _DarkColors {
 }
 
 /// Get dark theme data
-ThemeData getDarkThemeData() {
+ThemeData getDarkThemeData({String? fontFamily}) {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: FontFamily.geist,
+    fontFamily: fontFamily ?? FontFamily.geist,
 
     // Color Scheme
     colorScheme: ColorScheme.fromSeed(
@@ -351,9 +328,7 @@ ThemeData getDarkThemeData() {
       color: _DarkColors.surface,
       elevation: 0,
       surfaceTintColor: ColorManager.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xl,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
       margin: EdgeInsets.zero,
     ),
 
@@ -396,9 +371,7 @@ ThemeData getDarkThemeData() {
         disabledForegroundColor: const Color(0xFF6A6A6A),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         minimumSize: const Size(88, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusManager.xl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
         elevation: 0,
       ),
     ),
@@ -411,9 +384,7 @@ ThemeData getDarkThemeData() {
         side: const BorderSide(color: ColorManager.primary, width: 1.5),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         minimumSize: const Size(88, 56),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusManager.xl,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
       ),
     ),
 
@@ -432,16 +403,12 @@ ThemeData getDarkThemeData() {
       foregroundColor: ColorManager.white,
       elevation: 4,
       highlightElevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
     ),
 
     // Icon Button Theme
     iconButtonTheme: IconButtonThemeData(
-      style: IconButton.styleFrom(
-        foregroundColor: _DarkColors.textPrimary,
-      ),
+      style: IconButton.styleFrom(foregroundColor: _DarkColors.textPrimary),
     ),
 
     // Bottom Navigation Bar Theme
@@ -451,10 +418,7 @@ ThemeData getDarkThemeData() {
       unselectedItemColor: Color(0xFF6A6A6A),
       type: BottomNavigationBarType.fixed,
       elevation: 0,
-      selectedLabelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-      ),
+      selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       unselectedLabelStyle: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w500,
@@ -489,9 +453,7 @@ ThemeData getDarkThemeData() {
       selectedColor: ColorManager.primary10,
       secondarySelectedColor: ColorManager.primaryLight,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.full,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.full),
     ),
 
     // Dialog Theme
@@ -499,9 +461,7 @@ ThemeData getDarkThemeData() {
       backgroundColor: _DarkColors.surface,
       elevation: 0,
       surfaceTintColor: ColorManager.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xl,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xl),
     ),
 
     // Bottom Sheet Theme
@@ -519,9 +479,7 @@ ThemeData getDarkThemeData() {
     // Snackbar Theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: const Color(0xFF333333),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
       behavior: SnackBarBehavior.floating,
       elevation: 4,
     ),
@@ -579,9 +537,7 @@ ThemeData getDarkThemeData() {
       }),
       checkColor: WidgetStateProperty.all(ColorManager.white),
       side: const BorderSide(color: Color(0xFF6A6A6A), width: 2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.xs,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.xs),
     ),
 
     // Radio Theme
@@ -598,9 +554,7 @@ ThemeData getDarkThemeData() {
     listTileTheme: ListTileThemeData(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       iconColor: _DarkColors.textSecondary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusManager.lg,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusManager.lg),
     ),
   );
 }

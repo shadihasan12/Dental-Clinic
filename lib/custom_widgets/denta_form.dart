@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/english_picker.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,33 +25,41 @@ class FormTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    // The SafeArea sits *inside* the coloured Container, not around it, so the
+    // bar's own colour fills the status bar strip instead of leaving the
+    // scaffold background showing above a white header.
     return Container(
       color: c.surfaceBg,
-      padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onBack,
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              size: 18.w,
-              color: c.textPrimary,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textPrimary,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(4.w, 4.h, 14.w, 6.h),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: onBack,
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 18.w,
+                  color: c.textPrimary,
+                ),
               ),
-            ),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: FontHelper.fontFamily(context),
+                    color: c.textPrimary,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -991,7 +1000,26 @@ class DatePickerSheet {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
-    final start = initial ?? DateTime(1990);
+    // CupertinoDatePicker asserts on full timestamps even in date mode, so a
+    // bound carrying a time of day - `DateTime.now().subtract(1 day)` and
+    // friends - rejects that very same day picked earlier at midnight. Bounds
+    // here mean whole days, and the initial value is clamped into them so a
+    // stale selection outside the range cannot crash the sheet.
+    final minDate = minimum == null
+        ? DateTime(1900)
+        : DateTime(minimum.year, minimum.month, minimum.day);
+    final maxUpper = maximum ?? DateTime.now();
+    final maxDate = DateTime(
+      maxUpper.year,
+      maxUpper.month,
+      maxUpper.day,
+      23,
+      59,
+      59,
+    );
+    var start = initial ?? DateTime(1990);
+    if (start.isBefore(minDate)) start = minDate;
+    if (start.isAfter(maxDate)) start = maxDate;
     var temp = start;
 
     return showModalBottomSheet<DateTime>(
@@ -1047,12 +1075,14 @@ class DatePickerSheet {
               ),
               SizedBox(
                 height: 220.h,
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: start,
-                  minimumDate: minimum ?? DateTime(1900),
-                  maximumDate: maximum ?? DateTime.now(),
-                  onDateTimeChanged: (date) => temp = date,
+                child: EnglishPicker(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: start,
+                    minimumDate: minDate,
+                    maximumDate: maxDate,
+                    onDateTimeChanged: (date) => temp = date,
+                  ),
                 ),
               ),
               Padding(

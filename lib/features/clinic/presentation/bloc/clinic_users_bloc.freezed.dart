@@ -987,7 +987,11 @@ mixin _$ClinicUsersState {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -999,7 +1003,11 @@ mixin _$ClinicUsersState {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1011,7 +1019,11 @@ mixin _$ClinicUsersState {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1119,7 +1131,11 @@ class _$InitialImpl implements _Initial {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -1135,7 +1151,11 @@ class _$InitialImpl implements _Initial {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1151,7 +1171,11 @@ class _$InitialImpl implements _Initial {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1261,7 +1285,11 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -1277,7 +1305,11 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1293,7 +1325,11 @@ class _$LoadingImpl implements _Loading {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1436,7 +1472,11 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -1452,7 +1492,11 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1468,7 +1512,11 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1613,7 +1661,11 @@ class _$ErrorImpl implements _Error {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -1629,7 +1681,11 @@ class _$ErrorImpl implements _Error {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1645,7 +1701,11 @@ class _$ErrorImpl implements _Error {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1796,7 +1856,11 @@ class _$SubmittingImpl implements _Submitting {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -1812,7 +1876,11 @@ class _$SubmittingImpl implements _Submitting {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -1828,7 +1896,11 @@ class _$SubmittingImpl implements _Submitting {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
@@ -1906,7 +1978,13 @@ abstract class _$$SubmitSuccessImplCopyWith<$Res> {
     $Res Function(_$SubmitSuccessImpl) then,
   ) = __$$SubmitSuccessImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<ClinicUserEntity> users, String message});
+  $Res call({
+    List<ClinicUserEntity> users,
+    String message,
+    ClinicUserEntity? createdUser,
+  });
+
+  $ClinicUserEntityCopyWith<$Res>? get createdUser;
 }
 
 /// @nodoc
@@ -1922,7 +2000,11 @@ class __$$SubmitSuccessImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? users = null, Object? message = null}) {
+  $Res call({
+    Object? users = null,
+    Object? message = null,
+    Object? createdUser = freezed,
+  }) {
     return _then(
       _$SubmitSuccessImpl(
         null == users
@@ -1933,16 +2015,37 @@ class __$$SubmitSuccessImplCopyWithImpl<$Res>
             ? _value.message
             : message // ignore: cast_nullable_to_non_nullable
                   as String,
+        createdUser: freezed == createdUser
+            ? _value.createdUser
+            : createdUser // ignore: cast_nullable_to_non_nullable
+                  as ClinicUserEntity?,
       ),
     );
+  }
+
+  /// Create a copy of ClinicUsersState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ClinicUserEntityCopyWith<$Res>? get createdUser {
+    if (_value.createdUser == null) {
+      return null;
+    }
+
+    return $ClinicUserEntityCopyWith<$Res>(_value.createdUser!, (value) {
+      return _then(_value.copyWith(createdUser: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$SubmitSuccessImpl implements _SubmitSuccess {
-  const _$SubmitSuccessImpl(final List<ClinicUserEntity> users, this.message)
-    : _users = users;
+  const _$SubmitSuccessImpl(
+    final List<ClinicUserEntity> users,
+    this.message, {
+    this.createdUser,
+  }) : _users = users;
 
   final List<ClinicUserEntity> _users;
   @override
@@ -1954,10 +2057,12 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
 
   @override
   final String message;
+  @override
+  final ClinicUserEntity? createdUser;
 
   @override
   String toString() {
-    return 'ClinicUsersState.submitSuccess(users: $users, message: $message)';
+    return 'ClinicUsersState.submitSuccess(users: $users, message: $message, createdUser: $createdUser)';
   }
 
   @override
@@ -1966,7 +2071,9 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
         (other.runtimeType == runtimeType &&
             other is _$SubmitSuccessImpl &&
             const DeepCollectionEquality().equals(other._users, _users) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.createdUser, createdUser) ||
+                other.createdUser == createdUser));
   }
 
   @override
@@ -1974,6 +2081,7 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
     runtimeType,
     const DeepCollectionEquality().hash(_users),
     message,
+    createdUser,
   );
 
   /// Create a copy of ClinicUsersState
@@ -1992,12 +2100,16 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
   }) {
-    return submitSuccess(users, message);
+    return submitSuccess(users, message, createdUser);
   }
 
   @override
@@ -2008,12 +2120,16 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
   }) {
-    return submitSuccess?.call(users, message);
+    return submitSuccess?.call(users, message, createdUser);
   }
 
   @override
@@ -2024,13 +2140,17 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),
   }) {
     if (submitSuccess != null) {
-      return submitSuccess(users, message);
+      return submitSuccess(users, message, createdUser);
     }
     return orElse();
   }
@@ -2085,11 +2205,13 @@ class _$SubmitSuccessImpl implements _SubmitSuccess {
 abstract class _SubmitSuccess implements ClinicUsersState {
   const factory _SubmitSuccess(
     final List<ClinicUserEntity> users,
-    final String message,
-  ) = _$SubmitSuccessImpl;
+    final String message, {
+    final ClinicUserEntity? createdUser,
+  }) = _$SubmitSuccessImpl;
 
   List<ClinicUserEntity> get users;
   String get message;
+  ClinicUserEntity? get createdUser;
 
   /// Create a copy of ClinicUsersState
   /// with the given fields replaced by the non-null parameter values.
@@ -2191,7 +2313,11 @@ class _$SubmitErrorImpl implements _SubmitError {
     required TResult Function(List<ClinicUserEntity> users) loaded,
     required TResult Function(String message) error,
     required TResult Function(List<ClinicUserEntity> users) submitting,
-    required TResult Function(List<ClinicUserEntity> users, String message)
+    required TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )
     submitSuccess,
     required TResult Function(List<ClinicUserEntity> users, String message)
     submitError,
@@ -2207,7 +2333,11 @@ class _$SubmitErrorImpl implements _SubmitError {
     TResult? Function(List<ClinicUserEntity> users)? loaded,
     TResult? Function(String message)? error,
     TResult? Function(List<ClinicUserEntity> users)? submitting,
-    TResult? Function(List<ClinicUserEntity> users, String message)?
+    TResult? Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult? Function(List<ClinicUserEntity> users, String message)?
     submitError,
@@ -2223,7 +2353,11 @@ class _$SubmitErrorImpl implements _SubmitError {
     TResult Function(List<ClinicUserEntity> users)? loaded,
     TResult Function(String message)? error,
     TResult Function(List<ClinicUserEntity> users)? submitting,
-    TResult Function(List<ClinicUserEntity> users, String message)?
+    TResult Function(
+      List<ClinicUserEntity> users,
+      String message,
+      ClinicUserEntity? createdUser,
+    )?
     submitSuccess,
     TResult Function(List<ClinicUserEntity> users, String message)? submitError,
     required TResult orElse(),

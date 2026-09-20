@@ -26,7 +26,14 @@ class SessionManager {
   final UserStorage _userStorage;
 
   /// Guards against a burst of parallel 401s (a dashboard fires several
-  /// requests at once) each kicking off its own wipe + navigation.
+  /// requests at once) each kicking off its own wipe + navigation - and
+  /// against a user tapping Logout twice while the first one is in flight.
+  ///
+  /// Held until the redirect has actually run, not just been scheduled. The
+  /// navigation happens in a post-frame callback, so releasing the guard when
+  /// [endSession] returns leaves a window where the session is already wiped,
+  /// the user is still looking at the old screen, and a second call sails
+  /// through to navigate a second time.
   bool _isEndingSession = false;
 
   /// Clears the stored session and sends the user to the login page.
@@ -48,28 +55,41 @@ class SessionManager {
       // Best-effort — a dead push token must never block the redirect.
       try {
         await getIt<NotificationService>().onLogout();
-      } catch (_) {/* ignore */}
+      } catch (_) {
+        /* ignore */
+      }
 
+      // Releases the guard itself, once the navigation has run.
       _redirectToLogin(expired: expired);
-    } finally {
+    } catch (_) {
+      // The wipe failed and nothing was scheduled, so nothing will release
+      // the guard - let the user try again rather than locking logout out
+      // for the rest of the process.
       _isEndingSession = false;
+      rethrow;
     }
   }
 
   void _redirectToLogin({required bool expired}) {
     // Navigation may be requested from an interceptor mid-frame, so defer it.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = rootNavigatorKey.currentContext;
-      if (context == null) return;
+      try {
+        final context = rootNavigatorKey.currentContext;
+        if (context == null) return;
 
-      final router = GoRouter.of(context);
-      final location = router.routerDelegate.currentConfiguration.uri.path;
-      // Already out — don't stack another login page on top of itself.
-      if (location == '/login' || location == '/onboarding') return;
+        final router = GoRouter.of(context);
+        final location = router.routerDelegate.currentConfiguration.uri.path;
+        // Already out — don't stack another login page on top of itself.
+        if (location == '/login' || location == '/onboarding') return;
 
-      router.goNamed(AppRoutesNames.login);
+        router.goNamed(AppRoutesNames.login);
 
-      if (expired) _showExpiredNotice();
+        if (expired) _showExpiredNotice();
+      } finally {
+        // Signing in again goes through a fresh session, so the flag must not
+        // stay latched - but it is only dropped here, after the redirect.
+        _isEndingSession = false;
+      }
     });
   }
 

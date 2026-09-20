@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/role_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -382,6 +383,10 @@ class _MenuPageState extends State<MenuPage> {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
     final hasImage = profileImageUrl != null && profileImageUrl.isNotEmpty;
+    final roleLabel = clinicRoleLabelFromName(
+      AppLocalizations.of(context)!,
+      getIt<UserStorage>().getUserRole(),
+    );
 
     return Container(
       width: double.infinity,
@@ -421,17 +426,23 @@ class _MenuPageState extends State<MenuPage> {
                     color: c.textPrimary,
                   ),
                 ),
-                SizedBox(height: 2.h),
-                Text(
-                  AppLocalizations.of(context)!.dentist,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 11.sp,
-                    color: c.textTertiary,
+                // The role the user actually holds in the active clinic, not
+                // a fixed "Dentist" - a secretary was being shown as one.
+                // Hidden entirely when no role is cached, which is honest
+                // rather than guessing.
+                if (roleLabel != null) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    roleLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 11.sp,
+                      color: c.textTertiary,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -620,95 +631,150 @@ class _MenuPageState extends State<MenuPage> {
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: c.cardBg,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        titlePadding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
-        contentPadding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 0),
-        actionsPadding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 16.h),
-        title: Row(
-          children: [
-            Container(
-              width: 32.w,
-              height: 32.w,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: ColorManager.error.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(11.r),
-              ),
-              child: Icon(Icons.logout, size: 17.w, color: ColorManager.error),
+      // The wipe plus the push-token de-registration is a network round trip;
+      // dismissing on tap-outside mid-flight would leave the user staring at a
+      // signed-in screen with no idea anything was happening.
+      barrierDismissible: false,
+      builder: (dialogContext) => _LogoutDialog(
+        builder: (busy, runLogout) => PopScope(
+          canPop: !busy,
+          child: AlertDialog(
+            backgroundColor: c.cardBg,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
             ),
-            SizedBox(width: 11.w),
-            Expanded(
-              child: Text(
-                l10n.logout,
-                style: TextStyle(
-                  color: c.textPrimary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.sp,
-                  fontFamily: family,
+            titlePadding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
+            contentPadding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 0),
+            actionsPadding: EdgeInsets.fromLTRB(18.w, 14.h, 18.w, 16.h),
+            title: Row(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.w,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: ColorManager.error.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(11.r),
+                  ),
+                  child: Icon(
+                    Icons.logout,
+                    size: 17.w,
+                    color: ColorManager.error,
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.areYouSureLogout,
-              style: TextStyle(
-                color: c.textSecondary,
-                fontSize: 12.sp,
-                height: 1.5,
-                fontFamily: family,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 9.h),
-              decoration: BoxDecoration(
-                color: c.errorBg,
-                borderRadius: BorderRadius.circular(11.r),
-                border: Border.all(color: ColorManager.errorBorder),
-              ),
-              child: Text(
-                l10n.logoutConsequence,
-                style: TextStyle(
-                  color: ColorManager.error,
-                  fontSize: 11.sp,
-                  height: 1.45,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: family,
+                SizedBox(width: 11.w),
+                Expanded(
+                  child: Text(
+                    l10n.logout,
+                    style: TextStyle(
+                      color: c.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.sp,
+                      fontFamily: family,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.areYouSureLogout,
+                  style: TextStyle(
+                    color: c.textSecondary,
+                    fontSize: 12.sp,
+                    height: 1.5,
+                    fontFamily: family,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 11.w,
+                    vertical: 9.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: c.errorBg,
+                    borderRadius: BorderRadius.circular(11.r),
+                    border: Border.all(color: ColorManager.errorBorder),
+                  ),
+                  child: Text(
+                    l10n.logoutConsequence,
+                    style: TextStyle(
+                      color: ColorManager.error,
+                      fontSize: 11.sp,
+                      height: 1.45,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: family,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              _DialogButton(
+                label: l10n.cancel,
+                enabled: !busy,
+                onTap: () => Navigator.pop(dialogContext),
+              ),
+              _DialogButton(
+                label: l10n.logout,
+                filled: true,
+                tone: ColorManager.destructive,
+                busy: busy,
+                // The dialog stays put, showing the spinner, until the session is
+                // actually gone. Popping first is what let a second tap start a
+                // second sign-out over a half-torn-down navigator.
+                onTap: () => runLogout(() async {
+                  // Shares the wipe-and-redirect path with the forced sign-out on
+                  // a 401, so both clear exactly the same state.
+                  await getIt<SessionManager>().endSession();
+                  if (dialogContext.mounted) Navigator.pop(dialogContext);
+                }),
+              ),
+            ],
+          ),
         ),
-        actions: [
-          _DialogButton(
-            label: l10n.cancel,
-            onTap: () => Navigator.pop(dialogContext),
-          ),
-          _DialogButton(
-            label: l10n.logout,
-            filled: true,
-            tone: ColorManager.destructive,
-            onTap: () async {
-              Navigator.pop(dialogContext);
-              // Shares the wipe-and-redirect path with the forced sign-out on
-              // a 401, so both clear exactly the same state.
-              await getIt<SessionManager>().endSession();
-            },
-          ),
-        ],
       ),
     );
   }
+}
+
+/// Owns the in-flight state for a destructive dialog action.
+///
+/// [builder] receives whether the action is running and a callback that runs
+/// it exactly once - further taps while it is in flight are dropped rather
+/// than queued, which is the difference between a slow logout and two
+/// concurrent ones racing each other through the navigator.
+class _LogoutDialog extends StatefulWidget {
+  const _LogoutDialog({required this.builder});
+
+  final Widget Function(bool busy, void Function(Future<void> Function()) run)
+  builder;
+
+  @override
+  State<_LogoutDialog> createState() => _LogoutDialogState();
+}
+
+class _LogoutDialogState extends State<_LogoutDialog> {
+  bool _busy = false;
+
+  Future<void> _run(Future<void> Function() action) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await action();
+    } finally {
+      // The dialog is usually gone by now; only touch state if it is not.
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_busy, _run);
 }
 
 /// Dialog action: outlined by default, filled in its own hue when it is the
@@ -719,6 +785,8 @@ class _DialogButton extends StatelessWidget {
     required this.onTap,
     this.filled = false,
     this.tone,
+    this.busy = false,
+    this.enabled = true,
   });
 
   final String label;
@@ -726,32 +794,55 @@ class _DialogButton extends StatelessWidget {
   final bool filled;
   final Color? tone;
 
+  /// Swaps the label for a spinner and stops accepting taps.
+  final bool busy;
+
+  /// Greys the button out while another action on the dialog is running.
+  final bool enabled;
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final radius = BorderRadius.circular(11.r);
     final accent = tone ?? ColorManager.primary;
 
-    return Material(
-      color: filled ? accent : c.cardBg,
-      borderRadius: radius,
-      child: InkWell(
-        onTap: onTap,
+    final interactive = enabled && !busy;
+    final foreground = filled ? ColorManager.white : c.textSecondary;
+
+    return Opacity(
+      opacity: interactive ? 1 : 0.6,
+      child: Material(
+        color: filled ? accent : c.cardBg,
         borderRadius: radius,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.h),
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border: filled ? null : Border.all(color: c.border),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: filled ? ColorManager.white : c.textSecondary,
-              fontWeight: FontWeight.w600,
-              fontSize: 12.5.sp,
-              fontFamily: FontHelper.fontFamily(context),
+        child: InkWell(
+          onTap: interactive ? onTap : null,
+          borderRadius: radius,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.h),
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              border: filled ? null : Border.all(color: c.border),
             ),
+            // The spinner takes the label's place rather than sitting beside
+            // it, so the button keeps its width and the row does not jump.
+            child: busy
+                ? SizedBox(
+                    height: 15.sp,
+                    width: 15.sp,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(foreground),
+                    ),
+                  )
+                : Text(
+                    label,
+                    style: TextStyle(
+                      color: foreground,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.5.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                    ),
+                  ),
           ),
         ),
       ),
