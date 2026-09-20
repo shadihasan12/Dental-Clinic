@@ -96,8 +96,11 @@ class HomeHeader extends StatelessWidget {
   }
 
   /// Local clock, local phrasing. Arabic has no everyday split between
-  /// afternoon and evening, so its middle bucket is a plain "good day"
-  /// rather than a literal translation nobody says.
+  /// afternoon and evening - it greets with one or the other side of noon -
+  /// so its afternoon string is the same evening greeting, and the two
+  /// middle hours read the way people actually speak. English keeps all
+  /// three. The buckets stay here; which words fill them is the
+  /// translation's business.
   String _greeting(AppLocalizations l10n, DateTime now) {
     if (now.hour < 12) return l10n.goodMorning;
     if (now.hour < 17) return l10n.goodAfternoon;

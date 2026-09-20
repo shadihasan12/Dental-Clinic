@@ -3026,7 +3026,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get goodMorning => 'صباح الخير';
 
   @override
-  String get goodAfternoon => 'طاب يومك';
+  String get goodAfternoon => 'مساء الخير';
 
   @override
   String get goodEvening => 'مساء الخير';
