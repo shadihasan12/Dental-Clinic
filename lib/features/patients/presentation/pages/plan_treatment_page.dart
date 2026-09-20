@@ -375,15 +375,32 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
                     : ColorManager.of(context).textTertiary,
               ),
               SizedBox(width: 6.w),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected
-                      ? ColorManager.primary
-                      : ColorManager.of(context).textTertiary,
+              // Scaled down rather than ellipsised, and flexible rather than
+              // natural-width: the label is a category name the server chose
+              // ("Tooth-Level Treatments"), the tabs split the row evenly
+              // between however many categories come back, and the user's
+              // text scale stretches it further. All three are outside this
+              // screen's control, so the text gives way instead of
+              // overflowing - and "Tooth-Level Treatm..." would not tell the
+              // user which tab they are on.
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: isSelected
+                          ? ColorManager.primary
+                          : ColorManager.of(context).textTertiary,
+                    ),
+                  ),
                 ),
               ),
             ],
