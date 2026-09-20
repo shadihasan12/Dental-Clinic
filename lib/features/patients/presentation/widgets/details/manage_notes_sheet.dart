@@ -227,6 +227,8 @@ class _ManageNotesSheetState extends State<ManageNotesSheet> {
                   children: [
                     Expanded(
                       child: TextField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _controller,
                         maxLines: 3,
                         minLines: 1,

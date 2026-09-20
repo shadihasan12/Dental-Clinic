@@ -70,10 +70,8 @@ class _SetCostSheetState extends State<SetCostSheet> {
   CurrencyEntity? _labFeesCurrency;
   final _currencyBloc = getIt<CurrencyBloc>();
 
-  double get _totalCost =>
-      double.tryParse(_totalCostController.text) ?? 0;
-  double get _labFees =>
-      double.tryParse(_labFeesController.text) ?? 0;
+  double get _totalCost => double.tryParse(_totalCostController.text) ?? 0;
+  double get _labFees => double.tryParse(_labFeesController.text) ?? 0;
 
   bool get _canSave => _totalCost > 0 && _totalCostCurrency != null;
 
@@ -134,7 +132,8 @@ class _SetCostSheetState extends State<SetCostSheet> {
     return InputDecoration(
       hintText: '0.00',
       errorText: errorText,
-      hintStyle: TextStyle(fontSize: 15.sp, color: ColorManager.of(context).textTertiary),
+      hintStyle: TextStyle(
+          fontSize: 15.sp, color: ColorManager.of(context).textTertiary),
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       filled: true,
       fillColor: ColorManager.of(context).cardBgSecondary,
@@ -165,150 +164,156 @@ class _SetCostSheetState extends State<SetCostSheet> {
         );
       },
       child: Container(
-      padding: EdgeInsets.fromLTRB(
-        20.w,
-        16.h,
-        20.w,
-        MediaQuery.of(context).viewInsets.bottom + 16.h,
-      ),
-      decoration: BoxDecoration(
-        color: ColorManager.of(context).cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: ColorManager.of(context).border,
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            l10n.setCost,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w600,
-              color: ColorManager.of(context).textPrimary,
-            ),
-          ),
-          SizedBox(height: 16.h),
-
-          // ── Total Cost ──────────────────────────────────
-          Text(
-            l10n.totalCost,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w500,
-              color: ColorManager.of(context).textSecondary,
-            ),
-          ),
-          SizedBox(height: 6.h),
-          TextField(
-            controller: _totalCostController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-            ],
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w500,
-              color: ColorManager.of(context).textPrimary,
-            ),
-            decoration: _inputDecoration(),
-          ),
-          SizedBox(height: 8.h),
-          _CurrencyRow(
-            bloc: _currencyBloc,
-            selected: _totalCostCurrency,
-            required: _totalCost > 0,
-            onSelected: (c) => setState(() => _totalCostCurrency = c),
-          ),
-
-          SizedBox(height: 14.h),
-
-          // ── Lab Fees ────────────────────────────────────
-          Text(
-            l10n.labFees,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w500,
-              color: ColorManager.of(context).textSecondary,
-            ),
-          ),
-          SizedBox(height: 6.h),
-          TextField(
-            controller: _labFeesController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-            ],
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontFamily: FontHelper.fontFamily(context),
-              fontWeight: FontWeight.w500,
-              color: ColorManager.of(context).textPrimary,
-            ),
-            decoration: _inputDecoration(),
-          ),
-          SizedBox(height: 8.h),
-          _CurrencyRow(
-            bloc: _currencyBloc,
-            selected: _labFeesCurrency,
-            required: _labFees > 0,
-            onSelected: (c) => setState(() => _labFeesCurrency = c),
-          ),
-
-          SizedBox(height: 16.h),
-
-          // ── Save button ─────────────────────────────────
-          GestureDetector(
-            onTap: _canSave
-                ? () {
-                    widget.onSave(
-                      _totalCost,
-                      _labFees,
-                      _totalCostCurrency,
-                      _labFeesCurrency,
-                    );
-                    Navigator.pop(context);
-                  }
-                : null,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 14.h),
-              decoration: BoxDecoration(
-                color: _canSave ? ColorManager.primary : ColorManager.of(context).borderLight,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Text(
-                l10n.save,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: _canSave
-                      ? ColorManager.white
-                      : ColorManager.of(context).textTertiary,
+        padding: EdgeInsets.fromLTRB(
+          20.w,
+          16.h,
+          20.w,
+          MediaQuery.of(context).viewInsets.bottom + 16.h,
+        ),
+        decoration: BoxDecoration(
+          color: ColorManager.of(context).cardBg,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: ColorManager.of(context).border,
+                  borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 16.h),
+            Text(
+              l10n.setCost,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w600,
+                color: ColorManager.of(context).textPrimary,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // ── Total Cost ──────────────────────────────────
+            Text(
+              l10n.totalCost,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.of(context).textSecondary,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              controller: _totalCostController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+              ],
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.of(context).textPrimary,
+              ),
+              decoration: _inputDecoration(),
+            ),
+            SizedBox(height: 8.h),
+            _CurrencyRow(
+              bloc: _currencyBloc,
+              selected: _totalCostCurrency,
+              required: _totalCost > 0,
+              onSelected: (c) => setState(() => _totalCostCurrency = c),
+            ),
+
+            SizedBox(height: 14.h),
+
+            // ── Lab Fees ────────────────────────────────────
+            Text(
+              l10n.labFees,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.of(context).textSecondary,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              controller: _labFeesController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+              ],
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontFamily: FontHelper.fontFamily(context),
+                fontWeight: FontWeight.w500,
+                color: ColorManager.of(context).textPrimary,
+              ),
+              decoration: _inputDecoration(),
+            ),
+            SizedBox(height: 8.h),
+            _CurrencyRow(
+              bloc: _currencyBloc,
+              selected: _labFeesCurrency,
+              required: _labFees > 0,
+              onSelected: (c) => setState(() => _labFeesCurrency = c),
+            ),
+
+            SizedBox(height: 16.h),
+
+            // ── Save button ─────────────────────────────────
+            GestureDetector(
+              onTap: _canSave
+                  ? () {
+                      widget.onSave(
+                        _totalCost,
+                        _labFees,
+                        _totalCostCurrency,
+                        _labFeesCurrency,
+                      );
+                      Navigator.pop(context);
+                    }
+                  : null,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: _canSave
+                      ? ColorManager.primary
+                      : ColorManager.of(context).borderLight,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Text(
+                  l10n.save,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: _canSave
+                        ? ColorManager.white
+                        : ColorManager.of(context).textTertiary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

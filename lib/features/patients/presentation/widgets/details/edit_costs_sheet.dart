@@ -97,8 +97,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
     if (currencies.isEmpty) return;
     if (_selectedTotalCostCurrency == null) {
       if (widget.initialTotalCostCurrencyId != null) {
-        final match = currencies
-            .where((c) => c.id == widget.initialTotalCostCurrencyId);
+        final match =
+            currencies.where((c) => c.id == widget.initialTotalCostCurrencyId);
         _selectedTotalCostCurrency =
             match.isNotEmpty ? match.first : currencies.first;
       } else {
@@ -107,8 +107,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
     }
     if (_selectedLabFeesCurrency == null) {
       if (widget.initialLabFeesCurrencyId != null) {
-        final match = currencies
-            .where((c) => c.id == widget.initialLabFeesCurrencyId);
+        final match =
+            currencies.where((c) => c.id == widget.initialLabFeesCurrencyId);
         _selectedLabFeesCurrency =
             match.isNotEmpty ? match.first : currencies.first;
       } else {
@@ -125,10 +125,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
   }
 
   Future<void> _save() async {
-    final totalCost =
-        double.tryParse(_totalCostController.text.trim()) ?? 0;
-    final labFees =
-        double.tryParse(_labFeesController.text.trim()) ?? 0;
+    final totalCost = double.tryParse(_totalCostController.text.trim()) ?? 0;
+    final labFees = double.tryParse(_labFeesController.text.trim()) ?? 0;
 
     setState(() => _saving = true);
     try {
@@ -202,7 +200,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
                 // Total Cost
                 _buildLabel(context, AppLocalizations.of(context)!.totalCost),
                 SizedBox(height: 8.h),
-                _buildTextField(_totalCostController, AppLocalizations.of(context)!.enterTotalCost),
+                _buildTextField(_totalCostController,
+                    AppLocalizations.of(context)!.enterTotalCost),
                 if (currencies.isNotEmpty) ...[
                   SizedBox(height: 8.h),
                   CurrencyChips(
@@ -217,7 +216,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
                 // Lab Fees
                 _buildLabel(context, AppLocalizations.of(context)!.labFees),
                 SizedBox(height: 8.h),
-                _buildTextField(_labFeesController, AppLocalizations.of(context)!.enterLabFees),
+                _buildTextField(_labFeesController,
+                    AppLocalizations.of(context)!.enterLabFees),
                 if (currencies.isNotEmpty) ...[
                   SizedBox(height: 8.h),
                   CurrencyChips(
@@ -286,6 +286,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
 
   Widget _buildTextField(TextEditingController controller, String hint) {
     return TextField(
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       controller: controller,
       keyboardType: TextInputType.number,
       style: TextStyle(
@@ -299,8 +300,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
           fontSize: 14.sp,
           color: ColorManager.of(context).textTertiary,
         ),
-        contentPadding:
-            EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         filled: true,
         fillColor: ColorManager.of(context).cardBgSecondary,
         border: OutlineInputBorder(

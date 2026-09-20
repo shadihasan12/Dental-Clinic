@@ -232,6 +232,8 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 TextField(
+                  onTapOutside: (_) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   controller: _titleController,
                   autofocus: true,
                   maxLines: 3,
@@ -242,20 +244,20 @@ class _CompletedCasePageState extends State<CompletedCasePage> {
                     fontWeight: FontWeight.w600,
                     color: ColorManager.of(context).textPrimary,
                   ),
-                  decoration:
-                      formOutlinedInput(
-                        context,
-                        hintText: AppLocalizations.of(
-                          context,
-                        )!.caseTitlePlaceholder,
-                      ).copyWith(
-                        // The title is edited at the size it is read at.
-                        hintStyle: TextStyle(
-                          fontSize: 16.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          color: ColorManager.of(context).textTertiary,
-                        ),
-                      ),
+                  decoration: formOutlinedInput(
+                    context,
+                    hintText: AppLocalizations.of(
+                      context,
+                    )!
+                        .caseTitlePlaceholder,
+                  ).copyWith(
+                    // The title is edited at the size it is read at.
+                    hintStyle: TextStyle(
+                      fontSize: 16.sp,
+                      fontFamily: FontHelper.fontFamily(context),
+                      color: ColorManager.of(context).textTertiary,
+                    ),
+                  ),
                   onSubmitted: (_) => _saveTitle(),
                 ),
                 SizedBox(height: 10.h),

@@ -13,10 +13,16 @@ import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
+import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/use_cases/get_my_clinics_use_case.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
+import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
+import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_status_use_case.dart';
+import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
+import 'package:dental_clinic_app/features/subscription/presentation/widgets/subscription_card.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/language_settings_dialog.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/legal_links.dart';
 import 'package:dental_clinic_app/features/profile/presentation/widgets/theme_settings_dialog.dart';
@@ -30,11 +36,46 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  SubscriptionStatusEntity? _subscriptionStatus;
+  SubscriptionUsageEntity? _subscriptionUsage;
+  bool _subscriptionLoading = true;
+
   @override
   void initState() {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
     _refreshClinicOwnership();
+    _loadSubscription();
+  }
+
+  /// The plan and what is left of it, for the card at the top of the page.
+  ///
+  /// Both calls are skipped when billing is off, since nothing renders them
+  /// then - the same reason Home used to skip them.
+  Future<void> _loadSubscription() async {
+    if (!AppConfig.billingEnabled) {
+      if (mounted) setState(() => _subscriptionLoading = false);
+      return;
+    }
+
+    final statusFuture = getIt<GetSubscriptionStatusUseCase>()(NoParams());
+    final usageFuture = getIt<GetSubscriptionUsageUseCase>()(NoParams());
+
+    final statusResult = await statusFuture;
+    final usageResult = await usageFuture;
+    if (!mounted) return;
+
+    setState(() {
+      statusResult.fold(
+        (_) => _subscriptionStatus = null,
+        (value) => _subscriptionStatus = value,
+      );
+      usageResult.fold(
+        (_) => _subscriptionUsage = null,
+        (value) => _subscriptionUsage = value,
+      );
+      _subscriptionLoading = false;
+    });
   }
 
   /// Ownership is cached at login and at every clinic switch, but an install
@@ -110,6 +151,24 @@ class _MenuPageState extends State<MenuPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 18.h),
+
+                  // — Subscription. First thing under the profile header:
+                  // how long the plan has left is the one status on this
+                  // page that can stop the clinic working, and unlike a
+                  // menu row it says so without being opened. No dismiss
+                  // here - it is not in anyone's way.
+                  if (AppConfig.billingEnabled) ...[
+                    SubscriptionCard(
+                      status: _subscriptionStatus,
+                      usage: _subscriptionUsage,
+                      isLoading: _subscriptionLoading,
+                      onViewPlans: () =>
+                          context.pushNamed(AppRoutesNames.pricing),
+                      onUpgrade: () =>
+                          context.pushNamed(AppRoutesNames.pricing),
+                    ),
+                    SizedBox(height: 18.h),
+                  ],
 
                   // — Account Settings
                   _sectionLabel(context, l10n.accountSettings),

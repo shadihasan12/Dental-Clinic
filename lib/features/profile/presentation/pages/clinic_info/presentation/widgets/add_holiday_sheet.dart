@@ -87,6 +87,8 @@ void showAddHolidaySheet(
                 ),
                 SizedBox(height: 6.h),
                 TextField(
+                  onTapOutside: (_) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   controller: nameController,
                   style: TextStyle(
                     fontSize: 13.sp,

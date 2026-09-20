@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
@@ -25,27 +26,42 @@ import '../widgets/clinic_info_models.dart';
 import '../widgets/cupertino_picker_sheet.dart';
 
 class WorkingDaysPage extends StatelessWidget {
-  const WorkingDaysPage({super.key});
+  const WorkingDaysPage({super.key, this.isInitialSetup = false});
+
+  /// The post-signup gate rather than the settings screen.
+  ///
+  /// Same editor either way - a new clinic and an established one are
+  /// answering the same question - but in setup mode the page cannot be left
+  /// until a schedule is saved, it drops the holidays section, and it hands
+  /// over to the app instead of showing a "saved" toast. Without working
+  /// hours no appointment can be booked, so this is asked once, up front,
+  /// rather than discovered later from an empty slot list.
+  final bool isInitialSetup;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) =>
           getIt<WorkingDaysBloc>()..add(const WorkingDaysEvent.load()),
-      child: const _WorkingDaysContent(),
+      child: _WorkingDaysContent(isInitialSetup: isInitialSetup),
     );
   }
 }
 
 class _WorkingDaysContent extends StatefulWidget {
-  const _WorkingDaysContent();
+  const _WorkingDaysContent({required this.isInitialSetup});
+
+  final bool isInitialSetup;
 
   @override
   State<_WorkingDaysContent> createState() => _WorkingDaysContentState();
 }
 
 class _WorkingDaysContentState extends State<_WorkingDaysContent> {
-  String? _expandedDay;
+  /// Which day's shifts are open, by day of week rather than by row id.
+  /// A schedule seeded locally has no ids yet - every row carries an empty
+  /// one - so keying on the id opened all seven at once.
+  int? _expandedDayOfWeek;
   List<WorkingDay> _workingDays = [];
   final List<HolidayEntry> _holidays = [];
   bool _populated = false;
@@ -330,6 +346,12 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           },
           saved: () {
             AppLoadingDialog.dismiss(context);
+            // The schedule now exists, which is all the setup gate was
+            // waiting for: straight into the app, no toast to dismiss.
+            if (widget.isInitialSetup) {
+              context.goNamed(AppRoutesNames.root);
+              return;
+            }
             setState(() {
               _initialDays = _snapshotDays(_workingDays);
               _initialHolidays = _snapshotHolidays(_holidays);
@@ -353,56 +375,104 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
       },
       builder: (context, state) {
         final c = ColorManager.of(context);
-        return Scaffold(
-          backgroundColor: c.scaffoldBg,
-          bottomNavigationBar:
-              _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
-          body: Column(
-            children: [
-              PageHeader(
-                title: l10n.workingDaysAndHolidays,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _WorkingDaysSkeleton(),
-                  // Pull-to-refresh is offered on the failure state only. Once
-                  // the form is populated it may hold unsaved edits, and a
-                  // refetch would silently throw them away.
-                  error: (message) => DentaRefresh(
-                    onRefresh: () => _refresh(context),
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                      child: StateCard(
-                        icon: Icons.cloud_off_rounded,
-                        tone: ColorManager.error,
-                        title: l10n.workingDaysLoadFailed,
-                        message: message,
-                        actionLabel: l10n.retry,
-                        onAction: () => context.read<WorkingDaysBloc>().add(
-                              const WorkingDaysEvent.load(),
+        final isSetup = widget.isInitialSetup;
+        return PopScope(
+          // The gate is the point: a clinic with no schedule cannot take a
+          // single appointment, so there is no way around it. The settings
+          // screen keeps its ordinary back.
+          canPop: !isSetup,
+          child: Scaffold(
+            backgroundColor: c.scaffoldBg,
+            bottomNavigationBar:
+                _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
+            body: Column(
+              children: [
+                PageHeader(
+                  title: isSetup
+                      ? l10n.noWorkingHoursTitle
+                      : l10n.workingDaysAndHolidays,
+                  // Null, and a route with nothing behind it: PageHeader
+                  // draws no back button, so the gate has no exit but saving.
+                  onBack: isSetup ? null : () => context.pop(),
+                ),
+                Expanded(
+                  child: state.maybeWhen(
+                    loading: () => const _WorkingDaysSkeleton(),
+                    // Pull-to-refresh is offered on the failure state only.
+                    // Once the form is populated it may hold unsaved edits,
+                    // and a refetch would silently throw them away.
+                    error: (message) => DentaRefresh(
+                      onRefresh: () => _refresh(context),
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+                        child: Column(
+                          children: [
+                            StateCard(
+                              icon: Icons.cloud_off_rounded,
+                              tone: ColorManager.error,
+                              title: l10n.workingDaysLoadFailed,
+                              message: message,
+                              actionLabel: l10n.retry,
+                              onAction: () =>
+                                  context.read<WorkingDaysBloc>().add(
+                                        const WorkingDaysEvent.load(),
+                                      ),
                             ),
+                            // A gate that cannot reach the server must not
+                            // trap a new account inside it. The step is
+                            // required where we know it is unanswered, not
+                            // where we simply could not ask - and Settings
+                            // still leads back here.
+                            if (isSetup) ...[
+                              SizedBox(height: 8.h),
+                              TextButton(
+                                onPressed: () =>
+                                    context.goNamed(AppRoutesNames.root),
+                                child: Text(
+                                  l10n.skip,
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontFamily: FontHelper.fontFamily(context),
+                                    color: c.textSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
                     ),
+                    loaded: (workingDays, holidays) {
+                      // The gate asked the server first: a clinic that
+                      // already has a day open has nothing to set up, so it
+                      // is never held here. A clinic created seconds ago has
+                      // none, which is the whole reason for the step.
+                      if (isSetup && workingDays.any((d) => d.isOpen)) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) context.goNamed(AppRoutesNames.root);
+                        });
+                        return const _WorkingDaysSkeleton();
+                      }
+                      if (!_populated) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(
+                            () => _populateFromApi(workingDays, holidays),
+                          );
+                        });
+                        return const _WorkingDaysSkeleton();
+                      }
+                      return _buildForm(l10n);
+                    },
+                    orElse: () {
+                      if (!_populated) {
+                        return const SizedBox.shrink();
+                      }
+                      return _buildForm(l10n);
+                    },
                   ),
-                  loaded: (workingDays, holidays) {
-                    if (!_populated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => _populateFromApi(workingDays, holidays));
-                      });
-                      return const _WorkingDaysSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () {
-                    if (!_populated) {
-                      return const SizedBox.shrink();
-                    }
-                    return _buildForm(l10n);
-                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -414,9 +484,17 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: Column(
         children: [
+          if (widget.isInitialSetup) ...[
+            _SetupIntro(message: l10n.noWorkingHoursMessage),
+            SizedBox(height: 8.h),
+          ],
           CustomCard(child: _buildWorkingDaysSection()),
-          SizedBox(height: 8.h),
-          _buildHolidaysSection(),
+          // Holidays are an ordinary setting, not something to answer on the
+          // way in - the gate asks only for what blocks appointments.
+          if (!widget.isInitialSetup) ...[
+            SizedBox(height: 8.h),
+            _buildHolidaysSection(),
+          ],
         ],
       ),
     );
@@ -436,7 +514,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: DentaButton(
-            label: l10n.save,
+            label: widget.isInitialSetup ? l10n.saveAndContinue : l10n.save,
             expand: true,
             onTap: _hasChanges ? _onSave : null,
           ),
@@ -470,7 +548,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   }
 
   Widget _buildDayRow(WorkingDay day, {bool isLast = false}) {
-    final isExpanded = _expandedDay == day.id;
+    final isExpanded = _expandedDayOfWeek == day.dayOfWeek;
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     return Container(
@@ -487,8 +565,10 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: day.enabled
-                ? () =>
-                    setState(() => _expandedDay = isExpanded ? null : day.id)
+                ? () => setState(
+                      () => _expandedDayOfWeek =
+                          isExpanded ? null : day.dayOfWeek,
+                    )
                 : null,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14.h),
@@ -497,8 +577,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                   GestureDetector(
                     onTap: () => setState(() {
                       day.enabled = !day.enabled;
-                      if (!day.enabled && _expandedDay == day.id) {
-                        _expandedDay = null;
+                      if (!day.enabled && _expandedDayOfWeek == day.dayOfWeek) {
+                        _expandedDayOfWeek = null;
                       }
                     }),
                     child: DayToggle(enabled: day.enabled),
@@ -795,6 +875,51 @@ class _HolidaySnapshot {
 
 /// Holds the working-days card and the holidays card at full height while
 /// the schedule loads.
+/// Why the app is asking before it lets anyone in. One sentence - the same
+/// one the appointments screen shows a clinic with no hours; this is simply
+/// the earlier chance to answer it.
+class _SetupIntro extends StatelessWidget {
+  const _SetupIntro({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: ColorManager.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: ColorManager.primary.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.schedule_rounded,
+            size: 18.w,
+            color: ColorManager.primaryDarker,
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 12.sp,
+                height: 1.45,
+                fontFamily: FontHelper.fontFamily(context),
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _WorkingDaysSkeleton extends StatelessWidget {
   const _WorkingDaysSkeleton();
 

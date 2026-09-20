@@ -1928,6 +1928,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workingDaysAndHolidays => 'Clinic Working Days & Holidays';
 
   @override
+  String get saveAndContinue => 'Save and continue';
+
+  @override
   String get myWorkingHours => 'My Working Hours';
 
   @override
@@ -2875,7 +2878,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attachDocumentAction => 'Attach a document';
 
   @override
-  String get attachDocumentSub => 'PDF, Word, PowerPoint, text or image';
+  String get attachDocumentSub => 'PDF, Office, DICOM, image or video';
 
   @override
   String get offlineQueuedNote =>
@@ -2992,7 +2995,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unsupportedFileMessage =>
-      'You can attach images, PDF, PowerPoint or Excel files.';
+      'You can attach images, video, PDF, Word, Excel, PowerPoint, DICOM, CSV or text files.';
 
   @override
   String get cameraUnavailable => 'Camera is not available on this device';
@@ -3232,4 +3235,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get updateStoreUnavailable =>
       'Could not open the store on this device';
+
+  @override
+  String get deleteAccountAppointmentsLabel => 'Appointments cancelled';
+
+  @override
+  String get deleteAccountCasesLabel => 'Cases closed';
+
+  @override
+  String get deleteAccountMembersLabel => 'Members removed';
 }

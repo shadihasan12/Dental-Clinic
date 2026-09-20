@@ -6,22 +6,54 @@ import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class FilePickerService {
-  /// Every one of these has a standard MIME mapping on Android.
-  ///
-  /// That matters more than it looks: file_picker turns [allowedExtensions]
-  /// into an EXTRA_MIME_TYPES array, and an extension it cannot resolve
-  /// degrades the whole filter to `*/*` - which is why the document picker
-  /// was listing APKs. Anything added here needs a MIME type Android knows,
-  /// or the filter silently stops filtering.
-  static const _imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'];
+  // The three lists below mirror the media endpoint's accepted MIME types,
+  // one extension per type. Anything outside them is refused here rather than
+  // after an upload starts: the server would reject it anyway, and a failure
+  // at that point tells the user nothing about why.
+  //
+  // How Android reads them: file_picker resolves each extension through
+  // MimeTypeMap and puts the results in EXTRA_MIME_TYPES. An extension the
+  // device cannot resolve is dropped from the filter with a log warning - so
+  // that type simply is not selectable there, while the rest still filter
+  // correctly. Only if *every* extension fails does the dialog fall back to
+  // the intent's `*/*` and list everything, which is what had the document
+  // picker offering APKs. Practical effect: keep at least one well-known
+  // extension in the list, and expect the exotic ones (dcm, heif) to be
+  // missing on older Android, where MimeTypeMap's table is smaller.
 
-  /// What a case attachment is allowed to be: documents plus images.
+  /// image/jpeg, png, webp, heic, heif, tiff, bmp.
   ///
-  /// Anything outside this list is refused. The backend rejects the rest
-  /// anyway - an audio file used to pass the picker, fail the upload, and
-  /// leave the user with no idea why - so the line is drawn here, where it
-  /// can be explained.
-  static const _documentExtensions = ['pdf', 'ppt', 'pptx', 'xls', 'xlsx'];
+  /// No `gif`: the endpoint does not accept image/gif, and offering it only
+  /// bought a rejected upload.
+  static const _imageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'heic',
+    'heif',
+    'tiff',
+    'tif',
+    'bmp',
+  ];
+
+  /// video/mp4, quicktime, webm.
+  static const _videoExtensions = ['mp4', 'mov', 'webm'];
+
+  /// PDF, the Office pair for each of Word/Excel/PowerPoint, DICOM, and the
+  /// two plain-text types.
+  static const _documentExtensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'ppt',
+    'pptx',
+    'dcm',
+    'csv',
+    'txt',
+  ];
 
   /// What the media endpoint actually stores for a screenshot: JPEG and PNG
   /// and nothing else.
@@ -34,11 +66,17 @@ class FilePickerService {
   /// Server-side ceiling for one upload: 51200 KB.
   static const int maxUploadBytes = 51200 * 1024;
 
-  /// Extensions offered by [pickDocument], images included.
+  /// Everything a case attachment may be - documents, images and video.
   static List<String> get attachmentExtensions => [
-    ..._documentExtensions,
-    ..._imageExtensions,
-  ];
+        ..._documentExtensions,
+        ..._imageExtensions,
+        ..._videoExtensions,
+      ];
+
+  /// Video is accepted but must not be treated as an image: a thumbnail that
+  /// tries to decode an mp4 renders nothing.
+  static bool isVideoExtension(String ext) =>
+      _videoExtensions.contains(ext.toLowerCase());
 
   static bool isImageExtension(String ext) =>
       _imageExtensions.contains(ext.toLowerCase());
@@ -92,10 +130,8 @@ class FilePickerService {
       return const DocumentPick.cancelled();
     }
 
-    final picked = result.files
-        .map(_toResult)
-        .whereType<PickedFileResult>()
-        .toList();
+    final picked =
+        result.files.map(_toResult).whereType<PickedFileResult>().toList();
     if (picked.isEmpty) return const DocumentPick.cancelled();
 
     final allowed = <PickedFileResult>[];
@@ -127,10 +163,8 @@ class FilePickerService {
       return const DocumentPick.cancelled();
     }
 
-    final picked = result.files
-        .map(_toResult)
-        .whereType<PickedFileResult>()
-        .toList();
+    final picked =
+        result.files.map(_toResult).whereType<PickedFileResult>().toList();
     if (picked.isEmpty) return const DocumentPick.cancelled();
 
     final allowed = <PickedFileResult>[];
@@ -176,13 +210,13 @@ class DocumentPick {
     List<PickedFileResult> files, {
     String? rejectedName,
   }) : this._(
-         DocumentPickOutcome.picked,
-         files: files,
-         rejectedName: rejectedName,
-       );
+          DocumentPickOutcome.picked,
+          files: files,
+          rejectedName: rejectedName,
+        );
 
   const DocumentPick.unsupported(String name)
-    : this._(DocumentPickOutcome.unsupportedType, rejectedName: name);
+      : this._(DocumentPickOutcome.unsupportedType, rejectedName: name);
 
   final DocumentPickOutcome outcome;
 

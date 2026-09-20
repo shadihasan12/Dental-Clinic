@@ -27,8 +27,7 @@ class RecordPaymentPopup extends StatefulWidget {
     double amountInCaseCurrency,
     double exchangeRate,
     String? notes,
-  )
-  onSave;
+  ) onSave;
 
   const RecordPaymentPopup({
     super.key,
@@ -56,8 +55,7 @@ class RecordPaymentPopup extends StatefulWidget {
       double amountInCaseCurrency,
       double exchangeRate,
       String? notes,
-    )
-    onSave,
+    ) onSave,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -137,9 +135,9 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     if (_selectedCurrency != null) return;
     if (widget.caseCurrencyId != null) {
       _selectedCurrency = currencies.cast<CurrencyEntity?>().firstWhere(
-        (c) => c!.id == widget.caseCurrencyId,
-        orElse: () => currencies.isNotEmpty ? currencies.first : null,
-      );
+            (c) => c!.id == widget.caseCurrencyId,
+            orElse: () => currencies.isNotEmpty ? currencies.first : null,
+          );
     } else if (currencies.isNotEmpty) {
       _selectedCurrency = currencies.first;
     }
@@ -349,6 +347,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                       _buildLabel(l10n.noteOptional),
                       SizedBox(height: 6.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _noteController,
                         maxLines: 2,
                         decoration: formOutlinedInput(
@@ -384,11 +384,11 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                   // send Infinity to the API.
                                   final exchangeRate =
                                       (parsedRate == null || parsedRate <= 0)
-                                      ? 1.0
-                                      : parsedRate;
+                                          ? 1.0
+                                          : parsedRate;
                                   final caseCurrencyId =
                                       widget.caseCurrencyId ??
-                                      _selectedCurrency!.id;
+                                          _selectedCurrency!.id;
 
                                   // If same currency, no conversion needed
                                   // If different currency, convert based on swap direction:
@@ -409,8 +409,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
 
                                   final notes =
                                       _noteController.text.trim().isEmpty
-                                      ? null
-                                      : _noteController.text.trim();
+                                          ? null
+                                          : _noteController.text.trim();
 
                                   setState(() => _isSubmitting = true);
                                   try {
@@ -448,12 +448,10 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
     final selectedCurrencyCode = _selectedCurrency?.currencyCode ?? '';
 
     // Determine which currency is on each side
-    final leftCurrency = _isExchangeSwapped
-        ? selectedCurrencyCode
-        : caseCurrencyCode;
-    final rightCurrency = _isExchangeSwapped
-        ? caseCurrencyCode
-        : selectedCurrencyCode;
+    final leftCurrency =
+        _isExchangeSwapped ? selectedCurrencyCode : caseCurrencyCode;
+    final rightCurrency =
+        _isExchangeSwapped ? caseCurrencyCode : selectedCurrencyCode;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -461,6 +459,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
         // Left field: always "1"
         Expanded(
           child: TextFormField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             initialValue: '1',
             readOnly: true,
             style: TextStyle(
@@ -522,6 +521,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
         // Right field: user enters value
         Expanded(
           child: TextFormField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             controller: _exchangeRateController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
@@ -591,6 +591,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           children: [
             Expanded(
               child: TextFormField(
+                onTapOutside: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 controller: _amountController,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,

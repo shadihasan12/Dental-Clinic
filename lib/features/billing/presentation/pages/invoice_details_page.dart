@@ -194,8 +194,8 @@ class _DebugAdminPanel extends StatelessWidget {
                       ? null
                       : () {
                           context.read<BillingBloc>().add(
-                            BillingEvent.adminApproveInvoice(invoiceId),
-                          );
+                                BillingEvent.adminApproveInvoice(invoiceId),
+                              );
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorManager.success,
@@ -255,6 +255,7 @@ class _DebugAdminPanel extends StatelessWidget {
           backgroundColor: c.cardBg,
           title: const Text('Reject reason (optional)'),
           content: TextField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             controller: controller,
             autofocus: true,
             decoration: formOutlinedInput(
@@ -279,11 +280,11 @@ class _DebugAdminPanel extends StatelessWidget {
     if (reason == null) return;
     if (!context.mounted) return;
     context.read<BillingBloc>().add(
-      BillingEvent.adminRejectInvoice(
-        invoiceId: invoiceId,
-        reason: reason.isEmpty ? null : reason,
-      ),
-    );
+          BillingEvent.adminRejectInvoice(
+            invoiceId: invoiceId,
+            reason: reason.isEmpty ? null : reason,
+          ),
+        );
   }
 }
 

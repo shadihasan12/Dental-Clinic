@@ -190,300 +190,306 @@ class _SignupContentState extends State<_SignupContent> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return AuthDesktopShell(imageIndex: 1, child: Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state.status == AuthStatus.authenticated) {
-            context.goNamed(AppRoutesNames.root);
-          }
-          if (state.signupError != null) {
-            AppSnackbar.showError(
-              context,
-              title: l10n.signupFailed,
-              message: state.signupError,
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state.isLoadingSpecialties || state.isLoadingPlans) {
-            return SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+    return AuthDesktopShell(
+      imageIndex: 1,
+      child: Scaffold(
+        backgroundColor: ColorManager.of(context).scaffoldBg,
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            // Registration completes two screens further on, and this page is
+            // still in the stack listening to the same bloc. Without the guard
+            // it races the clinic step's own hand-off and sends the user
+            // straight home, past the working-hours gate.
+            if (state.status == AuthStatus.authenticated &&
+                (ModalRoute.of(context)?.isCurrent ?? true)) {
+              context.goNamed(AppRoutesNames.root);
+            }
+            if (state.signupError != null) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.signupFailed,
+                message: state.signupError,
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state.isLoadingSpecialties || state.isLoadingPlans) {
+              return SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTopBar(l10n, fontFamily),
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: ColorManager.primary,
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                l10n.loading,
+                                style: TextStyle(
+                                  fontSize: FontSizesManager.s16,
+                                  fontFamily: fontFamily,
+                                  color: ColorManager.of(context).textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            final hasLoadingError =
+                (state.specialties.isEmpty && !state.isLoadingSpecialties) ||
+                    (state.plans.isEmpty && !state.isLoadingPlans);
+
+            if (hasLoadingError) {
+              return SafeArea(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTopBar(l10n, fontFamily),
                     Expanded(
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: ColorManager.primary,
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              l10n.loading,
-                              style: TextStyle(
-                                fontSize: FontSizesManager.s16,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textSecondary,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 44.w,
+                                height: 44.w,
+                                decoration: BoxDecoration(
+                                  color: ColorManager.error
+                                      .withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(14.r),
+                                ),
+                                child: Icon(
+                                  Icons.error_outline,
+                                  size: 22.w,
+                                  color: ColorManager.error,
+                                ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 14.h),
+                              Text(
+                                l10n.failedToLoadData,
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: fontFamily,
+                                  color: ColorManager.of(context).textPrimary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                l10n.checkConnectionRetry,
+                                style: TextStyle(
+                                  fontSize: 11.5.sp,
+                                  height: 1.4,
+                                  fontFamily: fontFamily,
+                                  color: ColorManager.of(context).textSecondary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 32.h),
+                              PrimaryButton(
+                                text: l10n.retry,
+                                onPressed: () {
+                                  final bloc = context.read<AuthBloc>();
+                                  bloc.add(
+                                      const AuthEvent.specialtiesRequested());
+                                  bloc.add(const AuthEvent.plansRequested());
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          final hasLoadingError = (state.specialties.isEmpty && !state.isLoadingSpecialties) ||
-              (state.plans.isEmpty && !state.isLoadingPlans);
-
-          if (hasLoadingError) {
             return SafeArea(
-              child: Column(
-                children: [
-                  _buildTopBar(l10n, fontFamily),
-                  Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 44.w,
-                              height: 44.w,
-                              decoration: BoxDecoration(
-                                color: ColorManager.error
-                                    .withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(14.r),
-                              ),
-                              child: Icon(
-                                Icons.error_outline,
-                                size: 22.w,
-                                color: ColorManager.error,
-                              ),
-                            ),
-                            SizedBox(height: 14.h),
-                            Text(
-                              l10n.failedToLoadData,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textPrimary,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              l10n.checkConnectionRetry,
-                              style: TextStyle(
-                                fontSize: 11.5.sp,
-                                height: 1.4,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textSecondary,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 32.h),
-                            PrimaryButton(
-                              text: l10n.retry,
-                              onPressed: () {
-                                final bloc = context.read<AuthBloc>();
-                                bloc.add(const AuthEvent.specialtiesRequested());
-                                bloc.add(const AuthEvent.plansRequested());
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTopBar(l10n, fontFamily),
+                      SizedBox(height: 8.h),
+                      _buildInfoBox(l10n, fontFamily),
+                      SizedBox(height: 24.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AuthTextField(
+                              label: l10n.firstNameRequired,
+                              hint: l10n.firstNameHint,
+                              controller: _firstNameController,
+                              prefixIcon: Icons.person_outline,
+                              keyboardType: TextInputType.name,
+                              validator: _validateFirstName,
+                              onChanged: (value) {
+                                context.read<AuthBloc>().add(
+                                      AuthEvent.signupFirstNameChanged(value),
+                                    );
+                                _validateForm();
                               },
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: AuthTextField(
+                              label: l10n.lastNameRequired,
+                              hint: l10n.lastNameHint,
+                              controller: _lastNameController,
+                              prefixIcon: Icons.person_outline,
+                              keyboardType: TextInputType.name,
+                              validator: _validateLastName,
+                              onChanged: (value) {
+                                context.read<AuthBloc>().add(
+                                      AuthEvent.signupLastNameChanged(value),
+                                    );
+                                _validateForm();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      SizedBox(height: 16.h),
+                      AuthTextField(
+                        label: l10n.emailRequired,
+                        hint: l10n.emailHint,
+                        controller: _emailController,
+                        prefixIcon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        textDirection: TextDirection.ltr,
+                        validator: _validateEmail,
+                        enabled:
+                            state.sessionId == null || state.sessionId!.isEmpty,
+                        suffixIcon: state.sessionId != null &&
+                                state.sessionId!.isNotEmpty
+                            ? Icon(Icons.verified, color: ColorManager.success)
+                            : null,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(
+                                AuthEvent.signupEmailChanged(value),
+                              );
+                          _validateForm();
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      AuthTextField(
+                        label: l10n.mobileNumber,
+                        hint: l10n.mobileHint,
+                        controller: _mobileController,
+                        prefixIcon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                        validator: _validateMobileNumber,
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(
+                                AuthEvent.signupMobileNumberChanged(value),
+                              );
+                          _validateForm();
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildSpecialtyPicker(l10n, fontFamily, state),
+                      SizedBox(height: 16.h),
+                      AuthTextField(
+                        label: l10n.passwordRequired,
+                        hint: l10n.createPassword,
+                        controller: _passwordController,
+                        prefixIcon: Icons.lock_outline,
+                        obscureText: !state.isSignupPasswordVisible,
+                        validator: _validatePassword,
+                        // A GestureDetector, not an IconButton: the latter's
+                        // 48dp minimum inflates the field past the others.
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEvent
+                                      .signupPasswordVisibilityToggled(),
+                                );
+                          },
+                          child: Icon(
+                            state.isSignupPasswordVisible
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: ColorManager.of(context).textTertiary,
+                            size: 18.w,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(
+                                AuthEvent.signupPasswordChanged(value),
+                              );
+                          _validateForm();
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      AuthTextField(
+                        label: l10n.confirmPassword,
+                        hint: l10n.confirmPasswordHint,
+                        controller: _confirmPasswordController,
+                        prefixIcon: Icons.lock_outline,
+                        obscureText: !state.isSignupConfirmPasswordVisible,
+                        validator: _validateConfirmPassword,
+                        // A GestureDetector, not an IconButton: the latter's
+                        // 48dp minimum inflates the field past the others.
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEvent
+                                      .signupConfirmPasswordVisibilityToggled(),
+                                );
+                          },
+                          child: Icon(
+                            state.isSignupConfirmPasswordVisible
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: ColorManager.of(context).textTertiary,
+                            size: 18.w,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          context.read<AuthBloc>().add(
+                                AuthEvent.signupConfirmPasswordChanged(value),
+                              );
+                          _validateForm();
+                        },
+                      ),
+                      SizedBox(height: 40.h),
+                      PrimaryButton(
+                        text: l10n.next,
+                        onPressed: state.isSignupLoading ? null : _handleNext,
+                        isLoading: state.isSignupLoading,
+                      ),
+                      SizedBox(height: 24.h),
+                      _buildLoginLink(l10n, fontFamily),
+                      SizedBox(height: 32.h),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }
-
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTopBar(l10n, fontFamily),
-                    SizedBox(height: 8.h),
-                    _buildInfoBox(l10n, fontFamily),
-                    SizedBox(height: 24.h),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AuthTextField(
-                            label: l10n.firstNameRequired,
-                            hint: l10n.firstNameHint,
-                            controller: _firstNameController,
-                            prefixIcon: Icons.person_outline,
-                            keyboardType: TextInputType.name,
-                            validator: _validateFirstName,
-                            onChanged: (value) {
-                              context.read<AuthBloc>().add(
-                                AuthEvent.signupFirstNameChanged(value),
-                              );
-                              _validateForm();
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: AuthTextField(
-                            label: l10n.lastNameRequired,
-                            hint: l10n.lastNameHint,
-                            controller: _lastNameController,
-                            prefixIcon: Icons.person_outline,
-                            keyboardType: TextInputType.name,
-                            validator: _validateLastName,
-                            onChanged: (value) {
-                              context.read<AuthBloc>().add(
-                                AuthEvent.signupLastNameChanged(value),
-                              );
-                              _validateForm();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-
-                    AuthTextField(
-                      label: l10n.emailRequired,
-                      hint: l10n.emailHint,
-                      controller: _emailController,
-                      prefixIcon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      textDirection: TextDirection.ltr,
-                      validator: _validateEmail,
-                      enabled: state.sessionId == null || state.sessionId!.isEmpty,
-                      suffixIcon: state.sessionId != null && state.sessionId!.isNotEmpty
-                          ? Icon(Icons.verified, color: ColorManager.success)
-                          : null,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupEmailChanged(value),
-                        );
-                        _validateForm();
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    AuthTextField(
-                      label: l10n.mobileNumber,
-                      hint: l10n.mobileHint,
-                      controller: _mobileController,
-                      prefixIcon: Icons.phone_outlined,
-                      keyboardType: TextInputType.phone,
-                      validator: _validateMobileNumber,
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupMobileNumberChanged(value),
-                        );
-                        _validateForm();
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    _buildSpecialtyPicker(l10n, fontFamily, state),
-                    SizedBox(height: 16.h),
-
-                    AuthTextField(
-                      label: l10n.passwordRequired,
-                      hint: l10n.createPassword,
-                      controller: _passwordController,
-                      prefixIcon: Icons.lock_outline,
-                      obscureText: !state.isSignupPasswordVisible,
-                      validator: _validatePassword,
-                      // A GestureDetector, not an IconButton: the latter's
-                      // 48dp minimum inflates the field past the others.
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          context.read<AuthBloc>().add(
-                            const AuthEvent.signupPasswordVisibilityToggled(),
-                          );
-                        },
-                        child: Icon(
-                          state.isSignupPasswordVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: ColorManager.of(context).textTertiary,
-                          size: 18.w,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupPasswordChanged(value),
-                        );
-                        _validateForm();
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-
-                    AuthTextField(
-                      label: l10n.confirmPassword,
-                      hint: l10n.confirmPasswordHint,
-                      controller: _confirmPasswordController,
-                      prefixIcon: Icons.lock_outline,
-                      obscureText: !state.isSignupConfirmPasswordVisible,
-                      validator: _validateConfirmPassword,
-                      // A GestureDetector, not an IconButton: the latter's
-                      // 48dp minimum inflates the field past the others.
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          context.read<AuthBloc>().add(
-                            const AuthEvent.signupConfirmPasswordVisibilityToggled(),
-                          );
-                        },
-                        child: Icon(
-                          state.isSignupConfirmPasswordVisible
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                          color: ColorManager.of(context).textTertiary,
-                          size: 18.w,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        context.read<AuthBloc>().add(
-                          AuthEvent.signupConfirmPasswordChanged(value),
-                        );
-                        _validateForm();
-                      },
-                    ),
-                    SizedBox(height: 40.h),
-
-                    PrimaryButton(
-                      text: l10n.next,
-                      onPressed: state.isSignupLoading ? null : _handleNext,
-                      isLoading: state.isSignupLoading,
-                    ),
-                    SizedBox(height: 24.h),
-
-                    _buildLoginLink(l10n, fontFamily),
-                    SizedBox(height: 32.h),
-                  ],
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
-    ),);
+    );
   }
 
   Widget _buildSpecialtyPicker(
@@ -527,8 +533,8 @@ class _SignupContentState extends State<_SignupContent> {
                       onTap: () {
                         setState(() => _selectedSpecialty = spec);
                         context.read<AuthBloc>().add(
-                          AuthEvent.signupSpecialtyEntitySelected(spec),
-                        );
+                              AuthEvent.signupSpecialtyEntitySelected(spec),
+                            );
                         Navigator.pop(sheetContext);
                       },
                       behavior: HitTestBehavior.opaque,

@@ -59,6 +59,11 @@ class AppRoutesNames {
   static const String moreMenu = 'moreMenu';
   static const String clinicInfo = 'clinicInfo';
   static const String workingDays = 'workingDays';
+
+  /// The one-time gate between finishing signup and the app itself: a brand
+  /// new clinic has no working hours, and without them no appointment can be
+  /// booked, so the schedule is set here before anything else.
+  static const String setupWorkingHours = 'setupWorkingHours';
   static const String userHours = 'userHours';
   static const String notificationsSettings = 'notificationsSettings';
   static const String deleteAccount = 'deleteAccount';

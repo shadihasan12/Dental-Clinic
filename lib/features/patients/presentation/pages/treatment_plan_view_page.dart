@@ -148,6 +148,8 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
             ),
             SizedBox(height: 6.h),
             TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: totalCostController,
               keyboardType: TextInputType.number,
               inputFormatters: [
@@ -173,6 +175,8 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
             ),
             SizedBox(height: 6.h),
             TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: labFeesController,
               keyboardType: TextInputType.number,
               inputFormatters: [
@@ -394,6 +398,8 @@ class _TreatmentPlanViewPageState extends State<TreatmentPlanViewPage>
             ),
             SizedBox(height: 6.h),
             TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: controller,
               keyboardType: TextInputType.number,
               autofocus: true,

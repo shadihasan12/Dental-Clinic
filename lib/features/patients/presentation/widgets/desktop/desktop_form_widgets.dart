@@ -139,6 +139,7 @@ class DesktopTextField extends StatelessWidget {
             border: Border.all(color: c.borderLight),
           ),
           child: TextField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             controller: controller,
             keyboardType: keyboardType,
             maxLines: maxLines,
@@ -367,9 +368,7 @@ class _DesktopPrimaryButtonState extends State<DesktopPrimaryButton> {
           ),
           decoration: BoxDecoration(
             color: enabled
-                ? (_hovering
-                    ? base.withValues(alpha: 0.9)
-                    : base)
+                ? (_hovering ? base.withValues(alpha: 0.9) : base)
                 : base.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(10),
             boxShadow: enabled

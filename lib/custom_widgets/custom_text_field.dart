@@ -67,6 +67,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return TextFormField(
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       textDirection: textDirection,
       controller: controller,
       focusNode: focusNode,
@@ -95,23 +96,22 @@ class CustomTextField extends StatelessWidget {
         fontFamily: FontHelper.fontFamily(context),
         color: c.textPrimary,
       ),
-      decoration:
-          formOutlinedInput(
-            context,
-            hintText: hintText,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            fillColor: fillColor,
-          ).copyWith(
-            labelText: labelText,
-            labelStyle: TextStyle(
-              color: c.textSecondary,
-              fontFamily: FontHelper.fontFamily(context),
-              fontSize: 13.sp,
-            ),
-            // Null keeps the shared padding; a call site can still override it.
-            contentPadding: contentPadding,
-          ),
+      decoration: formOutlinedInput(
+        context,
+        hintText: hintText,
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
+        fillColor: fillColor,
+      ).copyWith(
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: c.textSecondary,
+          fontFamily: FontHelper.fontFamily(context),
+          fontSize: 13.sp,
+        ),
+        // Null keeps the shared padding; a call site can still override it.
+        contentPadding: contentPadding,
+      ),
     );
   }
 }

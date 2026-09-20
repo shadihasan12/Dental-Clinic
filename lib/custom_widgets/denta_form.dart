@@ -239,9 +239,9 @@ InputDecoration formOutlinedInput(
   final family = FontHelper.fontFamily(context);
 
   OutlineInputBorder side(Color color, double width) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12.r),
-    borderSide: BorderSide(color: color, width: width),
-  );
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: color, width: width),
+      );
 
   return InputDecoration(
     hintText: hintText,
@@ -280,15 +280,15 @@ InputDecoration formOutlinedInput(
 /// focused field draws a second blue outline inside the one its container
 /// already draws. Call `.copyWith(...)` for hint, icons and padding.
 InputDecoration bareInputDecoration() => const InputDecoration(
-  isDense: true,
-  filled: false,
-  border: InputBorder.none,
-  enabledBorder: InputBorder.none,
-  disabledBorder: InputBorder.none,
-  focusedBorder: InputBorder.none,
-  errorBorder: InputBorder.none,
-  focusedErrorBorder: InputBorder.none,
-);
+      isDense: true,
+      filled: false,
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
+    );
 
 class FormTextField extends StatefulWidget {
   const FormTextField({
@@ -385,6 +385,11 @@ class _FormTextFieldState extends State<FormTextField> {
                 textDirection: widget.textDirection,
                 onChanged: (_) => widget.onChanged?.call(),
                 onSubmitted: (_) => widget.onSubmitted?.call(),
+                // Flutter deliberately keeps focus when a *touch* lands
+                // outside a field on Android and iOS, so tap-to-dismiss has
+                // to be asked for. Desktop already unfocuses on its own; this
+                // just makes the two behave the same.
+                onTapOutside: (_) => _focusNode.unfocus(),
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontFamily: family,
@@ -895,9 +900,15 @@ class FormActionBar extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.busy = false,
+    this.tone,
   });
 
   final String label;
+
+  /// Hue of the filled button. Defaults to the primary ramp; a destructive
+  /// commit passes ColorManager.destructive so the docked bar still reads as
+  /// the same control rather than each screen rebuilding one.
+  final Color? tone;
 
   /// Null disables the button; the bar keeps its space either way.
   final VoidCallback? onPressed;
@@ -915,9 +926,10 @@ class FormActionBar extends StatelessWidget {
         border: Border(top: BorderSide(color: c.borderLight)),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          bottom: scaffoldBottomInset(context),
-        ),
+        // Deliberately *not* lifted above the keyboard. The bar stays docked
+        // at the bottom of the screen; dismissing the keyboard is what brings
+        // it back into reach, and the form scroll views do that on drag.
+        padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
           child: ElevatedButton(
@@ -925,11 +937,10 @@ class FormActionBar extends StatelessWidget {
             // Sized by its own padding rather than a fixed box, so a tall
             // Cairo line box grows the button instead of being clipped.
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorManager.primary,
+              backgroundColor: tone ?? ColorManager.primary,
               foregroundColor: ColorManager.white,
-              disabledBackgroundColor: ColorManager.primary.withValues(
-                alpha: 0.45,
-              ),
+              disabledBackgroundColor:
+                  (tone ?? ColorManager.primary).withValues(alpha: 0.45),
               disabledForegroundColor: ColorManager.white,
               elevation: 0,
               minimumSize: Size(double.infinity, 46.h),

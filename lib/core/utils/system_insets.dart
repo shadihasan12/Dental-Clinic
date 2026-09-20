@@ -25,13 +25,20 @@ double systemBottomInset(BuildContext context) =>
 double dockedBottomPadding(BuildContext context, double extra) =>
     systemBottomInset(context) + extra;
 
-/// Bottom space a bar docked inside a [Scaffold] must reserve.
+/// Bottom space a bar docked inside a [Scaffold] must reserve, *excluding*
+/// the keyboard.
 ///
-/// This is the one place the collapsing value is the right one. A Scaffold
-/// with `resizeToAvoidBottomInset` (the default) already lifts its body and
-/// its `bottomNavigationBar` above an open keyboard, so once the keyboard is
-/// up the navigation bar is behind it and there is nothing left to reserve —
-/// which is exactly what `MediaQuery.padding` describes.
+/// This is the one place the collapsing value is the right one: once a
+/// keyboard is up the navigation bar is behind it and there is nothing left to
+/// reserve, which is exactly what `MediaQuery.padding` describes.
+///
+/// It does **not** cover the keyboard itself, and a `Scaffold` will not do
+/// that for you either. `resizeToAvoidBottomInset` insets the *body* — see
+/// `contentBottom` in scaffold.dart — but `bottomNavigationBar` is positioned
+/// at `size.height - barHeight` with no keyboard term, so it stays behind an
+/// open keyboard. A docked bar that must remain tappable while typing adds
+/// `MediaQuery.viewInsetsOf(context).bottom` on top of this; the two never
+/// both apply, since this one is zero whenever that one is not.
 ///
 /// A modal bottom sheet gets no such treatment: it stays anchored to the
 /// bottom of the screen with the keyboard drawn over it, so a sheet wants

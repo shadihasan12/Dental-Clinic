@@ -1,158 +1,77 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:flutter/material.dart';
 
-/// The colour set for the redesigned Home screen (design handoff 1a).
+/// Home's names for the app palette.
 ///
-/// Deliberately local to this feature rather than merged into
-/// [ColorManager]: this palette is a new direction - a different ink, a
-/// different primary, a different page background - and folding it into the
-/// app-wide tokens would silently restyle every other screen. When the
-/// direction is adopted beyond Home, these move up and `DENTA_STYLE.md` gets
-/// rewritten to match.
+/// Home was built to its own handoff - a different ink, a different primary,
+/// a different page background - and ran on a private colour set while that
+/// direction was being tried. It now follows `DENTA_STYLE.md` like every other
+/// screen, so each name below resolves to the app token that carries the same
+/// meaning rather than to a colour of its own.
 ///
-/// The handoff specifies light only. The dark set below is derived from it,
-/// holding the same relationships - the tinted surfaces stay the quietest
-/// step above the card, the primary keeps its hue, the chart ramp keeps its
-/// three levels - so the screen is coherent in dark without inventing a
-/// second design.
+/// The class survives the change on purpose: the widgets below it read
+/// `t.ink`, `t.hairline`, `t.tint`, and those names say what the colour is
+/// *for*, which `c.textPrimary` and `c.borderLight` also do but from the app's
+/// vocabulary rather than the screen's. Keeping the indirection means one file
+/// decides the mapping, and a widget cannot quietly reach for a colour that is
+/// not in the system.
 class HomeTokens {
-  const HomeTokens({
-    required this.pageBg,
-    required this.card,
-    required this.ink,
-    required this.secondary,
-    required this.muted,
-    required this.chevron,
-    required this.hairline,
-    required this.hairlineStrong,
-    required this.pressed,
-    required this.focusBorder,
-    required this.primary,
-    required this.primaryDark,
-    required this.tint,
-    required this.tintBorder,
-    required this.revenueTop,
-    required this.revenueMid,
-    required this.revenueEnd,
-    required this.revenueBloom,
-    required this.chartLow,
-    required this.chartMid,
-    required this.chartToday,
-    required this.caption,
-    required this.patientChip,
-    required this.patientIcon,
-    required this.paymentChip,
-    required this.paymentIcon,
-    required this.onPrimary,
-    required this.buttonShadow,
-  });
+  const HomeTokens._(this._c, this._isDark);
 
-  final Color pageBg;
-  final Color card;
+  factory HomeTokens.of(BuildContext context) => HomeTokens._(
+        ColorManager.of(context),
+        Theme.of(context).brightness == Brightness.dark,
+      );
 
-  /// The near-black the design uses for every primary string.
-  final Color ink;
-  final Color secondary;
-  final Color muted;
-  final Color chevron;
-  final Color hairline;
-  final Color hairlineStrong;
+  final AppColors _c;
+  final bool _isDark;
 
-  /// Fill and border under a press.
-  final Color pressed;
-  final Color focusBorder;
+  Color get pageBg => _c.scaffoldBg;
+  Color get card => _c.cardBg;
 
-  final Color primary;
-  final Color primaryDark;
+  /// The near-black every primary string is set in.
+  Color get ink => _c.textPrimary;
+  Color get secondary => _c.textSecondary;
+  Color get muted => _c.textTertiary;
+  Color get chevron => _c.textSubtle;
 
-  /// The pale blue behind the avatar, the active tab pill and the
-  /// appointment chip.
-  final Color tint;
-  final Color tintBorder;
+  /// Elevation is a hairline, never a shadow - so these two are the only
+  /// edges Home draws.
+  Color get hairline => _c.borderLight;
+  Color get hairlineStrong => _c.border;
 
-  /// The revenue card's three gradient stops and the soft disc over them.
-  final Color revenueTop;
-  final Color revenueMid;
-  final Color revenueEnd;
-  final Color revenueBloom;
+  /// Fill under a press, and the 1.5px edge a pressed or focused element
+  /// takes in its own hue.
+  Color get pressed => _c.cardBgSecondary;
+  Color get focusBorder => ColorManager.primary;
 
-  /// Trend bars: the ordinary days, the runner-up, and today.
-  final Color chartLow;
-  final Color chartMid;
-  final Color chartToday;
+  Color get primary => ColorManager.primary;
 
-  /// The micro-label under the trend bars.
-  final Color caption;
+  /// The step of the ramp that is legible as text on white. Dark theme runs
+  /// the other way: the darker steps disappear into the card, so it takes the
+  /// light one.
+  Color get primaryDark =>
+      _isDark ? ColorManager.primaryLight : ColorManager.primaryDarker;
 
-  final Color patientChip;
-  final Color patientIcon;
-  final Color paymentChip;
-  final Color paymentIcon;
+  /// The 50-level of the brand hue, and its edge. The only tinted surface
+  /// Home uses for itself; the quick actions carry their own hues.
+  Color get tint => _c.primaryTintBg;
+  Color get tintBorder => _c.primaryTintBorder;
 
-  final Color onPrimary;
-  final Color buttonShadow;
+  /// The soft disc that bleeds off the trailing corner of a tinted card.
+  ///
+  /// White, and only just there: it is light falling across the surface, not
+  /// a shape with a meaning. Clipped by the card it sits in, so it reads as
+  /// the card being lit rather than as a circle someone drew. Dark theme
+  /// keeps the same idea at a tenth of the strength - the same lift over a
+  /// near-black surface would be a glare.
+  Color get bloom => Colors.white.withValues(alpha: _isDark ? 0.05 : 0.55);
 
-  static HomeTokens of(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark ? _dark : _light;
+  /// The inactive page dot - a hairline that has to read as a filled shape.
+  Color get dotIdle => _c.border;
 
-  static const HomeTokens _light = HomeTokens(
-    pageBg: Color(0xFFF5F8FB),
-    card: Color(0xFFFFFFFF),
-    ink: Color(0xFF12283C),
-    secondary: Color(0xFF7E93A4),
-    muted: Color(0xFF8FA6B7),
-    chevron: Color(0xFFC3D2DD),
-    hairline: Color(0xFFE9EFF4),
-    hairlineStrong: Color(0xFFE4EBF1),
-    pressed: Color(0xFFF0F6FA),
-    focusBorder: Color(0xFFBEDCEC),
-    primary: Color(0xFF5AA9D6),
-    primaryDark: Color(0xFF3E93C4),
-    tint: Color(0xFFDCEEF9),
-    tintBorder: Color(0xFFCDE6F5),
-    revenueTop: Color(0xFFDCEEF9),
-    revenueMid: Color(0xFFEAF5FC),
-    revenueEnd: Color(0xFFF3FAFE),
-    revenueBloom: Color(0x8CFFFFFF),
-    chartLow: Color(0xFFBEDCEC),
-    chartMid: Color(0xFF9FCDE6),
-    chartToday: Color(0xFF5AA9D6),
-    caption: Color(0xFF8FB3C8),
-    patientChip: Color(0xFFE5E8FD),
-    patientIcon: Color(0xFF4F5FD7),
-    paymentChip: Color(0xFFE3F6E9),
-    paymentIcon: Color(0xFF16A34A),
-    onPrimary: Color(0xFFFFFFFF),
-    buttonShadow: Color(0x595AA9D6),
-  );
+  /// The micro-label under a figure.
+  Color get caption => _c.textTertiary;
 
-  static const HomeTokens _dark = HomeTokens(
-    pageBg: Color(0xFF0F1721),
-    card: Color(0xFF17202B),
-    ink: Color(0xFFE6EDF3),
-    secondary: Color(0xFF93A8B8),
-    muted: Color(0xFF7E93A4),
-    chevron: Color(0xFF4A5A6A),
-    hairline: Color(0xFF22303D),
-    hairlineStrong: Color(0xFF2A3846),
-    pressed: Color(0xFF1D2935),
-    focusBorder: Color(0xFF35657F),
-    primary: Color(0xFF5AA9D6),
-    primaryDark: Color(0xFF7BBEE2),
-    tint: Color(0xFF17313F),
-    tintBorder: Color(0xFF23485C),
-    revenueTop: Color(0xFF1A3444),
-    revenueMid: Color(0xFF162A38),
-    revenueEnd: Color(0xFF131F29),
-    revenueBloom: Color(0x0DFFFFFF),
-    chartLow: Color(0xFF2C4A5C),
-    chartMid: Color(0xFF3E7794),
-    chartToday: Color(0xFF5AA9D6),
-    caption: Color(0xFF6F8FA3),
-    patientChip: Color(0xFF1E2340),
-    patientIcon: Color(0xFF8B97F0),
-    paymentChip: Color(0xFF16301F),
-    paymentIcon: Color(0xFF3FBF6B),
-    onPrimary: Color(0xFFFFFFFF),
-    buttonShadow: Color(0x005AA9D6),
-  );
+  Color get onPrimary => ColorManager.white;
 }

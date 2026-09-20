@@ -72,6 +72,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
       label: widget.label,
       required: widget.required,
       child: TextFormField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         controller: widget.controller,
         focusNode: _focusNode,
         keyboardType: widget.keyboardType,

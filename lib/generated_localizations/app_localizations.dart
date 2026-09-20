@@ -3740,6 +3740,12 @@ abstract class AppLocalizations {
   /// **'Clinic Working Days & Holidays'**
   String get workingDaysAndHolidays;
 
+  /// No description provided for @saveAndContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and continue'**
+  String get saveAndContinue;
+
   /// No description provided for @myWorkingHours.
   ///
   /// In en, this message translates to:
@@ -5519,7 +5525,7 @@ abstract class AppLocalizations {
   /// No description provided for @attachDocumentSub.
   ///
   /// In en, this message translates to:
-  /// **'PDF, Word, PowerPoint, text or image'**
+  /// **'PDF, Office, DICOM, image or video'**
   String get attachDocumentSub;
 
   /// No description provided for @offlineQueuedNote.
@@ -5735,7 +5741,7 @@ abstract class AppLocalizations {
   /// No description provided for @unsupportedFileMessage.
   ///
   /// In en, this message translates to:
-  /// **'You can attach images, PDF, PowerPoint or Excel files.'**
+  /// **'You can attach images, video, PDF, Word, Excel, PowerPoint, DICOM, CSV or text files.'**
   String get unsupportedFileMessage;
 
   /// No description provided for @cameraUnavailable.
@@ -6151,6 +6157,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open the store on this device'**
   String get updateStoreUnavailable;
+
+  /// No description provided for @deleteAccountAppointmentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments cancelled'**
+  String get deleteAccountAppointmentsLabel;
+
+  /// No description provided for @deleteAccountCasesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cases closed'**
+  String get deleteAccountCasesLabel;
+
+  /// No description provided for @deleteAccountMembersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Members removed'**
+  String get deleteAccountMembersLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -96,17 +96,17 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
 
   void _submit() {
     context.read<ClinicUsersBloc>().add(
-      ClinicUsersEvent.addUser(
-        firstName: _firstNameCtrl.text.trim(),
-        lastName: _lastNameCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-        mobileNumber: _mobileCtrl.text.trim(),
-        password: _passwordCtrl.text,
-        passwordConfirmation: _confirmCtrl.text,
-        roles: _selectedRoles.toList(),
-        specialtyId: _selectedSpecialty?.id,
-      ),
-    );
+          ClinicUsersEvent.addUser(
+            firstName: _firstNameCtrl.text.trim(),
+            lastName: _lastNameCtrl.text.trim(),
+            email: _emailCtrl.text.trim(),
+            mobileNumber: _mobileCtrl.text.trim(),
+            password: _passwordCtrl.text,
+            passwordConfirmation: _confirmCtrl.text,
+            roles: _selectedRoles.toList(),
+            specialtyId: _selectedSpecialty?.id,
+          ),
+        );
   }
 
   @override
@@ -141,6 +141,11 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
               onPressed: _canSubmit ? _submit : null,
             ),
             body: SingleChildScrollView(
+              // Dragging the form dismisses the keyboard, which is what puts the
+              // docked Save back within reach. A number pad has no Done key to
+              // close it with, so the scroll gesture the user already makes on
+              // the way to the button has to be the thing that does it.
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -235,13 +240,13 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                             onTap: disabled
                                 ? null
                                 : () => setState(() {
-                                    selected
-                                        ? _selectedRoles.remove(role)
-                                        : _selectedRoles.add(role);
-                                    if (!_isDentistSelected) {
-                                      _selectedSpecialty = null;
-                                    }
-                                  }),
+                                      selected
+                                          ? _selectedRoles.remove(role)
+                                          : _selectedRoles.add(role);
+                                      if (!_isDentistSelected) {
+                                        _selectedSpecialty = null;
+                                      }
+                                    }),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 150),
                               padding: EdgeInsets.symmetric(
@@ -252,17 +257,17 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                                 color: disabled
                                     ? c.cardBgSecondary
                                     : selected
-                                    ? ColorManager.primary.withValues(
-                                        alpha: 0.12,
-                                      )
-                                    : c.cardBg,
+                                        ? ColorManager.primary.withValues(
+                                            alpha: 0.12,
+                                          )
+                                        : c.cardBg,
                                 borderRadius: BorderRadius.circular(20.r),
                                 border: Border.all(
                                   color: disabled
                                       ? c.borderLight
                                       : selected
-                                      ? ColorManager.primary
-                                      : c.borderLight,
+                                          ? ColorManager.primary
+                                          : c.borderLight,
                                   width: selected && !disabled ? 1.5 : 1,
                                 ),
                               ),
@@ -290,8 +295,8 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                                       color: disabled
                                           ? c.textTertiary
                                           : selected
-                                          ? ColorManager.primaryDarker
-                                          : c.textSecondary,
+                                              ? ColorManager.primaryDarker
+                                              : c.textSecondary,
                                     ),
                                   ),
                                 ],

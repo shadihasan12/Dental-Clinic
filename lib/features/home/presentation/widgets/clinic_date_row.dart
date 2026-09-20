@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
@@ -38,8 +39,8 @@ class ClinicDateRow extends StatelessWidget {
             child: isLoading
                 ? ShimmerBox(
                     width: 120.w,
-                    height: 32.h,
-                    radius: BorderRadius.circular(999),
+                    height: 30.h,
+                    radius: BorderRadius.circular(20.r),
                   )
                 : _ClinicPill(clinicName: clinicName),
           ),
@@ -53,9 +54,9 @@ class ClinicDateRow extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
-            fontSize: 12.5.sp,
-            height: 1.2,
-            fontWeight: FontWeight.w600,
+            fontSize: 11.sp,
+            height: 1.3,
+            fontWeight: FontWeight.w400,
             color: t.secondary,
           ),
         ),
@@ -87,11 +88,14 @@ class _ClinicPillState extends State<_ClinicPill> {
       onTapUp: (_) => setState(() => _down = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 120),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 7.h),
         decoration: BoxDecoration(
           color: t.card,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: _down ? t.focusBorder : t.hairlineStrong),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: _down ? t.focusBorder : t.hairline,
+            width: _down ? 1.5 : 1,
+          ),
         ),
         // The pill keeps one physical arrangement in both languages - dot,
         // name, chevron - so the arrow never jumps from one side of the name
@@ -105,7 +109,7 @@ class _ClinicPillState extends State<_ClinicPill> {
                 width: 7.w,
                 height: 7.w,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF16A34A),
+                  color: ColorManager.success,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -117,7 +121,7 @@ class _ClinicPillState extends State<_ClinicPill> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: FontHelper.fontFamily(context),
-                    fontSize: 13.sp,
+                    fontSize: 12.5.sp,
                     height: 1.2,
                     color: t.ink,
                     fontWeight: FontWeight.w600,

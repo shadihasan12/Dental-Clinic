@@ -120,8 +120,8 @@ class _PendingApprovalsContent extends StatelessWidget {
                           isProcessing: state.isProcessing,
                           onApprove: () {
                             context.read<ApprovalsBloc>().add(
-                              ApprovalsEvent.approveRequest(request.id),
-                            );
+                                  ApprovalsEvent.approveRequest(request.id),
+                                );
                           },
                           onReject: () {
                             _showRejectDialog(context, request);
@@ -160,6 +160,8 @@ class _PendingApprovalsContent extends StatelessWidget {
             const Text('Are you sure you want to reject this request?'),
             SizedBox(height: 16.h),
             TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: reasonController,
               decoration: formOutlinedInput(
                 dialogContext,
@@ -178,13 +180,13 @@ class _PendingApprovalsContent extends StatelessWidget {
             onPressed: () {
               Navigator.pop(dialogContext);
               context.read<ApprovalsBloc>().add(
-                ApprovalsEvent.rejectRequest(
-                  requestId: request.id,
-                  rejectionReason: reasonController.text.isNotEmpty
-                      ? reasonController.text
-                      : null,
-                ),
-              );
+                    ApprovalsEvent.rejectRequest(
+                      requestId: request.id,
+                      rejectionReason: reasonController.text.isNotEmpty
+                          ? reasonController.text
+                          : null,
+                    ),
+                  );
             },
             style: TextButton.styleFrom(foregroundColor: ColorManager.error),
             child: const Text('Reject'),

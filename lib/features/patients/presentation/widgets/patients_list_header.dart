@@ -94,6 +94,8 @@ class PatientsListHeader extends StatelessWidget {
                 border: Border.all(color: c.borderLight),
               ),
               child: TextField(
+                onTapOutside: (_) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 controller: searchController,
                 onChanged: onSearchChanged,
                 style: TextStyle(

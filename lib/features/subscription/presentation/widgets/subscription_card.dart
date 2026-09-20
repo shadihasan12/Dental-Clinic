@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
-/// Subscription state on Home, rebuilt against DENTA_STYLE.md.
+/// Subscription state, rebuilt against DENTA_STYLE.md.
+///
+/// Lives at the top of Settings, where someone goes to look it up, rather
+/// than on Home, where it competed with the day's schedule for the fold.
 ///
 /// What the user comes to this card for is one number - how long until the
 /// plan stops working - so that number is a labelled tile rather than a
@@ -21,15 +24,15 @@ import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 /// `isInGracePeriod` and `graceEndsAt`, but every non-trial subscription fell
 /// through to the same "active plan" body, so a lapsed clinic was shown a
 /// green-ish card that said nothing was wrong.
-class HomeSubscriptionCard extends StatelessWidget {
-  const HomeSubscriptionCard({
+class SubscriptionCard extends StatelessWidget {
+  const SubscriptionCard({
     super.key,
     required this.status,
     this.usage,
     this.isLoading = false,
     required this.onViewPlans,
     required this.onUpgrade,
-    required this.onClose,
+    this.onClose,
   });
 
   final SubscriptionStatusEntity? status;
@@ -37,7 +40,10 @@ class HomeSubscriptionCard extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onViewPlans;
   final VoidCallback onUpgrade;
-  final VoidCallback onClose;
+
+  /// Dismisses the card. Null where the card is the point of the screen it
+  /// sits on - Settings has nothing to dismiss it back to.
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +135,7 @@ class _CardHead extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.title,
-    required this.onClose,
+    this.onClose,
     this.subtitle,
     this.pillLabel,
     this.pillColor,
@@ -141,7 +147,7 @@ class _CardHead extends StatelessWidget {
   final String? subtitle;
   final String? pillLabel;
   final Color? pillColor;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -199,20 +205,22 @@ class _CardHead extends StatelessWidget {
           SizedBox(width: 8.w),
           _StatusPill(label: pillLabel!, color: pillColor ?? accent),
         ],
-        SizedBox(width: 2.w),
-        InkResponse(
-          onTap: onClose,
-          radius: 18.w,
-          child: Padding(
-            padding: EdgeInsets.all(4.w),
-            child: Icon(
-              Icons.close_rounded,
-              size: 15.w,
-              color: c.textSubtle,
-              semanticLabel: AppLocalizations.of(context)!.close,
+        if (onClose != null) ...[
+          SizedBox(width: 2.w),
+          InkResponse(
+            onTap: onClose,
+            radius: 18.w,
+            child: Padding(
+              padding: EdgeInsets.all(4.w),
+              child: Icon(
+                Icons.close_rounded,
+                size: 15.w,
+                color: c.textSubtle,
+                semanticLabel: AppLocalizations.of(context)!.close,
+              ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -224,12 +232,12 @@ class _TrialCard extends StatelessWidget {
   const _TrialCard({
     required this.status,
     required this.onUpgrade,
-    required this.onClose,
+    this.onClose,
   });
 
   final SubscriptionStatusEntity status;
   final VoidCallback onUpgrade;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -287,13 +295,13 @@ class _GraceCard extends StatelessWidget {
     required this.status,
     required this.onRenew,
     required this.onViewPlans,
-    required this.onClose,
+    this.onClose,
   });
 
   final SubscriptionStatusEntity status;
   final VoidCallback onRenew;
   final VoidCallback onViewPlans;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -339,13 +347,13 @@ class _ExpiredCard extends StatelessWidget {
     required this.status,
     required this.onRenew,
     required this.onViewPlans,
-    required this.onClose,
+    this.onClose,
   });
 
   final SubscriptionStatusEntity status;
   final VoidCallback onRenew;
   final VoidCallback onViewPlans;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -392,13 +400,13 @@ class _PlanCard extends StatelessWidget {
     required this.status,
     required this.usage,
     required this.onViewPlans,
-    required this.onClose,
+    this.onClose,
   });
 
   final SubscriptionStatusEntity status;
   final SubscriptionUsageEntity? usage;
   final VoidCallback onViewPlans;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -443,10 +451,10 @@ class _PlanCard extends StatelessWidget {
 /// Empty state per the style guide: dashed border, one factual sentence, and
 /// the single action that fills it.
 class _NoPlanCard extends StatelessWidget {
-  const _NoPlanCard({required this.onStartTrial, required this.onClose});
+  const _NoPlanCard({required this.onStartTrial, this.onClose});
 
   final VoidCallback onStartTrial;
-  final VoidCallback onClose;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -491,19 +499,20 @@ class _NoPlanCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                InkResponse(
-                  onTap: onClose,
-                  radius: 18.w,
-                  child: Padding(
-                    padding: EdgeInsets.all(4.w),
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: 15.w,
-                      color: c.textSubtle,
-                      semanticLabel: l10n.close,
+                if (onClose != null)
+                  InkResponse(
+                    onTap: onClose,
+                    radius: 18.w,
+                    child: Padding(
+                      padding: EdgeInsets.all(4.w),
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 15.w,
+                        color: c.textSubtle,
+                        semanticLabel: l10n.close,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             SizedBox(height: 11.h),

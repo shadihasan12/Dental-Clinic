@@ -117,6 +117,11 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
         onPressed: _requestOtp,
       ),
       body: SingleChildScrollView(
+        // Dragging the form dismisses the keyboard, which is what puts the
+        // docked Save back within reach. A number pad has no Done key to
+        // close it with, so the scroll gesture the user already makes on
+        // the way to the button has to be the thing that does it.
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

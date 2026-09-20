@@ -56,8 +56,8 @@ class _PatientPickerState extends State<PatientPicker> {
       _filtered = query.isEmpty
           ? widget.patients
           : widget.patients
-                .where((p) => p.toLowerCase().contains(query.toLowerCase()))
-                .toList();
+              .where((p) => p.toLowerCase().contains(query.toLowerCase()))
+              .toList();
     });
   }
 
@@ -160,6 +160,7 @@ class _PatientPickerState extends State<PatientPicker> {
             hasError: false,
           ),
           child: TextField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             controller: _searchController,
             focusNode: _focusNode,
             autofocus: _isSearching,

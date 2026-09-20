@@ -241,8 +241,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     // appointment is being booked for another doctor we fall back to
     // the generic "no slots" message without the CTA.
     final currentUserId = getIt<TokenStorage>().getUserId();
-    final isSelf =
-        currentUserId != null &&
+    final isSelf = currentUserId != null &&
         currentUserId.isNotEmpty &&
         _selectedDoctor!.id == currentUserId;
     if (!isSelf) {
@@ -290,9 +289,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   _AppointmentErrors _validate() {
     final l10n = AppLocalizations.of(context)!;
     return _AppointmentErrors(
-      patient: _selectedPatientEntity == null
-          ? l10n.pleaseSelectAPatient
-          : null,
+      patient:
+          _selectedPatientEntity == null ? l10n.pleaseSelectAPatient : null,
       doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
       slot: _selectedSlot == null ? l10n.pleaseSelectAnAvailableTimeSlot : null,
     );
@@ -418,6 +416,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
               child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: SingleChildScrollView(
+                  // Dragging the form dismisses the keyboard, which is what puts the
+                  // docked Save back within reach. A number pad has no Done key to
+                  // close it with, so the scroll gesture the user already makes on
+                  // the way to the button has to be the thing that does it.
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: _scrollController,
                   padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
                   child: Form(
@@ -644,9 +648,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           message: isAdmin
               ? l10n.clinicWorkingDaysMissingAdminMessage
               : l10n.noWorkingHoursMessage,
-          buttonLabel: isAdmin
-              ? l10n.setClinicWorkingDays
-              : l10n.setWorkingHours,
+          buttonLabel:
+              isAdmin ? l10n.setClinicWorkingDays : l10n.setWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }
@@ -654,9 +657,8 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         return _SlotsEmptyHoursCta(
           title: l10n.notWorkingOnThisDayTitle,
           message: l10n.notWorkingOnThisDayMessage,
-          buttonLabel: isAdmin
-              ? l10n.setClinicWorkingDays
-              : l10n.updateWorkingHours,
+          buttonLabel:
+              isAdmin ? l10n.setClinicWorkingDays : l10n.updateWorkingHours,
           onPressed: _navigateToHoursPage,
         );
       }

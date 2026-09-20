@@ -78,6 +78,12 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                 return DentaRefresh(
                   onRefresh: () => _refresh(context),
                   child: ListView(
+                    // Dragging the form dismisses the keyboard, which is what puts the
+                    // docked action back within reach. A number pad has no Done key to
+                    // close it with, so the scroll gesture the user already makes on the
+                    // way to the button has to be the thing that does it.
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     // 14px screen gutters.
                     padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
                     children: [
@@ -93,13 +99,13 @@ class _ReportIssueViewState extends State<_ReportIssueView> {
                             .add(const IssuesEvent.reloadCategories()),
                         onSubmit: (category, title, description, mediaIds) {
                           context.read<IssuesBloc>().add(
-                            IssuesEvent.submit(
-                              category: category,
-                              title: title,
-                              description: description,
-                              mediaItemIds: mediaIds,
-                            ),
-                          );
+                                IssuesEvent.submit(
+                                  category: category,
+                                  title: title,
+                                  description: description,
+                                  mediaItemIds: mediaIds,
+                                ),
+                              );
                         },
                       ),
                       SizedBox(height: 22.h),

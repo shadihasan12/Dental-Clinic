@@ -509,6 +509,20 @@ class RoutesManager {
           },
         ),
         GoRoute(
+          path: '/setup-working-hours',
+          name: AppRoutesNames.setupWorkingHours,
+          pageBuilder: (context, state) {
+            // Same editor as the settings screen, in the mode that cannot be
+            // left until the schedule is saved. Reached only by `go` from the
+            // end of signup, so there is nothing behind it to pop back to.
+            return CupertinoPage(
+              child: const WorkingDaysPage(isInitialSetup: true),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
           path: '/clinic-users/:userId/hours',
           name: AppRoutesNames.userHours,
           pageBuilder: (context, state) {

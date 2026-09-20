@@ -298,6 +298,8 @@ class _TreatmentPlanCardState extends State<TreatmentPlanCard>
               children: [
                 Expanded(
                   child: TextField(
+                    onTapOutside: (_) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
                     controller: _noteController,
                     maxLines: 2,
                     minLines: 1,

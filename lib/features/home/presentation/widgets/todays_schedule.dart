@@ -1,4 +1,6 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/core/widgets/entrance_fade.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_list_card.dart';
@@ -58,7 +60,7 @@ class TodaysSchedule extends StatelessWidget {
                       l10n.seeAll,
                       style: TextStyle(
                         fontFamily: FontHelper.fontFamily(context),
-                        fontSize: 12.5.sp,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.w600,
                         color: t.primaryDark,
                       ),
@@ -66,7 +68,7 @@ class TodaysSchedule extends StatelessWidget {
                   ),
                 ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         _Shell(child: _body(context, t, l10n)),
       ],
     );
@@ -87,7 +89,7 @@ class TodaysSchedule extends StatelessWidget {
     if (error != null) {
       return _CentredState(
         icon: Icons.cloud_off_rounded,
-        tone: const Color(0xFFEA5A0C),
+        tone: ColorManager.warning,
         title: l10n.scheduleLoadFailed,
         message: error!,
         detail: l10n.scheduleUnchangedHint,
@@ -136,10 +138,10 @@ class _Shell extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: t.card,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: t.hairline),
       ),
       child: child,
@@ -179,19 +181,19 @@ class _CentredState extends StatelessWidget {
       child: Column(
         children: [
           _DashedBox(icon: icon, tone: accent),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
           Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: family,
-              fontSize: 16.5.sp,
+              fontSize: 12.5.sp,
               height: 1.25,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: t.ink,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 6.h),
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 270.w),
             child: Text(
@@ -199,7 +201,7 @@ class _CentredState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: family,
-                fontSize: 13.sp,
+                fontSize: 11.5.sp,
                 height: 1.5,
                 fontWeight: FontWeight.w400,
                 color: t.muted,
@@ -213,14 +215,17 @@ class _CentredState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: family,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 height: 1.4,
                 color: t.secondary,
               ),
             ),
           ],
-          SizedBox(height: 16.h),
-          _PrimaryButton(label: actionLabel, onTap: onAction),
+          SizedBox(height: 14.h),
+          // The app's filled action, so the one button on this card is the
+          // same object as the one on every other screen: 12px radius,
+          // 12.5/700 label, and no shadow under it.
+          DentaButton(label: actionLabel, onTap: onAction, expand: true),
         ],
       ),
     );
@@ -240,14 +245,14 @@ class _DashedBox extends StatelessWidget {
     return CustomPaint(
       painter: _DashedBorderPainter(
         color: t.tintBorder,
-        radius: 20.r,
+        radius: 16.r,
         strokeWidth: 1.5,
       ),
       child: SizedBox(
-        width: 56.w,
-        height: 56.w,
+        width: 50.w,
+        height: 50.w,
         child: Center(
-          child: Icon(icon, size: 22.w, color: tone),
+          child: Icon(icon, size: 20.w, color: tone),
         ),
       ),
     );
@@ -307,61 +312,4 @@ class _DashedBorderPainter extends CustomPainter {
       old.color != color ||
       old.radius != radius ||
       old.strokeWidth != strokeWidth;
-}
-
-class _PrimaryButton extends StatefulWidget {
-  const _PrimaryButton({required this.label, this.onTap});
-
-  final String label;
-  final VoidCallback? onTap;
-
-  @override
-  State<_PrimaryButton> createState() => _PrimaryButtonState();
-}
-
-class _PrimaryButtonState extends State<_PrimaryButton> {
-  bool _down = false;
-
-  void _set(bool down) => setState(() => _down = down);
-
-  @override
-  Widget build(BuildContext context) {
-    final t = HomeTokens.of(context);
-
-    return GestureDetector(
-      onTap: widget.onTap,
-      onTapDown: (_) => _set(true),
-      onTapCancel: () => _set(false),
-      onTapUp: (_) => _set(false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        width: double.infinity,
-        height: 52.h,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: _down ? t.primaryDark : t.primary,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: t.buttonShadow,
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Text(
-          widget.label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontFamily: FontHelper.fontFamily(context),
-            fontSize: 15.5.sp,
-            height: 1.2,
-            fontWeight: FontWeight.w700,
-            color: t.onPrimary,
-          ),
-        ),
-      ),
-    );
-  }
 }

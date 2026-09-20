@@ -759,6 +759,7 @@
   "pleaseEnterYourPassword": "Please enter your password",
   "pleaseSelectSpecialty": "Please select your specialization",
   "workingDaysAndHolidays": "Clinic Working Days & Holidays",
+  "saveAndContinue": "Save and continue",
   "myWorkingHours": "My Working Hours",
   "photoPermissionRequired": "Photo Permission Required",
   "photoPermissionMessage": "This app needs access to your photos to set your profile picture. Please grant permission in Settings.",
@@ -1176,7 +1177,7 @@
   "chooseFromGalleryAction": "Choose from gallery",
   "chooseFromGallerySub": "Images, multiple allowed",
   "attachDocumentAction": "Attach a document",
-  "attachDocumentSub": "PDF, Word, PowerPoint, text or image",
+  "attachDocumentSub": "PDF, Office, DICOM, image or video",
   "offlineQueuedNote": "If the connection drops, files are queued on the device and upload when the clinic network returns.",
   "removeFileTitle": "Delete this file?",
   "removeFileBody": "The file is deleted permanently and cannot be recovered.",
@@ -1222,7 +1223,7 @@
   "subscriptionExpiredBody": "This plan has ended. Renew to keep using it.",
   "renewAction": "Renew",
   "unsupportedFileTitle": "File type not supported",
-  "unsupportedFileMessage": "You can attach images, PDF, PowerPoint or Excel files.",
+  "unsupportedFileMessage": "You can attach images, video, PDF, Word, Excel, PowerPoint, DICOM, CSV or text files.",
   "cameraUnavailable": "Camera is not available on this device",
   "dayClinicClosed": "The clinic is closed on this day",
   "dayEndBeforeStart": "The end time must be after the start time",
@@ -1372,5 +1373,8 @@
       }
     }
   },
-  "updateStoreUnavailable": "Could not open the store on this device"
+  "updateStoreUnavailable": "Could not open the store on this device",
+  "deleteAccountAppointmentsLabel": "Appointments cancelled",
+  "deleteAccountCasesLabel": "Cases closed",
+  "deleteAccountMembersLabel": "Members removed"
 }

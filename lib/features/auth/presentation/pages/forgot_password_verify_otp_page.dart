@@ -111,9 +111,7 @@ class _ForgotPasswordVerifyOtpPageState
     final l10n = AppLocalizations.of(context)!;
     final otpCode = _otpControllers.map((c) => c.text).join();
     if (otpCode.length == 6) {
-      context
-          .read<AuthBloc>()
-          .add(const AuthEvent.resetPasswordOtpVerified());
+      context.read<AuthBloc>().add(const AuthEvent.resetPasswordOtpVerified());
     } else {
       AppSnackbar.showError(
         context,
@@ -128,291 +126,302 @@ class _ForgotPasswordVerifyOtpPageState
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return AuthDesktopShell(imageIndex: 0, child: Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<AuthBloc, AuthState>(
-            listenWhen: (previous, current) =>
-                previous.otpSecondsRemaining != current.otpSecondsRemaining,
-            listener: (context, state) {
-              if (state.otpSecondsRemaining > 0 &&
-                  _secondsNotifier.value == 0) {
-                _startCountdown(state.otpSecondsRemaining);
-              }
+    return AuthDesktopShell(
+      imageIndex: 0,
+      child: Scaffold(
+        backgroundColor: ColorManager.of(context).scaffoldBg,
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthBloc, AuthState>(
+              listenWhen: (previous, current) =>
+                  previous.otpSecondsRemaining != current.otpSecondsRemaining,
+              listener: (context, state) {
+                if (state.otpSecondsRemaining > 0 &&
+                    _secondsNotifier.value == 0) {
+                  _startCountdown(state.otpSecondsRemaining);
+                }
+              },
+            ),
+            BlocListener<AuthBloc, AuthState>(
+              listenWhen: (previous, current) =>
+                  previous.resetPasswordSessionId !=
+                  current.resetPasswordSessionId,
+              listener: (context, state) {
+                if (state.resetPasswordSessionId != null &&
+                    state.resetPasswordSessionId!.isNotEmpty) {
+                  AppSnackbar.showSuccess(
+                    context,
+                    title: l10n.emailVerified,
+                    message: l10n.setNewPassword,
+                  );
+                  context.pushNamed(
+                    AppRoutesNames.setNewPassword,
+                    extra: context.read<AuthBloc>(),
+                  );
+                }
+              },
+            ),
+            BlocListener<AuthBloc, AuthState>(
+              listenWhen: (previous, current) =>
+                  previous.otpError != current.otpError,
+              listener: (context, state) {
+                if (state.otpError != null && state.otpError!.isNotEmpty) {
+                  AppSnackbar.showError(
+                    context,
+                    title: l10n.verificationFailed,
+                    message: state.otpError,
+                  );
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<AuthBloc, AuthState>(
+            buildWhen: (previous, current) {
+              return previous.isOtpLoading != current.isOtpLoading ||
+                  previous.isOtpVerifying != current.isOtpVerifying ||
+                  previous.forgotPasswordEmail != current.forgotPasswordEmail;
             },
-          ),
-          BlocListener<AuthBloc, AuthState>(
-            listenWhen: (previous, current) =>
-                previous.resetPasswordSessionId !=
-                current.resetPasswordSessionId,
-            listener: (context, state) {
-              if (state.resetPasswordSessionId != null &&
-                  state.resetPasswordSessionId!.isNotEmpty) {
-                AppSnackbar.showSuccess(
-                  context,
-                  title: l10n.emailVerified,
-                  message: l10n.setNewPassword,
-                );
-                context.pushNamed(
-                  AppRoutesNames.setNewPassword,
-                  extra: context.read<AuthBloc>(),
-                );
-              }
-            },
-          ),
-          BlocListener<AuthBloc, AuthState>(
-            listenWhen: (previous, current) =>
-                previous.otpError != current.otpError,
-            listener: (context, state) {
-              if (state.otpError != null && state.otpError!.isNotEmpty) {
-                AppSnackbar.showError(
-                  context,
-                  title: l10n.verificationFailed,
-                  message: state.otpError,
-                );
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<AuthBloc, AuthState>(
-          buildWhen: (previous, current) {
-            return previous.isOtpLoading != current.isOtpLoading ||
-                previous.isOtpVerifying != current.isOtpVerifying ||
-                previous.forgotPasswordEmail != current.forgotPasswordEmail;
-          },
-          builder: (context, state) {
-            return SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16.h),
+            builder: (context, state) {
+              return SafeArea(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16.h),
 
-                    // Back button
-                    AuthBackButton(onTap: () => context.pop()),
+                      // Back button
+                      AuthBackButton(onTap: () => context.pop()),
 
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 24.h),
 
-                    // Title
-                    Text(
-                      l10n.verifyYourEmail,
-                      style: TextStyle(
-                        fontSize: FontSizesManager.s28,
-                        fontWeight: FontWeightManager.bold,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      l10n.enterCodeSentToEmail,
-                      style: TextStyle(
-                        fontSize: FontSizesManager.s14,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textSecondary,
-                      ),
-                    ),
-
-                    SizedBox(height: 40.h),
-
-                    // Email icon
-                    AuthHeroGlyph(icon: Icons.mark_email_read_outlined),
-
-                    SizedBox(height: 20.h),
-
-                    // Email address
-                    Center(
-                      child: Text(
-                        state.forgotPasswordEmail,
+                      // Title
+                      Text(
+                        l10n.verifyYourEmail,
                         style: TextStyle(
-                          fontSize: FontSizesManager.s16,
-                          fontWeight: FontWeightManager.semiBold,
+                          fontSize: FontSizesManager.s28,
+                          fontWeight: FontWeightManager.bold,
                           fontFamily: fontFamily,
                           color: ColorManager.of(context).textPrimary,
                         ),
                       ),
-                    ),
-
-                    SizedBox(height: 8.h),
-
-                    Center(
-                      child: Text(
-                        l10n.sentVerificationCode,
+                      SizedBox(height: 8.h),
+                      Text(
+                        l10n.enterCodeSentToEmail,
                         style: TextStyle(
                           fontSize: FontSizesManager.s14,
                           fontFamily: fontFamily,
                           color: ColorManager.of(context).textSecondary,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ),
 
-                    SizedBox(height: 36.h),
+                      SizedBox(height: 40.h),
 
-                    // OTP Input Fields
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(6, (index) {
-                          return Container(
-                            width: 48.w,
-                            height: 56.h,
-                            margin: EdgeInsets.symmetric(horizontal: 3.w),
-                            child: TextField(
-                              controller: _otpControllers[index],
-                              focusNode: _otpFocusNodes[index],
-                              enabled: !state.isOtpVerifying,
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(
-                                fontSize: FontSizesManager.s28,
-                                fontWeight: FontWeightManager.bold,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textPrimary,
-                              ),
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 14.h),
-                                filled: true,
-                                fillColor: ColorManager.of(context).inputBg,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: ColorManager.of(context).borderLight,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: ColorManager.of(context).borderLight,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: ColorManager.primary,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: ColorManager.of(context).borderLight,
-                                  ),
-                                ),
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(1),
-                              ],
-                              onChanged: (value) =>
-                                  _onOtpChanged(index, value),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
+                      // Email icon
+                      AuthHeroGlyph(icon: Icons.mark_email_read_outlined),
 
-                    SizedBox(height: 28.h),
+                      SizedBox(height: 20.h),
 
-                    // Resend code section
-                    if (state.isOtpLoading)
+                      // Email address
                       Center(
+                        child: Text(
+                          state.forgotPasswordEmail,
+                          style: TextStyle(
+                            fontSize: FontSizesManager.s16,
+                            fontWeight: FontWeightManager.semiBold,
+                            fontFamily: fontFamily,
+                            color: ColorManager.of(context).textPrimary,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 8.h),
+
+                      Center(
+                        child: Text(
+                          l10n.sentVerificationCode,
+                          style: TextStyle(
+                            fontSize: FontSizesManager.s14,
+                            fontFamily: fontFamily,
+                            color: ColorManager.of(context).textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+
+                      SizedBox(height: 36.h),
+
+                      // OTP Input Fields
+                      Directionality(
+                        textDirection: TextDirection.ltr,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 16.w,
-                              height: 16.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ColorManager.primary,
+                          children: List.generate(6, (index) {
+                            return Container(
+                              width: 48.w,
+                              height: 56.h,
+                              margin: EdgeInsets.symmetric(horizontal: 3.w),
+                              child: TextField(
+                                onTapOutside: (_) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                controller: _otpControllers[index],
+                                focusNode: _otpFocusNodes[index],
+                                enabled: !state.isOtpVerifying,
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(
+                                  fontSize: FontSizesManager.s28,
+                                  fontWeight: FontWeightManager.bold,
+                                  fontFamily: fontFamily,
+                                  color: ColorManager.of(context).textPrimary,
+                                ),
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 14.h),
+                                  filled: true,
+                                  fillColor: ColorManager.of(context).inputBg,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: BorderSide(
+                                      color:
+                                          ColorManager.of(context).borderLight,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: BorderSide(
+                                      color:
+                                          ColorManager.of(context).borderLight,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: BorderSide(
+                                      color: ColorManager.primary,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: BorderSide(
+                                      color:
+                                          ColorManager.of(context).borderLight,
+                                    ),
+                                  ),
+                                ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(1),
+                                ],
+                                onChanged: (value) =>
+                                    _onOtpChanged(index, value),
                               ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              l10n.sendingCode,
-                              style: TextStyle(
-                                fontSize: FontSizesManager.s14,
-                                fontFamily: fontFamily,
-                                color: ColorManager.of(context).textSecondary,
-                              ),
-                            ),
-                          ],
+                            );
+                          }),
                         ),
-                      )
-                    else
-                      ValueListenableBuilder<int>(
-                        valueListenable: _secondsNotifier,
-                        builder: (context, secondsRemaining, _) {
-                          if (secondsRemaining > 0) {
-                            return Center(
-                              child: Text(
-                                l10n.resendCodeIn(secondsRemaining),
+                      ),
+
+                      SizedBox(height: 28.h),
+
+                      // Resend code section
+                      if (state.isOtpLoading)
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 16.w,
+                                height: 16.w,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: ColorManager.primary,
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Text(
+                                l10n.sendingCode,
                                 style: TextStyle(
                                   fontSize: FontSizesManager.s14,
                                   fontFamily: fontFamily,
                                   color: ColorManager.of(context).textSecondary,
                                 ),
                               ),
-                            );
-                          }
-                          return Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  l10n.didntReceiveCode,
+                            ],
+                          ),
+                        )
+                      else
+                        ValueListenableBuilder<int>(
+                          valueListenable: _secondsNotifier,
+                          builder: (context, secondsRemaining, _) {
+                            if (secondsRemaining > 0) {
+                              return Center(
+                                child: Text(
+                                  l10n.resendCodeIn(secondsRemaining),
                                   style: TextStyle(
-                                    fontSize: FontSizesManager.s12,
+                                    fontSize: FontSizesManager.s14,
                                     fontFamily: fontFamily,
-                                    color: ColorManager.of(context).textSecondary,
+                                    color:
+                                        ColorManager.of(context).textSecondary,
                                   ),
                                 ),
-                                TextButton(
-                                  onPressed: _handleResendOtp,
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: Size.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  child: Text(
-                                    l10n.resend,
+                              );
+                            }
+                            return Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    l10n.didntReceiveCode,
                                     style: TextStyle(
                                       fontSize: FontSizesManager.s12,
                                       fontFamily: fontFamily,
-                                      color: ColorManager.primary,
-                                      fontWeight: FontWeightManager.semiBold,
+                                      color: ColorManager.of(context)
+                                          .textSecondary,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                                  TextButton(
+                                    onPressed: _handleResendOtp,
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    child: Text(
+                                      l10n.resend,
+                                      style: TextStyle(
+                                        fontSize: FontSizesManager.s12,
+                                        fontFamily: fontFamily,
+                                        color: ColorManager.primary,
+                                        fontWeight: FontWeightManager.semiBold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
+                      SizedBox(height: 32.h),
+
+                      PrimaryButton(
+                        text: l10n.verifyAndContinue,
+                        onPressed: state.isOtpVerifying ? null : _handleVerify,
+                        isLoading: state.isOtpVerifying,
                       ),
 
-                    SizedBox(height: 32.h),
-
-                    PrimaryButton(
-                      text: l10n.verifyAndContinue,
-                      onPressed: state.isOtpVerifying ? null : _handleVerify,
-                      isLoading: state.isOtpVerifying,
-                    ),
-
-                    SizedBox(height: 32.h),
-                  ],
+                      SizedBox(height: 32.h),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
-    ),);
+    );
   }
 }

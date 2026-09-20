@@ -1913,6 +1913,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workingDaysAndHolidays => 'أيام عمل العيادة والعطل';
 
   @override
+  String get saveAndContinue => 'حفظ ومتابعة';
+
+  @override
   String get myWorkingHours => 'ساعات عملي';
 
   @override
@@ -2853,7 +2856,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachDocumentAction => 'إرفاق مستند';
 
   @override
-  String get attachDocumentSub => 'PDF أو Word أو PowerPoint أو نص أو صورة';
+  String get attachDocumentSub => 'PDF أو Office أو DICOM أو صورة أو فيديو';
 
   @override
   String get offlineQueuedNote =>
@@ -2967,7 +2970,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unsupportedFileMessage =>
-      'يمكنك إرفاق صور أو ملفات PDF أو PowerPoint أو Excel.';
+      'يمكنك إرفاق صور أو فيديو أو ملفات PDF أو Word أو Excel أو PowerPoint أو DICOM أو CSV أو نصية.';
 
   @override
   String get cameraUnavailable => 'الكاميرا غير متوفرة على هذا الجهاز';
@@ -3202,4 +3205,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get updateStoreUnavailable => 'تعذّر فتح المتجر على هذا الجهاز';
+
+  @override
+  String get deleteAccountAppointmentsLabel => 'مواعيد سيتم إلغاؤها';
+
+  @override
+  String get deleteAccountCasesLabel => 'حالات سيتم إغلاقها';
+
+  @override
+  String get deleteAccountMembersLabel => 'أعضاء سيتم إزالتهم';
 }

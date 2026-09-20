@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
@@ -56,10 +57,9 @@ class HomeHeader extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: family,
-                        fontSize: 12.sp,
-                        height: 1.2,
-                        letterSpacing: 0.12,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 11.sp,
+                        height: 1.3,
+                        fontWeight: FontWeight.w400,
                         color: t.secondary,
                       ),
                     ),
@@ -70,10 +70,10 @@ class HomeHeader extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: family,
-                        fontSize: 19.sp,
-                        height: 1.1,
+                        fontSize: 15.sp,
+                        height: 1.2,
                         color: t.ink,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -120,8 +120,7 @@ class _Avatar extends StatelessWidget {
   final bool isLoading;
   final VoidCallback? onTap;
 
-  static const double _size = 46;
-  static const double _radius = 16;
+  static const double _size = 40;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +128,7 @@ class _Avatar extends StatelessWidget {
       return ShimmerBox(
         width: _size.w,
         height: _size.w,
-        radius: BorderRadius.circular(_radius.r),
+        radius: BorderRadius.circular(_size.r),
       );
     }
 
@@ -142,9 +141,10 @@ class _Avatar extends StatelessWidget {
       child: Container(
         width: _size.w,
         height: _size.w,
+        // Circular, which is what the style reserves for a face.
         decoration: BoxDecoration(
           color: t.tint,
-          borderRadius: BorderRadius.circular(_radius.r),
+          shape: BoxShape.circle,
           image: hasImage
               ? DecorationImage(image: NetworkImage(url), fit: BoxFit.cover)
               : null,
@@ -160,7 +160,7 @@ class _Avatar extends StatelessWidget {
     if (initials.isEmpty) {
       return Icon(
         Icons.person_outline_rounded,
-        size: 21.w,
+        size: 19.w,
         color: t.primaryDark,
       );
     }
@@ -168,9 +168,9 @@ class _Avatar extends StatelessWidget {
       initials,
       style: TextStyle(
         fontFamily: FontHelper.fontFamily(context),
-        fontSize: 18.sp,
+        fontSize: 15.sp,
         height: 1,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         color: t.primaryDark,
       ),
     );
@@ -212,18 +212,18 @@ class _HeaderButtonState extends State<_HeaderButton> {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 120),
-            width: 40.w,
-            height: 40.w,
+            width: 36.w,
+            height: 36.w,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: _down ? t.pressed : t.card,
-              borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(color: t.hairlineStrong),
+              borderRadius: BorderRadius.circular(11.r),
+              border: Border.all(color: t.hairline),
             ),
-            child: Icon(widget.icon, size: 18.w, color: t.ink),
+            child: Icon(widget.icon, size: 17.w, color: t.ink),
           ),
           if (widget.badge != null)
-            PositionedDirectional(end: 9.w, top: 8.h, child: widget.badge!),
+            PositionedDirectional(end: 8.w, top: 7.h, child: widget.badge!),
         ],
       ),
     );
@@ -242,7 +242,7 @@ class _UnreadDot extends StatelessWidget {
       width: 7.w,
       height: 7.w,
       decoration: BoxDecoration(
-        color: const Color(0xFFEA5A0C),
+        color: ColorManager.warning,
         shape: BoxShape.circle,
         border: Border.all(color: t.card, width: 2),
       ),
@@ -258,9 +258,9 @@ class _GreetingSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ShimmerBox(width: 88.w, height: 12.h),
-        SizedBox(height: 6.h),
-        ShimmerBox(width: 150.w, height: 19.h),
+        ShimmerBox(width: 88.w, height: 11.h),
+        SizedBox(height: 5.h),
+        ShimmerBox(width: 150.w, height: 15.h),
       ],
     );
   }

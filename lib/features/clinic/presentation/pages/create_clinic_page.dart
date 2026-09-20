@@ -167,6 +167,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       _buildLabel('Clinic Name *'),
                       SizedBox(height: 8.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _clinicNameController,
                         textCapitalization: TextCapitalization.words,
                         validator: _validateClinicName,
@@ -187,6 +189,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       _buildLabel('Address'),
                       SizedBox(height: 8.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _addressController,
                         textCapitalization: TextCapitalization.words,
                         decoration: _buildInputDecoration(
@@ -201,6 +205,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       _buildLabel('Phone Number'),
                       SizedBox(height: 8.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
                         decoration: _buildInputDecoration(
@@ -215,6 +221,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       _buildLabel('Clinic Email'),
                       SizedBox(height: 8.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         inputFormatters: emailInputFormatters,
@@ -236,6 +244,8 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
                       _buildLabel('Description'),
                       SizedBox(height: 8.h),
                       TextFormField(
+                        onTapOutside: (_) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
                         controller: _descriptionController,
                         textCapitalization: TextCapitalization.sentences,
                         maxLines: 3,

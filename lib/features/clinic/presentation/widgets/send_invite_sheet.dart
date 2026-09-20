@@ -57,11 +57,11 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
 
   void _submit() {
     context.read<InvitationBloc>().add(
-      InvitationEvent.sendInvitation(
-        email: _emailCtrl.text.trim(),
-        roles: _selectedRoles.toList(),
-      ),
-    );
+          InvitationEvent.sendInvitation(
+            email: _emailCtrl.text.trim(),
+            roles: _selectedRoles.toList(),
+          ),
+        );
     Navigator.pop(context);
   }
 
@@ -111,7 +111,6 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
             ),
           ),
           SizedBox(height: 20.h),
-
           Text(
             l10n.emailAddress,
             style: TextStyle(
@@ -123,6 +122,7 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
           ),
           SizedBox(height: 6.h),
           TextField(
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
             inputFormatters: emailInputFormatters,
@@ -138,7 +138,6 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
               hintText: 'colleague@example.com',
             ),
           ),
-
           SizedBox(height: 16.h),
           Text(
             l10n.selectRoles,
@@ -187,7 +186,6 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
               );
             }).toList(),
           ),
-
           SizedBox(height: 24.h),
           GestureDetector(
             onTap: _canSend ? _submit : null,

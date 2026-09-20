@@ -85,13 +85,13 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
       loaded: (currencies) {
         _selectedCurrency =
             currencies.where((c) => c.currencyCode == 'SYP').firstOrNull ??
-            (currencies.isNotEmpty ? currencies.first : null);
+                (currencies.isNotEmpty ? currencies.first : null);
 
         if (_isEditing) {
           final e = widget.expense!;
           _selectedCurrency =
               currencies.where((c) => c.id == e.currency.id).firstOrNull ??
-              _selectedCurrency;
+                  _selectedCurrency;
         }
       },
     );
@@ -110,9 +110,8 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
         if (_isEditing) {
           final e = widget.expense!;
-          _selectedCategory = categories
-              .where((c) => c.id == e.category.id)
-              .firstOrNull;
+          _selectedCategory =
+              categories.where((c) => c.id == e.category.id).firstOrNull;
           if (_selectedCategory == null) {
             _isOtherCategory = true;
             _customCategoryController.text = e.category.name;
@@ -168,13 +167,13 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
       amount: amount.isEmpty
           ? l10n.pleaseEnterAmount
           : (parsed == null || parsed <= 0
-                ? l10n.pleaseEnterValidAmount
-                : null),
+              ? l10n.pleaseEnterValidAmount
+              : null),
       category: _selectedCategory == null
           ? l10n.pleaseSelectExpenseType
           : (_isOtherCategory && _customCategoryController.text.trim().isEmpty
-                ? l10n.pleaseSelectExpenseType
-                : null),
+              ? l10n.pleaseSelectExpenseType
+              : null),
       currency: _selectedCurrency == null ? l10n.pleaseSelectCurrency : null,
     );
   }
@@ -262,6 +261,8 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               hasError: _errors.amount != null,
             ),
             child: TextField(
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               controller: _amountController,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,

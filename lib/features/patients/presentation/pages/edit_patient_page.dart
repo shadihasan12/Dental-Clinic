@@ -215,6 +215,12 @@ class _EditPatientPageState extends State<EditPatientPage> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                // Dragging the form dismisses the keyboard, which is what puts the
+                // docked Save back within reach. A number pad has no Done key to
+                // close it with, so the scroll gesture the user already makes on
+                // the way to the button has to be the thing that does it.
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 controller: _scrollController,
                 padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
                 child: PatientInfoForm(

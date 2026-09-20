@@ -36,13 +36,13 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     super.initState();
     _clinicNameController.addListener(() {
       context.read<AuthBloc>().add(
-        AuthEvent.signupClinicNameChanged(_clinicNameController.text),
-      );
+            AuthEvent.signupClinicNameChanged(_clinicNameController.text),
+          );
     });
     _addressController.addListener(() {
       context.read<AuthBloc>().add(
-        AuthEvent.signupClinicAddressChanged(_addressController.text),
-      );
+            AuthEvent.signupClinicAddressChanged(_addressController.text),
+          );
     });
   }
 
@@ -79,11 +79,11 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       context.read<AuthBloc>().add(
-        AuthEvent.locationSearchRequested(
-          query: query,
-          countryCode: _selectedCountryCode,
-        ),
-      );
+            AuthEvent.locationSearchRequested(
+              query: query,
+              countryCode: _selectedCountryCode,
+            ),
+          );
     });
   }
 
@@ -141,120 +141,128 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return AuthDesktopShell(imageIndex: 2, child: Scaffold(
-      backgroundColor: ColorManager.of(context).scaffoldBg,
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state.status == AuthStatus.authenticated) {
-            AppSnackbar.showSuccess(
-              context,
-              title: l10n.welcome,
-              message: l10n.accountCreatedSuccessfully,
-            );
-            context.goNamed(AppRoutesNames.root);
-          }
+    return AuthDesktopShell(
+      imageIndex: 2,
+      child: Scaffold(
+        backgroundColor: ColorManager.of(context).scaffoldBg,
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state.status == AuthStatus.authenticated) {
+              AppSnackbar.showSuccess(
+                context,
+                title: l10n.welcome,
+                message: l10n.accountCreatedSuccessfully,
+              );
+              // Not home yet. The clinic exists but has no schedule, and
+              // without one every appointment screen is a dead end, so the
+              // gate asks the server for its hours and only lets the app
+              // through once there are some.
+              context.goNamed(AppRoutesNames.setupWorkingHours);
+            }
 
-          if (state.signupError != null) {
-            AppSnackbar.showError(
-              context,
-              title: l10n.registrationFailed,
-              message: state.signupError,
-            );
-          }
-        },
-        builder: (context, state) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16.h),
+            if (state.signupError != null) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.registrationFailed,
+                message: state.signupError,
+              );
+            }
+          },
+          builder: (context, state) {
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16.h),
 
-                    // Back button
-                    AuthBackButton(onTap: () => context.pop()),
+                      // Back button
+                      AuthBackButton(onTap: () => context.pop()),
 
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 24.h),
 
-                    // Title
-                    Text(
-                      l10n.completeYourProfile,
-                      style: TextStyle(
-                        fontSize: FontSizesManager.s28,
-                        fontWeight: FontWeightManager.bold,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textPrimary,
+                      // Title
+                      Text(
+                        l10n.completeYourProfile,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s28,
+                          fontWeight: FontWeightManager.bold,
+                          fontFamily: fontFamily,
+                          color: ColorManager.of(context).textPrimary,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      l10n.setupClinicDetails,
-                      style: TextStyle(
-                        fontSize: FontSizesManager.s14,
-                        fontFamily: fontFamily,
-                        color: ColorManager.of(context).textSecondary,
+                      SizedBox(height: 8.h),
+                      Text(
+                        l10n.setupClinicDetails,
+                        style: TextStyle(
+                          fontSize: FontSizesManager.s14,
+                          fontFamily: fontFamily,
+                          color: ColorManager.of(context).textSecondary,
+                        ),
                       ),
-                    ),
 
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 24.h),
 
-                    _buildInfoBox(l10n, fontFamily),
+                      _buildInfoBox(l10n, fontFamily),
 
-                    SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
 
-                    AuthTextField(
-                      label: l10n.clinicNameRequired,
-                      hint: l10n.clinicNameHintExample,
-                      controller: _clinicNameController,
-                      prefixIcon: Icons.business_outlined,
-                      keyboardType: TextInputType.text,
-                      validator: _validateClinicName,
-                      onChanged: (value) {
-                        if (_showValidationErrors) {
-                          _formKey.currentState?.validate();
-                        }
-                      },
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    _buildLocationSearch(state, l10n, fontFamily),
-
-                    if (state.selectedLocation != null) ...[
-                      SizedBox(height: 12.h),
-                      _buildSelectedLocation(
-                        state.selectedLocation!,
-                        fontFamily,
+                      AuthTextField(
+                        label: l10n.clinicNameRequired,
+                        hint: l10n.clinicNameHintExample,
+                        controller: _clinicNameController,
+                        prefixIcon: Icons.business_outlined,
+                        keyboardType: TextInputType.text,
+                        validator: _validateClinicName,
+                        onChanged: (value) {
+                          if (_showValidationErrors) {
+                            _formKey.currentState?.validate();
+                          }
+                        },
                       ),
+
+                      SizedBox(height: 20.h),
+
+                      _buildLocationSearch(state, l10n, fontFamily),
+
+                      if (state.selectedLocation != null) ...[
+                        SizedBox(height: 12.h),
+                        _buildSelectedLocation(
+                          state.selectedLocation!,
+                          fontFamily,
+                        ),
+                      ],
+
+                      SizedBox(height: 20.h),
+
+                      AuthTextField(
+                        label: l10n.detailedAddress,
+                        hint: l10n.detailedAddressHint,
+                        controller: _addressController,
+                        prefixIcon: Icons.location_on_outlined,
+                        keyboardType: TextInputType.streetAddress,
+                      ),
+
+                      if (Responsive.isDesktop(context)) ...[
+                        SizedBox(height: 24.h),
+                        _buildInlineButton(l10n),
+                        SizedBox(height: 24.h),
+                      ] else
+                        SizedBox(height: 100.h),
                     ],
-
-                    SizedBox(height: 20.h),
-
-                    AuthTextField(
-                      label: l10n.detailedAddress,
-                      hint: l10n.detailedAddressHint,
-                      controller: _addressController,
-                      prefixIcon: Icons.location_on_outlined,
-                      keyboardType: TextInputType.streetAddress,
-                    ),
-
-                    if (Responsive.isDesktop(context)) ...[
-                      SizedBox(height: 24.h),
-                      _buildInlineButton(l10n),
-                      SizedBox(height: 24.h),
-                    ] else
-                      SizedBox(height: 100.h),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
+        bottomNavigationBar:
+            Responsive.isDesktop(context) ? null : _buildBottomButton(l10n),
       ),
-      bottomNavigationBar: Responsive.isDesktop(context) ? null : _buildBottomButton(l10n),
-    ),);
+    );
   }
 
   Widget _buildInfoBox(AppLocalizations l10n, String fontFamily) {
@@ -323,7 +331,6 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               : null,
           onChanged: _onLocationSearchChanged,
         ),
-
         if (_locationSearchController.text.trim().length >= 2 &&
             state.searchedLocations.isNotEmpty &&
             state.selectedLocation == null)
@@ -369,15 +376,14 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                   ),
                   onTap: () {
                     context.read<AuthBloc>().add(
-                      AuthEvent.signupLocationEntitySelected(location),
-                    );
+                          AuthEvent.signupLocationEntitySelected(location),
+                        );
                     _locationSearchController.clear();
                   },
                 );
               },
             ),
           ),
-
         if (_locationSearchController.text.trim().length >= 2 &&
             !state.isSearchingLocations &&
             state.searchedLocations.isEmpty &&
@@ -457,8 +463,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
       builder: (context, state) {
         return PrimaryButton(
           text: l10n.completeRegistration,
-          isEnabled:
-              _clinicNameController.text.trim().isNotEmpty &&
+          isEnabled: _clinicNameController.text.trim().isNotEmpty &&
               state.selectedLocation != null &&
               !state.isSignupLoading,
           isLoading: state.isSignupLoading,
@@ -486,8 +491,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
             ),
             child: PrimaryButton(
               text: l10n.completeRegistration,
-              isEnabled:
-                  _clinicNameController.text.trim().isNotEmpty &&
+              isEnabled: _clinicNameController.text.trim().isNotEmpty &&
                   state.selectedLocation != null &&
                   !state.isSignupLoading,
               isLoading: state.isSignupLoading,

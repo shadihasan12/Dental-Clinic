@@ -135,53 +135,53 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
         child: Padding(
           padding: EdgeInsets.only(bottom: systemBottomInset(context)),
           child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      l10n.cancel,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 15.sp,
-                        fontFamily: FontHelper.fontFamily(context),
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                        ),
                       ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _visitDate = tempDate);
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      l10n.close,
-                      style: TextStyle(
-                        color: ColorManager.primary,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: FontHelper.fontFamily(context),
+                    TextButton(
+                      onPressed: () {
+                        setState(() => _visitDate = tempDate);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.close,
+                        style: TextStyle(
+                          color: ColorManager.primary,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: FontHelper.fontFamily(context),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Divider(height: 1, color: Colors.grey.shade200),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _visitDate,
-                minimumDate: DateTime(2020),
-                maximumDate: DateTime.now().add(const Duration(days: 365)),
-                onDateTimeChanged: (date) => tempDate = date,
+              Divider(height: 1, color: Colors.grey.shade200),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _visitDate,
+                  minimumDate: DateTime(2020),
+                  maximumDate: DateTime.now().add(const Duration(days: 365)),
+                  onDateTimeChanged: (date) => tempDate = date,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -236,6 +236,12 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                // Dragging the form dismisses the keyboard, which is what puts the
+                // docked action back within reach. A number pad has no Done key to
+                // close it with, so the scroll gesture the user already makes on the
+                // way to the button has to be the thing that does it.
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: VisitInfoForm(
                   isInitial: widget.isInitial,

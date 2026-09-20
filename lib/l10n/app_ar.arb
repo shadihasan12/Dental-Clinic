@@ -728,6 +728,7 @@
   "pleaseEnterYourPassword": "يرجى إدخال كلمة المرور",
   "pleaseSelectSpecialty": "يرجى اختيار التخصص",
   "workingDaysAndHolidays": "أيام عمل العيادة والعطل",
+  "saveAndContinue": "حفظ ومتابعة",
   "myWorkingHours": "ساعات عملي",
   "photoPermissionRequired": "إذن الوصول للصور مطلوب",
   "photoPermissionMessage": "يحتاج التطبيق إلى إذن الوصول للصور لتعيين صورة ملفك الشخصي. يرجى منح الإذن من الإعدادات.",
@@ -1145,7 +1146,7 @@
   "chooseFromGalleryAction": "اختيار من المعرض",
   "chooseFromGallerySub": "صور، يمكن اختيار أكثر من واحدة",
   "attachDocumentAction": "إرفاق مستند",
-  "attachDocumentSub": "PDF أو Word أو PowerPoint أو نص أو صورة",
+  "attachDocumentSub": "PDF أو Office أو DICOM أو صورة أو فيديو",
   "offlineQueuedNote": "في حال فقدان الاتصال، يتم حفظ الملفات على الجهاز ورفعها عند عودة شبكة العيادة.",
   "removeFileTitle": "حذف هذا الملف؟",
   "removeFileBody": "سيتم حذف الملف نهائيًا ولا يمكن استرجاعه.",
@@ -1181,7 +1182,7 @@
   "subscriptionExpiredBody": "انتهت هذه الخطة. جدّدها للمتابعة.",
   "renewAction": "تجديد",
   "unsupportedFileTitle": "نوع الملف غير مدعوم",
-  "unsupportedFileMessage": "يمكنك إرفاق صور أو ملفات PDF أو PowerPoint أو Excel.",
+  "unsupportedFileMessage": "يمكنك إرفاق صور أو فيديو أو ملفات PDF أو Word أو Excel أو PowerPoint أو DICOM أو CSV أو نصية.",
   "cameraUnavailable": "الكاميرا غير متوفرة على هذا الجهاز",
   "dayClinicClosed": "العيادة مغلقة في هذا اليوم",
   "dayEndBeforeStart": "يجب أن يكون وقت الانتهاء بعد وقت البدء",
@@ -1327,5 +1328,8 @@
       }
     }
   },
-  "updateStoreUnavailable": "تعذّر فتح المتجر على هذا الجهاز"
+  "updateStoreUnavailable": "تعذّر فتح المتجر على هذا الجهاز",
+  "deleteAccountAppointmentsLabel": "مواعيد سيتم إلغاؤها",
+  "deleteAccountCasesLabel": "حالات سيتم إغلاقها",
+  "deleteAccountMembersLabel": "أعضاء سيتم إزالتهم"
 }

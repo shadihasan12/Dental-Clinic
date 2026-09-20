@@ -164,7 +164,8 @@ class _AddPatientContentState extends State<_AddPatientContent> {
         state.when(
           initial: () {},
           saving: () {
-            AppLoadingDialog.show(context: context, message: l10n.savingPatient);
+            AppLoadingDialog.show(
+                context: context, message: l10n.savingPatient);
           },
           success: (patient) async {
             AppLoadingDialog.dismiss(context);
@@ -210,6 +211,12 @@ class _AddPatientContentState extends State<_AddPatientContent> {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  // Dragging the form dismisses the keyboard, which is what puts the
+                  // docked Save back within reach. A number pad has no Done key to
+                  // close it with, so the scroll gesture the user already makes on
+                  // the way to the button has to be the thing that does it.
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   controller: _scrollController,
                   padding: EdgeInsets.fromLTRB(14.w, 8.h, 14.w, 24.h),
                   child: PatientInfoForm(
