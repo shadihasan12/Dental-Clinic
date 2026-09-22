@@ -33,21 +33,28 @@ class DonutPieChart extends StatelessWidget {
     }
 
     final total = series.total;
+    final holeRadius = isDonut ? 46.r : 0.0;
+    final ringRadius = 58.r;
     return Column(
       children: [
         SizedBox(
-          height: 170.h,
+          // fl_chart paints the pie at its radii whatever box it is given, so
+          // the box has to be the pie's own diameter - a shorter one let the
+          // ring spill over the card's description and the legend.
+          height: 2 * (holeRadius + ringRadius),
           child: PieChart(
             PieChartData(
               sectionsSpace: 2,
-              centerSpaceRadius: isDonut ? 46.r : 0,
+              centerSpaceRadius: holeRadius,
               sections: [
                 for (var i = 0; i < series.values.length; i++)
                   PieChartSectionData(
                     value: series.values[i],
                     color: StatisticsPalette.colorAt(i),
-                    radius: 58.r,
-                    title: total == 0
+                    radius: ringRadius,
+                    // A sliver too thin for its label would print it over
+                    // the next slice; the legend below still has the value.
+                    title: total == 0 || series.values[i] / total < 0.06
                         ? ''
                         : '${(series.values[i] / total * 100).round()}%',
                     titleStyle: TextStyle(

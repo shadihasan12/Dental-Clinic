@@ -45,13 +45,23 @@ class DioConsumer implements ApiConsumer {
       _client.interceptors.add(_loggingInterceptor);
     }
 
-    // Only bypass certificates in debug mode
-    if (kDebugMode && !kIsWeb) {
+    if (!kIsWeb) {
       (_client.httpClientAdapter as IOHttpClientAdapter).createHttpClient =
           () {
-            final client = HttpClient();
-            client.badCertificateCallback =
-                (X509Certificate cert, String host, int port) => true;
+            final client = HttpClient()
+              // The API closes an idle keep-alive connection after 5s
+              // (`Keep-Alive: timeout=5`), while HttpClient keeps one for
+              // reuse for 15s by default. A request sent in that gap goes
+              // out on a socket the server has already closed and fails with
+              // "Connection closed before full header was received" - which
+              // the app reported as "No internet connection" at random.
+              // Dropping idle sockets first means a request never finds one.
+              ..idleTimeout = const Duration(seconds: 3);
+            // Only bypass certificates in debug mode
+            if (kDebugMode) {
+              client.badCertificateCallback =
+                  (X509Certificate cert, String host, int port) => true;
+            }
             return client;
           };
     }

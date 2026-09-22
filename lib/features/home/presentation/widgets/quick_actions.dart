@@ -134,31 +134,30 @@ class _ActionTileState extends State<_ActionTile> {
               width: _down ? 1.5 : 1,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // Icon above the label rather than beside it: side by side, a third
+          // of a phone left "Appointment" room only at a smaller size than its
+          // neighbours, and the row of tiles read as three different fonts.
+          // Stacked, each label gets the tile's full width.
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               // No tone: IconTile falls back to the brand hue, the same
               // tinted tile the settings rows and every other list use.
               IconTile(icon: a.icon, size: 30.w),
-              SizedBox(width: 7.w),
-              // Scaled down rather than truncated when the word is long: a
-              // third of a phone leaves about five characters at this size,
-              // and "Appoint…" names nothing. Arabic - which is what most of
-              // these users read - fits at full size either way.
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    a.label,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontFamily: FontHelper.fontFamily(context),
-                      fontSize: 12.5.sp,
-                      height: 1.2,
-                      fontWeight: FontWeight.w600,
-                      color: t.ink,
-                    ),
+              SizedBox(height: 6.h),
+              // Still scaled down rather than truncated as a last resort, for
+              // a longer translation on a narrow phone.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  a.label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 12.5.sp,
+                    height: 1.2,
+                    fontWeight: FontWeight.w600,
+                    color: t.ink,
                   ),
                 ),
               ),

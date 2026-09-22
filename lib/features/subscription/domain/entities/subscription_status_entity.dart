@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
+
 /// Subscription status shown on the home card.
 ///
 /// Mirrors the `/subscriptions/status` response.
@@ -30,8 +32,7 @@ class SubscriptionStatusEntity {
   int get daysRemaining {
     if (remainingDays != null) return remainingDays!;
     if (endsAt == null) return 0;
-    final diff = endsAt!.difference(DateTime.now()).inDays;
-    return diff > 0 ? diff : 0;
+    return calendarDaysUntil(endsAt!);
   }
 
   bool get isActive => status.toUpperCase() == 'ACTIVE';

@@ -71,15 +71,11 @@ class UserSubscriptionEntity with _$UserSubscriptionEntity {
   /// Days remaining in trial
   int get trialDaysRemaining {
     if (trialEndDate == null) return 0;
-    final remaining = trialEndDate!.difference(DateTime.now()).inDays;
-    return remaining > 0 ? remaining : 0;
+    return calendarDaysUntil(trialEndDate!);
   }
 
   /// Days until renewal/expiry
-  int get daysUntilRenewal {
-    final remaining = currentPeriodEnd.difference(DateTime.now()).inDays;
-    return remaining > 0 ? remaining : 0;
-  }
+  int get daysUntilRenewal => calendarDaysUntil(currentPeriodEnd);
 
   /// Check if near expiry (7 days or less)
   bool get isNearExpiry => daysUntilRenewal <= 7 && daysUntilRenewal > 0;
@@ -121,4 +117,19 @@ class TrialConfig {
       autoRenew: false,
     );
   }
+}
+
+/// Whole calendar days from today to [end]'s date, never negative.
+///
+/// Not `end.difference(now).inDays`: that truncates, so a trial ending at
+/// this time of day 30 days out reads 29 from the first minute - while the
+/// server's own `remaining_days`, shown on other screens, says 30. Dates are
+/// compared as UTC midnights so a DST change cannot shave off an hour.
+int calendarDaysUntil(DateTime end) {
+  final now = DateTime.now();
+  final e = end.toLocal();
+  final days = DateTime.utc(e.year, e.month, e.day)
+      .difference(DateTime.utc(now.year, now.month, now.day))
+      .inDays;
+  return days > 0 ? days : 0;
 }

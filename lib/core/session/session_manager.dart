@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -52,13 +54,6 @@ class SessionManager {
       await _tokenStorage.clearAuthData();
       await _userStorage.clear();
 
-      // Best-effort — a dead push token must never block the redirect.
-      try {
-        await getIt<NotificationService>().onLogout();
-      } catch (_) {
-        /* ignore */
-      }
-
       // Releases the guard itself, once the navigation has run.
       _redirectToLogin(expired: expired);
     } catch (_) {
@@ -68,7 +63,24 @@ class SessionManager {
       _isEndingSession = false;
       rethrow;
     }
+
+    unawaited(_cleanUpPush());
   }
+
+  /// Best-effort, and deliberately *after* the redirect is scheduled rather
+  /// than before it. On iOS, FCM's unsubscribe/deleteToken can stall
+  /// indefinitely while there is no APNs token (simulator, or before APNs
+  /// answers) - a try/catch only survives a throw, not a hang, and awaiting
+  /// it here left the user on the old screen with the guard latched shut.
+  Future<void> _cleanUpPush() async {
+    try {
+      await getIt<NotificationService>().onLogout().timeout(_pushCleanupLimit);
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  static const Duration _pushCleanupLimit = Duration(seconds: 10);
 
   void _redirectToLogin({required bool expired}) {
     // Navigation may be requested from an interceptor mid-frame, so defer it.

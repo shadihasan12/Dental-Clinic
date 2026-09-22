@@ -398,9 +398,12 @@ class ValueTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Two lines, not one: tiles sit two or three to a row, and a label
+          // like "Appointments cancelled" cut to "APPOINTMENTS…" no longer
+          // says what the number counts.
           Text(
             label.toUpperCase(),
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 9.5.sp,
@@ -414,7 +417,7 @@ class ValueTile extends StatelessWidget {
           SizedBox(height: 2.h),
           Text(
             value,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: valueSize ?? 15.sp,

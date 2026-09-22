@@ -182,6 +182,26 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     });
   }
 
+  /// The API lists today's slots from opening time, including ones that have
+  /// already started. Offering 09:00 at two in the afternoon only invites a
+  /// booking in the past, so those are dropped here. VIP keeps them: it is the
+  /// switch that bypasses the schedule and "shows every slot".
+  List<String> _withoutPastSlots(List<String> slots) {
+    final now = DateTime.now();
+    final d = _selectedDate;
+    if (d.year != now.year || d.month != now.month || d.day != now.day) {
+      return slots;
+    }
+    final nowMinutes = now.hour * 60 + now.minute;
+    return slots.where((slot) {
+      final parts = slot.split(':');
+      final h = int.tryParse(parts.first);
+      final m = parts.length > 1 ? int.tryParse(parts[1]) : 0;
+      if (h == null || m == null) return true;
+      return h * 60 + m > nowMinutes;
+    }).toList();
+  }
+
   Future<void> _loadAvailableSlots() async {
     // Slots depend on the doctor — bail until one is picked.
     if (_selectedDoctor == null) {
@@ -227,8 +247,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return;
     }
 
-    final slots = result.getOrElse(() => const []);
-    if (slots.isNotEmpty) {
+    final serverSlots = result.getOrElse(() => const []);
+    final slots = _isVip ? serverSlots : _withoutPastSlots(serverSlots);
+    // A day whose slots have all gone by is not a day the doctor does not
+    // work - skip the working-hours diagnosis below and just show none.
+    if (slots.isNotEmpty || serverSlots.isNotEmpty) {
       setState(() {
         _availableSlots = slots;
         _isSlotsLoading = false;

@@ -445,13 +445,18 @@ class _ImpactTiles extends StatelessWidget {
         ),
     ];
 
-    return Row(
-      children: [
-        for (var i = 0; i < tiles.length; i++) ...[
-          if (i > 0) SizedBox(width: 8.w),
-          Expanded(child: tiles[i]),
+    // Labels may wrap to two lines, so the tiles are stretched to the
+    // tallest one; IntrinsicHeight is what makes `stretch` legal in a Row.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < tiles.length; i++) ...[
+            if (i > 0) SizedBox(width: 8.w),
+            Expanded(child: tiles[i]),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../../domain/entities/statistic_result.dart';
 import '../statistics_palette.dart';
@@ -15,8 +16,11 @@ import 'chart_support.dart';
 // — once the real payloads are confirmed these can be made richer.
 // ─────────────────────────────────────────────────────────────────────
 
-/// Peak booking hours/days. Renders a coloured day×hour grid when the
-/// payload exposes a `matrix`, otherwise a graceful message.
+/// Peak booking hours/days: a coloured day×hour grid.
+///
+/// The API sends sparse cells - `[{day, hour, count}]`, day 1 = Sunday per
+/// `meta.day_mapping` - which are spread into a dense grid here. A payload
+/// that already carries a `matrix` is still accepted as-is.
 class HeatmapView extends StatelessWidget {
   const HeatmapView({super.key, required this.result});
 
@@ -26,8 +30,10 @@ class HeatmapView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final map = result.dataMap;
-    final rawMatrix = map['matrix'] ?? map['grid'] ?? map['values'];
-    final matrix = _toMatrix(rawMatrix);
+    final cells = _fromCells(result.dataList, Localizations.localeOf(context));
+    final matrix =
+        cells?.matrix ??
+        _toMatrix(map['matrix'] ?? map['grid'] ?? map['values']);
 
     if (matrix.isEmpty) {
       return ChartMessage(
@@ -36,8 +42,12 @@ class HeatmapView extends StatelessWidget {
       );
     }
 
-    final xLabels = _toLabels(map['x_labels'] ?? map['hours'] ?? map['columns']);
-    final yLabels = _toLabels(map['y_labels'] ?? map['days'] ?? map['rows']);
+    final xLabels =
+        cells?.hourLabels ??
+        _toLabels(map['x_labels'] ?? map['hours'] ?? map['columns']);
+    final yLabels =
+        cells?.dayLabels ??
+        _toLabels(map['y_labels'] ?? map['days'] ?? map['rows']);
     var maxValue = 0.0;
     for (final row in matrix) {
       for (final v in row) {
@@ -60,8 +70,7 @@ class HeatmapView extends StatelessWidget {
                     width: 44.w,
                     child: Text(
                       r < yLabels.length ? yLabels[r] : 'Row ${r + 1}',
-                      style:
-                          TextStyle(fontSize: 9.sp, color: c.textTertiary),
+                      style: TextStyle(fontSize: 9.sp, color: c.textTertiary),
                     ),
                   ),
                   for (final value in matrix[r])
@@ -70,8 +79,9 @@ class HeatmapView extends StatelessWidget {
                       height: 26.w,
                       margin: EdgeInsets.all(2.w),
                       decoration: BoxDecoration(
-                        color: ColorManager.primary
-                            .withValues(alpha: 0.12 + (value / maxValue) * 0.78),
+                        color: ColorManager.primary.withValues(
+                          alpha: 0.12 + (value / maxValue) * 0.78,
+                        ),
                         borderRadius: BorderRadius.circular(4.r),
                       ),
                     ),
@@ -89,8 +99,7 @@ class HeatmapView extends StatelessWidget {
                       child: Text(
                         label,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 8.sp, color: c.textTertiary),
+                        style: TextStyle(fontSize: 8.sp, color: c.textTertiary),
                       ),
                     ),
                 ],
@@ -99,6 +108,51 @@ class HeatmapView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Spreads `[{day, hour, count}]` cells into seven day rows (Sunday first,
+  /// matching the API's day numbering) over the span of hours that actually
+  /// have bookings. Null when the payload is not in that shape.
+  static ({
+    List<List<double>> matrix,
+    List<String> dayLabels,
+    List<String> hourLabels,
+  })?
+  _fromCells(List<dynamic> raw, Locale locale) {
+    final cells = raw
+        .whereType<Map>()
+        .where((m) => m['day'] != null && m['hour'] != null)
+        .toList();
+    if (cells.isEmpty) return null;
+
+    int toInt(Object? v) => v is num ? v.toInt() : int.tryParse('$v') ?? 0;
+    var minHour = 23, maxHour = 0;
+    for (final c in cells) {
+      final h = toInt(c['hour']).clamp(0, 23);
+      minHour = math.min(minHour, h);
+      maxHour = math.max(maxHour, h);
+    }
+
+    final matrix = List.generate(
+      7,
+      (_) => List<double>.filled(maxHour - minHour + 1, 0),
+    );
+    for (final c in cells) {
+      final day = toInt(c['day']);
+      final hour = toInt(c['hour']).clamp(0, 23);
+      if (day < 1 || day > 7) continue;
+      matrix[day - 1][hour - minHour] += LabelledSeries.toDouble(c['count']);
+    }
+
+    // 2023-01-01 was a Sunday - day N of the API is that date plus N-1 days.
+    final dayFormat = DateFormat.E(locale.toString());
+    final dayLabels = [
+      for (var d = 0; d < 7; d++) dayFormat.format(DateTime(2023, 1, 1 + d)),
+    ];
+    final hourLabels = [
+      for (var h = minHour; h <= maxHour; h++) h.toString().padLeft(2, '0'),
+    ];
+    return (matrix: matrix, dayLabels: dayLabels, hourLabels: hourLabels);
   }
 
   static List<List<double>> _toMatrix(Object? raw) {
@@ -173,8 +227,9 @@ class DentalHeatmapView extends StatelessWidget {
                       value: e.count / maxCount,
                       minHeight: 14.h,
                       backgroundColor: c.borderLight,
-                      valueColor:
-                          const AlwaysStoppedAnimation(ColorManager.primary),
+                      valueColor: const AlwaysStoppedAnimation(
+                        ColorManager.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -195,11 +250,12 @@ class DentalHeatmapView extends StatelessWidget {
     );
   }
 
-  static List<({String tooth, double count})> _entries(
-    StatisticResult result,
-  ) {
-    // Shape A: `{labels: [...], values: [...]}`.
-    final series = LabelledSeries.tryParse(result.data);
+  static List<({String tooth, double count})> _entries(StatisticResult result) {
+    // Shape A: `{labels: [...], values: [...]}`. Only for a map - the
+    // generic parser also reads row lists, and would label these rows by the
+    // tooth's long `name` instead of its universal code.
+    final series =
+        result.data is Map ? LabelledSeries.tryParse(result.data) : null;
     if (series != null && !series.isEmpty) {
       return [
         for (var i = 0; i < series.labels.length; i++)
@@ -214,12 +270,13 @@ class DentalHeatmapView extends StatelessWidget {
       for (final entry in raw)
         if (entry is Map)
           (
-            tooth: (entry['tooth'] ??
-                    entry['code'] ??
-                    entry['universal_code'] ??
-                    entry['label'] ??
-                    '—')
-                .toString(),
+            tooth:
+                (entry['tooth'] ??
+                        entry['code'] ??
+                        entry['universal_code'] ??
+                        entry['label'] ??
+                        '—')
+                    .toString(),
             count: LabelledSeries.toDouble(
               entry['count'] ?? entry['value'] ?? entry['frequency'] ?? 0,
             ),
@@ -340,8 +397,9 @@ class _DemographicSection extends StatelessWidget {
                       value: total == 0 ? 0 : entries[keys[i]]! / total,
                       minHeight: 14.h,
                       backgroundColor: c.borderLight,
-                      valueColor:
-                          AlwaysStoppedAnimation(StatisticsPalette.colorAt(i)),
+                      valueColor: AlwaysStoppedAnimation(
+                        StatisticsPalette.colorAt(i),
+                      ),
                     ),
                   ),
                 ),

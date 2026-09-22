@@ -179,7 +179,8 @@ class KpiWithListView extends StatelessWidget {
     StatisticResult result,
   ) {
     // The list can live under several keys depending on the metric.
-    Object? raw = result.dataMap['items'] ??
+    Object? raw = result.dataMap['debtors'] ??
+        result.dataMap['items'] ??
         result.dataMap['list'] ??
         result.dataMap['balances'] ??
         result.dataMap['patients'];
@@ -197,7 +198,11 @@ class KpiWithListView extends StatelessWidget {
                     '—')
                 .toString(),
             amount: LabelledSeries.toDouble(
-              entry['amount'] ?? entry['balance'] ?? entry['value'] ?? 0,
+              entry['remaining'] ??
+                  entry['amount'] ??
+                  entry['balance'] ??
+                  entry['value'] ??
+                  0,
             ),
           ),
     ];
@@ -213,8 +218,15 @@ class _KpiValues {
   final double? changePercent;
 
   factory _KpiValues.from(StatisticResult result) {
+    // Money KPIs with a list attached (outstanding balances) carry their
+    // headline per currency under `totals`; the first is the main currency.
+    final totals = result.dataMap['totals'];
+    final firstTotal = totals is List && totals.isNotEmpty && totals.first is Map
+        ? Map<String, dynamic>.from(totals.first as Map)
+        : const <String, dynamic>{};
     final sources = <Map<String, dynamic>>[
       result.dataMap,
+      firstTotal,
       result.primaryRow,
       result.meta,
     ];

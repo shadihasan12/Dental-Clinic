@@ -65,6 +65,31 @@ class DualLineChart extends StatelessWidget {
     List<String> labels,
     List<({String name, List<double> values})> series
   })? _parse(Object? data) {
+    // The API's shape: one block per currency, each with its own timeline -
+    // `[{currency, timeline: [{period, revenue, expenses}]}]`. The first
+    // block is the clinic's main currency; mixing currencies on one axis
+    // would draw a meaningless line.
+    if (data is List) {
+      final block = data.whereType<Map>().firstOrNull;
+      final timeline = block?['timeline'];
+      if (timeline is! List) return null;
+      final points = timeline.whereType<Map>().toList();
+      if (points.isEmpty) return null;
+      final keys = [
+        for (final k in points.first.keys)
+          if (k != 'period' && points.first[k] is num) k.toString(),
+      ];
+      return (
+        labels: [for (final p in points) (p['period'] ?? '').toString()],
+        series: [
+          for (final k in keys)
+            (
+              name: LabelledSeries.prettyLabel(k),
+              values: [for (final p in points) LabelledSeries.toDouble(p[k])],
+            ),
+        ],
+      );
+    }
     if (data is! Map) return null;
     final rawLabels = data['labels'];
     if (rawLabels is! List) return null;
@@ -177,7 +202,9 @@ class _LineChartBody extends StatelessWidget {
                     curveSmoothness: 0.3,
                     color: StatisticsPalette.colorAt(s),
                     barWidth: 3,
-                    dotData: const FlDotData(show: false),
+                    // A line needs two points; a period with only one (a new
+                    // clinic's first month) drew nothing at all without a dot.
+                    dotData: FlDotData(show: series[s].values.length == 1),
                     belowBarData: BarAreaData(
                       show: filled,
                       gradient: LinearGradient(

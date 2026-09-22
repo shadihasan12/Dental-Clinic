@@ -5,10 +5,16 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// A `{labels: [...], values: [...]}` payload — the shape donut, pie,
-/// bar, horizontal-bar and area metrics all share. [tryParse] returns
-/// null when the data isn't this shape, so the caller can fall back to
-/// an empty state instead of crashing on a surprising payload.
+/// Labels and values for the donut, pie, bar, horizontal-bar and area
+/// metrics. [tryParse] reads either shape the API uses:
+///
+///  * `{labels: [...], values: [...]}` (appointment status breakdown), or
+///  * a list of rows - `[{name, count}]`, `[{doctor_name, count}]`,
+///    `[{status, count}]`, `[{period, count}]`, or money per currency as
+///    `[{name, currencies: [{currency, amount}]}]` / `revenues: [...]`.
+///
+/// It returns null for anything else, so the caller can fall back to an
+/// empty state instead of crashing on a surprising payload.
 class LabelledSeries {
   const LabelledSeries(this.labels, this.values);
 
@@ -22,6 +28,7 @@ class LabelledSeries {
       values.isEmpty ? 0 : values.reduce((a, b) => math.max(a, b));
 
   static LabelledSeries? tryParse(Object? data) {
+    if (data is List) return _fromRows(data);
     if (data is! Map) return null;
     final rawLabels = data['labels'];
     final rawValues = data['values'];
@@ -30,6 +37,73 @@ class LabelledSeries {
       for (final l in rawLabels) (l ?? '').toString(),
     ];
     final values = [for (final v in rawValues) toDouble(v)];
+    return LabelledSeries(labels, values);
+  }
+
+  static const _labelKeys = [
+    'name',
+    'doctor_name',
+    'patient_name',
+    'status',
+    'period',
+    'label',
+    'title',
+    'code',
+  ];
+  static const _valueKeys = ['count', 'value', 'amount', 'total'];
+  static const _moneyListKeys = ['currencies', 'revenues', 'amounts'];
+
+  static LabelledSeries? _fromRows(List<dynamic> rows) {
+    final maps = rows.whereType<Map>().toList();
+    if (maps.isEmpty) return rows.isEmpty ? const LabelledSeries([], []) : null;
+
+    // Per-currency money rows are summed in one currency only - adding USD
+    // to SYP would be meaningless. The first currency in the payload is the
+    // clinic's main one.
+    String? currency;
+    for (final m in maps) {
+      for (final k in _moneyListKeys) {
+        final list = m[k];
+        if (list is List && list.isNotEmpty && list.first is Map) {
+          currency ??= (list.first as Map)['currency']?.toString();
+        }
+      }
+    }
+
+    final labels = <String>[];
+    final values = <double>[];
+    for (final m in maps) {
+      final labelKey = _labelKeys.firstWhere(
+        (k) => m[k] != null,
+        orElse: () => '',
+      );
+      if (labelKey.isEmpty) return null;
+
+      double? value;
+      for (final k in _valueKeys) {
+        if (m[k] != null) {
+          value = toDouble(m[k]);
+          break;
+        }
+      }
+      if (value == null) {
+        for (final k in _moneyListKeys) {
+          final list = m[k];
+          if (list is! List) continue;
+          value = 0;
+          for (final entry in list.whereType<Map>()) {
+            if (currency == null || entry['currency']?.toString() == currency) {
+              value = value! + toDouble(entry['amount'] ?? entry['value']);
+            }
+          }
+          break;
+        }
+      }
+      if (value == null) return null;
+
+      labels.add(m[labelKey].toString());
+      values.add(value);
+    }
     return LabelledSeries(labels, values);
   }
 

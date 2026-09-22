@@ -149,6 +149,10 @@ class _AppointmentsContent extends StatelessWidget {
       return _buildWeekList(context, state.filteredAppointments);
     }
 
+    // In time order, as the week view already is - the API returns a day's
+    // appointments in its own order, which read as 15:00, 19:00, 17:30, 11:00.
+    final dayAppointments = [...state.filteredAppointments]
+      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return ListView.separated(
       padding: EdgeInsets.fromLTRB(
         14.w,
@@ -156,10 +160,10 @@ class _AppointmentsContent extends StatelessWidget {
         14.w,
         DentaNavBar.contentBottomInset(context),
       ),
-      itemCount: state.filteredAppointments.length,
+      itemCount: dayAppointments.length,
       separatorBuilder: (_, i) => SizedBox(height: 8.h),
       itemBuilder: (context, index) =>
-          AppointmentListCard(appointment: state.filteredAppointments[index]),
+          AppointmentListCard(appointment: dayAppointments[index]),
     );
   }
 
