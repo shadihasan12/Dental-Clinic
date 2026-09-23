@@ -9,8 +9,15 @@ class AuthEndpoints {
   /// Query parameters: query, country_code
   static const String locationSearch = '/locations/search';
 
-  /// GET /plans - Fetch available subscription plans
+  /// GET /plans - Fetch available subscription plans. Public: no token and
+  /// no clinic header needed, so it works in every subscription state.
   static const String plans = '/plans';
+
+  /// Query for [plans] that keeps the main plans only. The list also carries
+  /// add-on plans, which the app cannot sell.
+  static const Map<String, dynamic> mainPlansQuery = {
+    'filters[type][eq]': 'MAIN',
+  };
 
   /// POST /auth/register - Register new user with clinic
   static const String register = '/auth/register';

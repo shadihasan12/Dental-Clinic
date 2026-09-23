@@ -13,10 +13,28 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
   const factory NetworkExceptions.requestCancelled() = RequestCancelled;
   const factory NetworkExceptions.canceledByUser() = CanceledByUser;
 
-  const factory NetworkExceptions.badRequest(String reason) = BadRequest;
+  /// [fieldErrors] is the API's `error_list` keyed by field, for a form that
+  /// puts each message under its own input. [reason] already carries the
+  /// same messages joined, for everywhere else.
+  const factory NetworkExceptions.badRequest(
+    String reason, [
+    Map<String, String>? fieldErrors,
+  ]) = BadRequest;
   const factory NetworkExceptions.unauthorizedRequest(String reason) =
       UnauthorizedRequest;
   const factory NetworkExceptions.forbidden(String reason) = Forbidden;
+
+  /// 402: the clinic's subscription does not allow this *right now*.
+  ///
+  /// Unlike a 403 it is recoverable by paying, so it carries what the backend
+  /// says about the subscription - `meta.access_mode` and
+  /// `meta.subscription_status` - for the one handler that routes the user
+  /// to the subscription screen.
+  const factory NetworkExceptions.paymentRequired(
+    String reason, {
+    String? accessMode,
+    String? subscriptionStatus,
+  }) = PaymentRequired;
 
   const factory NetworkExceptions.notFound(String reason) = NotFound;
 
@@ -85,6 +103,28 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
     return fallback;
   }
 
+  static Map<String, dynamic>? _decodeBody(Response? response) {
+    try {
+      final data = response?.data;
+      if (data is Map<String, dynamic>) return data;
+      if (data is String && data.isNotEmpty) {
+        final decoded = jsonDecode(data);
+        if (decoded is Map<String, dynamic>) return decoded;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// `error_list` as field -> message, or null when it is not an object.
+  static Map<String, String>? _extractFieldErrors(Response? response) {
+    final errorList = _decodeBody(response)?['error_list'];
+    if (errorList is! Map<String, dynamic> || errorList.isEmpty) return null;
+    return errorList.map(
+      (key, value) =>
+          MapEntry(key, value is List ? value.join('\n') : value.toString()),
+    );
+  }
+
   static NetworkExceptions handleResponse(Response? response) {
     final int statusCode = response?.statusCode ?? 0;
 
@@ -92,6 +132,15 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       case 400:
         return NetworkExceptions.badRequest(
           _extractMessage(response, 'Bad request'),
+          _extractFieldErrors(response),
+        );
+      case 402:
+        final meta = _decodeBody(response)?['meta'];
+        return NetworkExceptions.paymentRequired(
+          _extractMessage(response, ''),
+          accessMode: meta is Map ? meta['access_mode'] as String? : null,
+          subscriptionStatus:
+              meta is Map ? meta['subscription_status'] as String? : null,
         );
       case 401:
         return NetworkExceptions.unauthorizedRequest(
@@ -223,7 +272,9 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       notFound: (reason) => reason,
       serviceUnavailable: () => l10n.errorServiceUnavailable,
       methodNotAllowed: () => l10n.errorMethodNotAllowed,
-      badRequest: (message) => message,
+      badRequest: (message, _) => message,
+      paymentRequired: (reason, _, _) =>
+          reason.isEmpty ? l10n.subscriptionInactiveMessage : reason,
       unauthorizedRequest: (error) => error,
       unprocessableEntity: (error) => error,
       unexpectedError: () => l10n.errorUnexpected,
@@ -265,8 +316,11 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       methodNotAllowed: () {
         errorMessage = 'Method Not Allowed';
       },
-      badRequest: (String message) {
+      badRequest: (String message, _) {
         errorMessage = message;
+      },
+      paymentRequired: (String reason, _, _) {
+        errorMessage = reason.isEmpty ? 'Subscription required' : reason;
       },
       unauthorizedRequest: (String error) {
         errorMessage = error;

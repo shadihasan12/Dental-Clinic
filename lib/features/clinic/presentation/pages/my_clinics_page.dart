@@ -11,6 +11,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/use_cases/switch_active_clinic_use_case.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/my_clinics_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/widgets/invitation_card.dart';
@@ -365,19 +366,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
     ClinicMembershipEntity membership,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    // The auth interceptor reads from TokenStorage on every request, so
-    // saving here is enough to flip every subsequent call to the new
-    // clinic. The user storage carries the display name for the home
-    // header. profileUpdateNotifier rebuilds the home page.
-    await getIt<TokenStorage>().saveClinicId(membership.clinicId);
-    await getIt<UserStorage>().saveClinicName(membership.clinicName);
-    await getIt<UserStorage>().saveUserRole(membership.role.name);
-    await getIt<UserStorage>().saveIsClinicOwner(membership.isOwner);
-    // profileUpdated rebuilds widgets that read the cached clinic/role
-    // (e.g. the home header); clinicChanged tells the root page to refetch
-    // permissions and remount every tab so each clinic-scoped API reloads.
-    UserStorage.notifyProfileUpdated();
-    UserStorage.notifyClinicChanged();
+    await getIt<SwitchActiveClinicUseCase>().activate(membership);
 
     if (!context.mounted) return;
 

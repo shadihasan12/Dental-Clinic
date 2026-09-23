@@ -1,61 +1,86 @@
 import 'dart:async';
 
-import 'package:dental_clinic_app/features/subscription/domain/entities/user_subscription_entity.dart';
+import 'package:dental_clinic_app/services/subscription_guard/access_mode.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
-/// Single source of truth for "is this clinic allowed to use premium
-/// features right now?". Other parts of the app (FABs, write actions)
-/// query this gate before performing the action.
+/// A 402 the server just sent, for the one handler that reacts to it.
+class PaymentRequiredNotice {
+  const PaymentRequiredNotice({
+    required this.message,
+    required this.mode,
+    this.subscriptionStatus,
+  });
+
+  /// Already translated by the server, written to be shown as it is.
+  final String message;
+  final AccessMode mode;
+  final String? subscriptionStatus;
+}
+
+/// Single source of truth for "what may this clinic do right now?".
 ///
-/// The gate starts populated with a mock trial subscription so dev builds
-/// behave exactly like today (write actions allowed). Once the real
-/// subscription is loaded — whether from the [SubscriptionBloc] or a future
-/// remote sync — call [update] with the entity and the gate flips to that.
+/// Holds the clinic's [AccessMode], fed from three places: the permissions
+/// call (`meta.access_mode`), the status call, and every 402 the
+/// [AuthInterceptor] sees. The last is why this cannot wait for the next
+/// permissions call - a 402 is the server saying the cached mode is stale.
 ///
-/// Why a separate service rather than reading the bloc directly? The bloc
-/// is registered as a factory and lives at the page level, so different
-/// screens see different instances. The gate is a process-wide singleton
-/// so any code path can ask `isActive` without needing a BlocProvider in
-/// scope.
+/// A process-wide singleton with no dependencies, so the interceptor can
+/// write to it without a dependency cycle through the API client.
 @lazySingleton
 class SubscriptionGuard {
-  SubscriptionGuard() {
-    // Default to a fresh trial — matches the mocked behavior of
-    // SubscriptionBloc._onLoadSubscription. Replace with `null` (or a
-    // remote check) once real subscriptions are live.
-    _current = TrialConfig.createTrial(userId: 'mock_user');
-    _controller.add(_current);
-  }
+  /// The current mode. Listen to it to rebuild on a change.
+  final ValueNotifier<AccessMode> mode = ValueNotifier(AccessMode.unknown);
 
-  UserSubscriptionEntity? _current;
-  final StreamController<UserSubscriptionEntity?> _controller =
+  /// The raw status that came with [mode], e.g. `EXPIRED`.
+  String? subscriptionStatus;
+
+  /// The server's own sentence from the last 402, shown on the lock screen.
+  String? lastMessage;
+
+  final StreamController<PaymentRequiredNotice> _notices =
       StreamController.broadcast();
 
-  UserSubscriptionEntity? get current => _current;
+  /// One event per 402 received.
+  Stream<PaymentRequiredNotice> get notices => _notices.stream;
 
-  Stream<UserSubscriptionEntity?> get stream => _controller.stream;
+  AccessMode get current => mode.value;
 
-  /// True if write/premium actions should be allowed right now.
-  bool get isActive => _current?.isValid ?? false;
+  /// True if create/edit/delete actions should be offered right now.
+  bool get isActive => current.canWrite;
 
-  /// Inverse convenience for read-only banners.
-  bool get isReadOnly => !isActive;
+  bool get isReadOnly => current == AccessMode.readOnly;
 
-  /// Call after every load/transition of the user's subscription.
-  void update(UserSubscriptionEntity? subscription) {
-    _current = subscription;
-    _controller.add(subscription);
+  bool get isLocked => current.isLocked;
+
+  /// Records what the server said. A null [accessMode] leaves the mode as it
+  /// is - not every response carries one.
+  void update({String? accessMode, String? status}) {
+    if (accessMode == null) return;
+    subscriptionStatus = status ?? subscriptionStatus;
+    mode.value = AccessMode.fromApi(accessMode);
   }
 
-  /// Debug-only: simulate an expired subscription so the read-only path
-  /// can be demoed without touching the system clock.
-  void debugForceExpired() {
-    final now = DateTime.now();
-    _current = (_current ?? TrialConfig.createTrial(userId: 'mock_user'))
-        .copyWith(
-      status: SubscriptionStatus.expired,
-      currentPeriodEnd: now.subtract(const Duration(days: 1)),
-    );
-    _controller.add(_current);
+  /// Called by the interceptor on every 402.
+  void reportPaymentRequired({
+    required String message,
+    String? accessMode,
+    String? status,
+  }) {
+    update(accessMode: accessMode, status: status);
+    if (message.isNotEmpty) lastMessage = message;
+    _notices.add(PaymentRequiredNotice(
+      message: message,
+      mode: current,
+      subscriptionStatus: status ?? subscriptionStatus,
+    ));
+  }
+
+  /// Forgets the previous clinic's mode on a clinic switch or a logout, so
+  /// one clinic's lock never leaks onto another.
+  void reset() {
+    subscriptionStatus = null;
+    lastMessage = null;
+    mode.value = AccessMode.unknown;
   }
 }

@@ -3,13 +3,14 @@ import 'package:dental_clinic_app/features/appointments/data/endpoints/appointme
 import 'package:dental_clinic_app/features/appointments/data/models/appointment_model.dart';
 import 'package:dental_clinic_app/features/appointments/data/models/clinic_doctor_model.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/available_slots_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class AppointmentRemoteDataSource {
   Future<List<AppointmentModel>> getAllAppointments(GetAppointmentsParams params);
-  Future<List<String>> getAvailableSlots(
+  Future<AvailableSlotsEntity> getAvailableSlots(
     DateTime date,
     int durationMinutes, {
     String? doctorId,
@@ -47,7 +48,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   }
 
   @override
-  Future<List<String>> getAvailableSlots(
+  Future<AvailableSlotsEntity> getAvailableSlots(
     DateTime date,
     int durationMinutes, {
     String? doctorId,
@@ -65,11 +66,17 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
     );
 
     final dataList = response['data'] as List;
-    return dataList.map((e) {
-      if (e is String) return e;
-      final map = e as Map<String, dynamic>;
-      return (map['start_time'] ?? map['start'] ?? map['time']).toString();
-    }).toList();
+    final meta = response['meta'];
+    return AvailableSlotsEntity(
+      slots: dataList.map((e) {
+        if (e is String) return e;
+        final map = e as Map<String, dynamic>;
+        return (map['start_time'] ?? map['start'] ?? map['time']).toString();
+      }).toList(),
+      hoursSource: SlotsHoursSource.fromApi(
+        meta is Map ? meta['hours_source'] as String? : null,
+      ),
+    );
   }
 
   @override

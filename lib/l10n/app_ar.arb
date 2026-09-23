@@ -1348,5 +1348,243 @@
       }
     }
   },
-  "workingHoursStepRequired": "ساعات العمل مطلوبة لإكمال إضافة هذا المستخدم."
+  "workingHoursStepRequired": "ساعات العمل مطلوبة لإكمال إضافة هذا المستخدم.",
+  "ok": "حسناً",
+  "remove": "إزالة",
+  "uploading": "جارٍ الرفع…",
+  "contactSupport": "تواصل مع الدعم",
+  "maxCharacters": "{count} حرفاً كحد أقصى",
+  "@maxCharacters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionPageTitle": "الاشتراك والفواتير",
+  "subscriptionHistoryTitle": "سجل الاشتراك",
+  "subscriptionRequiredTitle": "الاشتراك مطلوب",
+  "subscriptionInactiveTitle": "الاشتراك غير فعّال",
+  "subscriptionInactiveMessage": "اشتراك هذه العيادة لا يسمح بذلك حالياً.",
+  "subscriptionAskAdmin": "اطلب من مدير العيادة تجديد الاشتراك.",
+  "goToSubscription": "الانتقال إلى الاشتراك",
+  "viewSubscription": "عرض الاشتراك",
+  "billingLoadFailed": "تعذّر التحميل",
+  "readOnlyBanner": "انتهى الاشتراك: يمكنك عرض بياناتك دون تعديلها.",
+  "readOnlyBannerNonAdmin": "انتهى الاشتراك: البيانات للعرض فقط إلى أن يجدّد مدير العيادة الاشتراك.",
+  "subStatusTrialing": "تجربة مجانية",
+  "subStatusActive": "فعّال",
+  "subStatusGrace": "فترة سماح",
+  "subStatusExpired": "منتهٍ",
+  "subStatusPending": "بانتظار الدفع",
+  "subStatusCanceled": "ملغى",
+  "subStatusNone": "لا يوجد اشتراك",
+  "subBodyExpired": "انتهى اشتراكك. ما زال بإمكانك عرض بياناتك؛ اختر باقة وادفع لمتابعة العمل.",
+  "subBodyPending": "بانتظار الدفعة الأولى. إلى أن يتم تأكيدها، تتوفر صفحتا الاشتراك والدفعات فقط.",
+  "subBodyCanceled": "تم إلغاء هذا الاشتراك. اختر باقة للبدء من جديد.",
+  "subBodyGrace": "انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح. التجديد من التطبيق غير متاح بعد، يرجى التواصل مع الدعم.",
+  "subBodyNone": "لا يوجد اشتراك لهذه العيادة. يرجى التواصل مع الدعم.",
+  "subRenewNotAvailable": "تجديد الاشتراك أو تغيير الباقة غير متاح من التطبيق حالياً. يرجى التواصل مع الدعم.",
+  "renewalFromAppTitle": "تجديد الباقة",
+  "trialEndsLabel": "تنتهي التجربة",
+  "choosePlanAction": "اختر باقة",
+  "usageTitle": "الاستخدام",
+  "seatsLabel": "الأعضاء",
+  "usageOf": "{used} من {limit}",
+  "@usageOf": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "seatsFullMessage": "لا توجد مقاعد متاحة: باقتك تسمح بـ {count} عضو/أعضاء وجميعها مشغولة. قم بترقية الباقة أو أزل عضواً أولاً.",
+  "@seatsFullMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "seatsFullMessageGeneric": "لا توجد مقاعد متاحة في باقتك. قم بترقية الباقة أو أزل عضواً أولاً.",
+  "walletLabel": "رصيد المحفظة",
+  "walletHint": "الرصيد المتبقي بعد تسديد الفواتير",
+  "pendingPaymentsTitle": "حوالة قيد المراجعة",
+  "pendingPaymentsBody": "{count, plural, =1{استلمنا بلاغ الحوالة ونقوم بمراجعته.} other{استلمنا {count} بلاغات حوالات ونقوم بمراجعتها.}} يتحدّث اشتراكك بعد التأكيد، فلا حاجة لإرسال المبلغ مرة أخرى.",
+  "@pendingPaymentsBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openInvoiceTitle": "فاتورة للدفع",
+  "openInvoiceNumber": "فتح الفاتورة {number}",
+  "@openInvoiceNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "amountToTransfer": "المبلغ المطلوب تحويله",
+  "amountToTransferFor": "المبلغ المطلوب تحويله للفاتورة {number}",
+  "@amountToTransferFor": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "viewInvoice": "عرض الفاتورة",
+  "howToPayAction": "طريقة الدفع",
+  "reportTransferAction": "الإبلاغ عن حوالة",
+  "reportedTransfersTitle": "الحوالات المُبلَّغ عنها",
+  "reportedTransfersHint": "الحوالات التي أبلغتنا عنها وحالة مراجعتها",
+  "invoiceStatusOpen": "غير مدفوعة",
+  "invoiceStatusOverdue": "متأخرة",
+  "invoiceStatusVoid": "ملغاة",
+  "invoiceStatusOther": "أخرى",
+  "invoiceCreditNote": "رصيد دائن",
+  "invoiceCreditNoteBody": "أُعيد إلى محفظتك",
+  "invoiceLinesTitle": "التفاصيل",
+  "invoicePaidSoFar": "المدفوع حتى الآن",
+  "invoiceRemaining": "المتبقي",
+  "invoicePeriod": "الفترة",
+  "invoiceAmountLabel": "المبلغ",
+  "invoiceOverdueSince": "متأخرة منذ {date}",
+  "@invoiceOverdueSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicePaidOnDate": "دُفعت بتاريخ {date}",
+  "@invoicePaidOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "invoiceVoidedOn": "أُلغيت بتاريخ {date}",
+  "@invoiceVoidedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "invoicePaymentExplainer": "أرسل المبلغ بحوالة بنكية أو عبر المحفظة، ثم أبلغ عن الحوالة هنا. يبدأ اشتراكك بعد أن يؤكدها فريقنا.",
+  "invoiceRaisedTitle": "تم إصدار الفاتورة",
+  "billingTotalUsd": "الإجمالي (دولار)",
+  "billingMonthsCount": "{count, plural, =1{شهر واحد} =2{شهران} few{{count} أشهر} other{{count} شهراً}}",
+  "@billingMonthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingYearsCount": "{count, plural, =1{سنة واحدة} =2{سنتان} few{{count} سنوات} other{{count} سنة}}",
+  "@billingYearsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingDurationLabel": "مدة الدفع",
+  "seePriceAction": "عرض السعر",
+  "whatsIncluded": "ما الذي تتضمنه",
+  "notInTrial": "غير متاح في التجربة المجانية",
+  "quoteTitle": "السعر",
+  "quotePeriodIfPaidNow": "إذا دُفعت اليوم، تمتد من {start} إلى {end}. تبدأ من يوم تأكيد الدفع.",
+  "@quotePeriodIfPaidNow": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteInvoiceExplainer": "التأكيد يُصدر فاتورة. لا يتغير شيء حتى تُدفع ويؤكد فريقنا الحوالة.",
+  "requestInvoiceAction": "إصدار الفاتورة",
+  "noPaymentMethodsTitle": "لا توجد جهة دفع بعد",
+  "noPaymentMethodsBody": "لم يتم إعداد أي حساب لاستقبال الدفعات بعد. يرجى التواصل مع الدعم.",
+  "partialPaymentHint": "إن أرسلت أقل يبقى الباقي مستحقاً، وإن أرسلت أكثر يُحفظ الفرق رصيداً لك.",
+  "iSentItAction": "أرسلت المبلغ: الإبلاغ عن الحوالة",
+  "reportTransferTitle": "الإبلاغ عن حوالة",
+  "reportTransferExplainer": "سنطابق الحوالة مع حسابنا. قد يستغرق ذلك بضع ساعات، وسيصلك إشعار عند التأكيد.",
+  "paymentDestination": "أُرسلت إلى",
+  "transferDetailsTitle": "تفاصيل الحوالة",
+  "amountSent": "المبلغ المرسل",
+  "bankName": "البنك",
+  "bankNameOptional": "اسم البنك (اختياري)",
+  "transferDate": "تاريخ الإرسال",
+  "receiptsTitle": "الإيصالات",
+  "receiptFormatsHint": "صورة أو ملف PDF لإيصال الحوالة، بحد أقصى 10 ميغابايت لكل ملف.",
+  "receiptUploaded": "تم الرفع",
+  "receiptsNotReady": "انتظر اكتمال رفع الإيصالات، أو أزل ما فشل رفعه.",
+  "receiptUnsupportedTitle": "ملف غير مدعوم",
+  "receiptUnsupportedBody": "يجب أن يكون الإيصال بصيغة JPEG أو PNG أو WEBP أو HEIC أو PDF.",
+  "receiptTooLargeTitle": "الملف كبير جداً",
+  "receiptTooLargeBody": "حجم {name} أكبر من 10 ميغابايت.",
+  "@receiptTooLargeBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "receiptNumber": "إيصال {number}",
+  "@receiptNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "paymentReportedTitle": "تم الإبلاغ عن الحوالة",
+  "paymentReportedBody": "وهي قيد المراجعة الآن.",
+  "paymentStatusPending": "قيد المراجعة",
+  "paymentStatusVerified": "مؤكدة",
+  "paymentStatusRejected": "لم تُقبل",
+  "paymentStatusCancelled": "مسحوبة",
+  "paymentRejectedReason": "السبب: {reason}",
+  "@paymentRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentPendingExplainer": "يقوم فريقنا بمراجعة هذه الحوالة. يتحدّث اشتراكك بعد التأكيد.",
+  "paymentVerifiedExplainer": "تم التأكيد. أُضيف المبلغ إلى محفظتك وطُبّق على فواتيرك.",
+  "paymentRejectedExplainer": "لم تُقبل هذه الحوالة. راجع السبب وأبلغ عنها مجدداً بالتفاصيل الصحيحة.",
+  "paymentCancelledExplainer": "لقد سحبت هذا البلاغ.",
+  "valueInUsd": "القيمة بالدولار",
+  "noTransfersYet": "لا توجد حوالات مُبلَّغ عنها",
+  "noTransfersYetHint": "بعد دفع الفاتورة، أبلغ عن الحوالة لنتمكن من تأكيدها.",
+  "withdrawReport": "سحب البلاغ",
+  "withdrawReportTitle": "سحب هذا البلاغ؟",
+  "withdrawReportBody": "افعل ذلك فقط إذا لم تُرسل الحوالة أو أُبلغ عنها بالخطأ.",
+  "withdrawReasonOptional": "السبب (اختياري)",
+  "reportWithdrawn": "تم سحب البلاغ",
+  "reportAgain": "الإبلاغ مجدداً",
+  "periodCompleted": "مكتملة",
+  "noHistoryYet": "لا يوجد سجل اشتراك بعد",
+  "clinicTypeLabel": "نوع العيادة",
+  "clinicTypeIndividual": "عيادة فردية",
+  "clinicTypeCenter": "مركز طبي",
+  "clinicTypeRequired": "اختر نوع العيادة",
+  "followsClinicHoursNote": "أنت تتبع ساعات عمل العيادة، وتتغير كلما تغير جدول العيادة.",
+  "followsClinicHoursAdminNote": "يتبع ساعات عمل العيادة. حفظ التغييرات هنا يمنح هذا العضو جدولاً خاصاً به، ولن يتبع جدول العيادة بعد ذلك.",
+  "slotsFollowClinicHours": "حسب ساعات عمل العيادة"
 }

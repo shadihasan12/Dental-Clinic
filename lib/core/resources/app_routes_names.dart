@@ -77,16 +77,15 @@ class AppRoutesNames {
   static const String createClinic = 'createClinic';
   static const String clinicUsers = 'clinicUsers';
 
-  // Subscription Routes
-  static const String pricing = 'pricing';
-  static const String subscription = 'subscription';
-  static const String manageSubscription = 'manageSubscription';
-
-  // Billing Routes
+  // Subscription & Billing Routes
   static const String billing = 'billing';
   static const String selectBillingPlan = 'selectBillingPlan';
   static const String invoiceDetails = 'invoiceDetails';
-  static const String submitPaymentProof = 'submitPaymentProof';
+  static const String howToPay = 'howToPay';
+  static const String reportPayment = 'reportPayment';
+  static const String clinicPayments = 'clinicPayments';
+  static const String paymentDetails = 'paymentDetails';
+  static const String subscriptionHistory = 'subscriptionHistory';
 
   // Other Routes
   static const String medicalHistory = 'medicalHistory';

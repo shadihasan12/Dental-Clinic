@@ -9,17 +9,21 @@ import 'package:dental_clinic_app/core/resources/strings_manager.dart';
 import 'package:dental_clinic_app/core/localization/language_service.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 /// Interceptor that handles authentication token management:
 /// - Attaches stored token to outgoing requests
 /// - Extracts token from response Authorization header and stores it
 /// - Adds Accept-Language header based on cached language
 /// - Automatically refreshes expired tokens on 401 responses
+/// - Hands every 402 to the [SubscriptionGuard] - it is neither a 401 (no
+///   refresh) nor a 403 (it is recoverable by paying)
 @singleton
 class AuthInterceptor extends QueuedInterceptor {
   final TokenStorage _tokenStorage;
   final LanguageService _languageService;
   final SessionManager _sessionManager;
+  final SubscriptionGuard _subscriptionGuard;
 
   /// Flag to prevent redirect loops
   bool _isRefreshing = false;
@@ -28,6 +32,7 @@ class AuthInterceptor extends QueuedInterceptor {
     this._tokenStorage,
     this._languageService,
     this._sessionManager,
+    this._subscriptionGuard,
   );
 
   @override
@@ -56,6 +61,14 @@ class AuthInterceptor extends QueuedInterceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // The subscription does not allow this right now. Never a refresh and
+    // never a logout: update the cached mode and let the error carry on, so
+    // the caller still sees it and the one 402 handler can route the user.
+    if (err.response?.statusCode == 402) {
+      _reportPaymentRequired(err.response);
+      return super.onError(err, handler);
+    }
+
     // Only attempt refresh on 401 responses
     if (err.response?.statusCode != 401) {
       return super.onError(err, handler);
@@ -142,8 +155,18 @@ class AuthInterceptor extends QueuedInterceptor {
       final retryDio = Dio(BaseOptions(
         baseUrl: opts.baseUrl,
       ));
-      final retryResponse = await retryDio.fetch(opts);
-      return handler.resolve(retryResponse);
+      try {
+        final retryResponse = await retryDio.fetch(opts);
+        return handler.resolve(retryResponse);
+      } on DioException catch (retryError) {
+        // The token was renewed; the retried request simply failed on its
+        // own terms (a 402 from a lapsed clinic, a 409, a 404). That is the
+        // caller's error to handle, not a reason to end the session.
+        if (retryError.response?.statusCode == 402) {
+          _reportPaymentRequired(retryError.response);
+        }
+        return super.onError(retryError, handler);
+      }
     } on DioException catch (_) {
       _isRefreshing = false;
       await _forceLogout();
@@ -152,6 +175,25 @@ class AuthInterceptor extends QueuedInterceptor {
       _isRefreshing = false;
       await _forceLogout();
       return super.onError(err, handler);
+    }
+  }
+
+  /// Hands a 402's `message` and `meta` to the [SubscriptionGuard], which
+  /// updates the cached access mode straight away and notifies the handler.
+  void _reportPaymentRequired(Response? response) {
+    try {
+      final raw = response?.data;
+      final body = raw is String ? jsonDecode(raw) : raw;
+      if (body is! Map) return;
+      final meta = body['meta'];
+      _subscriptionGuard.reportPaymentRequired(
+        message: (body['message'] ?? '').toString(),
+        accessMode: meta is Map ? meta['access_mode'] as String? : null,
+        status: meta is Map ? meta['subscription_status'] as String? : null,
+      );
+    } catch (_) {
+      // A 402 with a body we cannot read still reaches the caller as an
+      // error; only the cached mode goes without an update.
     }
   }
 

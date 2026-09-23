@@ -17,9 +17,14 @@ class UserHoursState with _$UserHoursState {
   /// when the schedule could not be read (a non-admin cannot), in which case
   /// the form simply skips those checks and lets the server have the last
   /// word.
+  ///
+  /// [followsClinicHours]: the member has no hours of their own and works the
+  /// clinic's schedule, which is what [days] holds. Label it as such - it is
+  /// not a schedule they chose, and there is nothing for them to fix.
   const factory UserHoursState.loaded(
     List<UserWorkingDayApiModel> days, {
     @Default(false) bool isSeed,
+    @Default(false) bool followsClinicHours,
     @Default(<WorkingDayApiModel>[]) List<WorkingDayApiModel> clinicDays,
   }) = _UHLoaded;
 

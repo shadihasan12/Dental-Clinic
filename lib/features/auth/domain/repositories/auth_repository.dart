@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/features/auth/domain/entities/register_respons
 import 'package:dental_clinic_app/features/auth/domain/entities/account_deletion_preview.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
 
 /// Parameters for requesting OTP
 class RequestOtpParams {
@@ -102,6 +103,9 @@ class RegisterRequestParams {
   final String passwordConfirmation;
   final String specialtyId;
   final String clinicName;
+
+  /// Required: registering without `clinic.type` is a 400.
+  final ClinicType clinicType;
   final String locationId;
   final String detailedAddress;
   final String planVersionId;
@@ -115,6 +119,7 @@ class RegisterRequestParams {
     required this.passwordConfirmation,
     required this.specialtyId,
     required this.clinicName,
+    required this.clinicType,
     required this.locationId,
     required this.detailedAddress,
     required this.planVersionId,
@@ -134,6 +139,7 @@ class RegisterRequestParams {
       },
       'clinic': {
         'name': clinicName,
+        'type': clinicType.apiValue,
         'location_id': locationId,
         'detailed_address': detailedAddress,
       },

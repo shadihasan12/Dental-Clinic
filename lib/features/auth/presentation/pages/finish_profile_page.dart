@@ -14,6 +14,7 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/widgets/clinic_type_selector.dart';
 
 class FinishProfilePage extends StatefulWidget {
   const FinishProfilePage({super.key});
@@ -96,6 +97,10 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
+
+    // Required by /auth/register; the selector shows why once
+    // _showValidationErrors is on.
+    if (state.clinicType == null) return;
 
     if (state.selectedLocation == null) {
       AppSnackbar.showError(
@@ -222,6 +227,19 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                             _formKey.currentState?.validate();
                           }
                         },
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      ClinicTypeSelector(
+                        value: state.clinicType,
+                        errorText:
+                            _showValidationErrors && state.clinicType == null
+                                ? l10n.clinicTypeRequired
+                                : null,
+                        onChanged: (type) => context.read<AuthBloc>().add(
+                              AuthEvent.signupClinicTypeChanged(type),
+                            ),
                       ),
 
                       SizedBox(height: 20.h),

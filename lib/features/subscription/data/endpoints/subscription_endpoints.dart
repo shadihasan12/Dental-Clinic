@@ -1,10 +1,9 @@
 class SubscriptionEndpoints {
   SubscriptionEndpoints._();
 
-  static const String plans = '/subscription/plans';
-  static const String subscribe = '/subscription/subscribe';
-  static const String cancel = '/subscription/cancel';
+  /// GET - where the subscription stands, with its dates and `access_mode`.
   static const String status = '/subscriptions/status';
+
+  /// GET - seats and storage used vs allowed.
   static const String usage = '/subscriptions/usage';
-  static String subscription(String userId) => '/subscription/$userId';
 }

@@ -78,7 +78,8 @@ class AppErrorWidget extends StatelessWidget {
     return error.when(
       requestCancelled: () => Icons.cancel_outlined,
       canceledByUser: () => Icons.cancel_outlined,
-      badRequest: (_) => Icons.error_outline,
+      badRequest: (_, _) => Icons.error_outline,
+      paymentRequired: (_, _, _) => Icons.workspace_premium_outlined,
       unauthorizedRequest: (_) => Icons.lock_outline,
       forbidden: (_) => Icons.block_outlined,
       notFound: (_) => Icons.search_off_outlined,
@@ -104,7 +105,8 @@ class AppErrorWidget extends StatelessWidget {
     return error.when(
       requestCancelled: () => false,
       canceledByUser: () => false,
-      badRequest: (_) => false,
+      badRequest: (_, _) => false,
+      paymentRequired: (_, _, _) => false,
       unauthorizedRequest: (_) => false,
       forbidden: (_) => false,
       notFound: (_) => false,

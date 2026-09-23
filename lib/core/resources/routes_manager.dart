@@ -44,12 +44,14 @@ import 'package:dental_clinic_app/features/clinic/presentation/pages/pending_app
 import 'package:dental_clinic_app/features/clinic/presentation/pages/my_clinics_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/create_clinic_page.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/clinic_users_page.dart';
-import 'package:dental_clinic_app/features/subscription/presentation/pages/pricing_page.dart';
-import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/billing_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/how_to_pay_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/invoice_details_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/payment_details_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/payments_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/report_payment_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
-import 'package:dental_clinic_app/features/billing/presentation/pages/submit_payment_proof_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/subscription_history_page.dart';
 
 /// Root navigator key exposed so non-widget code (notification service, deep
 /// links, etc.) can navigate without holding a BuildContext.
@@ -392,20 +394,7 @@ class RoutesManager {
           },
         ),
 
-        // Subscription Routes
-        GoRoute(
-          path: '/pricing',
-          name: AppRoutesNames.pricing,
-          pageBuilder: (context, state) {
-            return CupertinoPage(
-              child: const PricingPage(),
-              key: state.pageKey,
-              name: state.name,
-            );
-          },
-        ),
-
-        // Billing Routes
+        // Subscription & Billing Routes
         GoRoute(
           path: '/billing',
           name: AppRoutesNames.billing,
@@ -418,36 +407,85 @@ class RoutesManager {
           },
         ),
         GoRoute(
-          path: '/billing/select-plan',
+          path: '/billing/plans',
           name: AppRoutesNames.selectBillingPlan,
           pageBuilder: (context, state) {
-            final isRenewal = (state.extra as bool?) ?? false;
             return CupertinoPage(
-              child: SelectBillingPlanPage(isRenewal: isRenewal),
+              child: const SelectBillingPlanPage(),
               key: state.pageKey,
               name: state.name,
             );
           },
         ),
         GoRoute(
-          path: '/billing/invoice',
+          path: '/billing/invoices/:invoiceId',
           name: AppRoutesNames.invoiceDetails,
           pageBuilder: (context, state) {
-            final invoice = state.extra as InvoiceEntity;
             return CupertinoPage(
-              child: InvoiceDetailsPage(invoice: invoice),
+              child: InvoiceDetailsPage(
+                invoiceId: state.pathParameters['invoiceId']!,
+              ),
               key: state.pageKey,
               name: state.name,
             );
           },
         ),
         GoRoute(
-          path: '/billing/submit-proof',
-          name: AppRoutesNames.submitPaymentProof,
+          path: '/billing/how-to-pay',
+          name: AppRoutesNames.howToPay,
           pageBuilder: (context, state) {
-            final invoice = state.extra as InvoiceEntity;
+            // Optional: the invoice being paid, to show today's amount.
             return CupertinoPage(
-              child: SubmitPaymentProofPage(invoice: invoice),
+              child: HowToPayPage(invoiceId: state.extra as String?),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/report-payment',
+          name: AppRoutesNames.reportPayment,
+          pageBuilder: (context, state) {
+            final prefill = state.extra as ReportPaymentPrefill?;
+            return CupertinoPage(
+              child: ReportPaymentPage(
+                prefill: prefill ?? const ReportPaymentPrefill(),
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/payments',
+          name: AppRoutesNames.clinicPayments,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const PaymentsPage(),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/payments/:paymentId',
+          name: AppRoutesNames.paymentDetails,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: PaymentDetailsPage(
+                paymentId: state.pathParameters['paymentId']!,
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/billing/history',
+          name: AppRoutesNames.subscriptionHistory,
+          pageBuilder: (context, state) {
+            return CupertinoPage(
+              child: const SubscriptionHistoryPage(),
               key: state.pageKey,
               name: state.name,
             );

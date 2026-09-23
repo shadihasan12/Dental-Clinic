@@ -12,20 +12,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+/// Adds a member directly. The plan's seat limit counts every member
+/// whatever their roles, so it is checked before this page opens (see
+/// [ClinicUsersPage]); a 409 here is only the race where the last seat went
+/// in the meantime, and its message is shown as the server wrote it.
 class AddClinicUserPage extends StatefulWidget {
-  const AddClinicUserPage({
-    super.key,
-    this.dentistsReached = false,
-    this.secretariesReached = false,
-  });
-
-  /// True when the subscription's dentist limit is at max. The DENTIST role
-  /// chip on this page becomes greyed-out and non-tappable in that case.
-  final bool dentistsReached;
-
-  /// True when the subscription's secretary limit is at max. The SECRETARY
-  /// role chip becomes greyed-out and non-tappable.
-  final bool secretariesReached;
+  const AddClinicUserPage({super.key});
 
   @override
   State<AddClinicUserPage> createState() => _AddClinicUserPageState();
@@ -77,12 +69,6 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
     super.dispose();
   }
 
-  bool _isRoleDisabled(String role) {
-    if (role == 'DENTIST') return widget.dentistsReached;
-    if (role == 'SECRETARY') return widget.secretariesReached;
-    return false;
-  }
-
   bool get _canSubmit =>
       _firstNameCtrl.text.trim().isNotEmpty &&
       _lastNameCtrl.text.trim().isNotEmpty &&
@@ -91,7 +77,6 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
       _passwordCtrl.text.length >= 8 &&
       _passwordCtrl.text == _confirmCtrl.text &&
       _selectedRoles.isNotEmpty &&
-      _selectedRoles.every((r) => !_isRoleDisabled(r)) &&
       (!_isDentistSelected || _selectedSpecialty != null);
 
   void _submit() {
@@ -243,18 +228,15 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                         runSpacing: 8.h,
                         children: _allRoles.map((role) {
                           final selected = _selectedRoles.contains(role);
-                          final disabled = _isRoleDisabled(role);
                           return GestureDetector(
-                            onTap: disabled
-                                ? null
-                                : () => setState(() {
-                                      selected
-                                          ? _selectedRoles.remove(role)
-                                          : _selectedRoles.add(role);
-                                      if (!_isDentistSelected) {
-                                        _selectedSpecialty = null;
-                                      }
-                                    }),
+                            onTap: () => setState(() {
+                              selected
+                                  ? _selectedRoles.remove(role)
+                                  : _selectedRoles.add(role);
+                              if (!_isDentistSelected) {
+                                _selectedSpecialty = null;
+                              }
+                            }),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 150),
                               padding: EdgeInsets.symmetric(
@@ -262,62 +244,36 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                                 vertical: 8.h,
                               ),
                               decoration: BoxDecoration(
-                                color: disabled
-                                    ? c.cardBgSecondary
-                                    : selected
-                                        ? ColorManager.primary.withValues(
-                                            alpha: 0.12,
-                                          )
-                                        : c.cardBg,
+                                color: selected
+                                    ? ColorManager.primary.withValues(
+                                        alpha: 0.12,
+                                      )
+                                    : c.cardBg,
                                 borderRadius: BorderRadius.circular(20.r),
                                 border: Border.all(
-                                  color: disabled
-                                      ? c.borderLight
-                                      : selected
-                                          ? ColorManager.primary
-                                          : c.borderLight,
-                                  width: selected && !disabled ? 1.5 : 1,
+                                  color: selected
+                                      ? ColorManager.primary
+                                      : c.borderLight,
+                                  width: selected ? 1.5 : 1,
                                 ),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (disabled) ...[
-                                    Icon(
-                                      Icons.lock_outline_rounded,
-                                      size: 12.w,
-                                      color: c.textTertiary,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                  ],
-                                  Text(
-                                    _roleLabel(l10n, role),
-                                    style: TextStyle(
-                                      fontSize: 11.5.sp,
-                                      fontFamily: FontHelper.fontFamily(
-                                        context,
-                                      ),
-                                      fontWeight: selected
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
-                                      color: disabled
-                                          ? c.textTertiary
-                                          : selected
-                                              ? ColorManager.primaryDarker
-                                              : c.textSecondary,
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                _roleLabel(l10n, role),
+                                style: TextStyle(
+                                  fontSize: 11.5.sp,
+                                  fontFamily: FontHelper.fontFamily(context),
+                                  fontWeight: selected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: selected
+                                      ? ColorManager.primaryDarker
+                                      : c.textSecondary,
+                                ),
                               ),
                             ),
                           );
                         }).toList(),
                       ),
-                      if (widget.dentistsReached || widget.secretariesReached)
-                        _RoleLimitNote(
-                          dentists: widget.dentistsReached,
-                          secretaries: widget.secretariesReached,
-                        ),
                       // Only a dentist has a specialty, so the field appears
                       // with the role rather than sitting there greyed out.
                       if (_isDentistSelected)
@@ -457,55 +413,6 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
       default:
         return role;
     }
-  }
-}
-
-class _RoleLimitNote extends StatelessWidget {
-  const _RoleLimitNote({required this.dentists, required this.secretaries});
-
-  final bool dentists;
-  final bool secretaries;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final c = ColorManager.of(context);
-    final lockedRoles = <String>[
-      if (dentists) l10n.roleDentist,
-      if (secretaries) l10n.roleSecretary,
-    ];
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: ColorManager.warning.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(11.r),
-        border: Border.all(color: ColorManager.warning.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.info_outline_rounded,
-            size: 16.w,
-            color: ColorManager.warning,
-          ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              l10n.roleLimitInfo(lockedRoles.join(' / ')),
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                color: c.textSecondary,
-                height: 1.45,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

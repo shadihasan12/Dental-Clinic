@@ -7,6 +7,8 @@ import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/widgets/clinic_type_selector.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/entities/clinic_info_entity.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/clinic_info_repository.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/clinic_info_bloc.dart';
@@ -47,6 +49,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
   Timer? _debounce;
 
   LocationEntity? _selectedLocation;
+  ClinicType? _clinicType;
   List<LocationEntity> _searchedLocations = [];
   bool _isSearchingLocations = false;
 
@@ -77,6 +80,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
     _clinicId = entity.id;
     _clinicNameController.text = entity.name;
     _addressController.text = entity.address;
+    _clinicType = entity.type;
     _originalEntity = entity;
 
     if (entity.locationId.isNotEmpty) {
@@ -142,7 +146,8 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
     final locationId = _selectedLocation?.id ?? original.locationId;
     return name != original.name.trim() ||
         _addressController.text.trim() != original.address.trim() ||
-        locationId != original.locationId;
+        locationId != original.locationId ||
+        _clinicType != original.type;
   }
 
   void _onSave() {
@@ -150,6 +155,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
     final entity = ClinicInfoEntity(
       id: _clinicId,
       name: _clinicNameController.text.trim(),
+      type: _clinicType,
       locationId: _selectedLocation?.id ?? _originalEntity!.locationId,
       locationName: _selectedLocation?.name ?? _originalEntity!.locationName,
       locationFullName:
@@ -282,6 +288,10 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
                 required: true,
                 controller: _clinicNameController,
                 textCapitalization: TextCapitalization.words,
+              ),
+              ClinicTypeSelector(
+                value: _clinicType,
+                onChanged: (type) => setState(() => _clinicType = type),
               ),
             ],
           ),

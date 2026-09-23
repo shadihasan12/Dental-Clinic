@@ -58,7 +58,7 @@ class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
   }
 
   @override
-  Future<Either<NetworkExceptions, List<UserWorkingDayApiModel>>>
+  Future<Either<NetworkExceptions, UserHoursApiModel>>
       getMyHours() async {
     try {
       final result = await _remoteDataSource.getMyHours();
@@ -69,7 +69,7 @@ class WorkingDaysRepositoryImpl implements WorkingDaysRepository {
   }
 
   @override
-  Future<Either<NetworkExceptions, List<UserWorkingDayApiModel>>> getUserHours(
+  Future<Either<NetworkExceptions, UserHoursApiModel>> getUserHours(
     String userId,
   ) async {
     try {

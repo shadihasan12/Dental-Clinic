@@ -12,6 +12,12 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
 import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
+import 'package:dental_clinic_app/core/config/app_config.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/billing_page.dart';
+import 'package:dental_clinic_app/features/root/presentation/widgets/subscription_access_widgets.dart';
+import 'package:dental_clinic_app/services/subscription_guard/access_mode.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -79,6 +85,9 @@ class _RootPageState extends State<RootPage> {
 
   void _onClinicChanged() {
     if (!mounted) return;
+    // The new clinic's mode arrives with its permissions; until then it must
+    // not inherit the old clinic's lock or read-only banner.
+    getIt<SubscriptionGuard>().reset();
     getIt<ClinicPermissionsBloc>().add(const ClinicPermissionsEvent.load());
     setState(() => _clinicVersion++);
   }
@@ -172,53 +181,102 @@ class _RootPageState extends State<RootPage> {
     return BlocConsumer<ClinicPermissionsBloc, ClinicPermissionsState>(
       bloc: getIt<ClinicPermissionsBloc>(),
       listener: (_, state) => _onPermissionsChanged(state),
-      builder: (context, state) {
-        // A secretary, for one, has no expenses permission — that tab is gone
-        // from the bar rather than sitting there leading to a locked page.
-        final tabs = visibleRootTabs(state);
-        // The listener puts this right, but it runs in the same frame as this
-        // build, so the fallback is applied here too.
-        final current = tabs.contains(_currentTab) ? _currentTab : RootTab.home;
-        final index = tabs.indexOf(current);
+      builder: (context, state) => ValueListenableBuilder<AccessMode>(
+        valueListenable: getIt<SubscriptionGuard>().mode,
+        builder: (context, mode, _) {
+          if (AppConfig.billingEnabled && mode.isLocked) {
+            // billing_only (or no subscription): every other tab would
+            // answer 402, so the app opens on the subscription screen and
+            // offers nowhere else. Someone who cannot pay is told who can.
+            return SubscriptionGuardHelper.canManageBilling
+                ? BillingPage(
+                    key: ValueKey('locked-billing-$_clinicVersion'),
+                    locked: true,
+                  )
+                : const SubscriptionLockedView();
+          }
+          return _buildTabs(
+            context,
+            state,
+            reservedBarHeight,
+            reservedTop,
+            l10n,
+            readOnly: AppConfig.billingEnabled && mode == AccessMode.readOnly,
+          );
+        },
+      ),
+    );
+  }
 
-        return Scaffold(
-          body: Stack(
+  Widget _buildTabs(
+    BuildContext context,
+    ClinicPermissionsState state,
+    double reservedBarHeight,
+    double reservedTop,
+    AppLocalizations l10n, {
+    required bool readOnly,
+  }) {
+    // A secretary, for one, has no expenses permission — that tab is gone
+    // from the bar rather than sitting there leading to a locked page.
+    final tabs = visibleRootTabs(state);
+    // The listener puts this right, but it runs in the same frame as this
+    // build, so the fallback is applied here too.
+    final current = tabs.contains(_currentTab) ? _currentTab : RootTab.home;
+    final index = tabs.indexOf(current);
+
+    final content = Stack(
+      children: [
+        Positioned.fill(
+          child: IndexedStack(
+            index: index,
             children: [
-              Positioned.fill(
-                child: IndexedStack(
-                  index: index,
-                  children: [
-                    for (final tab in tabs)
-                      Padding(
-                        // A full-bleed tab paints its own background to the
-                        // edges and leaves its own room at the bottom, so the
-                        // pill floats over its content - which is the whole
-                        // point of a translucent, blurred bar. Every other
-                        // tab still has the space reserved for it, and can
-                        // drop out of this padding as it is converted.
-                        padding: _fullBleedTabs.contains(tab)
-                            ? EdgeInsets.zero
-                            : EdgeInsets.only(
-                                top: reservedTop,
-                                bottom: reservedBarHeight,
-                              ),
-                        child: _pageFor(tab),
-                      ),
-                  ],
+              for (final tab in tabs)
+                Padding(
+                  // A full-bleed tab paints its own background to the
+                  // edges and leaves its own room at the bottom, so the
+                  // pill floats over its content - which is the whole
+                  // point of a translucent, blurred bar. Every other
+                  // tab still has the space reserved for it, and can
+                  // drop out of this padding as it is converted.
+                  padding: _fullBleedTabs.contains(tab)
+                      ? EdgeInsets.zero
+                      : EdgeInsets.only(
+                          top: reservedTop,
+                          bottom: reservedBarHeight,
+                        ),
+                  child: _pageFor(tab),
                 ),
-              ),
-              // One stroke weight and one bounding box across all of them,
-              // drawn from the redesign's own icon set rather than a
-              // per-platform symbol lookup.
-              DentaNavBar(
-                items: [for (final tab in tabs) _navItemFor(tab, l10n)],
-                selectedIndex: index,
-                onTap: (i) => _onTabSelected(tabs[i]),
-              ),
             ],
           ),
-        );
-      },
+        ),
+        // One stroke weight and one bounding box across all of them,
+        // drawn from the redesign's own icon set rather than a
+        // per-platform symbol lookup.
+        DentaNavBar(
+          items: [for (final tab in tabs) _navItemFor(tab, l10n)],
+          selectedIndex: index,
+          onTap: (i) => _onTabSelected(tabs[i]),
+        ),
+      ],
+    );
+
+    // Expired: everything stays readable, nothing can be changed. The banner
+    // takes the status bar's inset, so the tab under it must not add it a
+    // second time. The slot is always there, empty or not, so the banner
+    // coming and going never remounts the tabs underneath.
+    return Scaffold(
+      body: Column(
+        children: [
+          readOnly ? const ReadOnlyBanner() : const SizedBox.shrink(),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: readOnly,
+              child: content,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

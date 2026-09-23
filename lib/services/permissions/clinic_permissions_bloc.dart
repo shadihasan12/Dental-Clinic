@@ -10,6 +10,13 @@ part 'clinic_permissions_bloc.freezed.dart';
 @freezed
 class ClinicPermissionsEvent with _$ClinicPermissionsEvent {
   const factory ClinicPermissionsEvent.load() = _Load;
+
+  /// Re-reads the permissions without passing through `loading`.
+  ///
+  /// For resume, after a payment and after a 402: a full [load] would flash
+  /// every [PermissionGate] to a spinner and reshuffle the tab bar while the
+  /// user is looking at it. A failed refresh keeps what was already loaded.
+  const factory ClinicPermissionsEvent.refresh() = _Refresh;
 }
 
 @freezed
@@ -30,6 +37,7 @@ class ClinicPermissionsBloc
   ClinicPermissionsBloc(this._service)
       : super(const ClinicPermissionsState.initial()) {
     on<_Load>(_onLoad);
+    on<_Refresh>(_onRefresh);
   }
 
   Future<void> _onLoad(
@@ -44,6 +52,17 @@ class ClinicPermissionsBloc
       (error) => emit(
         ClinicPermissionsState.error(NetworkExceptions.getErrorMessage(error)),
       ),
+      (permissions) => emit(ClinicPermissionsState.loaded(permissions)),
+    );
+  }
+
+  Future<void> _onRefresh(
+    _Refresh event,
+    Emitter<ClinicPermissionsState> emit,
+  ) async {
+    final result = await _service.getPermissions();
+    result.fold(
+      (_) {},
       (permissions) => emit(ClinicPermissionsState.loaded(permissions)),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/available_slots_entity.dart';
 import 'package:dental_clinic_app/features/appointments/data/data_sources/appointment_remote_data_source.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
@@ -26,7 +27,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
-  Future<Either<NetworkExceptions, List<String>>> getAvailableSlots(
+  Future<Either<NetworkExceptions, AvailableSlotsEntity>> getAvailableSlots(
     DateTime date,
     int durationMinutes, {
     String? doctorId,

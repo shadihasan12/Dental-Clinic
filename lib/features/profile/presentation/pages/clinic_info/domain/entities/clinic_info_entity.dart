@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'clinic_info_entity.freezed.dart';
@@ -7,6 +8,10 @@ class ClinicInfoEntity with _$ClinicInfoEntity {
   const factory ClinicInfoEntity({
     required String id,
     required String name,
+
+    /// Null until `GET /clinics` has answered; left out of the update then,
+    /// so it stays as it was.
+    ClinicType? type,
     @Default('') String locationId,
     @Default('') String locationName,
     @Default('') String locationFullName,

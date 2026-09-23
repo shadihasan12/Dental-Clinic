@@ -3279,4 +3279,460 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get workingHoursStepRequired =>
       'Working hours are required to finish adding this user.';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get uploading => 'Uploading…';
+
+  @override
+  String get contactSupport => 'Contact support';
+
+  @override
+  String maxCharacters(int count) {
+    return 'At most $count characters';
+  }
+
+  @override
+  String get subscriptionPageTitle => 'Subscription & Billing';
+
+  @override
+  String get subscriptionHistoryTitle => 'Subscription history';
+
+  @override
+  String get subscriptionRequiredTitle => 'Subscription required';
+
+  @override
+  String get subscriptionInactiveTitle => 'Subscription not active';
+
+  @override
+  String get subscriptionInactiveMessage =>
+      'This clinic\'s subscription does not allow this right now.';
+
+  @override
+  String get subscriptionAskAdmin =>
+      'Ask the clinic\'s admin to renew the subscription.';
+
+  @override
+  String get goToSubscription => 'Go to subscription';
+
+  @override
+  String get viewSubscription => 'View subscription';
+
+  @override
+  String get billingLoadFailed => 'Couldn\'t load this';
+
+  @override
+  String get readOnlyBanner =>
+      'Subscription expired: you can view your data but not change it.';
+
+  @override
+  String get readOnlyBannerNonAdmin =>
+      'Subscription expired: data is read-only until the clinic\'s admin renews.';
+
+  @override
+  String get subStatusTrialing => 'Free trial';
+
+  @override
+  String get subStatusActive => 'Active';
+
+  @override
+  String get subStatusGrace => 'Grace period';
+
+  @override
+  String get subStatusExpired => 'Expired';
+
+  @override
+  String get subStatusPending => 'Awaiting payment';
+
+  @override
+  String get subStatusCanceled => 'Cancelled';
+
+  @override
+  String get subStatusNone => 'No subscription';
+
+  @override
+  String get subBodyExpired =>
+      'Your subscription has ended. You can still view your data; choose a plan and pay to keep working.';
+
+  @override
+  String get subBodyPending =>
+      'Waiting for the first payment. Until it is confirmed, only the subscription and payment screens are available.';
+
+  @override
+  String get subBodyCanceled =>
+      'This subscription was cancelled. Choose a plan to start again.';
+
+  @override
+  String get subBodyGrace =>
+      'Your paid period has ended. Everything keeps working until the grace period ends. Renewing from the app isn\'t available yet, so please contact support.';
+
+  @override
+  String get subBodyNone =>
+      'This clinic has no subscription. Please contact support.';
+
+  @override
+  String get subRenewNotAvailable =>
+      'Renewing or changing a running subscription isn\'t available from the app yet. Please contact support.';
+
+  @override
+  String get renewalFromAppTitle => 'Renewing your plan';
+
+  @override
+  String get trialEndsLabel => 'Trial ends';
+
+  @override
+  String get choosePlanAction => 'Choose a plan';
+
+  @override
+  String get usageTitle => 'Usage';
+
+  @override
+  String get seatsLabel => 'Members';
+
+  @override
+  String usageOf(String used, String limit) {
+    return '$used of $limit';
+  }
+
+  @override
+  String seatsFullMessage(int count) {
+    return 'No seats left: your plan allows $count member(s), and they are all taken. Upgrade the plan or remove a member first.';
+  }
+
+  @override
+  String get seatsFullMessageGeneric =>
+      'No seats left on your plan. Upgrade the plan or remove a member first.';
+
+  @override
+  String get walletLabel => 'Wallet balance';
+
+  @override
+  String get walletHint => 'Credit left after invoices were settled';
+
+  @override
+  String get pendingPaymentsTitle => 'Transfer under review';
+
+  @override
+  String pendingPaymentsBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'We have your $count transfer reports and are checking them.',
+      one: 'We have your transfer report and are checking it.',
+    );
+    return '$_temp0 Your subscription updates once it\'s confirmed, so there\'s no need to send the money again.';
+  }
+
+  @override
+  String get openInvoiceTitle => 'Invoice to pay';
+
+  @override
+  String openInvoiceNumber(String number) {
+    return 'Open invoice $number';
+  }
+
+  @override
+  String get amountToTransfer => 'Amount to transfer';
+
+  @override
+  String amountToTransferFor(String number) {
+    return 'Amount to transfer for $number';
+  }
+
+  @override
+  String get viewInvoice => 'View invoice';
+
+  @override
+  String get howToPayAction => 'How to pay';
+
+  @override
+  String get reportTransferAction => 'Report a transfer';
+
+  @override
+  String get reportedTransfersTitle => 'Reported transfers';
+
+  @override
+  String get reportedTransfersHint =>
+      'Transfers you told us about and where their review stands';
+
+  @override
+  String get invoiceStatusOpen => 'Unpaid';
+
+  @override
+  String get invoiceStatusOverdue => 'Overdue';
+
+  @override
+  String get invoiceStatusVoid => 'Void';
+
+  @override
+  String get invoiceStatusOther => 'Other';
+
+  @override
+  String get invoiceCreditNote => 'Credit';
+
+  @override
+  String get invoiceCreditNoteBody => 'Credited back to your wallet';
+
+  @override
+  String get invoiceLinesTitle => 'Details';
+
+  @override
+  String get invoicePaidSoFar => 'Paid so far';
+
+  @override
+  String get invoiceRemaining => 'Still owed';
+
+  @override
+  String get invoicePeriod => 'Period';
+
+  @override
+  String get invoiceAmountLabel => 'Amount';
+
+  @override
+  String invoiceOverdueSince(String date) {
+    return 'Overdue since $date';
+  }
+
+  @override
+  String invoicePaidOnDate(String date) {
+    return 'Paid on $date';
+  }
+
+  @override
+  String invoiceVoidedOn(String date) {
+    return 'Cancelled on $date';
+  }
+
+  @override
+  String get invoicePaymentExplainer =>
+      'Send the money by bank transfer or wallet, then report the transfer here. Your subscription starts once our team confirms it.';
+
+  @override
+  String get invoiceRaisedTitle => 'Invoice issued';
+
+  @override
+  String get billingTotalUsd => 'Total (USD)';
+
+  @override
+  String billingMonthsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String billingYearsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get billingDurationLabel => 'Pay for';
+
+  @override
+  String get seePriceAction => 'See the price';
+
+  @override
+  String get whatsIncluded => 'What\'s included';
+
+  @override
+  String get notInTrial => 'not in the free trial';
+
+  @override
+  String get quoteTitle => 'Your price';
+
+  @override
+  String quotePeriodIfPaidNow(String start, String end) {
+    return 'If paid today, it runs from $start to $end. It starts on the day payment is confirmed.';
+  }
+
+  @override
+  String get quoteInvoiceExplainer =>
+      'Confirming issues an invoice. Nothing changes until it is paid and our team confirms the transfer.';
+
+  @override
+  String get requestInvoiceAction => 'Issue the invoice';
+
+  @override
+  String get noPaymentMethodsTitle => 'No payment destination yet';
+
+  @override
+  String get noPaymentMethodsBody =>
+      'No account is set up to receive payments yet. Please contact support.';
+
+  @override
+  String get partialPaymentHint =>
+      'Send less and the rest stays owed; send more and the difference is kept as credit.';
+
+  @override
+  String get iSentItAction => 'I\'ve sent it: report the transfer';
+
+  @override
+  String get reportTransferTitle => 'Report a transfer';
+
+  @override
+  String get reportTransferExplainer =>
+      'We\'ll check the transfer against our account. This can take a few hours, and you\'ll be notified when it\'s confirmed.';
+
+  @override
+  String get paymentDestination => 'Sent to';
+
+  @override
+  String get transferDetailsTitle => 'Transfer details';
+
+  @override
+  String get amountSent => 'Amount sent';
+
+  @override
+  String get bankName => 'Bank';
+
+  @override
+  String get bankNameOptional => 'Bank name (optional)';
+
+  @override
+  String get transferDate => 'Date sent';
+
+  @override
+  String get receiptsTitle => 'Receipts';
+
+  @override
+  String get receiptFormatsHint =>
+      'Photo or PDF of the transfer slip, up to 10 MB each.';
+
+  @override
+  String get receiptUploaded => 'Uploaded';
+
+  @override
+  String get receiptsNotReady =>
+      'Wait for the receipts to finish uploading, or remove the ones that failed.';
+
+  @override
+  String get receiptUnsupportedTitle => 'Unsupported file';
+
+  @override
+  String get receiptUnsupportedBody =>
+      'Receipts must be a JPEG, PNG, WEBP, HEIC or PDF.';
+
+  @override
+  String get receiptTooLargeTitle => 'File too large';
+
+  @override
+  String receiptTooLargeBody(String name) {
+    return '$name is over 10 MB.';
+  }
+
+  @override
+  String receiptNumber(int number) {
+    return 'Receipt $number';
+  }
+
+  @override
+  String get paymentReportedTitle => 'Transfer reported';
+
+  @override
+  String get paymentReportedBody => 'It\'s under review now.';
+
+  @override
+  String get paymentStatusPending => 'Under review';
+
+  @override
+  String get paymentStatusVerified => 'Confirmed';
+
+  @override
+  String get paymentStatusRejected => 'Not accepted';
+
+  @override
+  String get paymentStatusCancelled => 'Withdrawn';
+
+  @override
+  String paymentRejectedReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get paymentPendingExplainer =>
+      'Our team is checking this transfer. Your subscription updates once it\'s confirmed.';
+
+  @override
+  String get paymentVerifiedExplainer =>
+      'Confirmed. The money was added to your wallet and applied to your invoices.';
+
+  @override
+  String get paymentRejectedExplainer =>
+      'This transfer wasn\'t accepted. Check the reason and report it again with the right details.';
+
+  @override
+  String get paymentCancelledExplainer => 'You withdrew this report.';
+
+  @override
+  String get valueInUsd => 'Value in USD';
+
+  @override
+  String get noTransfersYet => 'No transfers reported yet';
+
+  @override
+  String get noTransfersYetHint =>
+      'After paying an invoice, report the transfer so we can confirm it.';
+
+  @override
+  String get withdrawReport => 'Withdraw';
+
+  @override
+  String get withdrawReportTitle => 'Withdraw this report?';
+
+  @override
+  String get withdrawReportBody =>
+      'Only do this if the transfer wasn\'t sent or was reported by mistake.';
+
+  @override
+  String get withdrawReasonOptional => 'Reason (optional)';
+
+  @override
+  String get reportWithdrawn => 'Report withdrawn';
+
+  @override
+  String get reportAgain => 'Report again';
+
+  @override
+  String get periodCompleted => 'Completed';
+
+  @override
+  String get noHistoryYet => 'No subscription history yet';
+
+  @override
+  String get clinicTypeLabel => 'Clinic type';
+
+  @override
+  String get clinicTypeIndividual => 'Individual clinic';
+
+  @override
+  String get clinicTypeCenter => 'Medical center';
+
+  @override
+  String get clinicTypeRequired => 'Choose the clinic type';
+
+  @override
+  String get followsClinicHoursNote =>
+      'You\'re following the clinic\'s working hours. They change whenever the clinic\'s schedule does.';
+
+  @override
+  String get followsClinicHoursAdminNote =>
+      'Following the clinic\'s working hours. Saving changes here gives this member their own schedule, and it will no longer follow the clinic\'s.';
+
+  @override
+  String get slotsFollowClinicHours => 'Following the clinic\'s working hours';
 }

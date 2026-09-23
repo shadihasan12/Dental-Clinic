@@ -35,7 +35,8 @@ class ErrorHelper {
     return exception.when(
       requestCancelled: () => NetworkFailure(message),
       canceledByUser: () => NetworkFailure(message),
-      badRequest: (reason) => ValidationFailure(reason),
+      badRequest: (reason, _) => ValidationFailure(reason),
+      paymentRequired: (_, _, _) => NetworkFailure(message),
       unauthorizedRequest: (reason) => NetworkFailure(reason),
       forbidden: (_) => NetworkFailure(message),
       notFound: (reason) => NetworkFailure(reason),

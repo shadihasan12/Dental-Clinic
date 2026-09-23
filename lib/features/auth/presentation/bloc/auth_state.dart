@@ -42,6 +42,9 @@ class AuthState with _$AuthState {
 
     // Clinic information for registration
     @Default('') String clinicName,
+
+    /// Required by /auth/register. A label only - nothing branches on it.
+    @Default(null) ClinicType? clinicType,
     @Default('') String clinicAddress,
     @Default('') String mobileNumber,
 

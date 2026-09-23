@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 /// Single place that ends a session and puts the user back on the login page.
 ///
@@ -22,10 +23,11 @@ import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 /// request comes back `Unauthenticated`.
 @lazySingleton
 class SessionManager {
-  SessionManager(this._tokenStorage, this._userStorage);
+  SessionManager(this._tokenStorage, this._userStorage, this._subscriptionGuard);
 
   final TokenStorage _tokenStorage;
   final UserStorage _userStorage;
+  final SubscriptionGuard _subscriptionGuard;
 
   /// Guards against a burst of parallel 401s (a dashboard fires several
   /// requests at once) each kicking off its own wipe + navigation - and
@@ -53,6 +55,8 @@ class SessionManager {
       // against the account we are signing out of.
       await _tokenStorage.clearAuthData();
       await _userStorage.clear();
+      // The next account's clinic must not inherit this one's lock.
+      _subscriptionGuard.reset();
 
       // Releases the guard itself, once the navigation has run.
       _redirectToLogin(expired: expired);

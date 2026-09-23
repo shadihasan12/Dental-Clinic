@@ -18,13 +18,21 @@ class PermissionSlugs {
 
   // Subscriptions
   static const getSubscriptionInfo = 'get-current-clinic-subscription-info';
+  static const requestSubscription = 'request-clinic-subscription';
 
   // Clinic Payments
   static const viewClinicPayments = 'view-clinic-payments';
+  static const submitClinicPayments = 'submit-clinic-payments';
 
-  // Billing & Invoices
-  static const viewBillingInvoices = 'view-billing-invoices';
-  static const manageBillingInvoices = 'manage-billing-invoices';
+  /// The four slugs a `billing_only` clinic keeps. Holding any of them is
+  /// what makes the subscription section visible - they are granted to the
+  /// ADMIN role only, and everyone else gets 403 on every billing call.
+  static const billing = [
+    getSubscriptionInfo,
+    requestSubscription,
+    viewClinicPayments,
+    submitClinicPayments,
+  ];
 
   // Clinic Patients
   static const viewClinicPatients = 'view-clinic-patients';

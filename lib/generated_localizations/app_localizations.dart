@@ -6235,6 +6235,768 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working hours are required to finish adding this user.'**
   String get workingHoursStepRequired;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading…'**
+  String get uploading;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact support'**
+  String get contactSupport;
+
+  /// No description provided for @maxCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'At most {count} characters'**
+  String maxCharacters(int count);
+
+  /// No description provided for @subscriptionPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription & Billing'**
+  String get subscriptionPageTitle;
+
+  /// No description provided for @subscriptionHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription history'**
+  String get subscriptionHistoryTitle;
+
+  /// No description provided for @subscriptionRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription required'**
+  String get subscriptionRequiredTitle;
+
+  /// No description provided for @subscriptionInactiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription not active'**
+  String get subscriptionInactiveTitle;
+
+  /// No description provided for @subscriptionInactiveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This clinic\'s subscription does not allow this right now.'**
+  String get subscriptionInactiveMessage;
+
+  /// No description provided for @subscriptionAskAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the clinic\'s admin to renew the subscription.'**
+  String get subscriptionAskAdmin;
+
+  /// No description provided for @goToSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to subscription'**
+  String get goToSubscription;
+
+  /// No description provided for @viewSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'View subscription'**
+  String get viewSubscription;
+
+  /// No description provided for @billingLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this'**
+  String get billingLoadFailed;
+
+  /// No description provided for @readOnlyBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription expired: you can view your data but not change it.'**
+  String get readOnlyBanner;
+
+  /// No description provided for @readOnlyBannerNonAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription expired: data is read-only until the clinic\'s admin renews.'**
+  String get readOnlyBannerNonAdmin;
+
+  /// No description provided for @subStatusTrialing.
+  ///
+  /// In en, this message translates to:
+  /// **'Free trial'**
+  String get subStatusTrialing;
+
+  /// No description provided for @subStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subStatusActive;
+
+  /// No description provided for @subStatusGrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Grace period'**
+  String get subStatusGrace;
+
+  /// No description provided for @subStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get subStatusExpired;
+
+  /// No description provided for @subStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting payment'**
+  String get subStatusPending;
+
+  /// No description provided for @subStatusCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get subStatusCanceled;
+
+  /// No description provided for @subStatusNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription'**
+  String get subStatusNone;
+
+  /// No description provided for @subBodyExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription has ended. You can still view your data; choose a plan and pay to keep working.'**
+  String get subBodyExpired;
+
+  /// No description provided for @subBodyPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the first payment. Until it is confirmed, only the subscription and payment screens are available.'**
+  String get subBodyPending;
+
+  /// No description provided for @subBodyCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'This subscription was cancelled. Choose a plan to start again.'**
+  String get subBodyCanceled;
+
+  /// No description provided for @subBodyGrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Your paid period has ended. Everything keeps working until the grace period ends. Renewing from the app isn\'t available yet, so please contact support.'**
+  String get subBodyGrace;
+
+  /// No description provided for @subBodyNone.
+  ///
+  /// In en, this message translates to:
+  /// **'This clinic has no subscription. Please contact support.'**
+  String get subBodyNone;
+
+  /// No description provided for @subRenewNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewing or changing a running subscription isn\'t available from the app yet. Please contact support.'**
+  String get subRenewNotAvailable;
+
+  /// No description provided for @renewalFromAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewing your plan'**
+  String get renewalFromAppTitle;
+
+  /// No description provided for @trialEndsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial ends'**
+  String get trialEndsLabel;
+
+  /// No description provided for @choosePlanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan'**
+  String get choosePlanAction;
+
+  /// No description provided for @usageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage'**
+  String get usageTitle;
+
+  /// No description provided for @seatsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get seatsLabel;
+
+  /// No description provided for @usageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {limit}'**
+  String usageOf(String used, String limit);
+
+  /// No description provided for @seatsFullMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No seats left: your plan allows {count} member(s), and they are all taken. Upgrade the plan or remove a member first.'**
+  String seatsFullMessage(int count);
+
+  /// No description provided for @seatsFullMessageGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'No seats left on your plan. Upgrade the plan or remove a member first.'**
+  String get seatsFullMessageGeneric;
+
+  /// No description provided for @walletLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet balance'**
+  String get walletLabel;
+
+  /// No description provided for @walletHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit left after invoices were settled'**
+  String get walletHint;
+
+  /// No description provided for @pendingPaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer under review'**
+  String get pendingPaymentsTitle;
+
+  /// No description provided for @pendingPaymentsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{We have your transfer report and are checking it.} other{We have your {count} transfer reports and are checking them.}} Your subscription updates once it\'s confirmed, so there\'s no need to send the money again.'**
+  String pendingPaymentsBody(int count);
+
+  /// No description provided for @openInvoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice to pay'**
+  String get openInvoiceTitle;
+
+  /// No description provided for @openInvoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Open invoice {number}'**
+  String openInvoiceNumber(String number);
+
+  /// No description provided for @amountToTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to transfer'**
+  String get amountToTransfer;
+
+  /// No description provided for @amountToTransferFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to transfer for {number}'**
+  String amountToTransferFor(String number);
+
+  /// No description provided for @viewInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'View invoice'**
+  String get viewInvoice;
+
+  /// No description provided for @howToPayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'How to pay'**
+  String get howToPayAction;
+
+  /// No description provided for @reportTransferAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a transfer'**
+  String get reportTransferAction;
+
+  /// No description provided for @reportedTransfersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported transfers'**
+  String get reportedTransfersTitle;
+
+  /// No description provided for @reportedTransfersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers you told us about and where their review stands'**
+  String get reportedTransfersHint;
+
+  /// No description provided for @invoiceStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get invoiceStatusOpen;
+
+  /// No description provided for @invoiceStatusOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get invoiceStatusOverdue;
+
+  /// No description provided for @invoiceStatusVoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Void'**
+  String get invoiceStatusVoid;
+
+  /// No description provided for @invoiceStatusOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get invoiceStatusOther;
+
+  /// No description provided for @invoiceCreditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit'**
+  String get invoiceCreditNote;
+
+  /// No description provided for @invoiceCreditNoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Credited back to your wallet'**
+  String get invoiceCreditNoteBody;
+
+  /// No description provided for @invoiceLinesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get invoiceLinesTitle;
+
+  /// No description provided for @invoicePaidSoFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid so far'**
+  String get invoicePaidSoFar;
+
+  /// No description provided for @invoiceRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Still owed'**
+  String get invoiceRemaining;
+
+  /// No description provided for @invoicePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get invoicePeriod;
+
+  /// No description provided for @invoiceAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get invoiceAmountLabel;
+
+  /// No description provided for @invoiceOverdueSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue since {date}'**
+  String invoiceOverdueSince(String date);
+
+  /// No description provided for @invoicePaidOnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid on {date}'**
+  String invoicePaidOnDate(String date);
+
+  /// No description provided for @invoiceVoidedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled on {date}'**
+  String invoiceVoidedOn(String date);
+
+  /// No description provided for @invoicePaymentExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the money by bank transfer or wallet, then report the transfer here. Your subscription starts once our team confirms it.'**
+  String get invoicePaymentExplainer;
+
+  /// No description provided for @invoiceRaisedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice issued'**
+  String get invoiceRaisedTitle;
+
+  /// No description provided for @billingTotalUsd.
+  ///
+  /// In en, this message translates to:
+  /// **'Total (USD)'**
+  String get billingTotalUsd;
+
+  /// No description provided for @billingMonthsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String billingMonthsCount(int count);
+
+  /// No description provided for @billingYearsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String billingYearsCount(int count);
+
+  /// No description provided for @billingDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay for'**
+  String get billingDurationLabel;
+
+  /// No description provided for @seePriceAction.
+  ///
+  /// In en, this message translates to:
+  /// **'See the price'**
+  String get seePriceAction;
+
+  /// No description provided for @whatsIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s included'**
+  String get whatsIncluded;
+
+  /// No description provided for @notInTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'not in the free trial'**
+  String get notInTrial;
+
+  /// No description provided for @quoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your price'**
+  String get quoteTitle;
+
+  /// No description provided for @quotePeriodIfPaidNow.
+  ///
+  /// In en, this message translates to:
+  /// **'If paid today, it runs from {start} to {end}. It starts on the day payment is confirmed.'**
+  String quotePeriodIfPaidNow(String start, String end);
+
+  /// No description provided for @quoteInvoiceExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming issues an invoice. Nothing changes until it is paid and our team confirms the transfer.'**
+  String get quoteInvoiceExplainer;
+
+  /// No description provided for @requestInvoiceAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue the invoice'**
+  String get requestInvoiceAction;
+
+  /// No description provided for @noPaymentMethodsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment destination yet'**
+  String get noPaymentMethodsTitle;
+
+  /// No description provided for @noPaymentMethodsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No account is set up to receive payments yet. Please contact support.'**
+  String get noPaymentMethodsBody;
+
+  /// No description provided for @partialPaymentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Send less and the rest stays owed; send more and the difference is kept as credit.'**
+  String get partialPaymentHint;
+
+  /// No description provided for @iSentItAction.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve sent it: report the transfer'**
+  String get iSentItAction;
+
+  /// No description provided for @reportTransferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a transfer'**
+  String get reportTransferTitle;
+
+  /// No description provided for @reportTransferExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll check the transfer against our account. This can take a few hours, and you\'ll be notified when it\'s confirmed.'**
+  String get reportTransferExplainer;
+
+  /// No description provided for @paymentDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to'**
+  String get paymentDestination;
+
+  /// No description provided for @transferDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer details'**
+  String get transferDetailsTitle;
+
+  /// No description provided for @amountSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount sent'**
+  String get amountSent;
+
+  /// No description provided for @bankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get bankName;
+
+  /// No description provided for @bankNameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank name (optional)'**
+  String get bankNameOptional;
+
+  /// No description provided for @transferDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date sent'**
+  String get transferDate;
+
+  /// No description provided for @receiptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts'**
+  String get receiptsTitle;
+
+  /// No description provided for @receiptFormatsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo or PDF of the transfer slip, up to 10 MB each.'**
+  String get receiptFormatsHint;
+
+  /// No description provided for @receiptUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get receiptUploaded;
+
+  /// No description provided for @receiptsNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for the receipts to finish uploading, or remove the ones that failed.'**
+  String get receiptsNotReady;
+
+  /// No description provided for @receiptUnsupportedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported file'**
+  String get receiptUnsupportedTitle;
+
+  /// No description provided for @receiptUnsupportedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipts must be a JPEG, PNG, WEBP, HEIC or PDF.'**
+  String get receiptUnsupportedBody;
+
+  /// No description provided for @receiptTooLargeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File too large'**
+  String get receiptTooLargeTitle;
+
+  /// No description provided for @receiptTooLargeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is over 10 MB.'**
+  String receiptTooLargeBody(String name);
+
+  /// No description provided for @receiptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt {number}'**
+  String receiptNumber(int number);
+
+  /// No description provided for @paymentReportedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer reported'**
+  String get paymentReportedTitle;
+
+  /// No description provided for @paymentReportedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s under review now.'**
+  String get paymentReportedBody;
+
+  /// No description provided for @paymentStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get paymentStatusPending;
+
+  /// No description provided for @paymentStatusVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get paymentStatusVerified;
+
+  /// No description provided for @paymentStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not accepted'**
+  String get paymentStatusRejected;
+
+  /// No description provided for @paymentStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get paymentStatusCancelled;
+
+  /// No description provided for @paymentRejectedReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String paymentRejectedReason(String reason);
+
+  /// No description provided for @paymentPendingExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team is checking this transfer. Your subscription updates once it\'s confirmed.'**
+  String get paymentPendingExplainer;
+
+  /// No description provided for @paymentVerifiedExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed. The money was added to your wallet and applied to your invoices.'**
+  String get paymentVerifiedExplainer;
+
+  /// No description provided for @paymentRejectedExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'This transfer wasn\'t accepted. Check the reason and report it again with the right details.'**
+  String get paymentRejectedExplainer;
+
+  /// No description provided for @paymentCancelledExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'You withdrew this report.'**
+  String get paymentCancelledExplainer;
+
+  /// No description provided for @valueInUsd.
+  ///
+  /// In en, this message translates to:
+  /// **'Value in USD'**
+  String get valueInUsd;
+
+  /// No description provided for @noTransfersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No transfers reported yet'**
+  String get noTransfersYet;
+
+  /// No description provided for @noTransfersYetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After paying an invoice, report the transfer so we can confirm it.'**
+  String get noTransfersYetHint;
+
+  /// No description provided for @withdrawReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get withdrawReport;
+
+  /// No description provided for @withdrawReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw this report?'**
+  String get withdrawReportTitle;
+
+  /// No description provided for @withdrawReportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only do this if the transfer wasn\'t sent or was reported by mistake.'**
+  String get withdrawReportBody;
+
+  /// No description provided for @withdrawReasonOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get withdrawReasonOptional;
+
+  /// No description provided for @reportWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Report withdrawn'**
+  String get reportWithdrawn;
+
+  /// No description provided for @reportAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Report again'**
+  String get reportAgain;
+
+  /// No description provided for @periodCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get periodCompleted;
+
+  /// No description provided for @noHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription history yet'**
+  String get noHistoryYet;
+
+  /// No description provided for @clinicTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic type'**
+  String get clinicTypeLabel;
+
+  /// No description provided for @clinicTypeIndividual.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual clinic'**
+  String get clinicTypeIndividual;
+
+  /// No description provided for @clinicTypeCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical center'**
+  String get clinicTypeCenter;
+
+  /// No description provided for @clinicTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the clinic type'**
+  String get clinicTypeRequired;
+
+  /// No description provided for @followsClinicHoursNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re following the clinic\'s working hours. They change whenever the clinic\'s schedule does.'**
+  String get followsClinicHoursNote;
+
+  /// No description provided for @followsClinicHoursAdminNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Following the clinic\'s working hours. Saving changes here gives this member their own schedule, and it will no longer follow the clinic\'s.'**
+  String get followsClinicHoursAdminNote;
+
+  /// No description provided for @slotsFollowClinicHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Following the clinic\'s working hours'**
+  String get slotsFollowClinicHours;
 }
 
 class _AppLocalizationsDelegate

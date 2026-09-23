@@ -1,4 +1,5 @@
 class ClinicInfoEndpoints {
-  static const String clinicInfo = '/clinic-info';
-  static const String updateClinic = '/clinics';
+  /// GET - the current clinic (needs the clinic header). PUT - update it;
+  /// accepts an optional `type`.
+  static const String clinic = '/clinics';
 }

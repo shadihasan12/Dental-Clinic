@@ -2,10 +2,49 @@ import 'dart:io';
 
 import 'package:dental_clinic_app/services/file_picker/picked_file_model.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class FilePickerService {
+  /// A pick is on screen (or on its way there).
+  bool _picking = false;
+
+  /// The one door to the native picker.
+  ///
+  /// The Android plugin holds a single pending result and answers any second
+  /// call with `PlatformException(already_active)` until the first one
+  /// returns. A quick double tap on an "add file" button is enough to trigger
+  /// it, so a call made while a pick is in flight is simply ignored - the
+  /// dialog the first tap opened is the one the user answers.
+  ///
+  /// `already_active` can also outlive the Dart side: a hot restart while the
+  /// dialog is open leaves the plugin waiting for a result nobody will
+  /// collect, and every later pick fails until the app is fully restarted.
+  /// That is reported as a cancelled pick rather than thrown, so it can never
+  /// surface as an unhandled exception.
+  Future<FilePickerResult?> _pickFiles({
+    required FileType type,
+    List<String>? allowedExtensions,
+    bool allowMultiple = false,
+  }) async {
+    if (_picking) return null;
+    _picking = true;
+    try {
+      return await FilePicker.platform.pickFiles(
+        type: type,
+        allowedExtensions: allowedExtensions,
+        allowMultiple: allowMultiple,
+      );
+    } on PlatformException catch (e) {
+      if (e.code != 'already_active') rethrow;
+      debugPrint('[FilePickerService] native picker already active - ignored');
+      return null;
+    } finally {
+      _picking = false;
+    }
+  }
   // The three lists below mirror the media endpoint's accepted MIME types,
   // one extension per type. Anything outside them is refused here rather than
   // after an upload starts: the server would reject it anyway, and a failure
@@ -63,6 +102,21 @@ class FilePickerService {
   /// kept out of the dialog rather than failing after the upload starts.
   static const screenshotExtensions = ['jpg', 'jpeg', 'png'];
 
+  /// What `POST /clinic-payments/receipts` accepts for a transfer slip:
+  /// JPEG, PNG, WEBP, HEIC/HEIF and PDF.
+  static const receiptExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'webp',
+    'heic',
+    'heif',
+    'pdf',
+  ];
+
+  /// The receipts endpoint's ceiling for one slip: 10 MB.
+  static const int maxReceiptBytes = 10 * 1024 * 1024;
+
   /// Server-side ceiling for one upload: 51200 KB.
   static const int maxUploadBytes = 51200 * 1024;
 
@@ -85,7 +139,7 @@ class FilePickerService {
       ext != null && attachmentExtensions.contains(ext.toLowerCase());
 
   Future<PickedFileResult?> pickFile({FileType type = FileType.any}) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await _pickFiles(
       type: type,
       allowMultiple: false,
     );
@@ -96,7 +150,7 @@ class FilePickerService {
   Future<List<PickedFileResult>> pickMultipleFiles({
     FileType type = FileType.any,
   }) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await _pickFiles(
       type: type,
       allowMultiple: true,
     );
@@ -121,7 +175,7 @@ class FilePickerService {
   /// thing it turned away, so one stray file does not throw out the other
   /// nine the user just chose.
   Future<DocumentPick> pickDocuments({bool allowMultiple = false}) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await _pickFiles(
       type: FileType.custom,
       allowedExtensions: attachmentExtensions,
       allowMultiple: allowMultiple,
@@ -154,7 +208,7 @@ class FilePickerService {
   /// for the same reason [pickDocuments] does it - a file manager can offer
   /// "all files" whatever we asked for.
   Future<DocumentPick> pickScreenshots({bool allowMultiple = true}) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await _pickFiles(
       type: FileType.custom,
       allowedExtensions: screenshotExtensions,
       allowMultiple: allowMultiple,
@@ -172,6 +226,38 @@ class FilePickerService {
     for (final file in picked) {
       final ext = file.extension?.toLowerCase();
       if (ext != null && screenshotExtensions.contains(ext)) {
+        allowed.add(file);
+      } else {
+        rejected ??= file.name;
+      }
+    }
+
+    if (allowed.isEmpty) return DocumentPick.unsupported(rejected ?? '');
+    return DocumentPick.picked(allowed, rejectedName: rejected);
+  }
+
+  /// Picks transfer slips, restricted to [receiptExtensions]. Checked again
+  /// on the way back, like [pickScreenshots], since a file manager can offer
+  /// "all files" whatever was asked for.
+  Future<DocumentPick> pickReceipts({bool allowMultiple = true}) async {
+    final result = await _pickFiles(
+      type: FileType.custom,
+      allowedExtensions: receiptExtensions,
+      allowMultiple: allowMultiple,
+    );
+    if (result == null || result.files.isEmpty) {
+      return const DocumentPick.cancelled();
+    }
+
+    final picked =
+        result.files.map(_toResult).whereType<PickedFileResult>().toList();
+    if (picked.isEmpty) return const DocumentPick.cancelled();
+
+    final allowed = <PickedFileResult>[];
+    String? rejected;
+    for (final file in picked) {
+      final ext = file.extension?.toLowerCase();
+      if (ext != null && receiptExtensions.contains(ext)) {
         allowed.add(file);
       } else {
         rejected ??= file.name;

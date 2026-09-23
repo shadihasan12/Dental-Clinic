@@ -30,7 +30,6 @@ class PlanEntity with _$PlanEntity {
     required bool supportsTrial,
     required int trialPeriodDays,
     required int gracePeriodDays,
-    required String clinicType,
     required String type,
     required int sortOrder,
   }) = _PlanEntity;

@@ -18,6 +18,7 @@ import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 
@@ -78,6 +79,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Clinic info events
     on<_SignupClinicNameChanged>(_onSignupClinicNameChanged);
+    on<_SignupClinicTypeChanged>(
+      (event, emit) =>
+          emit(state.copyWith(clinicType: event.type, signupError: null)),
+    );
     on<_SignupClinicAddressChanged>(_onSignupClinicAddressChanged);
     on<_SignupMobileNumberChanged>(_onSignupMobileNumberChanged);
 
@@ -596,6 +601,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(signupError: 'Please enter clinic name'));
       return;
     }
+    // Registering without it is a 400. The page won't enable the button
+    // without one; this is the backstop.
+    if (state.clinicType == null) {
+      emit(state.copyWith(signupError: 'Please choose the clinic type'));
+      return;
+    }
 
     emit(state.copyWith(isSignupLoading: true, signupError: null));
 
@@ -614,6 +625,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       passwordConfirmation: state.signupConfirmPassword,
       specialtyId: state.selectedSpecialty!.id,
       clinicName: state.clinicName,
+      clinicType: state.clinicType!,
       locationId: state.selectedLocation!.id,
       detailedAddress: state.clinicAddress.trim().isEmpty
           ? state.selectedLocation!.name
@@ -990,6 +1002,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       selectedLocation: null,
       selectedPlan: null,
       clinicName: '',
+      clinicType: null,
       clinicAddress: '',
       mobileNumber: '',
     ));

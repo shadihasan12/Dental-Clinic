@@ -3249,4 +3249,462 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get workingHoursStepRequired =>
       'ساعات العمل مطلوبة لإكمال إضافة هذا المستخدم.';
+
+  @override
+  String get ok => 'حسناً';
+
+  @override
+  String get remove => 'إزالة';
+
+  @override
+  String get uploading => 'جارٍ الرفع…';
+
+  @override
+  String get contactSupport => 'تواصل مع الدعم';
+
+  @override
+  String maxCharacters(int count) {
+    return '$count حرفاً كحد أقصى';
+  }
+
+  @override
+  String get subscriptionPageTitle => 'الاشتراك والفواتير';
+
+  @override
+  String get subscriptionHistoryTitle => 'سجل الاشتراك';
+
+  @override
+  String get subscriptionRequiredTitle => 'الاشتراك مطلوب';
+
+  @override
+  String get subscriptionInactiveTitle => 'الاشتراك غير فعّال';
+
+  @override
+  String get subscriptionInactiveMessage =>
+      'اشتراك هذه العيادة لا يسمح بذلك حالياً.';
+
+  @override
+  String get subscriptionAskAdmin => 'اطلب من مدير العيادة تجديد الاشتراك.';
+
+  @override
+  String get goToSubscription => 'الانتقال إلى الاشتراك';
+
+  @override
+  String get viewSubscription => 'عرض الاشتراك';
+
+  @override
+  String get billingLoadFailed => 'تعذّر التحميل';
+
+  @override
+  String get readOnlyBanner => 'انتهى الاشتراك: يمكنك عرض بياناتك دون تعديلها.';
+
+  @override
+  String get readOnlyBannerNonAdmin =>
+      'انتهى الاشتراك: البيانات للعرض فقط إلى أن يجدّد مدير العيادة الاشتراك.';
+
+  @override
+  String get subStatusTrialing => 'تجربة مجانية';
+
+  @override
+  String get subStatusActive => 'فعّال';
+
+  @override
+  String get subStatusGrace => 'فترة سماح';
+
+  @override
+  String get subStatusExpired => 'منتهٍ';
+
+  @override
+  String get subStatusPending => 'بانتظار الدفع';
+
+  @override
+  String get subStatusCanceled => 'ملغى';
+
+  @override
+  String get subStatusNone => 'لا يوجد اشتراك';
+
+  @override
+  String get subBodyExpired =>
+      'انتهى اشتراكك. ما زال بإمكانك عرض بياناتك؛ اختر باقة وادفع لمتابعة العمل.';
+
+  @override
+  String get subBodyPending =>
+      'بانتظار الدفعة الأولى. إلى أن يتم تأكيدها، تتوفر صفحتا الاشتراك والدفعات فقط.';
+
+  @override
+  String get subBodyCanceled =>
+      'تم إلغاء هذا الاشتراك. اختر باقة للبدء من جديد.';
+
+  @override
+  String get subBodyGrace =>
+      'انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح. التجديد من التطبيق غير متاح بعد، يرجى التواصل مع الدعم.';
+
+  @override
+  String get subBodyNone =>
+      'لا يوجد اشتراك لهذه العيادة. يرجى التواصل مع الدعم.';
+
+  @override
+  String get subRenewNotAvailable =>
+      'تجديد الاشتراك أو تغيير الباقة غير متاح من التطبيق حالياً. يرجى التواصل مع الدعم.';
+
+  @override
+  String get renewalFromAppTitle => 'تجديد الباقة';
+
+  @override
+  String get trialEndsLabel => 'تنتهي التجربة';
+
+  @override
+  String get choosePlanAction => 'اختر باقة';
+
+  @override
+  String get usageTitle => 'الاستخدام';
+
+  @override
+  String get seatsLabel => 'الأعضاء';
+
+  @override
+  String usageOf(String used, String limit) {
+    return '$used من $limit';
+  }
+
+  @override
+  String seatsFullMessage(int count) {
+    return 'لا توجد مقاعد متاحة: باقتك تسمح بـ $count عضو/أعضاء وجميعها مشغولة. قم بترقية الباقة أو أزل عضواً أولاً.';
+  }
+
+  @override
+  String get seatsFullMessageGeneric =>
+      'لا توجد مقاعد متاحة في باقتك. قم بترقية الباقة أو أزل عضواً أولاً.';
+
+  @override
+  String get walletLabel => 'رصيد المحفظة';
+
+  @override
+  String get walletHint => 'الرصيد المتبقي بعد تسديد الفواتير';
+
+  @override
+  String get pendingPaymentsTitle => 'حوالة قيد المراجعة';
+
+  @override
+  String pendingPaymentsBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'استلمنا $count بلاغات حوالات ونقوم بمراجعتها.',
+      one: 'استلمنا بلاغ الحوالة ونقوم بمراجعته.',
+    );
+    return '$_temp0 يتحدّث اشتراكك بعد التأكيد، فلا حاجة لإرسال المبلغ مرة أخرى.';
+  }
+
+  @override
+  String get openInvoiceTitle => 'فاتورة للدفع';
+
+  @override
+  String openInvoiceNumber(String number) {
+    return 'فتح الفاتورة $number';
+  }
+
+  @override
+  String get amountToTransfer => 'المبلغ المطلوب تحويله';
+
+  @override
+  String amountToTransferFor(String number) {
+    return 'المبلغ المطلوب تحويله للفاتورة $number';
+  }
+
+  @override
+  String get viewInvoice => 'عرض الفاتورة';
+
+  @override
+  String get howToPayAction => 'طريقة الدفع';
+
+  @override
+  String get reportTransferAction => 'الإبلاغ عن حوالة';
+
+  @override
+  String get reportedTransfersTitle => 'الحوالات المُبلَّغ عنها';
+
+  @override
+  String get reportedTransfersHint =>
+      'الحوالات التي أبلغتنا عنها وحالة مراجعتها';
+
+  @override
+  String get invoiceStatusOpen => 'غير مدفوعة';
+
+  @override
+  String get invoiceStatusOverdue => 'متأخرة';
+
+  @override
+  String get invoiceStatusVoid => 'ملغاة';
+
+  @override
+  String get invoiceStatusOther => 'أخرى';
+
+  @override
+  String get invoiceCreditNote => 'رصيد دائن';
+
+  @override
+  String get invoiceCreditNoteBody => 'أُعيد إلى محفظتك';
+
+  @override
+  String get invoiceLinesTitle => 'التفاصيل';
+
+  @override
+  String get invoicePaidSoFar => 'المدفوع حتى الآن';
+
+  @override
+  String get invoiceRemaining => 'المتبقي';
+
+  @override
+  String get invoicePeriod => 'الفترة';
+
+  @override
+  String get invoiceAmountLabel => 'المبلغ';
+
+  @override
+  String invoiceOverdueSince(String date) {
+    return 'متأخرة منذ $date';
+  }
+
+  @override
+  String invoicePaidOnDate(String date) {
+    return 'دُفعت بتاريخ $date';
+  }
+
+  @override
+  String invoiceVoidedOn(String date) {
+    return 'أُلغيت بتاريخ $date';
+  }
+
+  @override
+  String get invoicePaymentExplainer =>
+      'أرسل المبلغ بحوالة بنكية أو عبر المحفظة، ثم أبلغ عن الحوالة هنا. يبدأ اشتراكك بعد أن يؤكدها فريقنا.';
+
+  @override
+  String get invoiceRaisedTitle => 'تم إصدار الفاتورة';
+
+  @override
+  String get billingTotalUsd => 'الإجمالي (دولار)';
+
+  @override
+  String billingMonthsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شهراً',
+      few: '$count أشهر',
+      two: 'شهران',
+      one: 'شهر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String billingYearsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سنة',
+      few: '$count سنوات',
+      two: 'سنتان',
+      one: 'سنة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get billingDurationLabel => 'مدة الدفع';
+
+  @override
+  String get seePriceAction => 'عرض السعر';
+
+  @override
+  String get whatsIncluded => 'ما الذي تتضمنه';
+
+  @override
+  String get notInTrial => 'غير متاح في التجربة المجانية';
+
+  @override
+  String get quoteTitle => 'السعر';
+
+  @override
+  String quotePeriodIfPaidNow(String start, String end) {
+    return 'إذا دُفعت اليوم، تمتد من $start إلى $end. تبدأ من يوم تأكيد الدفع.';
+  }
+
+  @override
+  String get quoteInvoiceExplainer =>
+      'التأكيد يُصدر فاتورة. لا يتغير شيء حتى تُدفع ويؤكد فريقنا الحوالة.';
+
+  @override
+  String get requestInvoiceAction => 'إصدار الفاتورة';
+
+  @override
+  String get noPaymentMethodsTitle => 'لا توجد جهة دفع بعد';
+
+  @override
+  String get noPaymentMethodsBody =>
+      'لم يتم إعداد أي حساب لاستقبال الدفعات بعد. يرجى التواصل مع الدعم.';
+
+  @override
+  String get partialPaymentHint =>
+      'إن أرسلت أقل يبقى الباقي مستحقاً، وإن أرسلت أكثر يُحفظ الفرق رصيداً لك.';
+
+  @override
+  String get iSentItAction => 'أرسلت المبلغ: الإبلاغ عن الحوالة';
+
+  @override
+  String get reportTransferTitle => 'الإبلاغ عن حوالة';
+
+  @override
+  String get reportTransferExplainer =>
+      'سنطابق الحوالة مع حسابنا. قد يستغرق ذلك بضع ساعات، وسيصلك إشعار عند التأكيد.';
+
+  @override
+  String get paymentDestination => 'أُرسلت إلى';
+
+  @override
+  String get transferDetailsTitle => 'تفاصيل الحوالة';
+
+  @override
+  String get amountSent => 'المبلغ المرسل';
+
+  @override
+  String get bankName => 'البنك';
+
+  @override
+  String get bankNameOptional => 'اسم البنك (اختياري)';
+
+  @override
+  String get transferDate => 'تاريخ الإرسال';
+
+  @override
+  String get receiptsTitle => 'الإيصالات';
+
+  @override
+  String get receiptFormatsHint =>
+      'صورة أو ملف PDF لإيصال الحوالة، بحد أقصى 10 ميغابايت لكل ملف.';
+
+  @override
+  String get receiptUploaded => 'تم الرفع';
+
+  @override
+  String get receiptsNotReady =>
+      'انتظر اكتمال رفع الإيصالات، أو أزل ما فشل رفعه.';
+
+  @override
+  String get receiptUnsupportedTitle => 'ملف غير مدعوم';
+
+  @override
+  String get receiptUnsupportedBody =>
+      'يجب أن يكون الإيصال بصيغة JPEG أو PNG أو WEBP أو HEIC أو PDF.';
+
+  @override
+  String get receiptTooLargeTitle => 'الملف كبير جداً';
+
+  @override
+  String receiptTooLargeBody(String name) {
+    return 'حجم $name أكبر من 10 ميغابايت.';
+  }
+
+  @override
+  String receiptNumber(int number) {
+    return 'إيصال $number';
+  }
+
+  @override
+  String get paymentReportedTitle => 'تم الإبلاغ عن الحوالة';
+
+  @override
+  String get paymentReportedBody => 'وهي قيد المراجعة الآن.';
+
+  @override
+  String get paymentStatusPending => 'قيد المراجعة';
+
+  @override
+  String get paymentStatusVerified => 'مؤكدة';
+
+  @override
+  String get paymentStatusRejected => 'لم تُقبل';
+
+  @override
+  String get paymentStatusCancelled => 'مسحوبة';
+
+  @override
+  String paymentRejectedReason(String reason) {
+    return 'السبب: $reason';
+  }
+
+  @override
+  String get paymentPendingExplainer =>
+      'يقوم فريقنا بمراجعة هذه الحوالة. يتحدّث اشتراكك بعد التأكيد.';
+
+  @override
+  String get paymentVerifiedExplainer =>
+      'تم التأكيد. أُضيف المبلغ إلى محفظتك وطُبّق على فواتيرك.';
+
+  @override
+  String get paymentRejectedExplainer =>
+      'لم تُقبل هذه الحوالة. راجع السبب وأبلغ عنها مجدداً بالتفاصيل الصحيحة.';
+
+  @override
+  String get paymentCancelledExplainer => 'لقد سحبت هذا البلاغ.';
+
+  @override
+  String get valueInUsd => 'القيمة بالدولار';
+
+  @override
+  String get noTransfersYet => 'لا توجد حوالات مُبلَّغ عنها';
+
+  @override
+  String get noTransfersYetHint =>
+      'بعد دفع الفاتورة، أبلغ عن الحوالة لنتمكن من تأكيدها.';
+
+  @override
+  String get withdrawReport => 'سحب البلاغ';
+
+  @override
+  String get withdrawReportTitle => 'سحب هذا البلاغ؟';
+
+  @override
+  String get withdrawReportBody =>
+      'افعل ذلك فقط إذا لم تُرسل الحوالة أو أُبلغ عنها بالخطأ.';
+
+  @override
+  String get withdrawReasonOptional => 'السبب (اختياري)';
+
+  @override
+  String get reportWithdrawn => 'تم سحب البلاغ';
+
+  @override
+  String get reportAgain => 'الإبلاغ مجدداً';
+
+  @override
+  String get periodCompleted => 'مكتملة';
+
+  @override
+  String get noHistoryYet => 'لا يوجد سجل اشتراك بعد';
+
+  @override
+  String get clinicTypeLabel => 'نوع العيادة';
+
+  @override
+  String get clinicTypeIndividual => 'عيادة فردية';
+
+  @override
+  String get clinicTypeCenter => 'مركز طبي';
+
+  @override
+  String get clinicTypeRequired => 'اختر نوع العيادة';
+
+  @override
+  String get followsClinicHoursNote =>
+      'أنت تتبع ساعات عمل العيادة، وتتغير كلما تغير جدول العيادة.';
+
+  @override
+  String get followsClinicHoursAdminNote =>
+      'يتبع ساعات عمل العيادة. حفظ التغييرات هنا يمنح هذا العضو جدولاً خاصاً به، ولن يتبع جدول العيادة بعد ذلك.';
+
+  @override
+  String get slotsFollowClinicHours => 'حسب ساعات عمل العيادة';
 }

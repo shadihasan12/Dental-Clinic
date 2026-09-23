@@ -47,6 +47,7 @@ mixin _$AuthEvent {
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -97,6 +98,7 @@ mixin _$AuthEvent {
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -146,6 +148,7 @@ mixin _$AuthEvent {
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -211,6 +214,8 @@ mixin _$AuthEvent {
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -284,6 +289,7 @@ mixin _$AuthEvent {
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -352,6 +358,7 @@ mixin _$AuthEvent {
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -520,6 +527,7 @@ class _$LoginEmailChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -574,6 +582,7 @@ class _$LoginEmailChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -627,6 +636,7 @@ class _$LoginEmailChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -699,6 +709,8 @@ class _$LoginEmailChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -776,6 +788,7 @@ class _$LoginEmailChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -848,6 +861,7 @@ class _$LoginEmailChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -1016,6 +1030,7 @@ class _$LoginPasswordChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -1070,6 +1085,7 @@ class _$LoginPasswordChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -1123,6 +1139,7 @@ class _$LoginPasswordChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -1195,6 +1212,8 @@ class _$LoginPasswordChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -1272,6 +1291,7 @@ class _$LoginPasswordChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -1344,6 +1364,7 @@ class _$LoginPasswordChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -1481,6 +1502,7 @@ class _$LoginPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -1535,6 +1557,7 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -1588,6 +1611,7 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -1660,6 +1684,8 @@ class _$LoginPasswordVisibilityToggledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -1737,6 +1763,7 @@ class _$LoginPasswordVisibilityToggledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -1809,6 +1836,7 @@ class _$LoginPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -1935,6 +1963,7 @@ class _$LoginSubmittedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -1989,6 +2018,7 @@ class _$LoginSubmittedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -2042,6 +2072,7 @@ class _$LoginSubmittedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -2114,6 +2145,8 @@ class _$LoginSubmittedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -2191,6 +2224,7 @@ class _$LoginSubmittedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -2263,6 +2297,7 @@ class _$LoginSubmittedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -2422,6 +2457,7 @@ class _$SignupFirstNameChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -2476,6 +2512,7 @@ class _$SignupFirstNameChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -2529,6 +2566,7 @@ class _$SignupFirstNameChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -2601,6 +2639,8 @@ class _$SignupFirstNameChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -2678,6 +2718,7 @@ class _$SignupFirstNameChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -2750,6 +2791,7 @@ class _$SignupFirstNameChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -2918,6 +2960,7 @@ class _$SignupLastNameChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -2972,6 +3015,7 @@ class _$SignupLastNameChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -3025,6 +3069,7 @@ class _$SignupLastNameChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -3097,6 +3142,8 @@ class _$SignupLastNameChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -3174,6 +3221,7 @@ class _$SignupLastNameChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -3246,6 +3294,7 @@ class _$SignupLastNameChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -3412,6 +3461,7 @@ class _$SignupEmailChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -3466,6 +3516,7 @@ class _$SignupEmailChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -3519,6 +3570,7 @@ class _$SignupEmailChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -3591,6 +3643,8 @@ class _$SignupEmailChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -3668,6 +3722,7 @@ class _$SignupEmailChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -3740,6 +3795,7 @@ class _$SignupEmailChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -3908,6 +3964,7 @@ class _$SignupPasswordChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -3962,6 +4019,7 @@ class _$SignupPasswordChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -4015,6 +4073,7 @@ class _$SignupPasswordChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -4087,6 +4146,8 @@ class _$SignupPasswordChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -4164,6 +4225,7 @@ class _$SignupPasswordChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -4236,6 +4298,7 @@ class _$SignupPasswordChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -4407,6 +4470,7 @@ class _$SignupConfirmPasswordChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -4461,6 +4525,7 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -4514,6 +4579,7 @@ class _$SignupConfirmPasswordChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -4586,6 +4652,8 @@ class _$SignupConfirmPasswordChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -4663,6 +4731,7 @@ class _$SignupConfirmPasswordChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -4735,6 +4804,7 @@ class _$SignupConfirmPasswordChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -4874,6 +4944,7 @@ class _$SignupPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -4928,6 +4999,7 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -4981,6 +5053,7 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -5053,6 +5126,8 @@ class _$SignupPasswordVisibilityToggledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -5130,6 +5205,7 @@ class _$SignupPasswordVisibilityToggledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -5202,6 +5278,7 @@ class _$SignupPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -5338,6 +5415,7 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -5392,6 +5470,7 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -5445,6 +5524,7 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -5517,6 +5597,8 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -5594,6 +5676,7 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -5666,6 +5749,7 @@ class _$SignupConfirmPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -5792,6 +5876,7 @@ class _$SignupSubmittedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -5846,6 +5931,7 @@ class _$SignupSubmittedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -5899,6 +5985,7 @@ class _$SignupSubmittedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -5971,6 +6058,8 @@ class _$SignupSubmittedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -6048,6 +6137,7 @@ class _$SignupSubmittedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -6120,6 +6210,7 @@ class _$SignupSubmittedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -6245,6 +6336,7 @@ class _$SignupFormResetImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -6299,6 +6391,7 @@ class _$SignupFormResetImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -6352,6 +6445,7 @@ class _$SignupFormResetImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -6424,6 +6518,8 @@ class _$SignupFormResetImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -6501,6 +6597,7 @@ class _$SignupFormResetImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -6573,6 +6670,7 @@ class _$SignupFormResetImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -6731,6 +6829,7 @@ class _$SignupLicenseNumberChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -6785,6 +6884,7 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -6838,6 +6938,7 @@ class _$SignupLicenseNumberChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -6910,6 +7011,8 @@ class _$SignupLicenseNumberChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -6987,6 +7090,7 @@ class _$SignupLicenseNumberChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -7059,6 +7163,7 @@ class _$SignupLicenseNumberChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -7228,6 +7333,7 @@ class _$SignupSpecializationChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -7282,6 +7388,7 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -7335,6 +7442,7 @@ class _$SignupSpecializationChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -7407,6 +7515,8 @@ class _$SignupSpecializationChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -7484,6 +7594,7 @@ class _$SignupSpecializationChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -7556,6 +7667,7 @@ class _$SignupSpecializationChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -7724,6 +7836,7 @@ class _$SignupLocationChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -7778,6 +7891,7 @@ class _$SignupLocationChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -7831,6 +7945,7 @@ class _$SignupLocationChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -7903,6 +8018,8 @@ class _$SignupLocationChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -7980,6 +8097,7 @@ class _$SignupLocationChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -8052,6 +8170,7 @@ class _$SignupLocationChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -8188,6 +8307,7 @@ class _$SpecialtiesRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -8242,6 +8362,7 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -8295,6 +8416,7 @@ class _$SpecialtiesRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -8367,6 +8489,8 @@ class _$SpecialtiesRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -8444,6 +8568,7 @@ class _$SpecialtiesRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -8516,6 +8641,7 @@ class _$SpecialtiesRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -8641,6 +8767,7 @@ class _$PlansRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -8695,6 +8822,7 @@ class _$PlansRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -8748,6 +8876,7 @@ class _$PlansRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -8820,6 +8949,8 @@ class _$PlansRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -8897,6 +9028,7 @@ class _$PlansRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -8969,6 +9101,7 @@ class _$PlansRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -9138,6 +9271,7 @@ class _$LocationSearchRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -9192,6 +9326,7 @@ class _$LocationSearchRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -9245,6 +9380,7 @@ class _$LocationSearchRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -9317,6 +9453,8 @@ class _$LocationSearchRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -9394,6 +9532,7 @@ class _$LocationSearchRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -9466,6 +9605,7 @@ class _$LocationSearchRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -9652,6 +9792,7 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -9706,6 +9847,7 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -9759,6 +9901,7 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -9831,6 +9974,8 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -9908,6 +10053,7 @@ class _$SignupSpecialtyEntitySelectedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -9980,6 +10126,7 @@ class _$SignupSpecialtyEntitySelectedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -10166,6 +10313,7 @@ class _$SignupLocationEntitySelectedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -10220,6 +10368,7 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -10273,6 +10422,7 @@ class _$SignupLocationEntitySelectedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -10345,6 +10495,8 @@ class _$SignupLocationEntitySelectedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -10422,6 +10574,7 @@ class _$SignupLocationEntitySelectedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -10494,6 +10647,7 @@ class _$SignupLocationEntitySelectedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -10674,6 +10828,7 @@ class _$SignupPlanEntitySelectedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -10728,6 +10883,7 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -10781,6 +10937,7 @@ class _$SignupPlanEntitySelectedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -10853,6 +11010,8 @@ class _$SignupPlanEntitySelectedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -10930,6 +11089,7 @@ class _$SignupPlanEntitySelectedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -11002,6 +11162,7 @@ class _$SignupPlanEntitySelectedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -11168,6 +11329,7 @@ class _$SignupClinicNameChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -11222,6 +11384,7 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -11275,6 +11438,7 @@ class _$SignupClinicNameChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -11347,6 +11511,8 @@ class _$SignupClinicNameChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -11424,6 +11590,7 @@ class _$SignupClinicNameChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -11496,6 +11663,7 @@ class _$SignupClinicNameChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -11548,6 +11716,507 @@ abstract class _SignupClinicNameChanged implements AuthEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SignupClinicNameChangedImplCopyWith<_$SignupClinicNameChangedImpl>
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignupClinicTypeChangedImplCopyWith<$Res> {
+  factory _$$SignupClinicTypeChangedImplCopyWith(
+    _$SignupClinicTypeChangedImpl value,
+    $Res Function(_$SignupClinicTypeChangedImpl) then,
+  ) = __$$SignupClinicTypeChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({ClinicType type});
+}
+
+/// @nodoc
+class __$$SignupClinicTypeChangedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignupClinicTypeChangedImpl>
+    implements _$$SignupClinicTypeChangedImplCopyWith<$Res> {
+  __$$SignupClinicTypeChangedImplCopyWithImpl(
+    _$SignupClinicTypeChangedImpl _value,
+    $Res Function(_$SignupClinicTypeChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? type = null}) {
+    return _then(
+      _$SignupClinicTypeChangedImpl(
+        null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as ClinicType,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignupClinicTypeChangedImpl
+    with DiagnosticableTreeMixin
+    implements _SignupClinicTypeChanged {
+  const _$SignupClinicTypeChangedImpl(this.type);
+
+  @override
+  final ClinicType type;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthEvent.signupClinicTypeChanged(type: $type)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthEvent.signupClinicTypeChanged'))
+      ..add(DiagnosticsProperty('type', type));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignupClinicTypeChangedImpl &&
+            (identical(other.type, type) || other.type == type));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, type);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignupClinicTypeChangedImplCopyWith<_$SignupClinicTypeChangedImpl>
+  get copyWith =>
+      __$$SignupClinicTypeChangedImplCopyWithImpl<
+        _$SignupClinicTypeChangedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) loginEmailChanged,
+    required TResult Function(String password) loginPasswordChanged,
+    required TResult Function() loginPasswordVisibilityToggled,
+    required TResult Function() loginSubmitted,
+    required TResult Function(String firstName) signupFirstNameChanged,
+    required TResult Function(String lastName) signupLastNameChanged,
+    required TResult Function(String email) signupEmailChanged,
+    required TResult Function(String password) signupPasswordChanged,
+    required TResult Function(String confirmPassword)
+    signupConfirmPasswordChanged,
+    required TResult Function() signupPasswordVisibilityToggled,
+    required TResult Function() signupConfirmPasswordVisibilityToggled,
+    required TResult Function() signupSubmitted,
+    required TResult Function() signupFormReset,
+    required TResult Function(String licenseNumber) signupLicenseNumberChanged,
+    required TResult Function(String specialization)
+    signupSpecializationChanged,
+    required TResult Function(String location) signupLocationChanged,
+    required TResult Function() specialtiesRequested,
+    required TResult Function() plansRequested,
+    required TResult Function(String query, String countryCode)
+    locationSearchRequested,
+    required TResult Function(SpecialtyEntity specialty)
+    signupSpecialtyEntitySelected,
+    required TResult Function(LocationEntity location)
+    signupLocationEntitySelected,
+    required TResult Function(PlanEntity plan) signupPlanEntitySelected,
+    required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
+    required TResult Function(String address) signupClinicAddressChanged,
+    required TResult Function(String mobile) signupMobileNumberChanged,
+    required TResult Function() otpRequested,
+    required TResult Function(String code) otpCodeChanged,
+    required TResult Function() otpVerified,
+    required TResult Function() otpResendRequested,
+    required TResult Function(String email) forgotPasswordEmailChanged,
+    required TResult Function() forgotPasswordSubmitted,
+    required TResult Function() forgotPasswordReset,
+    required TResult Function() resetPasswordOtpRequested,
+    required TResult Function() resetPasswordOtpVerified,
+    required TResult Function() resetPasswordOtpResendRequested,
+    required TResult Function(String password) resetPasswordNewChanged,
+    required TResult Function(String confirm) resetPasswordConfirmChanged,
+    required TResult Function() resetPasswordVisibilityToggled,
+    required TResult Function() resetPasswordConfirmVisibilityToggled,
+    required TResult Function() resetPasswordSubmitted,
+    required TResult Function(String? clinicId) activeClinicChanged,
+    required TResult Function() authCheckRequested,
+    required TResult Function() logoutRequested,
+    required TResult Function() verifyEmailOtpRequested,
+    required TResult Function() emailVerificationCompleted,
+    required TResult Function() emailVerificationCancelled,
+  }) {
+    return signupClinicTypeChanged(type);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String email)? loginEmailChanged,
+    TResult? Function(String password)? loginPasswordChanged,
+    TResult? Function()? loginPasswordVisibilityToggled,
+    TResult? Function()? loginSubmitted,
+    TResult? Function(String firstName)? signupFirstNameChanged,
+    TResult? Function(String lastName)? signupLastNameChanged,
+    TResult? Function(String email)? signupEmailChanged,
+    TResult? Function(String password)? signupPasswordChanged,
+    TResult? Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult? Function()? signupPasswordVisibilityToggled,
+    TResult? Function()? signupConfirmPasswordVisibilityToggled,
+    TResult? Function()? signupSubmitted,
+    TResult? Function()? signupFormReset,
+    TResult? Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult? Function(String specialization)? signupSpecializationChanged,
+    TResult? Function(String location)? signupLocationChanged,
+    TResult? Function()? specialtiesRequested,
+    TResult? Function()? plansRequested,
+    TResult? Function(String query, String countryCode)?
+    locationSearchRequested,
+    TResult? Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult? Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
+    TResult? Function(String address)? signupClinicAddressChanged,
+    TResult? Function(String mobile)? signupMobileNumberChanged,
+    TResult? Function()? otpRequested,
+    TResult? Function(String code)? otpCodeChanged,
+    TResult? Function()? otpVerified,
+    TResult? Function()? otpResendRequested,
+    TResult? Function(String email)? forgotPasswordEmailChanged,
+    TResult? Function()? forgotPasswordSubmitted,
+    TResult? Function()? forgotPasswordReset,
+    TResult? Function()? resetPasswordOtpRequested,
+    TResult? Function()? resetPasswordOtpVerified,
+    TResult? Function()? resetPasswordOtpResendRequested,
+    TResult? Function(String password)? resetPasswordNewChanged,
+    TResult? Function(String confirm)? resetPasswordConfirmChanged,
+    TResult? Function()? resetPasswordVisibilityToggled,
+    TResult? Function()? resetPasswordConfirmVisibilityToggled,
+    TResult? Function()? resetPasswordSubmitted,
+    TResult? Function(String? clinicId)? activeClinicChanged,
+    TResult? Function()? authCheckRequested,
+    TResult? Function()? logoutRequested,
+    TResult? Function()? verifyEmailOtpRequested,
+    TResult? Function()? emailVerificationCompleted,
+    TResult? Function()? emailVerificationCancelled,
+  }) {
+    return signupClinicTypeChanged?.call(type);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? loginEmailChanged,
+    TResult Function(String password)? loginPasswordChanged,
+    TResult Function()? loginPasswordVisibilityToggled,
+    TResult Function()? loginSubmitted,
+    TResult Function(String firstName)? signupFirstNameChanged,
+    TResult Function(String lastName)? signupLastNameChanged,
+    TResult Function(String email)? signupEmailChanged,
+    TResult Function(String password)? signupPasswordChanged,
+    TResult Function(String confirmPassword)? signupConfirmPasswordChanged,
+    TResult Function()? signupPasswordVisibilityToggled,
+    TResult Function()? signupConfirmPasswordVisibilityToggled,
+    TResult Function()? signupSubmitted,
+    TResult Function()? signupFormReset,
+    TResult Function(String licenseNumber)? signupLicenseNumberChanged,
+    TResult Function(String specialization)? signupSpecializationChanged,
+    TResult Function(String location)? signupLocationChanged,
+    TResult Function()? specialtiesRequested,
+    TResult Function()? plansRequested,
+    TResult Function(String query, String countryCode)? locationSearchRequested,
+    TResult Function(SpecialtyEntity specialty)? signupSpecialtyEntitySelected,
+    TResult Function(LocationEntity location)? signupLocationEntitySelected,
+    TResult Function(PlanEntity plan)? signupPlanEntitySelected,
+    TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
+    TResult Function(String address)? signupClinicAddressChanged,
+    TResult Function(String mobile)? signupMobileNumberChanged,
+    TResult Function()? otpRequested,
+    TResult Function(String code)? otpCodeChanged,
+    TResult Function()? otpVerified,
+    TResult Function()? otpResendRequested,
+    TResult Function(String email)? forgotPasswordEmailChanged,
+    TResult Function()? forgotPasswordSubmitted,
+    TResult Function()? forgotPasswordReset,
+    TResult Function()? resetPasswordOtpRequested,
+    TResult Function()? resetPasswordOtpVerified,
+    TResult Function()? resetPasswordOtpResendRequested,
+    TResult Function(String password)? resetPasswordNewChanged,
+    TResult Function(String confirm)? resetPasswordConfirmChanged,
+    TResult Function()? resetPasswordVisibilityToggled,
+    TResult Function()? resetPasswordConfirmVisibilityToggled,
+    TResult Function()? resetPasswordSubmitted,
+    TResult Function(String? clinicId)? activeClinicChanged,
+    TResult Function()? authCheckRequested,
+    TResult Function()? logoutRequested,
+    TResult Function()? verifyEmailOtpRequested,
+    TResult Function()? emailVerificationCompleted,
+    TResult Function()? emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (signupClinicTypeChanged != null) {
+      return signupClinicTypeChanged(type);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoginEmailChanged value) loginEmailChanged,
+    required TResult Function(_LoginPasswordChanged value) loginPasswordChanged,
+    required TResult Function(_LoginPasswordVisibilityToggled value)
+    loginPasswordVisibilityToggled,
+    required TResult Function(_LoginSubmitted value) loginSubmitted,
+    required TResult Function(_SignupFirstNameChanged value)
+    signupFirstNameChanged,
+    required TResult Function(_SignupLastNameChanged value)
+    signupLastNameChanged,
+    required TResult Function(_SignupEmailChanged value) signupEmailChanged,
+    required TResult Function(_SignupPasswordChanged value)
+    signupPasswordChanged,
+    required TResult Function(_SignupConfirmPasswordChanged value)
+    signupConfirmPasswordChanged,
+    required TResult Function(_SignupPasswordVisibilityToggled value)
+    signupPasswordVisibilityToggled,
+    required TResult Function(_SignupConfirmPasswordVisibilityToggled value)
+    signupConfirmPasswordVisibilityToggled,
+    required TResult Function(_SignupSubmitted value) signupSubmitted,
+    required TResult Function(_SignupFormReset value) signupFormReset,
+    required TResult Function(_SignupLicenseNumberChanged value)
+    signupLicenseNumberChanged,
+    required TResult Function(_SignupSpecializationChanged value)
+    signupSpecializationChanged,
+    required TResult Function(_SignupLocationChanged value)
+    signupLocationChanged,
+    required TResult Function(_SpecialtiesRequested value) specialtiesRequested,
+    required TResult Function(_PlansRequested value) plansRequested,
+    required TResult Function(_LocationSearchRequested value)
+    locationSearchRequested,
+    required TResult Function(_SignupSpecialtyEntitySelected value)
+    signupSpecialtyEntitySelected,
+    required TResult Function(_SignupLocationEntitySelected value)
+    signupLocationEntitySelected,
+    required TResult Function(_SignupPlanEntitySelected value)
+    signupPlanEntitySelected,
+    required TResult Function(_SignupClinicNameChanged value)
+    signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
+    required TResult Function(_SignupClinicAddressChanged value)
+    signupClinicAddressChanged,
+    required TResult Function(_SignupMobileNumberChanged value)
+    signupMobileNumberChanged,
+    required TResult Function(_OtpRequested value) otpRequested,
+    required TResult Function(_OtpCodeChanged value) otpCodeChanged,
+    required TResult Function(_OtpVerified value) otpVerified,
+    required TResult Function(_OtpResendRequested value) otpResendRequested,
+    required TResult Function(_ForgotPasswordEmailChanged value)
+    forgotPasswordEmailChanged,
+    required TResult Function(_ForgotPasswordSubmitted value)
+    forgotPasswordSubmitted,
+    required TResult Function(_ForgotPasswordReset value) forgotPasswordReset,
+    required TResult Function(_ResetPasswordOtpRequested value)
+    resetPasswordOtpRequested,
+    required TResult Function(_ResetPasswordOtpVerified value)
+    resetPasswordOtpVerified,
+    required TResult Function(_ResetPasswordOtpResendRequested value)
+    resetPasswordOtpResendRequested,
+    required TResult Function(_ResetPasswordNewChanged value)
+    resetPasswordNewChanged,
+    required TResult Function(_ResetPasswordConfirmChanged value)
+    resetPasswordConfirmChanged,
+    required TResult Function(_ResetPasswordVisibilityToggled value)
+    resetPasswordVisibilityToggled,
+    required TResult Function(_ResetPasswordConfirmVisibilityToggled value)
+    resetPasswordConfirmVisibilityToggled,
+    required TResult Function(_ResetPasswordSubmitted value)
+    resetPasswordSubmitted,
+    required TResult Function(_ActiveClinicChanged value) activeClinicChanged,
+    required TResult Function(_AuthCheckRequested value) authCheckRequested,
+    required TResult Function(_LogoutRequested value) logoutRequested,
+    required TResult Function(_VerifyEmailOtpRequested value)
+    verifyEmailOtpRequested,
+    required TResult Function(_EmailVerificationCompleted value)
+    emailVerificationCompleted,
+    required TResult Function(_EmailVerificationCancelled value)
+    emailVerificationCancelled,
+  }) {
+    return signupClinicTypeChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult? Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult? Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult? Function(_LoginSubmitted value)? loginSubmitted,
+    TResult? Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult? Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult? Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult? Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult? Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult? Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult? Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult? Function(_SignupSubmitted value)? signupSubmitted,
+    TResult? Function(_SignupFormReset value)? signupFormReset,
+    TResult? Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult? Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult? Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult? Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult? Function(_PlansRequested value)? plansRequested,
+    TResult? Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult? Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult? Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult? Function(_SignupPlanEntitySelected value)?
+    signupPlanEntitySelected,
+    TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
+    TResult? Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult? Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult? Function(_OtpRequested value)? otpRequested,
+    TResult? Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult? Function(_OtpVerified value)? otpVerified,
+    TResult? Function(_OtpResendRequested value)? otpResendRequested,
+    TResult? Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult? Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult? Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult? Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult? Function(_ResetPasswordOtpVerified value)?
+    resetPasswordOtpVerified,
+    TResult? Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult? Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult? Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult? Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult? Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult? Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult? Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult? Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult? Function(_LogoutRequested value)? logoutRequested,
+    TResult? Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult? Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult? Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+  }) {
+    return signupClinicTypeChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoginEmailChanged value)? loginEmailChanged,
+    TResult Function(_LoginPasswordChanged value)? loginPasswordChanged,
+    TResult Function(_LoginPasswordVisibilityToggled value)?
+    loginPasswordVisibilityToggled,
+    TResult Function(_LoginSubmitted value)? loginSubmitted,
+    TResult Function(_SignupFirstNameChanged value)? signupFirstNameChanged,
+    TResult Function(_SignupLastNameChanged value)? signupLastNameChanged,
+    TResult Function(_SignupEmailChanged value)? signupEmailChanged,
+    TResult Function(_SignupPasswordChanged value)? signupPasswordChanged,
+    TResult Function(_SignupConfirmPasswordChanged value)?
+    signupConfirmPasswordChanged,
+    TResult Function(_SignupPasswordVisibilityToggled value)?
+    signupPasswordVisibilityToggled,
+    TResult Function(_SignupConfirmPasswordVisibilityToggled value)?
+    signupConfirmPasswordVisibilityToggled,
+    TResult Function(_SignupSubmitted value)? signupSubmitted,
+    TResult Function(_SignupFormReset value)? signupFormReset,
+    TResult Function(_SignupLicenseNumberChanged value)?
+    signupLicenseNumberChanged,
+    TResult Function(_SignupSpecializationChanged value)?
+    signupSpecializationChanged,
+    TResult Function(_SignupLocationChanged value)? signupLocationChanged,
+    TResult Function(_SpecialtiesRequested value)? specialtiesRequested,
+    TResult Function(_PlansRequested value)? plansRequested,
+    TResult Function(_LocationSearchRequested value)? locationSearchRequested,
+    TResult Function(_SignupSpecialtyEntitySelected value)?
+    signupSpecialtyEntitySelected,
+    TResult Function(_SignupLocationEntitySelected value)?
+    signupLocationEntitySelected,
+    TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
+    TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
+    TResult Function(_SignupClinicAddressChanged value)?
+    signupClinicAddressChanged,
+    TResult Function(_SignupMobileNumberChanged value)?
+    signupMobileNumberChanged,
+    TResult Function(_OtpRequested value)? otpRequested,
+    TResult Function(_OtpCodeChanged value)? otpCodeChanged,
+    TResult Function(_OtpVerified value)? otpVerified,
+    TResult Function(_OtpResendRequested value)? otpResendRequested,
+    TResult Function(_ForgotPasswordEmailChanged value)?
+    forgotPasswordEmailChanged,
+    TResult Function(_ForgotPasswordSubmitted value)? forgotPasswordSubmitted,
+    TResult Function(_ForgotPasswordReset value)? forgotPasswordReset,
+    TResult Function(_ResetPasswordOtpRequested value)?
+    resetPasswordOtpRequested,
+    TResult Function(_ResetPasswordOtpVerified value)? resetPasswordOtpVerified,
+    TResult Function(_ResetPasswordOtpResendRequested value)?
+    resetPasswordOtpResendRequested,
+    TResult Function(_ResetPasswordNewChanged value)? resetPasswordNewChanged,
+    TResult Function(_ResetPasswordConfirmChanged value)?
+    resetPasswordConfirmChanged,
+    TResult Function(_ResetPasswordVisibilityToggled value)?
+    resetPasswordVisibilityToggled,
+    TResult Function(_ResetPasswordConfirmVisibilityToggled value)?
+    resetPasswordConfirmVisibilityToggled,
+    TResult Function(_ResetPasswordSubmitted value)? resetPasswordSubmitted,
+    TResult Function(_ActiveClinicChanged value)? activeClinicChanged,
+    TResult Function(_AuthCheckRequested value)? authCheckRequested,
+    TResult Function(_LogoutRequested value)? logoutRequested,
+    TResult Function(_VerifyEmailOtpRequested value)? verifyEmailOtpRequested,
+    TResult Function(_EmailVerificationCompleted value)?
+    emailVerificationCompleted,
+    TResult Function(_EmailVerificationCancelled value)?
+    emailVerificationCancelled,
+    required TResult orElse(),
+  }) {
+    if (signupClinicTypeChanged != null) {
+      return signupClinicTypeChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignupClinicTypeChanged implements AuthEvent {
+  const factory _SignupClinicTypeChanged(final ClinicType type) =
+      _$SignupClinicTypeChangedImpl;
+
+  ClinicType get type;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignupClinicTypeChangedImplCopyWith<_$SignupClinicTypeChangedImpl>
   get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -11662,6 +12331,7 @@ class _$SignupClinicAddressChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -11716,6 +12386,7 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -11769,6 +12440,7 @@ class _$SignupClinicAddressChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -11841,6 +12513,8 @@ class _$SignupClinicAddressChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -11918,6 +12592,7 @@ class _$SignupClinicAddressChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -11990,6 +12665,7 @@ class _$SignupClinicAddressChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -12156,6 +12832,7 @@ class _$SignupMobileNumberChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -12210,6 +12887,7 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -12263,6 +12941,7 @@ class _$SignupMobileNumberChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -12335,6 +13014,8 @@ class _$SignupMobileNumberChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -12412,6 +13093,7 @@ class _$SignupMobileNumberChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -12484,6 +13166,7 @@ class _$SignupMobileNumberChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -12616,6 +13299,7 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -12670,6 +13354,7 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -12723,6 +13408,7 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -12795,6 +13481,8 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -12872,6 +13560,7 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -12944,6 +13633,7 @@ class _$OtpRequestedImpl with DiagnosticableTreeMixin implements _OtpRequested {
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -13101,6 +13791,7 @@ class _$OtpCodeChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -13155,6 +13846,7 @@ class _$OtpCodeChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -13208,6 +13900,7 @@ class _$OtpCodeChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -13280,6 +13973,8 @@ class _$OtpCodeChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -13357,6 +14052,7 @@ class _$OtpCodeChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -13429,6 +14125,7 @@ class _$OtpCodeChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -13560,6 +14257,7 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -13614,6 +14312,7 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -13667,6 +14366,7 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -13739,6 +14439,8 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -13816,6 +14518,7 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -13888,6 +14591,7 @@ class _$OtpVerifiedImpl with DiagnosticableTreeMixin implements _OtpVerified {
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -14014,6 +14718,7 @@ class _$OtpResendRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -14068,6 +14773,7 @@ class _$OtpResendRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -14121,6 +14827,7 @@ class _$OtpResendRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -14193,6 +14900,8 @@ class _$OtpResendRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -14270,6 +14979,7 @@ class _$OtpResendRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -14342,6 +15052,7 @@ class _$OtpResendRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -14499,6 +15210,7 @@ class _$ForgotPasswordEmailChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -14553,6 +15265,7 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -14606,6 +15319,7 @@ class _$ForgotPasswordEmailChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -14678,6 +15392,8 @@ class _$ForgotPasswordEmailChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -14755,6 +15471,7 @@ class _$ForgotPasswordEmailChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -14827,6 +15544,7 @@ class _$ForgotPasswordEmailChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -14963,6 +15681,7 @@ class _$ForgotPasswordSubmittedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -15017,6 +15736,7 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -15070,6 +15790,7 @@ class _$ForgotPasswordSubmittedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -15142,6 +15863,8 @@ class _$ForgotPasswordSubmittedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -15219,6 +15942,7 @@ class _$ForgotPasswordSubmittedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -15291,6 +16015,7 @@ class _$ForgotPasswordSubmittedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -15418,6 +16143,7 @@ class _$ForgotPasswordResetImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -15472,6 +16198,7 @@ class _$ForgotPasswordResetImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -15525,6 +16252,7 @@ class _$ForgotPasswordResetImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -15597,6 +16325,8 @@ class _$ForgotPasswordResetImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -15674,6 +16404,7 @@ class _$ForgotPasswordResetImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -15746,6 +16477,7 @@ class _$ForgotPasswordResetImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -15873,6 +16605,7 @@ class _$ResetPasswordOtpRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -15927,6 +16660,7 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -15980,6 +16714,7 @@ class _$ResetPasswordOtpRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -16052,6 +16787,8 @@ class _$ResetPasswordOtpRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -16129,6 +16866,7 @@ class _$ResetPasswordOtpRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -16201,6 +16939,7 @@ class _$ResetPasswordOtpRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -16328,6 +17067,7 @@ class _$ResetPasswordOtpVerifiedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -16382,6 +17122,7 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -16435,6 +17176,7 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -16507,6 +17249,8 @@ class _$ResetPasswordOtpVerifiedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -16584,6 +17328,7 @@ class _$ResetPasswordOtpVerifiedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -16656,6 +17401,7 @@ class _$ResetPasswordOtpVerifiedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -16784,6 +17530,7 @@ class _$ResetPasswordOtpResendRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -16838,6 +17585,7 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -16891,6 +17639,7 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -16963,6 +17712,8 @@ class _$ResetPasswordOtpResendRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -17040,6 +17791,7 @@ class _$ResetPasswordOtpResendRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -17112,6 +17864,7 @@ class _$ResetPasswordOtpResendRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -17271,6 +18024,7 @@ class _$ResetPasswordNewChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -17325,6 +18079,7 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -17378,6 +18133,7 @@ class _$ResetPasswordNewChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -17450,6 +18206,8 @@ class _$ResetPasswordNewChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -17527,6 +18285,7 @@ class _$ResetPasswordNewChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -17599,6 +18358,7 @@ class _$ResetPasswordNewChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -17767,6 +18527,7 @@ class _$ResetPasswordConfirmChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -17821,6 +18582,7 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -17874,6 +18636,7 @@ class _$ResetPasswordConfirmChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -17946,6 +18709,8 @@ class _$ResetPasswordConfirmChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -18023,6 +18788,7 @@ class _$ResetPasswordConfirmChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -18095,6 +18861,7 @@ class _$ResetPasswordConfirmChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -18232,6 +18999,7 @@ class _$ResetPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -18286,6 +19054,7 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -18339,6 +19108,7 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -18411,6 +19181,8 @@ class _$ResetPasswordVisibilityToggledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -18488,6 +19260,7 @@ class _$ResetPasswordVisibilityToggledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -18560,6 +19333,7 @@ class _$ResetPasswordVisibilityToggledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -18696,6 +19470,7 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -18750,6 +19525,7 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -18803,6 +19579,7 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -18875,6 +19652,8 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -18952,6 +19731,7 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -19024,6 +19804,7 @@ class _$ResetPasswordConfirmVisibilityToggledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -19152,6 +19933,7 @@ class _$ResetPasswordSubmittedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -19206,6 +19988,7 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -19259,6 +20042,7 @@ class _$ResetPasswordSubmittedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -19331,6 +20115,8 @@ class _$ResetPasswordSubmittedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -19408,6 +20194,7 @@ class _$ResetPasswordSubmittedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -19480,6 +20267,7 @@ class _$ResetPasswordSubmittedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -19638,6 +20426,7 @@ class _$ActiveClinicChangedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -19692,6 +20481,7 @@ class _$ActiveClinicChangedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -19745,6 +20535,7 @@ class _$ActiveClinicChangedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -19817,6 +20608,8 @@ class _$ActiveClinicChangedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -19894,6 +20687,7 @@ class _$ActiveClinicChangedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -19966,6 +20760,7 @@ class _$ActiveClinicChangedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -20101,6 +20896,7 @@ class _$AuthCheckRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -20155,6 +20951,7 @@ class _$AuthCheckRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -20208,6 +21005,7 @@ class _$AuthCheckRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -20280,6 +21078,8 @@ class _$AuthCheckRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -20357,6 +21157,7 @@ class _$AuthCheckRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -20429,6 +21230,7 @@ class _$AuthCheckRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -20554,6 +21356,7 @@ class _$LogoutRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -20608,6 +21411,7 @@ class _$LogoutRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -20661,6 +21465,7 @@ class _$LogoutRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -20733,6 +21538,8 @@ class _$LogoutRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -20810,6 +21617,7 @@ class _$LogoutRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -20882,6 +21690,7 @@ class _$LogoutRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -21009,6 +21818,7 @@ class _$VerifyEmailOtpRequestedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -21063,6 +21873,7 @@ class _$VerifyEmailOtpRequestedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -21116,6 +21927,7 @@ class _$VerifyEmailOtpRequestedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -21188,6 +22000,8 @@ class _$VerifyEmailOtpRequestedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -21265,6 +22079,7 @@ class _$VerifyEmailOtpRequestedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -21337,6 +22152,7 @@ class _$VerifyEmailOtpRequestedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -21465,6 +22281,7 @@ class _$EmailVerificationCompletedImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -21519,6 +22336,7 @@ class _$EmailVerificationCompletedImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -21572,6 +22390,7 @@ class _$EmailVerificationCompletedImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -21644,6 +22463,8 @@ class _$EmailVerificationCompletedImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -21721,6 +22542,7 @@ class _$EmailVerificationCompletedImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -21793,6 +22615,7 @@ class _$EmailVerificationCompletedImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -21922,6 +22745,7 @@ class _$EmailVerificationCancelledImpl
     signupLocationEntitySelected,
     required TResult Function(PlanEntity plan) signupPlanEntitySelected,
     required TResult Function(String name) signupClinicNameChanged,
+    required TResult Function(ClinicType type) signupClinicTypeChanged,
     required TResult Function(String address) signupClinicAddressChanged,
     required TResult Function(String mobile) signupMobileNumberChanged,
     required TResult Function() otpRequested,
@@ -21976,6 +22800,7 @@ class _$EmailVerificationCancelledImpl
     TResult? Function(LocationEntity location)? signupLocationEntitySelected,
     TResult? Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult? Function(String name)? signupClinicNameChanged,
+    TResult? Function(ClinicType type)? signupClinicTypeChanged,
     TResult? Function(String address)? signupClinicAddressChanged,
     TResult? Function(String mobile)? signupMobileNumberChanged,
     TResult? Function()? otpRequested,
@@ -22029,6 +22854,7 @@ class _$EmailVerificationCancelledImpl
     TResult Function(LocationEntity location)? signupLocationEntitySelected,
     TResult Function(PlanEntity plan)? signupPlanEntitySelected,
     TResult Function(String name)? signupClinicNameChanged,
+    TResult Function(ClinicType type)? signupClinicTypeChanged,
     TResult Function(String address)? signupClinicAddressChanged,
     TResult Function(String mobile)? signupMobileNumberChanged,
     TResult Function()? otpRequested,
@@ -22101,6 +22927,8 @@ class _$EmailVerificationCancelledImpl
     signupPlanEntitySelected,
     required TResult Function(_SignupClinicNameChanged value)
     signupClinicNameChanged,
+    required TResult Function(_SignupClinicTypeChanged value)
+    signupClinicTypeChanged,
     required TResult Function(_SignupClinicAddressChanged value)
     signupClinicAddressChanged,
     required TResult Function(_SignupMobileNumberChanged value)
@@ -22178,6 +23006,7 @@ class _$EmailVerificationCancelledImpl
     TResult? Function(_SignupPlanEntitySelected value)?
     signupPlanEntitySelected,
     TResult? Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult? Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult? Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult? Function(_SignupMobileNumberChanged value)?
@@ -22250,6 +23079,7 @@ class _$EmailVerificationCancelledImpl
     signupLocationEntitySelected,
     TResult Function(_SignupPlanEntitySelected value)? signupPlanEntitySelected,
     TResult Function(_SignupClinicNameChanged value)? signupClinicNameChanged,
+    TResult Function(_SignupClinicTypeChanged value)? signupClinicTypeChanged,
     TResult Function(_SignupClinicAddressChanged value)?
     signupClinicAddressChanged,
     TResult Function(_SignupMobileNumberChanged value)?
@@ -22334,6 +23164,9 @@ mixin _$AuthState {
   PlanEntity? get selectedPlan =>
       throw _privateConstructorUsedError; // Clinic information for registration
   String get clinicName => throw _privateConstructorUsedError;
+
+  /// Required by /auth/register. A label only - nothing branches on it.
+  ClinicType? get clinicType => throw _privateConstructorUsedError;
   String get clinicAddress => throw _privateConstructorUsedError;
   String get mobileNumber =>
       throw _privateConstructorUsedError; // OTP verification fields
@@ -22411,6 +23244,7 @@ abstract class $AuthStateCopyWith<$Res> {
     LocationEntity? selectedLocation,
     PlanEntity? selectedPlan,
     String clinicName,
+    ClinicType? clinicType,
     String clinicAddress,
     String mobileNumber,
     String otpCode,
@@ -22489,6 +23323,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? selectedLocation = freezed,
     Object? selectedPlan = freezed,
     Object? clinicName = null,
+    Object? clinicType = freezed,
     Object? clinicAddress = null,
     Object? mobileNumber = null,
     Object? otpCode = null,
@@ -22629,6 +23464,10 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.clinicName
                 : clinicName // ignore: cast_nullable_to_non_nullable
                       as String,
+            clinicType: freezed == clinicType
+                ? _value.clinicType
+                : clinicType // ignore: cast_nullable_to_non_nullable
+                      as ClinicType?,
             clinicAddress: null == clinicAddress
                 ? _value.clinicAddress
                 : clinicAddress // ignore: cast_nullable_to_non_nullable
@@ -22840,6 +23679,7 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     LocationEntity? selectedLocation,
     PlanEntity? selectedPlan,
     String clinicName,
+    ClinicType? clinicType,
     String clinicAddress,
     String mobileNumber,
     String otpCode,
@@ -22921,6 +23761,7 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? selectedLocation = freezed,
     Object? selectedPlan = freezed,
     Object? clinicName = null,
+    Object? clinicType = freezed,
     Object? clinicAddress = null,
     Object? mobileNumber = null,
     Object? otpCode = null,
@@ -23060,6 +23901,10 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.clinicName
             : clinicName // ignore: cast_nullable_to_non_nullable
                   as String,
+        clinicType: freezed == clinicType
+            ? _value.clinicType
+            : clinicType // ignore: cast_nullable_to_non_nullable
+                  as ClinicType?,
         clinicAddress: null == clinicAddress
             ? _value.clinicAddress
             : clinicAddress // ignore: cast_nullable_to_non_nullable
@@ -23208,6 +24053,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     this.selectedLocation = null,
     this.selectedPlan = null,
     this.clinicName = '',
+    this.clinicType = null,
     this.clinicAddress = '',
     this.mobileNumber = '',
     this.otpCode = '',
@@ -23350,6 +24196,11 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   @override
   @JsonKey()
   final String clinicName;
+
+  /// Required by /auth/register. A label only - nothing branches on it.
+  @override
+  @JsonKey()
+  final ClinicType? clinicType;
   @override
   @JsonKey()
   final String clinicAddress;
@@ -23456,7 +24307,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicType: $clinicType, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
   }
 
   @override
@@ -23500,6 +24351,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       ..add(DiagnosticsProperty('selectedLocation', selectedLocation))
       ..add(DiagnosticsProperty('selectedPlan', selectedPlan))
       ..add(DiagnosticsProperty('clinicName', clinicName))
+      ..add(DiagnosticsProperty('clinicType', clinicType))
       ..add(DiagnosticsProperty('clinicAddress', clinicAddress))
       ..add(DiagnosticsProperty('mobileNumber', mobileNumber))
       ..add(DiagnosticsProperty('otpCode', otpCode))
@@ -23623,6 +24475,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
                 other.selectedPlan == selectedPlan) &&
             (identical(other.clinicName, clinicName) ||
                 other.clinicName == clinicName) &&
+            (identical(other.clinicType, clinicType) ||
+                other.clinicType == clinicType) &&
             (identical(other.clinicAddress, clinicAddress) ||
                 other.clinicAddress == clinicAddress) &&
             (identical(other.mobileNumber, mobileNumber) ||
@@ -23726,6 +24580,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     selectedLocation,
     selectedPlan,
     clinicName,
+    clinicType,
     clinicAddress,
     mobileNumber,
     otpCode,
@@ -23794,6 +24649,7 @@ abstract class _AuthState implements AuthState {
     final LocationEntity? selectedLocation,
     final PlanEntity? selectedPlan,
     final String clinicName,
+    final ClinicType? clinicType,
     final String clinicAddress,
     final String mobileNumber,
     final String otpCode,
@@ -23879,6 +24735,10 @@ abstract class _AuthState implements AuthState {
   PlanEntity? get selectedPlan; // Clinic information for registration
   @override
   String get clinicName;
+
+  /// Required by /auth/register. A label only - nothing branches on it.
+  @override
+  ClinicType? get clinicType;
   @override
   String get clinicAddress;
   @override

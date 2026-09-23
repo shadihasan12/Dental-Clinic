@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/features/clinic/domain/use_cases/switch_active_clinic_use_case.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,10 +54,22 @@ class NotificationRouting {
         return '/patients-details';
       case NotificationCategories.clinicInvitation:
         return '/my-clinics';
+      case NotificationCategories.billingInvoice:
+        final invoiceId = _string(data, 'invoice_id');
+        return invoiceId == null ? '/billing' : '/billing/invoices/$invoiceId';
+      case NotificationCategories.billingPayment:
+        return '/billing/payments';
+      case NotificationCategories.subscription:
+        return '/billing';
       default:
         return notificationsPath;
     }
   }
+
+  /// A subscription or billing notice: an invoice, a payment, or the
+  /// subscription itself.
+  static bool isBillingNotice(Map<String, dynamic> data) =>
+      NotificationCategories.billingTypes.contains(typeOf(data));
 
   /// Navigates [router] to wherever [data] points.
   ///
@@ -88,6 +105,12 @@ class NotificationRouting {
         router.pushNamed(AppRoutesNames.myClinics);
         return;
 
+      case NotificationCategories.billingInvoice:
+      case NotificationCategories.billingPayment:
+      case NotificationCategories.subscription:
+        unawaited(_openBilling(router, data, type));
+        return;
+
       case NotificationCategories.announcement:
         break;
 
@@ -101,5 +124,45 @@ class NotificationRouting {
     // Announcements, and anything this build does not recognise, land safely
     // on the inbox.
     router.pushNamed(AppRoutesNames.notifications);
+  }
+
+  /// Billing notices belong to one clinic, named by `clinic_id`. The
+  /// selected clinic is switched to it *before* navigating - otherwise the
+  /// screen loads another clinic's data, or answers 403.
+  static Future<void> _openBilling(
+    GoRouter router,
+    Map<String, dynamic> data,
+    String type,
+  ) async {
+    final clinicId = _string(data, 'clinic_id');
+    if (clinicId != null) {
+      final switched = await getIt<SwitchActiveClinicUseCase>()(clinicId);
+      if (!switched) {
+        // Not (or no longer) a member of that clinic: nothing to open.
+        router.pushNamed(AppRoutesNames.notifications);
+        return;
+      }
+    }
+    // Whatever it says, it changed the subscription or the money.
+    SubscriptionGuardHelper.refreshAccess(force: true);
+
+    switch (type) {
+      case NotificationCategories.billingInvoice:
+        final invoiceId = _string(data, 'invoice_id');
+        if (invoiceId != null) {
+          router.pushNamed(
+            AppRoutesNames.invoiceDetails,
+            pathParameters: {'invoiceId': invoiceId},
+          );
+          return;
+        }
+        router.pushNamed(AppRoutesNames.billing);
+        return;
+      case NotificationCategories.billingPayment:
+        router.pushNamed(AppRoutesNames.clinicPayments);
+        return;
+      default:
+        router.pushNamed(AppRoutesNames.billing);
+    }
   }
 }

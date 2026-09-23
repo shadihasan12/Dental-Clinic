@@ -1,6 +1,11 @@
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 
-/// Data model for price with JSON serialization
+/// One figure in one currency: `{ "amount": 719640, "currency": "SYP",
+/// "display": "SYP 719,640" }`.
+///
+/// The backend holds every sum in USD and sends this array wherever a figure
+/// is shown - plan prices, quotes, what is left on an invoice - converted at
+/// today's rate. The app shows `display` and never converts anything itself.
 class PriceModel {
   final double amount;
   final String currency;
@@ -15,19 +20,20 @@ class PriceModel {
   /// Create model from JSON
   factory PriceModel.fromJson(Map<String, dynamic> json) {
     return PriceModel(
-      amount: (json['amount'] as num).toDouble(),
-      currency: json['currency'] as String,
-      display: json['display'] as String,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0,
+      currency: (json['currency'] ?? '').toString(),
+      display: (json['display'] ?? '').toString(),
     );
   }
 
-  /// Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'amount': amount,
-      'currency': currency,
-      'display': display,
-    };
+  /// Parses an `amounts` array straight to entities; anything that is not a
+  /// list comes back empty.
+  static List<PriceEntity> listFromJson(dynamic json) {
+    if (json is! List) return const [];
+    return json
+        .whereType<Map<String, dynamic>>()
+        .map((e) => PriceModel.fromJson(e).toEntity())
+        .toList();
   }
 
   /// Convert model to domain entity
@@ -38,29 +44,23 @@ class PriceModel {
       display: display,
     );
   }
-
-  /// Create model from domain entity
-  factory PriceModel.fromEntity(PriceEntity entity) {
-    return PriceModel(
-      amount: entity.amount,
-      currency: entity.currency,
-      display: entity.display,
-    );
-  }
 }
 
-/// Data model for subscription plan with JSON serialization
+/// Data model for subscription plan with JSON serialization.
+///
+/// `id` is the plan; `version_id` is the priced version of it on sale today,
+/// and is what every purchase and every quote sends as `plan_version_id`.
+/// A plan carries no clinic type any more - every clinic sees every plan.
 class PlanModel {
   final String id;
   final String versionId;
   final String name;
   final String description;
-  final List<PriceModel> priceMonthly;
-  final List<PriceModel> priceYearly;
+  final List<PriceEntity> priceMonthly;
+  final List<PriceEntity> priceYearly;
   final bool supportsTrial;
   final int trialPeriodDays;
   final int gracePeriodDays;
-  final String clinicType;
   final String type;
   final int sortOrder;
 
@@ -74,7 +74,6 @@ class PlanModel {
     required this.supportsTrial,
     required this.trialPeriodDays,
     required this.gracePeriodDays,
-    required this.clinicType,
     required this.type,
     required this.sortOrder,
   });
@@ -84,39 +83,16 @@ class PlanModel {
     return PlanModel(
       id: json['id'] as String,
       versionId: json['version_id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      priceMonthly: (json['price_monthly'] as List)
-          .map((e) => PriceModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      priceYearly: (json['price_yearly'] as List)
-          .map((e) => PriceModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      supportsTrial: json['supports_trial'] as bool,
-      trialPeriodDays: json['trial_period_days'] as int,
-      gracePeriodDays: json['grace_period_days'] as int,
-      clinicType: json['clinic_type'] as String,
-      type: json['type'] as String,
-      sortOrder: json['sort_order'] as int,
+      name: (json['name'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      priceMonthly: PriceModel.listFromJson(json['price_monthly']),
+      priceYearly: PriceModel.listFromJson(json['price_yearly']),
+      supportsTrial: json['supports_trial'] as bool? ?? false,
+      trialPeriodDays: (json['trial_period_days'] as num?)?.toInt() ?? 0,
+      gracePeriodDays: (json['grace_period_days'] as num?)?.toInt() ?? 0,
+      type: (json['type'] ?? 'MAIN').toString(),
+      sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
     );
-  }
-
-  /// Convert model to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'version_id': versionId,
-      'name': name,
-      'description': description,
-      'price_monthly': priceMonthly.map((e) => e.toJson()).toList(),
-      'price_yearly': priceYearly.map((e) => e.toJson()).toList(),
-      'supports_trial': supportsTrial,
-      'trial_period_days': trialPeriodDays,
-      'grace_period_days': gracePeriodDays,
-      'clinic_type': clinicType,
-      'type': type,
-      'sort_order': sortOrder,
-    };
   }
 
   /// Convert model to domain entity
@@ -126,32 +102,13 @@ class PlanModel {
       versionId: versionId,
       name: name,
       description: description,
-      priceMonthly: priceMonthly.map((e) => e.toEntity()).toList(),
-      priceYearly: priceYearly.map((e) => e.toEntity()).toList(),
+      priceMonthly: priceMonthly,
+      priceYearly: priceYearly,
       supportsTrial: supportsTrial,
       trialPeriodDays: trialPeriodDays,
       gracePeriodDays: gracePeriodDays,
-      clinicType: clinicType,
       type: type,
       sortOrder: sortOrder,
-    );
-  }
-
-  /// Create model from domain entity
-  factory PlanModel.fromEntity(PlanEntity entity) {
-    return PlanModel(
-      id: entity.id,
-      versionId: entity.versionId,
-      name: entity.name,
-      description: entity.description,
-      priceMonthly: entity.priceMonthly.map((e) => PriceModel.fromEntity(e)).toList(),
-      priceYearly: entity.priceYearly.map((e) => PriceModel.fromEntity(e)).toList(),
-      supportsTrial: entity.supportsTrial,
-      trialPeriodDays: entity.trialPeriodDays,
-      gracePeriodDays: entity.gracePeriodDays,
-      clinicType: entity.clinicType,
-      type: entity.type,
-      sortOrder: entity.sortOrder,
     );
   }
 }

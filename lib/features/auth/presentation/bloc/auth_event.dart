@@ -39,6 +39,7 @@ class AuthEvent with _$AuthEvent {
 
   // Clinic information events
   const factory AuthEvent.signupClinicNameChanged(String name) = _SignupClinicNameChanged;
+  const factory AuthEvent.signupClinicTypeChanged(ClinicType type) = _SignupClinicTypeChanged;
   const factory AuthEvent.signupClinicAddressChanged(String address) = _SignupClinicAddressChanged;
   const factory AuthEvent.signupMobileNumberChanged(String mobile) = _SignupMobileNumberChanged;
 

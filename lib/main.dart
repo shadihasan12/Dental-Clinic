@@ -29,6 +29,8 @@ import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
+import 'package:dental_clinic_app/services/subscription_guard/payment_required_handler.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -116,6 +118,7 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     with WidgetsBindingObserver {
   final RoutesManager routesManager = RoutesManager(getIt<TokenStorage>());
   StreamSubscription<void>? _notificationTapSubscription;
+  StreamSubscription<void>? _billingNoticeSubscription;
 
   @override
   void initState() {
@@ -123,6 +126,17 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     WidgetsBinding.instance.addObserver(this);
     getIt<LanguageBloc>().add(const LoadLanguageEvent());
     getIt<ThemeBloc>().add(const LoadThemeEvent());
+
+    // The one reaction to a 402, wherever in the app it comes from.
+    getIt<PaymentRequiredHandler>().start();
+
+    // A subscription or billing notice means the subscription or the money
+    // just changed - an admin confirmed a transfer, the trial ended - and the
+    // server tells the app nothing else, so it re-reads the access mode.
+    _billingNoticeSubscription = getIt<NotificationService>()
+        .onNotificationReceived
+        .where((n) => NotificationRouting.isBillingNotice(n.data))
+        .listen((_) => SubscriptionGuardHelper.refreshAccess(force: true));
 
     // Deep-link push taps to the notifications screen. We use the GoRouter
     // instance directly (rather than `context.go`) because taps may fire
@@ -147,6 +161,7 @@ class _DentalClinicAppState extends State<DentalClinicApp>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _notificationTapSubscription?.cancel();
+    _billingNoticeSubscription?.cancel();
     super.dispose();
   }
 
@@ -158,6 +173,9 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     // Notifications may have been read on another device, or arrived while we
     // were backgrounded. Nothing else refreshes the badge on the way back in.
     unawaited(getIt<UnreadCountCubit>().refresh());
+    // A transfer may have been confirmed, or the trial may have ended, while
+    // the app was away - the access mode comes back with the permissions.
+    SubscriptionGuardHelper.refreshAccess();
     // Windows only: the poller can be idle here if it was stopped, and start()
     // polls immediately so anything that landed while we were away surfaces
     // now rather than one interval later.

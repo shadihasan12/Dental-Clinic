@@ -333,6 +333,7 @@ mixin _$UserHoursState {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -349,6 +350,7 @@ mixin _$UserHoursState {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -365,6 +367,7 @@ mixin _$UserHoursState {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -481,6 +484,7 @@ class _$UHInitialImpl implements _UHInitial {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -501,6 +505,7 @@ class _$UHInitialImpl implements _UHInitial {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -521,6 +526,7 @@ class _$UHInitialImpl implements _UHInitial {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -639,6 +645,7 @@ class _$UHLoadingImpl implements _UHLoading {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -659,6 +666,7 @@ class _$UHLoadingImpl implements _UHLoading {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -679,6 +687,7 @@ class _$UHLoadingImpl implements _UHLoading {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -759,6 +768,7 @@ abstract class _$$UHLoadedImplCopyWith<$Res> {
   $Res call({
     List<UserWorkingDayApiModel> days,
     bool isSeed,
+    bool followsClinicHours,
     List<WorkingDayApiModel> clinicDays,
   });
 }
@@ -779,6 +789,7 @@ class __$$UHLoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? days = null,
     Object? isSeed = null,
+    Object? followsClinicHours = null,
     Object? clinicDays = null,
   }) {
     return _then(
@@ -790,6 +801,10 @@ class __$$UHLoadedImplCopyWithImpl<$Res>
         isSeed: null == isSeed
             ? _value.isSeed
             : isSeed // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        followsClinicHours: null == followsClinicHours
+            ? _value.followsClinicHours
+            : followsClinicHours // ignore: cast_nullable_to_non_nullable
                   as bool,
         clinicDays: null == clinicDays
             ? _value._clinicDays
@@ -806,6 +821,7 @@ class _$UHLoadedImpl implements _UHLoaded {
   const _$UHLoadedImpl(
     final List<UserWorkingDayApiModel> days, {
     this.isSeed = false,
+    this.followsClinicHours = false,
     final List<WorkingDayApiModel> clinicDays = const <WorkingDayApiModel>[],
   }) : _days = days,
        _clinicDays = clinicDays;
@@ -821,6 +837,9 @@ class _$UHLoadedImpl implements _UHLoaded {
   @override
   @JsonKey()
   final bool isSeed;
+  @override
+  @JsonKey()
+  final bool followsClinicHours;
   final List<WorkingDayApiModel> _clinicDays;
   @override
   @JsonKey()
@@ -832,7 +851,7 @@ class _$UHLoadedImpl implements _UHLoaded {
 
   @override
   String toString() {
-    return 'UserHoursState.loaded(days: $days, isSeed: $isSeed, clinicDays: $clinicDays)';
+    return 'UserHoursState.loaded(days: $days, isSeed: $isSeed, followsClinicHours: $followsClinicHours, clinicDays: $clinicDays)';
   }
 
   @override
@@ -842,6 +861,8 @@ class _$UHLoadedImpl implements _UHLoaded {
             other is _$UHLoadedImpl &&
             const DeepCollectionEquality().equals(other._days, _days) &&
             (identical(other.isSeed, isSeed) || other.isSeed == isSeed) &&
+            (identical(other.followsClinicHours, followsClinicHours) ||
+                other.followsClinicHours == followsClinicHours) &&
             const DeepCollectionEquality().equals(
               other._clinicDays,
               _clinicDays,
@@ -853,6 +874,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     runtimeType,
     const DeepCollectionEquality().hash(_days),
     isSeed,
+    followsClinicHours,
     const DeepCollectionEquality().hash(_clinicDays),
   );
 
@@ -872,6 +894,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -881,7 +904,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     required TResult Function(String message) error,
     required TResult Function(String message) saveFailed,
   }) {
-    return loaded(days, isSeed, clinicDays);
+    return loaded(days, isSeed, followsClinicHours, clinicDays);
   }
 
   @override
@@ -892,6 +915,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -901,7 +925,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     TResult? Function(String message)? error,
     TResult? Function(String message)? saveFailed,
   }) {
-    return loaded?.call(days, isSeed, clinicDays);
+    return loaded?.call(days, isSeed, followsClinicHours, clinicDays);
   }
 
   @override
@@ -912,6 +936,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -923,7 +948,7 @@ class _$UHLoadedImpl implements _UHLoaded {
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(days, isSeed, clinicDays);
+      return loaded(days, isSeed, followsClinicHours, clinicDays);
     }
     return orElse();
   }
@@ -982,11 +1007,13 @@ abstract class _UHLoaded implements UserHoursState {
   const factory _UHLoaded(
     final List<UserWorkingDayApiModel> days, {
     final bool isSeed,
+    final bool followsClinicHours,
     final List<WorkingDayApiModel> clinicDays,
   }) = _$UHLoadedImpl;
 
   List<UserWorkingDayApiModel> get days;
   bool get isSeed;
+  bool get followsClinicHours;
   List<WorkingDayApiModel> get clinicDays;
 
   /// Create a copy of UserHoursState
@@ -1074,6 +1101,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -1094,6 +1122,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1114,6 +1143,7 @@ class _$UHNeedsClinicHoursImpl implements _UHNeedsClinicHours {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1241,6 +1271,7 @@ class _$UHSavingImpl implements _UHSaving {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -1261,6 +1292,7 @@ class _$UHSavingImpl implements _UHSaving {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1281,6 +1313,7 @@ class _$UHSavingImpl implements _UHSaving {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1399,6 +1432,7 @@ class _$UHSavedImpl implements _UHSaved {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -1419,6 +1453,7 @@ class _$UHSavedImpl implements _UHSaved {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1439,6 +1474,7 @@ class _$UHSavedImpl implements _UHSaved {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1584,6 +1620,7 @@ class _$UHErrorImpl implements _UHError {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -1604,6 +1641,7 @@ class _$UHErrorImpl implements _UHError {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1624,6 +1662,7 @@ class _$UHErrorImpl implements _UHError {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1777,6 +1816,7 @@ class _$UHSaveFailedImpl implements _UHSaveFailed {
     required TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )
     loaded,
@@ -1797,6 +1837,7 @@ class _$UHSaveFailedImpl implements _UHSaveFailed {
     TResult? Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,
@@ -1817,6 +1858,7 @@ class _$UHSaveFailedImpl implements _UHSaveFailed {
     TResult Function(
       List<UserWorkingDayApiModel> days,
       bool isSeed,
+      bool followsClinicHours,
       List<WorkingDayApiModel> clinicDays,
     )?
     loaded,

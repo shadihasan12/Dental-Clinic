@@ -53,8 +53,10 @@ class SubscriptionCard extends StatelessWidget {
     if (s == null) return _NoPlanCard(onStartTrial: onUpgrade, onClose: onClose);
 
     // Order matters: a trial can lapse, so the lapsed states are checked
-    // before isTrial rather than after it.
-    if (s.isExpired) {
+    // before isTrial rather than after it. Awaiting a first payment and
+    // cancelled read the same way: nothing is running, and paying is the
+    // way back.
+    if (s.isExpired || s.isPendingActivation || s.isCanceled) {
       return _ExpiredCard(
         status: s,
         onRenew: onUpgrade,
@@ -62,7 +64,7 @@ class SubscriptionCard extends StatelessWidget {
         onClose: onClose,
       );
     }
-    if (s.isInGracePeriod) {
+    if (s.isGrace) {
       return _GraceCard(
         status: s,
         onRenew: onUpgrade,
@@ -330,12 +332,10 @@ class _GraceCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: 11.h),
-          _ActionPair(
-            primaryLabel: l10n.renewAction,
-            onPrimary: onRenew,
-            secondaryLabel: l10n.viewAllPlans,
-            onSecondary: onViewPlans,
-          ),
+          // No renew action: while the subscription is in grace the app
+          // cannot raise a renewal, so this only leads to the screen that
+          // says to contact support.
+          _OutlinedAction(label: l10n.viewSubscription, onTap: onViewPlans),
         ],
       ),
     );
@@ -358,6 +358,11 @@ class _ExpiredCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final (pill, body) = status.isPendingActivation
+        ? (l10n.subStatusPending, l10n.subBodyPending)
+        : status.isCanceled
+            ? (l10n.subStatusCanceled, l10n.subBodyCanceled)
+            : (l10n.expired, l10n.subscriptionExpiredBody);
 
     return _Shell(
       accent: ColorManager.error,
@@ -368,12 +373,12 @@ class _ExpiredCard extends StatelessWidget {
             icon: Icons.block_outlined,
             accent: ColorManager.error,
             title: _planTitle(status, l10n),
-            subtitle: l10n.subscriptionExpiredBody,
-            pillLabel: l10n.expired,
+            subtitle: body,
+            pillLabel: pill,
             pillColor: ColorManager.error,
             onClose: onClose,
           ),
-          if (status.endsAt != null) ...[
+          if (status.isExpired && status.endsAt != null) ...[
             SizedBox(height: 9.h),
             _NumberTile(
               label: l10n.endedLabel,
@@ -383,12 +388,7 @@ class _ExpiredCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: 11.h),
-          _ActionPair(
-            primaryLabel: l10n.renewAction,
-            onPrimary: onRenew,
-            secondaryLabel: l10n.viewAllPlans,
-            onSecondary: onViewPlans,
-          ),
+          _FilledAction(label: l10n.renewAction, onTap: onRenew),
         ],
       ),
     );
@@ -413,7 +413,8 @@ class _PlanCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final live = status.isActive;
     final accent = live ? ColorManager.success : ColorManager.warning;
-    final storage = usage?.metric('storage');
+    final storage = usage?.storage;
+    final seats = usage?.users;
 
     return _Shell(
       accent: accent,
@@ -436,12 +437,16 @@ class _PlanCard extends StatelessWidget {
               small: true,
             ),
           ],
+          if (seats != null) ...[
+            SizedBox(height: 9.h),
+            _UsageBlock(metric: seats, label: l10n.seatsLabel),
+          ],
           if (storage != null) ...[
             SizedBox(height: 9.h),
             _UsageBlock(metric: storage, label: l10n.storageUsed),
           ],
           SizedBox(height: 11.h),
-          _OutlinedAction(label: l10n.viewAllPlans, onTap: onViewPlans),
+          _OutlinedAction(label: l10n.viewSubscription, onTap: onViewPlans),
         ],
       ),
     );
@@ -516,7 +521,9 @@ class _NoPlanCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 11.h),
-            _FilledAction(label: l10n.startFreeTrial, onTap: onStartTrial),
+            // There is no "start trial" call - a trial opens at registration
+            // and never again - so this leads to the screen that explains.
+            _FilledAction(label: l10n.viewSubscription, onTap: onStartTrial),
           ],
         ),
       ),
@@ -767,34 +774,6 @@ class _OutlinedAction extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Never more than two, primary leading.
-class _ActionPair extends StatelessWidget {
-  const _ActionPair({
-    required this.primaryLabel,
-    required this.onPrimary,
-    required this.secondaryLabel,
-    required this.onSecondary,
-  });
-
-  final String primaryLabel;
-  final VoidCallback onPrimary;
-  final String secondaryLabel;
-  final VoidCallback onSecondary;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: _FilledAction(label: primaryLabel, onTap: onPrimary)),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: _OutlinedAction(label: secondaryLabel, onTap: onSecondary),
-        ),
-      ],
     );
   }
 }

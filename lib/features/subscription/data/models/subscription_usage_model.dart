@@ -5,9 +5,10 @@ class SubscriptionUsageModel {
 
   const SubscriptionUsageModel({required this.metrics});
 
-  /// Parses the flat `max_<resource>` / `current_<resource>` shape:
-  ///   { "max_dentists": 1, "current_dentists": 1, ...,
-  ///     "max_storage_mb": 1024, "current_storage_mb": 0, ... }
+  /// Parses the flat `max_<resource>` / `current_<resource>` /
+  /// `<resource>_reached` shape:
+  ///   { "max_users": 2, "current_users": 1, "remaining_users": 1,
+  ///     "users_reached": false, "max_storage_mb": 1024, ... }
   ///
   /// A `_mb` suffix is stripped from the resource name and surfaced as the
   /// metric's display unit, so callers look up `'storage'` regardless of how
@@ -24,8 +25,16 @@ class SubscriptionUsageModel {
       final raw = entry.value as num?;
       // API uses -1 to mean "unlimited" (in addition to null).
       final limit = (raw == null || raw < 0) ? null : raw;
+      final reached =
+          json['${key}_reached'] as bool? ?? (limit != null && used >= limit);
 
-      metrics.add(UsageMetric(key: key, used: used, limit: limit, unit: unit));
+      metrics.add(UsageMetric(
+        key: key,
+        used: used,
+        limit: limit,
+        unit: unit,
+        reached: reached,
+      ));
     }
 
     return SubscriptionUsageModel(metrics: metrics);

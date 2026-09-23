@@ -12,7 +12,6 @@ import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_members
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
-import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/pages/user_hours_page.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -48,14 +47,10 @@ class _ClinicUsersContent extends StatefulWidget {
 class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   SubscriptionUsageEntity? _usage;
 
-  bool _isMetricReached(String key) {
-    final m = _usage?.metric(key);
-    if (m == null || m.isUnlimited) return false;
-    return m.used >= m.limit!;
-  }
-
-  bool get _dentistsReached => _isMetricReached('dentists');
-  bool get _secretariesReached => _isMetricReached('secretaries');
+  /// One seat limit counts every member, the owner included, whatever their
+  /// roles. When it is reached, adding a member is a 409 - said here, before
+  /// the form, rather than after it is filled in.
+  bool get _seatsFull => _usage?.usersReached ?? false;
 
   @override
   void initState() {
@@ -250,21 +245,20 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     );
   }
 
-  /// Adding a user is two steps, not one: the account, then the schedule that
-  /// makes the account usable. The API can only take the hours once it has a
-  /// user id, so they cannot be collected on one form - but the admin should
-  /// not have to discover the second half on their own from the roster's
-  /// overflow menu either, so this drives them straight into it.
+  /// Adding a user is one step. Nothing needs setting up afterwards: a new
+  /// member follows the clinic's working hours from the moment they join and
+  /// is bookable on them straight away. Hours of their own, if they need
+  /// any, are set later from the roster's overflow menu.
   Future<void> _onAddUser(BuildContext context, AppLocalizations l10n) async {
-    // Block entirely only when every limited role is full. If at least one
-    // role still has capacity, let the user enter the form — the disabled
-    // chips on that page will steer them to a role they can actually pick.
-    if (_dentistsReached && _secretariesReached) {
+    if (_seatsFull) {
+      final seats = _usage?.users;
       InfoPopup.show(
         context: context,
         icon: Icons.lock_outline_rounded,
         title: l10n.subscriptionLimitTitle,
-        body: l10n.dentistLimitMessage,
+        body: seats?.limit == null
+            ? l10n.seatsFullMessageGeneric
+            : l10n.seatsFullMessage(seats!.limit!.toInt()),
       );
       return;
     }
@@ -274,25 +268,11 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: bloc,
-          child: AddClinicUserPage(
-            dentistsReached: _dentistsReached,
-            secretariesReached: _secretariesReached,
-          ),
+          child: const AddClinicUserPage(),
         ),
       ),
     );
     if (created == null || !mounted) return;
-
-    await Navigator.of(this.context).push(
-      MaterialPageRoute(
-        builder: (_) => UserHoursPage(
-          userId: created.id,
-          userName: created.fullName,
-          requireSetup: true,
-        ),
-      ),
-    );
-    if (!mounted) return;
 
     AppSnackbar.showSuccess(
       this.context,

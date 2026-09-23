@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/core/utils/role_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/constants/legal_urls.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
-import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
 import 'package:dental_clinic_app/custom_widgets/page_header.dart';
@@ -15,9 +16,9 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/localization/language_bloc.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
-import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
-import 'package:dental_clinic_app/features/clinic/domain/use_cases/get_my_clinics_use_case.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
@@ -40,12 +41,22 @@ class _MenuPageState extends State<MenuPage> {
   SubscriptionStatusEntity? _subscriptionStatus;
   SubscriptionUsageEntity? _subscriptionUsage;
   bool _subscriptionLoading = true;
+  StreamSubscription<ClinicPermissionsState>? _permissionsSub;
+  bool _couldManageBilling = SubscriptionGuardHelper.canManageBilling;
 
   @override
   void initState() {
     super.initState();
     UserStorage.profileUpdateNotifier.addListener(_onProfileUpdated);
-    _refreshClinicOwnership();
+    // The subscription section follows the permissions list, which may land
+    // (or change, on a refresh) after this page is already open.
+    _permissionsSub = getIt<ClinicPermissionsBloc>().stream.listen((_) {
+      final can = SubscriptionGuardHelper.canManageBilling;
+      if (can == _couldManageBilling || !mounted) return;
+      _couldManageBilling = can;
+      setState(() => _subscriptionLoading = can);
+      if (can) _loadSubscription();
+    });
     _loadSubscription();
   }
 
@@ -54,7 +65,9 @@ class _MenuPageState extends State<MenuPage> {
   /// Both calls are skipped when billing is off, since nothing renders them
   /// then - the same reason Home used to skip them.
   Future<void> _loadSubscription() async {
-    if (!AppConfig.billingEnabled) {
+    // Every subscription call is behind a feature granted to admins only;
+    // anyone else would just collect a 403.
+    if (!SubscriptionGuardHelper.canManageBilling) {
       if (mounted) setState(() => _subscriptionLoading = false);
       return;
     }
@@ -79,36 +92,22 @@ class _MenuPageState extends State<MenuPage> {
     });
   }
 
-  /// Ownership is cached at login and at every clinic switch, but an install
-  /// that predates the flag - or a transfer of ownership done elsewhere -
-  /// would otherwise keep a stale answer until the next login. The menu is
-  /// the only place the flag is read, so it refreshes it on the way in.
-  Future<void> _refreshClinicOwnership() async {
-    final result = await getIt<GetMyClinicsUseCase>()();
-    final clinics = result.getOrElse(() => const []);
-    if (clinics.isEmpty) return;
-
-    final activeId = getIt<UserStorage>().getSelectedClinicId();
-    ClinicMembershipEntity active = clinics.first;
-    for (final c in clinics) {
-      if (c.clinicId == activeId) {
-        active = c;
-        break;
-      }
-    }
-    if (active.isOwner == getIt<UserStorage>().isClinicOwner) return;
-
-    await getIt<UserStorage>().saveIsClinicOwner(active.isOwner);
-    if (mounted) setState(() {});
-  }
-
   @override
   void dispose() {
+    _permissionsSub?.cancel();
     UserStorage.profileUpdateNotifier.removeListener(_onProfileUpdated);
     super.dispose();
   }
 
   void _onProfileUpdated() => setState(() {});
+
+  /// The card and the menu row both land on the subscription screen, and
+  /// the card is re-read on the way back - a request or a report there can
+  /// change what it says.
+  Future<void> _openSubscription() async {
+    await context.pushNamed(AppRoutesNames.billing);
+    if (mounted) _loadSubscription();
+  }
 
   String _getThemeLabel(AppLocalizations l10n) {
     final mode = getIt<ThemeBloc>().state.themeMode;
@@ -158,15 +157,13 @@ class _MenuPageState extends State<MenuPage> {
                   // page that can stop the clinic working, and unlike a
                   // menu row it says so without being opened. No dismiss
                   // here - it is not in anyone's way.
-                  if (AppConfig.billingEnabled) ...[
+                  if (SubscriptionGuardHelper.canManageBilling) ...[
                     SubscriptionCard(
                       status: _subscriptionStatus,
                       usage: _subscriptionUsage,
                       isLoading: _subscriptionLoading,
-                      onViewPlans: () =>
-                          context.pushNamed(AppRoutesNames.pricing),
-                      onUpgrade: () =>
-                          context.pushNamed(AppRoutesNames.pricing),
+                      onViewPlans: _openSubscription,
+                      onUpgrade: _openSubscription,
                     ),
                     SizedBox(height: 18.h),
                   ],
@@ -180,7 +177,6 @@ class _MenuPageState extends State<MenuPage> {
                       context,
                       l10n,
                       isAdmin: userStorage.isAdmin,
-                      isOwner: userStorage.isClinicOwner,
                     ),
                   ),
                   SizedBox(height: 18.h),
@@ -288,7 +284,6 @@ class _MenuPageState extends State<MenuPage> {
     BuildContext context,
     AppLocalizations l10n, {
     required bool isAdmin,
-    required bool isOwner,
   }) {
     return [
       MenuItem(
@@ -333,14 +328,14 @@ class _MenuPageState extends State<MenuPage> {
         title: l10n.analytics,
         onTap: () => context.pushNamed(AppRoutesNames.statistics),
       ),
-      // Invoices and the subscription belong to whoever owns the clinic and
-      // pays for it - an admin who merely works here has no business seeing
-      // them, so this is gated on ownership rather than on the admin role.
-      if (isOwner && AppConfig.billingEnabled)
+      // Built from the permissions list, not from `is_owner`: every
+      // subscription and payment endpoint is behind a feature granted to the
+      // ADMIN role, and anyone else gets 403 on all of them.
+      if (SubscriptionGuardHelper.canManageBilling)
         MenuItem(
           icon: Icons.receipt_long_outlined,
-          title: l10n.billingAndInvoices,
-          onTap: () => context.pushNamed(AppRoutesNames.billing),
+          title: l10n.subscriptionPageTitle,
+          onTap: _openSubscription,
         ),
       MenuItem(
         icon: Icons.notifications_outlined,

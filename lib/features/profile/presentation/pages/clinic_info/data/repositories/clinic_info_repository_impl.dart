@@ -33,6 +33,7 @@ class ClinicInfoRepositoryImpl implements ClinicInfoRepository {
         locationName: clinicInfo.locationName,
         locationFullName: clinicInfo.locationFullName,
         detailedAddress: clinicInfo.address,
+        type: clinicInfo.type,
       );
       return Right(clinicInfo);
     } catch (e) {

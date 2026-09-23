@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/features/auth/data/datasources/remote/main_plans_request.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/features/auth/data/models/specialty_model.dart';
 import 'package:dental_clinic_app/features/auth/data/models/location_model.dart';
@@ -104,17 +105,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<List<PlanModel>> getPlans() async {
-    final response = await _apiConsumer.get(AuthEndpoints.plans);
-
-    // Extract data array from response
-    final data = response['data'] as List;
-
-    // Map each JSON object to PlanModel
-    return data
-        .map((json) => PlanModel.fromJson(json as Map<String, dynamic>))
-        .toList();
-  }
+  Future<List<PlanModel>> getPlans() => fetchMainPlans(_apiConsumer);
 
   @override
   Future<OtpResponse> requestOtpForRegister(Map<String, dynamic> body) async {

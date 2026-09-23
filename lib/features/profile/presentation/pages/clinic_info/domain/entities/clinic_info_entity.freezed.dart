@@ -19,6 +19,10 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ClinicInfoEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+
+  /// Null until `GET /clinics` has answered; left out of the update then,
+  /// so it stays as it was.
+  ClinicType? get type => throw _privateConstructorUsedError;
   String get locationId => throw _privateConstructorUsedError;
   String get locationName => throw _privateConstructorUsedError;
   String get locationFullName => throw _privateConstructorUsedError;
@@ -43,6 +47,7 @@ abstract class $ClinicInfoEntityCopyWith<$Res> {
   $Res call({
     String id,
     String name,
+    ClinicType? type,
     String locationId,
     String locationName,
     String locationFullName,
@@ -69,6 +74,7 @@ class _$ClinicInfoEntityCopyWithImpl<$Res, $Val extends ClinicInfoEntity>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? type = freezed,
     Object? locationId = null,
     Object? locationName = null,
     Object? locationFullName = null,
@@ -86,6 +92,10 @@ class _$ClinicInfoEntityCopyWithImpl<$Res, $Val extends ClinicInfoEntity>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
+            type: freezed == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as ClinicType?,
             locationId: null == locationId
                 ? _value.locationId
                 : locationId // ignore: cast_nullable_to_non_nullable
@@ -128,6 +138,7 @@ abstract class _$$ClinicInfoEntityImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
+    ClinicType? type,
     String locationId,
     String locationName,
     String locationFullName,
@@ -153,6 +164,7 @@ class __$$ClinicInfoEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? type = freezed,
     Object? locationId = null,
     Object? locationName = null,
     Object? locationFullName = null,
@@ -170,6 +182,10 @@ class __$$ClinicInfoEntityImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
+        type: freezed == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as ClinicType?,
         locationId: null == locationId
             ? _value.locationId
             : locationId // ignore: cast_nullable_to_non_nullable
@@ -205,6 +221,7 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
   const _$ClinicInfoEntityImpl({
     required this.id,
     required this.name,
+    this.type,
     this.locationId = '',
     this.locationName = '',
     this.locationFullName = '',
@@ -218,6 +235,11 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
   final String id;
   @override
   final String name;
+
+  /// Null until `GET /clinics` has answered; left out of the update then,
+  /// so it stays as it was.
+  @override
+  final ClinicType? type;
   @override
   @JsonKey()
   final String locationId;
@@ -249,7 +271,7 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
 
   @override
   String toString() {
-    return 'ClinicInfoEntity(id: $id, name: $name, locationId: $locationId, locationName: $locationName, locationFullName: $locationFullName, address: $address, workingDays: $workingDays, holidays: $holidays)';
+    return 'ClinicInfoEntity(id: $id, name: $name, type: $type, locationId: $locationId, locationName: $locationName, locationFullName: $locationFullName, address: $address, workingDays: $workingDays, holidays: $holidays)';
   }
 
   @override
@@ -259,6 +281,7 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
             other is _$ClinicInfoEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.locationId, locationId) ||
                 other.locationId == locationId) &&
             (identical(other.locationName, locationName) ||
@@ -278,6 +301,7 @@ class _$ClinicInfoEntityImpl implements _ClinicInfoEntity {
     runtimeType,
     id,
     name,
+    type,
     locationId,
     locationName,
     locationFullName,
@@ -302,6 +326,7 @@ abstract class _ClinicInfoEntity implements ClinicInfoEntity {
   const factory _ClinicInfoEntity({
     required final String id,
     required final String name,
+    final ClinicType? type,
     final String locationId,
     final String locationName,
     final String locationFullName,
@@ -314,6 +339,11 @@ abstract class _ClinicInfoEntity implements ClinicInfoEntity {
   String get id;
   @override
   String get name;
+
+  /// Null until `GET /clinics` has answered; left out of the update then,
+  /// so it stays as it was.
+  @override
+  ClinicType? get type;
   @override
   String get locationId;
   @override

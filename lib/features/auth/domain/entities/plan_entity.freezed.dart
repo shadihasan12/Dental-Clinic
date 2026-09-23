@@ -204,7 +204,6 @@ mixin _$PlanEntity {
   bool get supportsTrial => throw _privateConstructorUsedError;
   int get trialPeriodDays => throw _privateConstructorUsedError;
   int get gracePeriodDays => throw _privateConstructorUsedError;
-  String get clinicType => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
   int get sortOrder => throw _privateConstructorUsedError;
 
@@ -232,7 +231,6 @@ abstract class $PlanEntityCopyWith<$Res> {
     bool supportsTrial,
     int trialPeriodDays,
     int gracePeriodDays,
-    String clinicType,
     String type,
     int sortOrder,
   });
@@ -262,7 +260,6 @@ class _$PlanEntityCopyWithImpl<$Res, $Val extends PlanEntity>
     Object? supportsTrial = null,
     Object? trialPeriodDays = null,
     Object? gracePeriodDays = null,
-    Object? clinicType = null,
     Object? type = null,
     Object? sortOrder = null,
   }) {
@@ -304,10 +301,6 @@ class _$PlanEntityCopyWithImpl<$Res, $Val extends PlanEntity>
                 ? _value.gracePeriodDays
                 : gracePeriodDays // ignore: cast_nullable_to_non_nullable
                       as int,
-            clinicType: null == clinicType
-                ? _value.clinicType
-                : clinicType // ignore: cast_nullable_to_non_nullable
-                      as String,
             type: null == type
                 ? _value.type
                 : type // ignore: cast_nullable_to_non_nullable
@@ -341,7 +334,6 @@ abstract class _$$PlanEntityImplCopyWith<$Res>
     bool supportsTrial,
     int trialPeriodDays,
     int gracePeriodDays,
-    String clinicType,
     String type,
     int sortOrder,
   });
@@ -370,7 +362,6 @@ class __$$PlanEntityImplCopyWithImpl<$Res>
     Object? supportsTrial = null,
     Object? trialPeriodDays = null,
     Object? gracePeriodDays = null,
-    Object? clinicType = null,
     Object? type = null,
     Object? sortOrder = null,
   }) {
@@ -412,10 +403,6 @@ class __$$PlanEntityImplCopyWithImpl<$Res>
             ? _value.gracePeriodDays
             : gracePeriodDays // ignore: cast_nullable_to_non_nullable
                   as int,
-        clinicType: null == clinicType
-            ? _value.clinicType
-            : clinicType // ignore: cast_nullable_to_non_nullable
-                  as String,
         type: null == type
             ? _value.type
             : type // ignore: cast_nullable_to_non_nullable
@@ -442,7 +429,6 @@ class _$PlanEntityImpl extends _PlanEntity {
     required this.supportsTrial,
     required this.trialPeriodDays,
     required this.gracePeriodDays,
-    required this.clinicType,
     required this.type,
     required this.sortOrder,
   }) : _priceMonthly = priceMonthly,
@@ -480,15 +466,13 @@ class _$PlanEntityImpl extends _PlanEntity {
   @override
   final int gracePeriodDays;
   @override
-  final String clinicType;
-  @override
   final String type;
   @override
   final int sortOrder;
 
   @override
   String toString() {
-    return 'PlanEntity(id: $id, versionId: $versionId, name: $name, description: $description, priceMonthly: $priceMonthly, priceYearly: $priceYearly, supportsTrial: $supportsTrial, trialPeriodDays: $trialPeriodDays, gracePeriodDays: $gracePeriodDays, clinicType: $clinicType, type: $type, sortOrder: $sortOrder)';
+    return 'PlanEntity(id: $id, versionId: $versionId, name: $name, description: $description, priceMonthly: $priceMonthly, priceYearly: $priceYearly, supportsTrial: $supportsTrial, trialPeriodDays: $trialPeriodDays, gracePeriodDays: $gracePeriodDays, type: $type, sortOrder: $sortOrder)';
   }
 
   @override
@@ -516,8 +500,6 @@ class _$PlanEntityImpl extends _PlanEntity {
                 other.trialPeriodDays == trialPeriodDays) &&
             (identical(other.gracePeriodDays, gracePeriodDays) ||
                 other.gracePeriodDays == gracePeriodDays) &&
-            (identical(other.clinicType, clinicType) ||
-                other.clinicType == clinicType) &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.sortOrder, sortOrder) ||
                 other.sortOrder == sortOrder));
@@ -535,7 +517,6 @@ class _$PlanEntityImpl extends _PlanEntity {
     supportsTrial,
     trialPeriodDays,
     gracePeriodDays,
-    clinicType,
     type,
     sortOrder,
   );
@@ -560,7 +541,6 @@ abstract class _PlanEntity extends PlanEntity {
     required final bool supportsTrial,
     required final int trialPeriodDays,
     required final int gracePeriodDays,
-    required final String clinicType,
     required final String type,
     required final int sortOrder,
   }) = _$PlanEntityImpl;
@@ -584,8 +564,6 @@ abstract class _PlanEntity extends PlanEntity {
   int get trialPeriodDays;
   @override
   int get gracePeriodDays;
-  @override
-  String get clinicType;
   @override
   String get type;
   @override

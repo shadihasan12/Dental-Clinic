@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/available_slots_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/create_appointment_use_case.dart';
@@ -53,6 +54,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   int _duration = 30;
   String? _selectedSlot;
   List<String> _availableSlots = [];
+
+  /// Which schedule the slots were cut from. `clinic` means the doctor has
+  /// no hours of their own here, and the slots say so rather than passing
+  /// the clinic's week off as the doctor's choice.
+  SlotsHoursSource _slotsSource = SlotsHoursSource.unknown;
   bool _isSlotsLoading = false;
   // Working-hours fallback flags — only meaningful when [_availableSlots]
   // came back empty. Distinguish "no hours saved at all" (needs setup)
@@ -247,8 +253,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       return;
     }
 
-    final serverSlots = result.getOrElse(() => const []);
+    final available = result.getOrElse(
+      () => const AvailableSlotsEntity(slots: []),
+    );
+    final serverSlots = available.slots;
     final slots = _isVip ? serverSlots : _withoutPastSlots(serverSlots);
+    _slotsSource = available.hoursSource;
     // A day whose slots have all gone by is not a day the doctor does not
     // work - skip the working-hours diagnosis below and just show none.
     if (slots.isNotEmpty || serverSlots.isNotEmpty) {
@@ -277,9 +287,11 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     hoursResult.fold((_) => setState(() => _isSlotsLoading = false), (hours) {
       // Dart's DateTime.weekday is 1=Mon..7=Sun — same convention the
       // working-days API uses, so we can compare directly.
+      // A member who follows the clinic comes back with the clinic's full
+      // week, so "no hours at all" now means the clinic itself has none.
       final selectedDow = _selectedDate.weekday;
-      final hasAnyWorkingHours = hours.any((h) => h.isWorking);
-      final worksOnDay = hours.any(
+      final hasAnyWorkingHours = hours.days.any((h) => h.isWorking);
+      final worksOnDay = hours.days.any(
         (h) => h.dayOfWeek == selectedDow && h.isWorking,
       );
       setState(() {
@@ -697,7 +709,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       );
     }
 
-    return SingleChildScrollView(
+    final chips = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
@@ -717,6 +729,35 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           ],
         ],
       ),
+    );
+    if (_slotsSource != SlotsHoursSource.clinic) return chips;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        chips,
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Icon(
+              Icons.sync_alt_rounded,
+              size: 13.w,
+              color: ColorManager.of(context).textTertiary,
+            ),
+            SizedBox(width: 4.w),
+            Expanded(
+              child: Text(
+                l10n.slotsFollowClinicHours,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  color: ColorManager.of(context).textTertiary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

@@ -15,6 +15,19 @@ class NotificationCategories {
   static const String paymentReminder = 'payment_reminder';
   static const String clinicInvitation = 'clinic_invitation';
   static const String announcement = 'announcement';
+
+  /// Subscription and billing notices: `category` is `subscription` and
+  /// `data.type` says which screen - one of the three below. Sent to every
+  /// admin of the clinic, and always carrying `clinic_id`.
+  static const String subscription = 'subscription';
+  static const String billingInvoice = 'invoice';
+  static const String billingPayment = 'payment';
+
+  static const Set<String> billingTypes = {
+    billingInvoice,
+    billingPayment,
+    subscription,
+  };
 }
 
 @freezed

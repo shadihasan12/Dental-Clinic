@@ -1,8 +1,10 @@
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/entities/clinic_info_entity.dart';
 
 class ClinicInfoModel {
   final String id;
   final String name;
+  final ClinicType? type;
   final String locationId;
   final String locationName;
   final String locationFullName;
@@ -13,6 +15,7 @@ class ClinicInfoModel {
   const ClinicInfoModel({
     required this.id,
     required this.name,
+    this.type,
     this.locationId = '',
     this.locationName = '',
     this.locationFullName = '',
@@ -25,6 +28,7 @@ class ClinicInfoModel {
     return ClinicInfoModel(
       id: json['id'] as String,
       name: json['name'] as String,
+      type: ClinicType.fromApi(json['type'] as String?),
       locationId: json['location_id'] as String? ?? '',
       locationName: json['location_name'] as String? ?? '',
       locationFullName: json['location_full_name'] as String? ?? '',
@@ -55,6 +59,7 @@ class ClinicInfoModel {
     return ClinicInfoModel(
       id: entity.id,
       name: entity.name,
+      type: entity.type,
       locationId: entity.locationId,
       locationName: entity.locationName,
       locationFullName: entity.locationFullName,
@@ -69,6 +74,7 @@ class ClinicInfoModel {
     return ClinicInfoEntity(
       id: id,
       name: name,
+      type: type,
       locationId: locationId,
       locationName: locationName,
       locationFullName: locationFullName,

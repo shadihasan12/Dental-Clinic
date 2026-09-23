@@ -28,20 +28,10 @@ class UserHoursPage extends StatelessWidget {
   final String userId;
   final String? userName;
 
-  /// Opens the screen as the closing step of "add clinic user" rather than as
-  /// a standalone edit: no back button, no system back, and saving is the only
-  /// way out. A user with no hours cannot be booked for anything, so the admin
-  /// who created them finishes the job here instead of finding their way back
-  /// through the roster's overflow menu later.
-  ///
-  /// The lock lifts only when the step is impossible - see [_UserHoursContent].
-  final bool requireSetup;
-
   const UserHoursPage({
     super.key,
     required this.userId,
     this.userName,
-    this.requireSetup = false,
   });
 
   /// Who may change a schedule: the clinic owner, or anyone holding the admin
@@ -61,7 +51,6 @@ class UserHoursPage extends StatelessWidget {
         userName: userName,
         readOnly: !_canEdit,
         isSelf: getIt<TokenStorage>().getUserId() == userId,
-        requireSetup: requireSetup,
       ),
     );
   }
@@ -71,12 +60,10 @@ class _UserHoursContent extends StatefulWidget {
   final String? userName;
   final bool readOnly;
   final bool isSelf;
-  final bool requireSetup;
   const _UserHoursContent({
     this.userName,
     this.readOnly = false,
     this.isSelf = false,
-    this.requireSetup = false,
   });
 
   @override
@@ -147,6 +134,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   /// point at. Drives three things: the ranges a full-time day is saved with,
   /// the times a new shift starts from, and the bounds an edit is checked
   /// against. Empty when the schedule could not be read.
+  /// The member has no hours of their own and works the clinic's week.
+  bool _followsClinicHours = false;
+
   Map<String, WorkingDayApiModel> _clinicById = {};
   Map<int, WorkingDayApiModel> _clinicByDow = {};
 
@@ -481,14 +471,11 @@ class _UserHoursContentState extends State<_UserHoursContent> {
           },
           saved: () {
             AppLoadingDialog.dismiss(context);
-            setState(() => _initialSnapshot = _snapshot(_days));
-            // Saving is what completes the add-user flow, so hand control back
-            // to the roster - it owns the "user added" confirmation and would
-            // otherwise report it behind this screen.
-            if (widget.requireSetup) {
-              Navigator.of(context).pop();
-              return;
-            }
+            setState(() {
+              _initialSnapshot = _snapshot(_days);
+              // Their own rows exist now; they no longer follow the clinic.
+              _followsClinicHours = false;
+            });
             AppSnackbar.showSuccess(
               context,
               title: l10n.success,
@@ -518,67 +505,43 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             _days.isNotEmpty &&
             state.maybeWhen(needsClinicHours: (_) => false, orElse: () => true);
 
-        // The add-user flow holds the admin here until the schedule is saved -
-        // but only while saving it is actually possible. On the two dead ends
-        // (the clinic itself has no working days, so there is nothing to fill
-        // in; or the schedule could not be loaded at all) the lock would trap
-        // them in front of a form that cannot be completed, so it lifts and
-        // the back button comes back.
-        final stepBlocked = state.maybeWhen(
-          needsClinicHours: (_) => true,
-          error: (_) => true,
-          orElse: () => false,
-        );
-        final locked = widget.requireSetup && !stepBlocked;
-
-        return PopScope(
-          canPop: !locked,
-          onPopInvokedWithResult: (didPop, _) {
-            if (didPop) return;
-            AppSnackbar.showError(
-              context,
-              title: l10n.workingHours,
-              message: l10n.workingHoursStepRequired,
-            );
-          },
-          child: Scaffold(
-            backgroundColor: c.scaffoldBg,
-            bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
-            body: Column(
-              children: [
-                PageHeader(
-                  title: widget.userName != null && widget.userName!.isNotEmpty
-                      ? '${l10n.workingHours} · ${widget.userName!}'
-                      : widget.isSelf
-                          ? l10n.myWorkingHours
-                          : l10n.workingHours,
-                  showBack: locked ? false : null,
-                  onBack: () => context.pop(),
-                ),
-                Expanded(
-                  child: state.maybeWhen(
-                    loading: () => const _UserHoursSkeleton(),
-                    error: (msg) => _buildError(msg, l10n),
-                    needsClinicHours: (isAdmin) =>
-                        _buildNeedsClinicHours(isAdmin, l10n),
-                    loaded: (days, isSeed, clinicDays) {
-                      if (!_populated) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          setState(() {
-                            _indexClinicDays(clinicDays);
-                            _populateFromApi(days, isSeed: isSeed);
-                          });
+        return Scaffold(
+          backgroundColor: c.scaffoldBg,
+          bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
+          body: Column(
+            children: [
+              PageHeader(
+                title: widget.userName != null && widget.userName!.isNotEmpty
+                    ? '${l10n.workingHours} · ${widget.userName!}'
+                    : widget.isSelf
+                        ? l10n.myWorkingHours
+                        : l10n.workingHours,
+                onBack: () => context.pop(),
+              ),
+              Expanded(
+                child: state.maybeWhen(
+                  loading: () => const _UserHoursSkeleton(),
+                  error: (msg) => _buildError(msg, l10n),
+                  needsClinicHours: (isAdmin) =>
+                      _buildNeedsClinicHours(isAdmin, l10n),
+                  loaded: (days, isSeed, followsClinicHours, clinicDays) {
+                    if (!_populated) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          _indexClinicDays(clinicDays);
+                          _populateFromApi(days, isSeed: isSeed);
+                          _followsClinicHours = followsClinicHours;
                         });
-                        return const _UserHoursSkeleton();
-                      }
-                      return _buildForm(l10n);
-                    },
-                    orElse: () =>
-                        _populated ? _buildForm(l10n) : const SizedBox.shrink(),
-                  ),
+                      });
+                      return const _UserHoursSkeleton();
+                    }
+                    return _buildForm(l10n);
+                  },
+                  orElse: () =>
+                      _populated ? _buildForm(l10n) : const SizedBox.shrink(),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -659,15 +622,15 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             _ReadOnlyNote(message: l10n.workingHoursReadOnlyNote),
             SizedBox(height: 10.h),
           ],
-          // The admin arrived here without asking to, and there is no back
-          // button; say what this step is and why it is not optional.
-          if (widget.requireSetup && !widget.readOnly) ...[
-            _SetupRequiredNote(
-              message: l10n.workingHoursRequiredNote(
-                widget.userName?.trim().isNotEmpty == true
-                    ? widget.userName!.trim()
-                    : l10n.addUser,
-              ),
+          // No hours of their own: this is the clinic's week, and it moves
+          // when the clinic's does. Presenting it as a schedule they chose
+          // would be wrong - and an admin should know that saving here
+          // detaches them from it.
+          if (_followsClinicHours) ...[
+            _FollowsClinicNote(
+              message: widget.readOnly
+                  ? l10n.followsClinicHoursNote
+                  : l10n.followsClinicHoursAdminNote,
             ),
             SizedBox(height: 10.h),
           ],
@@ -716,9 +679,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             // Saving is the only exit from the setup step, so it cannot be
             // gated on _hasChanges: the seeded default schedule is a valid
             // answer, and accepting it as-is means touching nothing.
-            label: widget.requireSetup ? l10n.saveAndFinish : l10n.save,
+            label: l10n.save,
             expand: true,
-            onTap: widget.requireSetup || _hasChanges ? _onSave : null,
+            onTap: _hasChanges ? _onSave : null,
           ),
         ),
       ),
@@ -1122,11 +1085,11 @@ class _DaySnapshot {
       Object.hash(dayOfWeek, isWorking, isFullTime, Object.hashAll(shifts));
 }
 
-/// Says why the screen opened and why it has no way out. Carries the primary
-/// tint rather than [_ReadOnlyNote]'s grey - this one is a step to complete,
-/// not a restriction to accept.
-class _SetupRequiredNote extends StatelessWidget {
-  const _SetupRequiredNote({required this.message});
+/// Says the week below is the clinic's, followed rather than chosen. Carries
+/// the primary tint rather than [_ReadOnlyNote]'s grey - it is information,
+/// not a restriction.
+class _FollowsClinicNote extends StatelessWidget {
+  const _FollowsClinicNote({required this.message});
 
   final String message;
 
@@ -1146,7 +1109,7 @@ class _SetupRequiredNote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            Icons.schedule_outlined,
+            Icons.sync_alt_rounded,
             size: 16.w,
             color: ColorManager.primaryDarker,
           ),

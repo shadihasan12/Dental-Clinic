@@ -71,13 +71,24 @@ class UserHoursBloc extends Bloc<UserHoursEvent, UserHoursState> {
       (days) => days,
     );
 
-    final userDays = userResult.getOrElse(() => const []);
+    final hours = userResult.getOrElse(
+      () => const UserHoursApiModel(followsClinicHours: false, days: []),
+    );
+    final userDays = hours.days;
+    // A member with no rows of their own now comes back with the clinic's
+    // full week and the flag - there is nothing to set up, so this is read
+    // off the flag rather than an empty list.
     if (userDays.isNotEmpty) {
-      emit(UserHoursState.loaded(userDays, clinicDays: clinicDays));
+      emit(UserHoursState.loaded(
+        userDays,
+        followsClinicHours: hours.followsClinicHours,
+        clinicDays: clinicDays,
+      ));
       return;
     }
 
-    // No hours saved yet. The user-hours upsert requires a real
+    // An empty week is left only when the clinic itself has no schedule to
+    // follow. The user-hours upsert requires a real
     // `clinic_working_day_id` per day, so we can't just save the
     // generic static seed — we have to anchor each row to a clinic
     // working day. Branch on role:

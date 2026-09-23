@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
+import 'package:dental_clinic_app/features/appointments/domain/entities/available_slots_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/repositories/appointment_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -20,13 +21,13 @@ class GetAvailableSlotsParams {
 
 @injectable
 class GetAvailableSlotsUseCase
-    implements UseCase<List<String>, GetAvailableSlotsParams> {
+    implements UseCase<AvailableSlotsEntity, GetAvailableSlotsParams> {
   final AppointmentRepository _repository;
 
   GetAvailableSlotsUseCase(this._repository);
 
   @override
-  Future<Either<NetworkExceptions, List<String>>> call(
+  Future<Either<NetworkExceptions, AvailableSlotsEntity>> call(
     GetAvailableSlotsParams params,
   ) {
     return _repository.getAvailableSlots(
