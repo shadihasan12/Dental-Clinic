@@ -80,10 +80,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
 
   Future<void> _loadTeeth() async {
     final result = await getIt<GetAllTeethUseCase>()(NoParams());
-    result.fold(
-      (_) {},
-      (teeth) => setState(() => _teeth = teeth),
-    );
+    result.fold((_) {}, (teeth) => setState(() => _teeth = teeth));
   }
 
   Future<void> _loadCoreTreatments() async {
@@ -229,56 +226,43 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
           },
         );
       },
-      child: Scaffold(
-        backgroundColor: ColorManager.of(context).scaffoldBg,
-        body: Column(
-          children: [
-            PageHeader(
-              title: localizations.addTreatment,
-              onBack: () => context.pop(),
+      child: AdaptivePageScaffold(
+        title: localizations.addTreatment,
+        body: SingleChildScrollView(
+          // Dragging the form dismisses the keyboard, which is what puts the
+          // docked action back within reach. A number pad has no Done key to
+          // close it with, so the scroll gesture the user already makes on the
+          // way to the button has to be the thing that does it.
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          child: VisitInfoForm(
+            isInitial: widget.isInitial,
+            visitDate: _visitDate,
+            onVisitDateTap: _selectDate,
+            selectedTreatmentTypes: _selectedTreatmentTypes,
+            availableTreatmentTypes: _coreTreatments,
+            onTreatmentToggle: (t) => setState(
+              () => _selectedTreatmentTypes.contains(t)
+                  ? _selectedTreatmentTypes.remove(t)
+                  : _selectedTreatmentTypes.add(t),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                // Dragging the form dismisses the keyboard, which is what puts the
-                // docked action back within reach. A number pad has no Done key to
-                // close it with, so the scroll gesture the user already makes on the
-                // way to the button has to be the thing that does it.
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: VisitInfoForm(
-                  isInitial: widget.isInitial,
-                  visitDate: _visitDate,
-                  onVisitDateTap: _selectDate,
-                  selectedTreatmentTypes: _selectedTreatmentTypes,
-                  availableTreatmentTypes: _coreTreatments,
-                  onTreatmentToggle: (t) => setState(
-                    () => _selectedTreatmentTypes.contains(t)
-                        ? _selectedTreatmentTypes.remove(t)
-                        : _selectedTreatmentTypes.add(t),
-                  ),
-                  teeth: _teeth,
-                  selectedTeeth: _selectedTeeth,
-                  onTeethChanged: (teeth) =>
-                      setState(() => _selectedTeeth = teeth),
-                  visitSummaryController: _visitSummaryController,
-                  totalCostController: _totalCostController,
-                  labFeesController: _labFeesController,
-                  attachments: _attachments,
-                  onUploadTap: () {},
-                  onAttachmentRemove: (i) =>
-                      setState(() => _attachments.removeAt(i)),
-                ),
-              ),
-            ),
-          ],
+            teeth: _teeth,
+            selectedTeeth: _selectedTeeth,
+            onTeethChanged: (teeth) => setState(() => _selectedTeeth = teeth),
+            visitSummaryController: _visitSummaryController,
+            totalCostController: _totalCostController,
+            labFeesController: _labFeesController,
+            attachments: _attachments,
+            onUploadTap: () {},
+            onAttachmentRemove: (i) => setState(() => _attachments.removeAt(i)),
+          ),
         ),
+        onBack: () => context.pop(),
+        backgroundColor: ColorManager.of(context).scaffoldBg,
         bottomNavigationBar: Padding(
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
           child: Padding(
-            padding: EdgeInsets.only(
-              bottom: scaffoldBottomInset(context),
-            ),
+            padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
             child: ElevatedButton(
               onPressed: _saveTreatment,
               style: ElevatedButton.styleFrom(

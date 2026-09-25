@@ -129,6 +129,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final e = widget.errors;
+    final m = FormMetrics.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,37 +137,48 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
         FormSectionCard(
           title: l10n.personalInformation,
           children: [
-            FormTextField(
-              label: l10n.firstName,
-              required: true,
-              controller: widget.firstNameController,
-              errorText: e.firstName,
-              textCapitalization: TextCapitalization.words,
-              onChanged: widget.onFieldChanged,
+            // Paired up so a desktop window does not stretch five short
+            // fields down a column the height of the screen. Each pair falls
+            // back to stacking when the card is too narrow to split.
+            FormFieldRow(
+              children: [
+                FormTextField(
+                  label: l10n.firstName,
+                  required: true,
+                  controller: widget.firstNameController,
+                  errorText: e.firstName,
+                  textCapitalization: TextCapitalization.words,
+                  onChanged: widget.onFieldChanged,
+                ),
+                FormTextField(
+                  label: l10n.lastName,
+                  required: true,
+                  controller: widget.lastNameController,
+                  errorText: e.lastName,
+                  textCapitalization: TextCapitalization.words,
+                  onChanged: widget.onFieldChanged,
+                ),
+              ],
             ),
-            FormTextField(
-              label: l10n.lastName,
-              required: true,
-              controller: widget.lastNameController,
-              errorText: e.lastName,
-              textCapitalization: TextCapitalization.words,
-              onChanged: widget.onFieldChanged,
-            ),
-            FormTextField(
-              label: l10n.phone,
-              required: true,
-              controller: widget.phoneController,
-              hintText: l10n.phoneHint,
-              keyboardType: TextInputType.phone,
-              errorText: e.phone,
-              onChanged: widget.onFieldChanged,
-            ),
-            FormDateField(
-              label: l10n.dateOfBirth,
-              required: true,
-              value: widget.dateOfBirth,
-              onTap: widget.onDateOfBirthTap,
-              errorText: e.dateOfBirth,
+            FormFieldRow(
+              children: [
+                FormTextField(
+                  label: l10n.phone,
+                  required: true,
+                  controller: widget.phoneController,
+                  hintText: l10n.phoneHint,
+                  keyboardType: TextInputType.phone,
+                  errorText: e.phone,
+                  onChanged: widget.onFieldChanged,
+                ),
+                FormDateField(
+                  label: l10n.dateOfBirth,
+                  required: true,
+                  value: widget.dateOfBirth,
+                  onTap: widget.onDateOfBirthTap,
+                  errorText: e.dateOfBirth,
+                ),
+              ],
             ),
             _GenderPicker(
               label: l10n.gender,
@@ -175,7 +187,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
             ),
           ],
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: m.isWide ? 14 : 8.h),
         FormSectionCard(
           title: l10n.medicalInformation,
           children: [
@@ -224,6 +236,7 @@ class _GenderPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final m = FormMetrics.of(context);
 
     return FormFieldShell(
       label: label,
@@ -243,7 +256,9 @@ class _GenderPicker extends StatelessWidget {
                   behavior: HitTestBehavior.opaque,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 160),
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      vertical: m.isWide ? 12 : 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: option == value
                           ? ColorManager.primary
@@ -256,7 +271,7 @@ class _GenderPicker extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: m.isWide ? 13.5 : 12.sp,
                         fontWeight: option == value
                             ? FontWeight.w600
                             : FontWeight.w500,
@@ -306,7 +321,7 @@ class _AllergiesField extends StatelessWidget {
               child: Text(
                 l10n.hasAllergies,
                 style: TextStyle(
-                  fontSize: 12.5.sp,
+                  fontSize: FormMetrics.of(context).labelFont + 1,
                   fontWeight: FontWeight.w600,
                   fontFamily: family,
                   color: c.textPrimary,

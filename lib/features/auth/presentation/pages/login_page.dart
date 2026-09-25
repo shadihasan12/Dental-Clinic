@@ -9,6 +9,7 @@ import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/injection.dart';
+import '../widgets/auth_desktop_shell.dart';
 import '../widgets/auth_text_field.dart';
 
 class LoginPage extends StatelessWidget {
@@ -79,7 +80,8 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    return AuthDesktopShell(
+      child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: BlocConsumer<AuthBloc, AuthState>(
         listenWhen: (previous, current) =>
@@ -199,6 +201,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             ),
           );
         },
+      ),
       ),
     );
   }

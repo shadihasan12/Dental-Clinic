@@ -178,6 +178,8 @@
   "newAppointment": "New Appointment",
   "addTreatment": "Add Treatment",
   "todaysSchedule": "Today's Schedule",
+  "todaysAppointments": "Today's Appointments",
+  "upcoming": "Upcoming",
   "viewAll": "View All",
   "analytics": "Analytics",
   "schedule": "Schedule",
@@ -1649,5 +1651,7 @@
   "clinicTypeRequired": "Choose the clinic type",
   "followsClinicHoursNote": "You're following the clinic's working hours. They change whenever the clinic's schedule does.",
   "followsClinicHoursAdminNote": "Following the clinic's working hours. Saving changes here gives this member their own schedule, and it will no longer follow the clinic's.",
-  "slotsFollowClinicHours": "Following the clinic's working hours"
+  "slotsFollowClinicHours": "Following the clinic's working hours",
+  "profilePhoto": "Profile Photo",
+  "profilePhotoHint": "Click the avatar to upload a new picture."
 }

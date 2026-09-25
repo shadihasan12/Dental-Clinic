@@ -4,7 +4,6 @@ import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/core/resources/gradient_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 
@@ -15,11 +14,7 @@ import 'package:dental_clinic_app/core/resources/responsive.dart';
 ///
 /// On narrow screens (< 900 px) the [child] is rendered directly.
 class AuthDesktopShell extends StatelessWidget {
-  const AuthDesktopShell({
-    super.key,
-    required this.child,
-    this.imageIndex = 0,
-  });
+  const AuthDesktopShell({super.key, required this.child, this.imageIndex = 0});
 
   /// The form content that will appear on the right side on desktop,
   /// or as the full page on mobile.
@@ -35,15 +30,10 @@ class AuthDesktopShell extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isDesktop(context)) return child;
 
-    // Reconfigure the ScreenUtil singleton so .sp/.w/.h scale
-    // as if the device were mobile-sized. This affects ALL child
-    // widgets automatically — no per-page changes needed.
-    ScreenUtil.configure(
-      data: MediaQuery.of(context).copyWith(
-        size: const Size(375, 812),
-      ),
-    );
-
+    // No ScreenUtil.configure here: main.dart sets the design size to the
+    // window on desktop, so .sp/.w/.h already resolve 1:1. Re-configuring the
+    // singleton from inside the tree is what used to make a hot reload paint
+    // at the phone ratio.
     return Scaffold(
       body: Row(
         children: [
@@ -56,7 +46,9 @@ class AuthDesktopShell extends StatelessWidget {
               color: ColorManager.of(context).scaffoldBg,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: Responsive.formMaxWidth),
+                  constraints: BoxConstraints(
+                    maxWidth: Responsive.formMaxWidth,
+                  ),
                   child: child,
                 ),
               ),
@@ -143,8 +135,11 @@ class _BrandingPanel extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Text('\u{1F9B7}', style: TextStyle(fontSize: 28)),
+                // Same mark the mobile login header uses, inset so the
+                // artwork does not run into the rounded corners.
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Assets.imagesLogoDentaMark.image(fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(height: 20),

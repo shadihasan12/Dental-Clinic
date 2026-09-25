@@ -2,10 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/language_switch_widget.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 
 void showLanguageSettingsDialog(BuildContext context) {
+  // Desktop gets a centred, width-capped dialog; a sheet slammed against the
+  // bottom edge of a 1080p window reads as a mobile port.
+  if (Responsive.isDesktop(context)) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: ColorManager.of(context).cardBg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: LanguageSettingsModal(isDesktop: true),
+        ),
+      ),
+    );
+    return;
+  }
   showModalBottomSheet(
     context: context,
     backgroundColor: ColorManager.of(context).cardBg,
@@ -17,31 +34,41 @@ void showLanguageSettingsDialog(BuildContext context) {
 }
 
 class LanguageSettingsModal extends StatelessWidget {
-  const LanguageSettingsModal({super.key});
+  const LanguageSettingsModal({super.key, this.isDesktop = false});
+
+  final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return SafeArea(
+      top: false,
+      bottom: !isDesktop,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+        padding: isDesktop
+            ? const EdgeInsets.all(20)
+            : EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 40x4 grab handle, then the title row with an x on the trailing
             // side - the sheet shape every other sheet in the app uses.
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: c.borderLight,
-                  borderRadius: BorderRadius.circular(2.r),
+            // The handle is a drag affordance for a bottom sheet; a centred
+            // desktop dialog cannot be dragged, so it is dropped there.
+            if (!isDesktop) ...[
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: c.borderLight,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 14.h),
+              SizedBox(height: 14.h),
+            ],
             Row(
               children: [
                 Expanded(

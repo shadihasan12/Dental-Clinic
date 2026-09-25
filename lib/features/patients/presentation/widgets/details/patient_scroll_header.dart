@@ -24,7 +24,11 @@ class PatientIdentityBar extends StatelessWidget {
 
   final String name;
   final String subtitle;
-  final VoidCallback onBack;
+
+  /// Null hides the arrow entirely. Desktop passes null: DesktopShell's top
+  /// bar already carries a back button, and two of them a few pixels apart
+  /// read as two different destinations.
+  final VoidCallback? onBack;
   final VoidCallback? onEdit;
 
   String get _initials {
@@ -46,17 +50,26 @@ class PatientIdentityBar extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(4.w, 4.h, 12.w, 12.h),
+          // The 4dp start inset is the IconButton's own padding showing
+          // through; without the button the avatar has to supply that margin
+          // itself.
+          padding: EdgeInsets.fromLTRB(
+            onBack == null ? 16.w : 4.w,
+            4.h,
+            12.w,
+            12.h,
+          ),
           child: Row(
             children: [
-              IconButton(
-                onPressed: onBack,
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20.w,
-                  color: c.textPrimary,
+              if (onBack != null)
+                IconButton(
+                  onPressed: onBack,
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 20.w,
+                    color: c.textPrimary,
+                  ),
                 ),
-              ),
               Container(
                 width: 40.w,
                 height: 40.w,

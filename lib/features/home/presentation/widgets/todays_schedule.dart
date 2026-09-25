@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/features/appointments/presentation/widgets/app
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/section_heading.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -99,12 +100,18 @@ class TodaysSchedule extends StatelessWidget {
     }
 
     if (appointments.isEmpty) {
+      // Desktop already offers New Appointment in the Quick Actions column
+      // beside this card, so repeating it here would be the same action twice
+      // on one screen. The card fills the column instead, rather than leaving
+      // dead space.
+      final isDesktop = Responsive.isDesktop(context);
       return _CentredState(
         icon: Icons.calendar_month_outlined,
         title: l10n.noAppointmentsToday,
         message: l10n.noAppointmentsTodayHint,
-        actionLabel: '+ ${l10n.newAppointment}',
-        onAction: onNewAppointment,
+        minHeight: isDesktop ? 340 : null,
+        actionLabel: isDesktop ? null : '+ ${l10n.newAppointment}',
+        onAction: isDesktop ? null : onNewAppointment,
       );
     }
 
@@ -156,10 +163,11 @@ class _CentredState extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.message,
-    required this.actionLabel,
+    this.actionLabel,
     this.detail,
     this.tone,
     this.onAction,
+    this.minHeight,
   });
 
   final IconData icon;
@@ -167,8 +175,14 @@ class _CentredState extends StatelessWidget {
   final String message;
   final String? detail;
   final Color? tone;
-  final String actionLabel;
+
+  /// Null drops the button entirely.
+  final String? actionLabel;
   final VoidCallback? onAction;
+
+  /// Lets the state fill a tall column (the desktop schedule) instead of
+  /// sitting at its top with dead space under it.
+  final double? minHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +190,12 @@ class _CentredState extends StatelessWidget {
     final family = FontHelper.fontFamily(context);
     final accent = tone ?? t.primary;
 
-    return Padding(
+    return Container(
+      constraints: BoxConstraints(minHeight: minHeight ?? 0),
+      alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 14.h),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           _DashedBox(icon: icon, tone: accent),
           SizedBox(height: 10.h),
@@ -221,11 +238,13 @@ class _CentredState extends StatelessWidget {
               ),
             ),
           ],
-          SizedBox(height: 14.h),
-          // The app's filled action, so the one button on this card is the
-          // same object as the one on every other screen: 12px radius,
-          // 12.5/700 label, and no shadow under it.
-          DentaButton(label: actionLabel, onTap: onAction, expand: true),
+          if (actionLabel != null) ...[
+            SizedBox(height: 14.h),
+            // The app's filled action, so the one button on this card is the
+            // same object as the one on every other screen: 12px radius,
+            // 12.5/700 label, and no shadow under it.
+            DentaButton(label: actionLabel!, onTap: onAction, expand: true),
+          ],
         ],
       ),
     );

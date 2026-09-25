@@ -505,43 +505,35 @@ class _UserHoursContentState extends State<_UserHoursContent> {
             _days.isNotEmpty &&
             state.maybeWhen(needsClinicHours: (_) => false, orElse: () => true);
 
-        return Scaffold(
+        return AdaptivePageScaffold(
+          title: widget.userName != null && widget.userName!.isNotEmpty
+              ? '${l10n.workingHours} · ${widget.userName!}'
+              : widget.isSelf
+                  ? l10n.myWorkingHours
+                  : l10n.workingHours,
+          onBack: () => context.pop(),
           backgroundColor: c.scaffoldBg,
           bottomNavigationBar: showSaveBar ? _buildSaveButton(l10n) : null,
-          body: Column(
-            children: [
-              PageHeader(
-                title: widget.userName != null && widget.userName!.isNotEmpty
-                    ? '${l10n.workingHours} · ${widget.userName!}'
-                    : widget.isSelf
-                        ? l10n.myWorkingHours
-                        : l10n.workingHours,
-                onBack: () => context.pop(),
-              ),
-              Expanded(
-                child: state.maybeWhen(
-                  loading: () => const _UserHoursSkeleton(),
-                  error: (msg) => _buildError(msg, l10n),
-                  needsClinicHours: (isAdmin) =>
-                      _buildNeedsClinicHours(isAdmin, l10n),
-                  loaded: (days, isSeed, followsClinicHours, clinicDays) {
-                    if (!_populated) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() {
-                          _indexClinicDays(clinicDays);
-                          _populateFromApi(days, isSeed: isSeed);
-                          _followsClinicHours = followsClinicHours;
-                        });
-                      });
-                      return const _UserHoursSkeleton();
-                    }
-                    return _buildForm(l10n);
-                  },
-                  orElse: () =>
-                      _populated ? _buildForm(l10n) : const SizedBox.shrink(),
-                ),
-              ),
-            ],
+          body: state.maybeWhen(
+            loading: () => const _UserHoursSkeleton(),
+            error: (msg) => _buildError(msg, l10n),
+            needsClinicHours: (isAdmin) =>
+                _buildNeedsClinicHours(isAdmin, l10n),
+            loaded: (days, isSeed, followsClinicHours, clinicDays) {
+              if (!_populated) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() {
+                    _indexClinicDays(clinicDays);
+                    _populateFromApi(days, isSeed: isSeed);
+                    _followsClinicHours = followsClinicHours;
+                  });
+                });
+                return const _UserHoursSkeleton();
+              }
+              return _buildForm(l10n);
+            },
+            orElse: () =>
+                _populated ? _buildForm(l10n) : const SizedBox.shrink(),
           ),
         );
       },

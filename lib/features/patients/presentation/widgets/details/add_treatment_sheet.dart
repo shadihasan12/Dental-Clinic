@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
@@ -30,6 +31,15 @@ class AddTreatmentSheet extends StatefulWidget {
     required List<TreatmentCategoryGroup> categories,
     required List<Tooth> teeth,
   }) {
+    // A sheet dragged up from the bottom edge of a 1600px window is a phone
+    // gesture wearing a desktop; the same flow belongs in a centred dialog.
+    if (Responsive.isDesktop(context)) {
+      return showDialog<List<PlannedTreatment>>(
+        context: context,
+        builder: (_) => AddTreatmentSheet(categories: categories, teeth: teeth),
+      );
+    }
+
     return showModalBottomSheet<List<PlannedTreatment>>(
       context: context,
       isScrollControlled: true,
@@ -93,12 +103,11 @@ class _AddTreatmentSheetState extends State<AddTreatmentSheet> {
   /// every one of them already has this treatment staged.
   bool _isSelected(TreatmentTypeInfo type) {
     if (_generalMode) {
-      return _staged
-          .any((s) => s.type.id == type.id && s.toothNumber == null);
+      return _staged.any((s) => s.type.id == type.id && s.toothNumber == null);
     }
     return _selectedTeeth.every(
-      (code) => _staged
-          .any((s) => s.type.id == type.id && s.toothNumber == code),
+      (code) =>
+          _staged.any((s) => s.type.id == type.id && s.toothNumber == code),
     );
   }
 
@@ -165,6 +174,10 @@ class _AddTreatmentSheetState extends State<AddTreatmentSheet> {
         .where((g) => g.name.contains('عامة'))
         .toList();
     final active = _generalTab ? generalCats : toothCats;
+
+    if (Responsive.isDesktop(context)) {
+      return _buildDesktop(context, active: active);
+    }
 
     return DraggableScrollableSheet(
       initialChildSize: 0.92,
@@ -313,11 +326,257 @@ class _AddTreatmentSheetState extends State<AddTreatmentSheet> {
                 onTap: () => Navigator.pop(context, List.of(_staged)),
               ),
               // Consume the sheet's own controller so the drag handle works.
-              SizedBox(height: 0, child: SingleChildScrollView(controller: sheetScroll)),
+              SizedBox(
+                height: 0,
+                child: SingleChildScrollView(controller: sheetScroll),
+              ),
             ],
           ),
         );
       },
+    );
+  }
+
+  /// Desktop layout: the chart on the left at a fixed width, the treatment
+  /// cards beside it on the right.
+  ///
+  /// Mobile stacks the two and scrolls the picker into view after a tap
+  /// because it has no room to do otherwise. Here both stay on screen, so
+  /// choosing a tooth and choosing what to do to it is one glance, and only
+  /// the card list scrolls.
+  Widget _buildDesktop(
+    BuildContext context, {
+    required List<TreatmentCategoryGroup> active,
+  }) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
+
+    return Dialog(
+      backgroundColor: c.scaffoldBg,
+      clipBehavior: Clip.antiAlias,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1020, maxHeight: 680),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: _Header(
+                title: l10n.addTreatmentButton,
+                subtitle: _staged.isEmpty
+                    ? null
+                    : '${_staged.length} ${l10n.selectedCount}',
+                onClose: () => Navigator.pop(context),
+              ),
+            ),
+            Divider(height: 1, color: c.borderLight),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(width: 390, child: _desktopChartPane(c, family)),
+                  Container(width: 1, color: c.borderLight),
+                  Expanded(child: _desktopPickerPane(c, l10n, family, active)),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: c.borderLight),
+            _desktopFooter(c, l10n, family),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _desktopChartPane(AppColors c, String family) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 18, 18, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ToothChart(
+            teeth: widget.teeth,
+            selectedTeeth: _selectedToothIds(),
+            // Wider ratio than mobile's 0.75 so the chart stays short
+            // enough to sit beside the picker without the pane scrolling.
+            aspectRatio: 0.8,
+            onSelectionChanged: (ids) {
+              if (ids.isEmpty) return;
+              _onToothTap(_codeForId(ids.last));
+            },
+          ),
+          if (_selectedTeeth.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final code in _selectedTeeth)
+                  _Pill(
+                    label: l10n.toothLabel(code),
+                    onRemove: () => setState(() => _selectedTeeth.remove(code)),
+                  ),
+                _ClearButton(
+                  label: l10n.clearSelection,
+                  onTap: () => setState(_selectedTeeth.clear),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _desktopPickerPane(
+    AppColors c,
+    AppLocalizations l10n,
+    String family,
+    List<TreatmentCategoryGroup> active,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
+          child: _TabSwitch(
+            toothLabel: l10n.toothSpecificTab,
+            generalLabel: l10n.generalTab,
+            generalActive: _generalTab,
+            onChanged: (g) => setState(() => _generalTab = g),
+          ),
+        ),
+        Expanded(
+          child: !_generalTab && _selectedTeeth.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      l10n.selectToothFirst,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: family,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ),
+                )
+              // Only this list scrolls - the chart and the footer stay put.
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+                  children: [
+                    for (final group in active) ...[
+                      Text(
+                        group.name,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: family,
+                          color: c.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final t in group.treatments)
+                            _TreatmentChoice(
+                              type: t,
+                              selected: _isSelected(t),
+                              onTap: () => _toggle(t),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _desktopFooter(AppColors c, AppLocalizations l10n, String family) {
+    return Container(
+      color: c.cardBg,
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      child: Row(
+        children: [
+          if (_staged.isNotEmpty)
+            // Read-only, as on mobile: the cards above are the toggle, so a
+            // second remove affordance here would only desync the two. Capped
+            // in height so a long list cannot squeeze the picker.
+            Expanded(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 64),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final s in _staged)
+                        _Pill(
+                          label: s.toothNumber == null
+                              ? s.type.name
+                              : '${s.type.name} - ${s.toothNumber}',
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else
+            const Spacer(),
+          const SizedBox(width: 16),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: c.textSecondary,
+              minimumSize: const Size(0, 42),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                fontFamily: family,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: _staged.isEmpty
+                ? null
+                : () => Navigator.pop(context, List.of(_staged)),
+            style: FilledButton.styleFrom(
+              backgroundColor: ColorManager.primary,
+              disabledBackgroundColor: c.cardBgSecondary,
+              minimumSize: const Size(0, 42),
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              l10n.addToThisCase,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                fontFamily: family,
+                color: _staged.isEmpty ? c.textTertiary : ColorManager.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -325,16 +584,16 @@ class _AddTreatmentSheetState extends State<AddTreatmentSheet> {
 class _Grabber extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: Container(
-          width: 40.w,
-          height: 4.h,
-          decoration: BoxDecoration(
-            color: ColorManager.of(context).border,
-            borderRadius: BorderRadius.circular(999.r),
-          ),
-        ),
-      );
+    padding: EdgeInsets.symmetric(vertical: 8.h),
+    child: Container(
+      width: 40.w,
+      height: 4.h,
+      decoration: BoxDecoration(
+        color: ColorManager.of(context).border,
+        borderRadius: BorderRadius.circular(999.r),
+      ),
+    ),
+  );
 }
 
 class _Header extends StatelessWidget {
@@ -595,9 +854,7 @@ class _Confirm extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: systemBottomInset(context),
-      ),
+      padding: EdgeInsets.only(bottom: systemBottomInset(context)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 10.h),
         child: SizedBox(

@@ -178,6 +178,8 @@
   "newAppointment": "موعد جديد",
   "addTreatment": "اضافة معالجة",
   "todaysSchedule": "جدول اليوم",
+  "todaysAppointments": "مواعيد اليوم",
+  "upcoming": "القادمة",
   "viewAll": "عرض الكل",
   "analytics": "الإحصائيات",
   "schedule": "الجدول",
@@ -1594,5 +1596,7 @@
   "clinicTypeRequired": "اختر نوع العيادة",
   "followsClinicHoursNote": "أنت تتبع ساعات عمل العيادة، وتتغير كلما تغير جدول العيادة.",
   "followsClinicHoursAdminNote": "يتبع ساعات عمل العيادة. حفظ التغييرات هنا يمنح هذا العضو جدولاً خاصاً به، ولن يتبع جدول العيادة بعد ذلك.",
-  "slotsFollowClinicHours": "حسب ساعات عمل العيادة"
+  "slotsFollowClinicHours": "حسب ساعات عمل العيادة",
+  "profilePhoto": "الصورة الشخصية",
+  "profilePhotoHint": "اضغط على الصورة لرفع صورة جديدة."
 }

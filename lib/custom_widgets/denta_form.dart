@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/widgets/english_picker.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,33 @@ import 'package:intl/intl.dart' hide TextDirection;
 /// The shared pieces every create/edit screen is built from, so Add Patient
 /// and Add Appointment cannot drift apart: one card shape, one input shell,
 /// one error line, one docked action, one date sheet.
+
+/// How big the kit draws itself for the form factor in front of it.
+///
+/// [DesktopShell] pins ScreenUtil to the phone design size, so every `.h` in
+/// this file resolves to a phone-sized box on a monitor - a 46px button and a
+/// 12px input gutter that look right under a thumb read as undersized under a
+/// mouse. This is the one place that decides how much bigger a control gets
+/// on desktop; the mobile numbers are unchanged.
+class FormMetrics {
+  const FormMetrics._(this.isWide);
+
+  factory FormMetrics.of(BuildContext context) =>
+      FormMetrics._(Responsive.isDesktop(context));
+
+  final bool isWide;
+
+  double get fieldPadV => isWide ? 16 : 12.h;
+  double get fieldPadH => isWide ? 14 : 12.w;
+  double get valueFont => isWide ? 14 : 13.sp;
+  double get labelFont => isWide ? 12.5 : 11.5.sp;
+  double get labelGap => isWide ? 8 : 6.h;
+  double get cardPad => isWide ? 20 : 14.w;
+  double get cardGap => isWide ? 18 : 12.h;
+  double get titleFont => isWide ? 15 : 13.sp;
+  double get buttonHeight => isWide ? 52 : 46.h;
+  double get buttonFont => isWide ? 15 : 14.sp;
+}
 
 /// Back + title. The identity row on a form screen.
 class FormTopBar extends StatelessWidget {
@@ -83,8 +111,9 @@ class FormSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final m = FormMetrics.of(context);
     return Container(
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(m.cardPad),
       decoration: BoxDecoration(
         color: c.cardBg,
         borderRadius: BorderRadius.circular(16.r),
@@ -99,7 +128,7 @@ class FormSectionCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: m.titleFont,
                     fontWeight: FontWeight.w600,
                     fontFamily: FontHelper.fontFamily(context),
                     color: c.textPrimary,
@@ -109,9 +138,75 @@ class FormSectionCard extends StatelessWidget {
               if (trailing != null) trailing!,
             ],
           ),
-          for (final child in children) ...[SizedBox(height: 12.h), child],
+          for (final child in children) ...[
+            SizedBox(height: m.cardGap),
+            child,
+          ],
         ],
       ),
+    );
+  }
+}
+
+/// Lays a small group of fields side by side once there is room for them,
+/// and stacks them otherwise.
+///
+/// Measures its own box rather than the window: a form is usually centred
+/// inside a max-width column on desktop, so the screen width says nothing
+/// useful about how much room the fields actually have.
+class FormFieldRow extends StatelessWidget {
+  const FormFieldRow({
+    super.key,
+    required this.children,
+    this.minFieldWidth = 220,
+    this.spacing = 12,
+  });
+
+  final List<Widget> children;
+
+  /// Stacks instead of pairing below this per-field width. A phone number or
+  /// a date needs room for its content plus a label that can run half again
+  /// as long once translated.
+  final double minFieldWidth;
+
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    final m = FormMetrics.of(context);
+    // A wider card wants a wider gutter, or the two fields read as one box
+    // split by a hairline.
+    final gap = m.isWide ? spacing + 6 : spacing.w;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final needed =
+            minFieldWidth * children.length + gap * (children.length - 1);
+
+        if (constraints.maxWidth < needed) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) SizedBox(height: m.isWide ? spacing : spacing.h),
+                children[i],
+              ],
+            ],
+          );
+        }
+
+        return Row(
+          // Top-aligned so an error line under one field cannot shove its
+          // neighbour's box down with it.
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) SizedBox(width: gap),
+              Expanded(child: children[i]),
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -171,6 +266,7 @@ class FormFieldShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final m = FormMetrics.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -188,13 +284,13 @@ class FormFieldShell extends StatelessWidget {
               ],
             ),
             style: TextStyle(
-              fontSize: 11.5.sp,
+              fontSize: m.labelFont,
               fontWeight: FontWeight.w500,
               fontFamily: FontHelper.fontFamily(context),
               color: c.textSecondary,
             ),
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: m.labelGap),
         ],
         child,
         if (errorText != null) FormErrorLine(message: errorText!),
@@ -366,6 +462,7 @@ class _FormTextFieldState extends State<FormTextField> {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
+    final m = FormMetrics.of(context);
 
     return FormFieldShell(
       label: widget.label,
@@ -400,20 +497,20 @@ class _FormTextFieldState extends State<FormTextField> {
                 // just makes the two behave the same.
                 onTapOutside: (_) => _focusNode.unfocus(),
                 style: TextStyle(
-                  fontSize: 13.sp,
+                  fontSize: m.valueFont,
                   fontFamily: family,
                   color: c.textPrimary,
                 ),
                 decoration: bareInputDecoration().copyWith(
                   hintText: widget.hintText,
                   hintStyle: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: m.valueFont,
                     fontFamily: family,
                     color: c.textTertiary,
                   ),
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 12.h,
+                    horizontal: m.fieldPadH,
+                    vertical: m.fieldPadV,
                   ),
                 ),
               ),
@@ -455,6 +552,7 @@ class FormDateField extends StatelessWidget {
     final family = FontHelper.fontFamily(context);
     final locale = Localizations.localeOf(context).toString();
     final date = value;
+    final m = FormMetrics.of(context);
 
     return FormFieldShell(
       label: label,
@@ -464,7 +562,10 @@ class FormDateField extends StatelessWidget {
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: m.fieldPadH,
+            vertical: m.fieldPadV,
+          ),
           decoration: formInputDecoration(
             context,
             focused: false,
@@ -478,7 +579,7 @@ class FormDateField extends StatelessWidget {
                       ? (placeholder ?? label)
                       : DateFormat('d MMM yyyy', locale).format(date),
                   style: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: m.valueFont,
                     fontFamily: family,
                     color: date == null ? c.textTertiary : c.textPrimary,
                   ),
@@ -538,6 +639,7 @@ class FormPickerField extends StatelessWidget {
     // A field with no tap and no action is locked: dim its surface so it does
     // not invite an edit that will not happen.
     final locked = onTap == null && action == null;
+    final m = FormMetrics.of(context);
 
     return FormFieldShell(
       label: label,
@@ -547,7 +649,12 @@ class FormPickerField extends StatelessWidget {
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: Container(
-          padding: EdgeInsetsDirectional.fromSTEB(12.w, 12.h, 8.w, 12.h),
+          padding: EdgeInsetsDirectional.fromSTEB(
+            m.fieldPadH,
+            m.fieldPadV,
+            8.w,
+            m.fieldPadV,
+          ),
           decoration: formInputDecoration(
             context,
             focused: false,
@@ -562,7 +669,7 @@ class FormPickerField extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textDirection: textDirection,
                   style: TextStyle(
-                    fontSize: 13.sp,
+                    fontSize: m.valueFont,
                     fontFamily: family,
                     color: shown
                         ? (locked ? c.textSecondary : c.textPrimary)
@@ -644,8 +751,9 @@ class FormDropdownField<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
+    final m = FormMetrics.of(context);
     final textStyle = TextStyle(
-      fontSize: 13.sp,
+      fontSize: m.valueFont,
       fontFamily: family,
       color: c.textPrimary,
     );
@@ -655,7 +763,7 @@ class FormDropdownField<T> extends StatelessWidget {
       required: required,
       errorText: errorText,
       child: Container(
-        padding: EdgeInsetsDirectional.fromSTEB(12.w, 0, 8.w, 0),
+        padding: EdgeInsetsDirectional.fromSTEB(m.fieldPadH, 0, 8.w, 0),
         decoration: formInputDecoration(
           context,
           focused: false,
@@ -666,7 +774,7 @@ class FormDropdownField<T> extends StatelessWidget {
             value: value,
             isExpanded: true,
             isDense: true,
-            padding: EdgeInsets.symmetric(vertical: 11.h),
+            padding: EdgeInsets.symmetric(vertical: m.fieldPadV - 1),
             borderRadius: BorderRadius.circular(12.r),
             dropdownColor: c.cardBg,
             style: textStyle,
@@ -719,11 +827,17 @@ class FormSheetShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    // showAdaptiveSheet hands this widget to a centred Dialog on desktop
+    // instead of a bottom sheet, so the two bottom-anchored affordances -
+    // the drag handle and the system-inset padding - stop applying.
+    final isDesktop = Responsive.isDesktop(context);
 
     return Container(
       decoration: BoxDecoration(
         color: c.cardBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
+        borderRadius: isDesktop
+            ? BorderRadius.circular(16)
+            : BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
       child: Padding(
         // The sheet is anchored to the bottom of the screen, so whatever
@@ -732,20 +846,23 @@ class FormSheetShell extends StatelessWidget {
         // already covers the navigation bar, so adding both would leave a
         // navigation bar's worth of dead space above the keyboard.
         padding: EdgeInsets.only(
-          bottom: math.max(keyboard, systemBottomInset(context)),
+          bottom: isDesktop
+              ? 0
+              : math.max(keyboard, systemBottomInset(context)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 10.h),
-            Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: c.border,
-                borderRadius: BorderRadius.circular(2.r),
+            if (!isDesktop)
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: c.border,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
               ),
-            ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(20.w, 12.h, 8.w, 0),
               child: Row(
@@ -811,6 +928,8 @@ class FormSheetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final m = FormMetrics.of(context);
+
     return ElevatedButton(
       onPressed: busy ? null : onPressed,
       // Sized by its own padding rather than a fixed box, so a tall Cairo
@@ -821,7 +940,7 @@ class FormSheetButton extends StatelessWidget {
         disabledBackgroundColor: ColorManager.primary.withValues(alpha: 0.45),
         disabledForegroundColor: ColorManager.white,
         elevation: 0,
-        minimumSize: Size(double.infinity, 46.h),
+        minimumSize: Size(double.infinity, m.buttonHeight),
         padding: EdgeInsets.symmetric(vertical: 12.h),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
@@ -839,7 +958,7 @@ class FormSheetButton extends StatelessWidget {
           : Text(
               label,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: m.buttonFont,
                 height: 1.4,
                 fontWeight: FontWeight.w600,
                 fontFamily: FontHelper.fontFamily(context),
@@ -910,6 +1029,7 @@ class FormActionBar extends StatelessWidget {
     required this.onPressed,
     this.busy = false,
     this.tone,
+    this.maxWidth = double.infinity,
   });
 
   final String label;
@@ -918,6 +1038,11 @@ class FormActionBar extends StatelessWidget {
   /// commit passes ColorManager.destructive so the docked bar still reads as
   /// the same control rather than each screen rebuilding one.
   final Color? tone;
+
+  /// Desktop only: keeps the button in line with a form column narrower than
+  /// the window. Pages that let their form fill the width leave this at
+  /// infinity, so the button fills it too.
+  final double maxWidth;
 
   /// Null disables the button; the bar keeps its space either way.
   final VoidCallback? onPressed;
@@ -928,6 +1053,44 @@ class FormActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final m = FormMetrics.of(context);
+
+    final button = ElevatedButton(
+      onPressed: busy ? null : onPressed,
+      // Sized by its own padding rather than a fixed box, so a tall
+      // Cairo line box grows the button instead of being clipped.
+      style: ElevatedButton.styleFrom(
+        backgroundColor: tone ?? ColorManager.primary,
+        foregroundColor: ColorManager.white,
+        disabledBackgroundColor:
+            (tone ?? ColorManager.primary).withValues(alpha: 0.45),
+        disabledForegroundColor: ColorManager.white,
+        elevation: 0,
+        minimumSize: Size(double.infinity, m.buttonHeight),
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+      child: busy
+          ? SizedBox(
+              width: 18.w,
+              height: 18.w,
+              child: const CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(ColorManager.white),
+              ),
+            )
+          : Text(
+              label,
+              style: TextStyle(
+                fontSize: m.buttonFont,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+                fontFamily: FontHelper.fontFamily(context),
+              ),
+            ),
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -941,42 +1104,18 @@ class FormActionBar extends StatelessWidget {
         padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
-          child: ElevatedButton(
-            onPressed: busy ? null : onPressed,
-            // Sized by its own padding rather than a fixed box, so a tall
-            // Cairo line box grows the button instead of being clipped.
-            style: ElevatedButton.styleFrom(
-              backgroundColor: tone ?? ColorManager.primary,
-              foregroundColor: ColorManager.white,
-              disabledBackgroundColor:
-                  (tone ?? ColorManager.primary).withValues(alpha: 0.45),
-              disabledForegroundColor: ColorManager.white,
-              elevation: 0,
-              minimumSize: Size(double.infinity, 46.h),
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-            ),
-            child: busy
-                ? SizedBox(
-                    width: 18.w,
-                    height: 18.w,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(ColorManager.white),
-                    ),
-                  )
-                : Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      height: 1.4,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: FontHelper.fontFamily(context),
-                    ),
+          child: Responsive.isDesktop(context) && maxWidth.isFinite
+              // heightFactor pins the bar to the button. A plain Center would
+              // take every pixel a Scaffold offers a bottom bar - which is the
+              // whole window - and leave the body nothing to draw in.
+              ? Align(
+                  heightFactor: 1,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: button,
                   ),
-          ),
+                )
+              : button,
         ),
       ),
     );
@@ -1032,9 +1171,7 @@ class DatePickerSheet {
           borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
         ),
         child: Padding(
-          padding: EdgeInsets.only(
-            bottom: systemBottomInset(context),
-          ),
+          padding: EdgeInsets.only(bottom: systemBottomInset(context)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

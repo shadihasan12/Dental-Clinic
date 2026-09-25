@@ -52,9 +52,10 @@ class PaymentsPage extends StatelessWidget {
       return payments.map((list) => _PaymentsData(list, names));
     }
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.reportedTransfersTitle),
+      title: l10n.reportedTransfersTitle,
+      maxContentWidth: 760,
       body: BillingAsync<_PaymentsData>(
         load: load,
         builder: (context, data, reload) {

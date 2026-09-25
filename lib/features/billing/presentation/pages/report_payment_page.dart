@@ -364,21 +364,15 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: Column(
-          children: [
-            FormTopBar(
-              title: l10n.reportTransferTitle,
-              onBack: () => context.pop(),
-            ),
-            Expanded(child: _body(context, l10n)),
-          ],
-        ),
+      title: l10n.reportTransferTitle,
+      maxContentWidth: 760,
+      mobileHeader: FormTopBar(
+        title: l10n.reportTransferTitle,
+        onBack: () => context.pop(),
       ),
+      body: _body(context, l10n),
       bottomNavigationBar: _loading || _methods.isEmpty
           ? null
           : FormActionBar(

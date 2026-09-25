@@ -50,21 +50,20 @@ class _BillingView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(
-        title: l10n.subscriptionPageTitle,
-        showBack: locked ? false : null,
-        actions: [
-          IconButton(
-            tooltip: l10n.subscriptionHistoryTitle,
-            icon: Icon(Icons.history_rounded, color: c.textSecondary),
-            onPressed: () =>
-                context.pushNamed(AppRoutesNames.subscriptionHistory),
-          ),
-          if (locked) _LockedMenu(),
-        ],
-      ),
+      title: l10n.subscriptionPageTitle,
+      showBack: locked ? false : null,
+      maxContentWidth: 760,
+      actions: [
+        IconButton(
+          tooltip: l10n.subscriptionHistoryTitle,
+          icon: Icon(Icons.history_rounded, color: c.textSecondary),
+          onPressed: () =>
+              context.pushNamed(AppRoutesNames.subscriptionHistory),
+        ),
+        if (locked) _LockedMenu(),
+      ],
       body: BlocBuilder<BillingOverviewCubit, BillingOverviewState>(
         builder: (context, state) {
           if (state.isLoading) return const BillingListSkeleton();
@@ -80,7 +79,12 @@ class _BillingView extends StatelessWidget {
               await cubit.load();
             },
             child: ListView(
-              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
+              padding: EdgeInsets.fromLTRB(
+                14.w,
+                14.h,
+                14.w,
+                24.h + bottomInset,
+              ),
               children: [
                 if (status != null)
                   _StatusCard(status: status)
@@ -90,10 +94,7 @@ class _BillingView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _PendingPaymentsCard(
                     count: pending.length,
-                    onTap: () => _push(
-                      context,
-                      AppRoutesNames.clinicPayments,
-                    ),
+                    onTap: () => _push(context, AppRoutesNames.clinicPayments),
                   ),
                 ],
                 if (open != null) ...[
@@ -107,11 +108,8 @@ class _BillingView extends StatelessWidget {
                       AppRoutesNames.invoiceDetails,
                       pathParameters: {'invoiceId': open.id},
                     ),
-                    onHowToPay: () => _push(
-                      context,
-                      AppRoutesNames.howToPay,
-                      extra: open.id,
-                    ),
+                    onHowToPay: () =>
+                        _push(context, AppRoutesNames.howToPay, extra: open.id),
                   ),
                 ] else if (status == null || status.canSubscribe) ...[
                   SizedBox(height: 12.h),
@@ -357,26 +355,32 @@ class _StatusCard extends StatelessWidget {
     if (status.isExpired) return const [];
     final tiles = <Widget>[];
     if (status.isTrial || status.isActive) {
-      tiles.add(ValueTile(
-        label: l10n.daysRemaining,
-        value: '${status.daysRemaining}',
-        tone: status.daysRemaining <= 7 ? ColorManager.warning : null,
-      ));
+      tiles.add(
+        ValueTile(
+          label: l10n.daysRemaining,
+          value: '${status.daysRemaining}',
+          tone: status.daysRemaining <= 7 ? ColorManager.warning : null,
+        ),
+      );
     }
     if (status.endsAt != null && !status.isGrace) {
-      tiles.add(ValueTile(
-        label: status.isTrial ? l10n.trialEndsLabel : l10n.endsLabel,
-        value: AppDate.medium(context, status.endsAt!),
-        valueSize: 12.5.sp,
-      ));
+      tiles.add(
+        ValueTile(
+          label: status.isTrial ? l10n.trialEndsLabel : l10n.endsLabel,
+          value: AppDate.medium(context, status.endsAt!),
+          valueSize: 12.5.sp,
+        ),
+      );
     }
     if (status.isGrace && status.graceEndsAt != null) {
-      tiles.add(ValueTile(
-        label: l10n.graceEndsLabel,
-        value: AppDate.medium(context, status.graceEndsAt!),
-        tone: ColorManager.warning,
-        valueSize: 12.5.sp,
-      ));
+      tiles.add(
+        ValueTile(
+          label: l10n.graceEndsLabel,
+          value: AppDate.medium(context, status.graceEndsAt!),
+          tone: ColorManager.warning,
+          valueSize: 12.5.sp,
+        ),
+      );
     }
     if (tiles.isEmpty) return const [];
     return [
@@ -406,7 +410,8 @@ class _StatusUnavailable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final noSubscription = error?.maybeWhen(
+    final noSubscription =
+        error?.maybeWhen(
           notFound: (_) => true,
           paymentRequired: (_, mode, _) => mode == 'none',
           orElse: () => false,
@@ -427,8 +432,9 @@ class _StatusUnavailable extends StatelessWidget {
       icon: Icons.cloud_off_outlined,
       tone: ColorManager.error,
       title: l10n.billingLoadFailed,
-      message:
-          error == null ? null : NetworkExceptions.localizedMessage(context, error!),
+      message: error == null
+          ? null
+          : NetworkExceptions.localizedMessage(context, error!),
       actionLabel: l10n.retry,
       onAction: () => context.read<BillingOverviewCubit>().load(),
     );
@@ -602,19 +608,23 @@ class _UsageCard extends StatelessWidget {
     final rows = <Widget>[];
     final users = usage.users;
     if (users != null) {
-      rows.add(_UsageRow(
-        icon: Icons.people_outline,
-        label: l10n.seatsLabel,
-        metric: users,
-      ));
+      rows.add(
+        _UsageRow(
+          icon: Icons.people_outline,
+          label: l10n.seatsLabel,
+          metric: users,
+        ),
+      );
     }
     final storage = usage.storage;
     if (storage != null) {
-      rows.add(_UsageRow(
-        icon: Icons.cloud_outlined,
-        label: l10n.storageUsed,
-        metric: storage,
-      ));
+      rows.add(
+        _UsageRow(
+          icon: Icons.cloud_outlined,
+          label: l10n.storageUsed,
+          metric: storage,
+        ),
+      );
     }
     if (rows.isEmpty) return const SizedBox.shrink();
     return AppCard(

@@ -2,10 +2,9 @@ import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
-import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,32 +36,26 @@ class _StatisticsView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    return Scaffold(
-      backgroundColor: c.scaffoldBg,
-      body: BlocBuilder<StatisticsDashboardBloc, StatisticsDashboardState>(
-        builder: (context, state) {
-          // Share is offered once the catalog has loaded; the card is
-          // built from whatever metrics have streamed in so far.
-          final canShare = state.catalogStatus == CatalogStatus.success;
-          return Column(
-            children: [
-              PageHeader(
-                title: l10n.statistics,
-                actions: [
-                  _ShareAction(
-                    enabled: canShare,
-                    onTap: () => showStatisticsShareSheet(
-                      context: context,
-                      stats: ShareStatistics.fromDashboard(state),
-                    ),
-                  ),
-                ],
+    return BlocBuilder<StatisticsDashboardBloc, StatisticsDashboardState>(
+      builder: (context, state) {
+        // Share is offered once the catalog has loaded; the card is
+        // built from whatever metrics have streamed in so far.
+        final canShare = state.catalogStatus == CatalogStatus.success;
+        return AdaptivePageScaffold(
+          title: l10n.statistics,
+          backgroundColor: c.scaffoldBg,
+          actions: [
+            _ShareAction(
+              enabled: canShare,
+              onTap: () => showStatisticsShareSheet(
+                context: context,
+                stats: ShareStatistics.fromDashboard(state),
               ),
-              Expanded(child: _Body(state: state)),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+          body: _Body(state: state),
+        );
+      },
     );
   }
 }

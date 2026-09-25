@@ -1088,6 +1088,18 @@ abstract class AppLocalizations {
   /// **'Today\'s Schedule'**
   String get todaysSchedule;
 
+  /// No description provided for @todaysAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Appointments'**
+  String get todaysAppointments;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
   /// No description provided for @viewAll.
   ///
   /// In en, this message translates to:
@@ -7015,6 +7027,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Following the clinic\'s working hours'**
   String get slotsFollowClinicHours;
+
+  /// No description provided for @profilePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Photo'**
+  String get profilePhoto;
+
+  /// No description provided for @profilePhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Click the avatar to upload a new picture.'**
+  String get profilePhotoHint;
 }
 
 class _AppLocalizationsDelegate

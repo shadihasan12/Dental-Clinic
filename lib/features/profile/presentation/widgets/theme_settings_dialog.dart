@@ -2,12 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 
 void showThemeSettingsDialog(BuildContext context) {
+  // Desktop gets a centred, width-capped dialog; a sheet slammed against the
+  // bottom edge of a 1080p window reads as a mobile port.
+  if (Responsive.isDesktop(context)) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: ColorManager.of(context).cardBg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: const ThemeSettingsModal(isDesktop: true),
+        ),
+      ),
+    );
+    return;
+  }
   showModalBottomSheet(
     context: context,
     backgroundColor: ColorManager.of(context).cardBg,
@@ -19,7 +36,9 @@ void showThemeSettingsDialog(BuildContext context) {
 }
 
 class ThemeSettingsModal extends StatelessWidget {
-  const ThemeSettingsModal({super.key});
+  const ThemeSettingsModal({super.key, this.isDesktop = false});
+
+  final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +48,33 @@ class ThemeSettingsModal extends StatelessWidget {
     final currentMode = getIt<ThemeBloc>().state.themeMode;
 
     return SafeArea(
+      top: false,
+      bottom: !isDesktop,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
+        padding: isDesktop
+            ? const EdgeInsets.all(20)
+            : EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 14.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 40x4 grab handle, then the title row with an x on the trailing
             // side - the sheet shape every other sheet in the app uses.
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: c.borderLight,
-                  borderRadius: BorderRadius.circular(2.r),
+            // The handle is a drag affordance for a bottom sheet; a centred
+            // desktop dialog cannot be dragged, so it is dropped there.
+            if (!isDesktop) ...[
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: c.borderLight,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 14.h),
+              SizedBox(height: 14.h),
+            ],
             Row(
               children: [
                 Expanded(
@@ -77,14 +104,13 @@ class ThemeSettingsModal extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
 
-          // Theme options
+            // Theme options
             _ThemeOption(
               icon: Icons.light_mode_outlined,
               title: l10n.lightMode,
               isSelected: currentMode == ThemeMode.light,
               onTap: () {
-                getIt<ThemeBloc>()
-                    .add(const ChangeThemeEvent(ThemeMode.light));
+                getIt<ThemeBloc>().add(const ChangeThemeEvent(ThemeMode.light));
                 Navigator.pop(context);
               },
             ),
@@ -104,8 +130,9 @@ class ThemeSettingsModal extends StatelessWidget {
               title: l10n.systemDefault,
               isSelected: currentMode == ThemeMode.system,
               onTap: () {
-                getIt<ThemeBloc>()
-                    .add(const ChangeThemeEvent(ThemeMode.system));
+                getIt<ThemeBloc>().add(
+                  const ChangeThemeEvent(ThemeMode.system),
+                );
                 Navigator.pop(context);
               },
             ),
@@ -160,8 +187,9 @@ class _ThemeOption extends StatelessWidget {
                   fontFamily: fontFamily,
                   fontSize: 12.5.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color:
-                      isSelected ? ColorManager.primaryDarker : c.textPrimary,
+                  color: isSelected
+                      ? ColorManager.primaryDarker
+                      : c.textPrimary,
                 ),
               ),
             ),

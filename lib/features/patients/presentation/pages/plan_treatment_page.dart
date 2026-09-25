@@ -3,7 +3,6 @@ import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_card.dart';
-import 'package:dental_clinic_app/custom_widgets/page_header.dart';
 import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/add/tooth_chart.dart';
@@ -11,6 +10,7 @@ import 'package:dental_clinic_app/features/patients/presentation/widgets/details
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_type_grid.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -120,194 +120,182 @@ class _PlanTreatmentPageState extends State<PlanTreatmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AdaptivePageScaffold(
+      title: AppLocalizations.of(context)!.planTreatments,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Mode toggle
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
+              child: _buildModeToggle(context),
+            ),
+            SizedBox(height: 12.h),
+
+            if (_viewMode == 0) ...[
+              // Instruction
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.touch_app,
+                        size: 20.w,
+                        color: ColorManager.primary,
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.tapToothToAddTreatments,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontFamily: FontHelper.fontFamily(context),
+                            color: ColorManager.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 8.h),
+
+              // Tooth chart
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: CustomCard(
+                  child: _InteractiveToothChart(
+                    teethWithTreatments: _teethWithTreatments,
+                    onToothTap: _handleToothTap,
+                    teeth: widget.teeth,
+                  ),
+                ),
+              ),
+            ] else if (_viewMode > 0 &&
+                _viewMode < widget.categories.length) ...[
+              // Category treatments grid
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: CustomCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.categories[_viewMode].name,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.of(context).textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 14.h),
+                      TreatmentTypeGrid(
+                        types: widget.categories[_viewMode].treatments,
+                        selectedIds: _newTreatments
+                            .where((t) => t.toothNumber == null)
+                            .map((t) => t.type.id)
+                            .toSet(),
+                        onSelect: _toggleGeneralTreatment,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            SizedBox(height: 16.h),
+
+            // New treatments list
+            if (_newTreatments.isNotEmpty) ...[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.addedTreatments,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontFamily: FontHelper.fontFamily(context),
+                        fontWeight: FontWeight.w600,
+                        color: ColorManager.of(context).textPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        '${_newTreatments.length}',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  children: _newTreatments
+                      .asMap()
+                      .entries
+                      .map(
+                        (e) => Padding(
+                          padding: EdgeInsets.only(bottom: 6.h),
+                          child: Dismissible(
+                            key: Key(e.value.id),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (_) => _removeTreatment(e.key),
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(right: 16.w),
+                              decoration: BoxDecoration(
+                                color: ColorManager.error.withValues(
+                                  alpha: 0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: ColorManager.error,
+                                size: 22.w,
+                              ),
+                            ),
+                            child: TreatmentPlanCard(treatment: e.value),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+            SizedBox(height: 100.h),
+          ],
+        ),
+      ),
+      onBack: () => context.pop(),
       backgroundColor: ColorManager.of(context).scaffoldBg,
       bottomNavigationBar: _newTreatments.isNotEmpty
           ? _buildBottomBar(context)
           : null,
-      body: Column(
-        children: [
-          PageHeader(
-            title: AppLocalizations.of(context)!.planTreatments,
-            onBack: () => context.pop(),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Mode toggle
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-                    child: _buildModeToggle(context),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  if (_viewMode == 0) ...[
-                    // Instruction
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: ColorManager.primary.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.touch_app,
-                              size: 20.w,
-                              color: ColorManager.primary,
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(
-                                  context,
-                                )!.tapToothToAddTreatments,
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontFamily: FontHelper.fontFamily(context),
-                                  color: ColorManager.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-
-                    // Tooth chart
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: CustomCard(
-                        child: _InteractiveToothChart(
-                          teethWithTreatments: _teethWithTreatments,
-                          onToothTap: _handleToothTap,
-                          teeth: widget.teeth,
-                        ),
-                      ),
-                    ),
-                  ] else if (_viewMode > 0 &&
-                      _viewMode < widget.categories.length) ...[
-                    // Category treatments grid
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: CustomCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.categories[_viewMode].name,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontWeight: FontWeight.w600,
-                                color: ColorManager.of(context).textPrimary,
-                              ),
-                            ),
-                            SizedBox(height: 14.h),
-                            TreatmentTypeGrid(
-                              types: widget.categories[_viewMode].treatments,
-                              selectedIds: _newTreatments
-                                  .where((t) => t.toothNumber == null)
-                                  .map((t) => t.type.id)
-                                  .toSet(),
-                              onSelect: _toggleGeneralTreatment,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: 16.h),
-
-                  // New treatments list
-                  if (_newTreatments.isNotEmpty) ...[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Row(
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.addedTreatments,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontFamily: FontHelper.fontFamily(context),
-                              fontWeight: FontWeight.w600,
-                              color: ColorManager.of(context).textPrimary,
-                            ),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorManager.primary.withValues(
-                                alpha: 0.1,
-                              ),
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Text(
-                              '${_newTreatments.length}',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: FontHelper.fontFamily(context),
-                                fontWeight: FontWeight.w600,
-                                color: ColorManager.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Column(
-                        children: _newTreatments
-                            .asMap()
-                            .entries
-                            .map(
-                              (e) => Padding(
-                                padding: EdgeInsets.only(bottom: 6.h),
-                                child: Dismissible(
-                                  key: Key(e.value.id),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (_) => _removeTreatment(e.key),
-                                  background: Container(
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(right: 16.w),
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.error.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.delete_outline,
-                                      color: ColorManager.error,
-                                      size: 22.w,
-                                    ),
-                                  ),
-                                  child: TreatmentPlanCard(treatment: e.value),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: 100.h),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

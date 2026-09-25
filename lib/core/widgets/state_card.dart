@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -20,6 +21,7 @@ class StateCard extends StatelessWidget {
     this.tone,
     this.actionLabel,
     this.onAction,
+    this.minHeight,
   });
 
   final IconData icon;
@@ -36,6 +38,11 @@ class StateCard extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
 
+  /// Floor for the card's height, so a desktop empty state fills the region
+  /// it replaces instead of sitting as a short strip at the top of it. The
+  /// content stays vertically centred inside whatever height results.
+  final double? minHeight;
+
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
@@ -45,6 +52,9 @@ class StateCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
+      constraints: minHeight == null
+          ? null
+          : BoxConstraints(minHeight: minHeight!),
       padding: EdgeInsets.fromLTRB(20.w, 26.h, 20.w, 20.h),
       decoration: BoxDecoration(
         color: c.cardBg,
@@ -52,6 +62,8 @@ class StateCard extends StatelessWidget {
         border: Border.all(color: edge),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: minHeight == null ? MainAxisSize.min : MainAxisSize.max,
         children: [
           Container(
             width: 56.w,
@@ -105,24 +117,37 @@ class StateCard extends StatelessWidget {
           ],
           if (actionLabel != null) ...[
             SizedBox(height: 18.h),
-            SizedBox(
-              width: double.infinity,
-              child: Material(
-                color: ColorManager.primary,
-                borderRadius: BorderRadius.circular(12.r),
-                child: InkWell(
-                  onTap: onAction,
+            // Full width is right on a phone, but stretched across a desktop
+            // column the button reads as a banner rather than a control, so
+            // it is capped and centred under the message.
+            Align(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: Responsive.isDesktop(context) ? 0 : double.infinity,
+                  maxWidth: Responsive.isDesktop(context)
+                      ? 260
+                      : double.infinity,
+                ),
+                child: Material(
+                  color: ColorManager.primary,
                   borderRadius: BorderRadius.circular(12.r),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 13.h),
-                    child: Text(
-                      actionLabel!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: family,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                        color: ColorManager.white,
+                  child: InkWell(
+                    onTap: onAction,
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 13.h,
+                        horizontal: 20.w,
+                      ),
+                      child: Text(
+                        actionLabel!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: family,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w700,
+                          color: ColorManager.white,
+                        ),
                       ),
                     ),
                   ),

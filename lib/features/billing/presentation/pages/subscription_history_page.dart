@@ -23,9 +23,10 @@ class SubscriptionHistoryPage extends StatelessWidget {
     final c = ColorManager.of(context);
     final repository = getIt<BillingRepository>();
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.subscriptionHistoryTitle),
+      title: l10n.subscriptionHistoryTitle,
+      maxContentWidth: 760,
       body: BillingAsync<List<SubscriptionPeriodEntity>>(
         load: repository.getPeriods,
         builder: (context, periods, _) {

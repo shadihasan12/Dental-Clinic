@@ -37,9 +37,10 @@ class InvoiceDetailsPage extends StatelessWidget {
     final c = ColorManager.of(context);
     final repository = getIt<BillingRepository>();
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.invoiceDetailsTitle),
+      title: l10n.invoiceDetailsTitle,
+      maxContentWidth: 760,
       body: BillingAsync<InvoiceEntity>(
         load: () => repository.getInvoice(invoiceId),
         builder: (context, invoice, reload) =>

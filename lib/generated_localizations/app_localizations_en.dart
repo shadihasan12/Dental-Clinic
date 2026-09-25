@@ -513,6 +513,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaysSchedule => 'Today\'s Schedule';
 
   @override
+  String get todaysAppointments => 'Today\'s Appointments';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
   String get viewAll => 'View All';
 
   @override
@@ -3752,4 +3758,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get slotsFollowClinicHours => 'Following the clinic\'s working hours';
+
+  @override
+  String get profilePhoto => 'Profile Photo';
+
+  @override
+  String get profilePhotoHint => 'Click the avatar to upload a new picture.';
 }

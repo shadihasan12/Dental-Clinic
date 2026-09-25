@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/features/patients/presentation/widgets/details
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/plan_summary_header.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

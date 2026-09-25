@@ -27,9 +27,10 @@ class PaymentDetailsPage extends StatelessWidget {
     final c = ColorManager.of(context);
     final repository = getIt<BillingRepository>();
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.transferDetailsTitle),
+      title: l10n.transferDetailsTitle,
+      maxContentWidth: 760,
       body: BillingAsync<ClinicPaymentEntity>(
         load: () => repository.getPayment(paymentId),
         builder: (context, payment, reload) =>

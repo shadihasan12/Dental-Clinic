@@ -1,4 +1,9 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/core/widgets/unread_badge.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_page.dart';
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +58,9 @@ class _RootPageState extends State<RootPage> {
   // Held as a [RootTab], not a position: the bar drops the tabs this user has
   // no permission for, so a list index means nothing outside one build.
   RootTab _currentTab = RootTab.home;
+  // Desktop only: the side nav's "More" row, one position past the root
+  // tabs. Mobile reaches the same page as a pushed route off the home header.
+  bool _moreSelected = false;
   // Bumped whenever the active clinic changes. Used as part of each tab's
   // ValueKey so Flutter discards the existing State and re-mounts the
   // subtree, which forces every per-tab initState (and therefore every
@@ -76,15 +84,22 @@ class _RootPageState extends State<RootPage> {
 
   void _onExternalTabChange() {
     final next = RootPage.selectedTab.value;
-    if (next < 0 || next >= RootTab.values.length) return;
+    if (next == RootTab.values.length) {
+      if (!_moreSelected) setState(() => _moreSelected = true);
+      return;
+    }
+    if (next < 0 || next > RootTab.values.length) return;
     final tab = RootTab.values[next];
     // A jump from elsewhere in the app can name a tab this user doesn't have;
     // ignoring it keeps the notifier and the visible selection from drifting
     // apart, since the bar could not show that tab anyway.
     final allowed = visibleRootTabs(getIt<ClinicPermissionsBloc>().state);
     if (!allowed.contains(tab)) return;
-    if (tab != _currentTab) {
-      setState(() => _currentTab = tab);
+    if (tab != _currentTab || _moreSelected) {
+      setState(() {
+        _currentTab = tab;
+        _moreSelected = false;
+      });
     }
   }
 
@@ -212,8 +227,11 @@ class _RootPageState extends State<RootPage> {
   }
 
   void _onTabSelected(RootTab tab) {
-    if (tab == _currentTab) return;
-    setState(() => _currentTab = tab);
+    if (tab == _currentTab && !_moreSelected) return;
+    setState(() {
+      _currentTab = tab;
+      _moreSelected = false;
+    });
     RootPage.selectedTab.value = tab.index;
   }
 
@@ -287,7 +305,75 @@ class _RootPageState extends State<RootPage> {
     final current = tabs.contains(_currentTab) ? _currentTab : RootTab.home;
     final index = tabs.indexOf(current);
 
-    final content = Stack(
+    final content = Responsive.isDesktop(context)
+        ? _buildDesktopContent(context, tabs, index)
+        : _buildMobileContent(
+            tabs,
+            index,
+            reservedBarHeight,
+            reservedTop,
+            l10n,
+          );
+
+    // Expired: everything stays readable, nothing can be changed. The banner
+    // takes the status bar's inset, so the tab under it must not add it a
+    // second time. The slot is always there, empty or not, so the banner
+    // coming and going never remounts the tabs underneath.
+    return Scaffold(
+      body: Column(
+        children: [
+          readOnly ? const ReadOnlyBanner() : const SizedBox.shrink(),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: readOnly,
+              child: content,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT — top bar + tab content. The side menu and the Ctrl+1..5
+  // shortcuts belong to AppShell, which outlives this page.
+  // ═════════════════════════════════════════════════════════════════════
+
+  Widget _buildDesktopContent(
+    BuildContext context,
+    List<RootTab> tabs,
+    int index,
+  ) {
+    return Column(
+      children: [
+        _DesktopTopBar(fontFamily: FontHelper.fontFamily(context)),
+        Expanded(
+          child: IndexedStack(
+            // "More" sits after the visible tabs.
+            index: _moreSelected ? tabs.length : index,
+            children: [
+              for (final tab in tabs) _pageFor(tab),
+              MenuPage(key: ValueKey('more-$_clinicVersion')),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT
+  // ═════════════════════════════════════════════════════════════════════
+
+  Widget _buildMobileContent(
+    List<RootTab> tabs,
+    int index,
+    double reservedBarHeight,
+    double reservedTop,
+    AppLocalizations l10n,
+  ) {
+    return Stack(
       children: [
         Positioned.fill(
           child: IndexedStack(
@@ -322,20 +408,149 @@ class _RootPageState extends State<RootPage> {
         ),
       ],
     );
+  }
+}
 
-    // Expired: everything stays readable, nothing can be changed. The banner
-    // takes the status bar's inset, so the tab under it must not add it a
-    // second time. The slot is always there, empty or not, so the banner
-    // coming and going never remounts the tabs underneath.
-    return Scaffold(
-      body: Column(
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP TOP BAR
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DesktopTopBar extends StatelessWidget {
+  const _DesktopTopBar({required this.fontFamily});
+
+  final String fontFamily;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final userStorage = getIt<UserStorage>();
+    final userName = userStorage.getFirstName() ?? '';
+    final clinicName = userStorage.getClinicName() ?? '';
+
+    return Container(
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(bottom: BorderSide(color: c.borderLight)),
+      ),
+      child: Row(
         children: [
-          readOnly ? const ReadOnlyBanner() : const SizedBox.shrink(),
-          Expanded(
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: readOnly,
-              child: content,
+          // Welcome + active clinic — the desktop stand-in for the mobile
+          // home header, which the side nav layout does not show.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                userName.isNotEmpty
+                    ? '${l10n.welcomeBack}, $userName'
+                    : l10n.welcomeBack,
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 15,
+                  fontWeight: FontWeightManager.semiBold,
+                  color: c.textPrimary,
+                ),
+              ),
+              if (clinicName.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: () => context.pushNamed(AppRoutesNames.myClinics),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF4ADE80),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        clinicName,
+                        style: TextStyle(
+                          fontFamily: fontFamily,
+                          fontSize: 13,
+                          color: ColorManager.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: ColorManager.primary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+
+          const Spacer(),
+
+          IconButton(
+            onPressed: () => context.pushNamed(AppRoutesNames.notifications),
+            tooltip: l10n.notifications,
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.notifications_outlined,
+                  color: c.textSecondary,
+                  size: 22,
+                ),
+                // Desktop has no push channel, so this pill is the only thing
+                // on screen that says a notification landed while the user was
+                // looking at another page. It follows the poller.
+                Positioned(
+                  right: -6,
+                  top: -5,
+                  child: UnreadBadge(borderColor: c.cardBg),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          InkWell(
+            onTap: () => context.pushNamed(AppRoutesNames.editProfile),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: ColorManager.primary10,
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeightManager.semiBold,
+                        color: ColorManager.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    userName,
+                    style: TextStyle(
+                      fontFamily: fontFamily,
+                      fontSize: 14,
+                      fontWeight: FontWeightManager.medium,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -343,3 +558,4 @@ class _RootPageState extends State<RootPage> {
     );
   }
 }
+

@@ -376,104 +376,107 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
       builder: (context, state) {
         final c = ColorManager.of(context);
         final isSetup = widget.isInitialSetup;
+        final body = state.maybeWhen(
+          loading: () => const _WorkingDaysSkeleton(),
+          // Pull-to-refresh is offered on the failure state only. Once the
+          // form is populated it may hold unsaved edits, and a refetch would
+          // silently throw them away.
+          error: (message) => DentaRefresh(
+            onRefresh: () => _refresh(context),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
+              child: Column(
+                children: [
+                  StateCard(
+                    icon: Icons.cloud_off_rounded,
+                    tone: ColorManager.error,
+                    title: l10n.workingDaysLoadFailed,
+                    message: message,
+                    actionLabel: l10n.retry,
+                    onAction: () => context.read<WorkingDaysBloc>().add(
+                          const WorkingDaysEvent.load(),
+                        ),
+                  ),
+                  // A gate that cannot reach the server must not trap a new
+                  // account inside it. The step is required where we know it
+                  // is unanswered, not where we simply could not ask - and
+                  // Settings still leads back here.
+                  if (isSetup) ...[
+                    SizedBox(height: 8.h),
+                    TextButton(
+                      onPressed: () => context.goNamed(AppRoutesNames.root),
+                      child: Text(
+                        l10n.skip,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          color: c.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          loaded: (workingDays, holidays) {
+            // The gate asked the server first: a clinic that already has a
+            // day open has nothing to set up, so it is never held here. A
+            // clinic created seconds ago has none, which is the whole reason
+            // for the step.
+            if (isSetup && workingDays.any((d) => d.isOpen)) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) context.goNamed(AppRoutesNames.root);
+              });
+              return const _WorkingDaysSkeleton();
+            }
+            if (!_populated) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() => _populateFromApi(workingDays, holidays));
+              });
+              return const _WorkingDaysSkeleton();
+            }
+            return _buildForm(l10n);
+          },
+          orElse: () {
+            if (!_populated) {
+              return const SizedBox.shrink();
+            }
+            return _buildForm(l10n);
+          },
+        );
+        final saveBar =
+            _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null;
+
         return PopScope(
           // The gate is the point: a clinic with no schedule cannot take a
           // single appointment, so there is no way around it. The settings
           // screen keeps its ordinary back.
           canPop: !isSetup,
-          child: Scaffold(
-            backgroundColor: c.scaffoldBg,
-            bottomNavigationBar:
-                _workingDays.isNotEmpty ? _buildSaveButton(l10n) : null,
-            body: Column(
-              children: [
-                PageHeader(
-                  title: isSetup
-                      ? l10n.noWorkingHoursTitle
-                      : l10n.workingDaysAndHolidays,
-                  // Null, and a route with nothing behind it: PageHeader
-                  // draws no back button, so the gate has no exit but saving.
-                  onBack: isSetup ? null : () => context.pop(),
-                ),
-                Expanded(
-                  child: state.maybeWhen(
-                    loading: () => const _WorkingDaysSkeleton(),
-                    // Pull-to-refresh is offered on the failure state only.
-                    // Once the form is populated it may hold unsaved edits,
-                    // and a refetch would silently throw them away.
-                    error: (message) => DentaRefresh(
-                      onRefresh: () => _refresh(context),
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                        child: Column(
-                          children: [
-                            StateCard(
-                              icon: Icons.cloud_off_rounded,
-                              tone: ColorManager.error,
-                              title: l10n.workingDaysLoadFailed,
-                              message: message,
-                              actionLabel: l10n.retry,
-                              onAction: () =>
-                                  context.read<WorkingDaysBloc>().add(
-                                        const WorkingDaysEvent.load(),
-                                      ),
-                            ),
-                            // A gate that cannot reach the server must not
-                            // trap a new account inside it. The step is
-                            // required where we know it is unanswered, not
-                            // where we simply could not ask - and Settings
-                            // still leads back here.
-                            if (isSetup) ...[
-                              SizedBox(height: 8.h),
-                              TextButton(
-                                onPressed: () =>
-                                    context.goNamed(AppRoutesNames.root),
-                                child: Text(
-                                  l10n.skip,
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontFamily: FontHelper.fontFamily(context),
-                                    color: c.textSecondary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                    loaded: (workingDays, holidays) {
-                      // The gate asked the server first: a clinic that
-                      // already has a day open has nothing to set up, so it
-                      // is never held here. A clinic created seconds ago has
-                      // none, which is the whole reason for the step.
-                      if (isSetup && workingDays.any((d) => d.isOpen)) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) context.goNamed(AppRoutesNames.root);
-                        });
-                        return const _WorkingDaysSkeleton();
-                      }
-                      if (!_populated) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          setState(
-                            () => _populateFromApi(workingDays, holidays),
-                          );
-                        });
-                        return const _WorkingDaysSkeleton();
-                      }
-                      return _buildForm(l10n);
-                    },
-                    orElse: () {
-                      if (!_populated) {
-                        return const SizedBox.shrink();
-                      }
-                      return _buildForm(l10n);
-                    },
+          // The setup gate keeps its bare header on every form factor: the
+          // desktop top bar always draws a back button (falling back to the
+          // root), which would be a way around the gate.
+          child: isSetup
+              ? Scaffold(
+                  backgroundColor: c.scaffoldBg,
+                  bottomNavigationBar: saveBar,
+                  body: Column(
+                    children: [
+                      // Null, and a route with nothing behind it: PageHeader
+                      // draws no back button, so the gate has no exit but
+                      // saving.
+                      PageHeader(title: l10n.noWorkingHoursTitle, onBack: null),
+                      Expanded(child: AdaptiveContentWidth(child: body)),
+                    ],
                   ),
+                )
+              : AdaptivePageScaffold(
+                  title: l10n.workingDaysAndHolidays,
+                  onBack: () => context.pop(),
+                  backgroundColor: c.scaffoldBg,
+                  bottomNavigationBar: saveBar,
+                  body: body,
                 ),
-              ],
-            ),
-          ),
         );
       },
     );

@@ -1,7 +1,9 @@
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -62,6 +64,21 @@ class QuickActions extends StatelessWidget {
         ),
     ];
 
+    // Desktop stacks them as full-width rows with a leading icon. Side by
+    // side in a narrow sidebar column each tile would be barely wider than
+    // its own icon, and the labels would start truncating.
+    if (Responsive.isDesktop(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < actions.length; i++) ...[
+            if (i > 0) const SizedBox(height: 8),
+            _ActionRow(action: actions[i]),
+          ],
+        ],
+      );
+    }
+
     // Equal thirds: the strip reaches both gutters like every card above and
     // below it, and the three targets stay the same size whatever their
     // labels happen to be.
@@ -88,6 +105,87 @@ class _QuickAction {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+}
+
+/// The desktop shape: one row per action, icon tile leading the label, with
+/// the hover feedback a pointer target is expected to have.
+class _ActionRow extends StatefulWidget {
+  const _ActionRow({required this.action});
+
+  final _QuickAction action;
+
+  @override
+  State<_ActionRow> createState() => _ActionRowState();
+}
+
+class _ActionRowState extends State<_ActionRow> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final a = widget.action;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        onTap: a.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: _hovering
+                  ? ColorManager.primary.withValues(alpha: 0.35)
+                  : c.borderLight,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  a.icon,
+                  color: ColorManager.primaryDarker,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  a.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: _hovering ? ColorManager.primary : c.textTertiary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ActionTile extends StatefulWidget {

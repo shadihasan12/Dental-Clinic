@@ -43,9 +43,10 @@ class _PlanPickerView extends StatelessWidget {
     return BlocBuilder<PlanPickerCubit, PlanPickerState>(
       builder: (context, state) {
         final cubit = context.read<PlanPickerCubit>();
-        return Scaffold(
+        return AdaptivePageScaffold(
           backgroundColor: c.scaffoldBg,
-          appBar: PageHeader(title: l10n.selectPlanTitle),
+          title: l10n.selectPlanTitle,
+          maxContentWidth: 760,
           body: _body(context, l10n, state, cubit),
           bottomNavigationBar: state.plans.isEmpty
               ? null

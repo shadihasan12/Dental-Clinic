@@ -51,9 +51,10 @@ class HowToPayPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
+    return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.howToPayTitle),
+      title: l10n.howToPayTitle,
+      maxContentWidth: 760,
       body: BillingAsync<_HowToPayData>(
         load: load,
         builder: (context, data, _) => _Body(data: data, invoiceId: invoiceId),

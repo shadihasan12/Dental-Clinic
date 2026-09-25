@@ -3,10 +3,11 @@ import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
+import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
-import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/get_appointments_params.dart';
 import 'package:dental_clinic_app/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
@@ -27,6 +28,7 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
 import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
+import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,6 +77,15 @@ class _HomePageState extends State<HomePage> {
   NetworkExceptions? _scheduleError;
 
   static const int _maxScheduleRows = 5;
+
+  /// Desktop puts the schedule in its own full-height column, so it can show
+  /// materially more of the day before the user has to jump to Appointments.
+  static const int _maxScheduleRowsDesktop = 10;
+
+  /// Fixed rather than flex: the quick-action rows have a natural width, and
+  /// letting them grow with the window only stretches the labels away from
+  /// their icons. The schedule absorbs the rest.
+  static const double _sidebarWidth = 320;
 
   String get _firstName {
     final s = getIt<UserStorage>();
@@ -234,8 +245,202 @@ class _HomePageState extends State<HomePage> {
     context.pushNamed(AppRoutesNames.addPatient);
   }
 
+  // ── Shared section builders ────────────────────────────────────────
+  // Both layouts render the same widgets against the same live data; only
+  // the arrangement differs, so nothing here may branch on real vs mock.
+
+  Widget _schedule({required int maxRows}) => TodaysSchedule(
+        appointments: _todayAppointments.take(maxRows).toList(),
+        totalCount: _todayAppointments.length,
+        isLoading: _scheduleLoading,
+        error: _scheduleError == null
+            ? null
+            : NetworkExceptions.localizedMessage(context, _scheduleError!),
+        onViewAllTap: () => RootPage.selectedTab.value = 2,
+        onNewAppointment: _openNewAppointment,
+        onRetry: () {
+          setState(() => _scheduleLoading = true);
+          _loadTodaysSchedule();
+        },
+      );
+
+  // Recording a payment lands on the expenses tab, so it is shown on the
+  // same terms the tab itself is: a secretary has neither.
+  Widget get _quickActions =>
+      BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
+        bloc: getIt<ClinicPermissionsBloc>(),
+        builder: (context, permissionsState) {
+          final canRecordPayment = visibleRootTabs(
+            permissionsState,
+          ).contains(RootTab.expenses);
+          return QuickActions(
+            onAddPatient: _openAddPatient,
+            onScheduleVisit: _openNewAppointment,
+            onRecordPayment: canRecordPayment
+                ? () {
+                    RootPage.selectedTab.value = RootTab.expenses.index;
+                    ExpensesPage.openAddExpenseRequest.value++;
+                  }
+                : null,
+          );
+        },
+      );
+
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) return _buildDesktop(context);
+    return _buildMobile(context);
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // DESKTOP LAYOUT
+  //
+  // Two columns instead of one stack. RootPage's desktop top bar already
+  // carries the greeting, clinic switcher, notifications and profile, so
+  // HomeHeader is deliberately omitted here rather than duplicated.
+  // ═════════════════════════════════════════════════════════════════════
+
+  /// Real figures only — the schedule is already loaded for the day, and the
+  /// rest are the home cards exactly as the server sent them. Nothing here is
+  /// a placeholder; a dashboard that invents numbers is worse than none.
+  List<DesktopStatCard> _statCards(AppLocalizations l10n) {
+    final now = DateTime.now();
+    final remaining =
+        _todayAppointments.where((a) => a.dateTime.isAfter(now)).length;
+    final done = _todayAppointments.length - remaining;
+
+    final cards = <DesktopStatCard>[
+      DesktopStatCard(
+        icon: Icons.calendar_today_outlined,
+        iconColor: const Color(0xFF3B82F6),
+        value: '${_todayAppointments.length}',
+        label: l10n.todaysAppointments,
+      ),
+      DesktopStatCard(
+        icon: Icons.schedule_outlined,
+        iconColor: ColorManager.warning,
+        value: '$remaining',
+        label: l10n.upcoming,
+      ),
+      DesktopStatCard(
+        icon: Icons.task_alt_rounded,
+        iconColor: ColorManager.success,
+        value: '$done',
+        label: l10n.completed,
+      ),
+    ];
+
+    // Then the server's own figures, one tile per card and in its order -
+    // the same list the mobile carousel pages through. Empty for the roles
+    // that are not meant to see them, which simply leaves the day's counts.
+    for (final card in _cards) {
+      cards.add(
+        DesktopStatCard(
+          icon: Icons.insights_outlined,
+          iconColor: ColorManager.primary,
+          value: card.unit == null ? card.value : '${card.value} ${card.unit}',
+          label: card.subtitle.isEmpty
+              ? card.title
+              : '${card.title} · ${card.subtitle}',
+        ),
+      );
+    }
+
+    return cards;
+  }
+
+  Widget _buildDesktop(BuildContext context) {
+    final t = HomeTokens.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      backgroundColor: t.pageBg,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          // Below this the two columns get too narrow to be worth splitting.
+          final isSingleColumn = width < 1100;
+          const contentMaxWidth = 1440.0;
+          final outerPadding = width > contentMaxWidth
+              ? (width - contentMaxWidth) / 2 + 32
+              : 32.0;
+
+          final schedule = _schedule(
+            maxRows:
+                isSingleColumn ? _maxScheduleRows : _maxScheduleRowsDesktop,
+          );
+
+          final sidebar = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SectionHeading(title: l10n.quickActions),
+              const SizedBox(height: 10),
+              _quickActions,
+            ],
+          );
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(outerPadding, 28, outerPadding, 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Same header / stats / content rhythm as the patients page,
+                // so the two tabs read as one product on desktop.
+                // No trailing action: Quick Actions below already offers
+                // Appointment, and the schedule card has its own entry point.
+                DesktopPageHeader(
+                  title: _firstName.isEmpty
+                      ? l10n.welcomeBack
+                      : '${l10n.welcomeBack}, $_firstName',
+                  subtitle: _clinicName.isEmpty ? null : _clinicName,
+                  // Same destination the mobile header's clinic chip opens.
+                  // It was plain grey text here, so nothing said it could be
+                  // clicked - and on desktop there is no tap-and-see.
+                  onSubtitleTap: () =>
+                      context.pushNamed(AppRoutesNames.myClinics),
+                ),
+                const SizedBox(height: 20),
+
+                if (_scheduleLoading || _cardsLoading)
+                  const _StatsRowSkeleton()
+                else
+                  DesktopStatsRow(
+                    cards: _statCards(l10n),
+                    compact: isSingleColumn,
+                  ),
+                const SizedBox(height: 24),
+
+                if (isSingleColumn)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [sidebar, const SizedBox(height: 24), schedule],
+                  )
+                else
+                  // Row lays out from the reading start edge, which is the
+                  // side the nav rail is on in both LTR and RTL. Quick
+                  // actions therefore sit against the rail and the schedule
+                  // takes the far side, where the wide column suits it.
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: _sidebarWidth, child: sidebar),
+                      const SizedBox(width: 24),
+                      Expanded(child: schedule),
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ═════════════════════════════════════════════════════════════════════
+  // MOBILE LAYOUT
+  // ═════════════════════════════════════════════════════════════════════
+
+  Widget _buildMobile(BuildContext context) {
     final t = HomeTokens.of(context);
     final l10n = AppLocalizations.of(context)!;
 
@@ -294,51 +499,42 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 18.h),
               SectionHeading(title: l10n.quickActions),
               SizedBox(height: 10.h),
-              // Recording a payment lands on the expenses tab, so it is
-              // shown on the same terms the tab itself is: a secretary has
-              // neither.
-              BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
-                bloc: getIt<ClinicPermissionsBloc>(),
-                builder: (context, permissionsState) {
-                  final canRecordPayment = visibleRootTabs(
-                    permissionsState,
-                  ).contains(RootTab.expenses);
-                  return QuickActions(
-                    onAddPatient: _openAddPatient,
-                    onScheduleVisit: _openNewAppointment,
-                    onRecordPayment: canRecordPayment
-                        ? () {
-                            RootPage.selectedTab.value = RootTab.expenses.index;
-                            ExpensesPage.openAddExpenseRequest.value++;
-                          }
-                        : null,
-                  );
-                },
-              ),
+              _quickActions,
 
               SizedBox(height: 18.h),
-              TodaysSchedule(
-                appointments:
-                    _todayAppointments.take(_maxScheduleRows).toList(),
-                totalCount: _todayAppointments.length,
-                isLoading: _scheduleLoading,
-                error: _scheduleError == null
-                    ? null
-                    : NetworkExceptions.localizedMessage(
-                        context,
-                        _scheduleError!,
-                      ),
-                onViewAllTap: () => RootPage.selectedTab.value = 2,
-                onNewAppointment: _openNewAppointment,
-                onRetry: () {
-                  setState(() => _scheduleLoading = true);
-                  _loadTodaysSchedule();
-                },
-              ),
+              _schedule(maxRows: _maxScheduleRows),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Placeholder tiles so the stats row reserves its height while the day's
+/// appointments are still loading, instead of the page jumping once they land.
+class _StatsRowSkeleton extends StatelessWidget {
+  const _StatsRowSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Row(
+      children: [
+        for (var i = 0; i < 4; i++) ...[
+          Expanded(
+            child: Container(
+              height: 118,
+              decoration: BoxDecoration(
+                color: c.cardBg,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: c.borderLight),
+              ),
+            ),
+          ),
+          if (i != 3) const SizedBox(width: 14),
+        ],
+      ],
     );
   }
 }

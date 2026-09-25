@@ -27,6 +27,10 @@ class DentaNavIcons {
       'M3 9a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z'
       'M16 12h.01';
 
+  /// Desktop-only fifth destination - the mobile bar reaches the same page
+  /// from the home header instead, so it never draws this one.
+  static const String more = 'M4 8h16M4 12h16M4 16h10';
+
   static String wrap(String path) =>
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" '
       'stroke="#000000" stroke-width="1.8" stroke-linecap="round" '

@@ -1,21 +1,18 @@
-import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
-import 'package:dental_clinic_app/features/home/presentation/manager/unread_count_cubit.dart';
+import 'package:dental_clinic_app/core/widgets/unread_badge.dart';
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
-import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Who is using the app, and the two things they reach for from anywhere.
 ///
 /// Handoff section 1: avatar, a time-of-day greeting over the name, and two
 /// square-ish icon buttons. The bell carries the unread count in the red
-/// circle every app puts there, fed by [UnreadCountCubit] - which every
-/// response carrying `unread_count` already keeps current, so the number is
-/// live without a request of its own.
+/// circle every app puts there, drawn by [UnreadBadge] off the unread cubit -
+/// which every response carrying `unread_count` already keeps current, so
+/// the number is live without a request of its own.
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
@@ -85,15 +82,13 @@ class HomeHeader extends StatelessWidget {
         _HeaderButton(
           icon: Icons.notifications_none_rounded,
           onTap: onNotificationTap,
-          badge: BlocBuilder<UnreadCountCubit, int>(
-            bloc: getIt<UnreadCountCubit>(),
-            builder: (context, unread) {
-              // Nothing at all at zero: an empty circle would be a badge
-              // announcing that there is nothing to announce.
-              return unread <= 0
-                  ? const SizedBox.shrink()
-                  : _UnreadBadge(count: unread);
-            },
+          // The shared badge the desktop shell's bell uses too: it reads the
+          // unread cubit itself and draws nothing at zero, so both delivery
+          // paths - FCM and the Windows poll - light it the same way.
+          badge: UnreadBadge(
+            borderColor: t.card,
+            size: 17.w,
+            fontSize: 9.5.sp,
           ),
         ),
         SizedBox(width: 8.w),
@@ -242,53 +237,6 @@ class _HeaderButtonState extends State<_HeaderButton> {
               child: widget.badge!,
             ),
         ],
-      ),
-    );
-  }
-}
-
-/// How many are unread, in the red circle the convention has settled on.
-///
-/// A circle at one digit and a stadium past that, because the alternative is
-/// a fixed box that either clips "12" or leaves a single "3" adrift in it.
-/// Past ninety-nine it says "99+": the exact number stops being actionable
-/// long before then, and three digits would be wider than the button it sits
-/// on.
-///
-/// The ring is the card colour rather than white, so the circle separates
-/// itself from the button edge in dark theme too.
-class _UnreadBadge extends StatelessWidget {
-  const _UnreadBadge({required this.count});
-
-  final int count;
-
-  static const int _max = 99;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = HomeTokens.of(context);
-    final size = 17.w;
-
-    return Container(
-      constraints: BoxConstraints(minWidth: size),
-      height: size,
-      padding: EdgeInsets.symmetric(horizontal: 4.w),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: ColorManager.error,
-        borderRadius: BorderRadius.circular(size),
-        border: Border.all(color: t.card, width: 1.5),
-      ),
-      child: Text(
-        count > _max ? '$_max+' : '$count',
-        maxLines: 1,
-        style: TextStyle(
-          fontFamily: FontHelper.fontFamily(context),
-          fontSize: 9.5.sp,
-          height: 1,
-          fontWeight: FontWeight.w700,
-          color: ColorManager.white,
-        ),
       ),
     );
   }
