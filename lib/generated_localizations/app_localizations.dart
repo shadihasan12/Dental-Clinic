@@ -6518,6 +6518,24 @@ abstract class AppLocalizations {
   /// **'How to pay'**
   String get howToPayAction;
 
+  /// No description provided for @payNowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay now'**
+  String get payNowAction;
+
+  /// No description provided for @daysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{day} other{days}}'**
+  String daysUnit(int count);
+
+  /// No description provided for @viewInvoiceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View invoice details'**
+  String get viewInvoiceDetails;
+
   /// No description provided for @reportTransferAction.
   ///
   /// In en, this message translates to:
@@ -6623,7 +6641,7 @@ abstract class AppLocalizations {
   /// No description provided for @invoicePaymentExplainer.
   ///
   /// In en, this message translates to:
-  /// **'Send the money by bank transfer or wallet, then report the transfer here. Your subscription starts once our team confirms it.'**
+  /// **'Send the amount through one of the available payment methods, then report the transfer. Your subscription starts once our team confirms it.'**
   String get invoicePaymentExplainer;
 
   /// No description provided for @invoiceRaisedTitle.

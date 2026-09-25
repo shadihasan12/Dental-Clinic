@@ -1441,6 +1441,14 @@
   },
   "viewInvoice": "عرض الفاتورة",
   "howToPayAction": "طريقة الدفع",
+  "payNowAction": "ادفع الآن",
+  "daysUnit": "{count, plural, =1{يوم} =2{يومان} few{أيام} other{يوم}}",
+  "@daysUnit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "viewInvoiceDetails": "عرض تفاصيل الفاتورة",
   "reportTransferAction": "الإبلاغ عن حوالة",
   "reportedTransfersTitle": "الحوالات المُبلَّغ عنها",
   "reportedTransfersHint": "الحوالات التي أبلغتنا عنها وحالة مراجعتها",
@@ -1479,7 +1487,7 @@
       }
     }
   },
-  "invoicePaymentExplainer": "أرسل المبلغ بحوالة بنكية أو عبر المحفظة، ثم أبلغ عن الحوالة هنا. يبدأ اشتراكك بعد أن يؤكدها فريقنا.",
+  "invoicePaymentExplainer": "أرسل المبلغ عن طريق إحدى طرق الدفع المتاحة، ثم أبلغ عن الحوالة. يبدأ اشتراكك بعد أن يؤكدها فريقنا.",
   "invoiceRaisedTitle": "تم إصدار الفاتورة",
   "billingTotalUsd": "الإجمالي (دولار)",
   "billingMonthsCount": "{count, plural, =1{شهر واحد} =2{شهران} few{{count} أشهر} other{{count} شهراً}}",

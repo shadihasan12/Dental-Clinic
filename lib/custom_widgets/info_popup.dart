@@ -49,7 +49,7 @@ class InfoPopup extends StatelessWidget {
     final fg = iconColor ?? ColorManager.primary;
     final bg = iconBackgroundColor ?? fg.withValues(alpha: 0.1);
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       insetPadding: EdgeInsets.symmetric(horizontal: 32.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       child: Padding(
@@ -72,7 +72,7 @@ class InfoPopup extends StatelessWidget {
                 fontSize: 17.sp,
                 fontFamily: FontHelper.fontFamily(context),
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF111111),
+                color: ColorManager.of(context).textPrimary,
               ),
             ),
             SizedBox(height: 8.h),
@@ -82,7 +82,7 @@ class InfoPopup extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontFamily: FontHelper.fontFamily(context),
-                color: const Color(0xFF555555),
+                color: ColorManager.of(context).textSecondary,
                 height: 1.4,
               ),
             ),

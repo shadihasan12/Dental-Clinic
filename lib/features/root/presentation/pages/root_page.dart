@@ -13,6 +13,11 @@ import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.d
 import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:dental_clinic_app/core/config/app_config.dart';
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/storage/token_storage.dart';
+import 'package:dental_clinic_app/features/clinic/domain/use_cases/get_my_clinics_use_case.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/billing_page.dart';
 import 'package:dental_clinic_app/features/root/presentation/widgets/subscription_access_widgets.dart';
 import 'package:dental_clinic_app/services/subscription_guard/access_mode.dart';
@@ -81,6 +86,60 @@ class _RootPageState extends State<RootPage> {
     if (tab != _currentTab) {
       setState(() => _currentTab = tab);
     }
+  }
+
+  /// The clinic version the working-hours gate last ran for, so a permissions
+  /// refresh (on resume, after a 402) does not run it again.
+  int? _hoursGateCheckedFor;
+
+  /// Sends the clinic's owner to the working-hours setup if the clinic has no
+  /// schedule yet.
+  ///
+  /// Signup ends on that same setup screen, but only once: close the app
+  /// there and the next launch lands on home, with a clinic that cannot take
+  /// a single appointment. So it is checked on every launch and clinic
+  /// switch instead. Only the owner is sent - it is their clinic to set up,
+  /// and anyone else could not save the week anyway.
+  ///
+  /// Runs after the permissions have loaded, so the access mode is known: a
+  /// clinic that cannot write (expired, billing only) would be trapped on a
+  /// screen whose save answers 402.
+  Future<void> _checkWorkingHoursSetup() async {
+    final version = _clinicVersion;
+    if (_hoursGateCheckedFor == version) return;
+    _hoursGateCheckedFor = version;
+
+    final guard = getIt<SubscriptionGuard>();
+    if (!guard.isActive) return;
+    if (!await _isOwnerOfActiveClinic()) return;
+
+    final result = await getIt<WorkingDaysRepository>().getWorkingDays();
+    if (!mounted || version != _clinicVersion) return;
+    // The API answers with all seven days, so "not set" is a week in which
+    // no day is open - and an empty list, should it ever send one. A failed
+    // read proves nothing and does not lock anyone out.
+    final hasSchedule = result.fold(
+      (_) => true,
+      (days) => days.any((d) => d.isOpen && d.ranges.isNotEmpty),
+    );
+    if (hasSchedule) return;
+    context.goNamed(AppRoutesNames.setupWorkingHours);
+  }
+
+  /// `is_owner` of the active clinic's membership, read fresh (and cached),
+  /// falling back to the cached flag when the memberships cannot be read.
+  Future<bool> _isOwnerOfActiveClinic() async {
+    final storage = getIt<UserStorage>();
+    final result = await getIt<GetMyClinicsUseCase>()();
+    final activeId = getIt<TokenStorage>().getClinicId();
+    final memberships = result.getOrElse(() => const []);
+    for (final m in memberships) {
+      if (m.clinicId == activeId) {
+        await storage.saveIsClinicOwner(m.isOwner);
+        return m.isOwner;
+      }
+    }
+    return storage.isClinicOwner;
   }
 
   void _onClinicChanged() {
@@ -162,6 +221,10 @@ class _RootPageState extends State<RootPage> {
   /// the selection lands back on home rather than on whatever slid into that
   /// slot.
   void _onPermissionsChanged(ClinicPermissionsState state) {
+    state.maybeWhen(
+      loaded: (_) => _checkWorkingHoursSetup(),
+      orElse: () {},
+    );
     if (visibleRootTabs(state).contains(_currentTab)) return;
     setState(() => _currentTab = RootTab.home);
     RootPage.selectedTab.value = RootTab.home.index;

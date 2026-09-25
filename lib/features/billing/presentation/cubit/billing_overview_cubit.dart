@@ -16,7 +16,6 @@ class BillingOverviewState {
     this.usage,
     this.invoices = const [],
     this.payments = const [],
-    this.wallet,
   });
 
   final bool isLoading;
@@ -28,9 +27,6 @@ class BillingOverviewState {
   final SubscriptionUsageEntity? usage;
   final List<InvoiceEntity> invoices;
   final List<ClinicPaymentEntity> payments;
-
-  /// `credit_balance_usd`, preformatted.
-  final String? wallet;
 
   /// A clinic has at most one open invoice at a time.
   InvoiceEntity? get openInvoice {
@@ -45,7 +41,7 @@ class BillingOverviewState {
 }
 
 /// Everything the subscription screen shows, loaded side by side: status,
-/// usage, invoices, payments and the wallet.
+/// usage, invoices and payments.
 @injectable
 class BillingOverviewCubit extends Cubit<BillingOverviewState> {
   BillingOverviewCubit(this._subscriptions, this._billing)
@@ -59,13 +55,11 @@ class BillingOverviewCubit extends Cubit<BillingOverviewState> {
     final usageF = _subscriptions.getUsage();
     final invoicesF = _billing.getInvoices();
     final paymentsF = _billing.getPayments();
-    final walletF = _billing.getWalletBalance();
 
     final status = await statusF;
     final usage = await usageF;
     final invoices = await invoicesF;
     final payments = await paymentsF;
-    final wallet = await walletF;
     if (isClosed) return;
 
     emit(BillingOverviewState(
@@ -75,7 +69,6 @@ class BillingOverviewCubit extends Cubit<BillingOverviewState> {
       usage: usage.fold((_) => null, (u) => u),
       invoices: invoices.getOrElse(() => const []),
       payments: payments.getOrElse(() => const []),
-      wallet: wallet.getOrElse(() => null),
     ));
   }
 }

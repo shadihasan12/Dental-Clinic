@@ -3419,6 +3419,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get howToPayAction => 'طريقة الدفع';
 
   @override
+  String get payNowAction => 'ادفع الآن';
+
+  @override
+  String daysUnit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'يوم',
+      few: 'أيام',
+      two: 'يومان',
+      one: 'يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get viewInvoiceDetails => 'عرض تفاصيل الفاتورة';
+
+  @override
   String get reportTransferAction => 'الإبلاغ عن حوالة';
 
   @override
@@ -3478,7 +3497,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invoicePaymentExplainer =>
-      'أرسل المبلغ بحوالة بنكية أو عبر المحفظة، ثم أبلغ عن الحوالة هنا. يبدأ اشتراكك بعد أن يؤكدها فريقنا.';
+      'أرسل المبلغ عن طريق إحدى طرق الدفع المتاحة، ثم أبلغ عن الحوالة. يبدأ اشتراكك بعد أن يؤكدها فريقنا.';
 
   @override
   String get invoiceRaisedTitle => 'تم إصدار الفاتورة';

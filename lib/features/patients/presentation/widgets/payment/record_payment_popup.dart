@@ -230,7 +230,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontFamily: fontFamily,
-                                      color: ColorManager.textSecondary,
+                                      color: ColorManager.of(context).textSecondary,
                                     ),
                                   ),
                               ],

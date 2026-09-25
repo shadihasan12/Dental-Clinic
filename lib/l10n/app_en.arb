@@ -1496,6 +1496,14 @@
   },
   "viewInvoice": "View invoice",
   "howToPayAction": "How to pay",
+  "payNowAction": "Pay now",
+  "daysUnit": "{count, plural, =1{day} other{days}}",
+  "@daysUnit": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "viewInvoiceDetails": "View invoice details",
   "reportTransferAction": "Report a transfer",
   "reportedTransfersTitle": "Reported transfers",
   "reportedTransfersHint": "Transfers you told us about and where their review stands",
@@ -1534,7 +1542,7 @@
       }
     }
   },
-  "invoicePaymentExplainer": "Send the money by bank transfer or wallet, then report the transfer here. Your subscription starts once our team confirms it.",
+  "invoicePaymentExplainer": "Send the amount through one of the available payment methods, then report the transfer. Your subscription starts once our team confirms it.",
   "invoiceRaisedTitle": "Invoice issued",
   "billingTotalUsd": "Total (USD)",
   "billingMonthsCount": "{count, plural, =1{1 month} other{{count} months}}",

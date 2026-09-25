@@ -29,7 +29,7 @@ class InvoiceCard extends StatelessWidget {
     // Open: the figure to transfer, in the server's first currency. Anything
     // else: what it was for, in USD - `amounts` is zero once it is paid.
     final figure = invoice.isOpen && invoice.amounts.isNotEmpty
-        ? invoice.amounts.first.display
+        ? formatPrice(invoice.amounts.first)
         : formatUsd(invoice.amountUsd);
     final date = invoice.isOpen ? invoice.dueAt : (invoice.paidAt ?? invoice.createdAt);
     final dateLabel = invoice.isOpen ? l10n.invoiceDueOn : l10n.invoiceIssuedOn;

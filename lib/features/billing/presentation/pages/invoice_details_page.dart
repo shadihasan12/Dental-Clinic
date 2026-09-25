@@ -6,7 +6,6 @@ import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
-import 'package:dental_clinic_app/features/billing/presentation/pages/report_payment_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -20,9 +19,17 @@ import 'package:go_router/go_router.dart';
 /// time it is read, so an amount to transfer from a list fetched earlier may
 /// already be out of date.
 class InvoiceDetailsPage extends StatelessWidget {
-  const InvoiceDetailsPage({super.key, required this.invoiceId});
+  const InvoiceDetailsPage({
+    super.key,
+    required this.invoiceId,
+    this.fromPayment = false,
+  });
 
   final String invoiceId;
+
+  /// Opened from the pay screen: its pay button goes back there rather than
+  /// stacking a second one on top.
+  final bool fromPayment;
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +43,26 @@ class InvoiceDetailsPage extends StatelessWidget {
       body: BillingAsync<InvoiceEntity>(
         load: () => repository.getInvoice(invoiceId),
         builder: (context, invoice, reload) =>
-            _InvoiceBody(invoice: invoice, reload: reload),
+            _InvoiceBody(
+              invoice: invoice,
+              reload: reload,
+              fromPayment: fromPayment,
+            ),
       ),
     );
   }
 }
 
 class _InvoiceBody extends StatelessWidget {
-  const _InvoiceBody({required this.invoice, required this.reload});
+  const _InvoiceBody({
+    required this.invoice,
+    required this.reload,
+    required this.fromPayment,
+  });
 
   final InvoiceEntity invoice;
   final Future<void> Function() reload;
+  final bool fromPayment;
 
   @override
   Widget build(BuildContext context) {
@@ -131,24 +147,19 @@ class _InvoiceBody extends StatelessWidget {
         if (invoice.isOpen) ...[
           SizedBox(height: 16.h),
           DentaButton(
-            label: l10n.howToPayAction,
+            label: l10n.payNowAction,
             icon: Icons.account_balance_outlined,
             expand: true,
-            onTap: () => context.pushNamed(
-              AppRoutesNames.howToPay,
-              extra: invoice.id,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          DentaOutlineButton(
-            label: l10n.reportTransferAction,
-            icon: Icons.upload_file_outlined,
-            expand: true,
-            tone: ColorManager.primary,
+            // Reporting the transfer lives on each account there, so the
+            // proof is sent against the destination it went to.
             onTap: () async {
+              if (fromPayment) {
+                context.pop();
+                return;
+              }
               await context.pushNamed(
-                AppRoutesNames.reportPayment,
-                extra: ReportPaymentPrefill(invoiceId: invoice.id),
+                AppRoutesNames.howToPay,
+                extra: invoice.id,
               );
               reload();
             },

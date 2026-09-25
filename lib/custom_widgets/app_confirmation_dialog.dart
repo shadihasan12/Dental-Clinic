@@ -13,7 +13,7 @@ class AppConfirmationDialog extends StatelessWidget {
     required this.subtitle,
     this.icon = Icons.check_circle,
     this.iconColor = const Color(0xFF62B4DA),
-    this.iconBackgroundColor = const Color(0xFFE6F3F9),
+    this.iconBackgroundColor,
     required this.yesText,
     required this.noText,
     this.onYesPressed,
@@ -25,7 +25,9 @@ class AppConfirmationDialog extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Color iconColor;
-  final Color iconBackgroundColor;
+  /// Defaults to [iconColor] at 12%, which reads on a light and a dark
+  /// card alike - a fixed pale tint turned into a bright disc in dark mode.
+  final Color? iconBackgroundColor;
   final String yesText;
   final String noText;
   final VoidCallback? onYesPressed;
@@ -39,7 +41,7 @@ class AppConfirmationDialog extends StatelessWidget {
     required String subtitle,
     IconData icon = Icons.check_circle,
     Color iconColor = const Color(0xFF62B4DA),
-    Color iconBackgroundColor = const Color(0xFFE6F3F9),
+    Color? iconBackgroundColor,
     String? yesText,
     String? noText,
     VoidCallback? onYesPressed,
@@ -77,7 +79,7 @@ class AppConfirmationDialog extends StatelessWidget {
             width: 80.w,
             height: 60.w,
             decoration: BoxDecoration(
-              color: iconBackgroundColor,
+              color: iconBackgroundColor ?? iconColor.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: iconColor, size: 36.sp),

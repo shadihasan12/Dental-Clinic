@@ -125,7 +125,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
 
     await showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
@@ -147,7 +147,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
                       child: Text(
                         l10n.cancel,
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: ColorManager.of(context).textSecondary,
                           fontSize: 15.sp,
                           fontFamily: FontHelper.fontFamily(context),
                         ),
@@ -171,7 +171,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
                   ],
                 ),
               ),
-              Divider(height: 1, color: Colors.grey.shade200),
+              Divider(height: 1, color: ColorManager.of(context).borderLight),
               Expanded(
                 child: EnglishPicker(
                   child: CupertinoDatePicker(
@@ -230,7 +230,7 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
         );
       },
       child: Scaffold(
-        backgroundColor: ColorManager.white,
+        backgroundColor: ColorManager.of(context).scaffoldBg,
         body: Column(
           children: [
             PageHeader(

@@ -3451,6 +3451,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howToPayAction => 'How to pay';
 
   @override
+  String get payNowAction => 'Pay now';
+
+  @override
+  String daysUnit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'days',
+      one: 'day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get viewInvoiceDetails => 'View invoice details';
+
+  @override
   String get reportTransferAction => 'Report a transfer';
 
   @override
@@ -3510,7 +3527,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invoicePaymentExplainer =>
-      'Send the money by bank transfer or wallet, then report the transfer here. Your subscription starts once our team confirms it.';
+      'Send the amount through one of the available payment methods, then report the transfer. Your subscription starts once our team confirms it.';
 
   @override
   String get invoiceRaisedTitle => 'Invoice issued';

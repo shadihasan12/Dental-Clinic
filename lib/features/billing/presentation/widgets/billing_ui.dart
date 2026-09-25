@@ -28,6 +28,16 @@ String formatUsd(double value) {
   return value < 0 ? '-$formatted' : formatted;
 }
 
+/// One figure in one currency, exactly as priced: `USD 19.99`, `SYP 239,880`.
+///
+/// Not the server's `display`, which rounds (`USD 20` for 19.99) - a price
+/// the owner is about to pay or transfer must not read as something it is
+/// not. Only the digits are formatted; nothing is converted.
+String formatPrice(PriceEntity price) {
+  final amount = NumberFormat('#,##0.##', 'en').format(price.amount);
+  return price.currency.isEmpty ? amount : '${price.currency} $amount';
+}
+
 /// A decimal written without a trailing `.0` - `719640`, `59.97`.
 String formatPlainAmount(double value) {
   if (value == value.roundToDouble()) return value.toStringAsFixed(0);
@@ -134,7 +144,7 @@ class AmountsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
-    final lines = amounts.map((a) => a.display).toList();
+    final lines = amounts.map(formatPrice).toList();
     if (lines.isEmpty && fallbackUsd != null) lines.add(formatUsd(fallbackUsd!));
     if (lines.isEmpty) return const SizedBox.shrink();
 

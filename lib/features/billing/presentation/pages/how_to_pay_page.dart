@@ -68,6 +68,12 @@ class _Body extends StatelessWidget {
   final _HowToPayData data;
   final String? invoiceId;
 
+  /// What to send to an account, in its own currency - exact, not rounded.
+  static String? _amountFor(InvoiceEntity? invoice, String currency) {
+    final price = invoice?.amountIn(currency);
+    return price == null ? null : formatPrice(price);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -75,6 +81,12 @@ class _Body extends StatelessWidget {
     final family = FontHelper.fontFamily(context);
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final invoice = data.invoice;
+    final summary = [
+      if (invoice != null && invoice.isOpen) ...[
+        _InvoiceSummary(invoice: invoice),
+        SizedBox(height: 16.h),
+      ],
+    ];
 
     // An empty list is legitimate - no destination is set up yet - and a
     // blank screen would read as broken.
@@ -82,6 +94,7 @@ class _Body extends StatelessWidget {
       return ListView(
         padding: EdgeInsets.all(14.w),
         children: [
+          ...summary,
           StateCard(
             icon: Icons.account_balance_outlined,
             title: l10n.noPaymentMethodsTitle,
@@ -96,39 +109,7 @@ class _Body extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
       children: [
-        if (invoice != null && invoice.isOpen) ...[
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.amountToTransferFor(invoice.number),
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 11.sp,
-                    color: c.textTertiary,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                AmountsView(
-                  amounts: invoice.amounts,
-                  fallbackUsd: invoice.remainingUsd,
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  l10n.partialPaymentHint,
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 11.sp,
-                    height: 1.4,
-                    color: c.textTertiary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 16.h),
-        ],
+        ...summary,
         for (final method in data.methods) ...[
           SectionLabel(method.name),
           SizedBox(height: 8.h),
@@ -149,7 +130,7 @@ class _Body extends StatelessWidget {
               child: _AccountCard(
                 method: method,
                 account: account,
-                amount: invoice?.amountIn(account.currency)?.display,
+                amount: _amountFor(invoice, account.currency),
                 onReport: () => context.pushNamed(
                   AppRoutesNames.reportPayment,
                   extra: ReportPaymentPrefill(
@@ -164,6 +145,67 @@ class _Body extends StatelessWidget {
           SizedBox(height: 8.h),
         ],
       ],
+    );
+  }
+}
+
+/// What is owed on the invoice being paid, and the way into its lines,
+/// period and dates - the pay screen is where a new plan lands, so the
+/// invoice has to stay reachable from here.
+class _InvoiceSummary extends StatelessWidget {
+  const _InvoiceSummary({required this.invoice});
+
+  final InvoiceEntity invoice;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    void openDetails() => context.pushNamed(
+          AppRoutesNames.invoiceDetails,
+          pathParameters: {'invoiceId': invoice.id},
+          extra: true,
+        );
+
+    return AppCard(
+      onTap: openDetails,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.amountToTransferFor(invoice.number),
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 11.sp,
+              color: c.textTertiary,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          AmountsView(
+            amounts: invoice.amounts,
+            fallbackUsd: invoice.remainingUsd,
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            l10n.partialPaymentHint,
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 11.sp,
+              height: 1.4,
+              color: c.textTertiary,
+            ),
+          ),
+          SizedBox(height: 10.h),
+          DentaOutlineButton(
+            label: l10n.viewInvoiceDetails,
+            icon: Icons.receipt_long_outlined,
+            expand: true,
+            tone: ColorManager.primary,
+            onTap: openDetails,
+          ),
+        ],
+      ),
     );
   }
 }

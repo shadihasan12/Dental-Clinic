@@ -133,35 +133,6 @@ class _BillingView extends StatelessWidget {
                   SizedBox(height: 10.h),
                   _UsageCard(usage: state.usage!),
                 ],
-                if (state.wallet != null) ...[
-                  SizedBox(height: 8.h),
-                  AppCard(
-                    child: Row(
-                      children: [
-                        const IconTile(
-                          icon: Icons.account_balance_wallet_outlined,
-                        ),
-                        SizedBox(width: 11.w),
-                        Expanded(
-                          child: _TwoLine(
-                            title: l10n.walletLabel,
-                            subtitle: l10n.walletHint,
-                          ),
-                        ),
-                        Text(
-                          state.wallet!,
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            fontFamily: FontHelper.fontFamily(context),
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            color: c.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
                 SizedBox(height: 16.h),
                 AppCard(
                   onTap: () => _push(context, AppRoutesNames.clinicPayments),
@@ -540,6 +511,8 @@ class _OpenInvoiceCard extends StatelessWidget {
                 ),
               ),
               CountPill.label(invoiceStatusLabel(l10n, invoice), tone: tone),
+              SizedBox(width: 6.w),
+              const DirectionalChevron(),
             ],
           ),
           SizedBox(height: 10.h),
@@ -568,25 +541,12 @@ class _OpenInvoiceCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: 12.h),
-          Row(
-            children: [
-              Expanded(
-                child: DentaOutlineButton(
-                  label: l10n.viewInvoice,
-                  expand: true,
-                  onTap: onOpen,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: DentaButton(
-                  label: l10n.howToPayAction,
-                  icon: Icons.account_balance_outlined,
-                  expand: true,
-                  onTap: onHowToPay,
-                ),
-              ),
-            ],
+          // One way forward: paying. The card itself opens the invoice.
+          DentaButton(
+            label: l10n.payNowAction,
+            icon: Icons.account_balance_outlined,
+            expand: true,
+            onTap: onHowToPay,
           ),
         ],
       ),

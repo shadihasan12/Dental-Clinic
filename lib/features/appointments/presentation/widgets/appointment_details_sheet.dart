@@ -181,7 +181,7 @@ class AppointmentDetailsSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -615,7 +615,7 @@ class _StatusPickerSheet extends StatelessWidget {
                     fontSize: 15.sp,
                     fontFamily: FontHelper.fontFamily(context),
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF111111),
+                    color: ColorManager.of(context).textPrimary,
                   ),
                 ),
               ),
@@ -686,7 +686,7 @@ class _StatusRow extends StatelessWidget {
                   fontSize: 14.sp,
                   fontFamily: FontHelper.fontFamily(context),
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: const Color(0xFF111111),
+                  color: ColorManager.of(context).textPrimary,
                 ),
               ),
             ),

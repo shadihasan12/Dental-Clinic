@@ -424,6 +424,7 @@ class RoutesManager {
             return CupertinoPage(
               child: InvoiceDetailsPage(
                 invoiceId: state.pathParameters['invoiceId']!,
+                fromPayment: state.extra == true,
               ),
               key: state.pageKey,
               name: state.name,
