@@ -14,13 +14,19 @@ class AppLoadingDialog extends StatelessWidget {
   final String message;
   final Color indicatorColor;
 
+  /// The loading dialogs on screen, oldest first.
+  static final List<Route<void>> _routes = [];
+
   /// Show the loading dialog
   static void show({
     required BuildContext context,
     String message = 'Loading...',
     Color indicatorColor = const Color(0xFF62B4DA),
   }) {
-    showDialog(
+    // Pushed on the root navigator, like any showDialog - and the route is
+    // kept, so dismiss() can remove exactly this dialog.
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final route = DialogRoute<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AppLoadingDialog(
@@ -28,11 +34,28 @@ class AppLoadingDialog extends StatelessWidget {
         indicatorColor: indicatorColor,
       ),
     );
+    _routes.add(route);
+    navigator.push(route);
   }
 
   /// Dismiss the loading dialog
+  ///
+  /// Removes the dialog's own route rather than popping whatever navigator
+  /// [context] sits in. Pages live inside the desktop ShellRoute's navigator
+  /// while the dialog sits on the root one, so `Navigator.pop(context)`
+  /// closed the *page* and left the spinner over the app for good. It also
+  /// cannot pop anything else - a sheet opened above it, or the page - when
+  /// no loader is showing.
   static void dismiss(BuildContext context) {
-    Navigator.pop(context);
+    if (_routes.isEmpty) return;
+    final route = _routes.removeLast();
+    final navigator = route.navigator;
+    if (navigator == null || !route.isActive) return;
+    if (route.isCurrent) {
+      navigator.pop();
+    } else {
+      navigator.removeRoute(route);
+    }
   }
 
   @override
