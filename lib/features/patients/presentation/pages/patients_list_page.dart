@@ -1318,7 +1318,7 @@ class _PatientRowState extends State<_PatientRow> {
               ),
               const SizedBox(height: 2),
               Text(
-                '${p.age} ${l10n.years} • $genderLabel',
+                p.age > 0 ? '${p.age} ${l10n.years} • $genderLabel' : genderLabel,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

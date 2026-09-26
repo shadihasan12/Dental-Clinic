@@ -75,6 +75,11 @@ class Assets {
     'assets/images/logo/denta_mark.png',
   );
 
+  /// File path: assets/images/logo/denta_mark_toast.png
+  static const AssetGenImage imagesLogoDentaMarkToast = AssetGenImage(
+    'assets/images/logo/denta_mark_toast.png',
+  );
+
   /// File path: assets/images/onboarding/1.jpg
   static const AssetGenImage imagesOnboarding1 = AssetGenImage(
     'assets/images/onboarding/1.jpg',
@@ -118,6 +123,7 @@ class Assets {
     iconsRootStatistics,
     imagesLogoDentaLogo,
     imagesLogoDentaMark,
+    imagesLogoDentaMarkToast,
     imagesOnboarding1,
     imagesOnboarding2,
     imagesOnboarding3,

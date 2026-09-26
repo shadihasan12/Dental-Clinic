@@ -320,6 +320,11 @@ class _RootPageState extends State<RootPage> {
     // second time. The slot is always there, empty or not, so the banner
     // coming and going never remounts the tabs underneath.
     return Scaffold(
+      // The nav bar lives in this body, so letting the shell shrink for the
+      // keyboard lifted the bar up on top of it (the patients search did it).
+      // The bar stays put at the bottom; each tab's own Scaffold still sees
+      // the keyboard inset and makes room for it.
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           readOnly ? const ReadOnlyBanner() : const SizedBox.shrink(),

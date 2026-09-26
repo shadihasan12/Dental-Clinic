@@ -156,7 +156,8 @@ class PatientModel {
       phone: phone,
       email: email,
       address: address,
-      dateOfBirth: DateTime.parse(dateOfBirth),
+      // Optional: an empty string is a patient with no date of birth.
+      dateOfBirth: DateTime.tryParse(dateOfBirth),
       medicalHistory: medicalHistory,
       allergies: allergies,
       insuranceProvider: insuranceProvider,
@@ -181,7 +182,7 @@ class PatientModel {
       phone: entity.phone,
       email: entity.email,
       address: entity.address,
-      dateOfBirth: entity.dateOfBirth.toIso8601String(),
+      dateOfBirth: entity.dateOfBirth?.toIso8601String() ?? '',
       medicalHistory: entity.medicalHistory,
       allergies: entity.allergies,
       insuranceProvider: entity.insuranceProvider,

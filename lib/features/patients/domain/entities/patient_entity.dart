@@ -15,7 +15,7 @@ class PatientEntity with _$PatientEntity {
     required String phone,
     required String email,
     required String address,
-    required DateTime dateOfBirth,
+    DateTime? dateOfBirth,
     String? medicalHistory,
     String? allergies,
     String? insuranceProvider,

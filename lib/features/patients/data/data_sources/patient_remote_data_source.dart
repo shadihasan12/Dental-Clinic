@@ -8,7 +8,6 @@ import 'package:dental_clinic_app/features/patients/data/models/tooth.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_item.dart';
 import 'package:dental_clinic_app/features/patients/domain/use_cases/add_treatment_use_case.dart';
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 class PatientFullDetailsResponse {
@@ -119,6 +118,13 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   final ApiConsumer _apiConsumer;
 
   PatientRemoteDataSourceImpl(this._apiConsumer);
+
+  /// An optional patient field as the API wants it: trimmed, or null when
+  /// left empty - never an empty string.
+  static String? _nullIfEmpty(String? value) {
+    final text = value?.trim();
+    return text == null || text.isEmpty ? null : text;
+  }
 
   @override
   Future<PaginatedResponse<PatientModel>> getAllPatients({
@@ -244,20 +250,20 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
     final firstName = nameParts.first;
     final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-    final formData = FormData.fromMap({
-      'first_name': firstName,
-      'last_name': lastName,
-      'date_of_birth': patient.dateOfBirth,
-      'phone_number': patient.phone,
-      'gender': patient.gender,
-      if (patient.medicalHistory != null)
-        'medical_history_notes': patient.medicalHistory,
-      if (patient.allergies != null) 'allergy_notes': patient.allergies,
-    });
-
+    // JSON rather than multipart: only first name, last name and gender are
+    // required, and every optional field left empty is sent as a real null -
+    // which form-data cannot carry (it would arrive as an empty string).
     final response = await _apiConsumer.post(
       PatientEndpoints.patients,
-      formData: formData,
+      body: {
+        'first_name': firstName,
+        'last_name': lastName,
+        'gender': patient.gender,
+        'date_of_birth': _nullIfEmpty(patient.dateOfBirth),
+        'phone_number': _nullIfEmpty(patient.phone),
+        'medical_history_notes': _nullIfEmpty(patient.medicalHistory),
+        'allergy_notes': _nullIfEmpty(patient.allergies),
+      },
     );
 
     final data = response['data'] as Map<String, dynamic>;
@@ -273,11 +279,12 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
     final body = <String, dynamic>{
       'first_name': firstName,
       'last_name': lastName,
-      if (patient.dateOfBirth.isNotEmpty) 'date_of_birth': patient.dateOfBirth,
-      'phone_number': patient.phone,
+      // Null clears a date of birth or phone that was removed on the form.
+      'date_of_birth': _nullIfEmpty(patient.dateOfBirth),
+      'phone_number': _nullIfEmpty(patient.phone),
       if (patient.gender.isNotEmpty) 'gender': patient.gender,
-      'medical_history_notes': patient.medicalHistory,
-      'allergy_notes': patient.allergies,
+      'medical_history_notes': _nullIfEmpty(patient.medicalHistory),
+      'allergy_notes': _nullIfEmpty(patient.allergies),
     };
 
     final response = await _apiConsumer.put(

@@ -69,21 +69,13 @@ class _AddPatientContentState extends State<_AddPatientContent> {
       AppLocalizations.of(context)!,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-      phone: _phoneController.text,
-      dateOfBirth: _dateOfBirth,
     );
   }
 
   void _revalidate() {
     if (!_submitted) return;
     final next = _validate();
-    if (next.hasAny != _errors.hasAny ||
-        next.firstName != _errors.firstName ||
-        next.lastName != _errors.lastName ||
-        next.phone != _errors.phone ||
-        next.dateOfBirth != _errors.dateOfBirth) {
-      setState(() => _errors = next);
-    }
+    if (next != _errors) setState(() => _errors = next);
   }
 
   Future<void> _pickDateOfBirth() async {
@@ -125,27 +117,17 @@ class _AddPatientContentState extends State<_AddPatientContent> {
       return;
     }
 
-    final dob = _dateOfBirth!;
-    final now = DateTime.now();
-    final age =
-        now.year -
-        dob.year -
-        ((now.month < dob.month ||
-                (now.month == dob.month && now.day < dob.day))
-            ? 1
-            : 0);
-
     final patient = PatientEntity(
       id: '',
       name:
           '${_firstNameController.text.trim()} '
           '${_lastNameController.text.trim()}',
-      age: age,
+      age: ageFromDateOfBirth(_dateOfBirth),
       gender: _gender,
       phone: _phoneController.text.trim(),
       email: '',
       address: '',
-      dateOfBirth: dob,
+      dateOfBirth: _dateOfBirth,
       medicalHistory: _medicalHistoryController.text.trim().isEmpty
           ? null
           : _medicalHistoryController.text.trim(),

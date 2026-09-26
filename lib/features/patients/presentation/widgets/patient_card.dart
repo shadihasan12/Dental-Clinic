@@ -246,7 +246,9 @@ class PatientCard extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                '${patient.age} ${l10n.years} - $genderLabel',
+                patient.age > 0
+                    ? '${patient.age} ${l10n.years} - $genderLabel'
+                    : genderLabel,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

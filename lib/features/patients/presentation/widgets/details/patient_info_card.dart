@@ -63,12 +63,14 @@ class _PatientInfoCardState extends State<PatientInfoCard> {
           trailingIcon: Icons.call_outlined,
           onTrailing: () => _call(p.phone),
         ),
-      _InfoRow(
-        label: l10n.dateOfBirth,
-        value: p.age > 0
-            ? '${dateFmt.format(p.dateOfBirth)} - ${p.age} ${l10n.yrs}'
-            : dateFmt.format(p.dateOfBirth),
-      ),
+      // Optional: a patient saved without one simply has no row.
+      if (p.dateOfBirth != null)
+        _InfoRow(
+          label: l10n.dateOfBirth,
+          value: p.age > 0
+              ? '${dateFmt.format(p.dateOfBirth!)} - ${p.age} ${l10n.yrs}'
+              : dateFmt.format(p.dateOfBirth!),
+        ),
       if (p.gender.trim().isNotEmpty)
         _InfoRow(label: l10n.gender, value: p.gender),
       if (p.email.trim().isNotEmpty)

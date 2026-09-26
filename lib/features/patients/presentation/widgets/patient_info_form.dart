@@ -40,41 +40,48 @@ class PatientFormErrors {
   const PatientFormErrors({
     this.firstName,
     this.lastName,
-    this.phone,
-    this.dateOfBirth,
   });
 
   final String? firstName;
   final String? lastName;
-  final String? phone;
-  final String? dateOfBirth;
 
   static const PatientFormErrors none = PatientFormErrors();
 
-  bool get hasAny =>
-      firstName != null ||
-      lastName != null ||
-      phone != null ||
-      dateOfBirth != null;
+  bool get hasAny => firstName != null || lastName != null;
 
-  /// Runs the required-field checks. Everything here is required because the
-  /// record is unusable without it: a patient with no name cannot be found
-  /// again, no phone cannot be reached, and no date of birth makes every age
-  /// on the clinical screens a guess.
+  @override
+  bool operator ==(Object other) =>
+      other is PatientFormErrors &&
+      other.firstName == firstName &&
+      other.lastName == lastName;
+
+  @override
+  int get hashCode => Object.hash(firstName, lastName);
+
+  /// Runs the required-field checks: the name only. Gender is required too,
+  /// but the picker always holds a value, so it cannot be missing. Phone,
+  /// date of birth and the clinical notes are optional - left empty, they
+  /// are sent as null.
   static PatientFormErrors validate(
     AppLocalizations l10n, {
     required String firstName,
     required String lastName,
-    required String phone,
-    required DateTime? dateOfBirth,
   }) {
     return PatientFormErrors(
       firstName: firstName.trim().isEmpty ? l10n.pleaseEnterFirstName : null,
       lastName: lastName.trim().isEmpty ? l10n.pleaseEnterLastName : null,
-      phone: phone.trim().isEmpty ? l10n.pleaseEnterPhone : null,
-      dateOfBirth: dateOfBirth == null ? l10n.pleaseSelectDateOfBirth : null,
     );
   }
+}
+
+/// Whole years from [dateOfBirth] to today; 0 when there is none.
+int ageFromDateOfBirth(DateTime? dateOfBirth) {
+  final dob = dateOfBirth;
+  if (dob == null) return 0;
+  final now = DateTime.now();
+  final beforeBirthday = now.month < dob.month ||
+      (now.month == dob.month && now.day < dob.day);
+  return now.year - dob.year - (beforeBirthday ? 1 : 0);
 }
 
 /// The patient record form, shared by Add and Edit.
@@ -164,19 +171,15 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
               children: [
                 FormTextField(
                   label: l10n.phone,
-                  required: true,
                   controller: widget.phoneController,
                   hintText: l10n.phoneHint,
                   keyboardType: TextInputType.phone,
-                  errorText: e.phone,
                   onChanged: widget.onFieldChanged,
                 ),
                 FormDateField(
                   label: l10n.dateOfBirth,
-                  required: true,
                   value: widget.dateOfBirth,
                   onTap: widget.onDateOfBirthTap,
-                  errorText: e.dateOfBirth,
                 ),
               ],
             ),

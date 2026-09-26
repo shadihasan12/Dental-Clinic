@@ -24,7 +24,7 @@ mixin _$PatientEntity {
   String get phone => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
-  DateTime get dateOfBirth => throw _privateConstructorUsedError;
+  DateTime? get dateOfBirth => throw _privateConstructorUsedError;
   String? get medicalHistory => throw _privateConstructorUsedError;
   String? get allergies => throw _privateConstructorUsedError;
   String? get insuranceProvider => throw _privateConstructorUsedError;
@@ -63,7 +63,7 @@ abstract class $PatientEntityCopyWith<$Res> {
     String phone,
     String email,
     String address,
-    DateTime dateOfBirth,
+    DateTime? dateOfBirth,
     String? medicalHistory,
     String? allergies,
     String? insuranceProvider,
@@ -101,7 +101,7 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
     Object? phone = null,
     Object? email = null,
     Object? address = null,
-    Object? dateOfBirth = null,
+    Object? dateOfBirth = freezed,
     Object? medicalHistory = freezed,
     Object? allergies = freezed,
     Object? insuranceProvider = freezed,
@@ -145,10 +145,10 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.address
                 : address // ignore: cast_nullable_to_non_nullable
                       as String,
-            dateOfBirth: null == dateOfBirth
+            dateOfBirth: freezed == dateOfBirth
                 ? _value.dateOfBirth
                 : dateOfBirth // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
+                      as DateTime?,
             medicalHistory: freezed == medicalHistory
                 ? _value.medicalHistory
                 : medicalHistory // ignore: cast_nullable_to_non_nullable
@@ -220,7 +220,7 @@ abstract class _$$PatientEntityImplCopyWith<$Res>
     String phone,
     String email,
     String address,
-    DateTime dateOfBirth,
+    DateTime? dateOfBirth,
     String? medicalHistory,
     String? allergies,
     String? insuranceProvider,
@@ -257,7 +257,7 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
     Object? phone = null,
     Object? email = null,
     Object? address = null,
-    Object? dateOfBirth = null,
+    Object? dateOfBirth = freezed,
     Object? medicalHistory = freezed,
     Object? allergies = freezed,
     Object? insuranceProvider = freezed,
@@ -301,10 +301,10 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.address
             : address // ignore: cast_nullable_to_non_nullable
                   as String,
-        dateOfBirth: null == dateOfBirth
+        dateOfBirth: freezed == dateOfBirth
             ? _value.dateOfBirth
             : dateOfBirth // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
+                  as DateTime?,
         medicalHistory: freezed == medicalHistory
             ? _value.medicalHistory
             : medicalHistory // ignore: cast_nullable_to_non_nullable
@@ -369,7 +369,7 @@ class _$PatientEntityImpl implements _PatientEntity {
     required this.phone,
     required this.email,
     required this.address,
-    required this.dateOfBirth,
+    this.dateOfBirth,
     this.medicalHistory,
     this.allergies,
     this.insuranceProvider,
@@ -399,7 +399,7 @@ class _$PatientEntityImpl implements _PatientEntity {
   @override
   final String address;
   @override
-  final DateTime dateOfBirth;
+  final DateTime? dateOfBirth;
   @override
   final String? medicalHistory;
   @override
@@ -521,7 +521,7 @@ abstract class _PatientEntity implements PatientEntity {
     required final String phone,
     required final String email,
     required final String address,
-    required final DateTime dateOfBirth,
+    final DateTime? dateOfBirth,
     final String? medicalHistory,
     final String? allergies,
     final String? insuranceProvider,
@@ -551,7 +551,7 @@ abstract class _PatientEntity implements PatientEntity {
   @override
   String get address;
   @override
-  DateTime get dateOfBirth;
+  DateTime? get dateOfBirth;
   @override
   String? get medicalHistory;
   @override

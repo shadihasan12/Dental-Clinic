@@ -68,20 +68,13 @@ class _EditPatientPageState extends State<EditPatientPage> {
       AppLocalizations.of(context)!,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-      phone: _phoneController.text,
-      dateOfBirth: _dateOfBirth,
     );
   }
 
   void _revalidate() {
     if (!_submitted) return;
     final next = _validate();
-    if (next.firstName != _errors.firstName ||
-        next.lastName != _errors.lastName ||
-        next.phone != _errors.phone ||
-        next.dateOfBirth != _errors.dateOfBirth) {
-      setState(() => _errors = next);
-    }
+    if (next != _errors) setState(() => _errors = next);
   }
 
   Future<void> _selectDate() async {
@@ -126,21 +119,13 @@ class _EditPatientPageState extends State<EditPatientPage> {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     final phone = _phoneController.text.trim();
-    final dob = _dateOfBirth!;
-    final now = DateTime.now();
-    final age = now.year -
-        dob.year -
-        ((now.month < dob.month ||
-                (now.month == dob.month && now.day < dob.day))
-            ? 1
-            : 0);
 
     final updated = widget.patient.copyWith(
       name: '$firstName $lastName',
-      age: age,
+      age: ageFromDateOfBirth(_dateOfBirth),
       gender: _gender,
       phone: phone,
-      dateOfBirth: dob,
+      dateOfBirth: _dateOfBirth,
       medicalHistory: _medicalHistoryController.text.trim().isEmpty
           ? null
           : _medicalHistoryController.text.trim(),
