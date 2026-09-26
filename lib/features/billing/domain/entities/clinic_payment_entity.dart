@@ -5,7 +5,7 @@ enum ClinicPaymentStatus {
   /// Confirmed; the money is in the wallet.
   verified,
 
-  /// Not accepted; the reason is appended to the notes.
+  /// Not accepted; the reason is in [ClinicPaymentEntity.rejectionReason].
   rejected,
 
   /// Withdrawn by the clinic itself. Two Ls, as the API spells it.
@@ -29,14 +29,17 @@ enum ClinicPaymentStatus {
   }
 }
 
-/// A transfer the clinic reported, from `/clinic-payments`.
+/// Real money between the clinic and us, from `/clinic-payments`: a transfer
+/// the clinic reported (or cash an admin recorded), or - [isRefund] - a
+/// balance we sent back to it.
 ///
-/// Reporting it moves nothing. The money reaches the wallet only once an
-/// admin verifies it, and then the server settles open invoices from the
+/// Reporting a transfer moves nothing. The money reaches the wallet only once
+/// an admin verifies it, and then the server settles open invoices from the
 /// wallet, oldest first - the app never links a payment to an invoice.
 class ClinicPaymentEntity {
   const ClinicPaymentEntity({
     required this.id,
+    this.kind = 'payment',
     required this.method,
     required this.referenceNumber,
     required this.amountOriginal,
@@ -49,9 +52,15 @@ class ClinicPaymentEntity {
     this.exchangeRate,
     this.paidAt,
     this.notes,
+    this.rejectionReason,
+    this.cancellationReason,
   });
 
   final String id;
+
+  /// `payment` - the clinic sent it to us - or `refund`, a balance sent back
+  /// to the clinic, listed once it really went out and always VERIFIED.
+  final String kind;
   final String method;
   final String referenceNumber;
 
@@ -67,9 +76,14 @@ class ClinicPaymentEntity {
   final String? bankName;
   final DateTime? paidAt;
 
-  /// The clinic's note, with any rejection or cancellation reason the
-  /// backend appended after ` | `.
+  /// Only what the clinic wrote. Can be null.
   final String? notes;
+
+  /// Set on REJECTED: the admin's reason, in its own field.
+  final String? rejectionReason;
+
+  /// Set on CANCELLED: why the clinic withdrew it.
+  final String? cancellationReason;
 
   /// Signed, expiring links. Re-read the payment for fresh ones rather than
   /// holding on to these.
@@ -77,42 +91,8 @@ class ClinicPaymentEntity {
 
   bool get isPending => status == ClinicPaymentStatus.pending;
 
-  static const _rejectionMarker = 'Rejection Reason:';
-  static const _cancellationMarker = 'Cancellation Reason:';
-
-  /// The admin's reason, split off the notes. The marker is written by the
-  /// backend in English whatever the language.
-  String? get rejectionReason => _after(_rejectionMarker);
-
-  String? get cancellationReason => _after(_cancellationMarker);
-
-  /// The note the clinic wrote itself, without the appended reasons.
-  String? get clinicNote {
-    final text = notes;
-    if (text == null) return null;
-    var cut = text.length;
-    for (final marker in [_rejectionMarker, _cancellationMarker]) {
-      final i = text.indexOf(marker);
-      if (i >= 0 && i < cut) cut = i;
-    }
-    final note = text.substring(0, cut).trim();
-    final cleaned =
-        note.endsWith('|') ? note.substring(0, note.length - 1).trim() : note;
-    return cleaned.isEmpty ? null : cleaned;
-  }
-
-  String? _after(String marker) {
-    final text = notes;
-    if (text == null) return null;
-    final i = text.lastIndexOf(marker);
-    if (i < 0) return null;
-    var reason = text.substring(i + marker.length);
-    // Another reason appended after this one belongs to it, not to us.
-    final pipe = reason.indexOf(' | ');
-    if (pipe >= 0) reason = reason.substring(0, pipe);
-    reason = reason.trim();
-    return reason.isEmpty ? null : reason;
-  }
+  /// Money received by the clinic, not paid by it.
+  bool get isRefund => kind.toLowerCase() == 'refund';
 }
 
 class PaymentAttachmentEntity {

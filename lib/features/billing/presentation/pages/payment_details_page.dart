@@ -14,8 +14,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// One reported transfer, read fresh - its receipt links are signed and
-/// expire, so they are never reused from an older read.
+/// One reported transfer - or a refund we sent the clinic - read fresh: its
+/// receipt links are signed and expire, so they are never reused from an
+/// older read.
 class PaymentDetailsPage extends StatelessWidget {
   const PaymentDetailsPage({super.key, required this.paymentId});
 
@@ -51,11 +52,14 @@ class _Body extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
-    final tone = paymentTone(payment.status);
+    // A refund is money the clinic received: the other direction, always
+    // verified, with our proof attached and nothing to act on.
+    final refund = payment.isRefund;
+    final tone = refund ? ColorManager.info : paymentTone(payment.status);
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final rejection = payment.rejectionReason;
     final cancellation = payment.cancellationReason;
-    final note = payment.clinicNote;
+    final note = payment.notes;
 
     return ListView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
@@ -67,23 +71,30 @@ class _Body extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconTile(icon: Icons.swap_horiz_rounded, tone: tone),
+                  IconTile(
+                    icon: refund
+                        ? Icons.south_west_rounded
+                        : Icons.swap_horiz_rounded,
+                    tone: tone,
+                  ),
                   SizedBox(width: 11.w),
                   Expanded(
                     child: Text(
-                      '${formatPlainAmount(payment.amountOriginal)} ${payment.currencyOriginal}',
+                      '${refund ? '+' : ''}${formatPlainAmount(payment.amountOriginal)} ${payment.currencyOriginal}',
                       textDirection: TextDirection.ltr,
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontFamily: family,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
-                        color: c.textPrimary,
+                        color: refund ? ColorManager.info : c.textPrimary,
                       ),
                     ),
                   ),
                   CountPill.label(
-                    paymentStatusLabel(l10n, payment.status),
+                    refund
+                        ? l10n.billingRefund
+                        : paymentStatusLabel(l10n, payment.status),
                     tone: tone,
                   ),
                 ],
@@ -122,7 +133,7 @@ class _Body extends StatelessWidget {
             children: [
               BillingInfoRow(
                 label: l10n.paymentMethod,
-                value: paymentMethodLabel(payment.method),
+                value: paymentMethodLabel(l10n, payment.method),
               ),
               BillingInfoRow(
                 label: l10n.transactionReferenceLabel,
@@ -143,18 +154,22 @@ class _Body extends StatelessWidget {
                 value: formatUsd(payment.amountUsd),
                 ltrValue: true,
               ),
-              if (note != null) BillingInfoRow(label: l10n.notes, value: note),
-              if (cancellation != null)
+              if (payment.status == ClinicPaymentStatus.cancelled &&
+                  cancellation != null)
                 BillingInfoRow(
-                  label: l10n.withdrawReasonOptional,
+                  label: l10n.paymentWithdrawnReason,
                   value: cancellation,
                 ),
+              // Only what the clinic itself wrote - the admin's reason for a
+              // refusal is shown above, in its own place.
+              if (note != null && note.isNotEmpty)
+                BillingInfoRow(label: l10n.paymentYourNote, value: note),
             ],
           ),
         ),
         if (payment.attachments.isNotEmpty) ...[
           SizedBox(height: 16.h),
-          SectionLabel(l10n.receiptsTitle),
+          SectionLabel(refund ? l10n.refundProofTitle : l10n.receiptsTitle),
           SizedBox(height: 10.h),
           for (final (i, attachment) in payment.attachments.indexed)
             Padding(
@@ -186,7 +201,7 @@ class _Body extends StatelessWidget {
               ),
             ),
         ],
-        if (payment.isPending) ...[
+        if (payment.isPending && !refund) ...[
           SizedBox(height: 16.h),
           DentaOutlineButton(
             label: l10n.withdrawReport,
@@ -198,7 +213,7 @@ class _Body extends StatelessWidget {
             },
           ),
         ],
-        if (payment.status == ClinicPaymentStatus.rejected) ...[
+        if (payment.status == ClinicPaymentStatus.rejected && !refund) ...[
           SizedBox(height: 16.h),
           DentaButton(
             label: l10n.reportAgain,
@@ -215,6 +230,7 @@ class _Body extends StatelessWidget {
   }
 
   String _statusExplainer(AppLocalizations l10n) {
+    if (payment.isRefund) return l10n.paymentRefundExplainer;
     switch (payment.status) {
       case ClinicPaymentStatus.pending:
         return l10n.paymentPendingExplainer;

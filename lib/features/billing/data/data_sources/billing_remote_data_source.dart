@@ -5,6 +5,7 @@ import 'package:dental_clinic_app/features/auth/data/datasources/remote/main_pla
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/billing/data/endpoints/billing_endpoints.dart';
 import 'package:dental_clinic_app/features/billing/data/models/billing_models.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/payment_method_entity.dart';
@@ -20,7 +21,12 @@ abstract class BillingRemoteDataSource {
   Future<List<PlanEntity>> getPlans();
   Future<PlanFeaturesEntity> getPlanFeatures(String planId);
   Future<QuoteEntity> getQuote(QuoteParams params);
-  Future<WithMessage<InvoiceEntity>> requestSubscription(QuoteParams params);
+  Future<BillingRequestResult> requestSubscription(QuoteParams params);
+  Future<QuoteEntity> getUpgradeQuote(String planVersionId);
+  Future<BillingRequestResult> requestUpgrade(String planVersionId);
+  Future<List<AddonEntity>> getAddons();
+  Future<QuoteEntity> getAddonQuote(String planVersionId, int quantity);
+  Future<BillingRequestResult> requestAddons(String planVersionId, int quantity);
   Future<List<SubscriptionPeriodEntity>> getPeriods();
   Future<List<InvoiceEntity>> getInvoices();
   Future<InvoiceEntity> getInvoice(String id);
@@ -30,7 +36,6 @@ abstract class BillingRemoteDataSource {
   Future<List<ClinicPaymentEntity>> getPayments();
   Future<ClinicPaymentEntity> getPayment(String id);
   Future<ClinicPaymentEntity> cancelPayment(String id, {String? reason});
-  Future<String?> getWalletBalance();
 }
 
 @Injectable(as: BillingRemoteDataSource)
@@ -51,6 +56,16 @@ class BillingRemoteDataSourceImpl implements BillingRemoteDataSource {
 
   String _message(dynamic response) => (response['message'] ?? '').toString();
 
+  /// `data` is the invoice, or null when the purchase came out in the
+  /// clinic's favour and there is nothing to invoice.
+  BillingRequestResult _requestResult(dynamic response) {
+    final data = response['data'];
+    return BillingRequestResult(
+      invoice: data is Map<String, dynamic> ? InvoiceModel.fromJson(data) : null,
+      message: _message(response),
+    );
+  }
+
   @override
   Future<List<PlanEntity>> getPlans() async {
     final models = await fetchMainPlans(_api);
@@ -67,18 +82,63 @@ class BillingRemoteDataSourceImpl implements BillingRemoteDataSource {
   Future<QuoteEntity> getQuote(QuoteParams params) async {
     final response = await _api.get(
       BillingEndpoints.quote,
-      queryParameters: params.toJson(),
+      queryParameters: params.toQuery(),
     );
     return QuoteModel.fromJson(_object(response));
   }
 
   @override
-  Future<WithMessage<InvoiceEntity>> requestSubscription(QuoteParams params) async {
+  Future<BillingRequestResult> requestSubscription(QuoteParams params) async {
     final response = await _api.post(
       BillingEndpoints.requests,
-      body: params.toJson(),
+      body: params.toBody(),
     );
-    return WithMessage(InvoiceModel.fromJson(_object(response)), _message(response));
+    return _requestResult(response);
+  }
+
+  @override
+  Future<QuoteEntity> getUpgradeQuote(String planVersionId) async {
+    final response = await _api.get(
+      BillingEndpoints.upgradeQuote,
+      queryParameters: {'plan_version_id': planVersionId},
+    );
+    return QuoteModel.fromJson(_object(response));
+  }
+
+  @override
+  Future<BillingRequestResult> requestUpgrade(String planVersionId) async {
+    final response = await _api.post(
+      BillingEndpoints.upgradeRequests,
+      body: {'plan_version_id': planVersionId},
+    );
+    return _requestResult(response);
+  }
+
+  @override
+  Future<List<AddonEntity>> getAddons() async {
+    final response = await _api.get(BillingEndpoints.addons);
+    return _list(response).map(AddonModel.fromJson).toList();
+  }
+
+  @override
+  Future<QuoteEntity> getAddonQuote(String planVersionId, int quantity) async {
+    final response = await _api.get(
+      BillingEndpoints.addonsQuote,
+      queryParameters: {'plan_version_id': planVersionId, 'quantity': quantity},
+    );
+    return QuoteModel.fromJson(_object(response));
+  }
+
+  @override
+  Future<BillingRequestResult> requestAddons(
+    String planVersionId,
+    int quantity,
+  ) async {
+    final response = await _api.post(
+      BillingEndpoints.addonsRequests,
+      body: {'plan_version_id': planVersionId, 'quantity': quantity},
+    );
+    return _requestResult(response);
   }
 
   @override
@@ -150,14 +210,5 @@ class BillingRemoteDataSourceImpl implements BillingRemoteDataSource {
       body: {if (reason != null && reason.isNotEmpty) 'reason': reason},
     );
     return ClinicPaymentModel.fromJson(_object(response));
-  }
-
-  @override
-  Future<String?> getWalletBalance() async {
-    final response = await _api.get(BillingEndpoints.clinic);
-    final data = response['data'];
-    // A preformatted string (`"$0.00"`), not a number - shown as it is.
-    final balance = data is Map ? data['credit_balance_usd'] : null;
-    return balance?.toString();
   }
 }

@@ -1439,7 +1439,7 @@
   "subBodyExpired": "Your subscription has ended. You can still view your data; choose a plan and pay to keep working.",
   "subBodyPending": "Waiting for the first payment. Until it is confirmed, only the subscription and payment screens are available.",
   "subBodyCanceled": "This subscription was cancelled. Choose a plan to start again.",
-  "subBodyGrace": "Your paid period has ended. Everything keeps working until the grace period ends. Renewing from the app isn't available yet, so please contact support.",
+  "subBodyGrace": "Your paid period has ended. Everything keeps working until the grace period ends - renew before then.",
   "subBodyNone": "This clinic has no subscription. Please contact support.",
   "subRenewNotAvailable": "Renewing or changing a running subscription isn't available from the app yet. Please contact support.",
   "renewalFromAppTitle": "Renewing your plan",
@@ -1458,7 +1458,7 @@
       }
     }
   },
-  "seatsFullMessage": "No seats left: your plan allows {count} member(s), and they are all taken. Upgrade the plan or remove a member first.",
+  "seatsFullMessage": "No seats left: your plan allows {count} member(s), and they are all taken. Buy an extra seat, upgrade the plan, or remove a member first.",
   "@seatsFullMessage": {
     "placeholders": {
       "count": {
@@ -1466,7 +1466,7 @@
       }
     }
   },
-  "seatsFullMessageGeneric": "No seats left on your plan. Upgrade the plan or remove a member first.",
+  "seatsFullMessageGeneric": "No seats left on your plan. Buy an extra seat, upgrade the plan, or remove a member first.",
   "walletLabel": "Wallet balance",
   "walletHint": "Credit left after invoices were settled",
   "pendingPaymentsTitle": "Transfer under review",
@@ -1502,7 +1502,9 @@
   "daysUnit": "{count, plural, =1{day} other{days}}",
   "@daysUnit": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "viewInvoiceDetails": "View invoice details",
@@ -1653,5 +1655,164 @@
   "followsClinicHoursAdminNote": "Following the clinic's working hours. Saving changes here gives this member their own schedule, and it will no longer follow the clinic's.",
   "slotsFollowClinicHours": "Following the clinic's working hours",
   "profilePhoto": "Profile Photo",
-  "profilePhotoHint": "Click the avatar to upload a new picture."
+  "profilePhotoHint": "Click the avatar to upload a new picture.",
+  "billingDoneTitle": "Done",
+  "renewFromAction": "Renew from {date}",
+  "@renewFromAction": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteRestOfCycle": "For the rest of this cycle",
+  "quoteCreditLabel": "Added to your balance",
+  "quoteUntil": "Applies now, until {date}.",
+  "@quoteUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteRunsFrom": "Runs from {start} to {end}, straight after your current cycle.",
+  "@quoteRunsFrom": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "billingNotAvailableNow": "This isn't available right now.",
+  "quoteCreditExplainer": "Nothing to pay: what comes back to you is more than the price, so the difference is added to your clinic's balance.",
+  "quoteStartsLaterExplainer": "Paid now, it starts on {date}, when your current cycle ends. You keep the days you have left.",
+  "@quoteStartsLaterExplainer": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quotePayBefore": "Confirming issues an invoice. Pay it before {date}, or it is cancelled on its own when this cycle ends.",
+  "@quotePayBefore": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "blockerSeats": "Members: {current} of {allowed} allowed. Remove {excess}, or add seats.",
+  "@blockerSeats": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "allowed": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "blockerStorage": "Storage: {excess} MB over. Free some space, or add storage.",
+  "@blockerStorage": {
+    "placeholders": {
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "upgradePlanAction": "Upgrade",
+  "upgradePlanTitle": "Upgrade your plan",
+  "renewPlanTitle": "Renew your subscription",
+  "nextCycleBooked": "Renewed: {plan} from {date}",
+  "@nextCycleBooked": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addonsTitle": "Extra seats & storage",
+  "addonsRowHint": "Add members or storage without changing your plan",
+  "noBiggerPlan": "You're already on the largest plan.",
+  "upgradeHint": "A bigger plan starts now, for the rest of this cycle. A smaller one starts with your next cycle: renew onto it.",
+  "renewAddonsTitle": "Extra seats & storage for the new cycle",
+  "renewAddonsHint": "Units are only dropped at a renewal. Lower one here and it ends with your current cycle.",
+  "billingRefund": "Refund",
+  "invoiceRefundedToYou": "Refunded to you",
+  "invoiceRefundedOnDate": "Sent to you on {date}",
+  "@invoiceRefundedOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentRefundExplainer": "We sent this amount back to you. Use the reference below to collect it.",
+  "paymentYourNote": "Your note",
+  "paymentWithdrawnReason": "Why it was withdrawn",
+  "refundProofTitle": "Proof of transfer",
+  "periodRunning": "Running now",
+  "periodTrialConverted": "Trial · subscribed early",
+  "periodTrialEnded": "Trial ended",
+  "periodUpgraded": "Upgraded",
+  "periodEnded": "Ended",
+  "periodPriceWithCredit": "{price} — {credit} back",
+  "@periodPriceWithCredit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "credit": {
+        "type": "String"
+      }
+    }
+  },
+  "addonsIntro": "Add members or storage for the rest of this cycle, without changing your plan.",
+  "addonsEmptyTitle": "Nothing on sale right now",
+  "addonsEmptyMessage": "Extra seats and storage will show here when they are offered.",
+  "addonsRemoveNote": "To remove units, lower them when you renew.",
+  "addonPricePerUnitMonthly": "{price} per unit a month",
+  "@addonPricePerUnitMonthly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "addonPricePerUnitYearly": "{price} per unit a year",
+  "@addonPricePerUnitYearly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "addonOwnedLabel": "You have",
+  "addonOwnedNow": "{count} now",
+  "@addonOwnedNow": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addonOwnedNextCycle": "{count} from your next cycle",
+  "@addonOwnedNextCycle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addonQuantityLabel": "Units to add",
+  "buySeatAction": "Buy a seat"
 }

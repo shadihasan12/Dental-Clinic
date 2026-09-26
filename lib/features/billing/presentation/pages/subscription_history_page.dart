@@ -64,14 +64,23 @@ class _PeriodCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
-    final (label, tone) = switch (period.status.toUpperCase()) {
-      'ACTIVE' => (l10n.subStatusActive, ColorManager.success),
-      'CANCELED' || 'CANCELLED' => (l10n.subStatusCanceled, ColorManager.error),
-      _ => (l10n.periodCompleted, ColorManager.gray500),
+    // Read from why the stretch stopped, never from `status`, which calls
+    // an upgrade "cancelled" too.
+    final (label, tone) = switch (period.endReason) {
+      PeriodEndReason.running => (l10n.periodRunning, ColorManager.success),
+      PeriodEndReason.completed => (l10n.periodCompleted, ColorManager.gray500),
+      PeriodEndReason.trialConverted =>
+        (l10n.periodTrialConverted, ColorManager.gray500),
+      PeriodEndReason.trialEnded => (l10n.periodTrialEnded, ColorManager.gray500),
+      PeriodEndReason.planChanged => (l10n.periodUpgraded, ColorManager.info),
+      PeriodEndReason.cancelled => (l10n.subStatusCanceled, ColorManager.error),
+      PeriodEndReason.unknown => (l10n.periodEnded, ColorManager.gray500),
     };
     final start = period.startsAt;
-    // A cancelled cycle's end is the day it really stopped.
+    // A stretch cut short ends on the day it really stopped.
     final end = period.endsAt;
+    final credit = period.creditUsd ?? 0;
+    final price = formatUsd(period.priceUsd);
 
     return AppCard(
       statusTone: tone,
@@ -128,8 +137,13 @@ class _PeriodCard extends StatelessWidget {
             ),
           BillingInfoRow(
             label: l10n.invoiceAmountLabel,
-            value: period.isTrial ? l10n.freeTrial : formatUsd(period.priceUsd),
-            ltrValue: !period.isTrial,
+            // What came back for unused days sits beside the price.
+            value: period.isTrial
+                ? l10n.freeTrial
+                : credit > 0
+                    ? l10n.periodPriceWithCredit(price, formatUsd(credit))
+                    : price,
+            ltrValue: !period.isTrial && credit <= 0,
           ),
         ],
       ),

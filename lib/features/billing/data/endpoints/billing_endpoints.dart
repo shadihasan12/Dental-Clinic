@@ -6,11 +6,23 @@ class BillingEndpoints {
   /// GET - the cycles this clinic has been through (the history screen).
   static const String periods = '/subscriptions/periods';
 
-  /// GET - what buying a plan would cost, and whether the app may ask.
+  /// GET - what a whole cycle would cost - new, or a renewal - and whether
+  /// the app may ask.
   static const String quote = '/subscriptions/quote';
 
-  /// POST - ask to be billed. Creates an OPEN invoice, not a subscription.
+  /// POST - ask to be billed for it. Creates an invoice, not a subscription.
   static const String requests = '/subscriptions/requests';
+
+  /// GET / POST - moving up to a bigger plan now, for the rest of the cycle.
+  static const String upgradeQuote = '/subscriptions/upgrade/quote';
+  static const String upgradeRequests = '/subscriptions/upgrade/requests';
+
+  /// GET - the add-ons on sale, and the units the clinic holds.
+  static const String addons = '/subscriptions/addons';
+
+  /// GET / POST - more add-on units now, for the rest of the cycle.
+  static const String addonsQuote = '/subscriptions/addons/quote';
+  static const String addonsRequests = '/subscriptions/addons/requests';
 
   /// GET - what one plan includes. Takes the plan id or the version id.
   static String planFeatures(String planId) => '/plans/$planId/features';
@@ -30,8 +42,4 @@ class BillingEndpoints {
   static const String payments = '/clinic-payments';
   static String payment(String id) => '/clinic-payments/$id';
   static String cancelPayment(String id) => '/clinic-payments/$id/cancel';
-
-  /// GET - the current clinic, carrying `credit_balance_usd` (the wallet)
-  /// for an admin. Needs the clinic header, unlike `/users/clinics`.
-  static const String clinic = '/clinics';
 }

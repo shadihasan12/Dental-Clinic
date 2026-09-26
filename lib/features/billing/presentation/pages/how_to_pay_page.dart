@@ -69,9 +69,15 @@ class _Body extends StatelessWidget {
   final _HowToPayData data;
   final String? invoiceId;
 
+  /// Only an open charge is something to pay. A refund (money sent to the
+  /// clinic) or a void one (nothing owed) never shows a figure to transfer.
+  static bool _payable(InvoiceEntity? invoice) =>
+      invoice != null && invoice.isOpen && !invoice.isRefund;
+
   /// What to send to an account, in its own currency - exact, not rounded.
   static String? _amountFor(InvoiceEntity? invoice, String currency) {
-    final price = invoice?.amountIn(currency);
+    if (!_payable(invoice)) return null;
+    final price = invoice!.amountIn(currency);
     return price == null ? null : formatPrice(price);
   }
 
@@ -83,8 +89,8 @@ class _Body extends StatelessWidget {
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final invoice = data.invoice;
     final summary = [
-      if (invoice != null && invoice.isOpen) ...[
-        _InvoiceSummary(invoice: invoice),
+      if (_payable(invoice)) ...[
+        _InvoiceSummary(invoice: invoice!),
         SizedBox(height: 16.h),
       ],
     ];

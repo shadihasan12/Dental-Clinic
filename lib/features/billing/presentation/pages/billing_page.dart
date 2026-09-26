@@ -6,7 +6,9 @@ import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_entity.dart';
 import 'package:dental_clinic_app/features/billing/presentation/cubit/billing_overview_cubit.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_cards.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
@@ -21,7 +23,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 /// The subscription screen: where it stands, what is owed, what was reported
-/// and is being checked, and the way into choosing a plan.
+/// and is being checked, and the way forward - choosing a plan, renewing,
+/// upgrading, or buying extra seats and storage.
 ///
 /// [locked] is the same screen standing in for the whole app when the clinic
 /// is `billing_only`: no back arrow, since there is nowhere else to go, and
@@ -111,25 +114,43 @@ class _BillingView extends StatelessWidget {
                     onHowToPay: () =>
                         _push(context, AppRoutesNames.howToPay, extra: open.id),
                   ),
-                ] else if (status == null || status.canSubscribe) ...[
+                ] else if (status != null) ...[
+                  // With an invoice open the quote refuses anything new -
+                  // pay that one first - so the actions wait for it.
                   SizedBox(height: 12.h),
-                  if (status != null)
-                    DentaButton(
-                      label: l10n.choosePlanAction,
-                      icon: Icons.workspace_premium_outlined,
-                      expand: true,
-                      onTap: () =>
-                          _push(context, AppRoutesNames.selectBillingPlan),
+                  _PlanActions(
+                    status: status,
+                    onOpen: (args) => _push(
+                      context,
+                      AppRoutesNames.selectBillingPlan,
+                      extra: args,
                     ),
-                ] else ...[
-                  SizedBox(height: 12.h),
-                  _RenewalUnavailableNote(),
+                  ),
                 ],
                 if (state.usage != null) ...[
                   SizedBox(height: 16.h),
                   SectionLabel(l10n.usageTitle),
                   SizedBox(height: 10.h),
                   _UsageCard(usage: state.usage!),
+                ],
+                if (state.addons.isNotEmpty) ...[
+                  SizedBox(height: 8.h),
+                  AppCard(
+                    onTap: () => _push(context, AppRoutesNames.billingAddons),
+                    child: Row(
+                      children: [
+                        const IconTile(icon: Icons.add_circle_outline_rounded),
+                        SizedBox(width: 11.w),
+                        Expanded(
+                          child: _TwoLine(
+                            title: l10n.addonsTitle,
+                            subtitle: l10n.addonsRowHint,
+                          ),
+                        ),
+                        const DirectionalChevron(),
+                      ],
+                    ),
+                  ),
                 ],
                 SizedBox(height: 16.h),
                 AppCard(
@@ -341,11 +362,18 @@ class _StatusCard extends StatelessWidget {
         null,
       );
     }
+    // Renewed ahead: say so, rather than let the end date read as a nag.
+    final next = status.nextCycle;
     return (
       l10n.subStatusActive,
       ColorManager.success,
       Icons.verified_outlined,
-      null,
+      next?.startsAt == null
+          ? null
+          : l10n.nextCycleBooked(
+              next!.planName,
+              AppDate.medium(context, next.startsAt!),
+            ),
     );
   }
 
@@ -560,39 +588,58 @@ class _OpenInvoiceCard extends StatelessWidget {
   }
 }
 
-/// ACTIVE or GRACE: the quote says `can_request: false` and the request is a
-/// 409, so there is no renew button that posts anything - only the way to
-/// support.
-class _RenewalUnavailableNote extends StatelessWidget {
+/// The way forward once nothing is owed. ACTIVE, GRACE and EXPIRED after a
+/// paid cycle renew - the picker opening on the plan, period and quantity
+/// being served; ACTIVE can also move up to a bigger plan now. Anything else
+/// buys a new subscription.
+class _PlanActions extends StatelessWidget {
+  const _PlanActions({required this.status, required this.onOpen});
+
+  final SubscriptionStatusEntity status;
+  final ValueChanged<BillingPlanArgs> onOpen;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const IconTile(icon: Icons.info_outline_rounded),
-              SizedBox(width: 11.w),
-              Expanded(
-                child: _TwoLine(
-                  title: l10n.renewalFromAppTitle,
-                  subtitle: l10n.subRenewNotAvailable,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          DentaOutlineButton(
-            label: l10n.contactSupport,
-            icon: Icons.support_agent_outlined,
+    if (!status.canRenew) {
+      return DentaButton(
+        label: l10n.choosePlanAction,
+        icon: Icons.workspace_premium_outlined,
+        expand: true,
+        onTap: () => onOpen(const BillingPlanArgs()),
+      );
+    }
+
+    final renew = DentaButton(
+      label: l10n.renewAction,
+      icon: Icons.autorenew_rounded,
+      expand: true,
+      onTap: () => onOpen(BillingPlanArgs(
+        mode: BillingPlanMode.renew,
+        currentPlanId: status.planId,
+        period: BillingPeriod.fromApi(status.billingPeriod),
+        duration: status.durationQuantity,
+      )),
+    );
+    if (!status.canUpgrade) return renew;
+
+    return Row(
+      children: [
+        Expanded(child: renew),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: DentaOutlineButton(
+            label: l10n.upgradePlanAction,
+            icon: Icons.trending_up_rounded,
             expand: true,
             tone: ColorManager.primary,
-            onTap: () => context.pushNamed(AppRoutesNames.reportIssue),
+            onTap: () => onOpen(BillingPlanArgs(
+              mode: BillingPlanMode.upgrade,
+              currentPlanId: status.planId,
+            )),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

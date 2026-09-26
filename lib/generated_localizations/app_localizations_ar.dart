@@ -3343,7 +3343,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subBodyGrace =>
-      'انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح. التجديد من التطبيق غير متاح بعد، يرجى التواصل مع الدعم.';
+      'انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح، جدّد قبلها.';
 
   @override
   String get subBodyNone =>
@@ -3375,12 +3375,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String seatsFullMessage(int count) {
-    return 'لا توجد مقاعد متاحة: باقتك تسمح بـ $count عضو/أعضاء وجميعها مشغولة. قم بترقية الباقة أو أزل عضواً أولاً.';
+    return 'لا توجد مقاعد متاحة: باقتك تسمح بـ $count عضو/أعضاء وجميعها مشغولة. اشترِ مقعداً إضافياً، أو رقِّ الباقة، أو أزل عضواً أولاً.';
   }
 
   @override
   String get seatsFullMessageGeneric =>
-      'لا توجد مقاعد متاحة في باقتك. قم بترقية الباقة أو أزل عضواً أولاً.';
+      'لا توجد مقاعد متاحة في باقتك. اشترِ مقعداً إضافياً، أو رقِّ الباقة، أو أزل عضواً أولاً.';
 
   @override
   String get walletLabel => 'رصيد المحفظة';
@@ -3738,4 +3738,176 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePhotoHint => 'اضغط على الصورة لرفع صورة جديدة.';
+
+  @override
+  String get billingDoneTitle => 'تم';
+
+  @override
+  String renewFromAction(String date) {
+    return 'جدّد ابتداءً من $date';
+  }
+
+  @override
+  String get quoteRestOfCycle => 'لبقية الدورة الحالية';
+
+  @override
+  String get quoteCreditLabel => 'يُضاف إلى رصيدك';
+
+  @override
+  String quoteUntil(String date) {
+    return 'يسري من الآن حتى $date.';
+  }
+
+  @override
+  String quoteRunsFrom(String start, String end) {
+    return 'تمتد من $start إلى $end، مباشرةً بعد دورتك الحالية.';
+  }
+
+  @override
+  String get billingNotAvailableNow => 'هذا غير متاح حالياً.';
+
+  @override
+  String get quoteCreditExplainer =>
+      'لا شيء للدفع: ما يُعاد إليك أكبر من السعر، فيُضاف الفرق إلى رصيد عيادتك.';
+
+  @override
+  String quoteStartsLaterExplainer(String date) {
+    return 'تدفعها الآن وتبدأ بتاريخ $date عند انتهاء دورتك الحالية، دون أن تخسر الأيام المتبقية.';
+  }
+
+  @override
+  String quotePayBefore(String date) {
+    return 'التأكيد يُصدر فاتورة. سدّدها قبل $date، وإلا تُلغى تلقائياً عند انتهاء هذه الدورة.';
+  }
+
+  @override
+  String blockerSeats(int current, int allowed, int excess) {
+    return 'الأعضاء: $current من أصل $allowed مسموح. أزل $excess، أو أضف مقاعد.';
+  }
+
+  @override
+  String blockerStorage(int excess) {
+    return 'التخزين: تجاوز بمقدار $excess ميجابايت. حرّر بعض المساحة، أو أضف مساحة.';
+  }
+
+  @override
+  String get upgradePlanAction => 'ترقية';
+
+  @override
+  String get upgradePlanTitle => 'ترقية الباقة';
+
+  @override
+  String get renewPlanTitle => 'تجديد الاشتراك';
+
+  @override
+  String nextCycleBooked(String plan, String date) {
+    return 'تم التجديد: $plan ابتداءً من $date';
+  }
+
+  @override
+  String get addonsTitle => 'مقاعد ومساحة إضافية';
+
+  @override
+  String get addonsRowHint => 'أضف أعضاء أو مساحة دون تغيير باقتك';
+
+  @override
+  String get noBiggerPlan => 'أنت على أكبر باقة متاحة.';
+
+  @override
+  String get upgradeHint =>
+      'الباقة الأكبر تبدأ فوراً لبقية الدورة. الباقة الأصغر تبدأ مع دورتك القادمة: جدّد عليها.';
+
+  @override
+  String get renewAddonsTitle => 'المقاعد والمساحة الإضافية للدورة الجديدة';
+
+  @override
+  String get renewAddonsHint =>
+      'لا تُلغى الوحدات إلا عند التجديد. خفّضها هنا لتنتهي مع دورتك الحالية.';
+
+  @override
+  String get billingRefund => 'استرداد';
+
+  @override
+  String get invoiceRefundedToYou => 'أُعيد إليك';
+
+  @override
+  String invoiceRefundedOnDate(String date) {
+    return 'أُرسل إليك في $date';
+  }
+
+  @override
+  String get paymentRefundExplainer =>
+      'أعدنا إليك هذا المبلغ. استخدم رقم المرجع أدناه لاستلامه.';
+
+  @override
+  String get paymentYourNote => 'ملاحظتك';
+
+  @override
+  String get paymentWithdrawnReason => 'سبب السحب';
+
+  @override
+  String get refundProofTitle => 'إثبات التحويل';
+
+  @override
+  String get periodRunning => 'سارية الآن';
+
+  @override
+  String get periodTrialConverted => 'تجربة · اشتركت قبل انتهائها';
+
+  @override
+  String get periodTrialEnded => 'انتهت التجربة';
+
+  @override
+  String get periodUpgraded => 'تمت الترقية';
+
+  @override
+  String get periodEnded => 'منتهية';
+
+  @override
+  String periodPriceWithCredit(String price, String credit) {
+    return '$price — استُرد $credit';
+  }
+
+  @override
+  String get addonsIntro =>
+      'أضف أعضاء أو مساحة لبقية الدورة الحالية، دون تغيير باقتك.';
+
+  @override
+  String get addonsEmptyTitle => 'لا توجد إضافات متاحة حالياً';
+
+  @override
+  String get addonsEmptyMessage =>
+      'ستظهر هنا المقاعد والمساحة الإضافية عند توفّرها.';
+
+  @override
+  String get addonsRemoveNote => 'لإزالة وحدات، خفّضها عند التجديد.';
+
+  @override
+  String addonPricePerUnitMonthly(String price) {
+    return '$price للوحدة شهرياً';
+  }
+
+  @override
+  String addonPricePerUnitYearly(String price) {
+    return '$price للوحدة سنوياً';
+  }
+
+  @override
+  String get addonOwnedLabel => 'لديك';
+
+  @override
+  String addonOwnedNow(int count) {
+    return '$count حالياً';
+  }
+
+  @override
+  String addonOwnedNextCycle(int count) {
+    return '$count من دورتك القادمة';
+  }
+
+  @override
+  String get addonQuantityLabel => 'عدد الوحدات المُضافة';
+
+  @override
+  String get buySeatAction => 'اشترِ مقعداً';
 }

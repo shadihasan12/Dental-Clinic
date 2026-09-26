@@ -86,6 +86,7 @@ class AppRoutesNames {
   static const String clinicPayments = 'clinicPayments';
   static const String paymentDetails = 'paymentDetails';
   static const String subscriptionHistory = 'subscriptionHistory';
+  static const String billingAddons = 'billingAddons';
 
   // Other Routes
   static const String medicalHistory = 'medicalHistory';

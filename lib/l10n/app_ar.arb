@@ -1384,7 +1384,7 @@
   "subBodyExpired": "انتهى اشتراكك. ما زال بإمكانك عرض بياناتك؛ اختر باقة وادفع لمتابعة العمل.",
   "subBodyPending": "بانتظار الدفعة الأولى. إلى أن يتم تأكيدها، تتوفر صفحتا الاشتراك والدفعات فقط.",
   "subBodyCanceled": "تم إلغاء هذا الاشتراك. اختر باقة للبدء من جديد.",
-  "subBodyGrace": "انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح. التجديد من التطبيق غير متاح بعد، يرجى التواصل مع الدعم.",
+  "subBodyGrace": "انتهت فترتك المدفوعة. كل شيء يعمل حتى نهاية فترة السماح، جدّد قبلها.",
   "subBodyNone": "لا يوجد اشتراك لهذه العيادة. يرجى التواصل مع الدعم.",
   "subRenewNotAvailable": "تجديد الاشتراك أو تغيير الباقة غير متاح من التطبيق حالياً. يرجى التواصل مع الدعم.",
   "renewalFromAppTitle": "تجديد الباقة",
@@ -1403,7 +1403,7 @@
       }
     }
   },
-  "seatsFullMessage": "لا توجد مقاعد متاحة: باقتك تسمح بـ {count} عضو/أعضاء وجميعها مشغولة. قم بترقية الباقة أو أزل عضواً أولاً.",
+  "seatsFullMessage": "لا توجد مقاعد متاحة: باقتك تسمح بـ {count} عضو/أعضاء وجميعها مشغولة. اشترِ مقعداً إضافياً، أو رقِّ الباقة، أو أزل عضواً أولاً.",
   "@seatsFullMessage": {
     "placeholders": {
       "count": {
@@ -1411,7 +1411,7 @@
       }
     }
   },
-  "seatsFullMessageGeneric": "لا توجد مقاعد متاحة في باقتك. قم بترقية الباقة أو أزل عضواً أولاً.",
+  "seatsFullMessageGeneric": "لا توجد مقاعد متاحة في باقتك. اشترِ مقعداً إضافياً، أو رقِّ الباقة، أو أزل عضواً أولاً.",
   "walletLabel": "رصيد المحفظة",
   "walletHint": "الرصيد المتبقي بعد تسديد الفواتير",
   "pendingPaymentsTitle": "حوالة قيد المراجعة",
@@ -1447,7 +1447,9 @@
   "daysUnit": "{count, plural, =1{يوم} =2{يومان} few{أيام} other{يوم}}",
   "@daysUnit": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "viewInvoiceDetails": "عرض تفاصيل الفاتورة",
@@ -1598,5 +1600,164 @@
   "followsClinicHoursAdminNote": "يتبع ساعات عمل العيادة. حفظ التغييرات هنا يمنح هذا العضو جدولاً خاصاً به، ولن يتبع جدول العيادة بعد ذلك.",
   "slotsFollowClinicHours": "حسب ساعات عمل العيادة",
   "profilePhoto": "الصورة الشخصية",
-  "profilePhotoHint": "اضغط على الصورة لرفع صورة جديدة."
+  "profilePhotoHint": "اضغط على الصورة لرفع صورة جديدة.",
+  "billingDoneTitle": "تم",
+  "renewFromAction": "جدّد ابتداءً من {date}",
+  "@renewFromAction": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteRestOfCycle": "لبقية الدورة الحالية",
+  "quoteCreditLabel": "يُضاف إلى رصيدك",
+  "quoteUntil": "يسري من الآن حتى {date}.",
+  "@quoteUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quoteRunsFrom": "تمتد من {start} إلى {end}، مباشرةً بعد دورتك الحالية.",
+  "@quoteRunsFrom": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "billingNotAvailableNow": "هذا غير متاح حالياً.",
+  "quoteCreditExplainer": "لا شيء للدفع: ما يُعاد إليك أكبر من السعر، فيُضاف الفرق إلى رصيد عيادتك.",
+  "quoteStartsLaterExplainer": "تدفعها الآن وتبدأ بتاريخ {date} عند انتهاء دورتك الحالية، دون أن تخسر الأيام المتبقية.",
+  "@quoteStartsLaterExplainer": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quotePayBefore": "التأكيد يُصدر فاتورة. سدّدها قبل {date}، وإلا تُلغى تلقائياً عند انتهاء هذه الدورة.",
+  "@quotePayBefore": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "blockerSeats": "الأعضاء: {current} من أصل {allowed} مسموح. أزل {excess}، أو أضف مقاعد.",
+  "@blockerSeats": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "allowed": {
+        "type": "int"
+      },
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "blockerStorage": "التخزين: تجاوز بمقدار {excess} ميجابايت. حرّر بعض المساحة، أو أضف مساحة.",
+  "@blockerStorage": {
+    "placeholders": {
+      "excess": {
+        "type": "int"
+      }
+    }
+  },
+  "upgradePlanAction": "ترقية",
+  "upgradePlanTitle": "ترقية الباقة",
+  "renewPlanTitle": "تجديد الاشتراك",
+  "nextCycleBooked": "تم التجديد: {plan} ابتداءً من {date}",
+  "@nextCycleBooked": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addonsTitle": "مقاعد ومساحة إضافية",
+  "addonsRowHint": "أضف أعضاء أو مساحة دون تغيير باقتك",
+  "noBiggerPlan": "أنت على أكبر باقة متاحة.",
+  "upgradeHint": "الباقة الأكبر تبدأ فوراً لبقية الدورة. الباقة الأصغر تبدأ مع دورتك القادمة: جدّد عليها.",
+  "renewAddonsTitle": "المقاعد والمساحة الإضافية للدورة الجديدة",
+  "renewAddonsHint": "لا تُلغى الوحدات إلا عند التجديد. خفّضها هنا لتنتهي مع دورتك الحالية.",
+  "billingRefund": "استرداد",
+  "invoiceRefundedToYou": "أُعيد إليك",
+  "invoiceRefundedOnDate": "أُرسل إليك في {date}",
+  "@invoiceRefundedOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentRefundExplainer": "أعدنا إليك هذا المبلغ. استخدم رقم المرجع أدناه لاستلامه.",
+  "paymentYourNote": "ملاحظتك",
+  "paymentWithdrawnReason": "سبب السحب",
+  "refundProofTitle": "إثبات التحويل",
+  "periodRunning": "سارية الآن",
+  "periodTrialConverted": "تجربة · اشتركت قبل انتهائها",
+  "periodTrialEnded": "انتهت التجربة",
+  "periodUpgraded": "تمت الترقية",
+  "periodEnded": "منتهية",
+  "periodPriceWithCredit": "{price} — استُرد {credit}",
+  "@periodPriceWithCredit": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "credit": {
+        "type": "String"
+      }
+    }
+  },
+  "addonsIntro": "أضف أعضاء أو مساحة لبقية الدورة الحالية، دون تغيير باقتك.",
+  "addonsEmptyTitle": "لا توجد إضافات متاحة حالياً",
+  "addonsEmptyMessage": "ستظهر هنا المقاعد والمساحة الإضافية عند توفّرها.",
+  "addonsRemoveNote": "لإزالة وحدات، خفّضها عند التجديد.",
+  "addonPricePerUnitMonthly": "{price} للوحدة شهرياً",
+  "@addonPricePerUnitMonthly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "addonPricePerUnitYearly": "{price} للوحدة سنوياً",
+  "@addonPricePerUnitYearly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "addonOwnedLabel": "لديك",
+  "addonOwnedNow": "{count} حالياً",
+  "@addonOwnedNow": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addonOwnedNextCycle": "{count} من دورتك القادمة",
+  "@addonOwnedNextCycle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addonQuantityLabel": "عدد الوحدات المُضافة",
+  "buySeatAction": "اشترِ مقعداً"
 }

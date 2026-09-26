@@ -6407,7 +6407,7 @@ abstract class AppLocalizations {
   /// No description provided for @subBodyGrace.
   ///
   /// In en, this message translates to:
-  /// **'Your paid period has ended. Everything keeps working until the grace period ends. Renewing from the app isn\'t available yet, so please contact support.'**
+  /// **'Your paid period has ended. Everything keeps working until the grace period ends - renew before then.'**
   String get subBodyGrace;
 
   /// No description provided for @subBodyNone.
@@ -6461,13 +6461,13 @@ abstract class AppLocalizations {
   /// No description provided for @seatsFullMessage.
   ///
   /// In en, this message translates to:
-  /// **'No seats left: your plan allows {count} member(s), and they are all taken. Upgrade the plan or remove a member first.'**
+  /// **'No seats left: your plan allows {count} member(s), and they are all taken. Buy an extra seat, upgrade the plan, or remove a member first.'**
   String seatsFullMessage(int count);
 
   /// No description provided for @seatsFullMessageGeneric.
   ///
   /// In en, this message translates to:
-  /// **'No seats left on your plan. Upgrade the plan or remove a member first.'**
+  /// **'No seats left on your plan. Buy an extra seat, upgrade the plan, or remove a member first.'**
   String get seatsFullMessageGeneric;
 
   /// No description provided for @walletLabel.
@@ -7039,6 +7039,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Click the avatar to upload a new picture.'**
   String get profilePhotoHint;
+
+  /// No description provided for @billingDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get billingDoneTitle;
+
+  /// No description provided for @renewFromAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew from {date}'**
+  String renewFromAction(String date);
+
+  /// No description provided for @quoteRestOfCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'For the rest of this cycle'**
+  String get quoteRestOfCycle;
+
+  /// No description provided for @quoteCreditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your balance'**
+  String get quoteCreditLabel;
+
+  /// No description provided for @quoteUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies now, until {date}.'**
+  String quoteUntil(String date);
+
+  /// No description provided for @quoteRunsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Runs from {start} to {end}, straight after your current cycle.'**
+  String quoteRunsFrom(String start, String end);
+
+  /// No description provided for @billingNotAvailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'This isn\'t available right now.'**
+  String get billingNotAvailableNow;
+
+  /// No description provided for @quoteCreditExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to pay: what comes back to you is more than the price, so the difference is added to your clinic\'s balance.'**
+  String get quoteCreditExplainer;
+
+  /// No description provided for @quoteStartsLaterExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid now, it starts on {date}, when your current cycle ends. You keep the days you have left.'**
+  String quoteStartsLaterExplainer(String date);
+
+  /// No description provided for @quotePayBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming issues an invoice. Pay it before {date}, or it is cancelled on its own when this cycle ends.'**
+  String quotePayBefore(String date);
+
+  /// No description provided for @blockerSeats.
+  ///
+  /// In en, this message translates to:
+  /// **'Members: {current} of {allowed} allowed. Remove {excess}, or add seats.'**
+  String blockerSeats(int current, int allowed, int excess);
+
+  /// No description provided for @blockerStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage: {excess} MB over. Free some space, or add storage.'**
+  String blockerStorage(int excess);
+
+  /// No description provided for @upgradePlanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgradePlanAction;
+
+  /// No description provided for @upgradePlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade your plan'**
+  String get upgradePlanTitle;
+
+  /// No description provided for @renewPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew your subscription'**
+  String get renewPlanTitle;
+
+  /// No description provided for @nextCycleBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewed: {plan} from {date}'**
+  String nextCycleBooked(String plan, String date);
+
+  /// No description provided for @addonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra seats & storage'**
+  String get addonsTitle;
+
+  /// No description provided for @addonsRowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add members or storage without changing your plan'**
+  String get addonsRowHint;
+
+  /// No description provided for @noBiggerPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already on the largest plan.'**
+  String get noBiggerPlan;
+
+  /// No description provided for @upgradeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A bigger plan starts now, for the rest of this cycle. A smaller one starts with your next cycle: renew onto it.'**
+  String get upgradeHint;
+
+  /// No description provided for @renewAddonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra seats & storage for the new cycle'**
+  String get renewAddonsTitle;
+
+  /// No description provided for @renewAddonsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Units are only dropped at a renewal. Lower one here and it ends with your current cycle.'**
+  String get renewAddonsHint;
+
+  /// No description provided for @billingRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get billingRefund;
+
+  /// No description provided for @invoiceRefundedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded to you'**
+  String get invoiceRefundedToYou;
+
+  /// No description provided for @invoiceRefundedOnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to you on {date}'**
+  String invoiceRefundedOnDate(String date);
+
+  /// No description provided for @paymentRefundExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent this amount back to you. Use the reference below to collect it.'**
+  String get paymentRefundExplainer;
+
+  /// No description provided for @paymentYourNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your note'**
+  String get paymentYourNote;
+
+  /// No description provided for @paymentWithdrawnReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it was withdrawn'**
+  String get paymentWithdrawnReason;
+
+  /// No description provided for @refundProofTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Proof of transfer'**
+  String get refundProofTitle;
+
+  /// No description provided for @periodRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running now'**
+  String get periodRunning;
+
+  /// No description provided for @periodTrialConverted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial · subscribed early'**
+  String get periodTrialConverted;
+
+  /// No description provided for @periodTrialEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Trial ended'**
+  String get periodTrialEnded;
+
+  /// No description provided for @periodUpgraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgraded'**
+  String get periodUpgraded;
+
+  /// No description provided for @periodEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get periodEnded;
+
+  /// No description provided for @periodPriceWithCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} — {credit} back'**
+  String periodPriceWithCredit(String price, String credit);
+
+  /// No description provided for @addonsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add members or storage for the rest of this cycle, without changing your plan.'**
+  String get addonsIntro;
+
+  /// No description provided for @addonsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on sale right now'**
+  String get addonsEmptyTitle;
+
+  /// No description provided for @addonsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra seats and storage will show here when they are offered.'**
+  String get addonsEmptyMessage;
+
+  /// No description provided for @addonsRemoveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'To remove units, lower them when you renew.'**
+  String get addonsRemoveNote;
+
+  /// No description provided for @addonPricePerUnitMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} per unit a month'**
+  String addonPricePerUnitMonthly(String price);
+
+  /// No description provided for @addonPricePerUnitYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} per unit a year'**
+  String addonPricePerUnitYearly(String price);
+
+  /// No description provided for @addonOwnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You have'**
+  String get addonOwnedLabel;
+
+  /// No description provided for @addonOwnedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} now'**
+  String addonOwnedNow(int count);
+
+  /// No description provided for @addonOwnedNextCycle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} from your next cycle'**
+  String addonOwnedNextCycle(int count);
+
+  /// No description provided for @addonQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Units to add'**
+  String get addonQuantityLabel;
+
+  /// No description provided for @buySeatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy a seat'**
+  String get buySeatAction;
 }
 
 class _AppLocalizationsDelegate

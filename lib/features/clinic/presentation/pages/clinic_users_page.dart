@@ -17,6 +17,7 @@ import 'package:dental_clinic_app/features/subscription/domain/entities/subscrip
 import 'package:dental_clinic_app/features/subscription/domain/use_cases/get_subscription_usage_use_case.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -287,14 +288,33 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   Future<void> _onAddUser(BuildContext context, AppLocalizations l10n) async {
     if (_seatsFull) {
       final seats = _usage?.users;
-      InfoPopup.show(
+      final message = seats?.limit == null
+          ? l10n.seatsFullMessageGeneric
+          : l10n.seatsFullMessage(seats!.limit!.toInt());
+      // Only someone who can manage billing can buy a seat; everyone else
+      // just learns why the add is blocked.
+      if (!SubscriptionGuardHelper.canManageBilling) {
+        InfoPopup.show(
+          context: context,
+          icon: Icons.lock_outline_rounded,
+          title: l10n.subscriptionLimitTitle,
+          body: message,
+        );
+        return;
+      }
+      final buy = await AppConfirmationDialog.show(
         context: context,
-        icon: Icons.lock_outline_rounded,
         title: l10n.subscriptionLimitTitle,
-        body: seats?.limit == null
-            ? l10n.seatsFullMessageGeneric
-            : l10n.seatsFullMessage(seats!.limit!.toInt()),
+        subtitle: message,
+        icon: Icons.lock_outline_rounded,
+        yesText: l10n.buySeatAction,
+        noText: l10n.close,
+        barrierDismissible: true,
       );
+      if (buy != true || !context.mounted) return;
+      await context.pushNamed(AppRoutesNames.billingAddons);
+      // A seat bought (or an invoice raised) there changes the limit.
+      if (mounted) await _loadUsage();
       return;
     }
 

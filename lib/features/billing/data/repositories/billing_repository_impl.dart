@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/data/data_sources/billing_remote_data_source.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
@@ -43,9 +44,40 @@ class BillingRepositoryImpl implements BillingRepository {
       _run(() => _remote.getQuote(params));
 
   @override
-  Future<Either<NetworkExceptions, WithMessage<InvoiceEntity>>>
-      requestSubscription(QuoteParams params) =>
-          _run(() => _remote.requestSubscription(params));
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestSubscription(
+    QuoteParams params,
+  ) =>
+      _run(() => _remote.requestSubscription(params));
+
+  @override
+  Future<Either<NetworkExceptions, QuoteEntity>> getUpgradeQuote(
+    String planVersionId,
+  ) =>
+      _run(() => _remote.getUpgradeQuote(planVersionId));
+
+  @override
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestUpgrade(
+    String planVersionId,
+  ) =>
+      _run(() => _remote.requestUpgrade(planVersionId));
+
+  @override
+  Future<Either<NetworkExceptions, List<AddonEntity>>> getAddons() =>
+      _run(_remote.getAddons);
+
+  @override
+  Future<Either<NetworkExceptions, QuoteEntity>> getAddonQuote(
+    String planVersionId,
+    int quantity,
+  ) =>
+      _run(() => _remote.getAddonQuote(planVersionId, quantity));
+
+  @override
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestAddons(
+    String planVersionId,
+    int quantity,
+  ) =>
+      _run(() => _remote.requestAddons(planVersionId, quantity));
 
   @override
   Future<Either<NetworkExceptions, List<SubscriptionPeriodEntity>>>
@@ -90,8 +122,4 @@ class BillingRepositoryImpl implements BillingRepository {
     String? reason,
   }) =>
       _run(() => _remote.cancelPayment(id, reason: reason));
-
-  @override
-  Future<Either<NetworkExceptions, String?>> getWalletBalance() =>
-      _run(_remote.getWalletBalance);
 }

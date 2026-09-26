@@ -83,7 +83,12 @@ class _InvoiceBody extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconTile(icon: Icons.receipt_long_outlined, tone: tone),
+                  IconTile(
+                    icon: invoice.isRefund
+                        ? Icons.south_west_rounded
+                        : Icons.receipt_long_outlined,
+                    tone: tone,
+                  ),
                   SizedBox(width: 11.w),
                   Expanded(
                     child: Text(
@@ -117,7 +122,8 @@ class _InvoiceBody extends StatelessWidget {
               SectionLabel(l10n.invoiceLinesTitle),
               SizedBox(height: 8.h),
               BillingLinesView(lines: invoice.items, total: invoice.amountUsd),
-              if (!invoice.isCreditNote) ...[
+              // A refund owes and was paid nothing; a void one owes nothing.
+              if (!invoice.isRefund) ...[
                 BillingInfoRow(
                   label: l10n.invoicePaidSoFar,
                   value: formatUsd(invoice.amountPaidUsd),
@@ -145,7 +151,9 @@ class _InvoiceBody extends StatelessWidget {
             ],
           ),
         ),
-        if (invoice.isOpen) ...[
+        // Only a charge still open is ever offered for paying - never a
+        // refund (money sent to the clinic) or a void (nothing is owed).
+        if (invoice.isOpen && !invoice.isRefund) ...[
           SizedBox(height: 16.h),
           DentaButton(
             label: l10n.payNowAction,
@@ -190,20 +198,27 @@ class _InvoiceBody extends StatelessWidget {
       color: c.textTertiary,
     );
 
-    if (invoice.isCreditNote) {
+    // Money sent back to the clinic: what reached it, in every currency it
+    // was sent in, as a positive figure - never a due date or a way to pay.
+    if (invoice.isRefund) {
+      final sent = invoice.amounts
+          .map((a) => a.copyWith(amount: a.amount.abs()))
+          .toList();
       return [
-        Text(l10n.invoiceCreditNoteBody, style: label),
+        Text(l10n.invoiceRefundedToYou, style: label),
         SizedBox(height: 4.h),
-        Text(
-          formatUsd(invoice.amountUsd.abs()),
-          textDirection: TextDirection.ltr,
-          style: TextStyle(
-            fontFamily: family,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w700,
-            color: ColorManager.info,
+        AmountsView(amounts: sent, fallbackUsd: invoice.amountUsd.abs()),
+        if (invoice.paidAt != null) ...[
+          SizedBox(height: 6.h),
+          Text(
+            l10n.invoiceRefundedOnDate(AppDate.medium(context, invoice.paidAt!)),
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 12.sp,
+              color: c.textSecondary,
+            ),
           ),
-        ),
+        ],
       ];
     }
     if (invoice.isOpen) {

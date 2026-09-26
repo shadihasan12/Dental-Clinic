@@ -240,13 +240,13 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
       children: [
         for (final entry in features.limits.entries)
           _FeatureGroup(
-            title: entry.key,
+            title: features.groupTitle(entry.key),
             entries: entry.value,
             showTrialNote: widget.showTrial,
           ),
         for (final entry in features.features.entries)
           _FeatureGroup(
-            title: entry.key,
+            title: features.groupTitle(entry.key),
             entries: entry.value,
             showTrialNote: widget.showTrial,
           ),
@@ -255,8 +255,8 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
   }
 }
 
-/// One period's price: its label, then each currency on its own line, the
-/// first one large.
+/// One period's price: its label, then each currency on its own line, SYP
+/// large - the server's order is not fixed, so it is sorted here.
 class _PriceBlock extends StatelessWidget {
   const _PriceBlock({
     required this.label,
@@ -314,7 +314,7 @@ class _PriceBlock extends StatelessWidget {
                 color: c.textTertiary,
               ),
             ),
-          for (final (i, price) in prices.indexed)
+          for (final (i, price) in orderedAmounts(prices).indexed)
             Text(
               formatPrice(price),
               textDirection: TextDirection.ltr,

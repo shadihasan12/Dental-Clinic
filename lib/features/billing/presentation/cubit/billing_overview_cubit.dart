@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
@@ -16,6 +17,7 @@ class BillingOverviewState {
     this.usage,
     this.invoices = const [],
     this.payments = const [],
+    this.addons = const [],
   });
 
   final bool isLoading;
@@ -28,10 +30,13 @@ class BillingOverviewState {
   final List<InvoiceEntity> invoices;
   final List<ClinicPaymentEntity> payments;
 
+  /// The add-ons on sale, with the units held. Empty hides the row.
+  final List<AddonEntity> addons;
+
   /// A clinic has at most one open invoice at a time.
   InvoiceEntity? get openInvoice {
     for (final i in invoices) {
-      if (i.isOpen && !i.isCreditNote) return i;
+      if (i.isOpen && !i.isRefund) return i;
     }
     return null;
   }
@@ -41,7 +46,7 @@ class BillingOverviewState {
 }
 
 /// Everything the subscription screen shows, loaded side by side: status,
-/// usage, invoices and payments.
+/// usage, invoices, payments and the add-ons.
 @injectable
 class BillingOverviewCubit extends Cubit<BillingOverviewState> {
   BillingOverviewCubit(this._subscriptions, this._billing)
@@ -55,11 +60,13 @@ class BillingOverviewCubit extends Cubit<BillingOverviewState> {
     final usageF = _subscriptions.getUsage();
     final invoicesF = _billing.getInvoices();
     final paymentsF = _billing.getPayments();
+    final addonsF = _billing.getAddons();
 
     final status = await statusF;
     final usage = await usageF;
     final invoices = await invoicesF;
     final payments = await paymentsF;
+    final addons = await addonsF;
     if (isClosed) return;
 
     emit(BillingOverviewState(
@@ -69,6 +76,7 @@ class BillingOverviewCubit extends Cubit<BillingOverviewState> {
       usage: usage.fold((_) => null, (u) => u),
       invoices: invoices.getOrElse(() => const []),
       payments: payments.getOrElse(() => const []),
+      addons: addons.getOrElse(() => const []),
     ));
   }
 }

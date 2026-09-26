@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
@@ -12,13 +13,24 @@ import 'package:dental_clinic_app/features/billing/domain/entities/plan_features
 import 'package:dental_clinic_app/features/billing/domain/entities/quote_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/subscription_period_entity.dart';
 
-/// The same three fields go to the quote and to the request, so the invoice
-/// raised is exactly the one that was priced.
+/// Add-on units to buy with a cycle.
+class AddonSelection {
+  const AddonSelection({required this.planVersionId, required this.quantity});
+
+  final String planVersionId;
+
+  /// 0 drops the add-on at the renewal.
+  final int quantity;
+}
+
+/// The same fields go to the quote and to the request, so the invoice raised
+/// is exactly the one that was priced.
 class QuoteParams {
   const QuoteParams({
     required this.planVersionId,
     required this.billingPeriod,
     this.durationQuantity = 1,
+    this.addons,
   });
 
   /// The plan's `version_id`, not its `id` - prices live on the version.
@@ -28,12 +40,37 @@ class QuoteParams {
   /// How many periods at once, 1-36.
   final int durationQuantity;
 
+  /// Null leaves `addons` out: a renewal carries on every unit the clinic
+  /// holds, a new subscription buys none. Sent, it is the whole list for the
+  /// new cycle - every add-on, 0 included.
+  final List<AddonSelection>? addons;
+
   static const int maxDuration = 36;
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> _base() => {
         'plan_version_id': planVersionId,
         'billing_period': billingPeriod.apiValue,
         'duration_quantity': durationQuantity,
+      };
+
+  /// The query string can't carry a list, so each unit is spelled out:
+  /// `addons[0][plan_version_id]=...&addons[0][quantity]=1`.
+  Map<String, dynamic> toQuery() => {
+        ..._base(),
+        if (addons != null)
+          for (var i = 0; i < addons!.length; i++) ...{
+            'addons[$i][plan_version_id]': addons![i].planVersionId,
+            'addons[$i][quantity]': addons![i].quantity,
+          },
+      };
+
+  Map<String, dynamic> toBody() => {
+        ..._base(),
+        if (addons != null)
+          'addons': [
+            for (final a in addons!)
+              {'plan_version_id': a.planVersionId, 'quantity': a.quantity},
+          ],
       };
 }
 
@@ -84,6 +121,24 @@ class ReportPaymentParams {
       };
 }
 
+/// What asking to be billed came to - for a cycle, an upgrade or add-ons:
+///
+/// - an OPEN [invoice]: the pay flow;
+/// - a PAID one: the clinic's balance covered it, and it has already taken
+///   effect (or, for a renewal bought ahead, the next cycle is booked);
+/// - no invoice at all: the credits outweighed the charge, and the
+///   difference went to the balance.
+///
+/// Either way [message] says which, in the server's words.
+class BillingRequestResult {
+  const BillingRequestResult({this.invoice, required this.message});
+
+  final InvoiceEntity? invoice;
+  final String message;
+
+  bool get needsPayment => invoice != null && invoice!.isOpen;
+}
+
 /// A write that came back with the server's own sentence, which the billing
 /// screens show verbatim rather than composing their own text.
 class WithMessage<T> {
@@ -102,10 +157,34 @@ abstract class BillingRepository {
 
   Future<Either<NetworkExceptions, QuoteEntity>> getQuote(QuoteParams params);
 
-  /// Raises an OPEN invoice. The subscription itself does not change until
-  /// the invoice is settled.
-  Future<Either<NetworkExceptions, WithMessage<InvoiceEntity>>>
-      requestSubscription(QuoteParams params);
+  /// Raises an invoice for a whole cycle - new, or a renewal. The
+  /// subscription itself does not change until the invoice is settled.
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestSubscription(
+    QuoteParams params,
+  );
+
+  /// Moving up to a bigger plan now. Only while ACTIVE.
+  Future<Either<NetworkExceptions, QuoteEntity>> getUpgradeQuote(
+    String planVersionId,
+  );
+
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestUpgrade(
+    String planVersionId,
+  );
+
+  /// The add-ons on sale, and the units the clinic holds. Can be empty.
+  Future<Either<NetworkExceptions, List<AddonEntity>>> getAddons();
+
+  /// [quantity] units more, for the rest of the cycle. Only while ACTIVE.
+  Future<Either<NetworkExceptions, QuoteEntity>> getAddonQuote(
+    String planVersionId,
+    int quantity,
+  );
+
+  Future<Either<NetworkExceptions, BillingRequestResult>> requestAddons(
+    String planVersionId,
+    int quantity,
+  );
 
   Future<Either<NetworkExceptions, List<SubscriptionPeriodEntity>>>
       getPeriods();
@@ -134,7 +213,4 @@ abstract class BillingRepository {
     String id, {
     String? reason,
   });
-
-  /// The clinic's wallet, preformatted (`"$0.00"`).
-  Future<Either<NetworkExceptions, String?>> getWalletBalance();
 }

@@ -12,16 +12,22 @@ class BillingLineEntity {
     this.periodEnd,
   });
 
-  /// `PLAN` today.
+  /// `PLAN`, `ADDON` (seats), `STORAGE`, `PRORATION_CREDIT` (money coming
+  /// off - negative), `ADJUSTMENT` or `REFUND`. Style a line by the sign of
+  /// [amountUsd], not by its kind.
   final String kind;
 
-  /// Generated server-side, in English for now.
+  /// Written by the server in the language asked for, with the dates it
+  /// covers. Displayed, never parsed.
   final String description;
   final int quantity;
   final double unitPriceUsd;
   final double amountUsd;
   final DateTime? periodStart;
   final DateTime? periodEnd;
+
+  /// Money coming off: a credit for unused days or a replaced next cycle.
+  bool get isCredit => amountUsd < 0;
 }
 
 /// `MONTHLY` or `YEARLY` - what a plan is priced and bought by.

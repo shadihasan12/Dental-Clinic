@@ -280,10 +280,13 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
       currencyOriginal: _currency!,
       referenceNumber: _reference.text.trim(),
       bankName: _method!.isBankTransfer ? _bankName.text.trim() : null,
-      // A day picked from the sheet has no time; today means "just now",
-      // and an earlier day is sent at midday so no timezone shifts it.
+      // A day picked from the sheet has no time. Today is left out, so the
+      // server stamps it with its own "now": sending the device's clock was
+      // refused as "in the future" whenever that clock ran a few seconds
+      // ahead of the server's. An earlier day is sent at midday so no
+      // timezone shifts it.
       paidAt: pickedToday
-          ? now
+          ? null
           : DateTime(_paidAt.year, _paidAt.month, _paidAt.day, 12),
       notes: _notes.text.trim(),
       mediaItemIds: [for (final r in _receipts) r.uploaded!.id],

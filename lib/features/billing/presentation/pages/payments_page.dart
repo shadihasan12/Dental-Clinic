@@ -34,7 +34,8 @@ Future<Either<NetworkExceptions, Map<String, String>>> _loadMethodNames(
 
 /// Every transfer the clinic reported, newest first, with where its review
 /// stands. A pending one can be withdrawn; a refused one shows the admin's
-/// reason and can be reported again.
+/// reason and can be reported again. Cash an admin recorded and refunds we
+/// sent back are listed here too; a refund reads as money received.
 class PaymentsPage extends StatelessWidget {
   const PaymentsPage({super.key});
 
@@ -104,7 +105,7 @@ class PaymentsPage extends StatelessWidget {
 }
 
 /// Withdraw on a pending report, report again on a refused one; nothing on
-/// the rest.
+/// the rest - nor ever on a refund, which the clinic did not send.
 class _PaymentActions extends StatelessWidget {
   const _PaymentActions({required this.payment, required this.onChanged});
 
@@ -114,6 +115,7 @@ class _PaymentActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    if (payment.isRefund) return const SizedBox.shrink();
     switch (payment.status) {
       case ClinicPaymentStatus.pending:
         return Align(

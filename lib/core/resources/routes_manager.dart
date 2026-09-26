@@ -53,6 +53,7 @@ import 'package:dental_clinic_app/features/billing/presentation/pages/payments_p
 import 'package:dental_clinic_app/features/billing/presentation/pages/report_payment_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/subscription_history_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/pages/addons_page.dart';
 
 /// Root navigator key exposed so non-widget code (notification service, deep
 /// links, etc.) can navigate without holding a BuildContext.
@@ -425,7 +426,11 @@ class RoutesManager {
             name: AppRoutesNames.selectBillingPlan,
             pageBuilder: (context, state) {
               return CupertinoPage(
-                child: const SelectBillingPlanPage(),
+                // Optional: renewing or upgrading, with what to preselect.
+                child: SelectBillingPlanPage(
+                  args: state.extra as BillingPlanArgs? ??
+                      const BillingPlanArgs(),
+                ),
                 key: state.pageKey,
                 name: state.name,
               );
@@ -501,6 +506,17 @@ class RoutesManager {
             pageBuilder: (context, state) {
               return CupertinoPage(
                 child: const SubscriptionHistoryPage(),
+                key: state.pageKey,
+                name: state.name,
+              );
+            },
+          ),
+          GoRoute(
+            path: '/billing/addons',
+            name: AppRoutesNames.billingAddons,
+            pageBuilder: (context, state) {
+              return CupertinoPage(
+                child: const AddonsPage(),
                 key: state.pageKey,
                 name: state.name,
               );

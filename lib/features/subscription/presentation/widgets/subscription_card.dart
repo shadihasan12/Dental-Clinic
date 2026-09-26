@@ -130,6 +130,13 @@ class SubscriptionCard extends StatelessWidget {
     if (s.endsAt == null) return null;
     if (s.isExpired) return line(l10n.endedLabel, s.endsAt!);
     if (s.isTrial) return line(l10n.trialEndsLabel, s.endsAt!);
+    final next = s.nextCycle;
+    if (s.isActive && next?.startsAt != null) {
+      return l10n.nextCycleBooked(
+        next!.planName,
+        AppDate.medium(context, next.startsAt!),
+      );
+    }
     if (s.isActive) return line(l10n.renewsLabel, s.endsAt!);
     return null;
   }
@@ -203,13 +210,12 @@ class _Look {
       );
     }
     if (s.isGrace) {
-      // No renew action: in grace the app cannot raise a renewal, so the
-      // card only leads to the screen that says to contact support.
       return _Look(
         accent: ColorManager.warning,
         icon: Icons.warning_amber_rounded,
         chip: l10n.subStatusGrace,
         message: l10n.subscriptionGraceBody,
+        needsAction: true,
         urgent: true,
       );
     }
@@ -229,7 +235,8 @@ class _Look {
       accent: live ? ColorManager.success : ColorManager.warning,
       icon: live ? Icons.verified_outlined : Icons.pause_circle_outline,
       chip: live ? l10n.active : l10n.inactive,
-      urgent: live && s.daysRemaining <= 7,
+      // Renewed ahead: the end date is not a deadline any more.
+      urgent: live && s.daysRemaining <= 7 && s.nextCycle == null,
     );
   }
 }
@@ -257,7 +264,7 @@ class _Shell extends StatelessWidget {
     final radius = BorderRadius.circular(18.r);
     return Material(
       color: c.cardBg,
-      borderRadius: radius,
+      // The radius lives on [shape] only: Material asserts when both are set.
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: radius,

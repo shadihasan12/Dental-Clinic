@@ -44,8 +44,17 @@ String formatPlainAmount(double value) {
   return value.toString();
 }
 
+/// SYP first - the figure a Syrian clinic reads - then the rest in the
+/// order the server sent them. That order is not fixed, so nothing may take
+/// `.first` of a raw `amounts` list as the local currency.
+List<PriceEntity> orderedAmounts(List<PriceEntity> amounts) => [
+      ...amounts.where((a) => a.currency.toUpperCase() == 'SYP'),
+      ...amounts.where((a) => a.currency.toUpperCase() != 'SYP'),
+    ];
+
 String invoiceStatusLabel(AppLocalizations l10n, InvoiceEntity invoice) {
-  if (invoice.isCreditNote) return l10n.invoiceCreditNote;
+  // Money sent to the clinic, born paid: its kind says more than "Paid".
+  if (invoice.isRefund) return l10n.billingRefund;
   switch (invoice.status) {
     case InvoiceStatus.open:
       return invoice.isOverdue ? l10n.invoiceStatusOverdue : l10n.invoiceStatusOpen;
@@ -61,7 +70,7 @@ String invoiceStatusLabel(AppLocalizations l10n, InvoiceEntity invoice) {
 }
 
 Color invoiceTone(InvoiceEntity invoice) {
-  if (invoice.isCreditNote) return ColorManager.info;
+  if (invoice.isRefund) return ColorManager.info;
   switch (invoice.status) {
     case InvoiceStatus.open:
       return invoice.isOverdue ? ColorManager.error : ColorManager.warning;
@@ -105,10 +114,16 @@ Color paymentTone(ClinicPaymentStatus status) {
 }
 
 /// The payment method's own name when the methods list is at hand, else a
-/// readable form of the code (`SHAM_CASH` -> `Sham Cash`).
-String paymentMethodLabel(String method, [Map<String, String>? names]) {
+/// readable form of the code (`SHAM_CASH` -> `Sham Cash`). `CASH` - money an
+/// admin recorded by hand - is never in that list, so it has its own name.
+String paymentMethodLabel(
+  AppLocalizations l10n,
+  String method, [
+  Map<String, String>? names,
+]) {
   final known = names?[method];
   if (known != null && known.isNotEmpty) return known;
+  if (method.toUpperCase() == 'CASH') return l10n.paymentMethodCash;
   return method
       .split('_')
       .where((p) => p.isNotEmpty)
@@ -131,7 +146,7 @@ String billingPeriodLabel(
   }
 }
 
-/// A figure to transfer: the first currency large, the rest beneath it.
+/// A figure to transfer: SYP large, the other currencies beneath it.
 class AmountsView extends StatelessWidget {
   const AmountsView({super.key, required this.amounts, this.fallbackUsd});
 
@@ -144,7 +159,7 @@ class AmountsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
-    final lines = amounts.map(formatPrice).toList();
+    final lines = orderedAmounts(amounts).map(formatPrice).toList();
     if (lines.isEmpty && fallbackUsd != null) lines.add(formatUsd(fallbackUsd!));
     if (lines.isEmpty) return const SizedBox.shrink();
 
@@ -253,11 +268,13 @@ class BillingLinesView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Styled by sign, not kind: a negative line is money coming off.
         for (final line in lines)
           BillingInfoRow(
             label: line.description,
             value: formatUsd(line.amountUsd),
             ltrValue: true,
+            valueTone: line.isCredit ? ColorManager.success : null,
           ),
         Divider(color: c.borderLight, height: 14.h),
         BillingInfoRow(

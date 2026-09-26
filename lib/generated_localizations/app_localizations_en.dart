@@ -3375,7 +3375,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subBodyGrace =>
-      'Your paid period has ended. Everything keeps working until the grace period ends. Renewing from the app isn\'t available yet, so please contact support.';
+      'Your paid period has ended. Everything keeps working until the grace period ends - renew before then.';
 
   @override
   String get subBodyNone =>
@@ -3407,12 +3407,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String seatsFullMessage(int count) {
-    return 'No seats left: your plan allows $count member(s), and they are all taken. Upgrade the plan or remove a member first.';
+    return 'No seats left: your plan allows $count member(s), and they are all taken. Buy an extra seat, upgrade the plan, or remove a member first.';
   }
 
   @override
   String get seatsFullMessageGeneric =>
-      'No seats left on your plan. Upgrade the plan or remove a member first.';
+      'No seats left on your plan. Buy an extra seat, upgrade the plan, or remove a member first.';
 
   @override
   String get walletLabel => 'Wallet balance';
@@ -3764,4 +3764,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhotoHint => 'Click the avatar to upload a new picture.';
+
+  @override
+  String get billingDoneTitle => 'Done';
+
+  @override
+  String renewFromAction(String date) {
+    return 'Renew from $date';
+  }
+
+  @override
+  String get quoteRestOfCycle => 'For the rest of this cycle';
+
+  @override
+  String get quoteCreditLabel => 'Added to your balance';
+
+  @override
+  String quoteUntil(String date) {
+    return 'Applies now, until $date.';
+  }
+
+  @override
+  String quoteRunsFrom(String start, String end) {
+    return 'Runs from $start to $end, straight after your current cycle.';
+  }
+
+  @override
+  String get billingNotAvailableNow => 'This isn\'t available right now.';
+
+  @override
+  String get quoteCreditExplainer =>
+      'Nothing to pay: what comes back to you is more than the price, so the difference is added to your clinic\'s balance.';
+
+  @override
+  String quoteStartsLaterExplainer(String date) {
+    return 'Paid now, it starts on $date, when your current cycle ends. You keep the days you have left.';
+  }
+
+  @override
+  String quotePayBefore(String date) {
+    return 'Confirming issues an invoice. Pay it before $date, or it is cancelled on its own when this cycle ends.';
+  }
+
+  @override
+  String blockerSeats(int current, int allowed, int excess) {
+    return 'Members: $current of $allowed allowed. Remove $excess, or add seats.';
+  }
+
+  @override
+  String blockerStorage(int excess) {
+    return 'Storage: $excess MB over. Free some space, or add storage.';
+  }
+
+  @override
+  String get upgradePlanAction => 'Upgrade';
+
+  @override
+  String get upgradePlanTitle => 'Upgrade your plan';
+
+  @override
+  String get renewPlanTitle => 'Renew your subscription';
+
+  @override
+  String nextCycleBooked(String plan, String date) {
+    return 'Renewed: $plan from $date';
+  }
+
+  @override
+  String get addonsTitle => 'Extra seats & storage';
+
+  @override
+  String get addonsRowHint =>
+      'Add members or storage without changing your plan';
+
+  @override
+  String get noBiggerPlan => 'You\'re already on the largest plan.';
+
+  @override
+  String get upgradeHint =>
+      'A bigger plan starts now, for the rest of this cycle. A smaller one starts with your next cycle: renew onto it.';
+
+  @override
+  String get renewAddonsTitle => 'Extra seats & storage for the new cycle';
+
+  @override
+  String get renewAddonsHint =>
+      'Units are only dropped at a renewal. Lower one here and it ends with your current cycle.';
+
+  @override
+  String get billingRefund => 'Refund';
+
+  @override
+  String get invoiceRefundedToYou => 'Refunded to you';
+
+  @override
+  String invoiceRefundedOnDate(String date) {
+    return 'Sent to you on $date';
+  }
+
+  @override
+  String get paymentRefundExplainer =>
+      'We sent this amount back to you. Use the reference below to collect it.';
+
+  @override
+  String get paymentYourNote => 'Your note';
+
+  @override
+  String get paymentWithdrawnReason => 'Why it was withdrawn';
+
+  @override
+  String get refundProofTitle => 'Proof of transfer';
+
+  @override
+  String get periodRunning => 'Running now';
+
+  @override
+  String get periodTrialConverted => 'Trial · subscribed early';
+
+  @override
+  String get periodTrialEnded => 'Trial ended';
+
+  @override
+  String get periodUpgraded => 'Upgraded';
+
+  @override
+  String get periodEnded => 'Ended';
+
+  @override
+  String periodPriceWithCredit(String price, String credit) {
+    return '$price — $credit back';
+  }
+
+  @override
+  String get addonsIntro =>
+      'Add members or storage for the rest of this cycle, without changing your plan.';
+
+  @override
+  String get addonsEmptyTitle => 'Nothing on sale right now';
+
+  @override
+  String get addonsEmptyMessage =>
+      'Extra seats and storage will show here when they are offered.';
+
+  @override
+  String get addonsRemoveNote => 'To remove units, lower them when you renew.';
+
+  @override
+  String addonPricePerUnitMonthly(String price) {
+    return '$price per unit a month';
+  }
+
+  @override
+  String addonPricePerUnitYearly(String price) {
+    return '$price per unit a year';
+  }
+
+  @override
+  String get addonOwnedLabel => 'You have';
+
+  @override
+  String addonOwnedNow(int count) {
+    return '$count now';
+  }
+
+  @override
+  String addonOwnedNextCycle(int count) {
+    return '$count from your next cycle';
+  }
+
+  @override
+  String get addonQuantityLabel => 'Units to add';
+
+  @override
+  String get buySeatAction => 'Buy a seat';
 }

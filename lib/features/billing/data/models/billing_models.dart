@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/features/auth/data/models/plan_model.dart';
+import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
@@ -55,6 +56,7 @@ abstract final class InvoiceModel {
     return InvoiceEntity(
       id: json['id'] as String,
       number: (json['number'] ?? '').toString(),
+      kind: (json['kind'] ?? 'charge').toString(),
       purpose: (json['purpose'] ?? '').toString(),
       status: InvoiceStatus.fromApi(json['status'] as String?),
       isCreditNote: json['is_credit_note'] as bool? ?? false,
@@ -89,6 +91,56 @@ abstract final class QuoteModel {
       amountUsd: _double(json['amount_usd']),
       amounts: PriceModel.listFromJson(json['amounts']),
       lines: _maps(json['lines']).map(BillingLineModel.fromJson).toList(),
+      blockers: _maps(json['blockers'])
+          .map(
+            (b) => QuoteBlockerEntity(
+              limit: (b['limit'] ?? '').toString(),
+              allowed: _int(b['allowed']),
+              current: _int(b['current']),
+              excess: _int(b['excess']),
+              message: (b['message'] ?? '').toString(),
+            ),
+          )
+          .toList(),
+      startsLater: json['starts_later'] as bool? ?? false,
+      addons: _maps(json['addons'])
+          .map(
+            (a) => QuoteAddonEntity(
+              planId: _string(a['plan_id']),
+              versionId: (a['version_id'] ?? '').toString(),
+              name: (a['name'] ?? '').toString(),
+              quantity: _int(a['quantity']),
+              unitPriceUsd: a['unit_price_usd'] == null
+                  ? null
+                  : _double(a['unit_price_usd']),
+              amountUsd: _double(a['amount_usd']),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+abstract final class AddonModel {
+  static AddonEntity fromJson(Map<String, dynamic> json) {
+    return AddonEntity(
+      planId: (json['plan_id'] ?? '').toString(),
+      versionId: json['version_id'] as String,
+      slug: (json['slug'] ?? '').toString(),
+      name: (json['name'] ?? '').toString(),
+      description: _string(json['description']),
+      limit: (json['limit'] ?? '').toString(),
+      unitValue: _int(json['unit_value'], 1),
+      priceMonthly: PriceModel.listFromJson(json['price_monthly']),
+      priceYearly: PriceModel.listFromJson(json['price_yearly']),
+      priceMonthlyUsd: _double(json['price_monthly_usd']),
+      priceYearlyUsd: _double(json['price_yearly_usd']),
+      ownedUnits: _int(json['owned_units']),
+      nextCycleUnits: json['next_cycle_units'] == null
+          ? null
+          : _int(json['next_cycle_units']),
+      canBuy: json['can_buy'] as bool? ?? false,
+      reason: _string(json['reason']),
     );
   }
 }
@@ -120,6 +172,7 @@ abstract final class ClinicPaymentModel {
   static ClinicPaymentEntity fromJson(Map<String, dynamic> json) {
     return ClinicPaymentEntity(
       id: json['id'] as String,
+      kind: (json['kind'] ?? 'payment').toString(),
       method: (json['method'] ?? '').toString(),
       referenceNumber: (json['reference_number'] ?? '').toString(),
       amountOriginal: _double(json['amount_original']),
@@ -132,6 +185,8 @@ abstract final class ClinicPaymentModel {
       bankName: _string(json['bank_name']),
       paidAt: _date(json['paid_at']),
       notes: _string(json['notes']),
+      rejectionReason: _string(json['rejection_reason']),
+      cancellationReason: _string(json['cancellation_reason']),
       attachments: _maps(json['attachments'])
           .where((a) => _string(a['view']) != null)
           .map(
@@ -163,6 +218,10 @@ abstract final class SubscriptionPeriodModel {
     final plan = json['plan'] as Map<String, dynamic>? ?? const {};
     return SubscriptionPeriodEntity(
       id: json['id'] as String,
+      kind: (json['kind'] ?? 'paid').toString(),
+      endReason: PeriodEndReason.fromApi(_string(json['ended_because'])),
+      creditUsd:
+          json['credit_usd'] == null ? null : _double(json['credit_usd']),
       status: (json['status'] ?? '').toString(),
       planName: (plan['name'] ?? '').toString(),
       billingPeriod: BillingPeriod.fromApi(json['billing_period'] as String?),
@@ -180,6 +239,11 @@ abstract final class PlanFeaturesModel {
     return PlanFeaturesEntity(
       features: _groups(json['features']),
       limits: _groups(json['limits']),
+      groupNames: {
+        if (json['group_names'] is Map)
+          for (final e in (json['group_names'] as Map).entries)
+            if (e.value != null) e.key.toString(): e.value.toString(),
+      },
     );
   }
 
