@@ -54,6 +54,13 @@ class AuthState with _$AuthState {
     @Default(false) bool isOtpVerifying,
     @Default(null) String? otpError,
     @Default(null) String? sessionId,
+
+    /// The server refused to register because the OTP session behind
+    /// [sessionId] has run out. Nothing on the create-account page can fix
+    /// that - the email has to be verified again - so the page reacts by
+    /// sending the user back to the start rather than showing an error they
+    /// cannot act on.
+    @Default(false) bool signupSessionExpired,
     @Default(0) int otpSecondsRemaining,
     @Default(false) bool canResendOtp,
 

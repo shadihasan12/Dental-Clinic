@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/invitation_bloc.dart';
@@ -15,7 +16,7 @@ class SendInviteSheet extends StatefulWidget {
 
   static Future<void> show(BuildContext context) {
     final bloc = context.read<InvitationBloc>();
-    return showModalBottomSheet(
+    return showAppSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -82,14 +83,14 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Container(
+            child: HideInDialog(child: Container(
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
                 color: c.border,
                 borderRadius: BorderRadius.circular(2.r),
               ),
-            ),
+            )),
           ),
           SizedBox(height: 16.h),
           Text(

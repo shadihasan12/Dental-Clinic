@@ -10,11 +10,16 @@ class CurrencyChips extends StatelessWidget {
     required this.currencies,
     required this.selectedCurrency,
     required this.onSelected,
+    this.onPrimary = false,
   });
 
   final List<CurrencyEntity> currencies;
   final CurrencyEntity? selectedCurrency;
   final ValueChanged<CurrencyEntity> onSelected;
+
+  /// Drawn on a primary-coloured surface: the selected chip turns white so
+  /// it still stands out, where a primary tint would vanish into the blue.
+  final bool onPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +27,44 @@ class CurrencyChips extends StatelessWidget {
       spacing: 8.w,
       children: currencies.map((c) {
         final isSelected = selectedCurrency?.id == c.id;
-        return GestureDetector(
-          onTap: () => onSelected(c),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? ColorManager.primary.withValues(alpha: 0.12)
-                  : ColorManager.of(context).inputBg,
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(
-                color: isSelected
-                    ? ColorManager.primary
-                    : ColorManager.of(context).borderLight,
+        final theme = ColorManager.of(context);
+        final Color fill;
+        final Color border;
+        final Color text;
+        if (onPrimary) {
+          fill = isSelected
+              ? ColorManager.white
+              : ColorManager.white.withValues(alpha: 0.14);
+          border = isSelected
+              ? ColorManager.white
+              : ColorManager.white.withValues(alpha: 0.35);
+          text = isSelected ? ColorManager.primaryDarker : ColorManager.white;
+        } else {
+          fill = isSelected
+              ? ColorManager.primary.withValues(alpha: 0.12)
+              : theme.inputBg;
+          border = isSelected ? ColorManager.primary : theme.borderLight;
+          text = isSelected ? ColorManager.primary : theme.textSecondary;
+        }
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () => onSelected(c),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: fill,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: border),
               ),
-            ),
-            child: Text(
-              c.currencyCode,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(context),
-                fontSize: 13.sp,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? ColorManager.primary : ColorManager.of(context).textSecondary,
+              child: Text(
+                c.currencyCode,
+                style: TextStyle(
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontSize: 13.sp,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: text,
+                ),
               ),
             ),
           ),

@@ -4,11 +4,13 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_content_width.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_refresh.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -340,23 +342,28 @@ class _BillingAsyncState<T> extends State<BillingAsync<T>> {
 
     final value = _value;
     if (value == null) {
-      return ListView(
-        padding: EdgeInsets.all(14.w),
-        children: [
-          StateCard(
-            icon: Icons.cloud_off_outlined,
-            tone: ColorManager.error,
-            title: l10n.billingLoadFailed,
-            message: _error == null
-                ? null
-                : NetworkExceptions.localizedMessage(context, _error!),
-            actionLabel: l10n.retry,
-            onAction: () {
-              setState(() => _loading = true);
-              _reload();
-            },
-          ),
-        ],
+      // One card's worth to say: a single column on desktop, not a banner
+      // across the page. A no-op on mobile.
+      return AdaptiveContentWidth(
+        maxWidth: kBillingNarrowWidth,
+        child: ListView(
+          padding: EdgeInsets.all(14.w),
+          children: [
+            StateCard(
+              icon: Icons.cloud_off_outlined,
+              tone: ColorManager.error,
+              title: l10n.billingLoadFailed,
+              message: _error == null
+                  ? null
+                  : NetworkExceptions.localizedMessage(context, _error!),
+              actionLabel: l10n.retry,
+              onAction: () {
+                setState(() => _loading = true);
+                _reload();
+              },
+            ),
+          ],
+        ),
       );
     }
 
@@ -386,20 +393,25 @@ class BillingListSkeleton extends StatelessWidget {
           ),
         );
 
-    return AppShimmer(
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        children: [
-          block(110.h),
-          SizedBox(height: 16.h),
-          ShimmerBox(width: 130.w, height: 13.h),
-          SizedBox(height: 10.h),
-          for (var i = 0; i < rows; i++) ...[
-            if (i > 0) SizedBox(height: 8.h),
-            block(72.h),
+    // Held to one column on desktop (a no-op on mobile), so the blocks do
+    // not stretch into bars across the window while the page loads.
+    return AdaptiveContentWidth(
+      maxWidth: kBillingNarrowWidth,
+      child: AppShimmer(
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+          children: [
+            block(110.h),
+            SizedBox(height: 16.h),
+            ShimmerBox(width: 130.w, height: 13.h),
+            SizedBox(height: 10.h),
+            for (var i = 0; i < rows; i++) ...[
+              if (i > 0) SizedBox(height: 8.h),
+              block(72.h),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

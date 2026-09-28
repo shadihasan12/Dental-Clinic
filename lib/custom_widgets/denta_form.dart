@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
@@ -138,10 +139,7 @@ class FormSectionCard extends StatelessWidget {
               if (trailing != null) trailing!,
             ],
           ),
-          for (final child in children) ...[
-            SizedBox(height: m.cardGap),
-            child,
-          ],
+          for (final child in children) ...[SizedBox(height: m.cardGap), child],
         ],
       ),
     );
@@ -344,9 +342,9 @@ InputDecoration formOutlinedInput(
   final family = FontHelper.fontFamily(context);
 
   OutlineInputBorder side(Color color, double width) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: color, width: width),
-      );
+    borderRadius: BorderRadius.circular(12.r),
+    borderSide: BorderSide(color: color, width: width),
+  );
 
   return InputDecoration(
     hintText: hintText,
@@ -385,15 +383,15 @@ InputDecoration formOutlinedInput(
 /// focused field draws a second blue outline inside the one its container
 /// already draws. Call `.copyWith(...)` for hint, icons and padding.
 InputDecoration bareInputDecoration() => const InputDecoration(
-      isDense: true,
-      filled: false,
-      border: InputBorder.none,
-      enabledBorder: InputBorder.none,
-      disabledBorder: InputBorder.none,
-      focusedBorder: InputBorder.none,
-      errorBorder: InputBorder.none,
-      focusedErrorBorder: InputBorder.none,
-    );
+  isDense: true,
+  filled: false,
+  border: InputBorder.none,
+  enabledBorder: InputBorder.none,
+  disabledBorder: InputBorder.none,
+  focusedBorder: InputBorder.none,
+  errorBorder: InputBorder.none,
+  focusedErrorBorder: InputBorder.none,
+);
 
 class FormTextField extends StatefulWidget {
   const FormTextField({
@@ -481,9 +479,7 @@ class _FormTextFieldState extends State<FormTextField> {
                 controller: widget.controller,
                 focusNode: _focusNode,
                 keyboardType: widget.keyboardType,
-                inputFormatters: formattersForKeyboard(
-                  widget.keyboardType,
-                ),
+                inputFormatters: formattersForKeyboard(widget.keyboardType),
                 maxLines: widget.obscureText ? 1 : widget.maxLines,
                 obscureText: widget.obscureText,
                 textCapitalization: widget.textCapitalization,
@@ -558,39 +554,42 @@ class FormDateField extends StatelessWidget {
       label: label,
       required: required,
       errorText: errorText,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: m.fieldPadH,
-            vertical: m.fieldPadV,
-          ),
-          decoration: formInputDecoration(
-            context,
-            focused: false,
-            hasError: errorText != null,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  date == null
-                      ? (placeholder ?? label)
-                      : DateFormat('d MMM yyyy', locale).format(date),
-                  style: TextStyle(
-                    fontSize: m.valueFont,
-                    fontFamily: family,
-                    color: date == null ? c.textTertiary : c.textPrimary,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: m.fieldPadH,
+              vertical: m.fieldPadV,
+            ),
+            decoration: formInputDecoration(
+              context,
+              focused: false,
+              hasError: errorText != null,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    date == null
+                        ? (placeholder ?? label)
+                        : DateFormat('d MMM yyyy', locale).format(date),
+                    style: TextStyle(
+                      fontSize: m.valueFont,
+                      fontFamily: family,
+                      color: date == null ? c.textTertiary : c.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              Icon(
-                Icons.calendar_today_outlined,
-                size: 16.w,
-                color: c.textTertiary,
-              ),
-            ],
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 16.w,
+                  color: c.textTertiary,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -855,12 +854,14 @@ class FormSheetShell extends StatelessWidget {
           children: [
             SizedBox(height: 10.h),
             if (!isDesktop)
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: c.border,
-                  borderRadius: BorderRadius.circular(2.r),
+              HideInDialog(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: c.border,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
               ),
             Padding(
@@ -971,7 +972,7 @@ class FormSheetButton extends StatelessWidget {
 /// A selectable chip in the form kit's metrics - the same fill, weight and
 /// type size as the segmented pickers, so a card mixing chips and inputs still
 /// reads as one column of controls.
-class FormChip extends StatelessWidget {
+class FormChip extends StatefulWidget {
   const FormChip({
     super.key,
     required this.label,
@@ -988,30 +989,70 @@ class FormChip extends StatelessWidget {
   final double radius;
 
   @override
+  State<FormChip> createState() => _FormChipState();
+}
+
+class _FormChipState extends State<FormChip> {
+  // Only a mouse ever enters a MouseRegion, so on a touch screen this stays
+  // false and the chip looks exactly as it did.
+  bool _hovered = false;
+  bool _pressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: selected ? ColorManager.primary : c.cardBgSecondary,
-          borderRadius: BorderRadius.circular(radius.r),
-          border: Border.all(
-            color: selected ? ColorManager.primary : c.borderLight,
-          ),
-        ),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            fontFamily: FontHelper.fontFamily(context),
-            color: selected ? ColorManager.white : c.textSecondary,
+    final selected = widget.selected;
+    final hovered = _hovered && !selected;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() {
+        _hovered = false;
+        _pressed = false;
+      }),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        onTapDown: _hovered ? (_) => setState(() => _pressed = true) : null,
+        onTapUp: _hovered ? (_) => setState(() => _pressed = false) : null,
+        onTapCancel: _hovered ? () => setState(() => _pressed = false) : null,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1,
+          duration: const Duration(milliseconds: 90),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: selected
+                  ? ColorManager.primary
+                  : hovered
+                  ? ColorManager.primary.withValues(alpha: 0.08)
+                  : c.cardBgSecondary,
+              borderRadius: BorderRadius.circular(widget.radius.r),
+              border: Border.all(
+                color: selected
+                    ? ColorManager.primary
+                    : hovered
+                    ? ColorManager.primary.withValues(alpha: 0.35)
+                    : c.borderLight,
+              ),
+            ),
+            child: Text(
+              widget.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                fontFamily: FontHelper.fontFamily(context),
+                color: selected
+                    ? ColorManager.white
+                    : hovered
+                    ? c.textPrimary
+                    : c.textSecondary,
+              ),
+            ),
           ),
         ),
       ),
@@ -1062,8 +1103,9 @@ class FormActionBar extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: tone ?? ColorManager.primary,
         foregroundColor: ColorManager.white,
-        disabledBackgroundColor:
-            (tone ?? ColorManager.primary).withValues(alpha: 0.45),
+        disabledBackgroundColor: (tone ?? ColorManager.primary).withValues(
+          alpha: 0.45,
+        ),
         disabledForegroundColor: ColorManager.white,
         elevation: 0,
         minimumSize: Size(double.infinity, m.buttonHeight),
@@ -1161,7 +1203,7 @@ class DatePickerSheet {
     if (start.isAfter(maxDate)) start = maxDate;
     var temp = start;
 
-    return showModalBottomSheet<DateTime>(
+    return showAppSheet<DateTime>(
       context: context,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -1176,12 +1218,14 @@ class DatePickerSheet {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 10.h),
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: c.border,
-                  borderRadius: BorderRadius.circular(2.r),
+              HideInDialog(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: c.border,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
               ),
               Padding(

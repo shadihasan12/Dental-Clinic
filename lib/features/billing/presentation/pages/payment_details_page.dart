@@ -1,11 +1,13 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/payments_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -31,7 +33,7 @@ class PaymentDetailsPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.transferDetailsTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingDetailWidth,
       body: BillingAsync<ClinicPaymentEntity>(
         load: () => repository.getPayment(paymentId),
         builder: (context, payment, reload) =>
@@ -61,170 +63,199 @@ class _Body extends StatelessWidget {
     final cancellation = payment.cancellationReason;
     final note = payment.notes;
 
-    return ListView(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
-      children: [
-        AppCard(
-          statusTone: tone,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    final header = AppCard(
+      statusTone: tone,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  IconTile(
-                    icon: refund
-                        ? Icons.south_west_rounded
-                        : Icons.swap_horiz_rounded,
-                    tone: tone,
+              IconTile(
+                icon: refund
+                    ? Icons.south_west_rounded
+                    : Icons.swap_horiz_rounded,
+                tone: tone,
+              ),
+              SizedBox(width: 11.w),
+              Expanded(
+                child: Text(
+                  '${refund ? '+' : ''}${formatPlainAmount(payment.amountOriginal)} ${payment.currencyOriginal}',
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: refund ? ColorManager.info : c.textPrimary,
                   ),
+                ),
+              ),
+              CountPill.label(
+                refund
+                    ? l10n.billingRefund
+                    : paymentStatusLabel(l10n, payment.status),
+                tone: tone,
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            _statusExplainer(l10n),
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 12.sp,
+              height: 1.45,
+              color: c.textSecondary,
+            ),
+          ),
+          if (payment.status == ClinicPaymentStatus.rejected &&
+              rejection != null) ...[
+            SizedBox(height: 8.h),
+            Text(
+              l10n.paymentRejectedReason(rejection),
+              style: TextStyle(
+                fontFamily: family,
+                fontSize: 12.5.sp,
+                fontWeight: FontWeight.w600,
+                height: 1.45,
+                color: ColorManager.error,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+    final info = AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          BillingInfoRow(
+            label: l10n.paymentMethod,
+            value: paymentMethodLabel(l10n, payment.method),
+          ),
+          BillingInfoRow(
+            label: l10n.transactionReferenceLabel,
+            value: payment.referenceNumber,
+            ltrValue: true,
+          ),
+          if (payment.bankName != null)
+            BillingInfoRow(label: l10n.bankName, value: payment.bankName!),
+          if (payment.paidAt != null)
+            BillingInfoRow(
+              label: l10n.transferDate,
+              value: AppDate.medium(context, payment.paidAt!),
+            ),
+          // The server's own reading of what was sent - shown for
+          // reference, never computed here.
+          BillingInfoRow(
+            label: l10n.valueInUsd,
+            value: formatUsd(payment.amountUsd),
+            ltrValue: true,
+          ),
+          if (payment.status == ClinicPaymentStatus.cancelled &&
+              cancellation != null)
+            BillingInfoRow(
+              label: l10n.paymentWithdrawnReason,
+              value: cancellation,
+            ),
+          // Only what the clinic itself wrote - the admin's reason for a
+          // refusal is shown above, in its own place.
+          if (note != null && note.isNotEmpty)
+            BillingInfoRow(label: l10n.paymentYourNote, value: note),
+        ],
+      ),
+    );
+    final receipts = <Widget>[
+      if (payment.attachments.isNotEmpty) ...[
+        SizedBox(height: 16.h),
+        SectionLabel(refund ? l10n.refundProofTitle : l10n.receiptsTitle),
+        SizedBox(height: 10.h),
+        for (final (i, attachment) in payment.attachments.indexed)
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: AppCard(
+              onTap: () => launchUrl(
+                Uri.parse(attachment.viewUrl),
+                mode: LaunchMode.externalApplication,
+              ),
+              child: Row(
+                children: [
+                  const IconTile(icon: Icons.receipt_outlined),
                   SizedBox(width: 11.w),
                   Expanded(
                     child: Text(
-                      '${refund ? '+' : ''}${formatPlainAmount(payment.amountOriginal)} ${payment.currencyOriginal}',
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.start,
+                      l10n.receiptNumber(i + 1),
                       style: TextStyle(
                         fontFamily: family,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: refund ? ColorManager.info : c.textPrimary,
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
                       ),
                     ),
                   ),
-                  CountPill.label(
-                    refund
-                        ? l10n.billingRefund
-                        : paymentStatusLabel(l10n, payment.status),
-                    tone: tone,
-                  ),
+                  Icon(Icons.open_in_new_rounded,
+                      size: 18.w, color: c.textTertiary),
                 ],
               ),
-              SizedBox(height: 10.h),
-              Text(
-                _statusExplainer(l10n),
-                style: TextStyle(
-                  fontFamily: family,
-                  fontSize: 12.sp,
-                  height: 1.45,
-                  color: c.textSecondary,
-                ),
-              ),
-              if (payment.status == ClinicPaymentStatus.rejected &&
-                  rejection != null) ...[
-                SizedBox(height: 8.h),
-                Text(
-                  l10n.paymentRejectedReason(rejection),
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 12.5.sp,
-                    fontWeight: FontWeight.w600,
-                    height: 1.45,
-                    color: ColorManager.error,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        SizedBox(height: 8.h),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              BillingInfoRow(
-                label: l10n.paymentMethod,
-                value: paymentMethodLabel(l10n, payment.method),
-              ),
-              BillingInfoRow(
-                label: l10n.transactionReferenceLabel,
-                value: payment.referenceNumber,
-                ltrValue: true,
-              ),
-              if (payment.bankName != null)
-                BillingInfoRow(label: l10n.bankName, value: payment.bankName!),
-              if (payment.paidAt != null)
-                BillingInfoRow(
-                  label: l10n.transferDate,
-                  value: AppDate.medium(context, payment.paidAt!),
-                ),
-              // The server's own reading of what was sent - shown for
-              // reference, never computed here.
-              BillingInfoRow(
-                label: l10n.valueInUsd,
-                value: formatUsd(payment.amountUsd),
-                ltrValue: true,
-              ),
-              if (payment.status == ClinicPaymentStatus.cancelled &&
-                  cancellation != null)
-                BillingInfoRow(
-                  label: l10n.paymentWithdrawnReason,
-                  value: cancellation,
-                ),
-              // Only what the clinic itself wrote - the admin's reason for a
-              // refusal is shown above, in its own place.
-              if (note != null && note.isNotEmpty)
-                BillingInfoRow(label: l10n.paymentYourNote, value: note),
-            ],
-          ),
-        ),
-        if (payment.attachments.isNotEmpty) ...[
-          SizedBox(height: 16.h),
-          SectionLabel(refund ? l10n.refundProofTitle : l10n.receiptsTitle),
-          SizedBox(height: 10.h),
-          for (final (i, attachment) in payment.attachments.indexed)
-            Padding(
-              padding: EdgeInsets.only(bottom: 8.h),
-              child: AppCard(
-                onTap: () => launchUrl(
-                  Uri.parse(attachment.viewUrl),
-                  mode: LaunchMode.externalApplication,
-                ),
-                child: Row(
-                  children: [
-                    const IconTile(icon: Icons.receipt_outlined),
-                    SizedBox(width: 11.w),
-                    Expanded(
-                      child: Text(
-                        l10n.receiptNumber(i + 1),
-                        style: TextStyle(
-                          fontFamily: family,
-                          fontSize: 12.5.sp,
-                          fontWeight: FontWeight.w600,
-                          color: c.textPrimary,
-                        ),
-                      ),
-                    ),
-                    Icon(Icons.open_in_new_rounded,
-                        size: 18.w, color: c.textTertiary),
-                  ],
-                ),
-              ),
             ),
-        ],
-        if (payment.isPending && !refund) ...[
-          SizedBox(height: 16.h),
-          DentaOutlineButton(
-            label: l10n.withdrawReport,
-            icon: Icons.undo_rounded,
-            expand: true,
-            tone: ColorManager.error,
-            onTap: () async {
-              if (await withdrawPayment(context, payment)) reload();
-            },
+          ),
+      ],
+    ];
+    final actions = <Widget>[
+      if (payment.isPending && !refund) ...[
+        SizedBox(height: 16.h),
+        DentaOutlineButton(
+          label: l10n.withdrawReport,
+          icon: Icons.undo_rounded,
+          expand: true,
+          tone: ColorManager.error,
+          onTap: () async {
+            if (await withdrawPayment(context, payment)) reload();
+          },
+        ),
+      ],
+      if (payment.status == ClinicPaymentStatus.rejected && !refund) ...[
+        SizedBox(height: 16.h),
+        DentaButton(
+          label: l10n.reportAgain,
+          icon: Icons.replay_rounded,
+          expand: true,
+          onTap: () async {
+            await reportAgain(context, payment);
+            if (context.mounted) context.pop();
+          },
+        ),
+      ],
+    ];
+
+    // Desktop: where the review stands and what can be done about it on the
+    // start side, the transfer's particulars and receipts on the end side.
+    if (Responsive.isDesktop(context)) {
+      return ListView(
+        padding: kBillingDesktopPadding,
+        children: [
+          BillingTwoPane(
+            start: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [header, ...actions],
+            ),
+            end: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [info, ...receipts],
+            ),
           ),
         ],
-        if (payment.status == ClinicPaymentStatus.rejected && !refund) ...[
-          SizedBox(height: 16.h),
-          DentaButton(
-            label: l10n.reportAgain,
-            icon: Icons.replay_rounded,
-            expand: true,
-            onTap: () async {
-              await reportAgain(context, payment);
-              if (context.mounted) context.pop();
-            },
-          ),
-        ],
+      );
+    }
+
+    return ListView(
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
+      children: [
+        header,
+        SizedBox(height: 8.h),
+        info,
+        ...receipts,
+        ...actions,
       ],
     );
   }

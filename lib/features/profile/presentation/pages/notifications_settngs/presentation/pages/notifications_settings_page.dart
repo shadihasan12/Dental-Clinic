@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
@@ -205,6 +206,8 @@ class _SettingsSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) return const _DesktopSettingsSkeleton();
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(dentaGutter, 14.h, dentaGutter, 28.h),
       child: AppShimmer(
@@ -247,6 +250,62 @@ class _SettingsSkeleton extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Desktop placeholder at the desktop tile's size (40px icon, compact
+/// switch). Static blocks: a shimmer sweep across a monitor-wide card reads
+/// as flicker rather than progress.
+class _DesktopSettingsSkeleton extends StatelessWidget {
+  const _DesktopSettingsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    Widget bar(double width, double height, {double radius = 6}) => Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: c.shimmerBase,
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(dentaGutter, 14.h, dentaGutter, 28.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          bar(120, 13),
+          SizedBox(height: 10.h),
+          for (var i = 0; i < 4; i++) ...[
+            if (i > 0) SizedBox(height: 8.h),
+            AppCard(
+              padding: const EdgeInsetsDirectional.fromSTEB(18, 14, 14, 14),
+              child: Row(
+                children: [
+                  bar(40, 40, radius: 11),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        bar(160, 14),
+                        const SizedBox(height: 7),
+                        bar(260, 11),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  bar(44, 26, radius: 13),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

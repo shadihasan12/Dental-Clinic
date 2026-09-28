@@ -1,8 +1,19 @@
 #include "flutter_window.h"
 
+#include <flutter_windows.h>
+
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+
+namespace {
+
+// Smallest window the user can resize to, in logical (96-dpi) pixels.
+// Change these two to move the floor.
+constexpr int kMinWindowWidth = 1024;
+constexpr int kMinWindowHeight = 680;
+
+}  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -65,6 +76,24 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     case WM_FONTCHANGE:
       flutter_controller_->engine()->ReloadSystemFonts();
       break;
+    case WM_GETMINMAXINFO: {
+      // Stops the window being dragged smaller than the desktop layout was
+      // built for. Below ~900 logical px the app flips to the phone layout,
+      // and between that and this the side nav, tables and two-column pages
+      // start to squeeze. The floor is in logical pixels and scaled to the
+      // monitor's DPI, so it is the same size on a 100% and a 150% display.
+      // Can arrive during CreateWindow, before the controller exists - it
+      // needs nothing from it.
+      // The engine's helper, as win32_window.cpp uses: GetDpiForWindow
+      // would need the build to target Windows 10 explicitly.
+      const UINT dpi = FlutterDesktopGetDpiForMonitor(
+          ::MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST));
+      const double scale = (dpi == 0 ? 96 : dpi) / 96.0;
+      auto* info = reinterpret_cast<MINMAXINFO*>(lparam);
+      info->ptMinTrackSize.x = static_cast<LONG>(kMinWindowWidth * scale);
+      info->ptMinTrackSize.y = static_cast<LONG>(kMinWindowHeight * scale);
+      return 0;
+    }
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);

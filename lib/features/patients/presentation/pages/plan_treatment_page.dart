@@ -474,17 +474,12 @@ class _InteractiveToothChart extends StatelessWidget {
       children: [
         // The tooth chart
         ToothChart(
-          teeth: teeth.isNotEmpty ? teeth : _fallbackTeeth(),
+          teeth: teeth.isNotEmpty ? teeth : ToothChart.fallbackTeeth(),
           selectedTeeth: _toSelectedIds(teethWithTreatments),
-          onSelectionChanged: (toothIds) {
-            // Find the last selected tooth (the one just tapped)
-            if (toothIds.isNotEmpty) {
-              final tappedId = toothIds.last;
-              // Convert tooth ID back to universal code
-              final code = _idToCode(tappedId);
-              onToothTap(code);
-            }
-          },
+          // The tapped tooth itself, not a toggled selection: a tooth that
+          // already has treatments must open its sheet again, not drop out
+          // of the list and open whichever tooth happens to be last.
+          onToothTap: (toothId) => onToothTap(_idToCode(toothId)),
           aspectRatio: 0.75,
         ),
 
@@ -534,24 +529,5 @@ class _InteractiveToothChart extends StatelessWidget {
     final tooth = teeth.where((t) => t.id == toothId);
     if (tooth.isNotEmpty) return tooth.first.universalCode;
     return toothId;
-  }
-
-  /// Fallback: generate all 32 teeth for the chart
-  List<Tooth> _fallbackTeeth() {
-    final teeth = <Tooth>[];
-    for (int q = 1; q <= 4; q++) {
-      for (int t = 1; t <= 8; t++) {
-        final code = '$q$t';
-        teeth.add(
-          Tooth(
-            id: code,
-            name: 'Tooth $code',
-            universalCode: code,
-            quadrant: '$q',
-          ),
-        );
-      }
-    }
-    return teeth;
   }
 }

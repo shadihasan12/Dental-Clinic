@@ -12,6 +12,8 @@ import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
+import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -138,6 +140,8 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
       // Step 3: Logout and redirect to login
       await getIt<TokenStorage>().clearAuthData();
       await getIt<UserStorage>().clear();
+      // Signing back in must open on home, not the tab this was reached from.
+      RootPage.selectedTab.value = RootTab.home.index;
 
       if (!mounted) return;
 

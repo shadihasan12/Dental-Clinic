@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -7,6 +8,7 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'tooth_names.dart';
 import 'treatment_type_grid.dart';
 
 /// Bottom sheet that appears when a tooth is tapped on the chart.
@@ -17,7 +19,7 @@ Future<List<TreatmentTypeInfo>?> showToothTreatmentSheet(
   List<String> existingTreatmentIds = const [],
   List<TreatmentTypeInfo> toothSpecificTypes = const [],
 }) {
-  return showModalBottomSheet<List<TreatmentTypeInfo>>(
+  return showAppSheet<List<TreatmentTypeInfo>>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -67,14 +69,14 @@ class _ToothTreatmentSheetContentState
           // Drag handle
           Padding(
             padding: EdgeInsets.only(top: 12.h),
-            child: Container(
+            child: HideInDialog(child: Container(
               width: 36.w,
               height: 4.h,
               decoration: BoxDecoration(
                 color: ColorManager.of(context).borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
-            ),
+            )),
           ),
           SizedBox(height: 16.h),
 
@@ -117,7 +119,10 @@ class _ToothTreatmentSheetContentState
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      _toothName(widget.toothNumber),
+                      toothDisplayName(
+                        AppLocalizations.of(context)!,
+                        widget.toothNumber,
+                      ),
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontFamily: FontHelper.fontFamily(context),
@@ -251,32 +256,4 @@ class _ToothTreatmentSheetContentState
     );
   }
 
-  String _toothName(String number) {
-    // Only parse if it looks like a 2-digit FDI code (e.g. "16", "48")
-    if (number.length > 2 || int.tryParse(number) == null) return '';
-    final quadrant = int.parse(number[0]);
-    final tooth = int.parse(number.substring(1));
-
-    final quadrantName = switch (quadrant) {
-      1 => 'Upper Right',
-      2 => 'Upper Left',
-      3 => 'Lower Left',
-      4 => 'Lower Right',
-      _ => '',
-    };
-
-    final toothName = switch (tooth) {
-      1 => 'Central Incisor',
-      2 => 'Lateral Incisor',
-      3 => 'Canine',
-      4 => 'First Premolar',
-      5 => 'Second Premolar',
-      6 => 'First Molar',
-      7 => 'Second Molar',
-      8 => 'Wisdom Tooth',
-      _ => 'Tooth',
-    };
-
-    return '$quadrantName $toothName';
-  }
 }

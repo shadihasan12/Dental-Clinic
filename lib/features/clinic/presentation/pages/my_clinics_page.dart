@@ -308,7 +308,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
     final isActive = membership.clinicId == _activeClinicId;
     final canLeave = membership.role != ClinicRole.admin;
 
-    showModalBottomSheet<void>(
+    showAppSheet<void>(
       context: context,
       useSafeArea: true,
       backgroundColor: c.cardBg,
@@ -323,14 +323,14 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Center(
-                child: Container(
+                child: HideInDialog(child: Container(
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
                     color: c.border,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
-                ),
+                )),
               ),
               SizedBox(height: 14.h),
               _SheetTitleRow(

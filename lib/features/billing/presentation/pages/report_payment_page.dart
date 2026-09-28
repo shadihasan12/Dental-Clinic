@@ -379,6 +379,9 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
       bottomNavigationBar: _loading || _methods.isEmpty
           ? null
           : FormActionBar(
+              // Desktop only: in line with the form above it - the 760 column
+              // less its 14px gutters.
+              maxWidth: 732,
               label: l10n.submitForReview,
               busy: _submitting,
               onPressed: _submit,

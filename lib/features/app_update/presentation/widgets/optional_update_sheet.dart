@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/app_update/domain/entities/app_update_info.dart';
@@ -24,7 +25,7 @@ class OptionalUpdateSheet extends StatelessWidget {
   /// this sheet's context immediately after popping it, which is a context
   /// that no longer has a place in the tree to read localisations from.
   static Future<bool> show(BuildContext context, AppUpdateInfo info) async {
-    final result = await showModalBottomSheet<bool>(
+    final result = await showAppSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -56,14 +57,14 @@ class OptionalUpdateSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Container(
+            child: HideInDialog(child: Container(
               width: 38.w,
               height: 4.h,
               decoration: BoxDecoration(
                 color: c.border,
                 borderRadius: BorderRadius.circular(2.r),
               ),
-            ),
+            )),
           ),
           SizedBox(height: 18.h),
           Row(

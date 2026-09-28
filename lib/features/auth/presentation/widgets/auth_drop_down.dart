@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,9 +82,10 @@ class AuthDropdownField extends StatelessWidget {
           focusedErrorBorder: _border(
             const BorderSide(color: ColorManager.error, width: 1.5),
           ),
+          // Matches AuthTextField's desktop height, so the two sit level.
           contentPadding: EdgeInsets.symmetric(
-            horizontal: 12.w,
-            vertical: 12.h,
+            horizontal: Responsive.isDesktop(context) ? 14 : 12.w,
+            vertical: Responsive.isDesktop(context) ? 17 : 12.h,
           ),
         ),
         items: items

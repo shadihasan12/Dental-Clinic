@@ -16,9 +16,8 @@ import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_cor
 import 'package:dental_clinic_app/features/patients/domain/use_cases/get_all_teeth_use_case.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/plan_treatment_page.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/treatment_plan_view_page.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_form_widgets.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/desktop/desktop_plan_editor.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/plan_summary_header.dart';
-import 'package:dental_clinic_app/features/patients/presentation/widgets/details/set_cost_sheet.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/treatment_plan_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -128,29 +127,6 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
       _plan.currencyCode = totalCostCurrency?.currencyCode;
       _plan.labFeesCurrencyCode = labFeesCurrency?.currencyCode;
     });
-  }
-
-  void _showEditCostSheet() {
-    SetCostSheet.show(
-      context,
-      totalCost: _plan.totalCost,
-      labFees: _plan.labFees,
-      totalCostCurrency: _totalCostCurrency,
-      labFeesCurrency: _labFeesCurrency,
-      onSave: (totalCost, labFees, totalCostCurrency, labFeesCurrency) {
-        setState(() {
-          _plan.totalCost = totalCost;
-          _plan.labFees = labFees;
-          _totalCostCurrency = totalCostCurrency;
-          _labFeesCurrency = labFeesCurrency;
-          // The summary card reads its currencies off the plan, so the two
-          // have to move together - the ids go to the API, the codes are what
-          // the card shows.
-          _plan.currencyCode = totalCostCurrency?.currencyCode;
-          _plan.labFeesCurrencyCode = labFeesCurrency?.currencyCode;
-        });
-      },
-    );
   }
 
   String? _toothCodeToId(String universalCode) {
@@ -274,22 +250,32 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
   // DESKTOP LAYOUT
   // ═══════════════════════════════════════════════════════════════
 
+  /// One page, no hand-offs: the costs are typed into the blue card, and the
+  /// chart, the treatments for the tapped tooth and the plan so far sit side
+  /// by side below it. The phone splits this across a sheet and a second
+  /// page only because it has no room.
   Widget _buildDesktopLayout() {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
 
-    final sorted = [
-      ..._plan.planned,
-      ..._plan.inProgress,
-      ..._plan.completed,
-    ];
-
+    // The top bar already names the page, so the body carries no header of
+    // its own: the patient rides above the title there, and Save sits in the
+    // bar's actions so it stays in reach however far the plan scrolls.
     return DesktopShell(
       title: l10n.newTreatmentPlan,
+      breadcrumb: widget.patientName,
+      actions: [
+        DesktopPrimaryButton(
+          label: l10n.save,
+          icon: Icons.check,
+          onPressed: _canSave ? _savePlan : null,
+          isLoading: _isSaving,
+        ),
+      ],
       body: Scaffold(
         backgroundColor: c.scaffoldBg,
         body: _isLoading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(color: ColorManager.primary),
               )
             : SingleChildScrollView(
@@ -300,294 +286,25 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        DesktopPageHeader(
-                          title: l10n.newTreatmentPlan,
-                          subtitle: l10n.treatmentPlan,
-                          trailing: DesktopPrimaryButton(
-                            label: l10n.save,
-                            icon: Icons.check,
-                            onPressed: _canSave ? _savePlan : null,
-                            isLoading: _isSaving,
-                          ),
+                        DesktopPlanCostCard(
+                          plan: _plan,
+                          totalCostCurrency: _totalCostCurrency,
+                          labFeesCurrency: _labFeesCurrency,
+                          onCostChanged: _applyCosts,
                         ),
-                        const SizedBox(height: 20),
-                        _desktopCostCard(l10n, c),
                         const SizedBox(height: 16),
-                        _desktopTreatmentsCard(l10n, c, sorted),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _desktopCostCard(AppLocalizations l10n, AppColors c) {
-    final fontFamily = FontHelper.fontFamily(context);
-    final paid = _plan.paid;
-    final total = _plan.totalCost;
-    final pending = (total - paid).clamp(0, double.infinity);
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [ColorManager.primary, ColorManager.primaryDark],
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.treatmentPlan,
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                // The currency is whatever was picked, not a dollar sign: a
-                // plan priced in SYP read as USD is off by three orders of
-                // magnitude.
-                Text.rich(
-                  TextSpan(
-                    text: total.toStringAsFixed(0),
-                    children: [
-                      if (_totalCostCurrency != null)
-                        TextSpan(
-                          text: '\u00A0${_totalCostCurrency!.currencyCode}',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withValues(alpha: 0.75),
-                            letterSpacing: 0,
-                          ),
-                        ),
-                    ],
-                  ),
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: -0.8,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: _showEditCostSheet,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.edit_outlined,
-                            color: Colors.white.withValues(alpha: 0.9),
-                            size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          l10n.editCosts,
-                          style: TextStyle(
-                            fontFamily: fontFamily,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
+                        DesktopPlanBuilder(
+                          categories: _categories,
+                          teeth: _teeth,
+                          treatments: _plan.treatments,
+                          onAdd: (t) => _addTreatments([t]),
+                          onRemove: _removeTreatment,
                         ),
                       ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          _desktopCostPill(l10n.paidLabel, paid, fontFamily),
-          const SizedBox(width: 12),
-          _desktopCostPill(l10n.pendingLabel, pending.toDouble(), fontFamily),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopCostPill(String label, double value, String fontFamily) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 11,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text.rich(
-            TextSpan(
-              text: value.toStringAsFixed(0),
-              children: [
-                if (_totalCostCurrency != null)
-                  TextSpan(
-                    text: '\u00A0${_totalCostCurrency!.currencyCode}',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withValues(alpha: 0.75),
-                    ),
-                  ),
-              ],
-            ),
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopTreatmentsCard(
-      AppLocalizations l10n, AppColors c, List<PlannedTreatment> sorted) {
-    return DesktopSectionCard(
-      title: l10n.treatments,
-      subtitle: '${sorted.length} total',
-      trailing: DesktopPrimaryButton(
-        label: l10n.addTreatmentButton,
-        icon: Icons.add,
-        compact: true,
-        onPressed: _openPlanTreatment,
-      ),
-      child: sorted.isEmpty
-          ? _desktopEmpty(l10n)
-          : Column(
-              children: sorted
-                  .map(
-                    (t) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: _desktopTreatmentRow(t, l10n, c),
-                    ),
-                  )
-                  .toList(),
-            ),
-    );
-  }
-
-  Widget _desktopTreatmentRow(
-      PlannedTreatment t, AppLocalizations l10n, AppColors c) {
-    final fontFamily = FontHelper.fontFamily(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: c.inputBg,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: c.borderLight),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: ColorManager.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.medical_services_outlined,
-                  color: ColorManager.primary,
-                  size: 18,
-                ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.type.name,
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    if (t.toothNumber != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        'Tooth #${t.toothNumber}',
-                        style: TextStyle(
-                          fontFamily: fontFamily,
-                          fontSize: 12,
-                          color: c.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: () => _removeTreatment(t),
-                icon: Icon(Icons.delete_outline,
-                    size: 18, color: c.textTertiary),
-                tooltip: l10n.delete,
-                hoverColor: ColorManager.error.withValues(alpha: 0.1),
-              ),
-            ],
-          ),
-    );
-  }
-
-  Widget _desktopEmpty(AppLocalizations l10n) {
-    final c = ColorManager.of(context);
-    final fontFamily = FontHelper.fontFamily(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: ColorManager.primary.withValues(alpha: 0.08),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.assignment_outlined,
-                size: 28, color: ColorManager.primary),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            l10n.noTreatmentsYetAddOne,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 13.5,
-              color: c.textTertiary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          DesktopPrimaryButton(
-            label: l10n.addTreatmentButton,
-            icon: Icons.add,
-            onPressed: _openPlanTreatment,
-          ),
-        ],
       ),
     );
   }
@@ -643,9 +360,8 @@ class _NewTreatmentPlanPageState extends State<NewTreatmentPlanPage> {
                       children: [
                         // Edits in place: the card opens the two cost
                         // fields under itself rather than handing off to a
-                        // sheet. Desktop keeps the sheet - there is room
-                        // beside the form there, and no keyboard climbing
-                        // over it.
+                        // sheet. Desktop shows the same fields open inside
+                        // its blue plan card.
                         PlanSummaryHeader(
                           plan: _plan,
                           isInitial: true,

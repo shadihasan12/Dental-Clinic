@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,20 @@ class IssuesSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    // Same slots on both, but desktop draws them as static blocks: the
+    // shimmer sweep reads as flicker rather than progress on a monitor.
+    final wide = Responsive.isDesktop(context);
+    Widget box({double? width, double? height, BorderRadius? radius}) => wide
+        ? Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: c.shimmerBase,
+              borderRadius: radius ?? BorderRadius.circular(8),
+            ),
+          )
+        : ShimmerBox(width: width, height: height, radius: radius);
+
     return Column(
       children: [
         for (var i = 0; i < rows; i++) ...[
@@ -33,7 +48,7 @@ class IssuesSkeleton extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerBox(
+                box(
                   width: 30.w,
                   height: 30.w,
                   radius: BorderRadius.circular(10.r),
@@ -45,15 +60,15 @@ class IssuesSkeleton extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Expanded(child: ShimmerBox(height: 12.h)),
+                          Expanded(child: box(height: 12.h)),
                           SizedBox(width: 8.w),
-                          ShimmerBox(width: 54.w, height: 16.h),
+                          box(width: 54.w, height: 16.h),
                         ],
                       ),
                       SizedBox(height: 8.h),
-                      ShimmerBox(height: 10.h),
+                      box(height: 10.h),
                       SizedBox(height: 6.h),
-                      ShimmerBox(width: 160.w, height: 10.h),
+                      box(width: 160.w, height: 10.h),
                     ],
                   ),
                 ),

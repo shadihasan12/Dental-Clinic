@@ -1,10 +1,12 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/quote_sheet.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -29,19 +31,45 @@ class AddonsPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.addonsTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingWideWidth,
       body: BillingAsync<List<AddonEntity>>(
         load: repository.getAddons,
         builder: (context, addons, _) {
           final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
           if (addons.isEmpty) {
+            return AdaptiveContentWidth(
+              maxWidth: kBillingNarrowWidth,
+              child: ListView(
+                padding: EdgeInsets.all(14.w),
+                children: [
+                  StateCard(
+                    icon: Icons.extension_outlined,
+                    title: l10n.addonsEmptyTitle,
+                    message: l10n.addonsEmptyMessage,
+                  ),
+                ],
+              ),
+            );
+          }
+          // Desktop: the add-ons as a grid of cards between the two notes,
+          // each card with its own stepper and quote.
+          if (Responsive.isDesktop(context)) {
             return ListView(
-              padding: EdgeInsets.all(14.w),
+              padding: kBillingDesktopPadding,
               children: [
-                StateCard(
-                  icon: Icons.extension_outlined,
-                  title: l10n.addonsEmptyTitle,
-                  message: l10n.addonsEmptyMessage,
+                _PageNote(text: l10n.addonsIntro),
+                SizedBox(height: 14.h),
+                BillingGrid(
+                  minTileWidth: 340,
+                  children: [
+                    for (final addon in addons)
+                      _AddonCard(key: ValueKey(addon.versionId), addon: addon),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                _PageNote(
+                  text: l10n.addonsRemoveNote,
+                  icon: Icons.info_outline_rounded,
                 ),
               ],
             );

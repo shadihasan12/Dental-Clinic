@@ -23,6 +23,7 @@ class HolidayItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: isLast
           ? null
@@ -94,7 +95,7 @@ class HolidayItem extends StatelessWidget {
                         ),
                         SizedBox(width: 3.w),
                         Text(
-                          AppLocalizations.of(context)!.recurring,
+                          l10n.recurring,
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontFamily: FontHelper.fontFamily(context),
@@ -107,30 +108,95 @@ class HolidayItem extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(width: 10.w),
             // Actions
-            GestureDetector(
+            _HolidayAction(
+              icon: Icons.edit_outlined,
+              tooltip: l10n.edit,
+              background: c.cardBgSecondary,
+              hoverBackground: ColorManager.primary.withValues(alpha: 0.10),
+              border: c.borderLight,
+              foreground: c.textSecondary,
+              hoverForeground: ColorManager.primaryDarker,
               onTap: onEdit,
-              child: Padding(
-                padding: EdgeInsets.all(6.w),
-                child: Icon(
-                  Icons.edit_outlined,
-                  size: 18.w,
-                  color: c.textSecondary,
-                ),
-              ),
             ),
-            GestureDetector(
+            SizedBox(width: 8.w),
+            _HolidayAction(
+              icon: Icons.delete_outline_rounded,
+              tooltip: l10n.delete,
+              background: ColorManager.error.withValues(alpha: 0.08),
+              hoverBackground: ColorManager.error.withValues(alpha: 0.16),
+              foreground: ColorManager.error,
               onTap: onDelete,
-              child: Padding(
-                padding: EdgeInsets.all(6.w),
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  size: 18.w,
-                  color: ColorManager.error,
-                ),
-              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A small square icon button for the row's actions. A tinted tile gives the
+/// icon a clear hit area and tells edit from delete at a glance, where bare
+/// icons at the row's end read as decoration.
+class _HolidayAction extends StatefulWidget {
+  const _HolidayAction({
+    required this.icon,
+    required this.tooltip,
+    required this.background,
+    required this.hoverBackground,
+    required this.foreground,
+    required this.onTap,
+    this.hoverForeground,
+    this.border,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final Color background;
+  final Color hoverBackground;
+  final Color foreground;
+  final Color? hoverForeground;
+  final Color? border;
+  final VoidCallback onTap;
+
+  @override
+  State<_HolidayAction> createState() => _HolidayActionState();
+}
+
+class _HolidayActionState extends State<_HolidayAction> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = _hovering
+        ? (widget.hoverForeground ?? widget.foreground)
+        : widget.foreground;
+    return Tooltip(
+      // Font comes from the app theme, which already follows the locale.
+      message: widget.tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovering = true),
+        onExit: (_) => setState(() => _hovering = false),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            // 36 stays a comfortable thumb target on a phone and still sits
+            // inside the 44px date badge's row height.
+            width: 36.w,
+            height: 36.w,
+            decoration: BoxDecoration(
+              color: _hovering ? widget.hoverBackground : widget.background,
+              borderRadius: BorderRadius.circular(10.r),
+              border: widget.border == null
+                  ? null
+                  : Border.all(color: widget.border!),
+            ),
+            child: Icon(widget.icon, size: 18.w, color: fg),
+          ),
         ),
       ),
     );

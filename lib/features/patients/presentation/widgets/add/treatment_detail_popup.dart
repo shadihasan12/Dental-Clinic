@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/data/models/core_treatment.dart';
@@ -32,7 +33,7 @@ class TreatmentDetailPopup extends StatelessWidget {
     required List<Tooth> teeth,
     required List<CoreTreatment> coreTreatments,
   }) {
-    return showModalBottomSheet(
+    return showAppSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -59,7 +60,7 @@ class TreatmentDetailPopup extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Handle
-          Container(
+          HideInDialog(child: Container(
             margin: EdgeInsets.only(top: 12.h),
             width: 40.w,
             height: 4.h,
@@ -67,7 +68,7 @@ class TreatmentDetailPopup extends StatelessWidget {
               color: ColorManager.of(context).border,
               borderRadius: BorderRadius.circular(2.r),
             ),
-          ),
+          )),
 
           // Content
           Flexible(

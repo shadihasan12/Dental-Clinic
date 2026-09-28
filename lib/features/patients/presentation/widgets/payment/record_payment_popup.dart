@@ -57,7 +57,7 @@ class RecordPaymentPopup extends StatefulWidget {
       String? notes,
     ) onSave,
   }) {
-    return showModalBottomSheet<void>(
+    return showAppSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -163,7 +163,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Handle
-            Container(
+            HideInDialog(child: Container(
               margin: EdgeInsets.only(top: 12.h),
               width: 40.w,
               height: 4.h,
@@ -171,7 +171,7 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                 color: ColorManager.of(context).border,
                 borderRadius: BorderRadius.circular(2.r),
               ),
-            ),
+            )),
 
             // Content
             Flexible(

@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
+import 'package:dental_clinic_app/core/utils/app_version.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_nav_bar.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -290,15 +291,23 @@ class _Footer extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            'v1.0.0',
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 11,
-              fontWeight: FontWeightManager.medium,
-              color: c.textSubtle,
-              letterSpacing: 0.3,
-            ),
+          // The installed build's version; it was a hardcoded 'v1.0.0'.
+          FutureBuilder<String?>(
+            future: appVersion,
+            builder: (context, snapshot) {
+              final version = snapshot.data;
+              if (version == null) return const SizedBox.shrink();
+              return Text(
+                'v$version',
+                style: TextStyle(
+                  fontFamily: fontFamily,
+                  fontSize: 11,
+                  fontWeight: FontWeightManager.medium,
+                  color: c.textSubtle,
+                  letterSpacing: 0.3,
+                ),
+              );
+            },
           ),
         ],
       ),

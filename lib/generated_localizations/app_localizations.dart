@@ -2150,6 +2150,24 @@ abstract class AppLocalizations {
   /// **'No available slots for this date'**
   String get noAvailableSlotsForThisDate;
 
+  /// No description provided for @selectPatientAndDoctorForSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient and a doctor to see available times'**
+  String get selectPatientAndDoctorForSlots;
+
+  /// No description provided for @selectDoctorForSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a doctor to see available times'**
+  String get selectDoctorForSlots;
+
+  /// No description provided for @selectPatientForSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a patient to see available times'**
+  String get selectPatientForSlots;
+
   /// No description provided for @noWorkingHoursTitle.
   ///
   /// In en, this message translates to:
@@ -2263,6 +2281,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appointment status could not be changed'**
   String get statusChangeFailed;
+
+  /// No description provided for @appointmentStatusUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment status updated'**
+  String get appointmentStatusUpdated;
 
   /// No description provided for @noAppointmentsToday.
   ///
@@ -7315,6 +7339,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy a seat'**
   String get buySeatAction;
+
+  /// No description provided for @toothQuadrantUpperRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper Right'**
+  String get toothQuadrantUpperRight;
+
+  /// No description provided for @toothQuadrantUpperLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper Left'**
+  String get toothQuadrantUpperLeft;
+
+  /// No description provided for @toothQuadrantLowerLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower Left'**
+  String get toothQuadrantLowerLeft;
+
+  /// No description provided for @toothQuadrantLowerRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower Right'**
+  String get toothQuadrantLowerRight;
+
+  /// No description provided for @toothCentralIncisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Central Incisor'**
+  String get toothCentralIncisor;
+
+  /// No description provided for @toothLateralIncisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Lateral Incisor'**
+  String get toothLateralIncisor;
+
+  /// No description provided for @toothCanine.
+  ///
+  /// In en, this message translates to:
+  /// **'Canine'**
+  String get toothCanine;
+
+  /// No description provided for @toothFirstPremolar.
+  ///
+  /// In en, this message translates to:
+  /// **'First Premolar'**
+  String get toothFirstPremolar;
+
+  /// No description provided for @toothSecondPremolar.
+  ///
+  /// In en, this message translates to:
+  /// **'Second Premolar'**
+  String get toothSecondPremolar;
+
+  /// No description provided for @toothFirstMolar.
+  ///
+  /// In en, this message translates to:
+  /// **'First Molar'**
+  String get toothFirstMolar;
+
+  /// No description provided for @toothSecondMolar.
+  ///
+  /// In en, this message translates to:
+  /// **'Second Molar'**
+  String get toothSecondMolar;
+
+  /// No description provided for @toothWisdom.
+  ///
+  /// In en, this message translates to:
+  /// **'Wisdom Tooth'**
+  String get toothWisdom;
+
+  /// No description provided for @toothFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'{quadrant} {tooth}'**
+  String toothFullName(String quadrant, String tooth);
+
+  /// No description provided for @pickToothHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a tooth on the chart to see its treatments'**
+  String get pickToothHint;
+
+  /// No description provided for @patientRegisteredColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered'**
+  String get patientRegisteredColumn;
+
+  /// No description provided for @patientOpenCaseColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Open case'**
+  String get patientOpenCaseColumn;
+
+  /// No description provided for @paginationPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get paginationPrevious;
+
+  /// No description provided for @paginationPageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {total}'**
+  String paginationPageOf(int page, int total);
+
+  /// No description provided for @homeUpNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Up next'**
+  String get homeUpNext;
+
+  /// No description provided for @homeInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get homeInProgress;
+
+  /// No description provided for @homeStartsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts in {time}'**
+  String homeStartsIn(String time);
+
+  /// No description provided for @homeNoMoreToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No more appointments today'**
+  String get homeNoMoreToday;
+
+  /// No description provided for @homeNoMoreTodayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The rest of the day is clear.'**
+  String get homeNoMoreTodayHint;
+
+  /// No description provided for @homeDayProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s progress'**
+  String get homeDayProgress;
+
+  /// No description provided for @homeDoneOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String homeDoneOfTotal(int done, int total);
+
+  /// No description provided for @homeActionPatientHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a new patient'**
+  String get homeActionPatientHint;
+
+  /// No description provided for @homeActionAppointmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a visit on the calendar'**
+  String get homeActionAppointmentHint;
+
+  /// No description provided for @homeActionPaymentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a payment or an expense'**
+  String get homeActionPaymentHint;
+
+  /// No description provided for @appointmentsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No appointments} =1{1 appointment} other{{count} appointments}}'**
+  String appointmentsCount(int count);
+
+  /// No description provided for @chooseThisPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose this plan'**
+  String get chooseThisPlan;
+
+  /// No description provided for @signupSessionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sign-up session has expired. Verify your email again to continue creating your account.'**
+  String get signupSessionExpiredMessage;
+
+  /// No description provided for @verifyEmailAgainAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify email again'**
+  String get verifyEmailAgainAction;
 }
 
 class _AppLocalizationsDelegate

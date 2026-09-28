@@ -53,5 +53,11 @@ class ExpenseListResponse with _$ExpenseListResponse {
   const factory ExpenseListResponse({
     required List<ExpenseEntity> expenses,
     required List<ExpenseTotalEntity> totals,
+    @Default(1) int page,
+    @Default(1) int lastPage,
+
+    /// Rows across every page, as the server counts them. Null when the
+    /// response carried no pagination.
+    int? total,
   }) = _ExpenseListResponse;
 }

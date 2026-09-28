@@ -83,6 +83,12 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   _AppointmentErrors _errors = _AppointmentErrors.none;
   bool _submitted = false;
 
+  /// Set once the user reaches for the schedule (date, duration, VIP). Times
+  /// cannot be offered without a patient and a doctor, so from then on the
+  /// missing one is flagged where it lives instead of the slots just reading
+  /// "no available slots" as if the day were full.
+  bool _scheduleTouched = false;
+
   final List<Map<String, dynamic>> _durations = [
     {'label': '15m', 'value': 15},
     {'label': '30m', 'value': 30},
@@ -178,9 +184,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
         return;
       }
 
-      final response = result.getOrElse(
-        () => throw StateError('unreachable'),
-      );
+      final response = result.getOrElse(() => throw StateError('unreachable'));
       loaded.addAll(response.data);
       if (!response.hasMore) break;
       page++;
@@ -190,6 +194,30 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       _patients = loaded;
       _isPatientsLoading = false;
     });
+  }
+
+  /// Sends the user to Add Patient, then brings the list up to date.
+  ///
+  /// The list was loaded once when this form opened, so a patient created
+  /// from here never appeared in it - the one person the user had just gone
+  /// to add was the one they could not book. It is reloaded on the way back,
+  /// and the new patient selected when Add Patient hands them back (it does
+  /// on "Not now"; choosing to add a treatment leaves for another page).
+  Future<void> _addNewPatient() async {
+    final added = await context.pushNamed<Object?>(AppRoutesNames.addPatient);
+    if (!mounted) return;
+
+    await _loadPatients();
+    if (!mounted || added is! PatientEntity) return;
+
+    final match = _patients.where((p) => p.id == added.id).firstOrNull;
+    setState(() {
+      // A list that failed to reload still gets the patient, so the
+      // selection has a row to show.
+      if (match == null) _patients = [added, ..._patients];
+      _selectedPatientEntity = match ?? added;
+    });
+    _revalidate();
   }
 
   /// The API lists today's slots from opening time, including ones that have
@@ -326,20 +354,35 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
   }
 
-  _AppointmentErrors _validate() {
+  bool get _hasSlotPrerequisites =>
+      _selectedPatientEntity != null && _selectedDoctor != null;
+
+  /// [includeSlot] is false before the first save: the user is still on the
+  /// way to picking a time, only the choices it depends on are checked.
+  _AppointmentErrors _validate({bool includeSlot = true}) {
     final l10n = AppLocalizations.of(context)!;
     return _AppointmentErrors(
-      patient:
-          _selectedPatientEntity == null ? l10n.pleaseSelectAPatient : null,
+      patient: _selectedPatientEntity == null
+          ? l10n.pleaseSelectAPatient
+          : null,
       doctor: _selectedDoctor == null ? l10n.pleaseSelectADoctor : null,
-      slot: _selectedSlot == null ? l10n.pleaseSelectAnAvailableTimeSlot : null,
+      // With a patient or doctor missing the slots area already says so;
+      // a second "pick a time" there would ask for something it cannot show.
+      slot: includeSlot && _hasSlotPrerequisites && _selectedSlot == null
+          ? l10n.pleaseSelectAnAvailableTimeSlot
+          : null,
     );
   }
 
   void _revalidate() {
-    if (!_submitted) return;
-    final next = _validate();
+    if (!_submitted && !_scheduleTouched) return;
+    final next = _validate(includeSlot: _submitted);
     if (next != _errors) setState(() => _errors = next);
+  }
+
+  void _touchSchedule() {
+    _scheduleTouched = true;
+    _revalidate();
   }
 
   Future<void> _selectDate() async {
@@ -353,6 +396,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
     );
     if (picked == null || !mounted) return;
     setState(() => _selectedDate = picked);
+    _touchSchedule();
     _loadAvailableSlots();
   }
 
@@ -466,7 +510,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
               setState(() => _selectedPatientEntity = entity);
               _revalidate();
             },
-            onAddNewPatient: () => context.pushNamed(AppRoutesNames.addPatient),
+            onAddNewPatient: _addNewPatient,
           ),
         if (_errors.patient != null) FormErrorLine(message: _errors.patient!),
       ],
@@ -627,9 +671,10 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
   Widget _buildVipSwitch(AppLocalizations l10n) {
     final c = ColorManager.of(context);
-    return GestureDetector(
+    return _ClickableRow(
       onTap: () {
         setState(() => _isVip = !_isVip);
+        _touchSchedule();
         _loadAvailableSlots();
       },
       child: Row(
@@ -670,6 +715,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             value: _isVip,
             onChanged: (val) {
               setState(() => _isVip = val);
+              _touchSchedule();
               _loadAvailableSlots();
             },
             activeThumbColor: ColorManager.white,
@@ -690,6 +736,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
           selected: _duration == d['value'],
           onTap: () {
             setState(() => _duration = d['value']);
+            _touchSchedule();
             _loadAvailableSlots();
           },
         );
@@ -698,6 +745,17 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Widget _buildSlots(AppLocalizations l10n) {
+    if (!_hasSlotPrerequisites) {
+      final String message;
+      if (_selectedPatientEntity == null && _selectedDoctor == null) {
+        message = l10n.selectPatientAndDoctorForSlots;
+      } else if (_selectedDoctor == null) {
+        message = l10n.selectDoctorForSlots;
+      } else {
+        message = l10n.selectPatientForSlots;
+      }
+      return _SlotsPrerequisiteHint(message: message);
+    }
     if (_isSlotsLoading) {
       return _buildSlotGridSkeleton();
     }
@@ -754,9 +812,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       chips = Wrap(
         spacing: 8,
         runSpacing: 8,
-        children: [
-          for (final slot in _availableSlots) _slotChip(slot),
-        ],
+        children: [for (final slot in _availableSlots) _slotChip(slot)],
       );
     } else {
       // A full working day is 30-odd slots. On one row that is a long scroll
@@ -829,7 +885,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
   }
 
   Widget _buildReminderRow(AppLocalizations l10n) {
-    return GestureDetector(
+    return _ClickableRow(
       onTap: () => setState(() => _sendReminder = !_sendReminder),
       child: Row(
         children: [
@@ -983,6 +1039,67 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Mouse-only affordance for a whole row that toggles on tap (the VIP and
+/// reminder rows): the click cursor over the row, not just over its switch.
+/// Touch screens never see a cursor, so phones are unaffected.
+class _ClickableRow extends StatelessWidget {
+  const _ClickableRow({required this.onTap, required this.child});
+
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Stands in for the slot chips until a patient and a doctor are chosen, so
+/// an unanswered choice is not mistaken for a fully booked day.
+class _SlotsPrerequisiteHint extends StatelessWidget {
+  const _SlotsPrerequisiteHint({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: c.cardBgSecondary,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, size: 16.w, color: c.textTertiary),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                height: 1.4,
+                fontFamily: FontHelper.fontFamily(context),
+                color: c.textSecondary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

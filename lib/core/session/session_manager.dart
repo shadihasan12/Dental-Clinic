@@ -12,6 +12,8 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
+import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 /// Single place that ends a session and puts the user back on the login page.
@@ -57,6 +59,11 @@ class SessionManager {
       await _userStorage.clear();
       // The next account's clinic must not inherit this one's lock.
       _subscriptionGuard.reset();
+      // Nor this one's tab. The selection is a static that outlives the
+      // session, and a fresh RootPage opens on home - so a user who signed
+      // out from "More" came back to home content with "More" still lit in
+      // the desktop side nav.
+      RootPage.selectedTab.value = RootTab.home.index;
 
       // Releases the guard itself, once the navigation has run.
       _redirectToLogin(expired: expired);

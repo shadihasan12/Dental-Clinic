@@ -14,6 +14,19 @@ class ToothChart extends StatefulWidget {
   final bool enabled;
   final double aspectRatio;
 
+  /// Reports the tapped tooth's id and nothing else, in place of toggling
+  /// [selectedTeeth].
+  ///
+  /// For charts where a tap means "open this tooth" rather than "mark it":
+  /// working that out from the toggled list is wrong the moment the tooth is
+  /// already marked, because the tap then *removes* it and the list's last
+  /// entry is some other tooth.
+  final ValueChanged<String>? onToothTap;
+
+  /// The tooth currently being worked on, drawn filled so it stands apart
+  /// from the teeth that are merely marked.
+  final String? focusedTooth;
+
   const ToothChart({
     super.key,
     required this.teeth,
@@ -21,7 +34,23 @@ class ToothChart extends StatefulWidget {
     this.onSelectionChanged,
     this.enabled = true,
     this.aspectRatio = 0.65,
+    this.onToothTap,
+    this.focusedTooth,
   });
+
+  /// All 32 permanent teeth keyed by their FDI code, for when the teeth
+  /// list has not come back from the API: the chart still works, with the
+  /// code standing in for the id.
+  static List<Tooth> fallbackTeeth() => [
+    for (int q = 1; q <= 4; q++)
+      for (int t = 1; t <= 8; t++)
+        Tooth(
+          id: '$q$t',
+          name: 'Tooth $q$t',
+          universalCode: '$q$t',
+          quadrant: '$q',
+        ),
+  ];
 
   @override
   State<ToothChart> createState() => _ToothChartState();
@@ -29,7 +58,12 @@ class ToothChart extends StatefulWidget {
 
 class _ToothChartState extends State<ToothChart> {
   void _toggleTooth(String toothId) {
-    if (!widget.enabled || widget.onSelectionChanged == null) return;
+    if (!widget.enabled) return;
+    if (widget.onToothTap != null) {
+      widget.onToothTap!(toothId);
+      return;
+    }
+    if (widget.onSelectionChanged == null) return;
 
     final newSelection = List<String>.from(widget.selectedTeeth);
     if (newSelection.contains(toothId)) {
@@ -70,9 +104,7 @@ class _ToothChartState extends State<ToothChart> {
   Tooth? _findTooth(int quadrant, int typeIndex) {
     final code = '$quadrant$typeIndex';
     try {
-      return widget.teeth.firstWhere(
-        (t) => t.universalCode == code,
-      );
+      return widget.teeth.firstWhere((t) => t.universalCode == code);
     } catch (_) {
       return null;
     }
@@ -100,7 +132,10 @@ class _ToothChartState extends State<ToothChart> {
                   children: [
                     _buildUpperJaw(),
                     const SizedBox(height: 10),
-                    Divider(color: ColorManager.of(context).borderLight, thickness: 2),
+                    Divider(
+                      color: ColorManager.of(context).borderLight,
+                      thickness: 2,
+                    ),
                     const SizedBox(height: 10),
                     _buildLowerJaw(),
                   ],
@@ -157,13 +192,13 @@ class _ToothChartState extends State<ToothChart> {
     // Index 1 = Central Incisor (near center), Index 8 = Wisdom (at edge)
     // Position data: [left, bottom, size] — identical to original layout
     const positions = <int, List<double>>{
-      8: [1, 1, 50],     // Wisdom tooth
-      7: [10, 40, 50],   // Second molar
-      6: [20, 82, 50],   // First molar
-      5: [35, 122, 40],  // Second premolar
-      4: [50, 148, 40],  // First premolar
-      3: [68, 175, 35],  // Canine
-      2: [88, 195, 35],  // Lateral incisor
+      8: [1, 1, 50], // Wisdom tooth
+      7: [10, 40, 50], // Second molar
+      6: [20, 82, 50], // First molar
+      5: [35, 122, 40], // Second premolar
+      4: [50, 148, 40], // First premolar
+      3: [68, 175, 35], // Canine
+      2: [88, 195, 35], // Lateral incisor
       1: [115, 200, 40], // Central incisor
     };
 
@@ -197,6 +232,7 @@ class _ToothChartState extends State<ToothChart> {
     required double size,
   }) {
     final isSelected = tooth != null && widget.selectedTeeth.contains(tooth.id);
+    final isFocused = tooth != null && widget.focusedTooth == tooth.id;
     final asset = _assetForToothType(typeIndex);
 
     return Positioned(
@@ -204,29 +240,37 @@ class _ToothChartState extends State<ToothChart> {
       bottom: bottom,
       width: size,
       height: size,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: widget.enabled && tooth != null
-            ? () => _toggleTooth(tooth.id)
-            : null,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: isSelected
-                ? Border.all(color: ColorManager.primary, width: 2)
-                : null,
-          ),
-          child: SvgPicture.asset(
-            asset,
-            width: size,
-            height: size,
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(
-                    isSelected
-                        ? ColorManager.primary
-                        : ColorManager.of(context).textPrimary,
-                    BlendMode.srcIn,
-                  ),
+      child: MouseRegion(
+        cursor: widget.enabled && tooth != null
+            ? SystemMouseCursors.click
+            : MouseCursor.defer,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.enabled && tooth != null
+              ? () => _toggleTooth(tooth.id)
+              : null,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isFocused
+                  ? ColorManager.primary.withValues(alpha: 0.18)
+                  : null,
+              borderRadius: BorderRadius.circular(8),
+              border: isSelected || isFocused
+                  ? Border.all(color: ColorManager.primary, width: 2)
+                  : null,
+            ),
+            child: SvgPicture.asset(
+              asset,
+              width: size,
+              height: size,
+              fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(
+                isSelected || isFocused
+                    ? ColorManager.primary
+                    : ColorManager.of(context).textPrimary,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
         ),
       ),

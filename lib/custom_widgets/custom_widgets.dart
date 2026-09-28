@@ -14,6 +14,7 @@ export 'custom_card.dart';
 export 'custom_text_field.dart';
 export 'denta_form.dart';
 export 'desktop_page_parts.dart';
+export 'desktop_pager.dart';
 export 'denta_refresh.dart';
 export 'glass_tab_bar.dart';
 export 'gradient_header.dart';

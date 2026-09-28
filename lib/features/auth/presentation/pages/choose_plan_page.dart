@@ -13,6 +13,7 @@ import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/plan_features_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
+import 'package:dental_clinic_app/features/auth/domain/entities/plan_entity.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/plan_option_card.dart';
 import 'package:dental_clinic_app/injection.dart';
 
@@ -34,17 +35,60 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
   final Map<String, PlanFeaturesEntity> _features = {};
   final Set<String> _featuresLoading = {};
 
-  Future<void> _loadFeatures(String planId) async {
-    if (_features.containsKey(planId) || _featuresLoading.contains(planId)) {
-      return;
-    }
+  /// One request per plan, shared by whoever asks: the card's in-place list
+  /// and the desktop popup both wait on the same future. Dropped on failure
+  /// so opening the plan again retries.
+  final Map<String, Future<void>> _featureRequests = {};
+
+  Future<void> _loadFeatures(String planId) =>
+      _featureRequests[planId] ??= _fetchFeatures(planId);
+
+  Future<void> _fetchFeatures(String planId) async {
     setState(() => _featuresLoading.add(planId));
     final result = await getIt<BillingRepository>().getPlanFeatures(planId);
     if (!mounted) return;
     setState(() {
       _featuresLoading.remove(planId);
-      result.fold((_) {}, (features) => _features[planId] = features);
+      result.fold(
+        (_) => _featureRequests.remove(planId),
+        (features) => _features[planId] = features,
+      );
     });
+  }
+
+  /// Desktop: what the plan includes, in a popup rather than inside the
+  /// card, so a long list cannot stretch one card far past the others. The
+  /// popup can pick the plan too - the question it answers is usually
+  /// "is this the one?".
+  Future<void> _openFeatures(PlanEntity plan) async {
+    final request = _loadFeatures(plan.id);
+    final l10n = AppLocalizations.of(context)!;
+
+    final choose = await showAppSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      dialogMaxWidth: 520,
+      builder: (sheetContext) => FormSheetShell(
+        title: plan.name,
+        footer: PrimaryButton(
+          text: l10n.chooseThisPlan,
+          onPressed: () => Navigator.pop(sheetContext, true),
+        ),
+        children: [
+          FutureBuilder<void>(
+            future: request,
+            builder: (_, snapshot) => PlanFeaturesList(
+              features: _features[plan.id],
+              loading: snapshot.connectionState != ConnectionState.done,
+              showTrialNote: true,
+            ),
+          ),
+        ],
+      ),
+    );
+    if (choose == true && mounted) {
+      setState(() => _selectedPlanId = plan.id);
+    }
   }
 
   @override
@@ -63,7 +107,11 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
 
-    return AuthDesktopShell(imageIndex: 0, child: Scaffold(
+    final isDesktop = Responsive.isDesktop(context);
+
+    return AuthDesktopShell(
+      imageIndex: 0,
+      child: Scaffold(
       backgroundColor: ColorManager.of(context).scaffoldBg,
       body: SafeArea(
         child: BlocBuilder<AuthBloc, AuthState>(
@@ -141,6 +189,8 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
               );
             }
 
+            if (isDesktop) return _buildDesktopBody(state, l10n, fontFamily);
+
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Column(
@@ -161,19 +211,16 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
                         onShowFeatures: () => _loadFeatures(plan.id),
                       ),
                     ),
-                  if (Responsive.isDesktop(context)) ...[
-                    SizedBox(height: 24.h),
-                    _buildInlineButton(l10n),
-                    SizedBox(height: 24.h),
-                  ] else
-                    SizedBox(height: 100.h),
+                  SizedBox(height: 100.h),
                 ],
               ),
             );
           },
         ),
       ),
-      bottomNavigationBar: Responsive.isDesktop(context) ? null : _buildBottomButton(l10n),
+      bottomNavigationBar: isDesktop
+          ? _buildDesktopFooter(l10n)
+          : _buildBottomButton(l10n),
     ),);
   }
 
@@ -223,6 +270,61 @@ class _ChoosePlanPageState extends State<ChoosePlanPage> {
     );
   }
 
+
+  /// Desktop: the heading stays at the top, the plans run down under it
+  /// as on a phone, and Next is docked below. "What's included" opens a
+  /// popup instead of the card, so every card keeps its size.
+  Widget _buildDesktopBody(
+    AuthState state,
+    AppLocalizations l10n,
+    String fontFamily,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildTopBar(l10n, fontFamily),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.only(bottom: 16),
+              itemCount: state.plans.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (_, i) {
+                final plan = state.plans[i];
+                return PlanOptionCard(
+                  plan: plan,
+                  selected: plan.id == _selectedPlanId,
+                  showTrial: true,
+                  features: _features[plan.id],
+                  featuresLoading: _featuresLoading.contains(plan.id),
+                  onTap: () => setState(() => _selectedPlanId = plan.id),
+                  onShowFeatures: () => _loadFeatures(plan.id),
+                  onOpenFeatures: () => _openFeatures(plan),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Next, docked under the page and centred at the width of a form button,
+  /// so it stays in the same place however many plans there are.
+  Widget _buildDesktopFooter(AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+      child: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: _buildInlineButton(l10n),
+        ),
+      ),
+    );
+  }
 
   Widget _buildInlineButton(AppLocalizations l10n) {
     return BlocBuilder<AuthBloc, AuthState>(

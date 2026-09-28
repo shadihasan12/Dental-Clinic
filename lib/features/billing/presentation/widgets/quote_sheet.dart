@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dartz/dartz.dart' show Either;
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -44,7 +45,7 @@ Future<QuoteSheetResult?> showQuoteSheet(
   required Future<Either<NetworkExceptions, BillingRequestResult>> Function()
       request,
 }) {
-  return showModalBottomSheet<QuoteSheetResult>(
+  return showAppSheet<QuoteSheetResult>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,

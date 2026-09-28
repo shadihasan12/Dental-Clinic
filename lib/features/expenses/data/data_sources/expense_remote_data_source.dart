@@ -39,9 +39,19 @@ class ExpenseRemoteDataSourceImpl implements ExpenseRemoteDataSource {
         .map((e) => ExpenseTotalModel.fromJson(e as Map<String, dynamic>))
         .toList();
 
+    // Absent when the request asked for no page: then the one response is
+    // the whole list, and it is reported as a single page.
+    final pagination = meta?['pagination'];
+    int? asInt(Object? v) => v is num ? v.toInt() : int.tryParse('$v');
+
     return {
       'expenses': expenses,
       'totals': totals,
+      if (pagination is Map) ...{
+        'page': asInt(pagination['page']),
+        'lastPage': asInt(pagination['last_page']),
+        'total': asInt(pagination['total']),
+      },
     };
   }
 

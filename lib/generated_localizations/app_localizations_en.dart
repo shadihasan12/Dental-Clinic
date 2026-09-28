@@ -1066,6 +1066,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noAvailableSlotsForThisDate => 'No available slots for this date';
 
   @override
+  String get selectPatientAndDoctorForSlots =>
+      'Select a patient and a doctor to see available times';
+
+  @override
+  String get selectDoctorForSlots => 'Select a doctor to see available times';
+
+  @override
+  String get selectPatientForSlots => 'Select a patient to see available times';
+
+  @override
   String get noWorkingHoursTitle => 'Set up your working hours';
 
   @override
@@ -1127,6 +1137,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusChangeFailed => 'Appointment status could not be changed';
+
+  @override
+  String get appointmentStatusUpdated => 'Appointment status updated';
 
   @override
   String get noAppointmentsToday => 'No appointments today';
@@ -3937,4 +3950,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get buySeatAction => 'Buy a seat';
+
+  @override
+  String get toothQuadrantUpperRight => 'Upper Right';
+
+  @override
+  String get toothQuadrantUpperLeft => 'Upper Left';
+
+  @override
+  String get toothQuadrantLowerLeft => 'Lower Left';
+
+  @override
+  String get toothQuadrantLowerRight => 'Lower Right';
+
+  @override
+  String get toothCentralIncisor => 'Central Incisor';
+
+  @override
+  String get toothLateralIncisor => 'Lateral Incisor';
+
+  @override
+  String get toothCanine => 'Canine';
+
+  @override
+  String get toothFirstPremolar => 'First Premolar';
+
+  @override
+  String get toothSecondPremolar => 'Second Premolar';
+
+  @override
+  String get toothFirstMolar => 'First Molar';
+
+  @override
+  String get toothSecondMolar => 'Second Molar';
+
+  @override
+  String get toothWisdom => 'Wisdom Tooth';
+
+  @override
+  String toothFullName(String quadrant, String tooth) {
+    return '$quadrant $tooth';
+  }
+
+  @override
+  String get pickToothHint => 'Pick a tooth on the chart to see its treatments';
+
+  @override
+  String get patientRegisteredColumn => 'Registered';
+
+  @override
+  String get patientOpenCaseColumn => 'Open case';
+
+  @override
+  String get paginationPrevious => 'Previous';
+
+  @override
+  String paginationPageOf(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String get homeUpNext => 'Up next';
+
+  @override
+  String get homeInProgress => 'In progress';
+
+  @override
+  String homeStartsIn(String time) {
+    return 'Starts in $time';
+  }
+
+  @override
+  String get homeNoMoreToday => 'No more appointments today';
+
+  @override
+  String get homeNoMoreTodayHint => 'The rest of the day is clear.';
+
+  @override
+  String get homeDayProgress => 'Today\'s progress';
+
+  @override
+  String homeDoneOfTotal(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get homeActionPatientHint => 'Register a new patient';
+
+  @override
+  String get homeActionAppointmentHint => 'Book a visit on the calendar';
+
+  @override
+  String get homeActionPaymentHint => 'Log a payment or an expense';
+
+  @override
+  String appointmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count appointments',
+      one: '1 appointment',
+      zero: 'No appointments',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chooseThisPlan => 'Choose this plan';
+
+  @override
+  String get signupSessionExpiredMessage =>
+      'Your sign-up session has expired. Verify your email again to continue creating your account.';
+
+  @override
+  String get verifyEmailAgainAction => 'Verify email again';
 }

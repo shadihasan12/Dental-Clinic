@@ -8,7 +8,13 @@ import 'package:dental_clinic_app/generated_localizations/app_localizations.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ExpenseDetailSheet extends StatelessWidget {
+/// An expense's details, and - in the same sheet - the question of deleting
+/// it.
+///
+/// Delete swaps the sheet's content for the confirmation rather than stacking
+/// an alert on top: one surface, one decision, and Cancel lands the user back
+/// on the details they were reading.
+class ExpenseDetailSheet extends StatefulWidget {
   const ExpenseDetailSheet({
     super.key,
     required this.expense,
@@ -21,12 +27,127 @@ class ExpenseDetailSheet extends StatelessWidget {
   final VoidCallback onEdit;
 
   @override
+  State<ExpenseDetailSheet> createState() => _ExpenseDetailSheetState();
+}
+
+class _ExpenseDetailSheetState extends State<ExpenseDetailSheet> {
+  bool _confirmingDelete = false;
+
+  ExpenseEntity get expense => widget.expense;
+
+  @override
   Widget build(BuildContext context) {
+    // Sized to whichever view is showing, and eased between them, so the
+    // swap reads as the sheet changing its mind rather than jumping.
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      alignment: Alignment.bottomCenter,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 160),
+        child: _confirmingDelete
+            ? _buildConfirmDelete(context)
+            : _buildDetails(context),
+      ),
+    );
+  }
+
+  Widget _buildConfirmDelete(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final c = ColorManager.of(context);
     final family = FontHelper.fontFamily(context);
 
     return FormSheetShell(
+      key: const ValueKey('confirm-delete'),
+      title: l10n.deleteExpenseTitle,
+      footer: Row(
+        children: [
+          Expanded(
+            child: _SheetAction(
+              icon: Icons.arrow_back_rounded,
+              label: l10n.cancel,
+              tone: c.textSecondary,
+              border: c.border,
+              onTap: () => setState(() => _confirmingDelete = false),
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: _SheetAction(
+              icon: Icons.delete_outline,
+              label: l10n.delete,
+              tone: ColorManager.white,
+              border: ColorManager.error,
+              fill: ColorManager.error,
+              onTap: () {
+                widget.onDelete();
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
+      ),
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: ColorManager.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                Icons.delete_outline,
+                size: 20.w,
+                color: ColorManager.error,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Names what is about to go, so the user confirms this
+                  // expense rather than "an expense".
+                  Text(
+                    '${expense.amount} ${expense.currency.currencyCode}'
+                    ' \u00B7 ${expense.category.name}',
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    l10n.deleteExpenseConfirmation,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 12.5.sp,
+                      height: 1.45,
+                      color: c.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+      ],
+    );
+  }
+
+  Widget _buildDetails(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+
+    return FormSheetShell(
+      key: const ValueKey('details'),
       title: l10n.expenseDetails,
       footer: Row(
         children: [
@@ -36,7 +157,15 @@ class ExpenseDetailSheet extends StatelessWidget {
               label: l10n.edit,
               tone: ColorManager.primaryDarker,
               border: ColorManager.primaryLighter,
-              onTap: onEdit,
+              // The sheet closes itself, with its own context, before handing
+              // over. The caller's context is the page's: on desktop this is
+              // a dialog on the root navigator, so popping from the page
+              // popped the page instead - the last one, which go_router
+              // asserts on.
+              onTap: () {
+                Navigator.pop(context);
+                widget.onEdit();
+              },
             ),
           ),
           SizedBox(width: 10.w),
@@ -46,7 +175,7 @@ class ExpenseDetailSheet extends StatelessWidget {
               label: l10n.delete,
               tone: ColorManager.error,
               border: ColorManager.errorBorder,
-              onTap: () => _confirmDelete(context, l10n),
+              onTap: () => setState(() => _confirmingDelete = true),
             ),
           ),
         ],
@@ -132,45 +261,6 @@ class ExpenseDetailSheet extends StatelessWidget {
     for (final a in expense.attachments)
       CaseAttachment(id: a.viewUrl, url: a.viewUrl, downloadUrl: a.downloadUrl),
   ];
-
-  void _confirmDelete(BuildContext context, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          l10n.deleteExpenseTitle,
-          style: TextStyle(fontFamily: FontHelper.fontFamily(ctx)),
-        ),
-        content: Text(
-          l10n.deleteExpenseConfirmation,
-          style: TextStyle(fontFamily: FontHelper.fontFamily(ctx)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(fontFamily: FontHelper.fontFamily(ctx)),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx); // close dialog
-              onDelete(); // remove from data
-              Navigator.pop(context); // close sheet
-            },
-            child: Text(
-              l10n.delete,
-              style: TextStyle(
-                fontFamily: FontHelper.fontFamily(ctx),
-                color: ColorManager.error,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 /// One receipt as a 72x72 tile. The API hands back a signed URL with no
@@ -262,6 +352,7 @@ class _SheetAction extends StatelessWidget {
     required this.tone,
     required this.border,
     required this.onTap,
+    this.fill,
   });
 
   final IconData icon;
@@ -270,11 +361,15 @@ class _SheetAction extends StatelessWidget {
   final Color border;
   final VoidCallback onTap;
 
+  /// Solid background for the one action that commits - the confirmed
+  /// delete. Null keeps the outlined card-coloured button.
+  final Color? fill;
+
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(11.r);
     return Material(
-      color: ColorManager.of(context).cardBg,
+      color: fill ?? ColorManager.of(context).cardBg,
       borderRadius: radius,
       child: InkWell(
         onTap: onTap,

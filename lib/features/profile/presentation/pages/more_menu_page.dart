@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/constants/legal_urls.dart';
+import 'package:dental_clinic_app/core/utils/app_version.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -211,15 +212,26 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  /// The installed build's version; it was a hardcoded '1.0.0' that never
+  /// moved with a release.
   Widget _versionLabel(BuildContext context, AppLocalizations l10n) {
     return Center(
-      child: Text(
-        '${l10n.version} 1.0.0',
-        style: TextStyle(
-          fontFamily: FontHelper.fontFamily(context),
-          fontSize: 11.sp,
-          color: ColorManager.of(context).textSubtle,
-        ),
+      child: FutureBuilder<String?>(
+        future: appVersion,
+        builder: (context, snapshot) {
+          final version = snapshot.data;
+          // Nothing until it resolves - a moment at most - rather than a
+          // placeholder number that could be wrong.
+          if (version == null) return const SizedBox.shrink();
+          return Text(
+            '${l10n.version} $version',
+            style: TextStyle(
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 11.sp,
+              color: ColorManager.of(context).textSubtle,
+            ),
+          );
+        },
       ),
     );
   }

@@ -369,6 +369,9 @@
   "searchPatientName": "Search patient name",
   "noPatientsFound": "No patients found",
   "noAvailableSlotsForThisDate": "No available slots for this date",
+  "selectPatientAndDoctorForSlots": "Select a patient and a doctor to see available times",
+  "selectDoctorForSlots": "Select a doctor to see available times",
+  "selectPatientForSlots": "Select a patient to see available times",
   "noWorkingHoursTitle": "Set up your working hours",
   "noWorkingHoursMessage": "You haven't added your working hours yet, so we can't show available slots. Add them once and you'll be able to schedule appointments right away.",
   "setWorkingHours": "Set working hours",
@@ -388,6 +391,7 @@
   "noAppointmentsScheduledHint": "Add an appointment and it will show here with its time and duration.",
   "appointmentsLoadFailed": "Appointments could not be loaded",
   "statusChangeFailed": "Appointment status could not be changed",
+  "appointmentStatusUpdated": "Appointment status updated",
   "noAppointmentsToday": "No appointments today",
   "noAppointmentsTodayHint": "Add the first appointment and it will show here with its time and duration.",
   "scheduleLoadFailed": "Today's schedule could not be loaded",
@@ -1814,5 +1818,65 @@
     }
   },
   "addonQuantityLabel": "Units to add",
-  "buySeatAction": "Buy a seat"
+  "buySeatAction": "Buy a seat",
+  "toothQuadrantUpperRight": "Upper Right",
+  "toothQuadrantUpperLeft": "Upper Left",
+  "toothQuadrantLowerLeft": "Lower Left",
+  "toothQuadrantLowerRight": "Lower Right",
+  "toothCentralIncisor": "Central Incisor",
+  "toothLateralIncisor": "Lateral Incisor",
+  "toothCanine": "Canine",
+  "toothFirstPremolar": "First Premolar",
+  "toothSecondPremolar": "Second Premolar",
+  "toothFirstMolar": "First Molar",
+  "toothSecondMolar": "Second Molar",
+  "toothWisdom": "Wisdom Tooth",
+  "toothFullName": "{quadrant} {tooth}",
+  "@toothFullName": {
+    "placeholders": {
+      "quadrant": {"type": "String"},
+      "tooth": {"type": "String"}
+    }
+  },
+  "pickToothHint": "Pick a tooth on the chart to see its treatments",
+  "patientRegisteredColumn": "Registered",
+  "patientOpenCaseColumn": "Open case",
+  "paginationPrevious": "Previous",
+  "paginationPageOf": "Page {page} of {total}",
+  "@paginationPageOf": {
+    "placeholders": {
+      "page": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "homeUpNext": "Up next",
+  "homeInProgress": "In progress",
+  "homeStartsIn": "Starts in {time}",
+  "@homeStartsIn": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "homeNoMoreToday": "No more appointments today",
+  "homeNoMoreTodayHint": "The rest of the day is clear.",
+  "homeDayProgress": "Today's progress",
+  "homeDoneOfTotal": "{done} of {total} done",
+  "@homeDoneOfTotal": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "homeActionPatientHint": "Register a new patient",
+  "homeActionAppointmentHint": "Book a visit on the calendar",
+  "homeActionPaymentHint": "Log a payment or an expense",
+  "appointmentsCount": "{count, plural, =0{No appointments} =1{1 appointment} other{{count} appointments}}",
+  "@appointmentsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "chooseThisPlan": "Choose this plan",
+  "signupSessionExpiredMessage": "Your sign-up session has expired. Verify your email again to continue creating your account.",
+  "verifyEmailAgainAction": "Verify email again"
 }

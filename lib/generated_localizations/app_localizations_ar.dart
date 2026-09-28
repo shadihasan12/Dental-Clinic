@@ -859,7 +859,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addNoteOptional => 'إضافة ملاحظة (اختيارية)';
 
   @override
-  String get addExpense => 'إضافة نفقة';
+  String get addExpense => 'إضافة دفعة';
 
   @override
   String get saveExpense => 'حفظ النفقة';
@@ -1060,6 +1060,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noAvailableSlotsForThisDate => 'لا توجد أوقات متاحة لهذا التاريخ';
 
   @override
+  String get selectPatientAndDoctorForSlots =>
+      'اختر مريضًا وطبيبًا لعرض الأوقات المتاحة';
+
+  @override
+  String get selectDoctorForSlots => 'اختر طبيبًا لعرض الأوقات المتاحة';
+
+  @override
+  String get selectPatientForSlots => 'اختر مريضًا لعرض الأوقات المتاحة';
+
+  @override
   String get noWorkingHoursTitle => 'حدّد ساعات عملك';
 
   @override
@@ -1120,6 +1130,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get statusChangeFailed => 'تعذّر تغيير حالة الموعد';
+
+  @override
+  String get appointmentStatusUpdated => 'تم تحديث حالة الموعد';
 
   @override
   String get noAppointmentsToday => 'لا مواعيد اليوم';
@@ -3189,11 +3202,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get updateOptionalBody =>
-      'أصبحت نسخة أحدث من دنتا جاهزة، تتضمن آخر الإصلاحات والتحسينات.';
+      'أصبحت نسخة أحدث من Denta جاهزة، تتضمن آخر الإصلاحات والتحسينات.';
 
   @override
   String get updateForcedBody =>
-      'لم تعد هذه النسخة من دنتا مدعومة. حدّث التطبيق لمتابعة استخدامه.';
+      'لم تعد هذه النسخة من Denta مدعومة. حدّث التطبيق لمتابعة استخدامه.';
 
   @override
   String get updateNow => 'حدّث الآن';
@@ -3910,4 +3923,121 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get buySeatAction => 'اشترِ مقعداً';
+
+  @override
+  String get toothQuadrantUpperRight => 'علوي أيمن';
+
+  @override
+  String get toothQuadrantUpperLeft => 'علوي أيسر';
+
+  @override
+  String get toothQuadrantLowerLeft => 'سفلي أيسر';
+
+  @override
+  String get toothQuadrantLowerRight => 'سفلي أيمن';
+
+  @override
+  String get toothCentralIncisor => 'ثنية';
+
+  @override
+  String get toothLateralIncisor => 'رباعية';
+
+  @override
+  String get toothCanine => 'ناب';
+
+  @override
+  String get toothFirstPremolar => 'ضاحك أول';
+
+  @override
+  String get toothSecondPremolar => 'ضاحك ثانٍ';
+
+  @override
+  String get toothFirstMolar => 'رحى أولى';
+
+  @override
+  String get toothSecondMolar => 'رحى ثانية';
+
+  @override
+  String get toothWisdom => 'ضرس العقل';
+
+  @override
+  String toothFullName(String quadrant, String tooth) {
+    return '$tooth - $quadrant';
+  }
+
+  @override
+  String get pickToothHint => 'اختر سناً من المخطط لعرض معالجاته';
+
+  @override
+  String get patientRegisteredColumn => 'تاريخ التسجيل';
+
+  @override
+  String get patientOpenCaseColumn => 'حالة مفتوحة';
+
+  @override
+  String get paginationPrevious => 'السابق';
+
+  @override
+  String paginationPageOf(int page, int total) {
+    return 'صفحة $page من $total';
+  }
+
+  @override
+  String get homeUpNext => 'التالي';
+
+  @override
+  String get homeInProgress => 'جارٍ الآن';
+
+  @override
+  String homeStartsIn(String time) {
+    return 'يبدأ بعد $time';
+  }
+
+  @override
+  String get homeNoMoreToday => 'لا مزيد من المواعيد اليوم';
+
+  @override
+  String get homeNoMoreTodayHint => 'بقية اليوم متاحة.';
+
+  @override
+  String get homeDayProgress => 'تقدّم اليوم';
+
+  @override
+  String homeDoneOfTotal(int done, int total) {
+    return '$done من $total مكتمل';
+  }
+
+  @override
+  String get homeActionPatientHint => 'سجّل مريضاً جديداً';
+
+  @override
+  String get homeActionAppointmentHint => 'احجز زيارة في التقويم';
+
+  @override
+  String get homeActionPaymentHint => 'سجّل دفعة أو مصروفاً';
+
+  @override
+  String appointmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count موعد',
+      many: '$count موعداً',
+      few: '$count مواعيد',
+      two: 'موعدان',
+      one: 'موعد واحد',
+      zero: 'لا مواعيد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chooseThisPlan => 'اختر هذه الباقة';
+
+  @override
+  String get signupSessionExpiredMessage =>
+      'انتهت صلاحية جلسة التسجيل. تحقّق من بريدك الإلكتروني مرة أخرى لمتابعة إنشاء حسابك.';
+
+  @override
+  String get verifyEmailAgainAction => 'التحقق من البريد مجدداً';
 }

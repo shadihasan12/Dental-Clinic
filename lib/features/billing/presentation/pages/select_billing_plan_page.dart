@@ -1,12 +1,14 @@
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/addon_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
 import 'package:dental_clinic_app/features/billing/presentation/cubit/plan_picker_cubit.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/plan_option_card.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/quote_sheet.dart';
@@ -58,11 +60,14 @@ class _PlanPickerView extends StatelessWidget {
             BillingPlanMode.renew => l10n.renewPlanTitle,
             BillingPlanMode.upgrade => l10n.upgradePlanTitle,
           },
-          maxContentWidth: 760,
+          maxContentWidth: kBillingWideWidth,
           body: _body(context, l10n, state, cubit),
           bottomNavigationBar: state.plans.isEmpty
               ? null
               : FormActionBar(
+                  // Desktop only: a button the width of the plan grid would
+                  // read as a banner.
+                  maxWidth: Responsive.formMaxWidth,
                   label: l10n.seePriceAction,
                   onPressed: state.quoteParams == null
                       ? null
@@ -80,38 +85,49 @@ class _PlanPickerView extends StatelessWidget {
     PlanPickerCubit cubit,
   ) {
     if (state.isLoading) return const BillingListSkeleton();
+    // The empty states are one card: a single column on desktop, a no-op on
+    // mobile.
     if (state.plans.isEmpty && state.isUpgrade && state.error == null) {
-      return ListView(
-        padding: EdgeInsets.all(14.w),
-        children: [
-          StateCard(
-            icon: Icons.workspace_premium_outlined,
-            title: l10n.noBiggerPlan,
-            message: l10n.upgradeHint,
-          ),
-        ],
+      return AdaptiveContentWidth(
+        maxWidth: kBillingNarrowWidth,
+        child: ListView(
+          padding: EdgeInsets.all(14.w),
+          children: [
+            StateCard(
+              icon: Icons.workspace_premium_outlined,
+              title: l10n.noBiggerPlan,
+              message: l10n.upgradeHint,
+            ),
+          ],
+        ),
       );
     }
     if (state.plans.isEmpty) {
-      return ListView(
-        padding: EdgeInsets.all(14.w),
-        children: [
-          StateCard(
-            icon: state.error == null
-                ? Icons.inventory_2_outlined
-                : Icons.cloud_off_outlined,
-            tone: state.error == null ? null : ColorManager.error,
-            title: state.error == null
-                ? l10n.noPlansAvailable
-                : l10n.billingLoadFailed,
-            message: state.error == null
-                ? null
-                : NetworkExceptions.localizedMessage(context, state.error!),
-            actionLabel: l10n.retry,
-            onAction: cubit.load,
-          ),
-        ],
+      return AdaptiveContentWidth(
+        maxWidth: kBillingNarrowWidth,
+        child: ListView(
+          padding: EdgeInsets.all(14.w),
+          children: [
+            StateCard(
+              icon: state.error == null
+                  ? Icons.inventory_2_outlined
+                  : Icons.cloud_off_outlined,
+              tone: state.error == null ? null : ColorManager.error,
+              title: state.error == null
+                  ? l10n.noPlansAvailable
+                  : l10n.billingLoadFailed,
+              message: state.error == null
+                  ? null
+                  : NetworkExceptions.localizedMessage(context, state.error!),
+              actionLabel: l10n.retry,
+              onAction: cubit.load,
+            ),
+          ],
+        ),
       );
+    }
+    if (Responsive.isDesktop(context)) {
+      return _desktopBody(context, l10n, state, cubit);
     }
 
     return ListView(
@@ -175,6 +191,102 @@ class _PlanPickerView extends StatelessWidget {
                     cubit.setAddonUnits(addon.versionId, units),
               ),
             ),
+        ],
+      ],
+    );
+  }
+
+  /// Desktop: the cycle controls share one row, and the plans sit side by
+  /// side so they can be compared at a glance instead of scrolled through.
+  /// The renewal add-ons tile the same way.
+  Widget _desktopBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    PlanPickerState state,
+    PlanPickerCubit cubit,
+  ) {
+    return ListView(
+      padding: kBillingDesktopPadding,
+      children: [
+        if (state.isUpgrade)
+          _HintCard(text: l10n.upgradeHint)
+        else ...[
+          SectionLabel(l10n.selectBillingCycle),
+          SizedBox(height: 10.h),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final toggle = _PeriodToggle(
+                period: state.period,
+                onChanged: cubit.setPeriod,
+              );
+              final stepper = _DurationStepper(
+                period: state.period,
+                duration: state.duration,
+                onChanged: cubit.setDuration,
+              );
+              if (constraints.maxWidth < 700) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [toggle, SizedBox(height: 12.h), stepper],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: toggle),
+                  const SizedBox(width: kBillingGap),
+                  Expanded(child: stepper),
+                ],
+              );
+            },
+          ),
+        ],
+        SizedBox(height: 18.h),
+        SectionLabel(l10n.choosePlan),
+        SizedBox(height: 10.h),
+        BillingGrid(
+          minTileWidth: 300,
+          maxColumns: 4,
+          balanced: true,
+          children: [
+            for (final plan in state.plans)
+              PlanOptionCard(
+                plan: plan,
+                highlightedPeriod: state.period,
+                selected: plan.id == state.selectedPlanId,
+                features: state.features[plan.id],
+                featuresLoading: state.featuresLoading.contains(plan.id),
+                onTap: () => cubit.selectPlan(plan.id),
+                onShowFeatures: () => cubit.loadFeatures(plan.id),
+              ),
+          ],
+        ),
+        if (state.mode == BillingPlanMode.renew &&
+            state.addons.isNotEmpty) ...[
+          SizedBox(height: 24.h),
+          SectionLabel(l10n.renewAddonsTitle),
+          SizedBox(height: 6.h),
+          Text(
+            l10n.renewAddonsHint,
+            style: TextStyle(
+              fontFamily: FontHelper.fontFamily(context),
+              fontSize: 11.sp,
+              height: 1.4,
+              color: ColorManager.of(context).textTertiary,
+            ),
+          ),
+          SizedBox(height: 10.h),
+          BillingGrid(
+            minTileWidth: 340,
+            children: [
+              for (final addon in state.addons)
+                _AddonStepper(
+                  addon: addon,
+                  units: state.addonUnits[addon.versionId] ?? 0,
+                  onChanged: (units) =>
+                      cubit.setAddonUnits(addon.versionId, units),
+                ),
+            ],
+          ),
         ],
       ],
     );

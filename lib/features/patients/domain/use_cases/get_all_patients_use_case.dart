@@ -12,9 +12,13 @@ import 'package:injectable/injectable.dart';
 /// page number: filtering used to happen in the page over the rows already
 /// scrolled into memory, which quietly hid every patient past the first page.
 class GetAllPatientsParams {
-  const GetAllPatientsParams({this.page = 1, this.search});
+  const GetAllPatientsParams({this.page = 1, this.search, this.size});
 
   final int page;
+
+  /// Rows per page. Null leaves it to the server's default - what mobile's
+  /// infinite scroll has always used.
+  final int? size;
 
   /// A name fragment. Null or blank fetches the roster page instead.
   final String? search;
@@ -34,6 +38,7 @@ class GetAllPatientsUseCase
     return _repository.getAllPatients(
       page: params.page,
       search: params.search,
+      size: params.size,
     );
   }
 }

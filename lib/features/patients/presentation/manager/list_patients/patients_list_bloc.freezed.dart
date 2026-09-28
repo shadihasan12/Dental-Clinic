@@ -22,18 +22,21 @@ mixin _$PatientsListEvent {
     required TResult Function() loadPatients,
     required TResult Function() loadMore,
     required TResult Function(String query) search,
+    required TResult Function(int page) goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loadPatients,
     TResult? Function()? loadMore,
     TResult? Function(String query)? search,
+    TResult? Function(int page)? goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loadPatients,
     TResult Function()? loadMore,
     TResult Function(String query)? search,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -41,18 +44,21 @@ mixin _$PatientsListEvent {
     required TResult Function(_LoadPatients value) loadPatients,
     required TResult Function(_LoadMore value) loadMore,
     required TResult Function(_Search value) search,
+    required TResult Function(_GoToPage value) goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_LoadPatients value)? loadPatients,
     TResult? Function(_LoadMore value)? loadMore,
     TResult? Function(_Search value)? search,
+    TResult? Function(_GoToPage value)? goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_LoadPatients value)? loadPatients,
     TResult Function(_LoadMore value)? loadMore,
     TResult Function(_Search value)? search,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -125,6 +131,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     required TResult Function() loadPatients,
     required TResult Function() loadMore,
     required TResult Function(String query) search,
+    required TResult Function(int page) goToPage,
   }) {
     return loadPatients();
   }
@@ -135,6 +142,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     TResult? Function()? loadPatients,
     TResult? Function()? loadMore,
     TResult? Function(String query)? search,
+    TResult? Function(int page)? goToPage,
   }) {
     return loadPatients?.call();
   }
@@ -145,6 +153,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     TResult Function()? loadPatients,
     TResult Function()? loadMore,
     TResult Function(String query)? search,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (loadPatients != null) {
@@ -159,6 +168,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     required TResult Function(_LoadPatients value) loadPatients,
     required TResult Function(_LoadMore value) loadMore,
     required TResult Function(_Search value) search,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return loadPatients(this);
   }
@@ -169,6 +179,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     TResult? Function(_LoadPatients value)? loadPatients,
     TResult? Function(_LoadMore value)? loadMore,
     TResult? Function(_Search value)? search,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return loadPatients?.call(this);
   }
@@ -179,6 +190,7 @@ class _$LoadPatientsImpl implements _LoadPatients {
     TResult Function(_LoadPatients value)? loadPatients,
     TResult Function(_LoadMore value)? loadMore,
     TResult Function(_Search value)? search,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (loadPatients != null) {
@@ -238,6 +250,7 @@ class _$LoadMoreImpl implements _LoadMore {
     required TResult Function() loadPatients,
     required TResult Function() loadMore,
     required TResult Function(String query) search,
+    required TResult Function(int page) goToPage,
   }) {
     return loadMore();
   }
@@ -248,6 +261,7 @@ class _$LoadMoreImpl implements _LoadMore {
     TResult? Function()? loadPatients,
     TResult? Function()? loadMore,
     TResult? Function(String query)? search,
+    TResult? Function(int page)? goToPage,
   }) {
     return loadMore?.call();
   }
@@ -258,6 +272,7 @@ class _$LoadMoreImpl implements _LoadMore {
     TResult Function()? loadPatients,
     TResult Function()? loadMore,
     TResult Function(String query)? search,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -272,6 +287,7 @@ class _$LoadMoreImpl implements _LoadMore {
     required TResult Function(_LoadPatients value) loadPatients,
     required TResult Function(_LoadMore value) loadMore,
     required TResult Function(_Search value) search,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return loadMore(this);
   }
@@ -282,6 +298,7 @@ class _$LoadMoreImpl implements _LoadMore {
     TResult? Function(_LoadPatients value)? loadPatients,
     TResult? Function(_LoadMore value)? loadMore,
     TResult? Function(_Search value)? search,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return loadMore?.call(this);
   }
@@ -292,6 +309,7 @@ class _$LoadMoreImpl implements _LoadMore {
     TResult Function(_LoadPatients value)? loadPatients,
     TResult Function(_LoadMore value)? loadMore,
     TResult Function(_Search value)? search,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -378,6 +396,7 @@ class _$SearchImpl implements _Search {
     required TResult Function() loadPatients,
     required TResult Function() loadMore,
     required TResult Function(String query) search,
+    required TResult Function(int page) goToPage,
   }) {
     return search(query);
   }
@@ -388,6 +407,7 @@ class _$SearchImpl implements _Search {
     TResult? Function()? loadPatients,
     TResult? Function()? loadMore,
     TResult? Function(String query)? search,
+    TResult? Function(int page)? goToPage,
   }) {
     return search?.call(query);
   }
@@ -398,6 +418,7 @@ class _$SearchImpl implements _Search {
     TResult Function()? loadPatients,
     TResult Function()? loadMore,
     TResult Function(String query)? search,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -412,6 +433,7 @@ class _$SearchImpl implements _Search {
     required TResult Function(_LoadPatients value) loadPatients,
     required TResult Function(_LoadMore value) loadMore,
     required TResult Function(_Search value) search,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return search(this);
   }
@@ -422,6 +444,7 @@ class _$SearchImpl implements _Search {
     TResult? Function(_LoadPatients value)? loadPatients,
     TResult? Function(_LoadMore value)? loadMore,
     TResult? Function(_Search value)? search,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return search?.call(this);
   }
@@ -432,6 +455,7 @@ class _$SearchImpl implements _Search {
     TResult Function(_LoadPatients value)? loadPatients,
     TResult Function(_LoadMore value)? loadMore,
     TResult Function(_Search value)? search,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -450,6 +474,160 @@ abstract class _Search implements PatientsListEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SearchImplCopyWith<_$SearchImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$GoToPageImplCopyWith<$Res> {
+  factory _$$GoToPageImplCopyWith(
+    _$GoToPageImpl value,
+    $Res Function(_$GoToPageImpl) then,
+  ) = __$$GoToPageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int page});
+}
+
+/// @nodoc
+class __$$GoToPageImplCopyWithImpl<$Res>
+    extends _$PatientsListEventCopyWithImpl<$Res, _$GoToPageImpl>
+    implements _$$GoToPageImplCopyWith<$Res> {
+  __$$GoToPageImplCopyWithImpl(
+    _$GoToPageImpl _value,
+    $Res Function(_$GoToPageImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of PatientsListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? page = null}) {
+    return _then(
+      _$GoToPageImpl(
+        null == page
+            ? _value.page
+            : page // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$GoToPageImpl implements _GoToPage {
+  const _$GoToPageImpl(this.page);
+
+  @override
+  final int page;
+
+  @override
+  String toString() {
+    return 'PatientsListEvent.goToPage(page: $page)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoToPageImpl &&
+            (identical(other.page, page) || other.page == page));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, page);
+
+  /// Create a copy of PatientsListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoToPageImplCopyWith<_$GoToPageImpl> get copyWith =>
+      __$$GoToPageImplCopyWithImpl<_$GoToPageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadPatients,
+    required TResult Function() loadMore,
+    required TResult Function(String query) search,
+    required TResult Function(int page) goToPage,
+  }) {
+    return goToPage(page);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadPatients,
+    TResult? Function()? loadMore,
+    TResult? Function(String query)? search,
+    TResult? Function(int page)? goToPage,
+  }) {
+    return goToPage?.call(page);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadPatients,
+    TResult Function()? loadMore,
+    TResult Function(String query)? search,
+    TResult Function(int page)? goToPage,
+    required TResult orElse(),
+  }) {
+    if (goToPage != null) {
+      return goToPage(page);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadPatients value) loadPatients,
+    required TResult Function(_LoadMore value) loadMore,
+    required TResult Function(_Search value) search,
+    required TResult Function(_GoToPage value) goToPage,
+  }) {
+    return goToPage(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadPatients value)? loadPatients,
+    TResult? Function(_LoadMore value)? loadMore,
+    TResult? Function(_Search value)? search,
+    TResult? Function(_GoToPage value)? goToPage,
+  }) {
+    return goToPage?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadPatients value)? loadPatients,
+    TResult Function(_LoadMore value)? loadMore,
+    TResult Function(_Search value)? search,
+    TResult Function(_GoToPage value)? goToPage,
+    required TResult orElse(),
+  }) {
+    if (goToPage != null) {
+      return goToPage(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _GoToPage implements PatientsListEvent {
+  const factory _GoToPage(final int page) = _$GoToPageImpl;
+
+  int get page;
+
+  /// Create a copy of PatientsListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GoToPageImplCopyWith<_$GoToPageImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

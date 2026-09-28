@@ -1,3 +1,10 @@
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/features/appointments/domain/use_cases/update_appointment_status_use_case.dart';
+import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
+import 'package:dental_clinic_app/custom_widgets/app_loading_dialog.dart';
+import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -21,10 +28,10 @@ class AppointmentDetailsSheet extends StatelessWidget {
 
   static void show(BuildContext context, AppointmentEntity appointment) {
     // Some entry points (home today's schedule) don't provide
-    // AppointmentBloc — in that case we show details read-only and the
-    // status pill becomes non-interactive.
+    // AppointmentBloc; there the status change goes straight to the use
+    // case instead (see [_changeStatus]).
     final AppointmentBloc? bloc = _tryReadBloc(context);
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -51,6 +58,10 @@ class AppointmentDetailsSheet extends StatelessWidget {
     final statusColor = AppointmentStatusStyles.color(appointment.status);
     final endTime = appointment.dateTime
         .add(Duration(minutes: appointment.durationMinutes));
+    // A final status has nowhere left to go, so the section is left out.
+    final nextStatuses = AppointmentStatusStyles.all
+        .where(appointment.status.canMoveTo)
+        .toList();
 
     return Container(
       constraints: BoxConstraints(
@@ -121,6 +132,26 @@ class AppointmentDetailsSheet extends StatelessWidget {
                 fullWidth: true,
               ),
 
+              // The moves the workflow allows, laid out as buttons. The pencil
+              // on the status pill was the only way in, and on a desktop row
+              // it read as a label rather than something to click.
+              if (nextStatuses.isNotEmpty) ...[
+                SizedBox(height: 20.h),
+                _SectionLabel(l10n.changeStatus),
+                SizedBox(height: 8.h),
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: [
+                    for (final status in nextStatuses)
+                      _StatusActionButton(
+                        status: status,
+                        onTap: () => _changeStatus(context, status),
+                      ),
+                  ],
+                ),
+              ],
+
               SizedBox(height: 20.h),
 
               if (appointment.treatmentType.isNotEmpty) ...[
@@ -171,14 +202,60 @@ class AppointmentDetailsSheet extends StatelessWidget {
     );
   }
 
+  /// Moves the appointment to [status] and closes the details.
+  ///
+  /// On the appointments page the bloc does it, which updates the row in
+  /// place and reports a refusal itself. Home has no such bloc, so there the
+  /// use case is called directly: the sheet waits for the answer, keeps
+  /// itself open on a refusal so the user can see what they tried, and on
+  /// success raises the app-wide signal Home already refreshes on.
+  Future<void> _changeStatus(
+    BuildContext context,
+    AppointmentStatus status,
+  ) async {
+    if (status == appointment.status) return;
+
+    final bloc = _tryReadBloc(context);
+    if (bloc != null) {
+      bloc.add(AppointmentEvent.updateAppointmentStatus(appointment.id, status));
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    final navigator = Navigator.of(context);
+    // Outlives the sheet, so the result can still be shown once it closes.
+    final rootContext = Navigator.of(context, rootNavigator: true).context;
+
+    AppLoadingDialog.show(context: context, message: l10n.saving);
+    final result = await getIt<UpdateAppointmentStatusUseCase>()(
+      UpdateAppointmentStatusParams(id: appointment.id, status: status),
+    );
+    if (!rootContext.mounted) return;
+    AppLoadingDialog.dismiss(rootContext);
+
+    result.fold(
+      (error) => AppSnackbar.showError(
+        rootContext,
+        title: l10n.statusChangeFailed,
+        message: NetworkExceptions.getErrorMessage(error),
+      ),
+      (_) {
+        UserStorage.notifyAppointmentsChanged();
+        if (navigator.mounted && navigator.canPop()) navigator.pop();
+        AppSnackbar.showSuccess(
+          rootContext,
+          title: l10n.appointmentStatusUpdated,
+        );
+      },
+    );
+  }
+
   void _openStatusPicker(
     BuildContext context,
     AppointmentEntity appointment,
   ) {
-    final bloc = _tryReadBloc(context);
-    if (bloc == null) return; // entry point doesn't support editing
-
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
@@ -188,17 +265,10 @@ class AppointmentDetailsSheet extends StatelessWidget {
       builder: (sheetContext) => _StatusPickerSheet(
         current: appointment.status,
         onSelected: (status) {
-          if (status == appointment.status) {
-            Navigator.pop(sheetContext);
-            return;
-          }
-          bloc.add(
-            AppointmentEvent.updateAppointmentStatus(appointment.id, status),
-          );
-          // Close the picker first, then the details sheet so the user lands
-          // back on the list and sees the updated row when it reloads.
+          // Close the picker first; the change then closes the details sheet
+          // so the user lands back on the list and sees the updated row.
           Navigator.pop(sheetContext);
-          Navigator.of(context).pop();
+          _changeStatus(context, status);
         },
       ),
     );
@@ -217,14 +287,14 @@ class AppointmentDetailsSheet extends StatelessWidget {
 class _Handle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return HideInDialog(child: Container(
       width: 40.w,
       height: 4.h,
       decoration: BoxDecoration(
         color: ColorManager.of(context).border,
         borderRadius: BorderRadius.circular(2.r),
       ),
-    );
+    ));
   }
 }
 
@@ -535,7 +605,9 @@ class _ViewPatientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
@@ -559,6 +631,69 @@ class _ViewPatientButton extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+      ),
+    );
+  }
+}
+
+/// One allowed next status, tinted in that status's own colour so the choice
+/// reads before the label does.
+class _StatusActionButton extends StatefulWidget {
+  final AppointmentStatus status;
+  final VoidCallback onTap;
+
+  const _StatusActionButton({required this.status, required this.onTap});
+
+  @override
+  State<_StatusActionButton> createState() => _StatusActionButtonState();
+}
+
+class _StatusActionButtonState extends State<_StatusActionButton> {
+  // Only a mouse enters, so phones keep the resting look.
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppointmentStatusStyles.color(widget.status);
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: _hovered ? 0.18 : 0.10),
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: color.withValues(alpha: _hovered ? 0.55 : 0.30),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                AppointmentStatusStyles.icon(widget.status),
+                size: 15.w,
+                color: color,
+              ),
+              SizedBox(width: 6.w),
+              Text(
+                AppointmentStatusStyles.label(context, widget.status),
+                style: TextStyle(
+                  fontSize: 12.5.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -595,14 +730,14 @@ class _StatusPickerSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
-              child: Container(
+              child: HideInDialog(child: Container(
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
                   color: ColorManager.of(context).border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
-              ),
+              )),
             ),
             SizedBox(height: 14.h),
             Padding(

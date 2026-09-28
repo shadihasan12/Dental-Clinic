@@ -130,15 +130,42 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     }
 
     if (state.sessionId == null || state.sessionId!.isEmpty) {
-      AppSnackbar.showError(
-        context,
-        title: l10n.sessionExpired,
-        message: l10n.pleaseVerifyEmailAgain,
-      );
+      _onSessionExpired(state.signupEmail);
       return;
     }
 
     context.read<AuthBloc>().add(const AuthEvent.signupSubmitted());
+  }
+
+  bool _handlingExpiredSession = false;
+
+  /// The OTP session this sign-up rides on has run out, so nothing typed
+  /// here can be submitted. Says so, then starts the flow again from email
+  /// verification - with the email already filled in - over the login page,
+  /// so Back still leads somewhere. The old flow's pages are discarded, not
+  /// left behind to return to with a dead session.
+  Future<void> _onSessionExpired(String email) async {
+    if (_handlingExpiredSession) return;
+    _handlingExpiredSession = true;
+    final l10n = AppLocalizations.of(context)!;
+    final router = GoRouter.of(context);
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => _SessionExpiredDialog(
+        title: l10n.sessionExpired,
+        message: l10n.signupSessionExpiredMessage,
+        actionLabel: l10n.verifyEmailAgainAction,
+        onAction: () => Navigator.of(dialogContext).pop(),
+      ),
+    );
+
+    router.goNamed(AppRoutesNames.login);
+    // After the go has replaced the stack, not in the same frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      router.pushNamed(AppRoutesNames.emailEntry, extra: email);
+    });
   }
 
   @override
@@ -163,6 +190,11 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               // gate asks the server for its hours and only lets the app
               // through once there are some.
               context.goNamed(AppRoutesNames.setupWorkingHours);
+            }
+
+            if (state.signupSessionExpired) {
+              _onSessionExpired(state.signupEmail);
+              return;
             }
 
             if (state.signupError != null) {
@@ -518,6 +550,85 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
           ),
         );
       },
+    );
+  }
+}
+
+/// "Your sign-up session expired" with the one thing to do about it. No
+/// dismiss: going back to verify the email is the only way forward.
+class _SessionExpiredDialog extends StatelessWidget {
+  const _SessionExpiredDialog({
+    required this.title,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  final String title;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    return PopScope(
+      canPop: false,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        child: ConstrainedBox(
+          // A small confirmation on desktop, the usual inset on a phone.
+          constraints: BoxConstraints(
+            maxWidth: Responsive.isDesktop(context) ? 420 : double.infinity,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 48.w,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    color: ColorManager.warning.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.timer_off_outlined,
+                    color: ColorManager.warning,
+                    size: 24.w,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 13.sp,
+                    height: 1.5,
+                    color: c.textSecondary,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                PrimaryButton(text: actionLabel, onPressed: onAction),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

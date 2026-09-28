@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
@@ -35,7 +36,7 @@ class PaymentHistoryPopup extends StatefulWidget {
     required double paidAmount,
     String? caseCurrencyCode,
   }) {
-    return showModalBottomSheet(
+    return showAppSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -95,7 +96,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Handle
-          Container(
+          HideInDialog(child: Container(
             margin: EdgeInsets.only(top: 12.h),
             width: 40.w,
             height: 4.h,
@@ -103,7 +104,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
               color: ColorManager.of(context).border,
               borderRadius: BorderRadius.circular(2.r),
             ),
-          ),
+          )),
 
           // Header
           Padding(

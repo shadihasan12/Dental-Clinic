@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -5,6 +6,7 @@ import 'dart:ui' as ui;
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
@@ -27,12 +29,15 @@ Future<void> showStatisticsShareSheet({
   required BuildContext context,
   required ShareStatistics stats,
 }) {
-  return showModalBottomSheet<void>(
+  return showAppSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withValues(alpha: 0.55),
+    // Desktop only: room for the prev/next arrows either side of the
+    // carousel without shrinking the card preview or hiding its neighbours.
+    dialogMaxWidth: 600,
     builder: (_) => _StatisticsShareSheet(stats: stats),
   );
 }
@@ -73,6 +78,17 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  /// Desktop arrows: animate to [index] and let [PageView.onPageChanged]
+  /// select and persist it, exactly as a swipe would.
+  void _goTo(int index) {
+    if (index < 0 || index >= ShareCardTemplate.values.length) return;
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   /// Builds the doctor's display name from cached profile data. Falls back
@@ -152,8 +168,15 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
     // Pick a 9:16 preview size that fits the screen with room to spare for
     // the header, picker chrome and buttons.
     final mq = MediaQuery.of(context);
-    final maxPreviewW = (mq.size.width - 80.w) * 0.86;
-    final maxPreviewH = mq.size.height * 0.50;
+    final isDesktop = Responsive.isDesktop(context);
+    // On desktop the sheet is a capped dialog, not the screen: size against
+    // the page the carousel gets between its arrows, and leave the dialog
+    // (88% of the window tall) room for the chrome around the card.
+    final maxPreviewW =
+        isDesktop ? 330.0 : (mq.size.width - 80.w) * 0.86;
+    final maxPreviewH = isDesktop
+        ? math.min(mq.size.height * 0.50, mq.size.height * 0.88 - 340)
+        : mq.size.height * 0.50;
     final double previewWidth;
     final double previewHeight;
     if (maxPreviewW * 16 / 9 <= maxPreviewH) {
@@ -183,33 +206,38 @@ class _StatisticsShareSheetState extends State<_StatisticsShareSheet> {
           SizedBox(height: 16.h),
           const _Header(),
           SizedBox(height: 16.h),
-          SizedBox(
-            height: ph,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: ShareCardTemplate.values.length,
-              // Keeps the off-screen neighbours built so swiping never
-              // lands on a blank card mid-decode.
-              allowImplicitScrolling: true,
-              onPageChanged: (i) {
-                final next = ShareCardTemplate.values[i];
-                setState(() => _selected = next);
-                getIt<UserStorage>().saveShareCardTemplate(next.id);
-              },
-              itemBuilder: (context, i) {
-                final template = ShareCardTemplate.values[i];
-                return Center(
-                  child: _TemplatePreview(
-                    key: ValueKey(template),
-                    boundaryKey: _boundaryKeys[template]!,
-                    template: template,
-                    data: data,
-                    width: pw,
-                    height: ph,
-                    selected: template == _selected,
-                  ),
-                );
-              },
+          _DesktopCarouselFrame(
+            index: ShareCardTemplate.values.indexOf(_selected),
+            count: ShareCardTemplate.values.length,
+            onStep: _goTo,
+            child: SizedBox(
+              height: ph,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: ShareCardTemplate.values.length,
+                // Keeps the off-screen neighbours built so swiping never
+                // lands on a blank card mid-decode.
+                allowImplicitScrolling: true,
+                onPageChanged: (i) {
+                  final next = ShareCardTemplate.values[i];
+                  setState(() => _selected = next);
+                  getIt<UserStorage>().saveShareCardTemplate(next.id);
+                },
+                itemBuilder: (context, i) {
+                  final template = ShareCardTemplate.values[i];
+                  return Center(
+                    child: _TemplatePreview(
+                      key: ValueKey(template),
+                      boundaryKey: _boundaryKeys[template]!,
+                      template: template,
+                      data: data,
+                      width: pw,
+                      height: ph,
+                      selected: template == _selected,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           SizedBox(height: 14.h),
@@ -309,14 +337,14 @@ class _Grabber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return HideInDialog(child: Container(
       width: 40.w,
       height: 4.h,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(2.r),
       ),
-    );
+    ));
   }
 }
 
@@ -437,6 +465,102 @@ class _TemplatePreview extends StatelessWidget {
   }
 }
 
+/// Desktop chrome for the design carousel; on a phone it returns [child]
+/// untouched.
+///
+/// A [PageView] only drags with touch by default, so with a mouse the other
+/// designs could not be reached at all. This lets mouse and trackpad drag it
+/// too, and adds previous/next arrows either side so the carousel is
+/// discoverable without knowing to drag. The arrows sit in a [Row], so in RTL
+/// they swap sides along with the page order.
+class _DesktopCarouselFrame extends StatelessWidget {
+  const _DesktopCarouselFrame({
+    required this.index,
+    required this.count,
+    required this.onStep,
+    required this.child,
+  });
+
+  final int index;
+  final int count;
+  final ValueChanged<int> onStep;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Responsive.isDesktop(context)) return child;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          _CarouselArrow(
+            icon: Icons.chevron_left_rounded,
+            tooltip: l10n.paginationPrevious,
+            onPressed: index > 0 ? () => onStep(index - 1) : null,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                dragDevices: const {
+                  ui.PointerDeviceKind.touch,
+                  ui.PointerDeviceKind.mouse,
+                  ui.PointerDeviceKind.trackpad,
+                  ui.PointerDeviceKind.stylus,
+                },
+              ),
+              child: child,
+            ),
+          ),
+          const SizedBox(width: 8),
+          _CarouselArrow(
+            icon: Icons.chevron_right_rounded,
+            tooltip: l10n.next,
+            onPressed: index < count - 1 ? () => onStep(index + 1) : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CarouselArrow extends StatelessWidget {
+  const _CarouselArrow({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final enabled = onPressed != null;
+    return IconButton(
+      onPressed: onPressed,
+      tooltip: tooltip,
+      style: IconButton.styleFrom(
+        fixedSize: const Size.square(40),
+        backgroundColor: c.cardBg,
+        disabledBackgroundColor: c.cardBg,
+        side: BorderSide(color: c.borderLight),
+      ),
+      // chevron_left/right mirror themselves under RTL, so each still
+      // points the way its page lies.
+      icon: Icon(
+        icon,
+        size: 22,
+        color: enabled ? c.textPrimary : c.textSubtle,
+      ),
+    );
+  }
+}
+
 class _TemplateLabel extends StatelessWidget {
   const _TemplateLabel({required this.template});
   final ShareCardTemplate template;
@@ -444,7 +568,6 @@ class _TemplateLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
-    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Text(
@@ -458,7 +581,7 @@ class _TemplateLabel extends StatelessWidget {
         ),
         SizedBox(height: 2.h),
         Text(
-          template.blurb(l10n),
+          template.blurb,
           style: TextStyle(
             fontFamily: FontHelper.fontFamily(context),
             fontSize: 12.sp,
@@ -505,6 +628,9 @@ class _ShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Desktop themes resolve to compact visual density, which trims the
+    // padding below and left this - the sheet's one action - looking squat.
+    final isDesktop = Responsive.isDesktop(context);
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
@@ -513,6 +639,8 @@ class _ShareButton extends StatelessWidget {
           backgroundColor: ColorManager.primary,
           foregroundColor: Colors.white,
           padding: EdgeInsets.symmetric(vertical: 14.h),
+          minimumSize: isDesktop ? const Size.fromHeight(48) : null,
+          visualDensity: isDesktop ? VisualDensity.standard : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14.r),
           ),

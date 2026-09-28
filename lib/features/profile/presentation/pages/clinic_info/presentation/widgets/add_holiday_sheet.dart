@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'dart:math' as math;
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
@@ -25,7 +26,7 @@ void showAddHolidaySheet(
   DateTime selectedDate = existing?.date ?? DateTime.now();
   bool recurring = existing?.recurring ?? false;
 
-  showModalBottomSheet(
+  showAppSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
@@ -56,14 +57,14 @@ void showAddHolidaySheet(
               children: [
                 // Drag handle
                 Center(
-                  child: Container(
+                  child: HideInDialog(child: Container(
                     width: 36.w,
                     height: 4.h,
                     decoration: BoxDecoration(
                       color: c.borderLight,
                       borderRadius: BorderRadius.circular(2.r),
                     ),
-                  ),
+                  )),
                 ),
                 SizedBox(height: 20.h),
                 Text(

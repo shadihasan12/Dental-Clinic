@@ -519,6 +519,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         (response) => emit(state.copyWith(
           isOtpVerifying: false,
           sessionId: response.sessionId,
+          signupSessionExpired: false,
         )),
       );
     }
@@ -610,9 +611,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(state.copyWith(isSignupLoading: true, signupError: null));
 
-    // Validate session ID from OTP verification
+    // Validate session ID from OTP verification. Without one there is
+    // nothing to register against: same outcome as the server saying the
+    // session ran out.
     if (state.sessionId == null || state.sessionId!.isEmpty) {
-      emit(state.copyWith(signupError: 'Please verify your email first'));
+      emit(state.copyWith(
+        isSignupLoading: false,
+        signupSessionExpired: true,
+      ));
       return;
     }
 
@@ -644,6 +650,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // even though the new account is the clinic admin.
     final failure = result.fold((l) => l, (_) => null);
     if (failure != null) {
+      if (_isSessionFailure(failure)) {
+        emit(state.copyWith(
+          isSignupLoading: false,
+          sessionId: null,
+          signupSessionExpired: true,
+        ));
+        return;
+      }
       emit(state.copyWith(
         isSignupLoading: false,
         signupError: NetworkExceptions.getErrorMessage(failure),
@@ -673,6 +687,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       memberships: [membership],
       activeClinicId: membership.clinicId,
     ));
+  }
+
+  /// Whether /auth/register refused because the OTP session is no longer
+  /// valid.
+  ///
+  /// The API has no dedicated status for it, so this reads what it does
+  /// say: a `session_id` field error, a message naming the session (the
+  /// server answers in the user's language), or a 401 - register carries no
+  /// token, so the session is the only credential a 401 can be about.
+  static bool _isSessionFailure(NetworkExceptions failure) {
+    final mentionsSession = RegExp(
+      r'session|جلس',
+      caseSensitive: false,
+    );
+    return failure.maybeWhen(
+      badRequest: (reason, fields) =>
+          (fields?.containsKey('session_id') ?? false) ||
+          mentionsSession.hasMatch(reason),
+      unauthorizedRequest: (_) => true,
+      forbidden: mentionsSession.hasMatch,
+      notFound: mentionsSession.hasMatch,
+      unprocessableEntity: mentionsSession.hasMatch,
+      conflict: mentionsSession.hasMatch,
+      defaultError: mentionsSession.hasMatch,
+      orElse: () => false,
+    );
   }
 
   // Forgot password handlers

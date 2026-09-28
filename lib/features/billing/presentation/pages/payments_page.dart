@@ -3,12 +3,14 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/clinic_payment_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/report_payment_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_cards.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -56,19 +58,56 @@ class PaymentsPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.reportedTransfersTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingWideWidth,
       body: BillingAsync<_PaymentsData>(
         load: load,
         builder: (context, data, reload) {
           final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
           if (data.payments.isEmpty) {
+            return AdaptiveContentWidth(
+              maxWidth: kBillingNarrowWidth,
+              child: ListView(
+                padding: EdgeInsets.all(14.w),
+                children: [
+                  StateCard(
+                    icon: Icons.swap_horiz_rounded,
+                    title: l10n.noTransfersYet,
+                    message: l10n.noTransfersYetHint,
+                  ),
+                ],
+              ),
+            );
+          }
+          // Desktop: two transfers to a row, newest first reading along the
+          // row, each with its withdraw / report-again action under it.
+          if (Responsive.isDesktop(context)) {
             return ListView(
-              padding: EdgeInsets.all(14.w),
+              padding: kBillingDesktopPadding,
               children: [
-                StateCard(
-                  icon: Icons.swap_horiz_rounded,
-                  title: l10n.noTransfersYet,
-                  message: l10n.noTransfersYetHint,
+                BillingGrid(
+                  minTileWidth: 440,
+                  maxColumns: 2,
+                  runSpacing: 12,
+                  children: [
+                    for (final payment in data.payments)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PaymentCard(
+                            payment: payment,
+                            methodNames: data.methodNames,
+                            onTap: () async {
+                              await context.pushNamed(
+                                AppRoutesNames.paymentDetails,
+                                pathParameters: {'paymentId': payment.id},
+                              );
+                              reload();
+                            },
+                          ),
+                          _PaymentActions(payment: payment, onChanged: reload),
+                        ],
+                      ),
+                  ],
                 ),
               ],
             );

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
@@ -332,7 +333,7 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
     final l10n = AppLocalizations.of(context)!;
     final family = FontHelper.fontFamily(context);
 
-    await showModalBottomSheet<void>(
+    await showAppSheet<void>(
       context: context,
       useSafeArea: true,
       backgroundColor: c.cardBg,
@@ -346,14 +347,14 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
           children: [
             SizedBox(height: 10.h),
             Center(
-              child: Container(
+              child: HideInDialog(child: Container(
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
                   color: c.borderLight,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
-              ),
+              )),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),

@@ -123,15 +123,24 @@ class RoutesManager {
           path: '/email-entry',
           name: AppRoutesNames.emailEntry,
           pageBuilder: (context, state) {
-            final authBloc = state.extra as AuthBloc?;
+            // An AuthBloc continues a flow; a String is an email to start a
+            // fresh one with - what an expired sign-up session sends back
+            // here, so the user does not have to type it again.
+            final extra = state.extra;
             return CupertinoPage(
-              child: authBloc != null
+              child: extra is AuthBloc
                   ? BlocProvider<AuthBloc>.value(
-                      value: authBloc,
+                      value: extra,
                       child: const EmailEntryPage(),
                     )
                   : BlocProvider(
-                      create: (_) => getIt<AuthBloc>(),
+                      create: (_) {
+                        final bloc = getIt<AuthBloc>();
+                        if (extra is String && extra.isNotEmpty) {
+                          bloc.add(AuthEvent.signupEmailChanged(extra));
+                        }
+                        return bloc;
+                      },
                       child: const EmailEntryPage(),
                     ),
               key: state.pageKey,
@@ -250,6 +259,23 @@ class RoutesManager {
         // Everything past sign-in shares one shell. The side menu is built
         // by the shell rather than by each page, so navigating swaps only
         // the content pane and the menu itself never moves.
+        // Outside the ShellRoute on purpose: the side nav it adds on desktop
+        // is a way out of a step that has none. AppShell draws nothing on a
+        // phone, so mobile is unchanged.
+        GoRoute(
+          path: '/setup-working-hours',
+          name: AppRoutesNames.setupWorkingHours,
+          pageBuilder: (context, state) {
+            // Same editor as the settings screen, in the mode that cannot be
+            // left until the schedule is saved. Reached only by `go` from the
+            // end of signup, so there is nothing behind it to pop back to.
+            return CupertinoPage(
+              child: const WorkingDaysPage(isInitialSetup: true),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
         ShellRoute(
           navigatorKey: shellNavigatorKey,
           builder: (context, state, child) => AppShell(child: child),
@@ -572,20 +598,6 @@ class RoutesManager {
             pageBuilder: (context, state) {
               return CupertinoPage(
                 child: const WorkingDaysPage(),
-                key: state.pageKey,
-                name: state.name,
-              );
-            },
-          ),
-          GoRoute(
-            path: '/setup-working-hours',
-            name: AppRoutesNames.setupWorkingHours,
-            pageBuilder: (context, state) {
-              // Same editor as the settings screen, in the mode that cannot be
-              // left until the schedule is saved. Reached only by `go` from the
-              // end of signup, so there is nothing behind it to pop back to.
-              return CupertinoPage(
-                child: const WorkingDaysPage(isInitialSetup: true),
                 key: state.pageKey,
                 name: state.name,
               );

@@ -26,6 +26,7 @@ abstract class PatientRemoteDataSource {
   Future<PaginatedResponse<PatientModel>> getAllPatients({
     int page = 1,
     String? search,
+    int? size,
   });
   Future<PatientFullDetailsResponse> getPatientFullDetails(String patientId);
   Future<PatientModel> getPatientDetails(String patientId);
@@ -130,13 +131,14 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   Future<PaginatedResponse<PatientModel>> getAllPatients({
     int page = 1,
     String? search,
+    int? size,
   }) async {
     final query = search?.trim() ?? '';
     if (query.isNotEmpty) return _searchByName(query);
 
     final response = await _apiConsumer.get(
       PatientEndpoints.patients,
-      queryParameters: {'page': page},
+      queryParameters: {'page': page, 'size': ?size},
     );
 
     final dataList = response['data'] as List;
@@ -151,6 +153,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       data: patients,
       currentPage: pagination['page'] as int,
       lastPage: pagination['last_page'] as int,
+      total: (pagination['total'] as num?)?.toInt(),
     );
   }
 
@@ -171,7 +174,13 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   /// name. Two go out and are merged on id. That is also why the result is
   /// reported as a single page: a merged set has no page number the server
   /// would agree with, and paging it would drop or repeat rows.
+  ///
+  /// A full name ("Omar Alshofi") matches neither field on its own, so when
+  /// the query has a space a third request pairs its first word with the
+  /// first name and the rest with the last name - which the server's AND is
+  /// exactly right for.
   Future<PaginatedResponse<PatientModel>> _searchByName(String query) async {
+    final words = query.split(RegExp(r'\s+'));
     final responses = await Future.wait([
       _apiConsumer.get(
         PatientEndpoints.patients,
@@ -187,6 +196,15 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
           'size': _searchPageSize,
         },
       ),
+      if (words.length > 1)
+        _apiConsumer.get(
+          PatientEndpoints.patients,
+          queryParameters: {
+            'filters[first_name][like]': words.first,
+            'filters[last_name][like]': words.skip(1).join(' '),
+            'size': _searchPageSize,
+          },
+        ),
     ]);
 
     final byId = <String, PatientModel>{};
@@ -203,7 +221,12 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
       );
 
-    return PaginatedResponse(data: merged, currentPage: 1, lastPage: 1);
+    return PaginatedResponse(
+      data: merged,
+      currentPage: 1,
+      lastPage: 1,
+      total: merged.length,
+    );
   }
 
   @override

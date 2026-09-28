@@ -120,8 +120,9 @@ class _AddTreatmentContentState extends State<_AddTreatmentContent> {
     final l10n = AppLocalizations.of(context)!;
     DateTime tempDate = _visitDate;
 
-    await showModalBottomSheet(
+    await showAppSheet(
       context: context,
+      dialogMaxWidth: 400,
       backgroundColor: ColorManager.of(context).cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),

@@ -26,6 +26,7 @@ class PlanOptionCard extends StatefulWidget {
     required this.onShowFeatures,
     this.highlightedPeriod,
     this.showTrial = false,
+    this.onOpenFeatures,
   });
 
   final PlanEntity plan;
@@ -43,6 +44,12 @@ class PlanOptionCard extends StatefulWidget {
 
   /// The free-trial days, for signup - the only place a trial starts.
   final bool showTrial;
+
+  /// Shows what the plan includes somewhere else - the desktop plan
+  /// chooser's popup - instead of opening the list inside the card. A
+  /// long feature list stretched one card far past the others; in a popup
+  /// the cards keep their size. Null keeps the in-card expansion.
+  final VoidCallback? onOpenFeatures;
 
   @override
   State<PlanOptionCard> createState() => _PlanOptionCardState();
@@ -181,12 +188,15 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: TextButton.icon(
-                    onPressed: () {
-                      setState(() => _expanded = !_expanded);
-                      if (_expanded) widget.onShowFeatures();
-                    },
+                    onPressed: widget.onOpenFeatures ??
+                        () {
+                          setState(() => _expanded = !_expanded);
+                          if (_expanded) widget.onShowFeatures();
+                        },
                     icon: Icon(
-                      _expanded
+                      widget.onOpenFeatures != null
+                          ? Icons.info_outline_rounded
+                          : _expanded
                           ? Icons.expand_less_rounded
                           : Icons.expand_more_rounded,
                       size: 18.w,
@@ -202,7 +212,12 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
                     ),
                   ),
                 ),
-                if (_expanded) _featuresBody(context, l10n),
+                if (_expanded && widget.onOpenFeatures == null)
+                  PlanFeaturesList(
+                    features: widget.features,
+                    loading: widget.featuresLoading,
+                    showTrialNote: widget.showTrial,
+                  ),
               ],
             ),
           ),
@@ -210,9 +225,27 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
       ),
     );
   }
+}
 
-  Widget _featuresBody(BuildContext context, AppLocalizations l10n) {
-    if (widget.featuresLoading && widget.features == null) {
+/// What a plan includes, grouped as the server groups it: limits first,
+/// then features. Drawn inside the card on a phone and in the desktop
+/// chooser's popup, so the two read the same.
+class PlanFeaturesList extends StatelessWidget {
+  const PlanFeaturesList({
+    super.key,
+    required this.features,
+    required this.loading,
+    this.showTrialNote = false,
+  });
+
+  final PlanFeaturesEntity? features;
+  final bool loading;
+  final bool showTrialNote;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (loading && features == null) {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),
         child: const Center(
@@ -224,8 +257,8 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
         ),
       );
     }
-    final features = widget.features;
-    if (features == null || features.isEmpty) {
+    final data = features;
+    if (data == null || data.isEmpty) {
       return Text(
         l10n.noData,
         style: TextStyle(
@@ -238,17 +271,17 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final entry in features.limits.entries)
+        for (final entry in data.limits.entries)
           _FeatureGroup(
-            title: features.groupTitle(entry.key),
+            title: data.groupTitle(entry.key),
             entries: entry.value,
-            showTrialNote: widget.showTrial,
+            showTrialNote: showTrialNote,
           ),
-        for (final entry in features.features.entries)
+        for (final entry in data.features.entries)
           _FeatureGroup(
-            title: features.groupTitle(entry.key),
+            title: data.groupTitle(entry.key),
             entries: entry.value,
-            showTrialNote: widget.showTrial,
+            showTrialNote: showTrialNote,
           ),
       ],
     );

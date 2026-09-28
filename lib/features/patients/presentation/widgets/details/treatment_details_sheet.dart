@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -36,7 +37,7 @@ class TreatmentDetailsSheet extends StatefulWidget {
     void Function(PlannedTreatment treatment, List<VisitNote> notes)?
         onNotesUpdated,
   }) {
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -125,14 +126,14 @@ class _TreatmentDetailsSheetState extends State<TreatmentDetailsSheet> {
                 children: [
                   // Handle
                   Center(
-                    child: Container(
+                    child: HideInDialog(child: Container(
                       width: 40.w,
                       height: 4.h,
                       decoration: BoxDecoration(
                         color: ColorManager.of(context).border,
                         borderRadius: BorderRadius.circular(2.r),
                       ),
-                    ),
+                    )),
                   ),
                   SizedBox(height: 16.h),
 

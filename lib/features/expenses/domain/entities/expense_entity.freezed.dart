@@ -909,6 +909,12 @@ abstract class _ExpenseTotalEntity implements ExpenseTotalEntity {
 mixin _$ExpenseListResponse {
   List<ExpenseEntity> get expenses => throw _privateConstructorUsedError;
   List<ExpenseTotalEntity> get totals => throw _privateConstructorUsedError;
+  int get page => throw _privateConstructorUsedError;
+  int get lastPage => throw _privateConstructorUsedError;
+
+  /// Rows across every page, as the server counts them. Null when the
+  /// response carried no pagination.
+  int? get total => throw _privateConstructorUsedError;
 
   /// Create a copy of ExpenseListResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -924,7 +930,13 @@ abstract class $ExpenseListResponseCopyWith<$Res> {
     $Res Function(ExpenseListResponse) then,
   ) = _$ExpenseListResponseCopyWithImpl<$Res, ExpenseListResponse>;
   @useResult
-  $Res call({List<ExpenseEntity> expenses, List<ExpenseTotalEntity> totals});
+  $Res call({
+    List<ExpenseEntity> expenses,
+    List<ExpenseTotalEntity> totals,
+    int page,
+    int lastPage,
+    int? total,
+  });
 }
 
 /// @nodoc
@@ -941,7 +953,13 @@ class _$ExpenseListResponseCopyWithImpl<$Res, $Val extends ExpenseListResponse>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? expenses = null, Object? totals = null}) {
+  $Res call({
+    Object? expenses = null,
+    Object? totals = null,
+    Object? page = null,
+    Object? lastPage = null,
+    Object? total = freezed,
+  }) {
     return _then(
       _value.copyWith(
             expenses: null == expenses
@@ -952,6 +970,18 @@ class _$ExpenseListResponseCopyWithImpl<$Res, $Val extends ExpenseListResponse>
                 ? _value.totals
                 : totals // ignore: cast_nullable_to_non_nullable
                       as List<ExpenseTotalEntity>,
+            page: null == page
+                ? _value.page
+                : page // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lastPage: null == lastPage
+                ? _value.lastPage
+                : lastPage // ignore: cast_nullable_to_non_nullable
+                      as int,
+            total: freezed == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -967,7 +997,13 @@ abstract class _$$ExpenseListResponseImplCopyWith<$Res>
   ) = __$$ExpenseListResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<ExpenseEntity> expenses, List<ExpenseTotalEntity> totals});
+  $Res call({
+    List<ExpenseEntity> expenses,
+    List<ExpenseTotalEntity> totals,
+    int page,
+    int lastPage,
+    int? total,
+  });
 }
 
 /// @nodoc
@@ -983,7 +1019,13 @@ class __$$ExpenseListResponseImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? expenses = null, Object? totals = null}) {
+  $Res call({
+    Object? expenses = null,
+    Object? totals = null,
+    Object? page = null,
+    Object? lastPage = null,
+    Object? total = freezed,
+  }) {
     return _then(
       _$ExpenseListResponseImpl(
         expenses: null == expenses
@@ -994,6 +1036,18 @@ class __$$ExpenseListResponseImplCopyWithImpl<$Res>
             ? _value._totals
             : totals // ignore: cast_nullable_to_non_nullable
                   as List<ExpenseTotalEntity>,
+        page: null == page
+            ? _value.page
+            : page // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lastPage: null == lastPage
+            ? _value.lastPage
+            : lastPage // ignore: cast_nullable_to_non_nullable
+                  as int,
+        total: freezed == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -1005,6 +1059,9 @@ class _$ExpenseListResponseImpl implements _ExpenseListResponse {
   const _$ExpenseListResponseImpl({
     required final List<ExpenseEntity> expenses,
     required final List<ExpenseTotalEntity> totals,
+    this.page = 1,
+    this.lastPage = 1,
+    this.total,
   }) : _expenses = expenses,
        _totals = totals;
 
@@ -1025,8 +1082,20 @@ class _$ExpenseListResponseImpl implements _ExpenseListResponse {
   }
 
   @override
+  @JsonKey()
+  final int page;
+  @override
+  @JsonKey()
+  final int lastPage;
+
+  /// Rows across every page, as the server counts them. Null when the
+  /// response carried no pagination.
+  @override
+  final int? total;
+
+  @override
   String toString() {
-    return 'ExpenseListResponse(expenses: $expenses, totals: $totals)';
+    return 'ExpenseListResponse(expenses: $expenses, totals: $totals, page: $page, lastPage: $lastPage, total: $total)';
   }
 
   @override
@@ -1035,7 +1104,11 @@ class _$ExpenseListResponseImpl implements _ExpenseListResponse {
         (other.runtimeType == runtimeType &&
             other is _$ExpenseListResponseImpl &&
             const DeepCollectionEquality().equals(other._expenses, _expenses) &&
-            const DeepCollectionEquality().equals(other._totals, _totals));
+            const DeepCollectionEquality().equals(other._totals, _totals) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.lastPage, lastPage) ||
+                other.lastPage == lastPage) &&
+            (identical(other.total, total) || other.total == total));
   }
 
   @override
@@ -1043,6 +1116,9 @@ class _$ExpenseListResponseImpl implements _ExpenseListResponse {
     runtimeType,
     const DeepCollectionEquality().hash(_expenses),
     const DeepCollectionEquality().hash(_totals),
+    page,
+    lastPage,
+    total,
   );
 
   /// Create a copy of ExpenseListResponse
@@ -1061,12 +1137,24 @@ abstract class _ExpenseListResponse implements ExpenseListResponse {
   const factory _ExpenseListResponse({
     required final List<ExpenseEntity> expenses,
     required final List<ExpenseTotalEntity> totals,
+    final int page,
+    final int lastPage,
+    final int? total,
   }) = _$ExpenseListResponseImpl;
 
   @override
   List<ExpenseEntity> get expenses;
   @override
   List<ExpenseTotalEntity> get totals;
+  @override
+  int get page;
+  @override
+  int get lastPage;
+
+  /// Rows across every page, as the server counts them. Null when the
+  /// response carried no pagination.
+  @override
+  int? get total;
 
   /// Create a copy of ExpenseListResponse
   /// with the given fields replaced by the non-null parameter values.

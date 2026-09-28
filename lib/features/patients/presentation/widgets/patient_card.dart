@@ -19,6 +19,10 @@ class Patient {
   /// dollar sign on a clinic that bills in SYP.
   final String? balanceCurrencyCode;
 
+  /// A case is still in progress. Shown as its own column on the desktop
+  /// table.
+  final bool hasOpenCase;
+
   /// When the patient was added, for the "New" filter.
   final DateTime? createdAt;
 
@@ -31,6 +35,7 @@ class Patient {
     this.nextVisit,
     required this.balance,
     this.balanceCurrencyCode,
+    this.hasOpenCase = false,
     this.createdAt,
   });
 

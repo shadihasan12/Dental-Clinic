@@ -24,8 +24,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 import '../widgets/widgets.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/patient_row_actions_menu.dart';
 
 class PatientsListPage extends StatelessWidget {
   const PatientsListPage({super.key});
@@ -66,6 +68,26 @@ class _PatientsListContentState extends State<_PatientsListContent> {
     UserStorage.patientsChangedNotifier.addListener(_onPatientsChanged);
   }
 
+  /// Rows per page on the desktop table: enough to be useful, few enough
+  /// that the page scrolls only a little rather than running on.
+  static const int _desktopPageSize = 10;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Re-checked on every resize, so a window dragged across the desktop
+    // breakpoint switches between paged and scrolled lists cleanly. Mobile
+    // keeps the server's default size, as it always has.
+    final size = Responsive.isDesktop(context) ? _desktopPageSize : null;
+    final bloc = context.read<PatientsListBloc>();
+    if (bloc.pageSize == size) return;
+    bloc.pageSize = size;
+    // A list already loaded at the other size has the wrong page bounds.
+    if (bloc.currentPage > 0) {
+      bloc.add(const PatientsListEvent.loadPatients());
+    }
+  }
+
   @override
   void dispose() {
     RootPage.selectedTab.removeListener(_onTabChanged);
@@ -87,7 +109,17 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       orElse: () => false,
     );
     if (isBusy) return;
-    bloc.add(const PatientsListEvent.loadPatients());
+    _reload(bloc);
+  }
+
+  /// Desktop pages through the table, so it refreshes the page it is on;
+  /// mobile starts the scrolled list over from the top.
+  void _reload(PatientsListBloc bloc) {
+    if (Responsive.isDesktop(context) && bloc.currentPage > 0) {
+      bloc.add(PatientsListEvent.goToPage(bloc.currentPage));
+    } else {
+      bloc.add(const PatientsListEvent.loadPatients());
+    }
   }
 
   void _onTabChanged() {
@@ -103,13 +135,29 @@ class _PatientsListContentState extends State<_PatientsListContent> {
       orElse: () => false,
     );
     if (isBusy) return;
-    bloc.add(const PatientsListEvent.loadPatients());
+    _reload(bloc);
   }
 
   void _onScroll() {
+    // The desktop table has page buttons; reaching the bottom there must
+    // not append the next page underneath.
+    if (Responsive.isDesktop(context)) return;
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       context.read<PatientsListBloc>().add(const PatientsListEvent.loadMore());
+    }
+  }
+
+  /// Back to the top on every page change, so the new page is read from its
+  /// first row rather than from wherever the last one was scrolled to.
+  void _goToPage(int page) {
+    context.read<PatientsListBloc>().add(PatientsListEvent.goToPage(page));
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -216,6 +264,7 @@ class _PatientsListContentState extends State<_PatientsListContent> {
             nextVisit: e.nextVisit,
             balance: e.balance,
             balanceCurrencyCode: e.balanceCurrencyCode,
+            hasOpenCase: e.hasOpenCase,
             createdAt: e.createdAt,
           ),
         )
@@ -253,12 +302,15 @@ class _PatientsListContentState extends State<_PatientsListContent> {
         scrollController: _scrollController,
         selectedFilterIndex: _selectedFilterIndex,
         onFilterChanged: (i) => setState(() => _selectedFilterIndex = i),
-        onSearchChanged: () => setState(() {}),
+        // Sends the query to the server like the phone does; this only
+        // rebuilt the page before, so typing on desktop searched nothing.
+        onSearchChanged: () => _onSearchChanged(_searchController.text),
         onAddPatient: _navigateToAddPatient,
         onEditPatient: _onEditPatient,
         onDeletePatient: _onDeletePatient,
         mapToDisplay: _mapToDisplayModel,
         applyFilters: _applyFilters,
+        onGoToPage: _goToPage,
       );
     }
     return _buildMobile(context);
@@ -311,7 +363,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           showCount: false,
           searchController: _searchController,
           onAddTap: () {},
-          onSearchChanged: (_) {},
+          // Live in every state: a search reloads through `loading`, and
+          // keystrokes typed while it does must still reach the server.
+          onSearchChanged: _onSearchChanged,
         ),
         Divider(height: 1, color: ColorManager.of(context).borderLight),
         Padding(
@@ -454,7 +508,9 @@ class _PatientsListContentState extends State<_PatientsListContent> {
           showCount: false,
           searchController: _searchController,
           onAddTap: _navigateToAddPatient,
-          onSearchChanged: (_) {},
+          // Live in every state: a search reloads through `loading`, and
+          // keystrokes typed while it does must still reach the server.
+          onSearchChanged: _onSearchChanged,
         ),
         Divider(height: 1, color: ColorManager.of(context).borderLight),
         Expanded(
@@ -544,6 +600,7 @@ class _DesktopPatientsView extends StatelessWidget {
     required this.onDeletePatient,
     required this.mapToDisplay,
     required this.applyFilters,
+    required this.onGoToPage,
   });
 
   final TextEditingController searchController;
@@ -556,6 +613,7 @@ class _DesktopPatientsView extends StatelessWidget {
   final ValueChanged<Patient> onDeletePatient;
   final List<Patient> Function(List<PatientEntity>) mapToDisplay;
   final List<Patient> Function(List<Patient>) applyFilters;
+  final ValueChanged<int> onGoToPage;
 
   @override
   Widget build(BuildContext context) {
@@ -599,6 +657,9 @@ class _DesktopPatientsView extends StatelessWidget {
     String? errorMessage,
   }) {
     final filtered = applyFilters(patients);
+    final bloc = context.read<PatientsListBloc>();
+    // The server's count across every page; the rows on screen are one page.
+    final total = bloc.total ?? patients.length;
 
     return SingleChildScrollView(
       controller: scrollController,
@@ -606,9 +667,9 @@ class _DesktopPatientsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _DesktopHeader(total: patients.length, onAddPatient: onAddPatient),
+          _DesktopHeader(total: total, onAddPatient: onAddPatient),
           const SizedBox(height: 20),
-          _DesktopStatsRow(patients: patients),
+          _DesktopStatsRow(patients: patients, total: total),
           const SizedBox(height: 20),
           _DesktopToolbar(
             searchController: searchController,
@@ -627,12 +688,34 @@ class _DesktopPatientsView extends StatelessWidget {
               onAddPatient: onAddPatient,
             )
           else
-            _DesktopTable(
-              patients: filtered,
-              showLoader: hasMore || isLoadingMore,
-              onEditPatient: onEditPatient,
-              onDeletePatient: onDeletePatient,
+            // Dimmed rather than replaced while the next page loads, so
+            // the table does not collapse and jump on every click.
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 150),
+              opacity: isLoadingMore ? 0.5 : 1,
+              child: IgnorePointer(
+                ignoring: isLoadingMore,
+                child: _DesktopTable(
+                  patients: filtered,
+                  onEditPatient: onEditPatient,
+                  onDeletePatient: onDeletePatient,
+                ),
+              ),
             ),
+          // Shown even for a single page, so the table always says where
+          // it stands; the buttons simply disable.
+          if (errorMessage == null &&
+              !isLoading &&
+              filtered.isNotEmpty &&
+              bloc.currentPage > 0) ...[
+            const SizedBox(height: 16),
+            DesktopPager(
+              page: bloc.currentPage,
+              lastPage: bloc.lastPage,
+              isLoading: isLoadingMore,
+              onGoToPage: onGoToPage,
+            ),
+          ],
         ],
       ),
     );
@@ -676,25 +759,25 @@ class _DesktopHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorManager.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      '$total',
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: ColorManager.primary,
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 10,
+                  //     vertical: 4,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     color: ColorManager.primary.withValues(alpha: 0.12),
+                  //     borderRadius: BorderRadius.circular(999),
+                  //   ),
+                  //   child: Text(
+                  //     '$total',
+                  //     style: TextStyle(
+                  //       fontFamily: fontFamily,
+                  //       fontSize: 12,
+                  //       fontWeight: FontWeight.w700,
+                  //       color: ColorManager.primary,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(height: 4),
@@ -724,79 +807,73 @@ class _DesktopHeader extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════════
 
 class _DesktopStatsRow extends StatelessWidget {
-  const _DesktopStatsRow({required this.patients});
+  const _DesktopStatsRow({required this.patients, required this.total});
 
+  /// The page on screen. [total] is the server's count across all pages.
   final List<Patient> patients;
+  final int total;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final withBalance = patients.where((p) => p.balance > 0).toList();
-    final upcoming = patients.where((p) => p.nextVisit != null).length;
     final newPatients = patients.where((p) => p.balance == 0).length;
     final outstandingTotal = withBalance.fold<double>(
       0,
       (sum, p) => sum + p.balance,
     );
 
+    final cards = [
+      (
+        icon: Icons.people_outline,
+        color: ColorManager.primary,
+        value: '$total',
+        label: l10n.patients,
+      ),
+      (
+        icon: Icons.auto_awesome_outlined,
+        color: ColorManager.success,
+        value: '$newPatients',
+        label: l10n.newFilter,
+      ),
+      (
+        icon: Icons.account_balance_wallet_outlined,
+        color: ColorManager.warning,
+        value: '\$${outstandingTotal.toInt()}',
+        label: l10n.outstandingBalance,
+      ),
+    ];
+
     return Row(
       children: [
-        Expanded(
-          child: _StatCard(
-            icon: Icons.people_outline,
-            iconColor: ColorManager.primary,
-            iconBg: ColorManager.primary.withValues(alpha: 0.12),
-            value: '${patients.length}',
-            label: l10n.patients,
+        for (var i = 0; i < cards.length; i++) ...[
+          Expanded(
+            child: _StatCard(
+              icon: cards[i].icon,
+              color: cards[i].color,
+              value: cards[i].value,
+              label: cards[i].label,
+            ),
           ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: _StatCard(
-            icon: Icons.auto_awesome_outlined,
-            iconColor: ColorManager.success,
-            iconBg: ColorManager.success.withValues(alpha: 0.12),
-            value: '$newPatients',
-            label: l10n.newFilter,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: _StatCard(
-            icon: Icons.account_balance_wallet_outlined,
-            iconColor: ColorManager.warning,
-            iconBg: ColorManager.warning.withValues(alpha: 0.12),
-            value: '\$${outstandingTotal.toInt()}',
-            label: l10n.outstandingBalance,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: _StatCard(
-            icon: Icons.calendar_today_outlined,
-            iconColor: const Color(0xFF3B82F6),
-            iconBg: const Color(0xFF3B82F6).withValues(alpha: 0.12),
-            value: '$upcoming',
-            label: l10n.nextVisit,
-          ),
-        ),
+          if (i != cards.length - 1) const SizedBox(width: 14),
+        ],
       ],
     );
   }
 }
 
+/// Icon beside the figure rather than above it - the appointments page's
+/// card, so the two tabs match and the row stays short.
 class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.icon,
-    required this.iconColor,
-    required this.iconBg,
+    required this.color,
     required this.value,
     required this.label,
   });
 
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
+  final Color color;
   final String value;
   final String label;
 
@@ -805,46 +882,54 @@ class _StatCard extends StatelessWidget {
     final c = ColorManager.of(context);
     final fontFamily = FontHelper.fontFamily(context);
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       decoration: BoxDecoration(
         color: c.cardBg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: c.borderLight),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(8),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: iconColor, size: 18),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 14),
-          Text(
-            value,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: c.textPrimary,
-              letterSpacing: -0.3,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: c.textPrimary,
+                    height: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 12.5,
+                    color: c.textTertiary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 12.5,
-              color: c.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -1009,18 +1094,30 @@ class _PatientCols {
 
   static const int patient = 4;
   static const int phone = 3;
-  static const int nextVisit = 3;
+  static const int registered = 2;
   static const int balance = 2;
+  static const int openCase = 2;
 
   /// Reserved whether or not the row menu is visible, so names do not shift
   /// sideways as the pointer travels down the table.
   static const double actions = 44;
+}
 
-  /// Which columns a given table width can carry. The patient cell is never
-  /// dropped - it is the thing being scanned for.
-  static bool showPhone(double w) => w >= 620;
-  static bool showBalance(double w) => w >= 780;
-  static bool showNextVisit(double w) => w >= 980;
+/// Which columns a given table width can carry, computed once per layout and
+/// handed to the header, the rows and the skeleton alike. The patient cell is
+/// never dropped - it is the thing being scanned for - and the rest go in
+/// reverse order of how much they are needed at a glance.
+class _VisibleCols {
+  _VisibleCols(double w)
+    : phone = w >= 620,
+      balance = w >= 760,
+      openCase = w >= 880,
+      registered = w >= 1000;
+
+  final bool phone;
+  final bool registered;
+  final bool balance;
+  final bool openCase;
 }
 
 const double _tableRowHeight = 60;
@@ -1030,13 +1127,11 @@ const EdgeInsets _tableCellPadding = EdgeInsets.symmetric(horizontal: 18);
 class _DesktopTable extends StatelessWidget {
   const _DesktopTable({
     required this.patients,
-    required this.showLoader,
     required this.onEditPatient,
     required this.onDeletePatient,
   });
 
   final List<Patient> patients;
-  final bool showLoader;
   final ValueChanged<Patient> onEditPatient;
   final ValueChanged<Patient> onDeletePatient;
 
@@ -1046,56 +1141,31 @@ class _DesktopTable extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final w = constraints.maxWidth;
-        final showPhone = _PatientCols.showPhone(w);
-        final showNextVisit = _PatientCols.showNextVisit(w);
-        final showBalance = _PatientCols.showBalance(w);
+        final cols = _VisibleCols(constraints.maxWidth);
 
-        return Column(
-          children: [
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: c.cardBg,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: c.borderLight),
-              ),
-              child: Column(
-                children: [
-                  _TableHeader(
-                    showPhone: showPhone,
-                    showNextVisit: showNextVisit,
-                    showBalance: showBalance,
-                  ),
-                  for (var i = 0; i < patients.length; i++)
-                    _PatientRow(
-                      key: ValueKey(patients[i].id),
-                      patient: patients[i],
-                      // The header already draws a rule beneath itself, so
-                      // the first row must not add a second one.
-                      topDivider: i > 0,
-                      showPhone: showPhone,
-                      showNextVisit: showNextVisit,
-                      showBalance: showBalance,
-                      onEdit: () => onEditPatient(patients[i]),
-                      onDelete: () => onDeletePatient(patients[i]),
-                    ),
-                ],
-              ),
-            ),
-            if (showLoader)
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: ColorManager.primary,
-                  ),
+        return Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Column(
+            children: [
+              _TableHeader(cols: cols),
+              for (var i = 0; i < patients.length; i++)
+                _PatientRow(
+                  key: ValueKey(patients[i].id),
+                  patient: patients[i],
+                  // The header already draws a rule beneath itself, so
+                  // the first row must not add a second one.
+                  topDivider: i > 0,
+                  cols: cols,
+                  onEdit: () => onEditPatient(patients[i]),
+                  onDelete: () => onDeletePatient(patients[i]),
                 ),
-              ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -1103,15 +1173,9 @@ class _DesktopTable extends StatelessWidget {
 }
 
 class _TableHeader extends StatelessWidget {
-  const _TableHeader({
-    required this.showPhone,
-    required this.showNextVisit,
-    required this.showBalance,
-  });
+  const _TableHeader({required this.cols});
 
-  final bool showPhone;
-  final bool showNextVisit;
-  final bool showBalance;
+  final _VisibleCols cols;
 
   @override
   Widget build(BuildContext context) {
@@ -1150,9 +1214,13 @@ class _TableHeader extends StatelessWidget {
       child: Row(
         children: [
           cell(_PatientCols.patient, l10n.patientName),
-          if (showPhone) cell(_PatientCols.phone, l10n.phone),
-          if (showNextVisit) cell(_PatientCols.nextVisit, l10n.nextVisit),
-          if (showBalance) cell(_PatientCols.balance, l10n.outstandingBalance),
+          if (cols.phone) cell(_PatientCols.phone, l10n.phone),
+          if (cols.registered)
+            cell(_PatientCols.registered, l10n.patientRegisteredColumn),
+          if (cols.balance)
+            cell(_PatientCols.balance, l10n.outstandingBalance),
+          if (cols.openCase)
+            cell(_PatientCols.openCase, l10n.patientOpenCaseColumn),
           // Deliberately unlabelled: the row menu needs the width reserved,
           // not a heading over it.
           const SizedBox(width: _PatientCols.actions),
@@ -1167,18 +1235,14 @@ class _PatientRow extends StatefulWidget {
     super.key,
     required this.patient,
     required this.topDivider,
-    required this.showPhone,
-    required this.showNextVisit,
-    required this.showBalance,
+    required this.cols,
     required this.onEdit,
     required this.onDelete,
   });
 
   final Patient patient;
   final bool topDivider;
-  final bool showPhone;
-  final bool showNextVisit;
-  final bool showBalance;
+  final _VisibleCols cols;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -1232,30 +1296,46 @@ class _PatientRowState extends State<_PatientRow> {
                 flex: _PatientCols.patient,
                 child: _identityCell(c, fontFamily, l10n, genderLabel),
               ),
-              if (widget.showPhone)
+              if (widget.cols.phone)
                 Expanded(
                   flex: _PatientCols.phone,
-                  child: Text(
-                    p.phone,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 13,
-                      color: c.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: p.phone.trim().isEmpty
+                      ? _placeholder(c, fontFamily)
+                      // Align puts the number at the column's own start
+                      // edge; the LTR text direction only keeps its digits
+                      // in order. With the direction alone, an RTL row drew
+                      // the number at the column's far (left) edge, where
+                      // it ran into the date beside it.
+                      : Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            p.phone,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 13,
+                              color: c.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                 ),
-              if (widget.showNextVisit)
+              if (widget.cols.registered)
                 Expanded(
-                  flex: _PatientCols.nextVisit,
-                  child: _nextVisitCell(c, fontFamily),
+                  flex: _PatientCols.registered,
+                  child: _registeredCell(context, c, fontFamily),
                 ),
-              if (widget.showBalance)
+              if (widget.cols.balance)
                 Expanded(
                   flex: _PatientCols.balance,
                   child: _balanceCell(c, fontFamily),
+                ),
+              if (widget.cols.openCase)
+                Expanded(
+                  flex: _PatientCols.openCase,
+                  child: _openCaseCell(c, fontFamily, l10n),
                 ),
               SizedBox(
                 width: _PatientCols.actions,
@@ -1335,32 +1415,64 @@ class _PatientRowState extends State<_PatientRow> {
     );
   }
 
-  Widget _nextVisitCell(AppColors c, String fontFamily) {
-    final next = widget.patient.nextVisit;
-    if (next == null) return _placeholder(c, fontFamily);
+  Widget _registeredCell(
+    BuildContext context,
+    AppColors c,
+    String fontFamily,
+  ) {
+    final created = widget.patient.createdAt;
+    if (created == null) return _placeholder(c, fontFamily);
 
-    return Row(
-      children: [
-        Icon(
-          Icons.calendar_today_outlined,
-          size: 13,
-          color: ColorManager.primary,
+    final locale = Localizations.localeOf(context).toString();
+    return Text(
+      DateFormat('d MMM yyyy', locale).format(created.toLocal()),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontFamily: fontFamily,
+        fontSize: 12.5,
+        color: c.textSecondary,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
+  /// A green pill for an open case; a plain muted "No" otherwise, so the
+  /// eye lands only on the patients who are mid-treatment.
+  Widget _openCaseCell(
+    AppColors c,
+    String fontFamily,
+    AppLocalizations l10n,
+  ) {
+    if (!widget.patient.hasOpenCase) {
+      return Text(
+        l10n.no,
+        style: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 12.5,
+          color: c.textSubtle,
         ),
-        const SizedBox(width: 7),
-        Flexible(
-          child: Text(
-            next,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
-              color: ColorManager.primary,
-            ),
+      );
+    }
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: ColorManager.success.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          l10n.yes,
+          style: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: ColorManager.success,
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -1376,8 +1488,12 @@ class _PatientRowState extends State<_PatientRow> {
           color: ColorManager.warning.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(6),
         ),
+        // The case's own currency, never a hardcoded '$' - an SYP balance
+        // was showing as dollars.
         child: Text(
-          '\$${balance.toInt()}',
+          widget.patient.balanceLabel,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: fontFamily,
             fontSize: 12,
@@ -1402,58 +1518,9 @@ class _PatientRowState extends State<_PatientRow> {
       opacity: _hovering ? 1 : 0,
       child: IgnorePointer(
         ignoring: !_hovering,
-        child: PopupMenuButton<int>(
-          tooltip: '',
-          padding: EdgeInsets.zero,
-          iconSize: 18,
-          icon: Icon(Icons.more_horiz, color: c.textTertiary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          onSelected: (value) {
-            if (value == 0) widget.onEdit();
-            if (value == 1) widget.onDelete();
-          },
-          itemBuilder: (context) => [
-            PopupMenuItem<int>(
-              value: 0,
-              child: Row(
-                children: [
-                  Icon(Icons.edit_outlined, size: 16, color: c.textSecondary),
-                  const SizedBox(width: 10),
-                  Text(
-                    l10n.edit,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: fontFamily,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<int>(
-              value: 1,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 16,
-                    color: ColorManager.error,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    l10n.delete,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: fontFamily,
-                      color: ColorManager.error,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: PatientRowActionsMenu(
+          onEdit: widget.onEdit,
+          onDelete: widget.onDelete,
         ),
       ),
     );
@@ -1475,10 +1542,7 @@ class _DesktopLoadingTable extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final w = constraints.maxWidth;
-        final showPhone = _PatientCols.showPhone(w);
-        final showNextVisit = _PatientCols.showNextVisit(w);
-        final showBalance = _PatientCols.showBalance(w);
+        final cols = _VisibleCols(constraints.maxWidth);
 
         return Container(
           clipBehavior: Clip.antiAlias,
@@ -1489,18 +1553,9 @@ class _DesktopLoadingTable extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _TableHeader(
-                showPhone: showPhone,
-                showNextVisit: showNextVisit,
-                showBalance: showBalance,
-              ),
+              _TableHeader(cols: cols),
               for (var i = 0; i < 6; i++)
-                _ShimmerRow(
-                  topDivider: i > 0,
-                  showPhone: showPhone,
-                  showNextVisit: showNextVisit,
-                  showBalance: showBalance,
-                ),
+                _ShimmerRow(topDivider: i > 0, cols: cols),
             ],
           ),
         );
@@ -1510,17 +1565,10 @@ class _DesktopLoadingTable extends StatelessWidget {
 }
 
 class _ShimmerRow extends StatelessWidget {
-  const _ShimmerRow({
-    required this.topDivider,
-    required this.showPhone,
-    required this.showNextVisit,
-    required this.showBalance,
-  });
+  const _ShimmerRow({required this.topDivider, required this.cols});
 
   final bool topDivider;
-  final bool showPhone;
-  final bool showNextVisit;
-  final bool showBalance;
+  final _VisibleCols cols;
 
   @override
   Widget build(BuildContext context) {
@@ -1562,12 +1610,14 @@ class _ShimmerRow extends StatelessWidget {
               ],
             ),
           ),
-          if (showPhone)
+          if (cols.phone)
             Expanded(flex: _PatientCols.phone, child: _bar(c, 110, 10)),
-          if (showNextVisit)
-            Expanded(flex: _PatientCols.nextVisit, child: _bar(c, 90, 10)),
-          if (showBalance)
+          if (cols.registered)
+            Expanded(flex: _PatientCols.registered, child: _bar(c, 80, 10)),
+          if (cols.balance)
             Expanded(flex: _PatientCols.balance, child: _bar(c, 54, 10)),
+          if (cols.openCase)
+            Expanded(flex: _PatientCols.openCase, child: _bar(c, 36, 10)),
           const SizedBox(width: _PatientCols.actions),
         ],
       ),

@@ -18,6 +18,8 @@ import 'package:dental_clinic_app/features/appointments/presentation/widgets/app
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_status_styles.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/widgets/appointment_details_sheet.dart';
+import 'package:dental_clinic_app/features/appointments/presentation/pages/new_appointment_page.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -28,9 +30,45 @@ class AppointmentsPage extends StatelessWidget {
       create: (context) =>
           getIt<AppointmentBloc>()
             ..add(const AppointmentEvent.loadAppointments()),
-      child: const _AppointmentsContent(),
+      child: const _ReloadOnCreate(child: _AppointmentsContent()),
     );
   }
+}
+
+/// Reloads the list whenever an appointment is booked, wherever the booking
+/// was opened from. The desktop header and empty-state buttons only push the
+/// form, so the list used to come back without the appointment just added.
+class _ReloadOnCreate extends StatefulWidget {
+  const _ReloadOnCreate({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ReloadOnCreate> createState() => _ReloadOnCreateState();
+}
+
+class _ReloadOnCreateState extends State<_ReloadOnCreate> {
+  @override
+  void initState() {
+    super.initState();
+    NewAppointmentPage.created.addListener(_reload);
+  }
+
+  @override
+  void dispose() {
+    NewAppointmentPage.created.removeListener(_reload);
+    super.dispose();
+  }
+
+  void _reload() {
+    if (!mounted) return;
+    context.read<AppointmentBloc>().add(
+      const AppointmentEvent.loadAppointments(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// The day (or week) of appointments, in the same visual language as the home
@@ -41,10 +79,28 @@ class _AppointmentsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Responsive.isDesktop(context)) {
-      return const _DesktopAppointments();
-    }
-    return const _MobileAppointments();
+    // A rejected status change has to say so. The list itself is still
+    // valid, so this is a snackbar over the day rather than an error state
+    // replacing it - and it carries the server's own reason, which is the
+    // part that used to be swallowed. Listened for here so both layouts get
+    // it; the desktop one used to change status silently on failure.
+    return BlocListener<AppointmentBloc, AppointmentState>(
+      listenWhen: (prev, curr) =>
+          prev.actionError != curr.actionError && curr.actionError != null,
+      listener: (context, state) {
+        AppSnackbar.showError(
+          context,
+          title: AppLocalizations.of(context)!.statusChangeFailed,
+          message: state.actionError,
+        );
+        context.read<AppointmentBloc>().add(
+          const AppointmentEvent.clearActionError(),
+        );
+      },
+      child: Responsive.isDesktop(context)
+          ? const _DesktopAppointments()
+          : const _MobileAppointments(),
+    );
   }
 }
 
@@ -64,23 +120,8 @@ class _MobileAppointments extends StatelessWidget {
       // the header up. The bottom is left open for the pill to float over.
       body: Padding(
         padding: const EdgeInsets.only(top: 8),
-        child: BlocConsumer<AppointmentBloc, AppointmentState>(
-          // A rejected status change has to say so. The list itself is still
-          // valid, so this is a snackbar over the day rather than an error
-          // state replacing it - and it carries the server's own reason, which
-          // is the part that used to be swallowed.
-          listenWhen: (prev, curr) =>
-              prev.actionError != curr.actionError && curr.actionError != null,
-          listener: (context, state) {
-            AppSnackbar.showError(
-              context,
-              title: AppLocalizations.of(context)!.statusChangeFailed,
-              message: state.actionError,
-            );
-            context.read<AppointmentBloc>().add(
-              const AppointmentEvent.clearActionError(),
-            );
-          },
+        // Status-change failures are reported by [_AppointmentsContent].
+        child: BlocBuilder<AppointmentBloc, AppointmentState>(
           builder: (context, state) {
             return Column(
               children: [
@@ -286,11 +327,8 @@ class _MobileAppointments extends StatelessWidget {
   Future<void> _openNewAppointment(BuildContext context) async {
     if (!await SubscriptionGuardHelper.requireActive(context)) return;
     if (!context.mounted) return;
+    // A successful booking reloads the list through [_ReloadOnCreate].
     await context.pushNamed(AppRoutesNames.newAppointment);
-    if (!context.mounted) return;
-    context.read<AppointmentBloc>().add(
-      const AppointmentEvent.loadAppointments(),
-    );
   }
 
   // ─── Header ─────────────────────────────────────────────────────────────
@@ -757,7 +795,7 @@ class _DesktopPageHeader extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                _headerSubtitle(state, l10n),
+                _headerSubtitle(context, state, l10n),
                 style: TextStyle(
                   fontFamily: fontFamily,
                   fontSize: 13.5,
@@ -779,37 +817,18 @@ class _DesktopPageHeader extends StatelessWidget {
     );
   }
 
-  String _headerSubtitle(AppointmentState state, AppLocalizations l10n) {
-    final date = state.selectedDate;
-    final formatted = _longDate(date);
-    return '$formatted  ·  ${state.filteredAppointments.length} ${l10n.appointments.toLowerCase()}';
-  }
-
-  String _longDate(DateTime d) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    const weekdays = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    return '${weekdays[d.weekday - 1]}, ${months[d.month - 1]} ${d.day}, ${d.year}';
+  /// Date and count, both in the app's language. The date used to be built
+  /// from hard-coded English month and weekday names, and English words set
+  /// inside an Arabic line are reordered by the bidi algorithm - the count,
+  /// the label and the date came out in the wrong order.
+  String _headerSubtitle(
+    BuildContext context,
+    AppointmentState state,
+    AppLocalizations l10n,
+  ) {
+    final date = AppDate.full(context, state.selectedDate);
+    final count = l10n.appointmentsCount(state.filteredAppointments.length);
+    return '$date  \u00B7  $count';
   }
 }
 
@@ -1755,120 +1774,94 @@ class _AppointmentRowDesktopState extends State<_AppointmentRowDesktop> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        padding: const EdgeInsets.fromLTRB(12, 12, 16, 12),
-        decoration: BoxDecoration(
-          color: _hovered
-              ? ColorManager.primary.withValues(alpha: 0.06)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => AppointmentDetailsSheet.show(context, a),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.fromLTRB(12, 12, 16, 12),
+          decoration: BoxDecoration(
             color: _hovered
-                ? ColorManager.primary.withValues(alpha: 0.22)
+                ? ColorManager.primary.withValues(alpha: 0.06)
                 : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _hovered
+                  ? ColorManager.primary.withValues(alpha: 0.22)
+                  : Colors.transparent,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 78,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppDate.time24(context, a.dateTime),
-                    style: TextStyle(
-                      fontFamily: widget.fontFamily,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: c.textPrimary,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 78,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppDate.time24(context, a.dateTime),
+                      style: TextStyle(
+                        fontFamily: widget.fontFamily,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: c.textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${a.durationMinutes} min',
-                    style: TextStyle(
-                      fontFamily: widget.fontFamily,
-                      fontSize: 11.5,
-                      color: c.textTertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 4,
-              height: 44,
-              decoration: BoxDecoration(
-                color: statusColor,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 14),
-            _Avatar(
-              name: a.patientName,
-              color: statusColor,
-              fontFamily: widget.fontFamily,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    a.patientName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: widget.fontFamily,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.medical_services_outlined,
-                        size: 12,
+                    const SizedBox(height: 2),
+                    Text(
+                      '${a.durationMinutes} min',
+                      style: TextStyle(
+                        fontFamily: widget.fontFamily,
+                        fontSize: 11.5,
                         color: c.textTertiary,
                       ),
-                      const SizedBox(width: 5),
-                      Flexible(
-                        child: Text(
-                          a.treatmentType,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: widget.fontFamily,
-                            fontSize: 12.5,
-                            color: c.textTertiary,
-                          ),
-                        ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 4,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 14),
+              _Avatar(
+                name: a.patientName,
+                color: statusColor,
+                fontFamily: widget.fontFamily,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      a.patientName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: widget.fontFamily,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
                       ),
-                      if (a.doctorName.isNotEmpty) ...[
-                        const SizedBox(width: 10),
-                        Container(
-                          width: 3,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: c.textSubtle,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
                         Icon(
-                          Icons.person_outline,
+                          Icons.medical_services_outlined,
                           size: 12,
                           color: c.textTertiary,
                         ),
                         const SizedBox(width: 5),
                         Flexible(
                           child: Text(
-                            a.doctorName,
+                            a.treatmentType,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -1878,15 +1871,45 @@ class _AppointmentRowDesktopState extends State<_AppointmentRowDesktop> {
                             ),
                           ),
                         ),
+                        if (a.doctorName.isNotEmpty) ...[
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 3,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: c.textSubtle,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Icon(
+                            Icons.person_outline,
+                            size: 12,
+                            color: c.textTertiary,
+                          ),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              a.doctorName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: widget.fontFamily,
+                                fontSize: 12.5,
+                                color: c.textTertiary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            _StatusPill(status: a.status, fontFamily: widget.fontFamily),
-          ],
+              const SizedBox(width: 12),
+              _StatusPill(status: a.status, fontFamily: widget.fontFamily),
+            ],
+          ),
         ),
       ),
     );

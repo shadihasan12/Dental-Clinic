@@ -24,8 +24,8 @@ class CheckAppUpdateUseCase implements UseCase<AppUpdateInfo, NoParams> {
   @override
   Future<Either<NetworkExceptions, AppUpdateInfo>> call(NoParams params) async {
     final platform = _platform();
-    // Nowhere to send the user on a platform with no store listing, so there
-    // is no point asking. Windows updates through a different channel.
+    // Nowhere to send the user on a platform the app is not distributed on,
+    // so there is no point asking.
     if (platform == null) return const Right(AppUpdateInfo.none());
 
     // Reading the running build goes over a platform channel, and a missing
@@ -63,14 +63,20 @@ class CheckAppUpdateUseCase implements UseCase<AppUpdateInfo, NoParams> {
     );
   }
 
-  /// Null on every platform the app is not published to a store on.
+  /// Null on every platform the app is not distributed on.
   ///
   /// Upper case because the route validates against an exact enum -
   /// `android` is rejected with a 400 where `ANDROID` is accepted.
+  ///
+  /// Windows has no store listing; its `store_url` is whatever the dashboard
+  /// row says, typically the installer download. A backend that does not
+  /// know `WINDOWS` yet answers 400, which the caller already treats as "no
+  /// update" - so the app still opens.
   static String? _platform() {
     if (kIsWeb) return null;
     if (Platform.isAndroid) return 'ANDROID';
     if (Platform.isIOS) return 'IOS';
+    if (Platform.isWindows) return 'WINDOWS';
     return null;
   }
 

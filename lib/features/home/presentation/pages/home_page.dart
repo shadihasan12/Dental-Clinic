@@ -18,6 +18,7 @@ import 'package:dental_clinic_app/features/home/presentation/widgets/home_header
 import 'package:dental_clinic_app/features/home/presentation/widgets/home_stats_carousel.dart';
 import 'package:dental_clinic_app/features/home/presentation/theme/home_tokens.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/clinic_date_row.dart';
+import 'package:dental_clinic_app/features/home/presentation/widgets/desktop_home_sections.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/quick_actions.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/section_heading.dart';
 import 'package:dental_clinic_app/features/home/presentation/widgets/todays_schedule.dart';
@@ -266,24 +267,25 @@ class _HomePageState extends State<HomePage> {
 
   // Recording a payment lands on the expenses tab, so it is shown on the
   // same terms the tab itself is: a secretary has neither.
+  VoidCallback? _recordPaymentFor(ClinicPermissionsState permissionsState) {
+    final canRecordPayment = visibleRootTabs(
+      permissionsState,
+    ).contains(RootTab.expenses);
+    if (!canRecordPayment) return null;
+    return () {
+      RootPage.selectedTab.value = RootTab.expenses.index;
+      ExpensesPage.openAddExpenseRequest.value++;
+    };
+  }
+
   Widget get _quickActions =>
       BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
         bloc: getIt<ClinicPermissionsBloc>(),
-        builder: (context, permissionsState) {
-          final canRecordPayment = visibleRootTabs(
-            permissionsState,
-          ).contains(RootTab.expenses);
-          return QuickActions(
-            onAddPatient: _openAddPatient,
-            onScheduleVisit: _openNewAppointment,
-            onRecordPayment: canRecordPayment
-                ? () {
-                    RootPage.selectedTab.value = RootTab.expenses.index;
-                    ExpensesPage.openAddExpenseRequest.value++;
-                  }
-                : null,
-          );
-        },
+        builder: (context, permissionsState) => QuickActions(
+          onAddPatient: _openAddPatient,
+          onScheduleVisit: _openNewAppointment,
+          onRecordPayment: _recordPaymentFor(permissionsState),
+        ),
       );
 
   @override
@@ -297,135 +299,112 @@ class _HomePageState extends State<HomePage> {
   //
   // Two columns instead of one stack. RootPage's desktop top bar already
   // carries the greeting, clinic switcher, notifications and profile, so
-  // HomeHeader is deliberately omitted here rather than duplicated.
+  // neither HomeHeader nor a welcome page header is repeated here.
   // ═════════════════════════════════════════════════════════════════════
 
-  /// Real figures only — the schedule is already loaded for the day, and the
-  /// rest are the home cards exactly as the server sent them. Nothing here is
-  /// a placeholder; a dashboard that invents numbers is worse than none.
-  List<DesktopStatCard> _statCards(AppLocalizations l10n) {
-    final now = DateTime.now();
-    final remaining =
-        _todayAppointments.where((a) => a.dateTime.isAfter(now)).length;
-    final done = _todayAppointments.length - remaining;
+  /// The home cards exactly as the server sent them, one tile per card and
+  /// in its order - the same list the mobile carousel pages through. The
+  /// day's appointment counts are left out: the schedule card below already
+  /// shows today's appointments.
+  List<DesktopStatCard> _statCards() => [
+        for (final card in _cards)
+          DesktopStatCard(
+            icon: Icons.insights_outlined,
+            iconColor: ColorManager.primary,
+            value:
+                card.unit == null ? card.value : '${card.value} ${card.unit}',
+            label: card.subtitle.isEmpty
+                ? card.title
+                : '${card.title} · ${card.subtitle}',
+          ),
+      ];
 
-    final cards = <DesktopStatCard>[
-      DesktopStatCard(
-        icon: Icons.calendar_today_outlined,
-        iconColor: const Color(0xFF3B82F6),
-        value: '${_todayAppointments.length}',
-        label: l10n.todaysAppointments,
-      ),
-      DesktopStatCard(
-        icon: Icons.schedule_outlined,
-        iconColor: ColorManager.warning,
-        value: '$remaining',
-        label: l10n.upcoming,
-      ),
-      DesktopStatCard(
-        icon: Icons.task_alt_rounded,
-        iconColor: ColorManager.success,
-        value: '$done',
-        label: l10n.completed,
-      ),
-    ];
-
-    // Then the server's own figures, one tile per card and in its order -
-    // the same list the mobile carousel pages through. Empty for the roles
-    // that are not meant to see them, which simply leaves the day's counts.
-    for (final card in _cards) {
-      cards.add(
-        DesktopStatCard(
-          icon: Icons.insights_outlined,
-          iconColor: ColorManager.primary,
-          value: card.unit == null ? card.value : '${card.value} ${card.unit}',
-          label: card.subtitle.isEmpty
-              ? card.title
-              : '${card.title} · ${card.subtitle}',
-        ),
-      );
-    }
-
-    return cards;
-  }
-
+  /// Stats, then a row of action tiles, then the day: a timeline of today's
+  /// appointments beside who is up next and how far through the day the
+  /// clinic is. Mobile keeps its single stack of QuickActions and
+  /// TodaysSchedule; see desktop_home_sections.dart for why these differ.
   Widget _buildDesktop(BuildContext context) {
     final t = HomeTokens.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: t.pageBg,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
-          // Below this the two columns get too narrow to be worth splitting.
+          // Below this the side column would squeeze the timeline; it moves
+          // above it instead.
           final isSingleColumn = width < 1100;
           const contentMaxWidth = 1440.0;
           final outerPadding = width > contentMaxWidth
               ? (width - contentMaxWidth) / 2 + 32
               : 32.0;
 
-          final schedule = _schedule(
-            maxRows:
-                isSingleColumn ? _maxScheduleRows : _maxScheduleRowsDesktop,
+          final timeline = DesktopTodayTimeline(
+            appointments:
+                _todayAppointments.take(_maxScheduleRowsDesktop).toList(),
+            totalCount: _todayAppointments.length,
+            isLoading: _scheduleLoading,
+            error: _scheduleError == null
+                ? null
+                : NetworkExceptions.localizedMessage(context, _scheduleError!),
+            upNextId: upNextAppointment(_todayAppointments, DateTime.now())?.id,
+            onViewAll: () => RootPage.selectedTab.value = 2,
+            onNewAppointment: _openNewAppointment,
+            onRetry: () {
+              setState(() => _scheduleLoading = true);
+              _loadTodaysSchedule();
+            },
           );
 
-          final sidebar = Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionHeading(title: l10n.quickActions),
-              const SizedBox(height: 10),
-              _quickActions,
-            ],
-          );
+          final side = _desktopSideColumn(isRow: isSingleColumn);
 
           return SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(outerPadding, 28, outerPadding, 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Same header / stats / content rhythm as the patients page,
-                // so the two tabs read as one product on desktop.
-                // No trailing action: Quick Actions below already offers
-                // Appointment, and the schedule card has its own entry point.
-                DesktopPageHeader(
-                  title: _firstName.isEmpty
-                      ? l10n.welcomeBack
-                      : '${l10n.welcomeBack}, $_firstName',
-                  subtitle: _clinicName.isEmpty ? null : _clinicName,
-                  // Same destination the mobile header's clinic chip opens.
-                  // It was plain grey text here, so nothing said it could be
-                  // clicked - and on desktop there is no tap-and-see.
-                  onSubtitleTap: () =>
-                      context.pushNamed(AppRoutesNames.myClinics),
+                // No page header: RootPage's desktop top bar already shows
+                // the greeting and clinic, so the page opens on the stats.
+                // Each tile is Expanded, so fewer cards means wider ones.
+                // Roles that get no cards get no row at all.
+                if (_cardsLoading) ...[
+                  const _StatsRowSkeleton(),
+                  const SizedBox(height: 20),
+                ] else if (_cards.isNotEmpty) ...[
+                  DesktopStatsRow(
+                    cards: _statCards(),
+                    // Three tiles still fit one row on a narrow window;
+                    // only a longer list needs to wrap into pairs.
+                    compact: isSingleColumn && _cards.length > 3,
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                BlocBuilder<ClinicPermissionsBloc, ClinicPermissionsState>(
+                  bloc: getIt<ClinicPermissionsBloc>(),
+                  builder: (context, permissionsState) =>
+                      DesktopQuickActionTiles(
+                        onAddPatient: _openAddPatient,
+                        onNewAppointment: _openNewAppointment,
+                        onRecordPayment: _recordPaymentFor(permissionsState),
+                      ),
                 ),
                 const SizedBox(height: 20),
-
-                if (_scheduleLoading || _cardsLoading)
-                  const _StatsRowSkeleton()
-                else
-                  DesktopStatsRow(
-                    cards: _statCards(l10n),
-                    compact: isSingleColumn,
-                  ),
-                const SizedBox(height: 24),
 
                 if (isSingleColumn)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [sidebar, const SizedBox(height: 24), schedule],
+                    children: [side, const SizedBox(height: 20), timeline],
                   )
                 else
-                  // Row lays out from the reading start edge, which is the
-                  // side the nav rail is on in both LTR and RTL. Quick
-                  // actions therefore sit against the rail and the schedule
-                  // takes the far side, where the wide column suits it.
+                  // The timeline takes the reading-start side, next to the
+                  // nav rail; the side column sits at the far edge.
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: _sidebarWidth, child: sidebar),
-                      const SizedBox(width: 24),
-                      Expanded(child: schedule),
+                      Expanded(child: timeline),
+                      const SizedBox(width: 20),
+                      SizedBox(width: _sidebarWidth, child: side),
                     ],
                   ),
               ],
@@ -433,6 +412,33 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
+    );
+  }
+
+  /// Up next and the day's progress. Stacked beside the timeline, or side by
+  /// side above it on a narrower window ([isRow]).
+  Widget _desktopSideColumn({required bool isRow}) {
+    final ready = !_scheduleLoading && _scheduleError == null;
+    final upNext = ready
+        ? DesktopUpNextCard(appointments: _todayAppointments)
+        : const _SideCardSkeleton(height: 196);
+    final progress = ready
+        ? DesktopDayProgressCard(appointments: _todayAppointments)
+        : const _SideCardSkeleton(height: 150);
+
+    if (isRow) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: upNext),
+          const SizedBox(width: 20),
+          Expanded(child: progress),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [upNext, const SizedBox(height: 16), progress],
     );
   }
 
@@ -511,6 +517,27 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+/// Holds a side card's place while the day loads, so the column does not
+/// jump when the figures land.
+class _SideCardSkeleton extends StatelessWidget {
+  const _SideCardSkeleton({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: c.borderLight),
+      ),
+    );
+  }
+}
+
 /// Placeholder tiles so the stats row reserves its height while the day's
 /// appointments are still loading, instead of the page jumping once they land.
 class _StatsRowSkeleton extends StatelessWidget {
@@ -521,7 +548,7 @@ class _StatsRowSkeleton extends StatelessWidget {
     final c = ColorManager.of(context);
     return Row(
       children: [
-        for (var i = 0; i < 4; i++) ...[
+        for (var i = 0; i < 3; i++) ...[
           Expanded(
             child: Container(
               height: 118,
@@ -532,7 +559,7 @@ class _StatsRowSkeleton extends StatelessWidget {
               ),
             ),
           ),
-          if (i != 3) const SizedBox(width: 14),
+          if (i != 2) const SizedBox(width: 14),
         ],
       ],
     );

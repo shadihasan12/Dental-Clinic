@@ -513,7 +513,7 @@ class _SignupContentState extends State<_SignupContent> {
     String fontFamily,
     AuthState state,
   ) {
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,

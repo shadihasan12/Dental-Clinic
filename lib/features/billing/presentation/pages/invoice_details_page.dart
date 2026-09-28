@@ -1,11 +1,13 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -40,7 +42,7 @@ class InvoiceDetailsPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.invoiceDetailsTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingDetailWidth,
       body: BillingAsync<InvoiceEntity>(
         load: () => repository.getInvoice(invoiceId),
         builder: (context, invoice, reload) =>
@@ -73,118 +75,141 @@ class _InvoiceBody extends StatelessWidget {
     final tone = invoiceTone(invoice);
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
 
+    final header = AppCard(
+      statusTone: tone,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              IconTile(
+                icon: invoice.isRefund
+                    ? Icons.south_west_rounded
+                    : Icons.receipt_long_outlined,
+                tone: tone,
+              ),
+              SizedBox(width: 11.w),
+              Expanded(
+                child: Text(
+                  invoice.number,
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontFamily: family,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
+                    decoration: invoice.status == InvoiceStatus.voided
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
+                ),
+              ),
+              CountPill.label(invoiceStatusLabel(l10n, invoice), tone: tone),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          ..._headline(context, l10n),
+        ],
+      ),
+    );
+    final lines = AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SectionLabel(l10n.invoiceLinesTitle),
+          SizedBox(height: 8.h),
+          BillingLinesView(lines: invoice.items, total: invoice.amountUsd),
+          // A refund owes and was paid nothing; a void one owes nothing.
+          if (!invoice.isRefund) ...[
+            BillingInfoRow(
+              label: l10n.invoicePaidSoFar,
+              value: formatUsd(invoice.amountPaidUsd),
+              ltrValue: true,
+            ),
+            BillingInfoRow(
+              label: l10n.invoiceRemaining,
+              value: formatUsd(invoice.remainingUsd),
+              ltrValue: true,
+              valueTone: invoice.remainingUsd > 0 ? tone : null,
+            ),
+          ],
+          for (final line in invoice.items)
+            if (line.periodStart != null && line.periodEnd != null)
+              BillingInfoRow(
+                label: l10n.invoicePeriod,
+                value:
+                    '${AppDate.medium(context, line.periodStart!)} – ${AppDate.medium(context, line.periodEnd!)}',
+              ),
+          if (invoice.createdAt != null)
+            BillingInfoRow(
+              label: l10n.invoiceIssuedOn,
+              value: AppDate.medium(context, invoice.createdAt!),
+            ),
+        ],
+      ),
+    );
+    final pay = <Widget>[
+      // Only a charge still open is ever offered for paying - never a
+      // refund (money sent to the clinic) or a void (nothing is owed).
+      if (invoice.isOpen && !invoice.isRefund) ...[
+        SizedBox(height: 16.h),
+        DentaButton(
+          label: l10n.payNowAction,
+          icon: Icons.account_balance_outlined,
+          expand: true,
+          // Reporting the transfer lives on each account there, so the
+          // proof is sent against the destination it went to.
+          onTap: () async {
+            if (fromPayment) {
+              context.pop();
+              return;
+            }
+            await context.pushNamed(
+              AppRoutesNames.howToPay,
+              extra: invoice.id,
+            );
+            reload();
+          },
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          l10n.invoicePaymentExplainer,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: family,
+            fontSize: 11.sp,
+            height: 1.45,
+            color: c.textTertiary,
+          ),
+        ),
+      ],
+    ];
+
+    // Desktop: what is owed and the way to pay it on the start side, what
+    // the invoice is made of on the end side.
+    if (Responsive.isDesktop(context)) {
+      return ListView(
+        padding: kBillingDesktopPadding,
+        children: [
+          BillingTwoPane(
+            start: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [header, ...pay],
+            ),
+            end: lines,
+          ),
+        ],
+      );
+    }
+
     return ListView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h + bottomInset),
       children: [
-        AppCard(
-          statusTone: tone,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  IconTile(
-                    icon: invoice.isRefund
-                        ? Icons.south_west_rounded
-                        : Icons.receipt_long_outlined,
-                    tone: tone,
-                  ),
-                  SizedBox(width: 11.w),
-                  Expanded(
-                    child: Text(
-                      invoice.number,
-                      textDirection: TextDirection.ltr,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontFamily: family,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
-                        color: c.textPrimary,
-                        decoration: invoice.status == InvoiceStatus.voided
-                            ? TextDecoration.lineThrough
-                            : null,
-                      ),
-                    ),
-                  ),
-                  CountPill.label(invoiceStatusLabel(l10n, invoice), tone: tone),
-                ],
-              ),
-              SizedBox(height: 14.h),
-              ..._headline(context, l10n),
-            ],
-          ),
-        ),
+        header,
         SizedBox(height: 8.h),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SectionLabel(l10n.invoiceLinesTitle),
-              SizedBox(height: 8.h),
-              BillingLinesView(lines: invoice.items, total: invoice.amountUsd),
-              // A refund owes and was paid nothing; a void one owes nothing.
-              if (!invoice.isRefund) ...[
-                BillingInfoRow(
-                  label: l10n.invoicePaidSoFar,
-                  value: formatUsd(invoice.amountPaidUsd),
-                  ltrValue: true,
-                ),
-                BillingInfoRow(
-                  label: l10n.invoiceRemaining,
-                  value: formatUsd(invoice.remainingUsd),
-                  ltrValue: true,
-                  valueTone: invoice.remainingUsd > 0 ? tone : null,
-                ),
-              ],
-              for (final line in invoice.items)
-                if (line.periodStart != null && line.periodEnd != null)
-                  BillingInfoRow(
-                    label: l10n.invoicePeriod,
-                    value:
-                        '${AppDate.medium(context, line.periodStart!)} – ${AppDate.medium(context, line.periodEnd!)}',
-                  ),
-              if (invoice.createdAt != null)
-                BillingInfoRow(
-                  label: l10n.invoiceIssuedOn,
-                  value: AppDate.medium(context, invoice.createdAt!),
-                ),
-            ],
-          ),
-        ),
-        // Only a charge still open is ever offered for paying - never a
-        // refund (money sent to the clinic) or a void (nothing is owed).
-        if (invoice.isOpen && !invoice.isRefund) ...[
-          SizedBox(height: 16.h),
-          DentaButton(
-            label: l10n.payNowAction,
-            icon: Icons.account_balance_outlined,
-            expand: true,
-            // Reporting the transfer lives on each account there, so the
-            // proof is sent against the destination it went to.
-            onTap: () async {
-              if (fromPayment) {
-                context.pop();
-                return;
-              }
-              await context.pushNamed(
-                AppRoutesNames.howToPay,
-                extra: invoice.id,
-              );
-              reload();
-            },
-          ),
-          SizedBox(height: 10.h),
-          Text(
-            l10n.invoicePaymentExplainer,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: family,
-              fontSize: 11.sp,
-              height: 1.45,
-              color: c.textTertiary,
-            ),
-          ),
-        ],
+        lines,
+        ...pay,
       ],
     );
   }

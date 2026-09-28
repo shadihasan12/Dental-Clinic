@@ -26,7 +26,13 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
       final totals = (result['totals'] as List<ExpenseTotalModel>)
           .map((m) => m.toEntity())
           .toList();
-      return Right(ExpenseListResponse(expenses: expenses, totals: totals));
+      return Right(ExpenseListResponse(
+        expenses: expenses,
+        totals: totals,
+        page: result['page'] as int? ?? 1,
+        lastPage: result['lastPage'] as int? ?? 1,
+        total: result['total'] as int?,
+      ));
     } catch (e) {
       return Left(NetworkExceptions.getException(e));
     }

@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -10,6 +11,7 @@ import 'package:dental_clinic_app/features/billing/domain/entities/billing_line_
 import 'package:dental_clinic_app/features/billing/presentation/cubit/billing_overview_cubit.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/select_billing_plan_page.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_cards.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_usage_entity.dart';
@@ -57,7 +59,7 @@ class _BillingView extends StatelessWidget {
       backgroundColor: c.scaffoldBg,
       title: l10n.subscriptionPageTitle,
       showBack: locked ? false : null,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingWideWidth,
       actions: [
         IconButton(
           tooltip: l10n.subscriptionHistoryTitle,
@@ -76,11 +78,93 @@ class _BillingView extends StatelessWidget {
           final pending = state.pendingPayments;
           final status = state.status;
 
+          Future<void> refresh() async {
+            SubscriptionGuardHelper.refreshAccess(force: true);
+            await cubit.load();
+          }
+
+          final addonsLink = state.addons.isEmpty
+              ? null
+              : AppCard(
+                  onTap: () => _push(context, AppRoutesNames.billingAddons),
+                  child: Row(
+                    children: [
+                      const IconTile(icon: Icons.add_circle_outline_rounded),
+                      SizedBox(width: 11.w),
+                      Expanded(
+                        child: _TwoLine(
+                          title: l10n.addonsTitle,
+                          subtitle: l10n.addonsRowHint,
+                        ),
+                      ),
+                      const DirectionalChevron(),
+                    ],
+                  ),
+                );
+          final transfersLink = AppCard(
+            onTap: () => _push(context, AppRoutesNames.clinicPayments),
+            child: Row(
+              children: [
+                const IconTile(icon: Icons.swap_horiz_rounded),
+                SizedBox(width: 11.w),
+                Expanded(
+                  child: _TwoLine(
+                    title: l10n.reportedTransfersTitle,
+                    subtitle: l10n.reportedTransfersHint,
+                  ),
+                ),
+                if (state.payments.isNotEmpty) ...[
+                  CountPill(state.payments.length),
+                  SizedBox(width: 6.w),
+                ],
+                const DirectionalChevron(),
+              ],
+            ),
+          );
+          final invoiceHistory = <Widget>[
+            SectionLabel(
+              l10n.invoicesHistoryTitle,
+              trailing: state.invoices.isEmpty
+                  ? null
+                  : CountPill(state.invoices.length),
+            ),
+            SizedBox(height: 10.h),
+            if (state.invoices.isEmpty)
+              StateCard(
+                icon: Icons.receipt_long_outlined,
+                title: l10n.noInvoicesYet,
+                message: l10n.noInvoicesYetHint,
+              )
+            else
+              for (final invoice in state.invoices)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.h),
+                  child: InvoiceCard(
+                    invoice: invoice,
+                    onTap: () => _push(
+                      context,
+                      AppRoutesNames.invoiceDetails,
+                      pathParameters: {'invoiceId': invoice.id},
+                    ),
+                  ),
+                ),
+          ];
+
+          if (Responsive.isDesktop(context)) {
+            return DentaRefresh(
+              onRefresh: refresh,
+              child: _desktop(
+                context,
+                state,
+                addonsLink: addonsLink,
+                transfersLink: transfersLink,
+                invoiceHistory: invoiceHistory,
+              ),
+            );
+          }
+
           return DentaRefresh(
-            onRefresh: () async {
-              SubscriptionGuardHelper.refreshAccess(force: true);
-              await cubit.load();
-            },
+            onRefresh: refresh,
             child: ListView(
               padding: EdgeInsets.fromLTRB(
                 14.w,
@@ -133,78 +217,122 @@ class _BillingView extends StatelessWidget {
                   SizedBox(height: 10.h),
                   _UsageCard(usage: state.usage!),
                 ],
-                if (state.addons.isNotEmpty) ...[
+                if (addonsLink != null) ...[
                   SizedBox(height: 8.h),
-                  AppCard(
-                    onTap: () => _push(context, AppRoutesNames.billingAddons),
-                    child: Row(
-                      children: [
-                        const IconTile(icon: Icons.add_circle_outline_rounded),
-                        SizedBox(width: 11.w),
-                        Expanded(
-                          child: _TwoLine(
-                            title: l10n.addonsTitle,
-                            subtitle: l10n.addonsRowHint,
-                          ),
-                        ),
-                        const DirectionalChevron(),
-                      ],
-                    ),
-                  ),
+                  addonsLink,
                 ],
                 SizedBox(height: 16.h),
-                AppCard(
-                  onTap: () => _push(context, AppRoutesNames.clinicPayments),
-                  child: Row(
-                    children: [
-                      const IconTile(icon: Icons.swap_horiz_rounded),
-                      SizedBox(width: 11.w),
-                      Expanded(
-                        child: _TwoLine(
-                          title: l10n.reportedTransfersTitle,
-                          subtitle: l10n.reportedTransfersHint,
-                        ),
-                      ),
-                      if (state.payments.isNotEmpty) ...[
-                        CountPill(state.payments.length),
-                        SizedBox(width: 6.w),
-                      ],
-                      const DirectionalChevron(),
-                    ],
-                  ),
-                ),
+                transfersLink,
                 SizedBox(height: 16.h),
-                SectionLabel(
-                  l10n.invoicesHistoryTitle,
-                  trailing: state.invoices.isEmpty
-                      ? null
-                      : CountPill(state.invoices.length),
-                ),
-                SizedBox(height: 10.h),
-                if (state.invoices.isEmpty)
-                  StateCard(
-                    icon: Icons.receipt_long_outlined,
-                    title: l10n.noInvoicesYet,
-                    message: l10n.noInvoicesYetHint,
-                  )
-                else
-                  for (final invoice in state.invoices)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 8.h),
-                      child: InvoiceCard(
-                        invoice: invoice,
-                        onTap: () => _push(
-                          context,
-                          AppRoutesNames.invoiceDetails,
-                          pathParameters: {'invoiceId': invoice.id},
-                        ),
-                      ),
-                    ),
+                ...invoiceHistory,
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  /// Desktop: where the subscription stands and the way forward on the
+  /// start side, the running record - links out and every invoice - on the
+  /// end side, so neither has to be scrolled past to reach the other. The
+  /// same cards as the phone, in the phone's order when the window is too
+  /// narrow for two panes.
+  Widget _desktop(
+    BuildContext context,
+    BillingOverviewState state, {
+    required Widget? addonsLink,
+    required Widget transfersLink,
+    required List<Widget> invoiceHistory,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final open = state.openInvoice;
+    final pending = state.pendingPayments;
+    final status = state.status;
+
+    final summary = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (status != null)
+          _StatusCard(status: status)
+        else
+          _StatusUnavailable(error: state.statusError),
+        if (pending.isNotEmpty) ...[
+          SizedBox(height: 8.h),
+          _PendingPaymentsCard(
+            count: pending.length,
+            onTap: () => _push(context, AppRoutesNames.clinicPayments),
+          ),
+        ],
+        if (open != null) ...[
+          SizedBox(height: 16.h),
+          SectionLabel(l10n.openInvoiceTitle),
+          SizedBox(height: 10.h),
+          _OpenInvoiceCard(
+            state: state,
+            onOpen: () => _push(
+              context,
+              AppRoutesNames.invoiceDetails,
+              pathParameters: {'invoiceId': open.id},
+            ),
+            onHowToPay: () =>
+                _push(context, AppRoutesNames.howToPay, extra: open.id),
+          ),
+        ] else if (status != null) ...[
+          // Same rule as the phone: an open invoice holds the actions back.
+          SizedBox(height: 12.h),
+          _PlanActions(
+            status: status,
+            onOpen: (args) => _push(
+              context,
+              AppRoutesNames.selectBillingPlan,
+              extra: args,
+            ),
+          ),
+        ],
+        if (state.usage != null) ...[
+          SizedBox(height: 16.h),
+          SectionLabel(l10n.usageTitle),
+          SizedBox(height: 10.h),
+          _UsageCard(usage: state.usage!),
+        ],
+      ],
+    );
+
+    final activity = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // The two ways out sit side by side as a pair of tiles, even height
+        // so a longer hint on one does not leave the other short.
+        if (addonsLink != null)
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: addonsLink),
+                SizedBox(width: 12.w),
+                Expanded(child: transfersLink),
+              ],
+            ),
+          )
+        else
+          transfersLink,
+        SizedBox(height: 16.h),
+        ...invoiceHistory,
+      ],
+    );
+
+    return ListView(
+      padding: kBillingDesktopPadding,
+      children: [
+        BillingTwoPane(
+          start: summary,
+          end: activity,
+          startFlex: 5,
+          endFlex: 6,
+          minWidth: 1000,
+        ),
+      ],
     );
   }
 

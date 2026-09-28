@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/patient_card.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/features/patients/presentation/widgets/patient_row_actions_menu.dart';
 
 /// Rich desktop patient card with hover effects, larger typography,
 /// and more information surfaced compared to the compact mobile card.
@@ -199,60 +200,9 @@ class _PatientCardDesktopState extends State<PatientCardDesktop> {
         opacity: _hovering ? 1 : 0,
         child: IgnorePointer(
           ignoring: !_hovering,
-          child: PopupMenuButton<int>(
-            tooltip: '',
-            padding: EdgeInsets.zero,
-            iconSize: 18,
-            icon: Icon(Icons.more_horiz, color: c.textTertiary),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            onSelected: (value) {
-              if (value == 0) widget.onEdit?.call();
-              if (value == 1) widget.onDelete?.call();
-            },
-            itemBuilder: (context) => [
-              if (widget.onEdit != null)
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit_outlined, size: 16, color: c.textSecondary),
-                      const SizedBox(width: 10),
-                      Text(
-                        l10n.edit,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontFamily: fontFamily,
-                          color: c.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (widget.onDelete != null)
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_outline,
-                        size: 16,
-                        color: ColorManager.error,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        l10n.delete,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontFamily: fontFamily,
-                          color: ColorManager.error,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
+          child: PatientRowActionsMenu(
+            onEdit: widget.onEdit,
+            onDelete: widget.onDelete,
           ),
         ),
       ),

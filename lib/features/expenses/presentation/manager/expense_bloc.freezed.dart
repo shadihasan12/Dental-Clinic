@@ -25,6 +25,7 @@ mixin _$ExpenseEvent {
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -32,6 +33,7 @@ mixin _$ExpenseEvent {
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -39,6 +41,7 @@ mixin _$ExpenseEvent {
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -47,6 +50,7 @@ mixin _$ExpenseEvent {
     required TResult Function(_AddExpense value) addExpense,
     required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -54,6 +58,7 @@ mixin _$ExpenseEvent {
     TResult? Function(_AddExpense value)? addExpense,
     TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -61,6 +66,7 @@ mixin _$ExpenseEvent {
     TResult Function(_AddExpense value)? addExpense,
     TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -177,6 +183,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
   }) {
     return loadExpenses(queryParameters);
   }
@@ -188,6 +195,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
   }) {
     return loadExpenses?.call(queryParameters);
   }
@@ -199,6 +207,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (loadExpenses != null) {
@@ -214,6 +223,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     required TResult Function(_AddExpense value) addExpense,
     required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return loadExpenses(this);
   }
@@ -225,6 +235,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     TResult? Function(_AddExpense value)? addExpense,
     TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return loadExpenses?.call(this);
   }
@@ -236,6 +247,7 @@ class _$LoadExpensesImpl implements _LoadExpenses {
     TResult Function(_AddExpense value)? addExpense,
     TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (loadExpenses != null) {
@@ -340,6 +352,7 @@ class _$AddExpenseImpl implements _AddExpense {
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
   }) {
     return addExpense(body);
   }
@@ -351,6 +364,7 @@ class _$AddExpenseImpl implements _AddExpense {
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
   }) {
     return addExpense?.call(body);
   }
@@ -362,6 +376,7 @@ class _$AddExpenseImpl implements _AddExpense {
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (addExpense != null) {
@@ -377,6 +392,7 @@ class _$AddExpenseImpl implements _AddExpense {
     required TResult Function(_AddExpense value) addExpense,
     required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return addExpense(this);
   }
@@ -388,6 +404,7 @@ class _$AddExpenseImpl implements _AddExpense {
     TResult? Function(_AddExpense value)? addExpense,
     TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return addExpense?.call(this);
   }
@@ -399,6 +416,7 @@ class _$AddExpenseImpl implements _AddExpense {
     TResult Function(_AddExpense value)? addExpense,
     TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (addExpense != null) {
@@ -510,6 +528,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
   }) {
     return updateExpense(id, body);
   }
@@ -521,6 +540,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
   }) {
     return updateExpense?.call(id, body);
   }
@@ -532,6 +552,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (updateExpense != null) {
@@ -547,6 +568,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     required TResult Function(_AddExpense value) addExpense,
     required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return updateExpense(this);
   }
@@ -558,6 +580,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     TResult? Function(_AddExpense value)? addExpense,
     TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return updateExpense?.call(this);
   }
@@ -569,6 +592,7 @@ class _$UpdateExpenseImpl implements _UpdateExpense {
     TResult Function(_AddExpense value)? addExpense,
     TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (updateExpense != null) {
@@ -670,6 +694,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     required TResult Function(String id, Map<String, dynamic> body)
     updateExpense,
     required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
   }) {
     return deleteExpense(id);
   }
@@ -681,6 +706,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     TResult? Function(Map<String, dynamic> body)? addExpense,
     TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
   }) {
     return deleteExpense?.call(id);
   }
@@ -692,6 +718,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     TResult Function(Map<String, dynamic> body)? addExpense,
     TResult Function(String id, Map<String, dynamic> body)? updateExpense,
     TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
     required TResult orElse(),
   }) {
     if (deleteExpense != null) {
@@ -707,6 +734,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     required TResult Function(_AddExpense value) addExpense,
     required TResult Function(_UpdateExpense value) updateExpense,
     required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
   }) {
     return deleteExpense(this);
   }
@@ -718,6 +746,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     TResult? Function(_AddExpense value)? addExpense,
     TResult? Function(_UpdateExpense value)? updateExpense,
     TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
   }) {
     return deleteExpense?.call(this);
   }
@@ -729,6 +758,7 @@ class _$DeleteExpenseImpl implements _DeleteExpense {
     TResult Function(_AddExpense value)? addExpense,
     TResult Function(_UpdateExpense value)? updateExpense,
     TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
     required TResult orElse(),
   }) {
     if (deleteExpense != null) {
@@ -751,6 +781,168 @@ abstract class _DeleteExpense implements ExpenseEvent {
 }
 
 /// @nodoc
+abstract class _$$GoToPageImplCopyWith<$Res> {
+  factory _$$GoToPageImplCopyWith(
+    _$GoToPageImpl value,
+    $Res Function(_$GoToPageImpl) then,
+  ) = __$$GoToPageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int page});
+}
+
+/// @nodoc
+class __$$GoToPageImplCopyWithImpl<$Res>
+    extends _$ExpenseEventCopyWithImpl<$Res, _$GoToPageImpl>
+    implements _$$GoToPageImplCopyWith<$Res> {
+  __$$GoToPageImplCopyWithImpl(
+    _$GoToPageImpl _value,
+    $Res Function(_$GoToPageImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? page = null}) {
+    return _then(
+      _$GoToPageImpl(
+        null == page
+            ? _value.page
+            : page // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$GoToPageImpl implements _GoToPage {
+  const _$GoToPageImpl(this.page);
+
+  @override
+  final int page;
+
+  @override
+  String toString() {
+    return 'ExpenseEvent.goToPage(page: $page)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GoToPageImpl &&
+            (identical(other.page, page) || other.page == page));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, page);
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GoToPageImplCopyWith<_$GoToPageImpl> get copyWith =>
+      __$$GoToPageImplCopyWithImpl<_$GoToPageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(Map<String, dynamic>? queryParameters)
+    loadExpenses,
+    required TResult Function(Map<String, dynamic> body) addExpense,
+    required TResult Function(String id, Map<String, dynamic> body)
+    updateExpense,
+    required TResult Function(String id) deleteExpense,
+    required TResult Function(int page) goToPage,
+  }) {
+    return goToPage(page);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(Map<String, dynamic>? queryParameters)? loadExpenses,
+    TResult? Function(Map<String, dynamic> body)? addExpense,
+    TResult? Function(String id, Map<String, dynamic> body)? updateExpense,
+    TResult? Function(String id)? deleteExpense,
+    TResult? Function(int page)? goToPage,
+  }) {
+    return goToPage?.call(page);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(Map<String, dynamic>? queryParameters)? loadExpenses,
+    TResult Function(Map<String, dynamic> body)? addExpense,
+    TResult Function(String id, Map<String, dynamic> body)? updateExpense,
+    TResult Function(String id)? deleteExpense,
+    TResult Function(int page)? goToPage,
+    required TResult orElse(),
+  }) {
+    if (goToPage != null) {
+      return goToPage(page);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_LoadExpenses value) loadExpenses,
+    required TResult Function(_AddExpense value) addExpense,
+    required TResult Function(_UpdateExpense value) updateExpense,
+    required TResult Function(_DeleteExpense value) deleteExpense,
+    required TResult Function(_GoToPage value) goToPage,
+  }) {
+    return goToPage(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_LoadExpenses value)? loadExpenses,
+    TResult? Function(_AddExpense value)? addExpense,
+    TResult? Function(_UpdateExpense value)? updateExpense,
+    TResult? Function(_DeleteExpense value)? deleteExpense,
+    TResult? Function(_GoToPage value)? goToPage,
+  }) {
+    return goToPage?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_LoadExpenses value)? loadExpenses,
+    TResult Function(_AddExpense value)? addExpense,
+    TResult Function(_UpdateExpense value)? updateExpense,
+    TResult Function(_DeleteExpense value)? deleteExpense,
+    TResult Function(_GoToPage value)? goToPage,
+    required TResult orElse(),
+  }) {
+    if (goToPage != null) {
+      return goToPage(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _GoToPage implements ExpenseEvent {
+  const factory _GoToPage(final int page) = _$GoToPageImpl;
+
+  int get page;
+
+  /// Create a copy of ExpenseEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GoToPageImplCopyWith<_$GoToPageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$ExpenseState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
@@ -760,6 +952,10 @@ mixin _$ExpenseState {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )
     loaded,
     required TResult Function(String message) error,
@@ -772,6 +968,10 @@ mixin _$ExpenseState {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult? Function(String message)? error,
@@ -784,6 +984,10 @@ mixin _$ExpenseState {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult Function(String message)? error,
@@ -884,6 +1088,10 @@ class _$InitialImpl implements _Initial {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )
     loaded,
     required TResult Function(String message) error,
@@ -900,6 +1108,10 @@ class _$InitialImpl implements _Initial {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult? Function(String message)? error,
@@ -916,6 +1128,10 @@ class _$InitialImpl implements _Initial {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult Function(String message)? error,
@@ -1018,6 +1234,10 @@ class _$LoadingImpl implements _Loading {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )
     loaded,
     required TResult Function(String message) error,
@@ -1034,6 +1254,10 @@ class _$LoadingImpl implements _Loading {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult? Function(String message)? error,
@@ -1050,6 +1274,10 @@ class _$LoadingImpl implements _Loading {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult Function(String message)? error,
@@ -1114,6 +1342,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
     List<ExpenseEntity> expenses,
     List<ExpenseTotalEntity> totals,
     String? actionError,
+    int page,
+    int lastPage,
+    int? total,
+    bool isPaging,
   });
 }
 
@@ -1134,6 +1366,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? expenses = null,
     Object? totals = null,
     Object? actionError = freezed,
+    Object? page = null,
+    Object? lastPage = null,
+    Object? total = freezed,
+    Object? isPaging = null,
   }) {
     return _then(
       _$LoadedImpl(
@@ -1149,6 +1385,22 @@ class __$$LoadedImplCopyWithImpl<$Res>
             ? _value.actionError
             : actionError // ignore: cast_nullable_to_non_nullable
                   as String?,
+        page: null == page
+            ? _value.page
+            : page // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lastPage: null == lastPage
+            ? _value.lastPage
+            : lastPage // ignore: cast_nullable_to_non_nullable
+                  as int,
+        total: freezed == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        isPaging: null == isPaging
+            ? _value.isPaging
+            : isPaging // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -1161,6 +1413,10 @@ class _$LoadedImpl implements _Loaded {
     required final List<ExpenseEntity> expenses,
     required final List<ExpenseTotalEntity> totals,
     this.actionError = null,
+    this.page = 1,
+    this.lastPage = 1,
+    this.total,
+    this.isPaging = false,
   }) : _expenses = expenses,
        _totals = totals;
 
@@ -1183,10 +1439,25 @@ class _$LoadedImpl implements _Loaded {
   @override
   @JsonKey()
   final String? actionError;
+  // Paging for the desktop table. Mobile asks for no page, so it always
+  // sees page 1 of 1 and never reads these.
+  @override
+  @JsonKey()
+  final int page;
+  @override
+  @JsonKey()
+  final int lastPage;
+  @override
+  final int? total;
+
+  /// Another page is on its way; the rows shown are the previous page's.
+  @override
+  @JsonKey()
+  final bool isPaging;
 
   @override
   String toString() {
-    return 'ExpenseState.loaded(expenses: $expenses, totals: $totals, actionError: $actionError)';
+    return 'ExpenseState.loaded(expenses: $expenses, totals: $totals, actionError: $actionError, page: $page, lastPage: $lastPage, total: $total, isPaging: $isPaging)';
   }
 
   @override
@@ -1197,7 +1468,13 @@ class _$LoadedImpl implements _Loaded {
             const DeepCollectionEquality().equals(other._expenses, _expenses) &&
             const DeepCollectionEquality().equals(other._totals, _totals) &&
             (identical(other.actionError, actionError) ||
-                other.actionError == actionError));
+                other.actionError == actionError) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.lastPage, lastPage) ||
+                other.lastPage == lastPage) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.isPaging, isPaging) ||
+                other.isPaging == isPaging));
   }
 
   @override
@@ -1206,6 +1483,10 @@ class _$LoadedImpl implements _Loaded {
     const DeepCollectionEquality().hash(_expenses),
     const DeepCollectionEquality().hash(_totals),
     actionError,
+    page,
+    lastPage,
+    total,
+    isPaging,
   );
 
   /// Create a copy of ExpenseState
@@ -1225,11 +1506,23 @@ class _$LoadedImpl implements _Loaded {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )
     loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(expenses, totals, actionError);
+    return loaded(
+      expenses,
+      totals,
+      actionError,
+      page,
+      lastPage,
+      total,
+      isPaging,
+    );
   }
 
   @override
@@ -1241,11 +1534,23 @@ class _$LoadedImpl implements _Loaded {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(expenses, totals, actionError);
+    return loaded?.call(
+      expenses,
+      totals,
+      actionError,
+      page,
+      lastPage,
+      total,
+      isPaging,
+    );
   }
 
   @override
@@ -1257,13 +1562,25 @@ class _$LoadedImpl implements _Loaded {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(expenses, totals, actionError);
+      return loaded(
+        expenses,
+        totals,
+        actionError,
+        page,
+        lastPage,
+        total,
+        isPaging,
+      );
     }
     return orElse();
   }
@@ -1311,11 +1628,23 @@ abstract class _Loaded implements ExpenseState {
     required final List<ExpenseEntity> expenses,
     required final List<ExpenseTotalEntity> totals,
     final String? actionError,
+    final int page,
+    final int lastPage,
+    final int? total,
+    final bool isPaging,
   }) = _$LoadedImpl;
 
   List<ExpenseEntity> get expenses;
   List<ExpenseTotalEntity> get totals;
-  String? get actionError;
+  String?
+  get actionError; // Paging for the desktop table. Mobile asks for no page, so it always
+  // sees page 1 of 1 and never reads these.
+  int get page;
+  int get lastPage;
+  int? get total;
+
+  /// Another page is on its way; the rows shown are the previous page's.
+  bool get isPaging;
 
   /// Create a copy of ExpenseState
   /// with the given fields replaced by the non-null parameter values.
@@ -1400,6 +1729,10 @@ class _$ErrorImpl implements _Error {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )
     loaded,
     required TResult Function(String message) error,
@@ -1416,6 +1749,10 @@ class _$ErrorImpl implements _Error {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult? Function(String message)? error,
@@ -1432,6 +1769,10 @@ class _$ErrorImpl implements _Error {
       List<ExpenseEntity> expenses,
       List<ExpenseTotalEntity> totals,
       String? actionError,
+      int page,
+      int lastPage,
+      int? total,
+      bool isPaging,
     )?
     loaded,
     TResult Function(String message)? error,

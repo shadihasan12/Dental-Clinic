@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +58,7 @@ class HeatmapView extends StatelessWidget {
     }
     if (maxValue == 0) maxValue = 1;
 
-    return SingleChildScrollView(
+    final grid = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,6 +109,21 @@ class HeatmapView extends StatelessWidget {
             ),
         ],
       ),
+    );
+
+    if (!Responsive.isDesktop(context)) return grid;
+    // Flutter only drags a scrollable with touch by default, so a grid wider
+    // than its card could not be pulled sideways with a mouse at all.
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: const {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad,
+          PointerDeviceKind.stylus,
+        },
+      ),
+      child: grid,
     );
   }
 

@@ -13,7 +13,7 @@ import 'package:dental_clinic_app/core/resources/responsive.dart';
 /// Right half: the page's form content, vertically & horizontally centred.
 ///
 /// On narrow screens (< 900 px) the [child] is rendered directly.
-class AuthDesktopShell extends StatelessWidget {
+class AuthDesktopShell extends StatefulWidget {
   const AuthDesktopShell({super.key, required this.child, this.imageIndex = 0});
 
   /// The form content that will appear on the right side on desktop,
@@ -27,8 +27,23 @@ class AuthDesktopShell extends StatelessWidget {
       MediaQuery.of(context).size.width >= Responsive.desktopBreakpoint;
 
   @override
+  State<AuthDesktopShell> createState() => _AuthDesktopShellState();
+}
+
+class _AuthDesktopShellState extends State<AuthDesktopShell> {
+  /// Handed to the page's own scroll view as its primary controller, so the
+  /// scrollbar can be drawn by the panel rather than by the page.
+  final ScrollController _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (!isDesktop(context)) return child;
+    if (!AuthDesktopShell.isDesktop(context)) return widget.child;
 
     // No ScreenUtil.configure here: main.dart sets the design size to the
     // window on desktop, so .sp/.w/.h already resolve 1:1. Re-configuring the
@@ -38,18 +53,40 @@ class AuthDesktopShell extends StatelessWidget {
       body: Row(
         children: [
           // ── Left panel: image + branding ─────────────────────
-          Expanded(child: _BrandingPanel(imageIndex: imageIndex)),
+          Expanded(child: _BrandingPanel(imageIndex: widget.imageIndex)),
 
           // ── Right panel: form content ───────────────────────
           Expanded(
             child: Container(
               color: ColorManager.of(context).scaffoldBg,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: Responsive.formMaxWidth,
+              // The page scrolls inside a column capped at the form width,
+              // so its own scrollbar sat at that column's edge - in the
+              // middle of the panel. The page's scroll view is lent this
+              // controller instead (inherited as its primary controller,
+              // which Flutter only does on phones by default), its own bar
+              // is switched off, and the panel draws one at its outer edge.
+              child: PrimaryScrollController(
+                controller: _scroll,
+                automaticallyInheritForPlatforms: TargetPlatform.values.toSet(),
+                child: Scrollbar(
+                  controller: _scroll,
+                  // Only the page's outermost scroll view: a list nested in
+                  // the form (location search results) keeps its own.
+                  notificationPredicate: (n) =>
+                      n.depth == 0 && _scroll.hasClients,
+                  child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(
+                      context,
+                    ).copyWith(scrollbars: false),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: Responsive.formMaxWidth,
+                        ),
+                        child: widget.child,
+                      ),
+                    ),
                   ),
-                  child: child,
                 ),
               ),
             ),

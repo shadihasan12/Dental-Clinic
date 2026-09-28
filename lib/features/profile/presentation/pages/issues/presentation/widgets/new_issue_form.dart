@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_text_field.dart';
@@ -235,6 +236,9 @@ class NewIssueFormState extends State<NewIssueForm> {
     final c = ColorManager.of(context);
     final l10n = AppLocalizations.of(context)!;
     final fontFamily = FontHelper.fontFamily(context);
+    // The phone's 12px field and 44px button read as squat under a mouse on
+    // a monitor; desktop gets the kit's own desktop control heights.
+    final wide = Responsive.isDesktop(context);
 
     return Container(
       padding: EdgeInsets.all(14.w),
@@ -271,6 +275,11 @@ class NewIssueFormState extends State<NewIssueForm> {
               textCapitalization: TextCapitalization.sentences,
               enabled: !widget.isSubmitting,
               maxLength: _titleMaxLength,
+              // ~50px on desktop. Horizontal stays at the shared 12 so the
+              // text lines up with the description box below it.
+              contentPadding: wide
+                  ? const EdgeInsets.symmetric(horizontal: 12, vertical: 16)
+                  : null,
               validator: (value) => (value?.trim().isEmpty ?? true)
                   ? l10n.issueTitleRequired
                   : null,
@@ -312,8 +321,8 @@ class NewIssueFormState extends State<NewIssueForm> {
                   disabledForegroundColor: ColorManager.white.withValues(
                     alpha: 0.85,
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  minimumSize: Size(double.infinity, 44.h),
+                  padding: EdgeInsets.symmetric(vertical: wide ? 14 : 12.h),
+                  minimumSize: Size(double.infinity, wide ? 48 : 44.h),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
@@ -331,7 +340,7 @@ class NewIssueFormState extends State<NewIssueForm> {
                     : Text(
                         l10n.sendReport,
                         style: TextStyle(
-                          fontSize: 13.sp,
+                          fontSize: wide ? 14 : 13.sp,
                           fontWeight: FontWeight.w600,
                           fontFamily: fontFamily,
                         ),
@@ -346,8 +355,20 @@ class NewIssueFormState extends State<NewIssueForm> {
 
   Widget _buildCategoryField(AppLocalizations l10n) {
     final c = ColorManager.of(context);
+    final wide = Responsive.isDesktop(context);
 
     if (widget.isLoadingCategories && widget.categories.isEmpty) {
+      // Desktop holds the slot with a static block the dropdown's height:
+      // a shimmer sweep reads as flicker on a monitor.
+      if (wide) {
+        return Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: c.shimmerBase,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+        );
+      }
       return ShimmerBox(
         width: double.infinity,
         height: 46.h,
@@ -369,7 +390,17 @@ class NewIssueFormState extends State<NewIssueForm> {
     return DropdownButtonFormField<String>(
       initialValue: _category,
       isExpanded: true,
-      decoration: formOutlinedInput(context, hintText: l10n.issueCategoryHint),
+      // Matches the title field's desktop height so the two stacked
+      // controls read as one set.
+      decoration: wide
+          ? formOutlinedInput(context, hintText: l10n.issueCategoryHint)
+              .copyWith(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 16,
+                ),
+              )
+          : formOutlinedInput(context, hintText: l10n.issueCategoryHint),
       icon: Icon(Icons.expand_more_rounded, size: 20.w, color: c.textTertiary),
       style: TextStyle(
         fontSize: 13.sp,

@@ -2,7 +2,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/clinic_info_models.dart';
 
 class TimePickerField extends StatelessWidget {
   const TimePickerField({
@@ -42,7 +42,13 @@ class TimePickerField extends StatelessWidget {
               border: Border.all(color: c.borderLight),
             ),
             child: Text(
-              AppDate.time12Of(context, time),
+              hoursTime(time),
+              textDirection: TextDirection.ltr,
+              // Keeps the value at the field's start edge in RTL too; an
+              // LTR paragraph would otherwise resolve `start` to the left.
+              textAlign: Directionality.of(context) == TextDirection.rtl
+                  ? TextAlign.right
+                  : TextAlign.left,
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: FontHelper.fontFamily(context),

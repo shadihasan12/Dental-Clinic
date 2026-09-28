@@ -3,6 +3,7 @@ import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -18,6 +19,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+
+/// Desktop column cap. Two form cards side by side need ~500px each to keep
+/// the type options and the address box readable; wider than this and the
+/// fields turn into long empty strips again.
+const double _desktopMaxWidth = 1040;
+
+/// Below this the two cards stack - a narrow desktop window (the side menu
+/// takes ~250px) would otherwise squeeze each card under its fields' width.
+const double _desktopTwoUpMinWidth = 820;
 
 class ClinicInfoPage extends StatelessWidget {
   const ClinicInfoPage({super.key});
@@ -229,14 +239,18 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
               onRefresh: () => _refresh(context),
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 28.h),
-                child: StateCard(
-                  icon: Icons.cloud_off_rounded,
-                  tone: ColorManager.error,
-                  title: l10n.clinicInfoLoadFailed,
-                  message: message,
-                  actionLabel: l10n.retry,
-                  onAction: () => context.read<ClinicInfoBloc>().add(
-                    const ClinicInfoEvent.loadClinicInfo(),
+                // No-op on mobile; keeps the card from spanning the window.
+                child: AdaptiveContentWidth(
+                  maxWidth: 640,
+                  child: StateCard(
+                    icon: Icons.cloud_off_rounded,
+                    tone: ColorManager.error,
+                    title: l10n.clinicInfoLoadFailed,
+                    message: message,
+                    actionLabel: l10n.retry,
+                    onAction: () => context.read<ClinicInfoBloc>().add(
+                      const ClinicInfoEvent.loadClinicInfo(),
+                    ),
                   ),
                 ),
               ),
@@ -259,52 +273,116 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
           ),
           onBack: () => context.pop(),
           backgroundColor: c.scaffoldBg,
-          bottomNavigationBar: _formPopulated ? _buildSaveButton(l10n) : null,
+          // Desktop saves from the end of the form instead: a docked bar
+          // across a monitor-wide window is a long empty strip.
+          bottomNavigationBar:
+              _formPopulated && !Responsive.isDesktop(context)
+                  ? _buildSaveButton(l10n)
+                  : null,
         );
       },
     );
   }
 
   Widget _buildForm(AppLocalizations l10n) {
-    final fontFamily = FontHelper.fontFamily(context);
+    if (Responsive.isDesktop(context)) return _buildDesktopForm(l10n);
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FormSectionCard(
-            title: l10n.clinicInformation,
-            children: [
-              FormTextField(
-                label: l10n.clinicName,
-                required: true,
-                controller: _clinicNameController,
-                textCapitalization: TextCapitalization.words,
-              ),
-              ClinicTypeSelector(
-                value: _clinicType,
-                onChanged: (type) => setState(() => _clinicType = type),
-              ),
-            ],
-          ),
+          _buildInfoCard(l10n),
           SizedBox(height: 8.h),
-          FormSectionCard(
-            title: l10n.location,
-            children: [
-              if (_selectedLocation != null)
-                _buildSelectedLocation(_selectedLocation!, fontFamily)
-              else
-                _buildLocationSearch(l10n, fontFamily),
-              FormTextField(
-                label: l10n.detailedAddress,
-                controller: _addressController,
-                hintText: l10n.detailedAddress,
-                maxLines: 2,
-              ),
-            ],
-          ),
+          _buildLocationCard(l10n),
         ],
       ),
+    );
+  }
+
+  /// Desktop puts the two cards side by side in a capped column, with Save
+  /// closing the form at its end rather than docked across the window.
+  Widget _buildDesktopForm(AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+      child: AdaptiveContentWidth(
+        maxWidth: _desktopMaxWidth,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final twoUp = constraints.maxWidth >= _desktopTwoUpMinWidth;
+            final info = _buildInfoCard(l10n);
+            final location = _buildLocationCard(l10n);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Top-aligned rather than equal height: the location card
+                // grows while search results are open, and stretching the
+                // other card along with it would make it jump.
+                if (twoUp)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: info),
+                      const SizedBox(width: 16),
+                      Expanded(child: location),
+                    ],
+                  )
+                else ...[
+                  info,
+                  const SizedBox(height: 12),
+                  location,
+                ],
+                const SizedBox(height: 20),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: DesktopPrimaryButton(
+                    label: l10n.save,
+                    icon: Icons.check_rounded,
+                    onPressed: _hasChanges ? _onSave : null,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(AppLocalizations l10n) {
+    return FormSectionCard(
+      title: l10n.clinicInformation,
+      children: [
+        FormTextField(
+          label: l10n.clinicName,
+          required: true,
+          controller: _clinicNameController,
+          textCapitalization: TextCapitalization.words,
+        ),
+        ClinicTypeSelector(
+          value: _clinicType,
+          onChanged: (type) => setState(() => _clinicType = type),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationCard(AppLocalizations l10n) {
+    final fontFamily = FontHelper.fontFamily(context);
+    return FormSectionCard(
+      title: l10n.location,
+      children: [
+        if (_selectedLocation != null)
+          _buildSelectedLocation(_selectedLocation!, fontFamily)
+        else
+          _buildLocationSearch(l10n, fontFamily),
+        FormTextField(
+          label: l10n.detailedAddress,
+          controller: _addressController,
+          hintText: l10n.detailedAddress,
+          maxLines: 2,
+        ),
+      ],
     );
   }
 
@@ -525,6 +603,10 @@ class _ClinicInfoSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const _DesktopClinicInfoSkeleton();
+    }
+
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
           height: height,
@@ -543,6 +625,118 @@ class _ClinicInfoSkeleton extends StatelessWidget {
           SizedBox(height: 8.h),
           block(190.h),
         ],
+      ),
+    );
+  }
+}
+
+/// Desktop placeholder in the shape of [_ClinicInfoContentState]'s desktop
+/// form: the two cards side by side (stacked on a narrow window) and Save at
+/// the end. Static on purpose - a shimmer sweep across a monitor-wide area
+/// reads as flicker rather than progress.
+class _DesktopClinicInfoSkeleton extends StatelessWidget {
+  const _DesktopClinicInfoSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    Widget bar(double width, double height, {double radius = 6}) => Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: c.shimmerBase,
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+
+    // Label above an input, matching FormTextField's desktop metrics.
+    Widget field({double labelWidth = 90, double height = 52}) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        bar(labelWidth, 10),
+        const SizedBox(height: 8),
+        bar(double.infinity, height, radius: 12),
+      ],
+    );
+
+    // Label above the two clinic-type options.
+    Widget typeOptions() => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        bar(80, 10),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(child: bar(double.infinity, 46, radius: 12)),
+            const SizedBox(width: 8),
+            Expanded(child: bar(double.infinity, 46, radius: 12)),
+          ],
+        ),
+      ],
+    );
+
+    Widget card({required double titleWidth, required List<Widget> rows}) =>
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: bar(titleWidth, 14),
+              ),
+              for (final row in rows) ...[const SizedBox(height: 18), row],
+            ],
+          ),
+        );
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+      child: AdaptiveContentWidth(
+        maxWidth: _desktopMaxWidth,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final twoUp = constraints.maxWidth >= _desktopTwoUpMinWidth;
+            final info = card(titleWidth: 150, rows: [field(), typeOptions()]);
+            final location = card(
+              titleWidth: 90,
+              rows: [
+                field(labelWidth: 70),
+                field(labelWidth: 120, height: 72),
+              ],
+            );
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (twoUp)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: info),
+                      const SizedBox(width: 16),
+                      Expanded(child: location),
+                    ],
+                  )
+                else ...[
+                  info,
+                  const SizedBox(height: 12),
+                  location,
+                ],
+                const SizedBox(height: 20),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: bar(96, 42, radius: 10),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

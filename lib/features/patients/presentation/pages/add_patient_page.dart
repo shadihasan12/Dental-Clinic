@@ -174,7 +174,10 @@ class _AddPatientContentState extends State<_AddPatientContent> {
                 );
               }
             } else {
-              if (context.mounted) context.pop();
+              // Hands the new patient back, so a form that sent the user here
+              // (New Appointment) can select them instead of making the user
+              // find them. Callers that ignore the result are unaffected.
+              if (context.mounted) context.pop(patient);
             }
           },
           error: (message) {

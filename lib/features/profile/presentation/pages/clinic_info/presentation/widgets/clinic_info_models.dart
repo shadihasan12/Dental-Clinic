@@ -1,4 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+/// `9:00 AM` in every language. Working hours are read like a sign on the
+/// clinic door, and the picker wheel that sets them is English too (see
+/// `EnglishPicker`), so the value shown must match what was picked rather
+/// than switch to ص/م under Arabic. Render the result with
+/// [TextDirection.ltr] - in an RTL paragraph the bidi algorithm would put
+/// the leading digits after the AM/PM marker.
+String hoursTime(TimeOfDay time) =>
+    DateFormat.jm('en').format(DateTime(2000, 1, 1, time.hour, time.minute));
+
+/// `9:00 AM – 5:00 PM`, formatted as [hoursTime].
+String hoursRange(TimeOfDay from, TimeOfDay to, {String separator = ' – '}) =>
+    '${hoursTime(from)}$separator${hoursTime(to)}';
 
 class WorkingShift {
   TimeOfDay from;

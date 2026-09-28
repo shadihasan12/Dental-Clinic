@@ -38,6 +38,9 @@ mixin _$PatientEntity {
   /// Currency of [balance]. Null when the server sent none, in which case
   /// the amount is rendered without a symbol rather than assuming dollars.
   String? get balanceCurrencyCode => throw _privateConstructorUsedError;
+
+  /// The patient has a case still in progress (`opened_case` on the API).
+  bool get hasOpenCase => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   List<AuditEntry> get audits => throw _privateConstructorUsedError;
 
@@ -74,6 +77,7 @@ abstract class $PatientEntityCopyWith<$Res> {
     String? nextVisit,
     double balance,
     String? balanceCurrencyCode,
+    bool hasOpenCase,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -112,6 +116,7 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
     Object? nextVisit = freezed,
     Object? balance = null,
     Object? balanceCurrencyCode = freezed,
+    Object? hasOpenCase = null,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -189,6 +194,10 @@ class _$PatientEntityCopyWithImpl<$Res, $Val extends PatientEntity>
                 ? _value.balanceCurrencyCode
                 : balanceCurrencyCode // ignore: cast_nullable_to_non_nullable
                       as String?,
+            hasOpenCase: null == hasOpenCase
+                ? _value.hasOpenCase
+                : hasOpenCase // ignore: cast_nullable_to_non_nullable
+                      as bool,
             createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -231,6 +240,7 @@ abstract class _$$PatientEntityImplCopyWith<$Res>
     String? nextVisit,
     double balance,
     String? balanceCurrencyCode,
+    bool hasOpenCase,
     DateTime? createdAt,
     List<AuditEntry> audits,
   });
@@ -268,6 +278,7 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
     Object? nextVisit = freezed,
     Object? balance = null,
     Object? balanceCurrencyCode = freezed,
+    Object? hasOpenCase = null,
     Object? createdAt = freezed,
     Object? audits = null,
   }) {
@@ -345,6 +356,10 @@ class __$$PatientEntityImplCopyWithImpl<$Res>
             ? _value.balanceCurrencyCode
             : balanceCurrencyCode // ignore: cast_nullable_to_non_nullable
                   as String?,
+        hasOpenCase: null == hasOpenCase
+            ? _value.hasOpenCase
+            : hasOpenCase // ignore: cast_nullable_to_non_nullable
+                  as bool,
         createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -380,6 +395,7 @@ class _$PatientEntityImpl implements _PatientEntity {
     this.nextVisit,
     this.balance = 0,
     this.balanceCurrencyCode,
+    this.hasOpenCase = false,
     this.createdAt,
     final List<AuditEntry> audits = const [],
   }) : _audits = audits;
@@ -425,6 +441,11 @@ class _$PatientEntityImpl implements _PatientEntity {
   /// the amount is rendered without a symbol rather than assuming dollars.
   @override
   final String? balanceCurrencyCode;
+
+  /// The patient has a case still in progress (`opened_case` on the API).
+  @override
+  @JsonKey()
+  final bool hasOpenCase;
   @override
   final DateTime? createdAt;
   final List<AuditEntry> _audits;
@@ -438,7 +459,7 @@ class _$PatientEntityImpl implements _PatientEntity {
 
   @override
   String toString() {
-    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance, balanceCurrencyCode: $balanceCurrencyCode, createdAt: $createdAt, audits: $audits)';
+    return 'PatientEntity(id: $id, name: $name, age: $age, gender: $gender, phone: $phone, email: $email, address: $address, dateOfBirth: $dateOfBirth, medicalHistory: $medicalHistory, allergies: $allergies, insuranceProvider: $insuranceProvider, insuranceNumber: $insuranceNumber, emergencyContact: $emergencyContact, status: $status, avatarUrl: $avatarUrl, nextVisit: $nextVisit, balance: $balance, balanceCurrencyCode: $balanceCurrencyCode, hasOpenCase: $hasOpenCase, createdAt: $createdAt, audits: $audits)';
   }
 
   @override
@@ -473,6 +494,8 @@ class _$PatientEntityImpl implements _PatientEntity {
             (identical(other.balance, balance) || other.balance == balance) &&
             (identical(other.balanceCurrencyCode, balanceCurrencyCode) ||
                 other.balanceCurrencyCode == balanceCurrencyCode) &&
+            (identical(other.hasOpenCase, hasOpenCase) ||
+                other.hasOpenCase == hasOpenCase) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             const DeepCollectionEquality().equals(other._audits, _audits));
@@ -499,6 +522,7 @@ class _$PatientEntityImpl implements _PatientEntity {
     nextVisit,
     balance,
     balanceCurrencyCode,
+    hasOpenCase,
     createdAt,
     const DeepCollectionEquality().hash(_audits),
   ]);
@@ -532,6 +556,7 @@ abstract class _PatientEntity implements PatientEntity {
     final String? nextVisit,
     final double balance,
     final String? balanceCurrencyCode,
+    final bool hasOpenCase,
     final DateTime? createdAt,
     final List<AuditEntry> audits,
   }) = _$PatientEntityImpl;
@@ -575,6 +600,10 @@ abstract class _PatientEntity implements PatientEntity {
   /// the amount is rendered without a symbol rather than assuming dollars.
   @override
   String? get balanceCurrencyCode;
+
+  /// The patient has a case still in progress (`opened_case` on the API).
+  @override
+  bool get hasOpenCase;
   @override
   DateTime? get createdAt;
   @override

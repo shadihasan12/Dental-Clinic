@@ -46,6 +46,12 @@ class _ExpensesContent extends StatefulWidget {
 class _ExpensesContentState extends State<_ExpensesContent> {
   late DateTime _currentMonth;
 
+  /// Rows per page on the desktop table, as on the patients table: the page
+  /// scrolls a little rather than running on.
+  static const int _desktopPageSize = 10;
+
+  final _desktopScroll = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -56,9 +62,40 @@ class _ExpensesContentState extends State<_ExpensesContent> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Desktop pages the month; mobile keeps asking for the whole month in
+    // one response, as it always has. Re-checked on resize, so a window
+    // dragged across the breakpoint reloads at the right size.
+    final size = Responsive.isDesktop(context) ? _desktopPageSize : null;
+    final bloc = context.read<ExpenseBloc>();
+    if (bloc.pageSize == size) return;
+    final hadLoaded = bloc.state.maybeWhen(
+      initial: () => false,
+      orElse: () => true,
+    );
+    bloc.pageSize = size;
+    if (hadLoaded) _loadMonth();
+  }
+
+  @override
   void dispose() {
     ExpensesPage.openAddExpenseRequest.removeListener(_onExternalAddRequest);
+    _desktopScroll.dispose();
     super.dispose();
+  }
+
+  /// Back to the top on every page change, so the new page is read from its
+  /// first row.
+  void _goToPage(int page) {
+    context.read<ExpenseBloc>().add(ExpenseEvent.goToPage(page));
+    if (_desktopScroll.hasClients) {
+      _desktopScroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _onExternalAddRequest() {
@@ -76,7 +113,13 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     ).day;
     final end =
         '${_currentMonth.year}-${_currentMonth.month.toString().padLeft(2, '0')}-${lastDay.toString().padLeft(2, '0')}';
-    return {'filters[entry_date][between]': '$start,$end'};
+    return {
+      'filters[entry_date][between]': '$start,$end',
+      // Newest first. Sorted by the server, not here: the desktop table
+      // pages, and a sort applied after paging would only reorder the ten
+      // rows it was given. The API takes one field; a second is ignored.
+      'sort': '-entry_date',
+    };
   }
 
   void _loadMonth() {
@@ -144,10 +187,8 @@ class _ExpensesContentState extends State<_ExpensesContent> {
             ExpenseEvent.deleteExpense(expense.id),
           );
         },
-        onEdit: () {
-          Navigator.pop(context);
-          _showEditExpense(context, expense);
-        },
+        // The detail sheet has already closed itself by now.
+        onEdit: () => _showEditExpense(context, expense),
       ),
     );
   }
@@ -174,13 +215,13 @@ class _ExpensesContentState extends State<_ExpensesContent> {
         listenWhen: (prev, curr) {
           String? prevError;
           String? currError;
-          prev.whenOrNull(loaded: (_, _, e) => prevError = e);
-          curr.whenOrNull(loaded: (_, _, e) => currError = e);
+          prev.whenOrNull(loaded: (_, _, e, _, _, _, _) => prevError = e);
+          curr.whenOrNull(loaded: (_, _, e, _, _, _, _) => currError = e);
           return currError != null && currError != prevError;
         },
         listener: (context, state) {
           state.whenOrNull(
-            loaded: (_, _, actionError) {
+            loaded: (_, _, actionError, _, _, _, _) {
               if (actionError != null) {
                 AppSnackbar.showError(context, title: actionError);
               }
@@ -217,7 +258,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           Expanded(child: _buildSkeletonList(context)),
         ],
       ),
-      loaded: (expenses, totals, _) {
+      loaded: (expenses, totals, _, _, _, _, _) {
         return Column(
           children: [
             _buildHeader(context, totals, expenses.length),
@@ -280,17 +321,43 @@ class _ExpensesContentState extends State<_ExpensesContent> {
         totals: const [],
         count: 0,
         fontFamily: fontFamily,
-        content: _desktopLoadingCard(context),
+        content: const _DesktopLoadingTable(),
       ),
-      loaded: (expenses, totals, _) => _desktopScaffold(
-        context,
-        totals: totals,
-        count: expenses.length,
-        fontFamily: fontFamily,
-        content: expenses.isEmpty
-            ? _desktopEmptyCard(context, l10n, fontFamily)
-            : _desktopExpensesTable(context, expenses, fontFamily),
-      ),
+      loaded: (expenses, totals, _, page, lastPage, total, isPaging) =>
+          _desktopScaffold(
+            context,
+            totals: totals,
+            // The month's count across every page, not the ten on screen.
+            count: total ?? expenses.length,
+            fontFamily: fontFamily,
+            content: expenses.isEmpty
+                ? _desktopEmptyCard(context, l10n, fontFamily)
+                : Column(
+                    children: [
+                      // Dimmed rather than replaced while the next page
+                      // loads, so the table does not jump on every click.
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 150),
+                        opacity: isPaging ? 0.5 : 1,
+                        child: IgnorePointer(
+                          ignoring: isPaging,
+                          child: _desktopExpensesTable(
+                            context,
+                            expenses,
+                            fontFamily,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      DesktopPager(
+                        page: page,
+                        lastPage: lastPage,
+                        isLoading: isPaging,
+                        onGoToPage: _goToPage,
+                      ),
+                    ],
+                  ),
+          ),
       error: (message) => _desktopScaffold(
         context,
         totals: const [],
@@ -337,6 +404,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     final c = ColorManager.of(context);
 
     return SingleChildScrollView(
+      controller: _desktopScroll,
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,28 +470,6 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           // ── Main content card ───────────────────────────────
           content,
         ],
-      ),
-    );
-  }
-
-  Widget _desktopLoadingCard(BuildContext context) {
-    final c = ColorManager.of(context);
-    return Container(
-      height: 360,
-      decoration: BoxDecoration(
-        color: c.cardBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: c.borderLight),
-      ),
-      child: const Center(
-        child: SizedBox(
-          width: 28,
-          height: 28,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            color: ColorManager.primary,
-          ),
-        ),
       ),
     );
   }
@@ -498,15 +544,16 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     return Container(
       decoration: BoxDecoration(
         color: c.cardBg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: c.borderLight),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          // Column headers
+          // Column headers, in the patients table's proportions.
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+            height: _expenseHeaderHeight,
+            padding: _expenseCellPadding,
             decoration: BoxDecoration(
               color: c.cardBgSecondary,
               border: Border(bottom: BorderSide(color: c.borderLight)),
@@ -515,21 +562,21 @@ class _ExpensesContentState extends State<_ExpensesContent> {
               children: [
                 Expanded(
                   flex: 4,
-                  child: _tableHeader(l10n.expenseType, fontFamily, c),
+                  child: _tableHeader(context, l10n.expenseType, fontFamily, c),
                 ),
                 Expanded(
                   flex: 4,
-                  child: _tableHeader(l10n.notes, fontFamily, c),
+                  child: _tableHeader(context, l10n.notes, fontFamily, c),
                 ),
                 Expanded(
                   flex: 2,
-                  child: _tableHeader(l10n.date, fontFamily, c),
+                  child: _tableHeader(context, l10n.date, fontFamily, c),
                 ),
                 Expanded(
                   flex: 2,
                   child: Align(
                     alignment: AlignmentDirectional.centerEnd,
-                    child: _tableHeader(l10n.amount, fontFamily, c),
+                    child: _tableHeader(context, l10n.amount, fontFamily, c),
                   ),
                 ),
                 const SizedBox(width: 40),
@@ -540,6 +587,7 @@ class _ExpensesContentState extends State<_ExpensesContent> {
           // Rows
           ...List.generate(expenses.length, (i) {
             return _DesktopExpenseRow(
+              key: ValueKey(expenses[i].id),
               expense: expenses[i],
               isLast: i == expenses.length - 1,
               fontFamily: fontFamily,
@@ -551,15 +599,23 @@ class _ExpensesContentState extends State<_ExpensesContent> {
     );
   }
 
-  Widget _tableHeader(String label, String fontFamily, AppColors c) {
+  Widget _tableHeader(
+    BuildContext context,
+    String label,
+    String fontFamily,
+    AppColors c,
+  ) {
+    // Tracking pulls Arabic letters apart at their joins and casing is a
+    // no-op there, so the small-caps treatment stays Latin-only.
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     return Text(
-      label.toUpperCase(),
+      isRtl ? label : label.toUpperCase(),
       style: TextStyle(
         fontFamily: fontFamily,
         fontSize: 11,
         fontWeight: FontWeightManager.semiBold,
         color: c.textTertiary,
-        letterSpacing: 0.4,
+        letterSpacing: isRtl ? 0 : 0.6,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -1060,75 +1116,75 @@ class _SummaryCard extends StatelessWidget {
   final String? suffix;
   final String fontFamily;
 
+  /// The patients and appointments pages' stat card: icon box beside the
+  /// figure, label under it. The currency rides small and muted after the
+  /// amount, where it used to be a separate badge in the corner.
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       decoration: BoxDecoration(
         color: c.cardBg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: c.borderLight),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: accentColor, size: 18),
-              ),
-              const Spacer(),
-              if (suffix != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    suffix!,
-                    style: TextStyle(
-                      fontFamily: fontFamily,
-                      fontSize: 11,
-                      fontWeight: FontWeightManager.semiBold,
-                      color: accentColor,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 22,
-              fontWeight: FontWeightManager.bold,
-              color: c.textPrimary,
-              height: 1.1,
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Icon(icon, color: accentColor, size: 20),
           ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: fontFamily,
-              fontSize: 13,
-              color: c.textSecondary,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: value,
+                    children: [
+                      if (suffix != null)
+                        TextSpan(
+                          // Non-breaking, so the code never wraps away from
+                          // the amount it qualifies.
+                          text: '\u00A0${suffix!}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: c.textTertiary,
+                          ),
+                        ),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: c.textPrimary,
+                    height: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontSize: 12.5,
+                    color: c.textTertiary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1139,6 +1195,7 @@ class _SummaryCard extends StatelessWidget {
 
 class _DesktopExpenseRow extends StatefulWidget {
   const _DesktopExpenseRow({
+    super.key,
     required this.expense,
     required this.isLast,
     required this.fontFamily,
@@ -1177,10 +1234,12 @@ class _DesktopExpenseRowState extends State<_DesktopExpenseRow> {
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          curve: Curves.easeOut,
+          height: _expenseRowHeight,
+          padding: _expenseCellPadding,
           decoration: BoxDecoration(
             color: _hovered
-                ? ColorManager.primary.withValues(alpha: 0.04)
+                ? ColorManager.primary.withValues(alpha: 0.05)
                 : Colors.transparent,
             border: widget.isLast
                 ? null
@@ -1313,6 +1372,106 @@ class _DesktopExpenseRowState extends State<_DesktopExpenseRow> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESKTOP: TABLE METRICS + LOADING
+// ═══════════════════════════════════════════════════════════════════════
+
+/// The patients table's metrics, so the two tables read as one design.
+const double _expenseRowHeight = 60;
+const double _expenseHeaderHeight = 44;
+const EdgeInsets _expenseCellPadding = EdgeInsets.symmetric(horizontal: 18);
+
+/// Static skeleton in the table's own shape - same header, row height and
+/// columns - so nothing shifts when the rows arrive. No shimmer sweep: on a
+/// desktop window it reads as noise.
+class _DesktopLoadingTable extends StatelessWidget {
+  const _DesktopLoadingTable();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    Widget bar(double w, double h, {bool end = false}) => Align(
+      alignment: end
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
+      child: Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+          color: c.shimmerBase,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    );
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: _expenseHeaderHeight,
+            padding: _expenseCellPadding,
+            decoration: BoxDecoration(
+              color: c.cardBgSecondary,
+              border: Border(bottom: BorderSide(color: c.borderLight)),
+            ),
+            child: Row(
+              children: [
+                Expanded(flex: 4, child: bar(70, 9)),
+                Expanded(flex: 4, child: bar(50, 9)),
+                Expanded(flex: 2, child: bar(40, 9)),
+                Expanded(flex: 2, child: bar(50, 9, end: true)),
+                const SizedBox(width: 40),
+              ],
+            ),
+          ),
+          for (var i = 0; i < 6; i++)
+            Container(
+              height: _expenseRowHeight,
+              padding: _expenseCellPadding,
+              decoration: BoxDecoration(
+                border: i == 0
+                    ? null
+                    : Border(top: BorderSide(color: c.borderLight)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: c.shimmerBase,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(child: bar(110, 11)),
+                      ],
+                    ),
+                  ),
+                  Expanded(flex: 4, child: bar(140, 10)),
+                  Expanded(flex: 2, child: bar(80, 10)),
+                  Expanded(flex: 2, child: bar(70, 11, end: true)),
+                  const SizedBox(width: 40),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }

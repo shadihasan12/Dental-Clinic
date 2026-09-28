@@ -197,7 +197,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     if (!mounted) return;
 
     final c = ColorManager.of(context);
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       backgroundColor: c.cardBg,
       shape: RoundedRectangleBorder(
@@ -210,7 +210,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Container(
+                child: HideInDialog(child: Container(
                   margin: EdgeInsets.only(top: 12.h),
                   width: 40.w,
                   height: 4.h,
@@ -218,7 +218,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                     color: c.borderLight,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
-                ),
+                )),
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),
@@ -501,20 +501,32 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         // floor. At 880 it missed by two pixels and stacked, which reads as
         // a bug rather than a breakpoint.
         maxWidth: 920,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(width: 248, child: _buildPhotoAside(l10n)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _personalCard(l10n, wide: true),
-                  const SizedBox(height: 12),
-                  _contactCard(l10n, wide: true),
-                ],
-              ),
+            // The photo card matches the personal card's height, so the top
+            // row reads as one band. The personal card sets that height and
+            // the photo is stretched onto it - IntrinsicHeight cannot measure
+            // FormFieldRow, which lays out through a LayoutBuilder.
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 248 + 16),
+                  child: _personalCard(l10n, wide: true),
+                ),
+                PositionedDirectional(
+                  start: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 248,
+                  child: _buildPhotoAside(l10n),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 248 + 16),
+              child: _contactCard(l10n, wide: true),
             ),
           ],
         ),
@@ -647,6 +659,10 @@ class _EditProfileSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) {
+      return const _DesktopEditProfileSkeleton();
+    }
+
     final c = ColorManager.of(context);
     Widget block(double height) => Container(
       height: height,
@@ -673,6 +689,118 @@ class _EditProfileSkeleton extends StatelessWidget {
           SizedBox(height: 8.h),
           block(120.h),
         ],
+      ),
+    );
+  }
+}
+
+/// Desktop placeholder in the shape of [_buildDesktopForm]: photo aside plus
+/// the two field cards, same widths and gutters, so nothing jumps when the
+/// form lands. Static on purpose - a shimmer sweep across a monitor-wide
+/// area reads as flicker rather than progress.
+class _DesktopEditProfileSkeleton extends StatelessWidget {
+  const _DesktopEditProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    Widget bar(double width, double height, {double radius = 6}) => Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: c.shimmerBase,
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+
+    // Label above a 52px input, matching FormTextField's desktop metrics.
+    Widget field() => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        bar(90, 10),
+        const SizedBox(height: 8),
+        bar(double.infinity, 52, radius: 12),
+      ],
+    );
+
+    Widget card({required double titleWidth, required List<Widget> rows}) =>
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: c.cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: c.borderLight),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: bar(titleWidth, 14),
+              ),
+              for (final row in rows) ...[const SizedBox(height: 18), row],
+            ],
+          ),
+        );
+
+    Widget pair() => Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: field()),
+        const SizedBox(width: 18),
+        Expanded(child: field()),
+      ],
+    );
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+      child: AdaptiveContentWidth(
+        maxWidth: 920,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 248 + 16),
+                  child: card(titleWidth: 150, rows: [pair(), field()]),
+                ),
+                PositionedDirectional(
+                  start: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 248,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: c.cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: c.borderLight),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        bar(100, 14),
+                        const SizedBox(height: 18),
+                        Center(child: bar(100, 100, radius: 50)),
+                        const SizedBox(height: 18),
+                        Center(child: bar(170, 10)),
+                        const SizedBox(height: 6),
+                        Center(child: bar(120, 10)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 248 + 16),
+              child: card(titleWidth: 140, rows: [pair()]),
+            ),
+          ],
+        ),
       ),
     );
   }

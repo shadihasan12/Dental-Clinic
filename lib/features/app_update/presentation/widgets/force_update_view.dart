@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/app_update/domain/entities/app_update_info.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -31,57 +32,62 @@ class ForceUpdateView extends StatelessWidget {
         child: Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 24.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 72.w,
-                  height: 72.w,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(24.r),
+            // A phone is narrower than this anyway; on a desktop window it
+            // keeps the copy and the button from running edge to edge.
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 72.w,
+                    height: 72.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: ColorManager.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(24.r),
+                    ),
+                    child: Icon(
+                      Icons.system_update,
+                      size: 34.w,
+                      color: ColorManager.primaryDarker,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.system_update,
-                    size: 34.w,
-                    color: ColorManager.primaryDarker,
+                  SizedBox(height: 20.h),
+                  Text(
+                    l10n.updateRequiredTitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
+                    ),
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  l10n.updateRequiredTitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
-                    color: c.textPrimary,
+                  SizedBox(height: 10.h),
+                  Text(
+                    l10n.updateForcedBody,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 12.sp,
+                      height: 1.6,
+                      color: c.textSecondary,
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Text(
-                  l10n.updateForcedBody,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: family,
-                    fontSize: 12.sp,
-                    height: 1.6,
-                    color: c.textSecondary,
-                  ),
-                ),
-                if (info.latestVersion != null) ...[
-                  SizedBox(height: 12.h),
-                  _VersionPill(version: info.latestVersion!),
+                  if (info.latestVersion != null) ...[
+                    SizedBox(height: 12.h),
+                    _VersionPill(version: info.latestVersion!),
+                  ],
+                  if (notes != null) ...[
+                    SizedBox(height: 18.h),
+                    _ReleaseNotes(notes: notes),
+                  ],
+                  SizedBox(height: 24.h),
+                  _UpdateButton(url: info.storeUrl!),
                 ],
-                if (notes != null) ...[
-                  SizedBox(height: 18.h),
-                  _ReleaseNotes(notes: notes),
-                ],
-                SizedBox(height: 24.h),
-                _UpdateButton(url: info.storeUrl!),
-              ],
+              ),
             ),
           ),
         ),
@@ -185,7 +191,9 @@ class _UpdateButton extends StatelessWidget {
         onTap: () => openStore(context, url),
         borderRadius: radius,
         child: Container(
-          width: double.infinity,
+          // Full width is the phone convention; on desktop a full-width bar
+          // reads as a banner, not a button.
+          width: Responsive.isDesktop(context) ? 220 : double.infinity,
           height: 48.h,
           alignment: Alignment.center,
           child: Text(

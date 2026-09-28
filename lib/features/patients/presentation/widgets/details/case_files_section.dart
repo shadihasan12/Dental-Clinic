@@ -1,7 +1,9 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/patients/presentation/widgets/details/case_file_preview.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
@@ -196,6 +198,24 @@ class CaseFilesSection extends StatelessWidget {
             primaryLabel: onAdd == null ? null : l10n.add,
             onPrimary: onAdd,
           )
+        else if (Responsive.isDesktop(context))
+          // Desktop wraps into rows instead of scrolling sideways: in the
+          // narrow files column a horizontal strip pushed its first tile out
+          // of view, and a mouse has no easy sideways swipe to find it. The
+          // add tile comes last, after the newest file.
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.w,
+            children: [
+              for (var i = 0; i < attachments.length; i++)
+                _Thumb(
+                  attachment: attachments[i],
+                  onTap: () => onOpen(i),
+                  onRetry: () => onRetry?.call(attachments[i]),
+                ),
+              if (onAdd != null) _AddTile(onTap: onAdd!),
+            ],
+          )
         else
           SizedBox(
             height: 92.w,
@@ -240,24 +260,42 @@ class _Thumb extends StatelessWidget {
     Widget body;
     if (a.localFile != null && a.isImage) {
       body = Image.file(a.localFile!, fit: BoxFit.cover);
-    } else if (a.localFile == null && a.url != null) {
-      body = Image.network(
-        a.url!,
-        fit: BoxFit.cover,
-        // A PDF or lab report lands here too and simply fails to decode.
-        errorBuilder: (_, _, _) => _fileCard(context, c, l10n),
-        loadingBuilder: (_, child, progress) => progress == null
-            ? child
-            : Center(
-                child: SizedBox(
-                  width: 18.w,
-                  height: 18.w,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: c.textTertiary,
-                  ),
+    } else if (a.localFile == null &&
+        a.url != null &&
+        a.probableKind != FileKind.pdf &&
+        a.probableKind != FileKind.other) {
+      // The URL is signed and has no extension, so what the file is has to
+      // be read from its bytes. Handing it straight to Image.network made
+      // every PDF download in full just to fail decoding - and when the
+      // strip rebuilt mid-download (a refetch after an upload) the failure
+      // had no listener left and surfaced as "Invalid image data".
+      body = FutureBuilder<Uint8List?>(
+        future: cachedFileBytes(a.url!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Center(
+              child: SizedBox(
+                width: 18.w,
+                height: 18.w,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: c.textTertiary,
                 ),
               ),
+            );
+          }
+          final bytes = snapshot.data;
+          final kind = bytes == null ? null : FileKind.ofBytes(bytes);
+          if (bytes == null || kind != FileKind.image) {
+            return _fileCard(context, c, l10n, kind: kind);
+          }
+          return Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            // Magic number said image but the codec disagreed (HEIC, say).
+            errorBuilder: (_, _, _) => _fileCard(context, c, l10n),
+          );
+        },
       );
     } else {
       body = _fileCard(context, c, l10n);
@@ -343,8 +381,16 @@ class _Thumb extends StatelessWidget {
   /// The type's own hue in a tinted icon tile - red for a PDF, the way every
   /// file list marks one - and the file's name under it, so a case carrying
   /// three lab reports does not show three identical squares.
-  Widget _fileCard(BuildContext context, AppColors c, AppLocalizations l10n) {
-    final isPdf = attachment.probableKind == FileKind.pdf;
+  ///
+  /// [kind] is what the bytes turned out to be, when they were read; it
+  /// beats the name's guess.
+  Widget _fileCard(
+    BuildContext context,
+    AppColors c,
+    AppLocalizations l10n, {
+    FileKind? kind,
+  }) {
+    final isPdf = (kind ?? attachment.probableKind) == FileKind.pdf;
     final tone = isPdf ? ColorManager.error : ColorManager.info;
     final label = attachment.displayName(l10n);
 
@@ -444,7 +490,7 @@ class AddFileSheet extends StatelessWidget {
     if (!_hasMobileSources) return _pickAttachments(context);
 
     final c = ColorManager.of(context);
-    return showModalBottomSheet<List<File>>(
+    return showAppSheet<List<File>>(
       context: context,
       backgroundColor: c.cardBg,
       isScrollControlled: true,
@@ -534,7 +580,7 @@ class AddFileSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Container(
+            child: HideInDialog(child: Container(
               width: 40.w,
               height: 4.h,
               margin: EdgeInsets.only(top: 10.h, bottom: 14.h),
@@ -542,7 +588,7 @@ class AddFileSheet extends StatelessWidget {
                 color: c.border,
                 borderRadius: BorderRadius.circular(999.r),
               ),
-            ),
+            )),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),

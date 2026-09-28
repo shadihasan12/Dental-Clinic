@@ -57,8 +57,8 @@ class _PatientPickerState extends State<PatientPicker> {
       _filtered = query.isEmpty
           ? widget.patients
           : widget.patients
-              .where((p) => p.toLowerCase().contains(query.toLowerCase()))
-              .toList();
+                .where((p) => p.toLowerCase().contains(query.toLowerCase()))
+                .toList();
     });
   }
 
@@ -94,54 +94,57 @@ class _PatientPickerState extends State<PatientPicker> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? ColorManager.primary : ColorManager.primaryDarker;
 
-    return GestureDetector(
-      onTap: () => setState(() => _isSearching = true),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
-        decoration: BoxDecoration(
-          color: ColorManager.primary.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: ColorManager.primary.withValues(alpha: 0.30),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => setState(() => _isSearching = true),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
+          decoration: BoxDecoration(
+            color: ColorManager.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: ColorManager.primary.withValues(alpha: 0.30),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 28.w,
-              height: 28.w,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: ColorManager.primary.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                widget.selectedPatient![0].toUpperCase(),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: accent,
+          child: Row(
+            children: [
+              Container(
+                width: 28.w,
+                height: 28.w,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: ColorManager.primary.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  widget.selectedPatient![0].toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: accent,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Text(
-                widget.selectedPatient!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontFamily: FontHelper.fontFamily(context),
-                  fontWeight: FontWeight.w600,
-                  color: c.textPrimary,
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Text(
+                  widget.selectedPatient!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontFamily: FontHelper.fontFamily(context),
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
                 ),
               ),
-            ),
-            Icon(Icons.close_rounded, size: 17.w, color: c.textTertiary),
-          ],
+              Icon(Icons.close_rounded, size: 17.w, color: c.textTertiary),
+            ],
+          ),
         ),
       ),
     );
@@ -283,28 +286,31 @@ class _PatientPickerState extends State<PatientPicker> {
   Widget _buildAddNewLink(AppLocalizations l10n) {
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: GestureDetector(
-        onTap: widget.onAddNewPatient,
-        behavior: HitTestBehavior.opaque,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.add_circle_outline_rounded,
-              size: 15.w,
-              color: ColorManager.primary,
-            ),
-            SizedBox(width: 6.w),
-            Text(
-              l10n.addNewPatient,
-              style: TextStyle(
-                fontSize: 11.5.sp,
-                fontFamily: FontHelper.fontFamily(context),
-                fontWeight: FontWeight.w600,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onAddNewPatient,
+          behavior: HitTestBehavior.opaque,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.add_circle_outline_rounded,
+                size: 15.w,
                 color: ColorManager.primary,
               ),
-            ),
-          ],
+              SizedBox(width: 6.w),
+              Text(
+                l10n.addNewPatient,
+                style: TextStyle(
+                  fontSize: 11.5.sp,
+                  fontFamily: FontHelper.fontFamily(context),
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.primary,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

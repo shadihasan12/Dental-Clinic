@@ -266,10 +266,15 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     List<ClinicUserEntity> users,
   ) {
     final currentEmail = getIt<UserStorage>().getUserEmail();
+    final wide = Responsive.isDesktop(context);
     return ListView.separated(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+      // Desktop lines the cards up with the 24px gutter of the "Add user"
+      // bar above them instead of the phone's 14.
+      padding: wide
+          ? const EdgeInsets.fromLTRB(24, 4, 24, 28)
+          : EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
       itemCount: users.length,
-      separatorBuilder: (_, _) => SizedBox(height: 8.h),
+      separatorBuilder: (_, _) => SizedBox(height: wide ? 10 : 8.h),
       itemBuilder: (_, index) {
         final user = users[index];
         return _UserCard(
@@ -349,7 +354,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     //   • users can't remove themselves
     //   • the clinic owner can't be removed by anyone, even other admins
     final canRemove = getIt<UserStorage>().isAdmin && !isSelf && !user.isOwner;
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       useSafeArea: true,
       backgroundColor: ColorManager.of(context).cardBg,
@@ -364,14 +369,14 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Center(
-                child: Container(
+                child: HideInDialog(child: Container(
                   width: 40.w,
                   height: 4.h,
                   decoration: BoxDecoration(
                     color: ColorManager.of(context).border,
                     borderRadius: BorderRadius.circular(2.r),
                   ),
-                ),
+                )),
               ),
               SizedBox(height: 14.h),
               _ActionsHeader(user: user),
@@ -430,7 +435,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     AppLocalizations l10n,
     ClinicUserEntity user,
   ) {
-    showModalBottomSheet(
+    showAppSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -553,6 +558,10 @@ class _UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The phone sizes read as fine print on a monitor, so desktop steps the
+    // whole row up together - text, avatar and padding - rather than just
+    // the fonts, which would crowd a 40px avatar.
+    final wide = Responsive.isDesktop(context);
     return Container(
       decoration: BoxDecoration(
         color: ColorManager.of(context).cardBg,
@@ -565,11 +574,13 @@ class _UserCard extends StatelessWidget {
           onTap: onMore,
           borderRadius: BorderRadius.circular(16.r),
           child: Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: wide
+                ? const EdgeInsets.symmetric(horizontal: 18, vertical: 16)
+                : EdgeInsets.all(12.w),
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: 20.r,
+                  radius: wide ? 24 : 20.r,
                   backgroundColor: ColorManager.primary.withValues(alpha: 0.15),
                   backgroundImage: user.imageUrl != null
                       ? NetworkImage(user.imageUrl!)
@@ -578,14 +589,14 @@ class _UserCard extends StatelessWidget {
                       ? Text(
                           _initials(),
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize: wide ? 15 : 13.sp,
                             fontWeight: FontWeight.w600,
                             color: ColorManager.primaryDarker,
                           ),
                         )
                       : null,
                 ),
-                SizedBox(width: 11.w),
+                SizedBox(width: wide ? 14 : 11.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,28 +606,28 @@ class _UserCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12.5.sp,
+                          fontSize: wide ? 15.5 : 12.5.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           fontWeight: FontWeight.w600,
                           color: ColorManager.of(context).textPrimary,
                         ),
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: wide ? 3 : 2.h),
                       Text(
                         user.email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11.sp,
+                          fontSize: wide ? 13 : 11.sp,
                           fontFamily: FontHelper.fontFamily(context),
                           color: ColorManager.of(context).textTertiary,
                         ),
                       ),
                       if (user.roles.isNotEmpty) ...[
-                        SizedBox(height: 6.h),
+                        SizedBox(height: wide ? 9 : 6.h),
                         Wrap(
-                          spacing: 4.w,
-                          runSpacing: 4.h,
+                          spacing: wide ? 6 : 4.w,
+                          runSpacing: wide ? 6 : 4.h,
                           children: user.roles
                               .map((r) => _RoleChip(role: r))
                               .toList(),
@@ -628,7 +639,7 @@ class _UserCard extends StatelessWidget {
                 Icon(
                   Icons.more_vert,
                   color: ColorManager.of(context).textSubtle,
-                  size: 18.w,
+                  size: wide ? 20 : 18.w,
                 ),
               ],
             ),
@@ -653,16 +664,19 @@ class _RoleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final wide = Responsive.isDesktop(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+      padding: wide
+          ? const EdgeInsets.symmetric(horizontal: 10, vertical: 4)
+          : EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
       decoration: BoxDecoration(
         color: _color().withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6.r),
+        borderRadius: BorderRadius.circular(wide ? 8 : 6.r),
       ),
       child: Text(
         _label(context),
         style: TextStyle(
-          fontSize: 10.sp,
+          fontSize: wide ? 13 : 10.sp,
           fontFamily: FontHelper.fontFamily(context),
           fontWeight: FontWeight.w600,
           color: _color(),
@@ -867,14 +881,14 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Container(
+            child: HideInDialog(child: Container(
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
                 color: c.borderLight,
                 borderRadius: BorderRadius.circular(2.r),
               ),
-            ),
+            )),
           ),
           SizedBox(height: 14.h),
           Row(
@@ -1034,6 +1048,8 @@ class _UsersSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Responsive.isDesktop(context)) return const _DesktopUsersSkeleton();
+
     final c = ColorManager.of(context);
     return ListView.separated(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
@@ -1074,6 +1090,65 @@ class _UsersSkeleton extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Desktop placeholder cut to the desktop [_UserCard]: same padding, 48px
+/// avatar and chip height. Static blocks rather than a shimmer sweep, which
+/// reads as flicker across a wide window.
+class _DesktopUsersSkeleton extends StatelessWidget {
+  const _DesktopUsersSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+
+    Widget bar(double width, double height, {double radius = 6}) => Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: c.shimmerBase,
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+      itemCount: 5,
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
+      itemBuilder: (_, _) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: c.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: c.borderLight),
+        ),
+        child: Row(
+          children: [
+            bar(48, 48, radius: 24),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  bar(170, 14),
+                  const SizedBox(height: 7),
+                  bar(220, 11),
+                  const SizedBox(height: 11),
+                  Row(
+                    children: [
+                      bar(64, 24, radius: 8),
+                      const SizedBox(width: 6),
+                      bar(76, 24, radius: 8),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

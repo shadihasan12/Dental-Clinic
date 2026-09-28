@@ -23175,6 +23175,13 @@ mixin _$AuthState {
   bool get isOtpVerifying => throw _privateConstructorUsedError;
   String? get otpError => throw _privateConstructorUsedError;
   String? get sessionId => throw _privateConstructorUsedError;
+
+  /// The server refused to register because the OTP session behind
+  /// [sessionId] has run out. Nothing on the create-account page can fix
+  /// that - the email has to be verified again - so the page reacts by
+  /// sending the user back to the start rather than showing an error they
+  /// cannot act on.
+  bool get signupSessionExpired => throw _privateConstructorUsedError;
   int get otpSecondsRemaining => throw _privateConstructorUsedError;
   bool get canResendOtp =>
       throw _privateConstructorUsedError; // Forgot password fields
@@ -23252,6 +23259,7 @@ abstract class $AuthStateCopyWith<$Res> {
     bool isOtpVerifying,
     String? otpError,
     String? sessionId,
+    bool signupSessionExpired,
     int otpSecondsRemaining,
     bool canResendOtp,
     String forgotPasswordEmail,
@@ -23331,6 +23339,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? isOtpVerifying = null,
     Object? otpError = freezed,
     Object? sessionId = freezed,
+    Object? signupSessionExpired = null,
     Object? otpSecondsRemaining = null,
     Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
@@ -23496,6 +23505,10 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.sessionId
                 : sessionId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            signupSessionExpired: null == signupSessionExpired
+                ? _value.signupSessionExpired
+                : signupSessionExpired // ignore: cast_nullable_to_non_nullable
+                      as bool,
             otpSecondsRemaining: null == otpSecondsRemaining
                 ? _value.otpSecondsRemaining
                 : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
@@ -23687,6 +23700,7 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     bool isOtpVerifying,
     String? otpError,
     String? sessionId,
+    bool signupSessionExpired,
     int otpSecondsRemaining,
     bool canResendOtp,
     String forgotPasswordEmail,
@@ -23769,6 +23783,7 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? isOtpVerifying = null,
     Object? otpError = freezed,
     Object? sessionId = freezed,
+    Object? signupSessionExpired = null,
     Object? otpSecondsRemaining = null,
     Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
@@ -23933,6 +23948,10 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.sessionId
             : sessionId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        signupSessionExpired: null == signupSessionExpired
+            ? _value.signupSessionExpired
+            : signupSessionExpired // ignore: cast_nullable_to_non_nullable
+                  as bool,
         otpSecondsRemaining: null == otpSecondsRemaining
             ? _value.otpSecondsRemaining
             : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
@@ -24061,6 +24080,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     this.isOtpVerifying = false,
     this.otpError = null,
     this.sessionId = null,
+    this.signupSessionExpired = false,
     this.otpSecondsRemaining = 0,
     this.canResendOtp = false,
     this.forgotPasswordEmail = '',
@@ -24223,6 +24243,15 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   @override
   @JsonKey()
   final String? sessionId;
+
+  /// The server refused to register because the OTP session behind
+  /// [sessionId] has run out. Nothing on the create-account page can fix
+  /// that - the email has to be verified again - so the page reacts by
+  /// sending the user back to the start rather than showing an error they
+  /// cannot act on.
+  @override
+  @JsonKey()
+  final bool signupSessionExpired;
   @override
   @JsonKey()
   final int otpSecondsRemaining;
@@ -24307,7 +24336,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicType: $clinicType, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicType: $clinicType, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, signupSessionExpired: $signupSessionExpired, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
   }
 
   @override
@@ -24359,6 +24388,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       ..add(DiagnosticsProperty('isOtpVerifying', isOtpVerifying))
       ..add(DiagnosticsProperty('otpError', otpError))
       ..add(DiagnosticsProperty('sessionId', sessionId))
+      ..add(DiagnosticsProperty('signupSessionExpired', signupSessionExpired))
       ..add(DiagnosticsProperty('otpSecondsRemaining', otpSecondsRemaining))
       ..add(DiagnosticsProperty('canResendOtp', canResendOtp))
       ..add(DiagnosticsProperty('forgotPasswordEmail', forgotPasswordEmail))
@@ -24490,6 +24520,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
                 other.otpError == otpError) &&
             (identical(other.sessionId, sessionId) ||
                 other.sessionId == sessionId) &&
+            (identical(other.signupSessionExpired, signupSessionExpired) ||
+                other.signupSessionExpired == signupSessionExpired) &&
             (identical(other.otpSecondsRemaining, otpSecondsRemaining) ||
                 other.otpSecondsRemaining == otpSecondsRemaining) &&
             (identical(other.canResendOtp, canResendOtp) ||
@@ -24588,6 +24620,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     isOtpVerifying,
     otpError,
     sessionId,
+    signupSessionExpired,
     otpSecondsRemaining,
     canResendOtp,
     forgotPasswordEmail,
@@ -24657,6 +24690,7 @@ abstract class _AuthState implements AuthState {
     final bool isOtpVerifying,
     final String? otpError,
     final String? sessionId,
+    final bool signupSessionExpired,
     final int otpSecondsRemaining,
     final bool canResendOtp,
     final String forgotPasswordEmail,
@@ -24753,6 +24787,14 @@ abstract class _AuthState implements AuthState {
   String? get otpError;
   @override
   String? get sessionId;
+
+  /// The server refused to register because the OTP session behind
+  /// [sessionId] has run out. Nothing on the create-account page can fix
+  /// that - the email has to be verified again - so the page reacts by
+  /// sending the user back to the start rather than showing an error they
+  /// cannot act on.
+  @override
+  bool get signupSessionExpired;
   @override
   int get otpSecondsRemaining;
   @override

@@ -1,10 +1,12 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/subscription_period_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -26,18 +28,37 @@ class SubscriptionHistoryPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.subscriptionHistoryTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingWideWidth,
       body: BillingAsync<List<SubscriptionPeriodEntity>>(
         load: repository.getPeriods,
         builder: (context, periods, _) {
           final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
           if (periods.isEmpty) {
+            return AdaptiveContentWidth(
+              maxWidth: kBillingNarrowWidth,
+              child: ListView(
+                padding: EdgeInsets.all(14.w),
+                children: [
+                  StateCard(
+                    icon: Icons.history_rounded,
+                    title: l10n.noHistoryYet,
+                  ),
+                ],
+              ),
+            );
+          }
+          // Desktop: the cycles tile two or three to a row, newest first
+          // reading along the row.
+          if (Responsive.isDesktop(context)) {
             return ListView(
-              padding: EdgeInsets.all(14.w),
+              padding: kBillingDesktopPadding,
               children: [
-                StateCard(
-                  icon: Icons.history_rounded,
-                  title: l10n.noHistoryYet,
+                BillingGrid(
+                  minTileWidth: 360,
+                  runSpacing: 12,
+                  children: [
+                    for (final period in periods) _PeriodCard(period: period),
+                  ],
                 ),
               ],
             );

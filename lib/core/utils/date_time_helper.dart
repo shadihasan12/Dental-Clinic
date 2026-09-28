@@ -40,6 +40,11 @@ class AppDate {
   static DateFormat mediumFormat(BuildContext context) =>
       DateFormat.yMMMd(_locale(context));
 
+  /// `Monday, December 28, 2024` · `الاثنين، 28 ديسمبر 2024` — a page
+  /// header's full date.
+  static String full(BuildContext context, DateTime date) =>
+      DateFormat.yMMMMEEEEd(_locale(context)).format(date);
+
   /// `Dec 28` · `28 ديسمبر` — no year, for dates already scoped to one year.
   static String dayMonth(BuildContext context, DateTime date) =>
       DateFormat.MMMd(_locale(context)).format(date);

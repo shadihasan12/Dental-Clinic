@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +21,9 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    // The desktop grid spaces its cells with its own gutters, so the card
+    // brings no margin there - and a touch more breathing room inside.
+    final isDesktop = Responsive.isDesktop(context);
 
     return BlocBuilder<StatisticsDashboardBloc, StatisticsDashboardState>(
       buildWhen: (a, b) => a.results[metric.key] != b.results[metric.key],
@@ -28,8 +32,8 @@ class MetricCard extends StatelessWidget {
             state.results[metric.key] ?? const MetricState.loading();
 
         return Container(
-          margin: EdgeInsets.only(bottom: 8.h),
-          padding: EdgeInsets.all(12.w),
+          margin: isDesktop ? EdgeInsets.zero : EdgeInsets.only(bottom: 8.h),
+          padding: EdgeInsets.all(isDesktop ? 16 : 12.w),
           decoration: BoxDecoration(
             color: c.cardBg,
             borderRadius: BorderRadius.circular(16.r),

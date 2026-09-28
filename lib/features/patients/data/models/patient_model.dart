@@ -22,6 +22,9 @@ class PatientModel {
   /// Currency of [balance], from the case it was derived from. Null when the
   /// server sent none - the amount is then shown bare rather than guessed at.
   final String? balanceCurrencyCode;
+
+  /// True when the API sent an `opened_case` - a case still in progress.
+  final bool hasOpenCase;
   final DateTime? createdAt;
   final List<AuditEntry> audits;
 
@@ -44,6 +47,7 @@ class PatientModel {
     this.nextVisit,
     this.balance = 0,
     this.balanceCurrencyCode,
+    this.hasOpenCase = false,
     this.createdAt,
     this.audits = const [],
   });
@@ -90,6 +94,7 @@ class PatientModel {
           json['next_visit'] as String?,
       balance: _balanceFrom(json),
       balanceCurrencyCode: _currencyCodeFrom(json),
+      hasOpenCase: json['opened_case'] is Map<String, dynamic>,
       createdAt: _parseNullableDate(json['created_at']),
       audits: AuditEntry.listFromJson(json['audits']),
     );
@@ -168,6 +173,7 @@ class PatientModel {
       nextVisit: nextVisit,
       balance: balance,
       balanceCurrencyCode: balanceCurrencyCode,
+      hasOpenCase: hasOpenCase,
       createdAt: createdAt,
       audits: audits,
     );
@@ -193,6 +199,7 @@ class PatientModel {
       nextVisit: entity.nextVisit,
       balance: entity.balance,
       balanceCurrencyCode: entity.balanceCurrencyCode,
+      hasOpenCase: entity.hasOpenCase,
     );
   }
 }

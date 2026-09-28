@@ -8,4 +8,8 @@ class PatientsListEvent with _$PatientsListEvent {
   /// A name fragment typed into the search field. Blank clears the search and
   /// returns to the paginated roster.
   const factory PatientsListEvent.search(String query) = _Search;
+
+  /// Show exactly this page, replacing the rows on screen - the desktop
+  /// table's paging. Mobile appends with [loadMore] instead.
+  const factory PatientsListEvent.goToPage(int page) = _GoToPage;
 }

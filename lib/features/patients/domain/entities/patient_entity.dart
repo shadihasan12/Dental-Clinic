@@ -28,6 +28,8 @@ class PatientEntity with _$PatientEntity {
     /// Currency of [balance]. Null when the server sent none, in which case
     /// the amount is rendered without a symbol rather than assuming dollars.
     String? balanceCurrencyCode,
+    /// The patient has a case still in progress (`opened_case` on the API).
+    @Default(false) bool hasOpenCase,
     DateTime? createdAt,
     @Default([]) List<AuditEntry> audits,
   }) = _PatientEntity;

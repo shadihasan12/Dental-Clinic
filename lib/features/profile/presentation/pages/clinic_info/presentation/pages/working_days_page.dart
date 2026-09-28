@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -19,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 import '../widgets/add_holiday_sheet.dart';
 import '../widgets/clinic_info_models.dart';
@@ -238,7 +239,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   }
 
   /// Wire format for the working-hours payload — NOT for display. Times shown
-  /// to the user go through `AppDate`, which localises them.
+  /// to the user go through [hoursTime], which keeps them in English.
   static String _apiTime(TimeOfDay t) {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
@@ -249,12 +250,16 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   }
 
   String _daySummary(WorkingDay day) {
-    if (day.shifts.length == 1) {
-      return '${AppDate.time12Of(context, day.shifts[0].from)} – '
-          '${AppDate.time12Of(context, day.shifts[0].to)}';
+    if (_summaryIsTimeRange(day)) {
+      return hoursRange(day.shifts[0].from, day.shifts[0].to);
     }
     return '${day.shifts.length} ${AppLocalizations.of(context)!.shifts}';
   }
+
+  /// A lone range is Latin text and must be laid out LTR (see [hoursTime]);
+  /// the shift count and "Closed" are localised words and must not be.
+  bool _summaryIsTimeRange(WorkingDay day) =>
+      day.enabled && day.shifts.length == 1;
 
   Future<void> _pickShiftTime(
     WorkingDay day,
@@ -465,7 +470,16 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                       // Null, and a route with nothing behind it: PageHeader
                       // draws no back button, so the gate has no exit but
                       // saving.
-                      PageHeader(title: l10n.noWorkingHoursTitle, onBack: null),
+                      // Desktop gets a full-height bar of its own: the phone
+                      // header is a thin strip across a wide window. Neither
+                      // has a way back.
+                      if (Responsive.isDesktop(context))
+                        _SetupDesktopHeader(title: l10n.noWorkingHoursTitle)
+                      else
+                        PageHeader(
+                          title: l10n.noWorkingHoursTitle,
+                          onBack: null,
+                        ),
                       Expanded(child: AdaptiveContentWidth(child: body)),
                     ],
                   ),
@@ -516,10 +530,26 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         padding: EdgeInsets.only(bottom: scaffoldBottomInset(context)),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 10.h),
-          child: DentaButton(
-            label: widget.isInitialSetup ? l10n.saveAndContinue : l10n.save,
-            expand: true,
-            onTap: _hasChanges ? _onSave : null,
+          // In line with the form above it on desktop, rather than a bar
+          // across the whole window. heightFactor 1 matters: this sits in
+          // bottomNavigationBar, where a plain Center (AdaptiveContentWidth)
+          // grows to the full height and covers the page.
+          child: Center(
+            heightFactor: 1,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: Responsive.isDesktop(context)
+                    ? 900
+                    : double.infinity,
+              ),
+              child: DentaButton(
+                label: widget.isInitialSetup
+                    ? l10n.saveAndContinue
+                    : l10n.save,
+                expand: true,
+                onTap: _hasChanges ? _onSave : null,
+              ),
+            ),
           ),
         ),
       ),
@@ -599,6 +629,9 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                   ),
                   Text(
                     day.enabled ? _daySummary(day) : l10n.closed,
+                    textDirection: _summaryIsTimeRange(day)
+                        ? TextDirection.ltr
+                        : null,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontFamily: FontHelper.fontFamily(context),
@@ -876,8 +909,54 @@ class _HolidaySnapshot {
   int get hashCode => Object.hash(id, name, year, month, day, recurring);
 }
 
-/// Holds the working-days card and the holidays card at full height while
-/// the schedule loads.
+/// The setup gate's bar on desktop: the Denta mark and the step's title, at
+/// the height of the app's own top bar. Deliberately no back button and no
+/// menu - the only way on is saving the schedule.
+class _SetupDesktopHeader extends StatelessWidget {
+  const _SetupDesktopHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    return Container(
+      height: 84,
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        border: Border(bottom: BorderSide(color: c.borderLight)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: c.cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: c.borderLight),
+            ),
+            child: Assets.imagesLogoDentaMark.image(fit: BoxFit.contain),
+          ),
+          const SizedBox(width: 14),
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: c.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Why the app is asking before it lets anyone in. One sentence - the same
 /// one the appointments screen shows a clinic with no hours; this is simply
 /// the earlier chance to answer it.
@@ -923,6 +1002,8 @@ class _SetupIntro extends StatelessWidget {
   }
 }
 
+/// Holds the working-days card and the holidays card at full height while
+/// the schedule loads.
 class _WorkingDaysSkeleton extends StatelessWidget {
   const _WorkingDaysSkeleton();
 

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -14,7 +15,7 @@ class PatientSavedSheet {
   PatientSavedSheet._();
 
   static Future<bool?> show(BuildContext context) {
-    return showModalBottomSheet<bool>(
+    return showAppSheet<bool>(
       context: context,
       useSafeArea: true,
       isDismissible: false,
@@ -50,14 +51,14 @@ class _PatientSavedSheetBody extends StatelessWidget {
           children: [
             SizedBox(height: 10.h),
             Center(
-              child: Container(
+              child: HideInDialog(child: Container(
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
                   color: c.border,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
-              ),
+              )),
             ),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(20.w, 14.h, 8.w, 0),

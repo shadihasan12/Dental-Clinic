@@ -1,9 +1,8 @@
-import 'dart:typed_data';
-
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pdfx/pdfx.dart';
@@ -52,9 +51,16 @@ enum FileKind {
   /// The guess a file name allows, for the strip - which cannot download
   /// every file it draws a tile for. Null when the name says nothing.
   static FileKind? ofName(String? name) {
-    final dot = name?.lastIndexOf('.') ?? -1;
-    if (name == null || dot < 0 || dot == name.length - 1) return null;
-    switch (name.substring(dot + 1).toLowerCase()) {
+    if (name == null) return null;
+    // Only the last path segment can carry an extension. Fed a signed URL
+    // (`…runbit.tech/api/media-items/secure?data=…`) the whole string's last
+    // dot is in the host, which classed every nameless attachment as
+    // "other" - and the strip then stopped trying to preview real images.
+    var file = name.split(RegExp(r'[?#]')).first;
+    file = file.substring(file.lastIndexOf('/') + 1);
+    final dot = file.lastIndexOf('.');
+    if (dot <= 0 || dot == file.length - 1) return null;
+    switch (file.substring(dot + 1).toLowerCase()) {
       case 'pdf':
         return pdf;
       case 'png':
@@ -103,7 +109,19 @@ class CasePdfView extends StatefulWidget {
 }
 
 class _CasePdfViewState extends State<CasePdfView> {
-  PdfControllerPinch? _controller;
+  /// pdfx's pinch viewer is mobile/macOS only - on Windows it throws
+  /// UnimplementedError the moment it builds. There the paged viewer is used
+  /// instead: one page at a time, each zoomable, turned vertically so it
+  /// still never fights the horizontal pager between attachments.
+  static bool get _pinchSupported => switch (defaultTargetPlatform) {
+    TargetPlatform.android ||
+    TargetPlatform.iOS ||
+    TargetPlatform.macOS => true,
+    _ => false,
+  };
+
+  PdfControllerPinch? _pinch;
+  PdfController? _paged;
   Object? _error;
 
   @override
@@ -114,23 +132,32 @@ class _CasePdfViewState extends State<CasePdfView> {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _pinch?.dispose();
+    _paged?.dispose();
     super.dispose();
   }
 
   Future<void> _load() async {
     try {
-      final bytes = widget.bytes ?? await downloadFileBytes(widget.url);
+      final bytes = widget.bytes ?? await cachedFileBytes(widget.url);
       if (bytes == null) throw StateError('empty');
       if (!mounted) return;
 
-      final controller = PdfControllerPinch(
-        document: PdfDocument.openData(bytes),
-      );
-      setState(() => _controller = controller);
+      final document = PdfDocument.openData(bytes);
+      setState(() {
+        if (_pinchSupported) {
+          _pinch = PdfControllerPinch(document: document);
+        } else {
+          _paged = PdfController(document: document);
+        }
+      });
     } catch (e) {
       if (mounted) setState(() => _error = e);
     }
+  }
+
+  void _onError(Object error) {
+    if (mounted) setState(() => _error = error);
   }
 
   @override
@@ -139,8 +166,26 @@ class _CasePdfViewState extends State<CasePdfView> {
       return CaseFileFallback(url: widget.url, name: null);
     }
 
-    final controller = _controller;
-    if (controller == null) {
+    // The viewer's own background. pdfx paints white behind a page by
+    // default, which on a black screen reads as a flash between pages.
+    const background = BoxDecoration(color: ColorManager.black);
+
+    final paged = _paged;
+    if (paged != null) {
+      return PdfView(
+        controller: paged,
+        scrollDirection: Axis.vertical,
+        backgroundDecoration: background,
+        onDocumentLoaded: (document) =>
+            widget.onPageChanged?.call(paged.page, document.pagesCount),
+        onPageChanged: (page) =>
+            widget.onPageChanged?.call(page, paged.pagesCount ?? 0),
+        onDocumentError: _onError,
+      );
+    }
+
+    final pinch = _pinch;
+    if (pinch == null) {
       return const Center(
         child: CircularProgressIndicator(
           strokeWidth: 2,
@@ -150,22 +195,16 @@ class _CasePdfViewState extends State<CasePdfView> {
     }
 
     return PdfViewPinch(
-      controller: controller,
+      controller: pinch,
       onDocumentLoaded: (document) =>
-          widget.onPageChanged?.call(controller.page, document.pagesCount),
-      onPageChanged: (page) => widget.onPageChanged?.call(
-        page,
-        controller.pagesCount ?? 0,
-      ),
-      // The viewer's own background. pdfx paints white behind a page by
-      // default, which on a black screen reads as a flash between pages.
-      backgroundDecoration: const BoxDecoration(color: ColorManager.black),
+          widget.onPageChanged?.call(pinch.page, document.pagesCount),
+      onPageChanged: (page) =>
+          widget.onPageChanged?.call(page, pinch.pagesCount ?? 0),
+      backgroundDecoration: background,
       // A document that fails to parse after downloading cleanly - a PDF we
       // cannot render, or one that is not really a PDF - falls through to
       // the same way out as any other unrenderable file.
-      onDocumentError: (error) {
-        if (mounted) setState(() => _error = error);
-      },
+      onDocumentError: _onError,
     );
   }
 }
@@ -286,6 +325,39 @@ Future<Uint8List?> downloadFileBytes(String url) async {
   return Uint8List.fromList(data);
 }
 
+/// Downloads already made, keyed by URL, so the strip's thumbnail and the
+/// viewer share one request per file. Bounded: a case can carry many files
+/// and a PDF can be megabytes, so only the most recent few are kept.
+final Map<String, Future<Uint8List?>> _fileBytesCache = {};
+const int _fileBytesCacheSize = 24;
+
+/// [downloadFileBytes], at most once per URL while it stays cached. A failed
+/// or empty download is dropped from the cache, so opening the file again
+/// retries it.
+Future<Uint8List?> cachedFileBytes(String url) {
+  final cached = _fileBytesCache.remove(url);
+  if (cached != null) {
+    // Re-inserted to mark it most recently used.
+    _fileBytesCache[url] = cached;
+    return cached;
+  }
+  final request = downloadFileBytes(url).then(
+    (bytes) {
+      if (bytes == null) _fileBytesCache.remove(url);
+      return bytes;
+    },
+    onError: (Object error, StackTrace stack) {
+      _fileBytesCache.remove(url);
+      Error.throwWithStackTrace(error, stack);
+    },
+  );
+  _fileBytesCache[url] = request;
+  while (_fileBytesCache.length > _fileBytesCacheSize) {
+    _fileBytesCache.remove(_fileBytesCache.keys.first);
+  }
+  return request;
+}
+
 /// A remote attachment whose type nothing in the payload revealed.
 ///
 /// Downloads it once, reads the magic number, and renders what it actually
@@ -328,7 +400,8 @@ class _CaseRemoteFileState extends State<CaseRemoteFile> {
 
   Future<void> _load() async {
     try {
-      final bytes = await downloadFileBytes(widget.url);
+      // Usually already fetched by the thumbnail that was tapped.
+      final bytes = await cachedFileBytes(widget.url);
       if (!mounted) return;
       if (bytes == null) {
         setState(() => _failed = true);

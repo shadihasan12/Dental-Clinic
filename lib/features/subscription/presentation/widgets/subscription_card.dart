@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
@@ -38,9 +39,32 @@ class SubscriptionCard extends StatelessWidget {
   /// sits on - Settings has nothing to dismiss it back to.
   final VoidCallback? onClose;
 
+  /// Below this a desktop card keeps the phone's stacked shape.
+  static const double _wideMinWidth = 720;
+
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const _Skeleton();
+    if (!Responsive.isDesktop(context)) return _card(context);
+    // Desktop lays the same band, usage and footer out side by side once the
+    // card is wide enough, rather than a tall card with most of each row
+    // empty.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        if (width < _wideMinWidth) return _card(context);
+        return _card(
+          context,
+          bandWidth: (width * 0.38).clamp(300.0, 400.0),
+        );
+      },
+    );
+  }
+
+  /// [bandWidth] set is the wide desktop shape: the band as a fixed start
+  /// panel, usage and footer beside it.
+  Widget _card(BuildContext context, {double? bandWidth}) {
+    final wide = bandWidth != null;
+    if (isLoading) return _Skeleton(wide: wide);
     final l10n = AppLocalizations.of(context)!;
     final look = _Look.of(context, l10n, status);
     final s = status;
@@ -48,6 +72,7 @@ class SubscriptionCard extends StatelessWidget {
     return _Shell(
       accent: look.accent,
       onTap: onViewPlans,
+      bandWidth: bandWidth,
       band: _Band(
         look: look,
         title: s == null ? l10n.noSubscription : _planName(s, l10n),
@@ -64,6 +89,7 @@ class SubscriptionCard extends StatelessWidget {
         action: _actionLabel(l10n, s, look),
         filled: look.needsAction,
         onTap: look.needsAction ? onUpgrade : onViewPlans,
+        wide: wide,
       ),
     );
   }
@@ -250,6 +276,7 @@ class _Shell extends StatelessWidget {
     required this.band,
     required this.footer,
     this.body,
+    this.bandWidth,
   });
 
   final Color accent;
@@ -257,6 +284,9 @@ class _Shell extends StatelessWidget {
   final Widget band;
   final Widget? body;
   final Widget footer;
+
+  /// Desktop, wide: the band becomes a start panel this wide.
+  final double? bandWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -272,18 +302,53 @@ class _Shell extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            band,
-            if (body != null)
-              Padding(
-                padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 2.h),
-                child: body,
+        child: bandWidth != null
+            ? _wide(context)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  band,
+                  if (body != null)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 2.h),
+                      child: body,
+                    ),
+                  footer,
+                ],
               ),
-            footer,
-          ],
-        ),
+      ),
+    );
+  }
+
+  /// Band as a tinted start panel at full card height; usage over the
+  /// footer beside it, centred so a card with no usage strip does not leave
+  /// the footer hanging at the top.
+  Widget _wide(BuildContext context) {
+    final c = ColorManager.of(context);
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(width: bandWidth, child: band),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(20.w, 14.h, 16.w, 14.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (body != null) ...[
+                    body!,
+                    SizedBox(height: 12.h),
+                    Divider(height: 1, color: c.borderLight),
+                    SizedBox(height: 10.h),
+                  ],
+                  footer,
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -390,6 +455,7 @@ class _Footer extends StatelessWidget {
     required this.onTap,
     this.date,
     this.dateTone,
+    this.wide = false,
   });
 
   final String? date;
@@ -397,6 +463,10 @@ class _Footer extends StatelessWidget {
   final String action;
   final bool filled;
   final VoidCallback onTap;
+
+  /// Desktop, wide: one line - date on the start side, the action on the
+  /// end - with no padding or divider of its own; [_Shell] supplies both.
+  final bool wide;
 
   @override
   Widget build(BuildContext context) {
@@ -428,6 +498,50 @@ class _Footer extends StatelessWidget {
               ),
             ],
           );
+
+    if (wide) {
+      return Row(
+        children: [
+          Expanded(child: dateText ?? const SizedBox.shrink()),
+          SizedBox(width: 12.w),
+          if (filled)
+            FilledButton(
+              onPressed: onTap,
+              style: FilledButton.styleFrom(
+                backgroundColor: ColorManager.primary,
+                foregroundColor: ColorManager.white,
+                minimumSize: Size(160.w, 40.h),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+              child: Text(
+                action,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: family,
+                  fontSize: 12.5.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+          else ...[
+            Text(
+              action,
+              style: TextStyle(
+                fontFamily: family,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: ColorManager.primaryDarker,
+              ),
+            ),
+            DirectionalChevron(size: 18.w, color: ColorManager.primaryDarker),
+          ],
+        ],
+      );
+    }
 
     if (filled) {
       return Padding(
@@ -691,11 +805,15 @@ class _Message extends StatelessWidget {
 /// Holds the loaded card's slots - band with avatar, lines and ring, usage
 /// strip, footer - so nothing jumps when data lands.
 class _Skeleton extends StatelessWidget {
-  const _Skeleton();
+  const _Skeleton({this.wide = false});
+
+  /// The wide desktop card's shape: band slots and usage strip in one row.
+  final bool wide;
 
   @override
   Widget build(BuildContext context) {
     final c = ColorManager.of(context);
+    if (wide) return _wideSkeleton(c);
     return Container(
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
@@ -747,6 +865,63 @@ class _Skeleton extends StatelessWidget {
           ),
           SizedBox(height: 14.h),
           ShimmerBox(width: double.infinity, height: 14.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _wideSkeleton(AppColors c) {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: c.cardBg,
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: c.borderLight),
+      ),
+      child: Row(
+        children: [
+          ShimmerBox(
+            width: 40.w,
+            height: 40.w,
+            radius: BorderRadius.circular(999.r),
+          ),
+          SizedBox(width: 12.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerBox(width: 70.w, height: 9.h),
+              SizedBox(height: 6.h),
+              ShimmerBox(width: 120.w, height: 13.h),
+              SizedBox(height: 7.h),
+              ShimmerBox(
+                width: 56.w,
+                height: 16.h,
+                radius: BorderRadius.circular(999.r),
+              ),
+            ],
+          ),
+          SizedBox(width: 24.w),
+          ShimmerBox(
+            width: 58.w,
+            height: 58.w,
+            radius: BorderRadius.circular(999.r),
+          ),
+          SizedBox(width: 32.w),
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: ShimmerBox(height: 30.h)),
+                    SizedBox(width: 14.w),
+                    Expanded(child: ShimmerBox(height: 30.h)),
+                  ],
+                ),
+                SizedBox(height: 14.h),
+                ShimmerBox(width: double.infinity, height: 14.h),
+              ],
+            ),
+          ),
         ],
       ),
     );

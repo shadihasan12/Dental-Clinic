@@ -11,6 +11,8 @@ import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/user_hours_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/data/models/working_days_models.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/manager/user_hours_bloc.dart';
+import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/clinic_info_models.dart'
+    show hoursRange;
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/cupertino_picker_sheet.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/day_toggle.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/presentation/widgets/shift_count_control.dart';
@@ -22,7 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
 
 class UserHoursPage extends StatelessWidget {
   final String userId;
@@ -349,7 +350,7 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   }
 
   /// Wire format for the working-hours payload — NOT for display. Times shown
-  /// to the user go through `AppDate`, which localises them.
+  /// to the user go through `hoursTime`, which keeps them in English.
   static String _apiTime(TimeOfDay t) {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
@@ -362,12 +363,16 @@ class _UserHoursContentState extends State<_UserHoursContent> {
   String _daySummary(_UserDay day, AppLocalizations l10n) {
     if (!day.isWorking) return l10n.closed;
     if (day.isFullTime) return l10n.fullClinicHours;
-    if (day.shifts.length == 1) {
-      return '${AppDate.time12Of(context, day.shifts[0].from)} – '
-          '${AppDate.time12Of(context, day.shifts[0].to)}';
+    if (_summaryIsTimeRange(day)) {
+      return hoursRange(day.shifts[0].from, day.shifts[0].to);
     }
     return '${day.shifts.length} ${l10n.shifts}';
   }
+
+  /// A lone range is Latin text and must be laid out LTR (see `hoursTime`);
+  /// the shift count and the localised states must not be.
+  bool _summaryIsTimeRange(_UserDay day) =>
+      day.isWorking && !day.isFullTime && day.shifts.length == 1;
 
   Future<void> _pickShiftTime(
     _UserDay day,
@@ -697,6 +702,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
     // rather than the placeholder shifts the form keeps for editing.
     final clinic = _clinicDayFor(day);
     final List<String> lines;
+    // Only the ranges are Latin; "Closed" / "Full clinic hours" stay in the
+    // page's own direction.
+    var linesAreTimes = working;
     if (!working) {
       lines = [l10n.closed];
     } else if (day.isFullTime) {
@@ -706,25 +714,25 @@ class _UserHoursContentState extends State<_UserHoursContent> {
       // was saved before full-time days stored any ranges.
       final ranges = day.hasStoredRanges
           ? day.shifts
-              .map((sh) => '${AppDate.time12Of(context, sh.from)} - '
-                  '${AppDate.time12Of(context, sh.to)}')
+              .map((sh) => hoursRange(sh.from, sh.to, separator: ' - '))
               .toList()
           : (clinic?.ranges ?? const [])
               .map(
-                (r) =>
-                    '${AppDate.time12Of(context, _timeOfApi(r.startTime))} - '
-                    '${AppDate.time12Of(context, _timeOfApi(r.endTime))}',
+                (r) => hoursRange(
+                  _timeOfApi(r.startTime),
+                  _timeOfApi(r.endTime),
+                  separator: ' - ',
+                ),
               )
               .toList();
       lines = ranges.isEmpty ? [l10n.fullClinicHours] : ranges;
+      linesAreTimes = ranges.isNotEmpty;
     } else {
       lines = day.shifts
-          .map(
-            (sh) => '${AppDate.time12Of(context, sh.from)} - '
-                '${AppDate.time12Of(context, sh.to)}',
-          )
+          .map((sh) => hoursRange(sh.from, sh.to, separator: ' - '))
           .toList();
     }
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Container(
       decoration: isLast
@@ -774,7 +782,12 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                 if (i > 0) SizedBox(height: 3.h),
                 Text(
                   lines[i],
-                  textAlign: TextAlign.end,
+                  textDirection: linesAreTimes ? TextDirection.ltr : null,
+                  // `end` of the page, not of the LTR range - so a short
+                  // range still hugs the row's edge in Arabic.
+                  textAlign: linesAreTimes
+                      ? (isRtl ? TextAlign.left : TextAlign.right)
+                      : TextAlign.end,
                   style: TextStyle(
                     fontSize: 11.5.sp,
                     fontFamily: family,
@@ -853,6 +866,9 @@ class _UserHoursContentState extends State<_UserHoursContent> {
                   ),
                   Text(
                     _daySummary(day, l10n),
+                    textDirection: _summaryIsTimeRange(day)
+                        ? TextDirection.ltr
+                        : null,
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontFamily: FontHelper.fontFamily(context),

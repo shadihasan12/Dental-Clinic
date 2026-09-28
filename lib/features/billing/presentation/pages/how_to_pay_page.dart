@@ -3,12 +3,14 @@ import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/invoice_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/entities/payment_method_entity.dart';
 import 'package:dental_clinic_app/features/billing/domain/repositories/billing_repository.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/report_payment_page.dart';
+import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_desktop.dart';
 import 'package:dental_clinic_app/features/billing/presentation/widgets/billing_ui.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
@@ -54,7 +56,7 @@ class HowToPayPage extends StatelessWidget {
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.howToPayTitle,
-      maxContentWidth: 760,
+      maxContentWidth: kBillingWideWidth,
       body: BillingAsync<_HowToPayData>(
         load: load,
         builder: (context, data, _) => _Body(data: data, invoiceId: invoiceId),
@@ -98,18 +100,61 @@ class _Body extends StatelessWidget {
     // An empty list is legitimate - no destination is set up yet - and a
     // blank screen would read as broken.
     if (data.methods.isEmpty) {
-      return ListView(
-        padding: EdgeInsets.all(14.w),
-        children: [
-          ...summary,
-          StateCard(
-            icon: Icons.account_balance_outlined,
-            title: l10n.noPaymentMethodsTitle,
-            message: l10n.noPaymentMethodsBody,
-            actionLabel: l10n.contactSupport,
-            onAction: () => context.pushNamed(AppRoutesNames.reportIssue),
+      // One column's worth on desktop; a no-op on mobile.
+      return AdaptiveContentWidth(
+        maxWidth: kBillingNarrowWidth,
+        child: ListView(
+          padding: EdgeInsets.all(14.w),
+          children: [
+            ...summary,
+            StateCard(
+              icon: Icons.account_balance_outlined,
+              title: l10n.noPaymentMethodsTitle,
+              message: l10n.noPaymentMethodsBody,
+              actionLabel: l10n.contactSupport,
+              onAction: () => context.pushNamed(AppRoutesNames.reportIssue),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget accountCard(
+      PaymentMethodEntity method,
+      PaymentAccountEntity account,
+    ) {
+      return _AccountCard(
+        method: method,
+        account: account,
+        amount: _amountFor(invoice, account.currency),
+        onReport: () => context.pushNamed(
+          AppRoutesNames.reportPayment,
+          extra: ReportPaymentPrefill(
+            invoiceId: invoiceId,
+            method: method.method,
+            accountId: account.id,
+            currency: account.currency,
           ),
-        ],
+        ),
+      );
+    }
+
+    Widget noAccounts() => AppCard(
+          child: Text(
+            l10n.noPaymentMethodsBody,
+            style: TextStyle(
+              fontFamily: family,
+              fontSize: 12.sp,
+              color: c.textSecondary,
+            ),
+          ),
+        );
+
+    if (Responsive.isDesktop(context)) {
+      return _desktop(
+        invoice: _payable(invoice) ? invoice : null,
+        accountCard: accountCard,
+        noAccounts: noAccounts,
       );
     }
 
@@ -120,37 +165,62 @@ class _Body extends StatelessWidget {
         for (final method in data.methods) ...[
           SectionLabel(method.name),
           SizedBox(height: 8.h),
-          if (method.accounts.isEmpty)
-            AppCard(
-              child: Text(
-                l10n.noPaymentMethodsBody,
-                style: TextStyle(
-                  fontFamily: family,
-                  fontSize: 12.sp,
-                  color: c.textSecondary,
-                ),
-              ),
-            ),
+          if (method.accounts.isEmpty) noAccounts(),
           for (final account in method.accounts)
             Padding(
               padding: EdgeInsets.only(bottom: 8.h),
-              child: _AccountCard(
-                method: method,
-                account: account,
-                amount: _amountFor(invoice, account.currency),
-                onReport: () => context.pushNamed(
-                  AppRoutesNames.reportPayment,
-                  extra: ReportPaymentPrefill(
-                    invoiceId: invoiceId,
-                    method: method.method,
-                    accountId: account.id,
-                    currency: account.currency,
-                  ),
-                ),
-              ),
+              child: accountCard(method, account),
             ),
           SizedBox(height: 8.h),
         ],
+      ],
+    );
+  }
+
+  /// Desktop: the invoice being paid stays in view on the start side while
+  /// the destinations tile beside it, each method's accounts in a grid - the
+  /// figure to send and the account to send it to are read together.
+  Widget _desktop({
+    required InvoiceEntity? invoice,
+    required Widget Function(PaymentMethodEntity, PaymentAccountEntity)
+        accountCard,
+    required Widget Function() noAccounts,
+  }) {
+    final methods = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final method in data.methods) ...[
+          SectionLabel(method.name),
+          SizedBox(height: 8.h),
+          if (method.accounts.isEmpty)
+            noAccounts()
+          else
+            BillingGrid(
+              minTileWidth: 320,
+              maxColumns: invoice == null ? 3 : 2,
+              runSpacing: 10,
+              children: [
+                for (final account in method.accounts)
+                  accountCard(method, account),
+              ],
+            ),
+          SizedBox(height: 18.h),
+        ],
+      ],
+    );
+
+    return ListView(
+      padding: kBillingDesktopPadding,
+      children: [
+        if (invoice == null)
+          methods
+        else
+          BillingTwoPane(
+            start: _InvoiceSummary(invoice: invoice),
+            end: methods,
+            startFlex: 2,
+            endFlex: 3,
+          ),
       ],
     );
   }
