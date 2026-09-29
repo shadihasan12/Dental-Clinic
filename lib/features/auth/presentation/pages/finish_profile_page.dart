@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:async';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -111,7 +112,9 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
       return;
     }
 
-    if (state.selectedPlan == null) {
+    // With billing hidden there is no chooser to set a plan; AuthBloc falls
+    // back to the entry plan when it registers.
+    if (AppConfig.billingEnabled && state.selectedPlan == null) {
       AppSnackbar.showError(
         context,
         title: l10n.validationError,

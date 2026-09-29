@@ -4064,4 +4064,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifyEmailAgainAction => 'Verify email again';
+
+  @override
+  String get membersLimitTitle => 'Member limit reached';
+
+  @override
+  String get membersLimitMessage =>
+      'This clinic has reached its member limit. Remove a member to add someone new.';
 }

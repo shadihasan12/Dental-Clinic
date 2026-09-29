@@ -4040,4 +4040,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get verifyEmailAgainAction => 'التحقق من البريد مجدداً';
+
+  @override
+  String get membersLimitTitle => 'تم بلوغ حد الأعضاء';
+
+  @override
+  String get membersLimitMessage =>
+      'وصلت هذه العيادة إلى الحد الأقصى للأعضاء. أزل عضواً لإضافة شخص جديد.';
 }

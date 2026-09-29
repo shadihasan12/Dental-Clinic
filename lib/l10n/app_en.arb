@@ -1878,5 +1878,7 @@
   },
   "chooseThisPlan": "Choose this plan",
   "signupSessionExpiredMessage": "Your sign-up session has expired. Verify your email again to continue creating your account.",
-  "verifyEmailAgainAction": "Verify email again"
+  "verifyEmailAgainAction": "Verify email again",
+  "membersLimitTitle": "Member limit reached",
+  "membersLimitMessage": "This clinic has reached its member limit. Remove a member to add someone new."
 }

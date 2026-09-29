@@ -1795,5 +1795,7 @@
   "appointmentsCount": "{count, plural, =0{لا مواعيد} =1{موعد واحد} =2{موعدان} few{{count} مواعيد} many{{count} موعداً} other{{count} موعد}}",
   "chooseThisPlan": "اختر هذه الباقة",
   "signupSessionExpiredMessage": "انتهت صلاحية جلسة التسجيل. تحقّق من بريدك الإلكتروني مرة أخرى لمتابعة إنشاء حسابك.",
-  "verifyEmailAgainAction": "التحقق من البريد مجدداً"
+  "verifyEmailAgainAction": "التحقق من البريد مجدداً",
+  "membersLimitTitle": "تم بلوغ حد الأعضاء",
+  "membersLimitMessage": "وصلت هذه العيادة إلى الحد الأقصى للأعضاء. أزل عضواً لإضافة شخص جديد."
 }

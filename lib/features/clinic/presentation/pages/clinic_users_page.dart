@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -293,6 +294,15 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
   Future<void> _onAddUser(BuildContext context, AppLocalizations l10n) async {
     if (_seatsFull) {
       final seats = _usage?.users;
+      if (!AppConfig.billingEnabled) {
+        InfoPopup.show(
+          context: context,
+          icon: Icons.lock_outline_rounded,
+          title: l10n.membersLimitTitle,
+          body: l10n.membersLimitMessage,
+        );
+        return;
+      }
       final message = seats?.limit == null
           ? l10n.seatsFullMessageGeneric
           : l10n.seatsFullMessage(seats!.limit!.toInt());

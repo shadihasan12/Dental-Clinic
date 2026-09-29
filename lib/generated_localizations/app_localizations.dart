@@ -7531,6 +7531,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verify email again'**
   String get verifyEmailAgainAction;
+
+  /// No description provided for @membersLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Member limit reached'**
+  String get membersLimitTitle;
+
+  /// No description provided for @membersLimitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This clinic has reached its member limit. Remove a member to add someone new.'**
+  String get membersLimitMessage;
 }
 
 class _AppLocalizationsDelegate

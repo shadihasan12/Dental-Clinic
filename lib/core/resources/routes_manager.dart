@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/new_treatment_plan_page.dart';
@@ -75,6 +76,15 @@ class RoutesManager {
       debugLogDiagnostics: true,
       // Navigate to home if authenticated, otherwise show onboarding
       initialLocation: isAuthenticated ? '/' : '/onboarding',
+      // Billing hidden in this build: every subscription, plan and payment
+      // screen is closed off here, whatever link or leftover call reaches it.
+      redirect: (context, state) {
+        if (AppConfig.billingEnabled) return null;
+        final path = state.uri.path;
+        if (path.startsWith('/billing')) return '/';
+        if (path == '/choose-plan') return '/register';
+        return null;
+      },
       routes: [
         // Onboarding
         GoRoute(

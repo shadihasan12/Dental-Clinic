@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'dart:async';
 
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
@@ -47,6 +48,9 @@ class NotificationRouting {
   /// through [navigate], because some destinations need `extra` objects that a
   /// path cannot carry.
   static String locationFor(Map<String, dynamic> data) {
+    if (!AppConfig.billingEnabled && isBillingNotice(data)) {
+      return notificationsPath;
+    }
     switch (typeOf(data)) {
       case NotificationCategories.appointmentReminder:
         return '/';
@@ -108,6 +112,8 @@ class NotificationRouting {
       case NotificationCategories.billingInvoice:
       case NotificationCategories.billingPayment:
       case NotificationCategories.subscription:
+        // Billing hidden in this build: the screens it would open are gone.
+        if (!AppConfig.billingEnabled) break;
         unawaited(_openBilling(router, data, type));
         return;
 

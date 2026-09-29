@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -172,9 +173,17 @@ class _NotificationContentState extends State<_NotificationContent> {
     NotificationState state,
     AppLocalizations l10n,
   ) {
+    // A build without billing does not list the server's invoice, payment
+    // and subscription notices either - they would point at screens that
+    // are not there.
+    final all = AppConfig.billingEnabled
+        ? state.notifications
+        : state.notifications
+              .where((n) => !NotificationRouting.isBillingNotice(n.data))
+              .toList();
     final visible = _filter == NotificationFilter.unread
-        ? state.notifications.where((n) => !n.isRead).toList()
-        : state.notifications;
+        ? all.where((n) => !n.isRead).toList()
+        : all;
     final rows = _buildRows(visible, l10n);
 
     // The docked bar floats over the list, so the tail has to clear it.
