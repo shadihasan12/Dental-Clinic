@@ -41,7 +41,7 @@ class AppConfig {
   ///
   /// Signup still sends a `plan_version_id` because /auth/register requires
   /// one; see AuthBloc, which picks the entry plan silently when this is off.
-  static const bool billingEnabled = false;
+  static const bool billingEnabled = true;
 
   // === Subscription Configuration ===
 
