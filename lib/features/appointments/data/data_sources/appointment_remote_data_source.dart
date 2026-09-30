@@ -93,6 +93,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         if (params.notes != null && params.notes!.isNotEmpty)
           'notes': params.notes,
         'notify_patient': params.notifyPatient,
+        'is_vip': params.isVip,
       },
     );
 
