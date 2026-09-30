@@ -438,6 +438,7 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
       endTime: end,
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
       notifyPatient: _sendReminder,
+      isVip: _isVip,
     );
 
     AppLoadingDialog.show(context: context, message: l10n.savingAppointment);
