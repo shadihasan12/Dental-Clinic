@@ -1,6 +1,7 @@
 import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
@@ -289,7 +290,8 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
     return TextField(
       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       controller: controller,
-      keyboardType: TextInputType.number,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: moneyInputFormatters(),
       style: TextStyle(
         fontSize: 15.sp,
         fontFamily: FontHelper.fontFamily(context),

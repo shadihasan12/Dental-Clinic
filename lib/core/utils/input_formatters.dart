@@ -11,6 +11,24 @@ final List<TextInputFormatter> emailInputFormatters = <TextInputFormatter>[
   FilteringTextInputFormatter.deny(RegExp(r'\s')),
 ];
 
+/// Keeps a money field inside what the server takes: at most
+/// [integerDigits] digits before the point, and two after it.
+///
+/// Refuses the edit rather than trimming it. A filter pattern cannot do this
+/// job - `FilteringTextInputFormatter.allow` keeps every run of the text its
+/// pattern matches, so a ninth digit comes back as a second match and slips
+/// through - and silently cutting a pasted figure down would send a
+/// different number from the one on screen.
+List<TextInputFormatter> moneyInputFormatters({int integerDigits = 8}) {
+  final shape = RegExp('^\\d{0,$integerDigits}(\\.\\d{0,2})?\$');
+  return <TextInputFormatter>[
+    TextInputFormatter.withFunction(
+      (oldValue, newValue) =>
+          shape.hasMatch(newValue.text) ? newValue : oldValue,
+    ),
+  ];
+}
+
 /// [emailInputFormatters] when the field declares itself an email field, null
 /// otherwise.
 ///

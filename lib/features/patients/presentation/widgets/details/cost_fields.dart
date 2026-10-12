@@ -2,12 +2,12 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/currency_chips.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_text_field.dart';
+import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
 import 'package:dental_clinic_app/services/currency/currency_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -268,9 +268,7 @@ class _CostFieldsState extends State<CostFields> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       // Eight digits and two decimals: the server takes a cost up to
       // 99,999,999.99.
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'^\d{1,8}\.?\d{0,2}')),
-      ],
+      inputFormatters: moneyInputFormatters(),
     );
   }
 }

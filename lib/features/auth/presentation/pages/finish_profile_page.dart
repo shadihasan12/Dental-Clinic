@@ -173,7 +173,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     // Billing only: root opens on the subscription screen and offers
     // nowhere else. The working-hours gate would be a trap there - its save
     // answers 402 and it has no way back.
-    if (getIt<SubscriptionGuard>().isLocked) {
+    if (AppConfig.billingEnabled && getIt<SubscriptionGuard>().isLocked) {
       router.goNamed(AppRoutesNames.root);
       return;
     }
