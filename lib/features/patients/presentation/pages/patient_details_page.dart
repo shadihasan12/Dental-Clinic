@@ -111,6 +111,11 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
   List<CaseAttachment> _attachments = [];
   String? _attachmentsCaseId;
 
+  /// When the attachments were last read. Their links are signed and last
+  /// an hour, so a list older than [_linkLifetime] is holding dead ones.
+  DateTime? _attachmentsFetchedAt;
+  static const Duration _linkLifetime = Duration(minutes: 50);
+
   /// Done-state applied locally by [_toggleDone], keyed by plan item id.
   /// Lets the check flip immediately instead of waiting on a page reload;
   /// cleared whenever the bloc hands us a genuinely new case.
@@ -151,9 +156,13 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
   /// all come from separate calls, so all three are re-run together.
   Future<void> _refresh() async {
     final bloc = context.read<PatientDetailsBloc>();
+    final caseId = _attachmentsCaseId;
     _reload();
     await Future.wait([
       _loadCoreTreatments(),
+      // The bloc's reload brings the same case back, which leaves the
+      // attachments as they are - so they are read here, for fresh links.
+      if (caseId != null) _fetchAttachments(caseId),
       bloc.stream.settled(
         (state) => state.maybeWhen(loading: () => false, orElse: () => true),
       ),
@@ -431,9 +440,8 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
               ),
             );
             final err = result.fold<NetworkExceptions?>((l) => l, (_) => null);
-            if (err != null) {
-              throw Exception(NetworkExceptions.getErrorMessage(err));
-            }
+            // Thrown as it is, so the popup can show the server's sentence.
+            if (err != null) throw err;
             if (mounted) _reload();
           },
     );
@@ -498,6 +506,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     // upload is not wiped by an unrelated bloc emission.
     if (_attachmentsCaseId == c.id) return;
     _attachmentsCaseId = c.id;
+    _attachmentsFetchedAt = null;
     // Different case, so the optimistic done-flags belong to nothing.
     _doneOverrides.clear();
     // Seed from whatever the case payload carried so the strip is not empty
@@ -527,8 +536,36 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     // Clearing the id also makes any in-flight [_fetchAttachments] discard
     // its result instead of repopulating the list.
     _attachmentsCaseId = null;
+    _attachmentsFetchedAt = null;
     _attachments = [];
     _doneOverrides.clear();
+  }
+
+  /// Opens the viewer on the file at [index].
+  ///
+  /// A file link is signed and expires after an hour; opened past that it
+  /// answers 403 and the viewer has nothing to show. A screen left open that
+  /// long reads its attachments again first, so the viewer gets links that
+  /// still work.
+  Future<void> _openFiles(DentalCase c, int index) async {
+    final fetchedAt = _attachmentsFetchedAt;
+    var openAt = index;
+    if (fetchedAt == null ||
+        DateTime.now().difference(fetchedAt) > _linkLifetime) {
+      final id = index < _attachments.length ? _attachments[index].id : null;
+      await _fetchAttachments(c.id);
+      if (!mounted) return;
+      // The list may have changed under the tap: find the same file again.
+      final found = _attachments.indexWhere((a) => a.id == id);
+      if (found >= 0) openAt = found;
+    }
+    if (_attachments.isEmpty) return;
+    CaseFileViewer.open(
+      context,
+      attachments: _attachments,
+      initialIndex: openAt < _attachments.length ? openAt : 0,
+      onDelete: (a) => _deleteAttachment(c, a),
+    );
   }
 
   Future<void> _fetchAttachments(String caseId) async {
@@ -540,6 +577,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     // Deliberately silent on failure: the seeded list still renders, and a
     // toast on every page open would be noise rather than information.
     result.fold((_) {}, (rows) {
+      _attachmentsFetchedAt = DateTime.now();
       setState(() {
         final pending = _attachments
             .where((a) => a.uploading || a.failed)
@@ -648,6 +686,14 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     );
     if (!mounted) return;
     result.fold((e) {
+      // Already gone on the server - deleted from another device, say. The
+      // tile stays removed: putting it back would offer a file that is not
+      // there.
+      final gone = e.maybeWhen(notFound: (_) => true, orElse: () => false);
+      if (gone) {
+        _ok(AppLocalizations.of(context)!.fileRemoved);
+        return;
+      }
       setState(() => _attachments = snapshot);
       _error(e);
     }, (_) => _ok(AppLocalizations.of(context)!.fileRemoved));
@@ -960,13 +1006,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
                             CaseFilesSection(
                               attachments: _attachments,
                               onAdd: () => _addFile(activeCase),
-                              onOpen: (i) => CaseFileViewer.open(
-                                context,
-                                attachments: _attachments,
-                                initialIndex: i,
-                                onDelete: (a) =>
-                                    _deleteAttachment(activeCase, a),
-                              ),
+                              onOpen: (i) => _openFiles(activeCase, i),
                               onRetry: (a) => _retryUpload(activeCase, a),
                             ),
                           ],
@@ -1126,13 +1166,7 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
                             child: CaseFilesSection(
                               attachments: _attachments,
                               onAdd: () => _addFile(activeCase),
-                              onOpen: (i) => CaseFileViewer.open(
-                                context,
-                                attachments: _attachments,
-                                initialIndex: i,
-                                onDelete: (a) =>
-                                    _deleteAttachment(activeCase, a),
-                              ),
+                              onOpen: (i) => _openFiles(activeCase, i),
                               onRetry: (a) => _retryUpload(activeCase, a),
                             ),
                           ),

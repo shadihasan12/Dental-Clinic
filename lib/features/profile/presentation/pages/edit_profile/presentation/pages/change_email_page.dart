@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/utils/error_helper.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -78,24 +79,57 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
       final secondsRemaining = meta?['seconds_remaining'] as int? ?? 60;
 
       if (!mounted) return;
-      context.pushNamed(
-        AppRoutesNames.changeEmailOtpPage,
-        extra: {
-          'newEmail': newEmail,
-          'sessionId': sessionId,
-          'secondsRemaining': secondsRemaining,
-          // The resend on the next screen re-posts to the same endpoint,
-          // which validates the password again.
-          'currentPassword': password,
-        },
+      _openCodeScreen(
+        newEmail: newEmail,
+        password: password,
+        sessionId: sessionId,
+        secondsRemaining: secondsRemaining,
       );
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
+      // Asked again while a code lives, the server sends no second one and
+      // answers 429 with the seconds the first has left - no `Retry-After`.
+      // That code is still good, so on to the screen that takes it.
+      final codeLeft = e is NetworkExceptions
+          ? e.maybeWhen(
+              tooManyRequests: (_, retryAfter, secondsRemaining) =>
+                  retryAfter == null ? secondsRemaining : null,
+              orElse: () => null,
+            )
+          : null;
+      if (codeLeft != null) {
+        _openCodeScreen(
+          newEmail: newEmail,
+          password: password,
+          secondsRemaining: codeLeft,
+        );
+        return;
+      }
+
       final message = ErrorHelper.getErrorMessage(e);
       AppSnackbar.showError(context, title: l10n.error, message: message);
     }
+  }
+
+  void _openCodeScreen({
+    required String newEmail,
+    required String password,
+    required int secondsRemaining,
+    String? sessionId,
+  }) {
+    context.pushNamed(
+      AppRoutesNames.changeEmailOtpPage,
+      extra: {
+        'newEmail': newEmail,
+        'sessionId': sessionId,
+        'secondsRemaining': secondsRemaining,
+        // The resend on the next screen re-posts to the same endpoint,
+        // which validates the password again.
+        'currentPassword': password,
+      },
+    );
   }
 
   @override

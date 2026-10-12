@@ -1,4 +1,6 @@
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/utils/error_helper.dart';
+import 'package:dental_clinic_app/features/patients/domain/case_payment_amount.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
 import 'package:dental_clinic_app/services/currency/currency_entity.dart';
@@ -87,6 +89,12 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   late final CurrencyBloc _currencyBloc;
   CurrencyEntity? _selectedCurrency;
   bool _isSubmitting = false;
+
+  /// Why the last save did not go through: the server's refusal, or a sum
+  /// that falls outside what it takes. Shown above the button.
+  String? _saveError;
+
+  static const String _maxAmountLabel = '99,999,999.99';
 
   /// When false: 1 [caseCurrency] = X [selectedCurrency]
   /// When true:  1 [selectedCurrency] = X [caseCurrency]
@@ -359,6 +367,18 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
 
                       SizedBox(height: 24.h),
 
+                      if (_saveError != null) ...[
+                        Text(
+                          _saveError!,
+                          style: TextStyle(
+                            color: ColorManager.error,
+                            fontSize: 12.sp,
+                            fontFamily: fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                      ],
+
                       // Save button
                       _isSubmitting
                           ? const Center(child: CircularProgressIndicator())
@@ -394,17 +414,34 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                   // If different currency, convert based on swap direction:
                                   //   Not swapped: 1 [caseCurrency] = X [selectedCurrency] → divide
                                   //   Swapped:     1 [selectedCurrency] = X [caseCurrency] → multiply
-                                  double amountInCaseCurrency;
-                                  if (!_isCurrencyChanged) {
-                                    amountInCaseCurrency = amount;
-                                  } else if (_isExchangeSwapped) {
-                                    // 1 selectedCurrency = X caseCurrency → multiply
-                                    amountInCaseCurrency =
-                                        amount * exchangeRate;
-                                  } else {
-                                    // 1 caseCurrency = X selectedCurrency → divide
-                                    amountInCaseCurrency =
-                                        amount / exchangeRate;
+                                  // Rounded to the cent either way: the
+                                  // server refuses a payment whose two
+                                  // amounts do not agree with its rate.
+                                  final amountInCaseCurrency =
+                                      !_isCurrencyChanged
+                                          ? amount
+                                          : CasePaymentAmount.inCaseCurrency(
+                                              amount: amount,
+                                              rate: exchangeRate,
+                                              rateIsPerPaymentUnit:
+                                                  _isExchangeSwapped,
+                                            );
+                                  // A sum that rounds to nothing in the
+                                  // case's currency would be refused too.
+                                  if (!CasePaymentAmount.isAmountInRange(
+                                    amountInCaseCurrency,
+                                  )) {
+                                    setState(
+                                      () => _saveError =
+                                          amountInCaseCurrency <
+                                                  CasePaymentAmount.minAmount
+                                              ? l10n
+                                                  .paymentTooSmallInCaseCurrency
+                                              : l10n.amountAtMost(
+                                                  _maxAmountLabel,
+                                                ),
+                                    );
+                                    return;
                                   }
 
                                   final notes =
@@ -412,7 +449,10 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                           ? null
                                           : _noteController.text.trim();
 
-                                  setState(() => _isSubmitting = true);
+                                  setState(() {
+                                    _isSubmitting = true;
+                                    _saveError = null;
+                                  });
                                   try {
                                     await widget.onSave(
                                       amount,
@@ -423,9 +463,17 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                                       notes,
                                     );
                                     if (mounted) context.pop();
-                                  } catch (_) {
+                                  } catch (e) {
+                                    // The server's own sentence - the two
+                                    // amounts disagree, the case is not this
+                                    // clinic's - with everything typed left
+                                    // in place to correct.
                                     if (mounted) {
-                                      setState(() => _isSubmitting = false);
+                                      setState(() {
+                                        _isSubmitting = false;
+                                        _saveError =
+                                            ErrorHelper.getErrorMessage(e);
+                                      });
                                     }
                                   }
                                 }
@@ -567,8 +615,11 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                 return l10n.pleaseEnterAmount;
               }
               final rate = double.tryParse(value);
-              if (rate == null || rate <= 0) {
+              if (rate == null || rate < CasePaymentAmount.minRate) {
                 return l10n.pleaseEnterValidAmount;
+              }
+              if (rate > CasePaymentAmount.maxRate) {
+                return l10n.amountAtMost('999,999,999.999999');
               }
               return null;
             },
@@ -638,8 +689,11 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
                     return l10n.pleaseEnterAmount;
                   }
                   final amount = double.tryParse(value);
-                  if (amount == null || amount <= 0) {
+                  if (amount == null || amount < CasePaymentAmount.minAmount) {
                     return l10n.pleaseEnterValidAmount;
+                  }
+                  if (amount > CasePaymentAmount.maxAmount) {
+                    return l10n.amountAtMost(_maxAmountLabel);
                   }
                   return null;
                 },

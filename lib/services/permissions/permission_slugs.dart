@@ -7,12 +7,6 @@ class PermissionSlugs {
   // Clinic User Working Days
   static const manageUserWorkingDays = 'clinic-manage-user-working-days';
 
-  // Clinic Availability Exceptions
-  static const manageUserAvailabilityExceptions =
-      'clinic-manage-user-availability-exceptions';
-  static const showUserAvailabilityExceptions =
-      'show-clinic-user-availability-exceptions';
-
   // Clinic Holidays
   static const manageHolidays = 'clinic-manage-holidays';
 

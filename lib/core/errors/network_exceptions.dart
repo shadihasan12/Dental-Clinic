@@ -46,8 +46,19 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
   const factory NetworkExceptions.sendTimeout() = SendTimeout;
 
-  const factory NetworkExceptions.tooManyRequests(String message) =
-      TooManyRequests;
+  /// 429: called too often. Two kinds, told apart by which number came:
+  ///
+  /// - [retryAfterSeconds], from the `Retry-After` header: a rate limit. The
+  ///   call is let through again once it has passed.
+  /// - [secondsRemaining], from `meta.seconds_remaining`: the wait between
+  ///   two one-time codes. The code already sent is still good.
+  ///
+  /// Never a reason to refresh the token or to log out.
+  const factory NetworkExceptions.tooManyRequests(
+    String message, {
+    int? retryAfterSeconds,
+    int? secondsRemaining,
+  }) = TooManyRequests;
 
   const factory NetworkExceptions.unprocessableEntity(String reason) =
       UnprocessableEntity;
@@ -64,7 +75,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
 
   const factory NetworkExceptions.notImplemented() = NotImplemented;
 
-  const factory NetworkExceptions.serviceUnavailable() = ServiceUnavailable;
+  /// [message] is the server's sentence when it sent one - a one-time code
+  /// that could not go out says so, and says to try again.
+  const factory NetworkExceptions.serviceUnavailable([String? message]) =
+      ServiceUnavailable;
 
   const factory NetworkExceptions.noInternetConnection() = NoInternetConnection;
 
@@ -125,6 +139,26 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
     );
   }
 
+  /// The `Retry-After` header of [response] in seconds, or null when it is
+  /// missing or not a count of seconds.
+  static int? retryAfterOf(Response? response) =>
+      _asSeconds(response?.headers.value('retry-after'));
+
+  static int? _asSeconds(Object? value) {
+    final seconds = value is num ? value.ceil() : int.tryParse('$value'.trim());
+    return seconds != null && seconds > 0 ? seconds : null;
+  }
+
+  /// How long the user has to wait after [error], when it is a 429 that
+  /// says: the limit's `Retry-After`, else the wait between two codes.
+  static int? waitSecondsOf(Object? error) {
+    if (error is! NetworkExceptions) return null;
+    return error.maybeWhen(
+      tooManyRequests: (_, retryAfter, remaining) => retryAfter ?? remaining,
+      orElse: () => null,
+    );
+  }
+
   static NetworkExceptions handleResponse(Response? response) {
     final int statusCode = response?.statusCode ?? 0;
 
@@ -171,10 +205,22 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
         return NetworkExceptions.unprocessableEntity(
           _extractMessage(response, 'Invalid data'),
         );
+      case 429:
+        final meta = _decodeBody(response)?['meta'];
+        return NetworkExceptions.tooManyRequests(
+          // Empty rather than a word, as for a 409: the caller falls back to
+          // a translated sentence when the server sent none.
+          _extractMessage(response, ''),
+          retryAfterSeconds: retryAfterOf(response),
+          secondsRemaining:
+              meta is Map ? _asSeconds(meta['seconds_remaining']) : null,
+        );
       case 500:
         return const NetworkExceptions.internalServerError();
       case 503:
-        return const NetworkExceptions.serviceUnavailable();
+        return NetworkExceptions.serviceUnavailable(
+          _extractMessage(response, ''),
+        );
       default:
         return NetworkExceptions.defaultError(
           _extractMessage(
@@ -270,7 +316,9 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       requestCancelled: () => l10n.errorRequestCancelled,
       internalServerError: () => l10n.errorInternalServer,
       notFound: (reason) => reason,
-      serviceUnavailable: () => l10n.errorServiceUnavailable,
+      serviceUnavailable: (message) => message == null || message.isEmpty
+          ? l10n.errorServiceUnavailable
+          : message,
       methodNotAllowed: () => l10n.errorMethodNotAllowed,
       badRequest: (message, _) => message,
       paymentRequired: (reason, _, _) =>
@@ -281,7 +329,8 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       requestTimeout: () => l10n.errorRequestTimeout,
       noInternetConnection: () => l10n.errorNoInternet,
       conflict: (reason) => reason.isEmpty ? l10n.errorConflict : reason,
-      tooManyRequests: (message) => message,
+      tooManyRequests: (message, _, _) =>
+          message.isEmpty ? l10n.errorTooManyRequests : message,
       sendTimeout: () => l10n.errorSendTimeout,
       unableToProcess: () => l10n.errorUnableToProcess,
       defaultError: (error) => error,
@@ -310,8 +359,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       notFound: (String reason) {
         errorMessage = reason;
       },
-      serviceUnavailable: () {
-        errorMessage = 'Service unavailable';
+      serviceUnavailable: (String? message) {
+        errorMessage = message == null || message.isEmpty
+            ? 'Service unavailable'
+            : message;
       },
       methodNotAllowed: () {
         errorMessage = 'Method Not Allowed';
@@ -340,8 +391,10 @@ abstract class NetworkExceptions with _$NetworkExceptions implements Exception {
       conflict: (String reason) {
         errorMessage = reason.isEmpty ? 'Error due to a conflict' : reason;
       },
-      tooManyRequests: (String message) {
-        errorMessage = message;
+      tooManyRequests: (String message, _, _) {
+        errorMessage = message.isEmpty
+            ? 'Too many requests. Please wait a moment and try again.'
+            : message;
       },
       sendTimeout: () {
         errorMessage = 'Send timeout in connection with API server';

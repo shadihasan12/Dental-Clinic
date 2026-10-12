@@ -11,6 +11,7 @@ import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_user_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/staff_role_rules.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/bloc/clinic_users_bloc.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/pages/add_clinic_user_page.dart';
@@ -266,7 +267,16 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     AppLocalizations l10n,
     List<ClinicUserEntity> users,
   ) {
-    final currentEmail = getIt<UserStorage>().getUserEmail();
+    final storage = getIt<UserStorage>();
+    final currentEmail = storage.getUserEmail();
+    // Who may change whose roles, read off the roster itself: each member
+    // comes with `roles` and `is_owner`.
+    final rules = StaffRoleRules.forViewer(
+      roster: users,
+      viewerEmail: currentEmail,
+      cachedIsOwner: storage.isClinicOwner,
+      cachedIsAdmin: storage.isAdmin,
+    );
     final wide = Responsive.isDesktop(context);
     return ListView.separated(
       // Desktop lines the cards up with the 24px gutter of the "Add user"
@@ -281,7 +291,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
         return _UserCard(
           user: user,
           isSelf: user.email == currentEmail,
-          onMore: () => _showUserActionsSheet(context, l10n, user),
+          onMore: () => _showUserActionsSheet(context, l10n, user, rules),
         );
       },
     );
@@ -334,11 +344,24 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     }
 
     final bloc = context.read<ClinicUsersBloc>();
+    final storage = getIt<UserStorage>();
+    final rules = StaffRoleRules.forViewer(
+      roster: bloc.state.maybeWhen(
+        loaded: (users) => users,
+        submitting: (users) => users,
+        submitSuccess: (users, _, _) => users,
+        submitError: (users, _) => users,
+        orElse: () => const [],
+      ),
+      viewerEmail: storage.getUserEmail(),
+      cachedIsOwner: storage.isClinicOwner,
+      cachedIsAdmin: storage.isAdmin,
+    );
     final created = await Navigator.of(context).push<ClinicUserEntity>(
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: bloc,
-          child: const AddClinicUserPage(),
+          child: AddClinicUserPage(canGrantAdmin: rules.canGrantAdmin),
         ),
       ),
     );
@@ -356,14 +379,24 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     BuildContext context,
     AppLocalizations l10n,
     ClinicUserEntity user,
+    StaffRoleRules rules,
   ) {
     final isSelf = user.email == getIt<UserStorage>().getUserEmail();
     // Three-way gate on the destructive "Remove" action:
-    //   • only an admin may delete (the page itself is admin-only, but
-    //     we double-check at the action level)
+    //   • only whoever runs the clinic may delete (the page itself is
+    //     admin-only, but we double-check at the action level)
     //   • users can't remove themselves
     //   • the clinic owner can't be removed by anyone, even other admins
-    final canRemove = getIt<UserStorage>().isAdmin && !isSelf && !user.isOwner;
+    final canRemove = rules.canRemove(
+      isSelf: isSelf,
+      targetIsOwner: user.isOwner,
+    );
+    // Nobody changes their own roles, and the owner's are the owner's alone:
+    // the server answers 403 to both, so neither is offered.
+    final canEditRoles = rules.canEditRoles(
+      isSelf: isSelf,
+      targetIsOwner: user.isOwner,
+    );
     showAppSheet(
       context: context,
       useSafeArea: true,
@@ -392,19 +425,21 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
               _ActionsHeader(user: user),
               SizedBox(height: 8.h),
               Divider(height: 1, color: ColorManager.of(context).borderLight),
-              _ActionRow(
-                icon: Icons.manage_accounts_outlined,
-                label: l10n.manageRoles,
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _showManageRolesSheet(context, l10n, user);
-                },
-              ),
-              Divider(
-                height: 1,
-                indent: 57.w,
-                color: ColorManager.of(context).borderLight,
-              ),
+              if (canEditRoles) ...[
+                _ActionRow(
+                  icon: Icons.manage_accounts_outlined,
+                  label: l10n.manageRoles,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _showManageRolesSheet(context, l10n, user, rules);
+                  },
+                ),
+                Divider(
+                  height: 1,
+                  indent: 57.w,
+                  color: ColorManager.of(context).borderLight,
+                ),
+              ],
               _ActionRow(
                 icon: Icons.schedule_outlined,
                 label: l10n.manageWorkingHours,
@@ -444,6 +479,7 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
     BuildContext context,
     AppLocalizations l10n,
     ClinicUserEntity user,
+    StaffRoleRules rules,
   ) {
     showAppSheet(
       context: context,
@@ -452,7 +488,13 @@ class _ClinicUsersContentState extends State<_ClinicUsersContent> {
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<ClinicUsersBloc>(),
-        child: _ManageRolesSheet(user: user, l10n: l10n),
+        child: _ManageRolesSheet(
+          user: user,
+          l10n: l10n,
+          // The owner keeps ADMIN, and only whoever runs the clinic gives
+          // it or takes it away.
+          adminLocked: rules.isAdminLocked(targetIsOwner: user.isOwner),
+        ),
       ),
     );
   }
@@ -845,7 +887,16 @@ class _ActionRow extends StatelessWidget {
 class _ManageRolesSheet extends StatefulWidget {
   final ClinicUserEntity user;
   final AppLocalizations l10n;
-  const _ManageRolesSheet({required this.user, required this.l10n});
+
+  /// ADMIN stays as this member has it: shown when held, but not to be
+  /// ticked or unticked here.
+  final bool adminLocked;
+
+  const _ManageRolesSheet({
+    required this.user,
+    required this.l10n,
+    this.adminLocked = false,
+  });
 
   @override
   State<_ManageRolesSheet> createState() => _ManageRolesSheetState();
@@ -941,18 +992,22 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
             ],
           ),
           SizedBox(height: 14.h),
-          for (final role in _allRoles) ...[
-            _RoleRow(
-              label: _roleLabel(context, role),
-              selected: _selectedRoles.contains(role),
-              onTap: () => setState(() {
-                _selectedRoles.contains(role)
-                    ? _selectedRoles.remove(role)
-                    : _selectedRoles.add(role);
-              }),
-            ),
-            SizedBox(height: 8.h),
-          ],
+          for (final role in _allRoles)
+            // A locked ADMIN the member does not hold is not offered at all.
+            if (!_isLocked(role) || _selectedRoles.contains(role)) ...[
+              _RoleRow(
+                label: _roleLabel(context, role),
+                selected: _selectedRoles.contains(role),
+                onTap: _isLocked(role)
+                    ? null
+                    : () => setState(() {
+                          _selectedRoles.contains(role)
+                              ? _selectedRoles.remove(role)
+                              : _selectedRoles.add(role);
+                        }),
+              ),
+              SizedBox(height: 8.h),
+            ],
           SizedBox(height: 6.h),
           DentaButton(
             label: l10n.updateRoles,
@@ -973,6 +1028,8 @@ class _ManageRolesSheetState extends State<_ManageRolesSheet> {
       ),
     );
   }
+
+  bool _isLocked(String role) => role == 'ADMIN' && widget.adminLocked;
 
   String _roleLabel(BuildContext context, String role) {
     final l10n = AppLocalizations.of(context)!;
@@ -1000,7 +1057,9 @@ class _RoleRow extends StatelessWidget {
 
   final String label;
   final bool selected;
-  final VoidCallback onTap;
+
+  /// Null for a role that is shown but cannot be changed here.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -1037,9 +1096,11 @@ class _RoleRow extends StatelessWidget {
                 ),
               ),
               Icon(
-                selected
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked_rounded,
+                onTap == null
+                    ? Icons.lock_outline_rounded
+                    : selected
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked_rounded,
                 size: 18.w,
                 color: selected ? ColorManager.primaryDarker : c.textSubtle,
               ),

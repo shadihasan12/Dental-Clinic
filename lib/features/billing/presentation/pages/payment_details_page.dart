@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart' show Either;
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
@@ -16,6 +18,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+class _PaymentDetailsData {
+  const _PaymentDetailsData(this.payment, this.methodNames);
+
+  final ClinicPaymentEntity payment;
+
+  /// method code -> its translated name, from the payment-methods list.
+  final Map<String, String> methodNames;
+}
+
 /// One reported transfer - or a refund we sent the clinic - read fresh: its
 /// receipt links are signed and expire, so they are never reused from an
 /// older read.
@@ -30,23 +41,42 @@ class PaymentDetailsPage extends StatelessWidget {
     final c = ColorManager.of(context);
     final repository = getIt<BillingRepository>();
 
+    // The method's name comes from the payment-methods list, as on the list
+    // of transfers. Without it the payment is still shown, its method by a
+    // readable form of the code.
+    Future<Either<NetworkExceptions, _PaymentDetailsData>> load() async {
+      final paymentF = repository.getPayment(paymentId);
+      final namesF = loadPaymentMethodNames(repository);
+      final payment = await paymentF;
+      final names = (await namesF).getOrElse(() => const {});
+      return payment.map((p) => _PaymentDetailsData(p, names));
+    }
+
     return AdaptivePageScaffold(
       backgroundColor: c.scaffoldBg,
       title: l10n.transferDetailsTitle,
       maxContentWidth: kBillingDetailWidth,
-      body: BillingAsync<ClinicPaymentEntity>(
-        load: () => repository.getPayment(paymentId),
-        builder: (context, payment, reload) =>
-            _Body(payment: payment, reload: reload),
+      body: BillingAsync<_PaymentDetailsData>(
+        load: load,
+        builder: (context, data, reload) => _Body(
+          payment: data.payment,
+          methodNames: data.methodNames,
+          reload: reload,
+        ),
       ),
     );
   }
 }
 
 class _Body extends StatelessWidget {
-  const _Body({required this.payment, required this.reload});
+  const _Body({
+    required this.payment,
+    required this.methodNames,
+    required this.reload,
+  });
 
   final ClinicPaymentEntity payment;
+  final Map<String, String> methodNames;
   final Future<void> Function() reload;
 
   @override
@@ -131,7 +161,7 @@ class _Body extends StatelessWidget {
         children: [
           BillingInfoRow(
             label: l10n.paymentMethod,
-            value: paymentMethodLabel(l10n, payment.method),
+            value: paymentMethodLabel(l10n, payment.method, methodNames),
           ),
           BillingInfoRow(
             label: l10n.transactionReferenceLabel,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/utils/error_helper.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -58,6 +59,15 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
   bool _isResending = false;
   String? _sessionId;
 
+  /// The session a right code opened. It works for one change-email call,
+  /// so it is kept: if that call fails without spending it, Verify sends it
+  /// again rather than a code that has already been used up.
+  String? _verifiedSession;
+
+  /// Wrong answers given to the code in hand. The server ends a code at the
+  /// fifth, and from then on refuses even the right one.
+  int _wrongAnswers = 0;
+
   @override
   void initState() {
     super.initState();
@@ -82,7 +92,8 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
 
   void _startCountdown(int seconds) {
     _countdownTimer?.cancel();
-    _secondsNotifier.value = seconds;
+    _secondsNotifier.value = seconds < 0 ? 0 : seconds;
+    if (seconds <= 0) return;
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsNotifier.value > 0) {
         _secondsNotifier.value--;
@@ -115,20 +126,38 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
 
     setState(() => _isVerifying = true);
 
-    try {
-      // Step 1: Verify OTP to get session_id
-      final verifyResponse = await getIt<ApiConsumer>().post(
-        AuthEndpoints.verifyOtp,
-        body: {'email': widget.newEmail, 'otp': otpCode},
-      );
+    // Step 1: Verify OTP to get session_id
+    var sessionId = _verifiedSession;
+    if (sessionId == null) {
+      try {
+        final verifyResponse = await getIt<ApiConsumer>().post(
+          AuthEndpoints.verifyOtp,
+          body: {'email': widget.newEmail, 'otp': otpCode},
+        );
 
-      final meta = verifyResponse['meta'] as Map<String, dynamic>?;
-      final sessionId = meta?['session'] as String? ?? _sessionId;
-
-      if (sessionId == null || sessionId.isEmpty) {
-        throw Exception(l10n.somethingWentWrong);
+        final meta = verifyResponse['meta'] as Map<String, dynamic>?;
+        sessionId = meta?['session'] as String? ?? _sessionId;
+      } catch (e) {
+        if (!mounted) return;
+        setState(() => _isVerifying = false);
+        _onCodeRefused(e, l10n);
+        return;
       }
 
+      if (sessionId == null || sessionId.isEmpty) {
+        if (!mounted) return;
+        setState(() => _isVerifying = false);
+        AppSnackbar.showError(
+          context,
+          title: l10n.error,
+          message: l10n.somethingWentWrong,
+        );
+        return;
+      }
+      _verifiedSession = sessionId;
+    }
+
+    try {
       // Step 2: Confirm email change with session_id
       await getIt<ApiConsumer>().post(
         AuthEndpoints.changeEmail,
@@ -157,9 +186,48 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
       if (!mounted) return;
       setState(() => _isVerifying = false);
 
+      // A 422 here is the session itself: used, expired, or opened for
+      // another account. Nothing on this screen can mend it - the change
+      // starts again from the form, for a new code.
+      if (_isUnprocessable(e)) {
+        _verifiedSession = null;
+        AppSnackbar.showError(
+          context,
+          title: l10n.sessionExpired,
+          message: l10n.emailChangeSessionExpiredMessage,
+        );
+        context.pop();
+        return;
+      }
+
       final message = ErrorHelper.getErrorMessage(e);
       AppSnackbar.showError(context, title: l10n.error, message: message);
     }
+  }
+
+  bool _isUnprocessable(Object error) =>
+      error is NetworkExceptions &&
+      error.maybeWhen(unprocessableEntity: (_) => true, orElse: () => false);
+
+  /// The code was not accepted. A wrong one is a 422, and the fifth ends the
+  /// code - and with it the wait before a new one, so Resend is offered at
+  /// once.
+  void _onCodeRefused(Object error, AppLocalizations l10n) {
+    if (_isUnprocessable(error)) _wrongAnswers++;
+    if (_wrongAnswers >= 5) {
+      _startCountdown(0);
+      AppSnackbar.showError(
+        context,
+        title: l10n.error,
+        message: l10n.otpCodeSpent,
+      );
+      return;
+    }
+    AppSnackbar.showError(
+      context,
+      title: l10n.error,
+      message: ErrorHelper.getErrorMessage(error),
+    );
   }
 
   Future<void> _resendOtp() async {
@@ -195,6 +263,7 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
       final meta = response['meta'] as Map<String, dynamic>?;
       final seconds = meta?['seconds_remaining'] as int? ?? 60;
       _sessionId = meta?['session'] as String? ?? _sessionId;
+      _wrongAnswers = 0;
       _startCountdown(seconds);
 
       for (var c in _otpControllers) {
@@ -209,6 +278,11 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isResending = false);
+
+      // A 429 says how long to wait - between two codes, or for the limit
+      // of three requests in ten minutes. Resend counts down from it.
+      final wait = NetworkExceptions.waitSecondsOf(e);
+      if (wait != null) _startCountdown(wait);
 
       final message = ErrorHelper.getErrorMessage(e);
       AppSnackbar.showError(context, title: l10n.error, message: message);

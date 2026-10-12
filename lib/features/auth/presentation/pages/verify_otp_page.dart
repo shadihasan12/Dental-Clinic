@@ -72,7 +72,8 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
 
   void _startCountdown(int seconds) {
     _countdownTimer?.cancel();
-    _secondsNotifier.value = seconds;
+    _secondsNotifier.value = seconds < 0 ? 0 : seconds;
+    if (seconds <= 0) return;
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsNotifier.value > 0) {
@@ -151,14 +152,13 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
           body: MultiBlocListener(
             listeners: [
               BlocListener<AuthBloc, AuthState>(
+                // Every new wait restarts the countdown: a code sent again,
+                // a 429 saying how long, or a code used up by wrong answers
+                // (zero - a new one can be asked for at once).
                 listenWhen: (previous, current) =>
-                    previous.otpSecondsRemaining != current.otpSecondsRemaining,
-                listener: (context, state) {
-                  if (state.otpSecondsRemaining > 0 &&
-                      _secondsNotifier.value == 0) {
-                    _startCountdown(state.otpSecondsRemaining);
-                  }
-                },
+                    previous.otpWaitTick != current.otpWaitTick,
+                listener: (context, state) =>
+                    _startCountdown(state.otpSecondsRemaining),
               ),
               BlocListener<AuthBloc, AuthState>(
                 listenWhen: (previous, current) =>
@@ -205,7 +205,9 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                     AppSnackbar.showError(
                       context,
                       title: l10n.verificationFailed,
-                      message: state.otpError,
+                      message: state.isOtpCodeSpent
+                          ? l10n.otpCodeSpent
+                          : state.otpError,
                     );
                   }
                 },
@@ -275,7 +277,12 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
 
                         Center(
                           child: Text(
-                            l10n.sentVerificationCode,
+                            // At sign-up an address that already has an
+                            // account is answered "sent" too, and gets no
+                            // code: the words have to hold for both.
+                            state.emailVerificationForLogin
+                                ? l10n.sentVerificationCode
+                                : l10n.signupCodeOnItsWay,
                             style: TextStyle(
                               fontSize: FontSizesManager.s14,
                               fontFamily: fontFamily,

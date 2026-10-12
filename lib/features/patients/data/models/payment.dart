@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
+
 class Payment {
   final String id;
   final double amount;
@@ -17,6 +19,10 @@ class Payment {
   final double? amountInCaseCurrency;
   final double? exchangeRate;
 
+  /// Who recorded the payment and who edited it since, oldest first. Empty
+  /// for a payment recorded before the server kept a history.
+  final List<AuditEntry> audits;
+
   const Payment({
     required this.id,
     required this.amount,
@@ -26,6 +32,7 @@ class Payment {
     this.currencyCode,
     this.amountInCaseCurrency,
     this.exchangeRate,
+    this.audits = const [],
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
@@ -38,8 +45,40 @@ class Payment {
       currencyCode: _currencyCode(json),
       amountInCaseCurrency: _toDouble(json['amount_in_case_currency']),
       exchangeRate: _toDouble(json['exchange_rate']),
+      audits: [
+        for (final entry in (json['audits'] as List?) ?? const [])
+          if (entry is Map<String, dynamic>) AuditEntry.fromJson(entry),
+      ],
     );
   }
+
+  /// The fields a history entry can name, in the order they are shown.
+  static const List<String> auditFields = [
+    'amount',
+    'currency_id',
+    'amount_in_case_currency',
+    'case_currency_id',
+    'exchange_rate',
+    'notes',
+  ];
+
+  /// What [entry] changed, before and after. An edit names only the fields
+  /// it touched; a first recording has no "before" and is the payment as it
+  /// was first written, so it lists nothing.
+  static List<PaymentChange> changesIn(AuditEntry entry) {
+    final before = entry.oldValues;
+    final after = entry.newValues;
+    if (before == null || after == null) return const [];
+    return [
+      for (final field in auditFields)
+        if (before.containsKey(field) || after.containsKey(field))
+          PaymentChange(field, before[field], after[field]),
+    ];
+  }
+
+  /// A figure from a history entry as a number: the same amount arrives as
+  /// `120000` when it was sent and as `"100000.00"` when it was read back.
+  static double? auditFigure(Object? value) => _toDouble(value);
 
   /// Accepts the nested `currency` object the list endpoints use elsewhere,
   /// and a flat `currency_code` string, so the label survives either shape.
@@ -60,4 +99,15 @@ class Payment {
     if (value is String) return double.tryParse(value);
     return null;
   }
+}
+
+/// One field an edit changed. The values are as the server sent them: a
+/// figure can be a number or a string, an id is a string, a cleared note is
+/// null.
+class PaymentChange {
+  const PaymentChange(this.field, this.before, this.after);
+
+  final String field;
+  final Object? before;
+  final Object? after;
 }

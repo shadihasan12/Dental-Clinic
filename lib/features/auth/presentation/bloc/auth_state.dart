@@ -62,6 +62,16 @@ class AuthState with _$AuthState {
     /// cannot act on.
     @Default(false) bool signupSessionExpired,
     @Default(0) int otpSecondsRemaining,
+
+    /// Goes up every time a wait begins: a code went out, or the server
+    /// said how long to wait before asking again. The code screens restart
+    /// their countdown on it - the seconds alone can be the same twice in a
+    /// row (300, then 300), which is no change to listen for.
+    @Default(0) int otpWaitTick,
+
+    /// Wrong answers given to the code now in hand. The server ends a code
+    /// at the fifth; see [AuthStateValidation.isOtpCodeSpent].
+    @Default(0) int otpFailedAttempts,
     @Default(false) bool canResendOtp,
 
     // Forgot password fields
@@ -79,6 +89,12 @@ class AuthState with _$AuthState {
     @Default(false) bool isResetPasswordSuccess,
     @Default(null) String? resetPasswordError,
     @Default(null) String? resetPasswordSessionId,
+
+    /// The server refused the reset because the session behind
+    /// [resetPasswordSessionId] is used up or has run out. As at sign-up,
+    /// only a new code can fix that, so the page sends the user back for
+    /// one.
+    @Default(false) bool resetSessionExpired,
 
     // Authenticated user data
     @Default(null) UserEntity? currentUser,
@@ -105,13 +121,15 @@ enum AuthStatus {
 extension AuthStateValidation on AuthState {
   bool get isLoginEmailValid =>
       _isValidEmail(loginEmail) || _isValidPhone(loginEmail);
-  bool get isLoginPasswordValid => loginPassword.length >= 8;
+  // The password in use is only compared, never judged: an account older
+  // than the rules for a new one still signs in with what it has.
+  bool get isLoginPasswordValid => loginPassword.isNotEmpty;
   bool get isLoginFormValid => isLoginEmailValid && isLoginPasswordValid;
 
   bool get isSignupFirstNameValid => signupFirstName.length >= 2;
   bool get isSignupLastNameValid => signupLastName.length >= 2;
   bool get isSignupEmailValid => _isValidEmail(signupEmail);
-  bool get isSignupPasswordValid => signupPassword.length >= 8;
+  bool get isSignupPasswordValid => PasswordRules.isValid(signupPassword);
   bool get isSignupConfirmPasswordValid =>
       signupConfirmPassword == signupPassword && signupConfirmPassword.isNotEmpty;
 
@@ -124,10 +142,14 @@ extension AuthStateValidation on AuthState {
 
   bool get isForgotPasswordEmailValid => _isValidEmail(forgotPasswordEmail);
 
-  bool get isResetPasswordValid => resetPasswordNew.length >= 8;
+  bool get isResetPasswordValid => PasswordRules.isValid(resetPasswordNew);
   bool get isResetPasswordConfirmValid =>
       resetPasswordConfirm == resetPasswordNew && resetPasswordConfirm.isNotEmpty;
   bool get isResetPasswordFormValid => isResetPasswordValid && isResetPasswordConfirmValid;
+
+  /// Five wrong answers end a code, and from then on the server refuses
+  /// even the right one. A new code can be asked for at once.
+  bool get isOtpCodeSpent => otpFailedAttempts >= 5;
 
   // Get the current user's role in the active clinic
   ClinicRole? get activeClinicRole {
@@ -159,7 +181,5 @@ extension AuthStateValidation on AuthState {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  bool _isValidPhone(String phone) {
-    return RegExp(r'^\+?[0-9]{7,15}$').hasMatch(phone.trim());
-  }
+  bool _isValidPhone(String phone) => MobileNumber.isValid(phone);
 }

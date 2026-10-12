@@ -1,5 +1,6 @@
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/widgets.dart';
@@ -21,6 +22,7 @@ class SetNewPasswordPage extends StatefulWidget {
 class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool _showValidationErrors = false;
 
   @override
@@ -32,7 +34,33 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
 
   void _handleResetPassword() {
     setState(() => _showValidationErrors = true);
-    context.read<AuthBloc>().add(const AuthEvent.resetPasswordSubmitted());
+    // After the frame, so the validators just switched on are the ones run.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_formKey.currentState?.validate() ?? false) {
+        context.read<AuthBloc>().add(const AuthEvent.resetPasswordSubmitted());
+      }
+    });
+  }
+
+  void _validateForm() {
+    if (_showValidationErrors) _formKey.currentState?.validate();
+  }
+
+  /// The session this reset rides on is used up or has run out, so no
+  /// password typed here can be saved. Says so and goes back to the email
+  /// step - still filled in - for a new code.
+  void _onSessionExpired() {
+    final l10n = AppLocalizations.of(context)!;
+    final router = GoRouter.of(context);
+    AppSnackbar.showError(
+      context,
+      title: l10n.sessionExpired,
+      message: l10n.resetSessionExpiredMessage,
+    );
+    // This page, then the code screen under it.
+    router.pop();
+    if (router.canPop()) router.pop();
   }
 
   @override
@@ -60,6 +88,11 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
           ),
           BlocListener<AuthBloc, AuthState>(
             listenWhen: (previous, current) =>
+                !previous.resetSessionExpired && current.resetSessionExpired,
+            listener: (context, state) => _onSessionExpired(),
+          ),
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
                 previous.resetPasswordError != current.resetPasswordError,
             listener: (context, state) {
               if (state.resetPasswordError != null &&
@@ -83,7 +116,9 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
             return SafeArea(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Column(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16.h),
@@ -145,18 +180,16 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                       validator: _showValidationErrors
                           ? (value) {
                               if (value == null || value.isEmpty) {
-                                return l10n.passwordRequired;
+                                return l10n.pleaseEnterYourPassword;
                               }
-                              if (value.length < 8) {
-                                return l10n.passwordTooShort;
-                              }
-                              return null;
+                              return PasswordRules.problem(l10n, value);
                             }
                           : null,
                       onChanged: (value) {
                         context.read<AuthBloc>().add(
                               AuthEvent.resetPasswordNewChanged(value),
                             );
+                        _validateForm();
                       },
                     ),
 
@@ -199,6 +232,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                         context.read<AuthBloc>().add(
                               AuthEvent.resetPasswordConfirmChanged(value),
                             );
+                        _validateForm();
                       },
                     ),
 
@@ -214,6 +248,7 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
 
                     SizedBox(height: 32.h),
                   ],
+                  ),
                 ),
               ),
             );

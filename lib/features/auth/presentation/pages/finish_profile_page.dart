@@ -16,6 +16,10 @@ import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/features/auth/presentation/widgets/auth_desktop_shell.dart';
 import 'package:dental_clinic_app/features/auth/domain/entities/location_entity.dart';
 import 'package:dental_clinic_app/features/clinic/presentation/widgets/clinic_type_selector.dart';
+import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 class FinishProfilePage extends StatefulWidget {
   const FinishProfilePage({super.key});
@@ -140,6 +144,46 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
     context.read<AuthBloc>().add(const AuthEvent.signupSubmitted());
   }
 
+  bool _openingAfterSignup = false;
+
+  /// Where a new account opens.
+  ///
+  /// The answer to register does not say what the clinic started on. A plan
+  /// with a trial, for an inbox new to the server, starts trialing; a plan
+  /// without one, or an inbox that already had an account - a deleted one
+  /// included - starts on billing only, where nothing but the subscription
+  /// and payment screens answers. So the mode is read first: it comes with
+  /// the permissions, the same call the root page opens on.
+  Future<void> _openAfterSignup() async {
+    if (_openingAfterSignup) return;
+    _openingAfterSignup = true;
+    final router = GoRouter.of(context);
+
+    final permissions = getIt<ClinicPermissionsBloc>();
+    permissions.add(const ClinicPermissionsEvent.load());
+    await permissions.stream.settled(
+      (state) => state.maybeWhen(
+        loaded: (_) => true,
+        error: (_) => true,
+        orElse: () => false,
+      ),
+      timeout: const Duration(seconds: 10),
+    );
+
+    // Billing only: root opens on the subscription screen and offers
+    // nowhere else. The working-hours gate would be a trap there - its save
+    // answers 402 and it has no way back.
+    if (getIt<SubscriptionGuard>().isLocked) {
+      router.goNamed(AppRoutesNames.root);
+      return;
+    }
+
+    // Not home yet. The clinic exists but has no schedule, and without one
+    // every appointment screen is a dead end, so the gate asks the server
+    // for its hours and only lets the app through once there are some.
+    router.goNamed(AppRoutesNames.setupWorkingHours);
+  }
+
   bool _handlingExpiredSession = false;
 
   /// The OTP session this sign-up rides on has run out, so nothing typed
@@ -188,11 +232,7 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
                 title: l10n.welcome,
                 message: l10n.accountCreatedSuccessfully,
               );
-              // Not home yet. The clinic exists but has no schedule, and
-              // without one every appointment screen is a dead end, so the
-              // gate asks the server for its hours and only lets the app
-              // through once there are some.
-              context.goNamed(AppRoutesNames.setupWorkingHours);
+              _openAfterSignup();
             }
 
             if (state.signupSessionExpired) {

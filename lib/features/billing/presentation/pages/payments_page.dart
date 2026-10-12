@@ -27,7 +27,10 @@ class _PaymentsData {
   final Map<String, String> methodNames;
 }
 
-Future<Either<NetworkExceptions, Map<String, String>>> _loadMethodNames(
+/// The names of the ways of paying, by method code, for a screen that shows
+/// payments. A method the list no longer holds has no name here; the label
+/// then falls back to a readable form of its code.
+Future<Either<NetworkExceptions, Map<String, String>>> loadPaymentMethodNames(
   BillingRepository repository,
 ) async {
   final result = await repository.getPaymentMethods();
@@ -49,7 +52,7 @@ class PaymentsPage extends StatelessWidget {
 
     Future<Either<NetworkExceptions, _PaymentsData>> load() async {
       final paymentsF = repository.getPayments();
-      final namesF = _loadMethodNames(repository);
+      final namesF = loadPaymentMethodNames(repository);
       final payments = await paymentsF;
       final names = (await namesF).getOrElse(() => const {});
       return payments.map((list) => _PaymentsData(list, names));

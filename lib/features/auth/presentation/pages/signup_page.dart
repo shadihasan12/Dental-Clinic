@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/core/constants/validation_constants.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
@@ -149,10 +150,7 @@ class _SignupContentState extends State<_SignupContent> {
     if (value == null || value.isEmpty) {
       return l10n.pleaseEnterYourPassword;
     }
-    if (!ValidationConstants.isValidPassword(value)) {
-      return l10n.passwordTooShort;
-    }
-    return null;
+    return PasswordRules.problem(l10n, value);
   }
 
   String? _validateConfirmPassword(String? value) {
@@ -173,8 +171,8 @@ class _SignupContentState extends State<_SignupContent> {
     if (value == null || value.isEmpty) {
       return l10n.mobileRequired;
     }
-    if (value.length < 8) {
-      return l10n.mobileTooShort;
+    if (!MobileNumber.isValid(value)) {
+      return l10n.mobileInvalid;
     }
     return null;
   }

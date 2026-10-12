@@ -7,6 +7,7 @@ import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
+import 'package:dental_clinic_app/features/appointments/domain/appointment_rules.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/available_slots_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/clinic_doctor_entity.dart';
 import 'package:dental_clinic_app/features/appointments/domain/entities/create_appointment_params.dart';
@@ -430,6 +431,17 @@ class _NewAppointmentPageState extends State<NewAppointmentPage> {
 
     final start = _slotToDateTime(_selectedSlot!);
     final end = start.add(Duration(minutes: _duration));
+
+    // A late slot with a long duration runs into the next day, which the
+    // server refuses.
+    if (!endsOnStartDay(start, end)) {
+      AppSnackbar.showWarning(
+        context,
+        title: l10n.missingData,
+        message: l10n.appointmentMustEndSameDay,
+      );
+      return;
+    }
 
     final params = CreateAppointmentParams(
       patientId: _selectedPatientEntity!.id,

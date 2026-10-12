@@ -61,7 +61,8 @@ class _ForgotPasswordVerifyOtpPageState
 
   void _startCountdown(int seconds) {
     _countdownTimer?.cancel();
-    _secondsNotifier.value = seconds;
+    _secondsNotifier.value = seconds < 0 ? 0 : seconds;
+    if (seconds <= 0) return;
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsNotifier.value > 0) {
@@ -133,14 +134,13 @@ class _ForgotPasswordVerifyOtpPageState
         body: MultiBlocListener(
           listeners: [
             BlocListener<AuthBloc, AuthState>(
+              // Every new wait restarts the countdown: a code sent again, a
+              // 429 saying how long, or a code used up by wrong answers
+              // (zero - a new one can be asked for at once).
               listenWhen: (previous, current) =>
-                  previous.otpSecondsRemaining != current.otpSecondsRemaining,
-              listener: (context, state) {
-                if (state.otpSecondsRemaining > 0 &&
-                    _secondsNotifier.value == 0) {
-                  _startCountdown(state.otpSecondsRemaining);
-                }
-              },
+                  previous.otpWaitTick != current.otpWaitTick,
+              listener: (context, state) =>
+                  _startCountdown(state.otpSecondsRemaining),
             ),
             BlocListener<AuthBloc, AuthState>(
               listenWhen: (previous, current) =>
@@ -169,7 +169,9 @@ class _ForgotPasswordVerifyOtpPageState
                   AppSnackbar.showError(
                     context,
                     title: l10n.verificationFailed,
-                    message: state.otpError,
+                    message: state.isOtpCodeSpent
+                        ? l10n.otpCodeSpent
+                        : state.otpError,
                   );
                 }
               },

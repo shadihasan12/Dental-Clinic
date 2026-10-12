@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 /// What the form starts from: the invoice being paid, the destination picked
 /// on "how to pay", or - for "report it again" - a refused report's values.
@@ -52,6 +53,9 @@ class _Receipt {
   PaymentReceiptEntity? uploaded;
   bool uploading = true;
   String? error;
+
+  /// False when sending it again could only be refused the same way.
+  bool canRetry = true;
 }
 
 /// Reporting a transfer made outside the app.
@@ -156,6 +160,10 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
 
   void _selectAccount(PaymentAccountEntity? account) {
     _account = account;
+    // What was wrong with the last choice says nothing about this one.
+    if (_errors.containsKey('payment_account_id')) {
+      _errors = {..._errors}..remove('payment_account_id');
+    }
     // Send in the destination's own currency.
     if (account != null) _setCurrency(account.currency);
   }
@@ -229,7 +237,14 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
     setState(() {
       receipt.uploading = false;
       result.fold(
-        (e) => receipt.error = NetworkExceptions.localizedMessage(context, e),
+        (e) {
+          receipt.error = NetworkExceptions.localizedMessage(context, e);
+          // A 409 is the clinic's ten receipts already waiting unused. Until
+          // a payment takes some of them this one is refused however often it
+          // is sent, so the sentence is shown with no retry beside it.
+          receipt.canRetry =
+              e.maybeWhen(conflict: (_) => false, orElse: () => true);
+        },
         (uploaded) => receipt.uploaded = uploaded,
       );
     });
@@ -237,10 +252,21 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
 
   Map<String, String> _validate(AppLocalizations l10n) {
     final errors = <String, String>{};
-    if (_method == null) errors['method'] = l10n.fieldRequired;
-    final amount = double.tryParse(_amount.text.trim().replaceAll(',', ''));
+    if (_method == null) {
+      errors['method'] = l10n.fieldRequired;
+    } else if (_method!.accounts.isEmpty) {
+      // Nowhere the money could have gone, so nothing to report.
+      errors['payment_account_id'] = l10n.paymentMethodNoAccounts;
+    } else if (_account == null) {
+      errors['payment_account_id'] = l10n.paymentAccountRequired;
+    }
+    final amount = ReportPaymentParams.parseAmount(_amount.text);
     if (amount == null || amount <= 0) {
       errors['amount_original'] = l10n.pleaseEnterValidAmount;
+    } else if (amount > ReportPaymentParams.maxAmount) {
+      errors['amount_original'] = l10n.amountAtMost(
+        NumberFormat('#,##0.##', 'en').format(ReportPaymentParams.maxAmount),
+      );
     }
     if (_currency == null || _currency!.isEmpty) {
       errors['currency_original'] = l10n.fieldRequired;
@@ -275,7 +301,7 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
     setState(() => _submitting = true);
     final result = await _repository.reportPayment(ReportPaymentParams(
       method: _method!.method,
-      paymentAccountId: _account?.id,
+      paymentAccountId: _account!.id,
       amountOriginal: _amount.text.trim().replaceAll(',', ''),
       currencyOriginal: _currency!,
       referenceNumber: _reference.text.trim(),
@@ -292,6 +318,21 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
       mediaItemIds: [for (final r in _receipts) r.uploaded!.id],
     ));
     if (!mounted) return;
+    // The account was refused: retired, or moved to another method, since
+    // the list was read. It is read again while the button is still busy, so
+    // the owner picks from what is there now.
+    final accountRefused = result.fold(
+      (e) => e.maybeWhen(
+        badRequest: (_, fields) =>
+            fields?.containsKey('payment_account_id') ?? false,
+        orElse: () => false,
+      ),
+      (_) => false,
+    );
+    if (accountRefused) {
+      await _refreshMethods();
+      if (!mounted) return;
+    }
     setState(() => _submitting = false);
 
     final created = result.fold((_) => null, (value) => value);
@@ -321,6 +362,32 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
       orElse: () =>
           AppSnackbar.showError(context, title: l10n.errorTitle, message: message),
     );
+  }
+
+  /// Reads the destinations again, keeping the method and the account chosen
+  /// only where they are still listed: an account no longer under its method
+  /// is dropped, to be picked again. Nothing typed is touched.
+  Future<void> _refreshMethods() async {
+    final result = await _repository.getPaymentMethods();
+    if (!mounted) return;
+    // Unreadable just now: the list on screen stays as it is.
+    final methods = result.fold((_) => null, (list) => list);
+    if (methods == null) return;
+
+    final methodCode = _method?.method;
+    final accountId = _account?.id;
+    setState(() {
+      _methods = methods;
+      _method = null;
+      _account = null;
+      for (final m in methods) {
+        if (m.method != methodCode) continue;
+        _method = m;
+        for (final a in m.accounts) {
+          if (a.id == accountId) _account = a;
+        }
+      }
+    });
   }
 
   /// `media_item_ids.0` and friends all belong to the receipts section.
@@ -418,6 +485,17 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
 
     final method = _method;
     final invoice = _invoice;
+    final accounts = method?.accounts ?? const <PaymentAccountEntity>[];
+    // A method with no account set up has nowhere the money could have gone:
+    // said as soon as it is picked, not only on submit.
+    final accountError = _errors['payment_account_id'] ??
+        (method != null && accounts.isEmpty
+            ? l10n.paymentMethodNoAccounts
+            : null);
+    // A method's only account is chosen with it. The picker is for several -
+    // or for choosing again, once the account sent was refused.
+    final pickAccount =
+        accounts.length > 1 || (accounts.isNotEmpty && _account == null);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: ListView(
@@ -464,15 +542,16 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
               ),
               if (_errors['method'] != null)
                 FormErrorLine(message: _errors['method']!),
-              if (method != null && method.accounts.length > 1)
+              if (pickAccount)
                 FormFieldShell(
                   label: l10n.paymentDestination,
-                  errorText: _errors['payment_account_id'],
+                  required: true,
+                  errorText: accountError,
                   child: Wrap(
                     spacing: 8.w,
                     runSpacing: 8.h,
                     children: [
-                      for (final a in method.accounts)
+                      for (final a in accounts)
                         FormChip(
                           label: '${a.accountName} · ${a.currency}',
                           selected: a.id == _account?.id,
@@ -482,6 +561,8 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
                   ),
                 ),
               if (_account != null) _AccountLine(account: _account!),
+              if (!pickAccount && accountError != null)
+                FormErrorLine(message: accountError),
             ],
           ),
           SizedBox(height: 8.h),
@@ -718,12 +799,12 @@ class _ReceiptRow extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 2.h),
+                // Never cut short: a failure is the server's own sentence,
+                // and it says what to do next.
                 Text(
                   receipt.uploading
                       ? l10n.uploading
                       : (receipt.error ?? l10n.receiptUploaded),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: family,
                     fontSize: 11.sp,
@@ -739,7 +820,7 @@ class _ReceiptRow extends StatelessWidget {
               height: 18.w,
               child: const CircularProgressIndicator(strokeWidth: 2),
             )
-          else if (failed)
+          else if (failed && receipt.canRetry)
             IconButton(
               tooltip: l10n.retry,
               onPressed: onRetry,

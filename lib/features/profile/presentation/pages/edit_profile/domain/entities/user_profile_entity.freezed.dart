@@ -22,6 +22,12 @@ mixin _$UserProfileEntity {
   String get lastName => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
+
+  /// Whether [phone] differs from the number the profile was loaded with.
+  /// Only an edited number is sent on save: an account older than the
+  /// server's rule for a number may hold one it would now refuse, and
+  /// sending it back untouched would fail a save that never touched it.
+  bool get phoneEdited => throw _privateConstructorUsedError;
   String? get specialtyId => throw _privateConstructorUsedError;
   String? get specialtyName => throw _privateConstructorUsedError;
   String? get imageId => throw _privateConstructorUsedError;
@@ -47,6 +53,7 @@ abstract class $UserProfileEntityCopyWith<$Res> {
     String lastName,
     String email,
     String phone,
+    bool phoneEdited,
     String? specialtyId,
     String? specialtyName,
     String? imageId,
@@ -74,6 +81,7 @@ class _$UserProfileEntityCopyWithImpl<$Res, $Val extends UserProfileEntity>
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
+    Object? phoneEdited = null,
     Object? specialtyId = freezed,
     Object? specialtyName = freezed,
     Object? imageId = freezed,
@@ -101,6 +109,10 @@ class _$UserProfileEntityCopyWithImpl<$Res, $Val extends UserProfileEntity>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
+            phoneEdited: null == phoneEdited
+                ? _value.phoneEdited
+                : phoneEdited // ignore: cast_nullable_to_non_nullable
+                      as bool,
             specialtyId: freezed == specialtyId
                 ? _value.specialtyId
                 : specialtyId // ignore: cast_nullable_to_non_nullable
@@ -138,6 +150,7 @@ abstract class _$$UserProfileEntityImplCopyWith<$Res>
     String lastName,
     String email,
     String phone,
+    bool phoneEdited,
     String? specialtyId,
     String? specialtyName,
     String? imageId,
@@ -164,6 +177,7 @@ class __$$UserProfileEntityImplCopyWithImpl<$Res>
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
+    Object? phoneEdited = null,
     Object? specialtyId = freezed,
     Object? specialtyName = freezed,
     Object? imageId = freezed,
@@ -191,6 +205,10 @@ class __$$UserProfileEntityImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
+        phoneEdited: null == phoneEdited
+            ? _value.phoneEdited
+            : phoneEdited // ignore: cast_nullable_to_non_nullable
+                  as bool,
         specialtyId: freezed == specialtyId
             ? _value.specialtyId
             : specialtyId // ignore: cast_nullable_to_non_nullable
@@ -221,6 +239,7 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
     required this.lastName,
     required this.email,
     this.phone = '',
+    this.phoneEdited = true,
     this.specialtyId,
     this.specialtyName,
     this.imageId,
@@ -238,6 +257,14 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
   @override
   @JsonKey()
   final String phone;
+
+  /// Whether [phone] differs from the number the profile was loaded with.
+  /// Only an edited number is sent on save: an account older than the
+  /// server's rule for a number may hold one it would now refuse, and
+  /// sending it back untouched would fail a save that never touched it.
+  @override
+  @JsonKey()
+  final bool phoneEdited;
   @override
   final String? specialtyId;
   @override
@@ -249,7 +276,7 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
 
   @override
   String toString() {
-    return 'UserProfileEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, specialtyId: $specialtyId, specialtyName: $specialtyName, imageId: $imageId, imageUrl: $imageUrl)';
+    return 'UserProfileEntity(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, phoneEdited: $phoneEdited, specialtyId: $specialtyId, specialtyName: $specialtyName, imageId: $imageId, imageUrl: $imageUrl)';
   }
 
   @override
@@ -264,6 +291,8 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
                 other.lastName == lastName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.phoneEdited, phoneEdited) ||
+                other.phoneEdited == phoneEdited) &&
             (identical(other.specialtyId, specialtyId) ||
                 other.specialtyId == specialtyId) &&
             (identical(other.specialtyName, specialtyName) ||
@@ -281,6 +310,7 @@ class _$UserProfileEntityImpl implements _UserProfileEntity {
     lastName,
     email,
     phone,
+    phoneEdited,
     specialtyId,
     specialtyName,
     imageId,
@@ -306,6 +336,7 @@ abstract class _UserProfileEntity implements UserProfileEntity {
     required final String lastName,
     required final String email,
     final String phone,
+    final bool phoneEdited,
     final String? specialtyId,
     final String? specialtyName,
     final String? imageId,
@@ -322,6 +353,13 @@ abstract class _UserProfileEntity implements UserProfileEntity {
   String get email;
   @override
   String get phone;
+
+  /// Whether [phone] differs from the number the profile was loaded with.
+  /// Only an edited number is sent on save: an account older than the
+  /// server's rule for a number may hold one it would now refuse, and
+  /// sending it back untouched would fail a save that never touched it.
+  @override
+  bool get phoneEdited;
   @override
   String? get specialtyId;
   @override

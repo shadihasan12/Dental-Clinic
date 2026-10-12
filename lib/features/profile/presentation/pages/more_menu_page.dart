@@ -20,6 +20,7 @@ import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
 import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:dental_clinic_app/core/theme/theme_bloc.dart';
 import 'package:dental_clinic_app/features/subscription/domain/entities/subscription_status_entity.dart';
@@ -53,13 +54,28 @@ class _MenuPageState extends State<MenuPage> {
     // The subscription section follows the permissions list, which may land
     // (or change, on a refresh) after this page is already open.
     _permissionsSub = getIt<ClinicPermissionsBloc>().stream.listen((_) {
+      if (!mounted) return;
       final can = SubscriptionGuardHelper.canManageBilling;
-      if (can == _couldManageBilling || !mounted) return;
+      if (can == _couldManageBilling) {
+        // The staff and clinic-info entries follow the list as well.
+        setState(() {});
+        return;
+      }
       _couldManageBilling = can;
       setState(() => _subscriptionLoading = can);
       if (can) _loadSubscription();
     });
     _loadSubscription();
+  }
+
+  /// Whether the clinic's permissions list holds [slug]. Until the list has
+  /// loaded - or when it could not be read - the cached role answers
+  /// instead, so an admin's menu does not empty out on a slow connection.
+  bool _hasFeature(String slug, {required bool isAdmin}) {
+    return getIt<ClinicPermissionsBloc>().state.maybeWhen(
+      loaded: (permissions) => permissions.hasFeature(slug),
+      orElse: () => isAdmin,
+    );
   }
 
   /// The plan and what is left of it, for the card at the top of the page.
@@ -400,12 +416,16 @@ class _MenuPageState extends State<MenuPage> {
         title: l10n.editProfile,
         onTap: () => context.pushNamed(AppRoutesNames.editProfile),
       ),
-      if (isAdmin) ...[
+      // Built from the permissions list, not from the role: clinic info and
+      // staff are features of their own, and a member whose list leaves one
+      // out gets 403 on its calls.
+      if (_hasFeature(PermissionSlugs.updateClinicInfo, isAdmin: isAdmin))
         MenuItem(
           icon: Icons.business_outlined,
           title: l10n.clinicInformation,
           onTap: () => context.pushNamed(AppRoutesNames.clinicInfo),
         ),
+      if (_hasFeature(PermissionSlugs.manageStaff, isAdmin: isAdmin))
         MenuItem(
           icon: Icons.people_outlined,
           title: l10n.clinicUsers,
@@ -414,12 +434,13 @@ class _MenuPageState extends State<MenuPage> {
             context.pushNamed(AppRoutesNames.clinicUsers, extra: clinicId);
           },
         ),
+      if (isAdmin)
         MenuItem(
           icon: Icons.schedule_outlined,
           title: l10n.workingDaysAndHolidays,
           onTap: () => context.pushNamed(AppRoutesNames.workingDays),
-        ),
-      ] else
+        )
+      else
         MenuItem(
           icon: Icons.schedule_outlined,
           title: l10n.myWorkingHours,

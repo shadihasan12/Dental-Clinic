@@ -34,9 +34,12 @@ class VerifyEmailEntryPage extends StatelessWidget {
         body: MultiBlocListener(
           listeners: [
             BlocListener<AuthBloc, AuthState>(
-              // Only navigate to OTP when seconds go from 0 → positive (fresh send)
+              // Only navigate to OTP when a code is out: just sent, or still
+              // good from a moment ago. A refusal that says how long to wait
+              // starts a wait too, but carries an error and stays here.
               listenWhen: (previous, current) =>
-                  previous.otpSecondsRemaining == 0 &&
+                  previous.otpWaitTick != current.otpWaitTick &&
+                  current.otpError == null &&
                   current.otpSecondsRemaining > 0,
               listener: (context, state) {
                 AppSnackbar.showSuccess(

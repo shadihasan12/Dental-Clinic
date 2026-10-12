@@ -1664,6 +1664,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sentVerificationCode => 'We\'ve sent a 6-digit verification code';
 
   @override
+  String get signupCodeOnItsWay =>
+      'If this email is new, a 6-digit code is on its way. Already have an account? Sign in, or use Forgot password.';
+
+  @override
+  String get otpCodeSpent =>
+      'Too many wrong tries, so this code no longer works. Request a new one.';
+
+  @override
   String get sendingCode => 'Sending code...';
 
   @override
@@ -1903,6 +1911,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get passwordTooLong => 'Password must be at most 72 characters';
+
+  @override
+  String get passwordNeedsLetter => 'Password must contain at least one letter';
+
+  @override
+  String get passwordNeedsDigit => 'Password must contain at least one number';
+
+  @override
+  String get mobileInvalid =>
+      'Enter a valid mobile number: 7 to 19 digits, and it may start with +';
 
   @override
   String get caseTitleOptional => 'Case Title (Optional)';
@@ -3107,6 +3128,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorConflict => 'This conflicts with data already saved';
 
   @override
+  String get errorTooManyRequests =>
+      'Too many requests. Please wait a moment and try again.';
+
+  @override
   String get errorSendTimeout => 'The server took too long to respond';
 
   @override
@@ -3597,6 +3622,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String quoteRenewalPeriodIfPaidNow(String start, String end) {
+    return 'If paid today, it runs from $start to $end.';
+  }
+
+  @override
   String get quoteInvoiceExplainer =>
       'Confirming issues an invoice. Nothing changes until it is paid and our team confirms the transfer.';
 
@@ -3628,10 +3658,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paymentDestination => 'Sent to';
 
   @override
+  String get paymentAccountRequired => 'Choose the account you sent it to';
+
+  @override
+  String get paymentTooSmallInCaseCurrency =>
+      'This comes to less than 0.01 in the case\'s currency. Check the amount and the rate.';
+
+  @override
+  String paymentRecordedBy(String name) {
+    return 'Recorded by $name';
+  }
+
+  @override
+  String paymentEditedBy(String name) {
+    return 'Edited by $name';
+  }
+
+  @override
+  String get deletedUser => 'a deleted user';
+
+  @override
+  String get appointmentMustEndSameDay =>
+      'An appointment has to end on the day it starts. Pick an earlier time or a shorter duration.';
+
+  @override
+  String get amountInCaseCurrencyLabel => 'Amount in the case\'s currency';
+
+  @override
+  String get paymentMethodNoAccounts =>
+      'No account is set up for this method yet. Choose another one, or contact support.';
+
+  @override
   String get transferDetailsTitle => 'Transfer details';
 
   @override
   String get amountSent => 'Amount sent';
+
+  @override
+  String amountAtMost(String max) {
+    return 'At most $max';
+  }
 
   @override
   String get bankName => 'Bank';
@@ -4064,6 +4130,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifyEmailAgainAction => 'Verify email again';
+
+  @override
+  String get resetSessionExpiredMessage =>
+      'Your password reset has expired. Request a new code to set your password.';
+
+  @override
+  String get emailChangeSessionExpiredMessage =>
+      'This email change has expired. Start it again to get a new code.';
 
   @override
   String get membersLimitTitle => 'Member limit reached';

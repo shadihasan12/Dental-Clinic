@@ -642,6 +642,8 @@
   "verifyYourEmail": "Verify Your Email",
   "enterCodeSentToEmail": "Enter the code sent to your email",
   "sentVerificationCode": "We've sent a 6-digit verification code",
+  "signupCodeOnItsWay": "If this email is new, a 6-digit code is on its way. Already have an account? Sign in, or use Forgot password.",
+  "otpCodeSpent": "Too many wrong tries, so this code no longer works. Request a new one.",
   "sendingCode": "Sending code...",
   "resendCodeIn": "Resend code in {seconds}s",
   "@resendCodeIn": {
@@ -751,6 +753,10 @@
   "passwordResetSuccessMessage": "You can now sign in with your new password",
   "passwordTooShort": "Password must be at least 8 characters",
   "passwordsDoNotMatch": "Passwords do not match",
+  "passwordTooLong": "Password must be at most 72 characters",
+  "passwordNeedsLetter": "Password must contain at least one letter",
+  "passwordNeedsDigit": "Password must contain at least one number",
+  "mobileInvalid": "Enter a valid mobile number: 7 to 19 digits, and it may start with +",
   "caseTitleOptional": "Case Title (Optional)",
   "caseTitleHint": "Enter a title for the completed case",
   "caseMarkedAsFinished": "Case marked as finished",
@@ -1277,6 +1283,7 @@
   "errorRequestTimeout": "The connection timed out",
   "errorNoInternet": "No internet connection",
   "errorConflict": "This conflicts with data already saved",
+  "errorTooManyRequests": "Too many requests. Please wait a moment and try again.",
   "errorSendTimeout": "The server took too long to respond",
   "errorUnableToProcess": "The data could not be processed",
   "errorNotAcceptable": "The server rejected the request",
@@ -1585,6 +1592,17 @@
       }
     }
   },
+  "quoteRenewalPeriodIfPaidNow": "If paid today, it runs from {start} to {end}.",
+  "@quoteRenewalPeriodIfPaidNow": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
   "quoteInvoiceExplainer": "Confirming issues an invoice. Nothing changes until it is paid and our team confirms the transfer.",
   "requestInvoiceAction": "Issue the invoice",
   "noPaymentMethodsTitle": "No payment destination yet",
@@ -1594,8 +1612,38 @@
   "reportTransferTitle": "Report a transfer",
   "reportTransferExplainer": "We'll check the transfer against our account. This can take a few hours, and you'll be notified when it's confirmed.",
   "paymentDestination": "Sent to",
+  "paymentAccountRequired": "Choose the account you sent it to",
+  "paymentTooSmallInCaseCurrency": "This comes to less than 0.01 in the case's currency. Check the amount and the rate.",
+  "paymentRecordedBy": "Recorded by {name}",
+  "@paymentRecordedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentEditedBy": "Edited by {name}",
+  "@paymentEditedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deletedUser": "a deleted user",
+  "appointmentMustEndSameDay": "An appointment has to end on the day it starts. Pick an earlier time or a shorter duration.",
+  "amountInCaseCurrencyLabel": "Amount in the case's currency",
+  "paymentMethodNoAccounts": "No account is set up for this method yet. Choose another one, or contact support.",
   "transferDetailsTitle": "Transfer details",
   "amountSent": "Amount sent",
+  "amountAtMost": "At most {max}",
+  "@amountAtMost": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "bankName": "Bank",
   "bankNameOptional": "Bank name (optional)",
   "transferDate": "Date sent",
@@ -1879,6 +1927,8 @@
   "chooseThisPlan": "Choose this plan",
   "signupSessionExpiredMessage": "Your sign-up session has expired. Verify your email again to continue creating your account.",
   "verifyEmailAgainAction": "Verify email again",
+  "resetSessionExpiredMessage": "Your password reset has expired. Request a new code to set your password.",
+  "emailChangeSessionExpiredMessage": "This email change has expired. Start it again to get a new code.",
   "membersLimitTitle": "Member limit reached",
   "membersLimitMessage": "This clinic has reached its member limit. Remove a member to add someone new."
 }

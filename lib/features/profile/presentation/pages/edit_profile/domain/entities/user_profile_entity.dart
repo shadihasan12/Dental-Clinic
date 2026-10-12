@@ -10,6 +10,12 @@ class UserProfileEntity with _$UserProfileEntity {
     required String lastName,
     required String email,
     @Default('') String phone,
+
+    /// Whether [phone] differs from the number the profile was loaded with.
+    /// Only an edited number is sent on save: an account older than the
+    /// server's rule for a number may hold one it would now refuse, and
+    /// sending it back untouched would fail a save that never touched it.
+    @Default(true) bool phoneEdited,
     String? specialtyId,
     String? specialtyName,
     String? imageId,

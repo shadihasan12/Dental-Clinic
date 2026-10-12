@@ -81,10 +81,10 @@ class QuoteParams {
 class ReportPaymentParams {
   const ReportPaymentParams({
     required this.method,
+    required this.paymentAccountId,
     required this.amountOriginal,
     required this.currencyOriginal,
     required this.referenceNumber,
-    this.paymentAccountId,
     this.bankName,
     this.paidAt,
     this.notes,
@@ -94,11 +94,14 @@ class ReportPaymentParams {
   /// From the payment-methods list. Never `CASH`.
   final String method;
 
+  /// The account the money went to: one of those listed under [method].
+  /// The server refuses a report without it, or with any other id.
+  final String paymentAccountId;
+
   /// What they actually sent, as typed.
   final String amountOriginal;
   final String currencyOriginal;
   final String referenceNumber;
-  final String? paymentAccountId;
   final String? bankName;
   final DateTime? paidAt;
   final String? notes;
@@ -108,12 +111,22 @@ class ReportPaymentParams {
 
   static const int maxReceipts = 5;
 
+  /// The server's ceiling on `amount_original`, which must also be above 0.
+  static const double maxAmount = 999999999999.99;
+
+  /// [typed] as a number, thousands separators dropped - or null when it is
+  /// not one.
+  static double? parseAmount(String typed) {
+    final value = double.tryParse(typed.trim().replaceAll(',', ''));
+    return value == null || value.isNaN ? null : value;
+  }
+
   Map<String, dynamic> toJson() => {
         'method': method,
+        'payment_account_id': paymentAccountId,
         'amount_original': amountOriginal,
         'currency_original': currencyOriginal,
         'reference_number': referenceNumber,
-        if (paymentAccountId != null) 'payment_account_id': paymentAccountId,
         if (bankName != null && bankName!.isNotEmpty) 'bank_name': bankName,
         if (paidAt != null) 'paid_at': paidAt!.toUtc().toIso8601String(),
         if (notes != null && notes!.isNotEmpty) 'notes': notes,

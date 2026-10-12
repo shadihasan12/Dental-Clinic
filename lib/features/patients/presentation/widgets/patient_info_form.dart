@@ -40,36 +40,55 @@ class PatientFormErrors {
   const PatientFormErrors({
     this.firstName,
     this.lastName,
+    this.phone,
   });
 
   final String? firstName;
   final String? lastName;
+  final String? phone;
 
   static const PatientFormErrors none = PatientFormErrors();
 
-  bool get hasAny => firstName != null || lastName != null;
+  bool get hasAny => firstName != null || lastName != null || phone != null;
 
   @override
   bool operator ==(Object other) =>
       other is PatientFormErrors &&
       other.firstName == firstName &&
-      other.lastName == lastName;
+      other.lastName == lastName &&
+      other.phone == phone;
 
   @override
-  int get hashCode => Object.hash(firstName, lastName);
+  int get hashCode => Object.hash(firstName, lastName, phone);
+
+  /// The server's limits on a name and on a phone number.
+  static const int maxNameLength = 255;
+  static const int maxPhoneLength = 50;
 
   /// Runs the required-field checks: the name only. Gender is required too,
   /// but the picker always holds a value, so it cannot be missing. Phone,
   /// date of birth and the clinical notes are optional - left empty, they
-  /// are sent as null.
+  /// are sent as null. What is filled in is held to the server's lengths.
   static PatientFormErrors validate(
     AppLocalizations l10n, {
     required String firstName,
     required String lastName,
+    String phone = '',
   }) {
+    String? name(String value, String missing) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) return missing;
+      return trimmed.runes.length > maxNameLength
+          ? l10n.maxCharacters(maxNameLength)
+          : null;
+    }
+
     return PatientFormErrors(
-      firstName: firstName.trim().isEmpty ? l10n.pleaseEnterFirstName : null,
-      lastName: lastName.trim().isEmpty ? l10n.pleaseEnterLastName : null,
+      firstName: name(firstName, l10n.pleaseEnterFirstName),
+      lastName: name(lastName, l10n.pleaseEnterLastName),
+      phone: phone.trim().runes.length > maxPhoneLength
+          ? l10n.maxCharacters(maxPhoneLength)
+          : null,
     );
   }
 }
@@ -172,6 +191,7 @@ class _PatientInfoFormState extends State<PatientInfoForm> {
                 FormTextField(
                   label: l10n.phone,
                   controller: widget.phoneController,
+                  errorText: e.phone,
                   hintText: l10n.phoneHint,
                   keyboardType: TextInputType.phone,
                   onChanged: widget.onFieldChanged,

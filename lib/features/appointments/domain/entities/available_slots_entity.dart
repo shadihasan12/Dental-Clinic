@@ -1,7 +1,7 @@
 /// Which schedule a set of slots was cut from - `meta.hours_source` on
 /// `GET /clinics/appointment-available-slots`.
 enum SlotsHoursSource {
-  /// The doctor's own rows, or an availability exception for that date.
+  /// The doctor's own rows.
   user,
 
   /// The doctor has no rows here; the clinic's schedule stood in. Also what

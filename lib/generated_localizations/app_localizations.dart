@@ -3248,6 +3248,18 @@ abstract class AppLocalizations {
   /// **'We\'ve sent a 6-digit verification code'**
   String get sentVerificationCode;
 
+  /// No description provided for @signupCodeOnItsWay.
+  ///
+  /// In en, this message translates to:
+  /// **'If this email is new, a 6-digit code is on its way. Already have an account? Sign in, or use Forgot password.'**
+  String get signupCodeOnItsWay;
+
+  /// No description provided for @otpCodeSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong tries, so this code no longer works. Request a new one.'**
+  String get otpCodeSpent;
+
   /// No description provided for @sendingCode.
   ///
   /// In en, this message translates to:
@@ -3691,6 +3703,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// No description provided for @passwordTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at most 72 characters'**
+  String get passwordTooLong;
+
+  /// No description provided for @passwordNeedsLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one letter'**
+  String get passwordNeedsLetter;
+
+  /// No description provided for @passwordNeedsDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one number'**
+  String get passwordNeedsDigit;
+
+  /// No description provided for @mobileInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid mobile number: 7 to 19 digits, and it may start with +'**
+  String get mobileInvalid;
 
   /// No description provided for @caseTitleOptional.
   ///
@@ -5948,6 +5984,12 @@ abstract class AppLocalizations {
   /// **'This conflicts with data already saved'**
   String get errorConflict;
 
+  /// No description provided for @errorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait a moment and try again.'**
+  String get errorTooManyRequests;
+
   /// No description provided for @errorSendTimeout.
   ///
   /// In en, this message translates to:
@@ -6740,6 +6782,12 @@ abstract class AppLocalizations {
   /// **'If paid today, it runs from {start} to {end}. It starts on the day payment is confirmed.'**
   String quotePeriodIfPaidNow(String start, String end);
 
+  /// No description provided for @quoteRenewalPeriodIfPaidNow.
+  ///
+  /// In en, this message translates to:
+  /// **'If paid today, it runs from {start} to {end}.'**
+  String quoteRenewalPeriodIfPaidNow(String start, String end);
+
   /// No description provided for @quoteInvoiceExplainer.
   ///
   /// In en, this message translates to:
@@ -6794,6 +6842,54 @@ abstract class AppLocalizations {
   /// **'Sent to'**
   String get paymentDestination;
 
+  /// No description provided for @paymentAccountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the account you sent it to'**
+  String get paymentAccountRequired;
+
+  /// No description provided for @paymentTooSmallInCaseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'This comes to less than 0.01 in the case\'s currency. Check the amount and the rate.'**
+  String get paymentTooSmallInCaseCurrency;
+
+  /// No description provided for @paymentRecordedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded by {name}'**
+  String paymentRecordedBy(String name);
+
+  /// No description provided for @paymentEditedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited by {name}'**
+  String paymentEditedBy(String name);
+
+  /// No description provided for @deletedUser.
+  ///
+  /// In en, this message translates to:
+  /// **'a deleted user'**
+  String get deletedUser;
+
+  /// No description provided for @appointmentMustEndSameDay.
+  ///
+  /// In en, this message translates to:
+  /// **'An appointment has to end on the day it starts. Pick an earlier time or a shorter duration.'**
+  String get appointmentMustEndSameDay;
+
+  /// No description provided for @amountInCaseCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount in the case\'s currency'**
+  String get amountInCaseCurrencyLabel;
+
+  /// No description provided for @paymentMethodNoAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'No account is set up for this method yet. Choose another one, or contact support.'**
+  String get paymentMethodNoAccounts;
+
   /// No description provided for @transferDetailsTitle.
   ///
   /// In en, this message translates to:
@@ -6805,6 +6901,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Amount sent'**
   String get amountSent;
+
+  /// No description provided for @amountAtMost.
+  ///
+  /// In en, this message translates to:
+  /// **'At most {max}'**
+  String amountAtMost(String max);
 
   /// No description provided for @bankName.
   ///
@@ -7531,6 +7633,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verify email again'**
   String get verifyEmailAgainAction;
+
+  /// No description provided for @resetSessionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password reset has expired. Request a new code to set your password.'**
+  String get resetSessionExpiredMessage;
+
+  /// No description provided for @emailChangeSessionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This email change has expired. Start it again to get a new code.'**
+  String get emailChangeSessionExpiredMessage;
 
   /// No description provided for @membersLimitTitle.
   ///

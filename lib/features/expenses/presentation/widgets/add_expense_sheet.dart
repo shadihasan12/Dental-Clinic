@@ -168,7 +168,10 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
           ? l10n.pleaseEnterAmount
           : (parsed == null || parsed <= 0
               ? l10n.pleaseEnterValidAmount
-              : null),
+              // The server's ceiling; past it the save is refused.
+              : (parsed > 9999999999999.99
+                  ? l10n.amountAtMost('9,999,999,999,999.99')
+                  : null)),
       category: _selectedCategory == null
           ? l10n.pleaseSelectExpenseType
           : (_isOtherCategory && _customCategoryController.text.trim().isEmpty

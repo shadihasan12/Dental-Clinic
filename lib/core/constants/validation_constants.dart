@@ -8,7 +8,7 @@ class ValidationConstants {
 
   // Length constraints
   static const int minPasswordLength = 8;
-  static const int maxPasswordLength = 128;
+  static const int maxPasswordLength = 72;
   static const int minNameLength = 2;
   static const int maxNameLength = 100;
   static const int minPhoneLength = 10;

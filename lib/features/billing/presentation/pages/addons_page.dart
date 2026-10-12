@@ -34,7 +34,7 @@ class AddonsPage extends StatelessWidget {
       maxContentWidth: kBillingWideWidth,
       body: BillingAsync<List<AddonEntity>>(
         load: repository.getAddons,
-        builder: (context, addons, _) {
+        builder: (context, addons, reload) {
           final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
           if (addons.isEmpty) {
             return AdaptiveContentWidth(
@@ -63,7 +63,11 @@ class AddonsPage extends StatelessWidget {
                   minTileWidth: 340,
                   children: [
                     for (final addon in addons)
-                      _AddonCard(key: ValueKey(addon.versionId), addon: addon),
+                      _AddonCard(
+                        key: ValueKey(addon.versionId),
+                        addon: addon,
+                        onRefused: reload,
+                      ),
                   ],
                 ),
                 SizedBox(height: 16.h),
@@ -80,7 +84,11 @@ class AddonsPage extends StatelessWidget {
               _PageNote(text: l10n.addonsIntro),
               SizedBox(height: 12.h),
               for (final addon in addons) ...[
-                _AddonCard(key: ValueKey(addon.versionId), addon: addon),
+                _AddonCard(
+                  key: ValueKey(addon.versionId),
+                  addon: addon,
+                  onRefused: reload,
+                ),
                 SizedBox(height: 10.h),
               ],
               SizedBox(height: 2.h),
@@ -131,9 +139,13 @@ class _PageNote extends StatelessWidget {
 }
 
 class _AddonCard extends StatefulWidget {
-  const _AddonCard({super.key, required this.addon});
+  const _AddonCard({super.key, required this.addon, required this.onRefused});
 
   final AddonEntity addon;
+
+  /// Reads the list again: a purchase was refused because what is on sale,
+  /// or what can be bought now, is no longer what this page shows.
+  final VoidCallback onRefused;
 
   @override
   State<_AddonCard> createState() => _AddonCardState();
@@ -155,6 +167,7 @@ class _AddonCardState extends State<_AddonCard> {
       context,
       quote: () => repository.getAddonQuote(addon.versionId, quantity),
       request: () => repository.requestAddons(addon.versionId, quantity),
+      onRefused: widget.onRefused,
     );
     if (result != null && mounted) handleQuoteSheetResult(context, result);
   }

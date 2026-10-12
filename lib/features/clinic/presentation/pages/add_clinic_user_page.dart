@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/custom_widgets/adaptive_content_width.dart';
 import 'package:dental_clinic_app/custom_widgets/adaptive_page_scaffold.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
@@ -20,7 +21,11 @@ import 'package:go_router/go_router.dart';
 /// [ClinicUsersPage]); a 409 here is only the race where the last seat went
 /// in the meantime, and its message is shown as the server wrote it.
 class AddClinicUserPage extends StatefulWidget {
-  const AddClinicUserPage({super.key});
+  const AddClinicUserPage({super.key, this.canGrantAdmin = true});
+
+  /// Whether the ADMIN role is offered. Only whoever runs the clinic - its
+  /// owner or an admin - may give it; from anyone else it is a 403.
+  final bool canGrantAdmin;
 
   @override
   State<AddClinicUserPage> createState() => _AddClinicUserPageState();
@@ -76,8 +81,8 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
       _firstNameCtrl.text.trim().isNotEmpty &&
       _lastNameCtrl.text.trim().isNotEmpty &&
       _emailCtrl.text.trim().isNotEmpty &&
-      _mobileCtrl.text.trim().isNotEmpty &&
-      _passwordCtrl.text.length >= 8 &&
+      MobileNumber.isValid(_mobileCtrl.text) &&
+      PasswordRules.isValid(_passwordCtrl.text) &&
       _passwordCtrl.text == _confirmCtrl.text &&
       _selectedRoles.isNotEmpty &&
       (!_isDentistSelected || _selectedSpecialty != null);
@@ -88,7 +93,8 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
             firstName: _firstNameCtrl.text.trim(),
             lastName: _lastNameCtrl.text.trim(),
             email: _emailCtrl.text.trim(),
-            mobileNumber: _mobileCtrl.text.trim(),
+            // The way the server stores it: digits 0-9, no spaces or dashes.
+            mobileNumber: MobileNumber.clean(_mobileCtrl.text),
             password: _passwordCtrl.text,
             passwordConfirmation: _confirmCtrl.text,
             roles: _selectedRoles.toList(),
@@ -201,6 +207,12 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                               controller: _mobileCtrl,
                               keyboardType: TextInputType.phone,
                               textDirection: TextDirection.ltr,
+                              // Said as it is typed, and only once there is
+                              // something to judge.
+                              errorText: _mobileCtrl.text.trim().isEmpty ||
+                                      MobileNumber.isValid(_mobileCtrl.text)
+                                  ? null
+                                  : l10n.mobileInvalid,
                               onChanged: () => setState(() {}),
                             ),
                           ],
@@ -221,6 +233,12 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                               required: true,
                               controller: _passwordCtrl,
                               obscureText: _obscurePassword,
+                              errorText: _passwordCtrl.text.isEmpty
+                                  ? null
+                                  : PasswordRules.problem(
+                                      l10n,
+                                      _passwordCtrl.text,
+                                    ),
                               onChanged: () => setState(() {}),
                               suffix: _RevealToggle(
                                 obscured: _obscurePassword,
@@ -234,6 +252,10 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                               required: true,
                               controller: _confirmCtrl,
                               obscureText: _obscureConfirm,
+                              errorText: _confirmCtrl.text.isEmpty ||
+                                      _confirmCtrl.text == _passwordCtrl.text
+                                  ? null
+                                  : l10n.passwordsDoNotMatch,
                               onChanged: () => setState(() {}),
                               suffix: _RevealToggle(
                                 obscured: _obscureConfirm,
@@ -253,7 +275,12 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                         Wrap(
                           spacing: 8.w,
                           runSpacing: 8.h,
-                          children: _allRoles.map((role) {
+                          children: _allRoles
+                              .where(
+                                (role) =>
+                                    role != 'ADMIN' || widget.canGrantAdmin,
+                              )
+                              .map((role) {
                             final selected = _selectedRoles.contains(role);
                             return GestureDetector(
                               onTap: () => setState(() {

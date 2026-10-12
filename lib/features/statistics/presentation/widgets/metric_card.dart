@@ -191,18 +191,13 @@ class _Body extends StatelessWidget {
           child: const Center(child: CircularProgressIndicator()),
         );
       case MetricStatus.failure:
-        return ChartMessage(
-          icon: Icons.error_outline_rounded,
-          text: metricState.error ?? 'Failed to load',
-          action: TextButton(
-            onPressed: () => context
-                .read<StatisticsDashboardBloc>()
-                .add(DashboardMetricRetried(metric.key)),
-            child: const Text('Retry'),
-          ),
-        );
+        return _failed(context, metricState.error ?? 'Failed to load');
       case MetricStatus.success:
         final result = metricState.result;
+        // One metric can fail inside an answer that is otherwise good. It
+        // says so in a sentence of its own, shown here rather than as "no
+        // data" - which would read as a quiet month.
+        if (result?.error != null) return _failed(context, result!.error!);
         if (result == null) {
           return const ChartMessage(
             icon: Icons.inbox_outlined,
@@ -211,5 +206,18 @@ class _Body extends StatelessWidget {
         }
         return MetricChart(metric: metric, result: result);
     }
+  }
+
+  Widget _failed(BuildContext context, String text) {
+    return ChartMessage(
+      icon: Icons.error_outline_rounded,
+      text: text,
+      action: TextButton(
+        onPressed: () => context
+            .read<StatisticsDashboardBloc>()
+            .add(DashboardMetricRetried(metric.key)),
+        child: const Text('Retry'),
+      ),
+    );
   }
 }

@@ -25,6 +25,8 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/services/permissions/clinic_permissions_bloc.dart';
+import 'package:dental_clinic_app/services/permissions/permission_slugs.dart';
 import 'package:go_router/go_router.dart';
 
 class MyClinicsPage extends StatelessWidget {
@@ -32,7 +34,13 @@ class MyClinicsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = getIt<UserStorage>().isAdmin;
+    // Inviting is the staff feature's, read from the permissions list - the
+    // cached role answers only until the list has loaded.
+    final isAdmin = getIt<ClinicPermissionsBloc>().state.maybeWhen(
+      loaded: (permissions) =>
+          permissions.hasFeature(PermissionSlugs.manageStaff),
+      orElse: () => getIt<UserStorage>().isAdmin,
+    );
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -105,6 +113,7 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
               prev.sendSuccess != curr.sendSuccess ||
               prev.acceptSuccess != curr.acceptSuccess ||
               prev.rejectSuccess != curr.rejectSuccess ||
+              prev.actionError != curr.actionError ||
               prev.error != curr.error,
           listener: (context, state) {
             if (state.sendSuccess) {
@@ -130,7 +139,16 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
                 message: l10n.invitationDeclinedMessage,
               );
             }
-            if (state.error != null) {
+            // A refused action is the server's own sentence: already a
+            // member, declined in the last 7 days, no seats left, too many
+            // invitations this hour, an email not verified yet.
+            if (state.actionError != null) {
+              AppSnackbar.showError(
+                context,
+                title: l10n.error,
+                message: state.actionError,
+              );
+            } else if (state.error != null) {
               AppSnackbar.showError(
                 context,
                 title: l10n.error,

@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -78,7 +79,11 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         _imageUrl != _initialImageUrl;
   }
 
-  void _onFieldChanged() => setState(() {});
+  /// Shown under the number once a save was refused for it; cleared as soon
+  /// as it is edited again.
+  String? _phoneError;
+
+  void _onFieldChanged() => setState(() => _phoneError = null);
 
   @override
   void initState() {
@@ -128,12 +133,17 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   }
 
   UserProfileEntity _buildEntity() {
+    final phone = _phoneController.text.trim();
+    final phoneEdited = phone != _initialPhone;
     return UserProfileEntity(
       id: _profileId,
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
+      // An edited number goes out, and comes back, the way the server
+      // stores it: digits 0-9, no spaces or dashes.
+      phone: phoneEdited ? MobileNumber.clean(phone) : phone,
+      phoneEdited: phoneEdited,
       specialtyId: _selectedSpecialtyId,
       specialtyName: _selectedSpecialtyName,
       imageId: _uploadedImageId,
@@ -143,6 +153,15 @@ class _EditProfileContentState extends State<_EditProfileContent> {
 
   void _onSave() {
     final entity = _buildEntity();
+    // Checked only when it was edited: a number left as loaded is not sent.
+    if (entity.phoneEdited &&
+        entity.phone.isNotEmpty &&
+        !MobileNumber.isValid(entity.phone)) {
+      setState(
+        () => _phoneError = AppLocalizations.of(context)!.mobileInvalid,
+      );
+      return;
+    }
     context.read<EditProfileBloc>().add(EditProfileEvent.updateProfile(entity));
   }
 
@@ -316,6 +335,8 @@ class _EditProfileContentState extends State<_EditProfileContent> {
           },
           saved: (profile) {
             AppLoadingDialog.dismiss(context);
+            // Show the number as it was stored.
+            if (profile.phoneEdited) _phoneController.text = profile.phone;
             // Re-snapshot so save button disables again
             setState(() {
               _initialFirstName = _firstNameController.text.trim();
@@ -612,6 +633,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       label: l10n.phone,
       controller: _phoneController,
       keyboardType: TextInputType.phone,
+      errorText: _phoneError,
     );
 
     return FormSectionCard(

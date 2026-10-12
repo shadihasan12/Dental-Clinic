@@ -23183,6 +23183,16 @@ mixin _$AuthState {
   /// cannot act on.
   bool get signupSessionExpired => throw _privateConstructorUsedError;
   int get otpSecondsRemaining => throw _privateConstructorUsedError;
+
+  /// Goes up every time a wait begins: a code went out, or the server
+  /// said how long to wait before asking again. The code screens restart
+  /// their countdown on it - the seconds alone can be the same twice in a
+  /// row (300, then 300), which is no change to listen for.
+  int get otpWaitTick => throw _privateConstructorUsedError;
+
+  /// Wrong answers given to the code now in hand. The server ends a code
+  /// at the fifth; see [AuthStateValidation.isOtpCodeSpent].
+  int get otpFailedAttempts => throw _privateConstructorUsedError;
   bool get canResendOtp =>
       throw _privateConstructorUsedError; // Forgot password fields
   String get forgotPasswordEmail => throw _privateConstructorUsedError;
@@ -23197,7 +23207,13 @@ mixin _$AuthState {
   bool get isResetPasswordLoading => throw _privateConstructorUsedError;
   bool get isResetPasswordSuccess => throw _privateConstructorUsedError;
   String? get resetPasswordError => throw _privateConstructorUsedError;
-  String? get resetPasswordSessionId =>
+  String? get resetPasswordSessionId => throw _privateConstructorUsedError;
+
+  /// The server refused the reset because the session behind
+  /// [resetPasswordSessionId] is used up or has run out. As at sign-up,
+  /// only a new code can fix that, so the page sends the user back for
+  /// one.
+  bool get resetSessionExpired =>
       throw _privateConstructorUsedError; // Authenticated user data
   UserEntity? get currentUser => throw _privateConstructorUsedError;
   List<ClinicMembershipEntity> get memberships =>
@@ -23261,6 +23277,8 @@ abstract class $AuthStateCopyWith<$Res> {
     String? sessionId,
     bool signupSessionExpired,
     int otpSecondsRemaining,
+    int otpWaitTick,
+    int otpFailedAttempts,
     bool canResendOtp,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
@@ -23274,6 +23292,7 @@ abstract class $AuthStateCopyWith<$Res> {
     bool isResetPasswordSuccess,
     String? resetPasswordError,
     String? resetPasswordSessionId,
+    bool resetSessionExpired,
     UserEntity? currentUser,
     List<ClinicMembershipEntity> memberships,
     List<InvitationEntity> pendingInvitations,
@@ -23341,6 +23360,8 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? sessionId = freezed,
     Object? signupSessionExpired = null,
     Object? otpSecondsRemaining = null,
+    Object? otpWaitTick = null,
+    Object? otpFailedAttempts = null,
     Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
@@ -23354,6 +23375,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
     Object? isResetPasswordSuccess = null,
     Object? resetPasswordError = freezed,
     Object? resetPasswordSessionId = freezed,
+    Object? resetSessionExpired = null,
     Object? currentUser = freezed,
     Object? memberships = null,
     Object? pendingInvitations = null,
@@ -23513,6 +23535,14 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.otpSecondsRemaining
                 : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
                       as int,
+            otpWaitTick: null == otpWaitTick
+                ? _value.otpWaitTick
+                : otpWaitTick // ignore: cast_nullable_to_non_nullable
+                      as int,
+            otpFailedAttempts: null == otpFailedAttempts
+                ? _value.otpFailedAttempts
+                : otpFailedAttempts // ignore: cast_nullable_to_non_nullable
+                      as int,
             canResendOtp: null == canResendOtp
                 ? _value.canResendOtp
                 : canResendOtp // ignore: cast_nullable_to_non_nullable
@@ -23565,6 +23595,10 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
                 ? _value.resetPasswordSessionId
                 : resetPasswordSessionId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            resetSessionExpired: null == resetSessionExpired
+                ? _value.resetSessionExpired
+                : resetSessionExpired // ignore: cast_nullable_to_non_nullable
+                      as bool,
             currentUser: freezed == currentUser
                 ? _value.currentUser
                 : currentUser // ignore: cast_nullable_to_non_nullable
@@ -23702,6 +23736,8 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     String? sessionId,
     bool signupSessionExpired,
     int otpSecondsRemaining,
+    int otpWaitTick,
+    int otpFailedAttempts,
     bool canResendOtp,
     String forgotPasswordEmail,
     bool isForgotPasswordLoading,
@@ -23715,6 +23751,7 @@ abstract class _$$AuthStateImplCopyWith<$Res>
     bool isResetPasswordSuccess,
     String? resetPasswordError,
     String? resetPasswordSessionId,
+    bool resetSessionExpired,
     UserEntity? currentUser,
     List<ClinicMembershipEntity> memberships,
     List<InvitationEntity> pendingInvitations,
@@ -23785,6 +23822,8 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? sessionId = freezed,
     Object? signupSessionExpired = null,
     Object? otpSecondsRemaining = null,
+    Object? otpWaitTick = null,
+    Object? otpFailedAttempts = null,
     Object? canResendOtp = null,
     Object? forgotPasswordEmail = null,
     Object? isForgotPasswordLoading = null,
@@ -23798,6 +23837,7 @@ class __$$AuthStateImplCopyWithImpl<$Res>
     Object? isResetPasswordSuccess = null,
     Object? resetPasswordError = freezed,
     Object? resetPasswordSessionId = freezed,
+    Object? resetSessionExpired = null,
     Object? currentUser = freezed,
     Object? memberships = null,
     Object? pendingInvitations = null,
@@ -23956,6 +23996,14 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.otpSecondsRemaining
             : otpSecondsRemaining // ignore: cast_nullable_to_non_nullable
                   as int,
+        otpWaitTick: null == otpWaitTick
+            ? _value.otpWaitTick
+            : otpWaitTick // ignore: cast_nullable_to_non_nullable
+                  as int,
+        otpFailedAttempts: null == otpFailedAttempts
+            ? _value.otpFailedAttempts
+            : otpFailedAttempts // ignore: cast_nullable_to_non_nullable
+                  as int,
         canResendOtp: null == canResendOtp
             ? _value.canResendOtp
             : canResendOtp // ignore: cast_nullable_to_non_nullable
@@ -24008,6 +24056,10 @@ class __$$AuthStateImplCopyWithImpl<$Res>
             ? _value.resetPasswordSessionId
             : resetPasswordSessionId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        resetSessionExpired: null == resetSessionExpired
+            ? _value.resetSessionExpired
+            : resetSessionExpired // ignore: cast_nullable_to_non_nullable
+                  as bool,
         currentUser: freezed == currentUser
             ? _value.currentUser
             : currentUser // ignore: cast_nullable_to_non_nullable
@@ -24082,6 +24134,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     this.sessionId = null,
     this.signupSessionExpired = false,
     this.otpSecondsRemaining = 0,
+    this.otpWaitTick = 0,
+    this.otpFailedAttempts = 0,
     this.canResendOtp = false,
     this.forgotPasswordEmail = '',
     this.isForgotPasswordLoading = false,
@@ -24095,6 +24149,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     this.isResetPasswordSuccess = false,
     this.resetPasswordError = null,
     this.resetPasswordSessionId = null,
+    this.resetSessionExpired = false,
     this.currentUser = null,
     final List<ClinicMembershipEntity> memberships = const [],
     final List<InvitationEntity> pendingInvitations = const [],
@@ -24255,6 +24310,20 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   @override
   @JsonKey()
   final int otpSecondsRemaining;
+
+  /// Goes up every time a wait begins: a code went out, or the server
+  /// said how long to wait before asking again. The code screens restart
+  /// their countdown on it - the seconds alone can be the same twice in a
+  /// row (300, then 300), which is no change to listen for.
+  @override
+  @JsonKey()
+  final int otpWaitTick;
+
+  /// Wrong answers given to the code now in hand. The server ends a code
+  /// at the fifth; see [AuthStateValidation.isOtpCodeSpent].
+  @override
+  @JsonKey()
+  final int otpFailedAttempts;
   @override
   @JsonKey()
   final bool canResendOtp;
@@ -24296,6 +24365,14 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
   @override
   @JsonKey()
   final String? resetPasswordSessionId;
+
+  /// The server refused the reset because the session behind
+  /// [resetPasswordSessionId] is used up or has run out. As at sign-up,
+  /// only a new code can fix that, so the page sends the user back for
+  /// one.
+  @override
+  @JsonKey()
+  final bool resetSessionExpired;
   // Authenticated user data
   @override
   @JsonKey()
@@ -24336,7 +24413,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicType: $clinicType, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, signupSessionExpired: $signupSessionExpired, otpSecondsRemaining: $otpSecondsRemaining, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
+    return 'AuthState(loginEmail: $loginEmail, loginPassword: $loginPassword, isLoginPasswordVisible: $isLoginPasswordVisible, isLoginLoading: $isLoginLoading, loginError: $loginError, signupFirstName: $signupFirstName, signupLastName: $signupLastName, signupEmail: $signupEmail, signupPassword: $signupPassword, signupConfirmPassword: $signupConfirmPassword, isSignupPasswordVisible: $isSignupPasswordVisible, isSignupConfirmPasswordVisible: $isSignupConfirmPasswordVisible, isSignupLoading: $isSignupLoading, signupError: $signupError, signupLicenseNumber: $signupLicenseNumber, signupSpecialization: $signupSpecialization, signupLocation: $signupLocation, specialties: $specialties, searchedLocations: $searchedLocations, plans: $plans, isLoadingSpecialties: $isLoadingSpecialties, isLoadingPlans: $isLoadingPlans, isSearchingLocations: $isSearchingLocations, selectedSpecialty: $selectedSpecialty, selectedLocation: $selectedLocation, selectedPlan: $selectedPlan, clinicName: $clinicName, clinicType: $clinicType, clinicAddress: $clinicAddress, mobileNumber: $mobileNumber, otpCode: $otpCode, isOtpLoading: $isOtpLoading, isOtpVerifying: $isOtpVerifying, otpError: $otpError, sessionId: $sessionId, signupSessionExpired: $signupSessionExpired, otpSecondsRemaining: $otpSecondsRemaining, otpWaitTick: $otpWaitTick, otpFailedAttempts: $otpFailedAttempts, canResendOtp: $canResendOtp, forgotPasswordEmail: $forgotPasswordEmail, isForgotPasswordLoading: $isForgotPasswordLoading, isForgotPasswordSuccess: $isForgotPasswordSuccess, forgotPasswordError: $forgotPasswordError, resetPasswordNew: $resetPasswordNew, resetPasswordConfirm: $resetPasswordConfirm, isResetPasswordVisible: $isResetPasswordVisible, isResetPasswordConfirmVisible: $isResetPasswordConfirmVisible, isResetPasswordLoading: $isResetPasswordLoading, isResetPasswordSuccess: $isResetPasswordSuccess, resetPasswordError: $resetPasswordError, resetPasswordSessionId: $resetPasswordSessionId, resetSessionExpired: $resetSessionExpired, currentUser: $currentUser, memberships: $memberships, pendingInvitations: $pendingInvitations, activeClinicId: $activeClinicId, status: $status, needsEmailVerification: $needsEmailVerification, emailVerificationForLogin: $emailVerificationForLogin)';
   }
 
   @override
@@ -24390,6 +24467,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       ..add(DiagnosticsProperty('sessionId', sessionId))
       ..add(DiagnosticsProperty('signupSessionExpired', signupSessionExpired))
       ..add(DiagnosticsProperty('otpSecondsRemaining', otpSecondsRemaining))
+      ..add(DiagnosticsProperty('otpWaitTick', otpWaitTick))
+      ..add(DiagnosticsProperty('otpFailedAttempts', otpFailedAttempts))
       ..add(DiagnosticsProperty('canResendOtp', canResendOtp))
       ..add(DiagnosticsProperty('forgotPasswordEmail', forgotPasswordEmail))
       ..add(
@@ -24420,6 +24499,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
       ..add(
         DiagnosticsProperty('resetPasswordSessionId', resetPasswordSessionId),
       )
+      ..add(DiagnosticsProperty('resetSessionExpired', resetSessionExpired))
       ..add(DiagnosticsProperty('currentUser', currentUser))
       ..add(DiagnosticsProperty('memberships', memberships))
       ..add(DiagnosticsProperty('pendingInvitations', pendingInvitations))
@@ -24524,6 +24604,10 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
                 other.signupSessionExpired == signupSessionExpired) &&
             (identical(other.otpSecondsRemaining, otpSecondsRemaining) ||
                 other.otpSecondsRemaining == otpSecondsRemaining) &&
+            (identical(other.otpWaitTick, otpWaitTick) ||
+                other.otpWaitTick == otpWaitTick) &&
+            (identical(other.otpFailedAttempts, otpFailedAttempts) ||
+                other.otpFailedAttempts == otpFailedAttempts) &&
             (identical(other.canResendOtp, canResendOtp) ||
                 other.canResendOtp == canResendOtp) &&
             (identical(other.forgotPasswordEmail, forgotPasswordEmail) ||
@@ -24560,6 +24644,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
                 other.resetPasswordError == resetPasswordError) &&
             (identical(other.resetPasswordSessionId, resetPasswordSessionId) ||
                 other.resetPasswordSessionId == resetPasswordSessionId) &&
+            (identical(other.resetSessionExpired, resetSessionExpired) ||
+                other.resetSessionExpired == resetSessionExpired) &&
             (identical(other.currentUser, currentUser) ||
                 other.currentUser == currentUser) &&
             const DeepCollectionEquality().equals(
@@ -24622,6 +24708,8 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     sessionId,
     signupSessionExpired,
     otpSecondsRemaining,
+    otpWaitTick,
+    otpFailedAttempts,
     canResendOtp,
     forgotPasswordEmail,
     isForgotPasswordLoading,
@@ -24635,6 +24723,7 @@ class _$AuthStateImpl with DiagnosticableTreeMixin implements _AuthState {
     isResetPasswordSuccess,
     resetPasswordError,
     resetPasswordSessionId,
+    resetSessionExpired,
     currentUser,
     const DeepCollectionEquality().hash(_memberships),
     const DeepCollectionEquality().hash(_pendingInvitations),
@@ -24692,6 +24781,8 @@ abstract class _AuthState implements AuthState {
     final String? sessionId,
     final bool signupSessionExpired,
     final int otpSecondsRemaining,
+    final int otpWaitTick,
+    final int otpFailedAttempts,
     final bool canResendOtp,
     final String forgotPasswordEmail,
     final bool isForgotPasswordLoading,
@@ -24705,6 +24796,7 @@ abstract class _AuthState implements AuthState {
     final bool isResetPasswordSuccess,
     final String? resetPasswordError,
     final String? resetPasswordSessionId,
+    final bool resetSessionExpired,
     final UserEntity? currentUser,
     final List<ClinicMembershipEntity> memberships,
     final List<InvitationEntity> pendingInvitations,
@@ -24797,6 +24889,18 @@ abstract class _AuthState implements AuthState {
   bool get signupSessionExpired;
   @override
   int get otpSecondsRemaining;
+
+  /// Goes up every time a wait begins: a code went out, or the server
+  /// said how long to wait before asking again. The code screens restart
+  /// their countdown on it - the seconds alone can be the same twice in a
+  /// row (300, then 300), which is no change to listen for.
+  @override
+  int get otpWaitTick;
+
+  /// Wrong answers given to the code now in hand. The server ends a code
+  /// at the fifth; see [AuthStateValidation.isOtpCodeSpent].
+  @override
+  int get otpFailedAttempts;
   @override
   bool get canResendOtp; // Forgot password fields
   @override
@@ -24822,7 +24926,14 @@ abstract class _AuthState implements AuthState {
   @override
   String? get resetPasswordError;
   @override
-  String? get resetPasswordSessionId; // Authenticated user data
+  String? get resetPasswordSessionId;
+
+  /// The server refused the reset because the session behind
+  /// [resetPasswordSessionId] is used up or has run out. As at sign-up,
+  /// only a new code can fix that, so the page sends the user back for
+  /// one.
+  @override
+  bool get resetSessionExpired; // Authenticated user data
   @override
   UserEntity? get currentUser;
   @override

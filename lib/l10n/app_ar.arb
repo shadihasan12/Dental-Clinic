@@ -611,6 +611,8 @@
   "verifyYourEmail": "تحقق من بريدك الإلكتروني",
   "enterCodeSentToEmail": "أدخل الرمز المرسل إلى بريدك الإلكتروني",
   "sentVerificationCode": "لقد أرسلنا رمز تحقق مكون من 6 أرقام",
+  "signupCodeOnItsWay": "إذا كان هذا البريد جديداً فسيصلك رمز مكون من 6 أرقام. لديك حساب بالفعل؟ سجّل الدخول، أو استخدم «نسيت كلمة المرور».",
+  "otpCodeSpent": "محاولات خاطئة كثيرة، ولم يعد هذا الرمز صالحاً. اطلب رمزاً جديداً.",
   "sendingCode": "جاري إرسال الرمز...",
   "resendCodeIn": "إعادة الإرسال خلال {seconds} ثانية",
   "@resendCodeIn": {
@@ -720,6 +722,10 @@
   "passwordResetSuccessMessage": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة",
   "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
   "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  "passwordTooLong": "يجب ألا تتجاوز كلمة المرور 72 حرفاً",
+  "passwordNeedsLetter": "يجب أن تحتوي كلمة المرور على حرف واحد على الأقل",
+  "passwordNeedsDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+  "mobileInvalid": "أدخل رقم هاتف صحيحاً: من 7 إلى 19 رقماً، ويمكن أن يبدأ بـ +",
   "caseTitleOptional": "عنوان الحالة (اختياري)",
   "caseTitleHint": "أدخل عنوان للحالة المكتملة",
   "caseMarkedAsFinished": "تم إنهاء الحالة",
@@ -1234,6 +1240,7 @@
   "errorRequestTimeout": "انتهت مهلة الاتصال",
   "errorNoInternet": "لا يوجد اتصال بالإنترنت",
   "errorConflict": "يتعارض هذا مع بيانات محفوظة مسبقًا",
+  "errorTooManyRequests": "طلبات كثيرة جداً. يرجى الانتظار قليلاً ثم المحاولة مجدداً",
   "errorSendTimeout": "استغرق الخادم وقتًا طويلًا للرد",
   "errorUnableToProcess": "تعذرت معالجة البيانات",
   "errorNotAcceptable": "رفض الخادم الطلب",
@@ -1530,6 +1537,17 @@
       }
     }
   },
+  "quoteRenewalPeriodIfPaidNow": "إذا دُفعت اليوم، تمتد من {start} إلى {end}.",
+  "@quoteRenewalPeriodIfPaidNow": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
   "quoteInvoiceExplainer": "التأكيد يُصدر فاتورة. لا يتغير شيء حتى تُدفع ويؤكد فريقنا الحوالة.",
   "requestInvoiceAction": "إصدار الفاتورة",
   "noPaymentMethodsTitle": "لا توجد جهة دفع بعد",
@@ -1539,8 +1557,38 @@
   "reportTransferTitle": "الإبلاغ عن حوالة",
   "reportTransferExplainer": "سنطابق الحوالة مع حسابنا. قد يستغرق ذلك بضع ساعات، وسيصلك إشعار عند التأكيد.",
   "paymentDestination": "أُرسلت إلى",
+  "paymentAccountRequired": "اختر الحساب الذي أرسلت الحوالة إليه",
+  "paymentTooSmallInCaseCurrency": "هذا المبلغ يقل عن 0.01 بعملة الحالة. تحقق من المبلغ وسعر الصرف.",
+  "paymentRecordedBy": "سجّلها {name}",
+  "@paymentRecordedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentEditedBy": "عدّلها {name}",
+  "@paymentEditedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deletedUser": "مستخدم محذوف",
+  "appointmentMustEndSameDay": "يجب أن ينتهي الموعد في نفس اليوم الذي يبدأ فيه. اختر وقتاً أبكر أو مدة أقصر.",
+  "amountInCaseCurrencyLabel": "المبلغ بعملة الحالة",
+  "paymentMethodNoAccounts": "لم يتم إعداد أي حساب لهذه الطريقة بعد. اختر طريقة أخرى، أو تواصل مع الدعم.",
   "transferDetailsTitle": "تفاصيل الحوالة",
   "amountSent": "المبلغ المرسل",
+  "amountAtMost": "{max} كحد أقصى",
+  "@amountAtMost": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "bankName": "البنك",
   "bankNameOptional": "اسم البنك (اختياري)",
   "transferDate": "تاريخ الإرسال",
@@ -1796,6 +1844,8 @@
   "chooseThisPlan": "اختر هذه الباقة",
   "signupSessionExpiredMessage": "انتهت صلاحية جلسة التسجيل. تحقّق من بريدك الإلكتروني مرة أخرى لمتابعة إنشاء حسابك.",
   "verifyEmailAgainAction": "التحقق من البريد مجدداً",
+  "resetSessionExpiredMessage": "انتهت صلاحية طلب إعادة تعيين كلمة المرور. اطلب رمزاً جديداً لتعيين كلمة المرور.",
+  "emailChangeSessionExpiredMessage": "انتهت صلاحية طلب تغيير البريد الإلكتروني. ابدأ من جديد للحصول على رمز جديد.",
   "membersLimitTitle": "تم بلوغ حد الأعضاء",
   "membersLimitMessage": "وصلت هذه العيادة إلى الحد الأقصى للأعضاء. أزل عضواً لإضافة شخص جديد."
 }

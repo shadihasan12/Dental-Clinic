@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/edit_profile/domain/entities/user_profile_entity.dart';
 
 class UserProfileModel {
@@ -6,6 +7,7 @@ class UserProfileModel {
   final String lastName;
   final String email;
   final String phone;
+  final bool phoneEdited;
   final String? specialtyId;
   final String? specialtyName;
   final String? imageId;
@@ -17,6 +19,7 @@ class UserProfileModel {
     required this.lastName,
     required this.email,
     required this.phone,
+    this.phoneEdited = true,
     this.specialtyId,
     this.specialtyName,
     this.imageId,
@@ -41,7 +44,8 @@ class UserProfileModel {
     final body = <String, dynamic>{
       'first_name': firstName,
       'last_name': lastName,
-      'mobile_number': phone,
+      // Only when the user changed it, and the way the server stores it.
+      if (phoneEdited) 'mobile_number': MobileNumber.clean(phone),
     };
     if (specialtyId != null) {
       body['specialty_id'] = specialtyId;
@@ -59,6 +63,7 @@ class UserProfileModel {
       lastName: entity.lastName,
       email: entity.email,
       phone: entity.phone,
+      phoneEdited: entity.phoneEdited,
       specialtyId: entity.specialtyId,
       specialtyName: entity.specialtyName,
       imageId: entity.imageId,
@@ -73,6 +78,7 @@ class UserProfileModel {
       lastName: lastName,
       email: email,
       phone: phone,
+      phoneEdited: phoneEdited,
       specialtyId: specialtyId,
       specialtyName: specialtyName,
       imageId: imageId,

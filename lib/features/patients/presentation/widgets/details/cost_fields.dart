@@ -266,8 +266,10 @@ class _CostFieldsState extends State<CostFields> {
           ? EdgeInsets.symmetric(horizontal: 14.w, vertical: 17.h)
           : null,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      // Eight digits and two decimals: the server takes a cost up to
+      // 99,999,999.99.
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+        FilteringTextInputFormatter.allow(RegExp(r'^\d{1,8}\.?\d{0,2}')),
       ],
     );
   }

@@ -68,6 +68,7 @@ class _EditPatientPageState extends State<EditPatientPage> {
       AppLocalizations.of(context)!,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
+      phone: _phoneController.text,
     );
   }
 

@@ -14,6 +14,10 @@ class StatisticResultModel {
       type: StatisticChartType.fromApi(json['type'] as String?),
       data: json['data'],
       meta: (json['meta'] as Map<String, dynamic>?) ?? const {},
+      error: _sentence(json['error']),
     );
   }
+
+  static String? _sentence(Object? value) =>
+      value is String && value.trim().isNotEmpty ? value : null;
 }

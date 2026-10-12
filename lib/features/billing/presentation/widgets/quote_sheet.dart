@@ -39,17 +39,25 @@ class QuoteSheetResult {
 /// is false the server's `reason` (and, when the clinic does not fit, what it
 /// is over) is shown in its place, and the price stays visible - the owner is
 /// allowed to know what it would cost.
+///
+/// A request refused because what was priced no longer holds - the
+/// subscription changed since the quote - is priced again with [quote], and
+/// the new figures are shown under the server's sentence, to be asked for
+/// once more. [onRefused] is called then, and when what was priced is no
+/// longer on sale, for a page that lists what can be bought to read it again.
 Future<QuoteSheetResult?> showQuoteSheet(
   BuildContext context, {
   required Future<Either<NetworkExceptions, QuoteEntity>> Function() quote,
   required Future<Either<NetworkExceptions, BillingRequestResult>> Function()
       request,
+  VoidCallback? onRefused,
 }) {
   return showAppSheet<QuoteSheetResult>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => _QuoteSheet(quote: quote, request: request),
+    builder: (_) =>
+        _QuoteSheet(quote: quote, request: request, onRefused: onRefused),
   );
 }
 
@@ -97,11 +105,16 @@ void handleQuoteSheetResult(BuildContext context, QuoteSheetResult result) {
 }
 
 class _QuoteSheet extends StatefulWidget {
-  const _QuoteSheet({required this.quote, required this.request});
+  const _QuoteSheet({
+    required this.quote,
+    required this.request,
+    this.onRefused,
+  });
 
   final Future<Either<NetworkExceptions, QuoteEntity>> Function() quote;
   final Future<Either<NetworkExceptions, BillingRequestResult>> Function()
       request;
+  final VoidCallback? onRefused;
 
   @override
   State<_QuoteSheet> createState() => _QuoteSheetState();
@@ -114,8 +127,13 @@ class _QuoteSheetState extends State<_QuoteSheet> {
   NetworkExceptions? _loadError;
   bool _requesting = false;
 
-  /// A refusal to show in place of the button, verbatim.
+  /// A refusal to show, verbatim.
   String? _refusal;
+
+  /// False once a request failed and the purchase was not priced again
+  /// after it: the figures on screen are then older than the refusal, and
+  /// nothing more is asked for against them.
+  bool _priceIsCurrent = true;
 
   /// Set when the request was refused because an invoice is already open.
   InvoiceEntity? _openInvoice;
@@ -135,6 +153,9 @@ class _QuoteSheetState extends State<_QuoteSheet> {
   }
 
   Future<void> _request() async {
+    // Two requests at the same moment get one invoice and one refusal: the
+    // second tap is dropped here, before the button has redrawn as busy.
+    if (_requesting) return;
     setState(() => _requesting = true);
     final result = await widget.request();
     if (!mounted) return;
@@ -150,21 +171,37 @@ class _QuoteSheetState extends State<_QuoteSheet> {
     final isConflict =
         failure.maybeWhen(conflict: (_) => true, orElse: () => false);
     InvoiceEntity? open;
+    QuoteEntity? requoted;
     if (isConflict) {
       // One open invoice per clinic: if that is why, the owner needs that
-      // invoice, not a second one. Other 409s - the clinic does not fit, the
-      // next cycle is starting this minute - are shown as they are.
+      // invoice, not a second one.
       final invoices = await _repository.getInvoices();
+      if (!mounted) return;
       open = invoices.fold(
         (_) => null,
         (list) => list.where((i) => i.isOpen && !i.isRefund).firstOrNull,
       );
+      if (open == null) {
+        // Any other 409 says that what was priced no longer holds - first of
+        // all, that the subscription changed since the quote. The body has
+        // only a sentence to tell them apart by, so each is priced again: the
+        // new quote either has figures to ask for once more, or says in its
+        // `reason` why it cannot be asked for.
+        widget.onRefused?.call();
+        requoted = (await widget.quote()).fold((_) => null, (q) => q);
+      }
+    } else if (failure.maybeWhen(notFound: (_) => true, orElse: () => false)) {
+      // No longer on sale: nothing to price again, but the list it was picked
+      // from is out of date.
+      widget.onRefused?.call();
     }
     if (!mounted) return;
     setState(() {
       _requesting = false;
       _refusal = message;
       _openInvoice = open;
+      if (requoted != null) _quote = requoted;
+      _priceIsCurrent = requoted != null;
     });
   }
 
@@ -190,7 +227,7 @@ class _QuoteSheetState extends State<_QuoteSheet> {
           QuoteSheetResult.alreadyOpen(_openInvoice!),
         ),
       );
-    } else if (quote != null && quote.canRequest && _refusal == null) {
+    } else if (quote != null && quote.canRequest && _priceIsCurrent) {
       footer = FormSheetButton(
         label: _confirmLabel(l10n, quote),
         busy: _requesting,
@@ -234,6 +271,11 @@ class _QuoteSheetState extends State<_QuoteSheet> {
     final start = quote.periodStart;
     final end = quote.periodEnd;
     final isNowPurchase = quote.kind == 'upgrade' || quote.kind == 'addon';
+    // Only a `new` cycle starts on the day it is paid. A renewal bought after
+    // the cycle ended starts where that cycle left off, or - once the grace
+    // has run out - as many days back as the grace ran: its start is not the
+    // payment day, so only its dates are said.
+    final startsWhenPaid = quote.kind == 'new';
     // A refusal about the state (not ACTIVE, the cycle ends today) comes with
     // empty figures - the reason is all there is to show.
     final hasFigures = quote.lines.isNotEmpty;
@@ -298,10 +340,15 @@ class _QuoteSheetState extends State<_QuoteSheet> {
                         AppDate.medium(context, start),
                         AppDate.medium(context, end),
                       )
-                    : l10n.quotePeriodIfPaidNow(
-                        AppDate.medium(context, start),
-                        AppDate.medium(context, end),
-                      ),
+                    : startsWhenPaid
+                        ? l10n.quotePeriodIfPaidNow(
+                            AppDate.medium(context, start),
+                            AppDate.medium(context, end),
+                          )
+                        : l10n.quoteRenewalPeriodIfPaidNow(
+                            AppDate.medium(context, start),
+                            AppDate.medium(context, end),
+                          ),
             style: small,
           ),
         ],
@@ -309,7 +356,9 @@ class _QuoteSheetState extends State<_QuoteSheet> {
       SizedBox(height: 12.h),
       if (!quote.canRequest) ...[
         _Notice(
-          text: quote.reason ?? l10n.billingNotAvailableNow,
+          // Priced again after a refusal and given no reason of its own, the
+          // refusal is the reason.
+          text: quote.reason ?? _refusal ?? l10n.billingNotAvailableNow,
           tone: ColorManager.warning,
         ),
         for (final blocker in quote.blockers) ...[

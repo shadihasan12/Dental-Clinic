@@ -1652,6 +1652,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sentVerificationCode => 'لقد أرسلنا رمز تحقق مكون من 6 أرقام';
 
   @override
+  String get signupCodeOnItsWay =>
+      'إذا كان هذا البريد جديداً فسيصلك رمز مكون من 6 أرقام. لديك حساب بالفعل؟ سجّل الدخول، أو استخدم «نسيت كلمة المرور».';
+
+  @override
+  String get otpCodeSpent =>
+      'محاولات خاطئة كثيرة، ولم يعد هذا الرمز صالحاً. اطلب رمزاً جديداً.';
+
+  @override
   String get sendingCode => 'جاري إرسال الرمز...';
 
   @override
@@ -1888,6 +1896,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+
+  @override
+  String get passwordTooLong => 'يجب ألا تتجاوز كلمة المرور 72 حرفاً';
+
+  @override
+  String get passwordNeedsLetter =>
+      'يجب أن تحتوي كلمة المرور على حرف واحد على الأقل';
+
+  @override
+  String get passwordNeedsDigit =>
+      'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get mobileInvalid =>
+      'أدخل رقم هاتف صحيحاً: من 7 إلى 19 رقماً، ويمكن أن يبدأ بـ +';
 
   @override
   String get caseTitleOptional => 'عنوان الحالة (اختياري)';
@@ -3081,6 +3104,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorConflict => 'يتعارض هذا مع بيانات محفوظة مسبقًا';
 
   @override
+  String get errorTooManyRequests =>
+      'طلبات كثيرة جداً. يرجى الانتظار قليلاً ثم المحاولة مجدداً';
+
+  @override
   String get errorSendTimeout => 'استغرق الخادم وقتًا طويلًا للرد';
 
   @override
@@ -3571,6 +3598,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String quoteRenewalPeriodIfPaidNow(String start, String end) {
+    return 'إذا دُفعت اليوم، تمتد من $start إلى $end.';
+  }
+
+  @override
   String get quoteInvoiceExplainer =>
       'التأكيد يُصدر فاتورة. لا يتغير شيء حتى تُدفع ويؤكد فريقنا الحوالة.';
 
@@ -3602,10 +3634,46 @@ class AppLocalizationsAr extends AppLocalizations {
   String get paymentDestination => 'أُرسلت إلى';
 
   @override
+  String get paymentAccountRequired => 'اختر الحساب الذي أرسلت الحوالة إليه';
+
+  @override
+  String get paymentTooSmallInCaseCurrency =>
+      'هذا المبلغ يقل عن 0.01 بعملة الحالة. تحقق من المبلغ وسعر الصرف.';
+
+  @override
+  String paymentRecordedBy(String name) {
+    return 'سجّلها $name';
+  }
+
+  @override
+  String paymentEditedBy(String name) {
+    return 'عدّلها $name';
+  }
+
+  @override
+  String get deletedUser => 'مستخدم محذوف';
+
+  @override
+  String get appointmentMustEndSameDay =>
+      'يجب أن ينتهي الموعد في نفس اليوم الذي يبدأ فيه. اختر وقتاً أبكر أو مدة أقصر.';
+
+  @override
+  String get amountInCaseCurrencyLabel => 'المبلغ بعملة الحالة';
+
+  @override
+  String get paymentMethodNoAccounts =>
+      'لم يتم إعداد أي حساب لهذه الطريقة بعد. اختر طريقة أخرى، أو تواصل مع الدعم.';
+
+  @override
   String get transferDetailsTitle => 'تفاصيل الحوالة';
 
   @override
   String get amountSent => 'المبلغ المرسل';
+
+  @override
+  String amountAtMost(String max) {
+    return '$max كحد أقصى';
+  }
 
   @override
   String get bankName => 'البنك';
@@ -4040,6 +4108,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get verifyEmailAgainAction => 'التحقق من البريد مجدداً';
+
+  @override
+  String get resetSessionExpiredMessage =>
+      'انتهت صلاحية طلب إعادة تعيين كلمة المرور. اطلب رمزاً جديداً لتعيين كلمة المرور.';
+
+  @override
+  String get emailChangeSessionExpiredMessage =>
+      'انتهت صلاحية طلب تغيير البريد الإلكتروني. ابدأ من جديد للحصول على رمز جديد.';
 
   @override
   String get membersLimitTitle => 'تم بلوغ حد الأعضاء';

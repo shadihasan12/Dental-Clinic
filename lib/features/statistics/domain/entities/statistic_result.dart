@@ -15,12 +15,18 @@ class StatisticResult {
     required this.type,
     this.data,
     this.meta = const {},
+    this.error,
   });
 
   final String key;
   final StatisticChartType type;
   final Object? data;
   final Map<String, dynamic> meta;
+
+  /// Set when this metric failed while the others in the same answer did
+  /// not: one sentence from the server, already in the reader's language,
+  /// to show on this card as it is. Never parsed.
+  final String? error;
 
   /// [data] as a string-keyed map, or an empty map when it isn't one.
   Map<String, dynamic> get dataMap =>

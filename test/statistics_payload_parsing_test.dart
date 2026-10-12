@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/features/statistics/data/models/statistic_result_model.dart';
 import 'package:dental_clinic_app/features/statistics/presentation/widgets/charts/chart_support.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -76,5 +77,29 @@ void main() {
     expect(LabelledSeries.tryParse([
       {'foo': 1},
     ]), isNull);
+  });
+
+  // A metric can fail inside an answer that is otherwise good. It then
+  // carries one translated sentence, which the card shows as it is.
+  test('a failed metric keeps the sentence the server sent', () {
+    final failed = StatisticResultModel.fromJson('revenue', {
+      'type': 'kpi',
+      'data': null,
+      'error': 'تعذر تحميل هذه الإحصائية. يرجى المحاولة لاحقاً',
+    });
+    expect(failed.error, 'تعذر تحميل هذه الإحصائية. يرجى المحاولة لاحقاً');
+  });
+
+  test('a metric that loaded has no error, whatever the key holds', () {
+    for (final error in [null, '', '  ', false]) {
+      final ok = StatisticResultModel.fromJson('revenue', {
+        'type': 'kpi',
+        'data': [
+          {'value': 1},
+        ],
+        'error': error,
+      });
+      expect(ok.error, isNull, reason: '$error');
+    }
   });
 }

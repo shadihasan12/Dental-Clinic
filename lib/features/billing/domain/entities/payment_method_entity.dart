@@ -12,8 +12,9 @@ class PaymentMethodEntity {
     required this.accounts,
   });
 
-  /// The value sent back on a payment: `BANK_TRANSFER`, `SHAM_CASH`,
-  /// `MTN_CASH`, `SYRIATEL_CASH`.
+  /// The value sent back on a payment, as it came: today `BANK_TRANSFER`,
+  /// `SHAM_CASH`, `MTN_CASH` or `SYRIATEL_CASH`, and whatever the dashboard
+  /// adds next.
   final String method;
 
   /// Already in the user's language.
@@ -34,7 +35,8 @@ class PaymentAccountEntity {
     this.instructions,
   });
 
-  /// Sent as `payment_account_id` - it makes verification quicker.
+  /// Sent as `payment_account_id`, with the `method` it is listed under:
+  /// a report has to name the account the money went to.
   final String id;
   final String accountName;
 

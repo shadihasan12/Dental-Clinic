@@ -259,13 +259,8 @@ against the backend before relying on them.
 
 | Constant | Path | Note |
 |---|---|---|
-| `ClinicInfoEndpoints.clinicInfo` | `/clinic-info` | Clinic info is read from `/users/clinics` instead. |
 | `EditProfileEndpoints.profile` | `/profile` | Superseded — the data source calls `/auth/profile` inline. |
 | `EditProfileEndpoints.updateProfile` | `/profile` | Superseded by `/auth/update-profile`. |
-| `SubscriptionEndpoints.plans` | `/subscription/plans` | Signup uses `/plans`; billing has no API layer yet. |
-| `SubscriptionEndpoints.subscribe` | `/subscription/subscribe` | Unused. |
-| `SubscriptionEndpoints.cancel` | `/subscription/cancel` | Unused. |
-| `SubscriptionEndpoints.subscription` | `/subscription/{userId}` | Unused. |
 | `PatientEndpoints.activeCase` | `/patients/{patientId}/cases/active` | Call site is commented out; note it lacks the `/clinics` prefix the other case routes use. |
 
 ### Inconsistencies worth a look
@@ -273,9 +268,3 @@ against the backend before relying on them.
 - **Profile routes bypass their endpoint class.** `edit_profile_remote_data_source.dart`
   hardcodes `/auth/profile` and `/auth/update-profile` while
   `EditProfileEndpoints` still declares `/profile`. One of the two is wrong.
-- **Subscription paths are split** between `/subscription/*` (all unused) and
-  `/subscriptions/*` (the two that are live). Singular vs plural is not a typo
-  in the live calls, but the dead constants suggest the API changed under them.
-- **Billing has no data layer.** `lib/features/billing/` renders plan selection,
-  invoices and payment-proof screens with no `ApiConsumer` calls behind them, so
-  those screens are not yet wired to the backend.

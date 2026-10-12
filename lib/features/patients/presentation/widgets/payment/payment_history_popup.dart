@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
+import 'package:dental_clinic_app/core/models/audit_entry.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
 import 'package:dental_clinic_app/features/patients/data/models/payment.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/currency/currency_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/border_radius_manager.dart';
 import 'package:dental_clinic_app/core/utils/date_time_helper.dart';
@@ -59,10 +65,31 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
   List<Payment>? _payments;
   bool _isLoading = true;
 
+  StreamSubscription<CurrencyState>? _currencySub;
+
   @override
   void initState() {
     super.initState();
     _loadPayments();
+    // A currency changed by an edit is named by its code, from the list the
+    // app holds. Usually loaded already; asked for here when it is not.
+    final currencies = getIt<CurrencyBloc>();
+    final loaded = currencies.state.maybeWhen(
+      loaded: (_) => true,
+      orElse: () => false,
+    );
+    if (!loaded) {
+      _currencySub = currencies.stream.listen((_) {
+        if (mounted) setState(() {});
+      });
+      currencies.add(const CurrencyEvent.load());
+    }
+  }
+
+  @override
+  void dispose() {
+    _currencySub?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadPayments() async {
@@ -162,7 +189,23 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
         borderRadius: BorderRadiusManager.md,
         border: Border.all(color: ColorManager.of(context).borderLight),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPaymentRow(context, payment),
+          if (payment.audits.isNotEmpty) ...[
+            SizedBox(height: 10.h),
+            Divider(height: 1, color: ColorManager.of(context).borderLight),
+            SizedBox(height: 8.h),
+            for (final entry in payment.audits) _buildAuditEntry(context, entry),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentRow(BuildContext context, Payment payment) {
+    return Row(
         children: [
           // Icon
           Container(
@@ -243,7 +286,99 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
             ],
           ),
         ],
+    );
+  }
+
+  /// One line of a payment's history: who recorded it or edited it, when,
+  /// and - for an edit - what each field it touched held before and after.
+  Widget _buildAuditEntry(BuildContext context, AuditEntry entry) {
+    final l10n = AppLocalizations.of(context)!;
+    final c = ColorManager.of(context);
+    final family = FontHelper.fontFamily(context);
+    final name =
+        entry.isDeletedUser ? l10n.deletedUser : entry.userFullname.trim();
+    final who = entry.isUpdate
+        ? l10n.paymentEditedBy(name)
+        : l10n.paymentRecordedBy(name);
+    final when = entry.createdAt;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 4.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            when == null ? who : '$who · ${AppDate.medium(context, when)}',
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontFamily: family,
+              color: c.textSecondary,
+            ),
+          ),
+          for (final change in Payment.changesIn(entry))
+            Padding(
+              padding: EdgeInsetsDirectional.only(start: 10.w, top: 2.h),
+              child: Text(
+                '${_auditFieldLabel(l10n, change.field)}: '
+                '${_auditValue(change.field, change.before)} → '
+                '${_auditValue(change.field, change.after)}',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontFamily: family,
+                  color: c.textTertiary,
+                ),
+              ),
+            ),
+        ],
       ),
+    );
+  }
+
+  String _auditFieldLabel(AppLocalizations l10n, String field) {
+    switch (field) {
+      case 'amount':
+        return l10n.amount;
+      case 'amount_in_case_currency':
+        return l10n.amountInCaseCurrencyLabel;
+      case 'exchange_rate':
+        return l10n.exchangeRate;
+      case 'notes':
+        return l10n.notes;
+      default:
+        // currency_id, case_currency_id
+        return l10n.currency;
+    }
+  }
+
+  /// A history value as it reads: a figure without its padding zeros, a
+  /// currency by its code, a note as written.
+  String _auditValue(String field, Object? value) {
+    if (value == null || '$value'.isEmpty) return '—';
+    switch (field) {
+      case 'notes':
+        return '$value';
+      case 'currency_id':
+      case 'case_currency_id':
+        return _currencyCodeOf('$value') ?? '—';
+      default:
+        final figure = Payment.auditFigure(value);
+        return figure == null
+            ? '$value'
+            : NumberFormat('#,##0.######', 'en').format(figure);
+    }
+  }
+
+  /// The code of a currency id, from the list the app already holds. Null
+  /// until that list has loaded - the id itself says nothing to a reader.
+  String? _currencyCodeOf(String id) {
+    return getIt<CurrencyBloc>().state.maybeWhen(
+      loaded: (currencies) {
+        for (final currency in currencies) {
+          if (currency.id == id) return currency.currencyCode;
+        }
+        return null;
+      },
+      orElse: () => null,
     );
   }
 

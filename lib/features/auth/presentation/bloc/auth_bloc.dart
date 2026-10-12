@@ -21,6 +21,7 @@ import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_members
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_type.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/invitation_entity.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -168,8 +169,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     debugPrint('[AuthBloc] Login submitted — identifier: "${state.loginEmail}"');
     emit(state.copyWith(isLoginLoading: true, loginError: null));
 
+    // With an `@` it is looked up only as an email; anything else only as a
+    // number, which goes out the way it is stored.
+    final identifier = state.loginEmail.trim();
     final params = LoginParams(
-      emailOrMobileNumber: state.loginEmail,
+      emailOrMobileNumber: identifier.contains('@')
+          ? identifier
+          : MobileNumber.clean(identifier),
       password: state.loginPassword,
     );
 
@@ -462,15 +468,77 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.requestOtpForRegister(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
-      )),
+      (failure) {
+        final left = _codeAlreadyOut(failure);
+        emit(
+          left == null
+              ? _codeRequestFailed(failure)
+              : _awaitingCode(left, isNewCode: false),
+        );
+      },
+      (response) => emit(_awaitingCode(response.secondsRemaining)),
+    );
+  }
+
+  /// The state a code on its way leaves behind: the countdown before another
+  /// may be asked for and, for a new code, a clean count of wrong answers.
+  AuthState _awaitingCode(
+    int seconds, {
+    bool isNewCode = true,
+    bool clearCode = false,
+  }) {
+    return state.copyWith(
+      isOtpLoading: false,
+      otpError: null,
+      otpSecondsRemaining: seconds,
+      otpWaitTick: state.otpWaitTick + 1,
+      otpFailedAttempts: isNewCode ? 0 : state.otpFailedAttempts,
+      canResendOtp: false,
+      otpCode: clearCode ? '' : state.otpCode,
+    );
+  }
+
+  /// The state a refused code request leaves behind. A 429 says how long to
+  /// wait - between two codes, or for the limit of three requests in ten
+  /// minutes - and the countdown follows whichever it was.
+  AuthState _codeRequestFailed(NetworkExceptions failure) {
+    final wait = NetworkExceptions.waitSecondsOf(failure);
+    return state.copyWith(
+      isOtpLoading: false,
+      otpError: NetworkExceptions.getErrorMessage(failure),
+      otpSecondsRemaining: wait ?? state.otpSecondsRemaining,
+      otpWaitTick: wait == null ? state.otpWaitTick : state.otpWaitTick + 1,
+    );
+  }
+
+  /// The seconds left on a code already sent, when [failure] is the wait
+  /// between two codes (`meta.seconds_remaining`, no `Retry-After`).
+  ///
+  /// Asked again while a code lives, the server sends no second one - but
+  /// the first is still good. So the request that opens a flow treats this
+  /// as "sent" and moves on to the code screen, instead of leaving the user
+  /// on the email step with nothing to do for five minutes.
+  static int? _codeAlreadyOut(NetworkExceptions failure) => failure.maybeWhen(
+        tooManyRequests: (_, retryAfter, secondsRemaining) =>
+            retryAfter == null ? secondsRemaining : null,
+        orElse: () => null,
+      );
+
+  /// The state a refused code leaves behind. The server ends a code at its
+  /// fifth wrong answer, and with it the wait before a new one: the
+  /// countdown is dropped so the page can offer one at once.
+  AuthState _codeRefused(NetworkExceptions failure) {
+    final attempts = failure.maybeWhen(
+      unprocessableEntity: (_) => state.otpFailedAttempts + 1,
+      orElse: () => state.otpFailedAttempts,
+    );
+    final spent = attempts >= 5;
+    return state.copyWith(
+      isOtpVerifying: false,
+      otpError: NetworkExceptions.getErrorMessage(failure),
+      otpFailedAttempts: attempts,
+      otpSecondsRemaining: spent ? 0 : state.otpSecondsRemaining,
+      otpWaitTick: spent ? state.otpWaitTick + 1 : state.otpWaitTick,
     );
   }
 
@@ -493,16 +561,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Email verification flow uses a dedicated endpoint
       final result = await _authRepository.verifyEmailWithOtp(state.otpCode);
       result.fold(
-        (failure) => emit(state.copyWith(
-          isOtpVerifying: false,
-          otpError: NetworkExceptions.getErrorMessage(failure),
-        )),
-        (_) => emit(state.copyWith(
-          isOtpVerifying: false,
-          status: AuthStatus.authenticated,
-          needsEmailVerification: false,
-          emailVerificationForLogin: false,
-        )),
+        (failure) => emit(_codeRefused(failure)),
+        (_) {
+          // The login that led here stopped short of this: the session only
+          // becomes usable now, so now is when the device is registered.
+          _registerDeviceForPush();
+          emit(state.copyWith(
+            isOtpVerifying: false,
+            status: AuthStatus.authenticated,
+            needsEmailVerification: false,
+            emailVerificationForLogin: false,
+          ));
+        },
       );
     } else {
       // Signup / registration flow
@@ -512,10 +582,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       final result = await _authRepository.verifyOtp(params: params);
       result.fold(
-        (failure) => emit(state.copyWith(
-          isOtpVerifying: false,
-          otpError: NetworkExceptions.getErrorMessage(failure),
-        )),
+        (failure) => emit(_codeRefused(failure)),
         (response) => emit(state.copyWith(
           isOtpVerifying: false,
           sessionId: response.sessionId,
@@ -537,20 +604,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
-        otpCode: '', // Clear OTP code on resend
-      )),
+      (failure) => emit(_codeRequestFailed(failure)),
+      // Clear OTP code on resend
+      (response) => emit(
+        _awaitingCode(response.secondsRemaining, clearCode: true),
+      ),
     );
   }
 
   Future<void> _onSignupSubmitted(_SignupSubmitted event, Emitter<AuthState> emit) async {
+    // The session behind this works once. A second tap while the first is on
+    // its way would spend it twice, and the loser comes back "invalid
+    // session".
+    if (state.isSignupLoading) return;
+
     // Validate basic form fields
     if (!state.isSignupFirstNameValid) {
       emit(state.copyWith(signupError: 'First name must be at least 2 characters'));
@@ -565,7 +632,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
     if (!state.isSignupPasswordValid) {
-      emit(state.copyWith(signupError: 'Password must be at least 8 characters'));
+      emit(state.copyWith(signupError: _passwordRulesMessage));
       return;
     }
     if (!state.isSignupConfirmPasswordValid) {
@@ -580,6 +647,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
     if (state.mobileNumber.trim().isEmpty) {
       emit(state.copyWith(signupError: 'Please enter your mobile number'));
+      return;
+    }
+    if (!MobileNumber.isValid(state.mobileNumber)) {
+      emit(state.copyWith(signupError: 'Please enter a valid mobile number'));
       return;
     }
     if (state.selectedLocation == null) {
@@ -626,7 +697,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final params = RegisterRequestParams(
       firstName: state.signupFirstName,
       lastName: state.signupLastName,
-      mobileNumber: state.mobileNumber,
+      // The way the server stores it: digits 0-9, no spaces or dashes.
+      mobileNumber: MobileNumber.clean(state.mobileNumber),
       password: state.signupPassword,
       passwordConfirmation: state.signupConfirmPassword,
       specialtyId: state.selectedSpecialty!.id,
@@ -658,8 +730,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
         return;
       }
+      // The plan picked is no longer on sale - withdrawn since the list was
+      // read. The catalogue is read again and the choice dropped, so the
+      // user picks from what is sold now.
+      final planGone = failure.maybeWhen(
+        badRequest: (_, fields) =>
+            fields?.containsKey('plan_version_id') ?? false,
+        orElse: () => false,
+      );
+      if (planGone) add(const AuthEvent.plansRequested());
       emit(state.copyWith(
         isSignupLoading: false,
+        selectedPlan: planGone ? null : state.selectedPlan,
         signupError: NetworkExceptions.getErrorMessage(failure),
       ));
       return;
@@ -692,10 +774,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Whether /auth/register refused because the OTP session is no longer
   /// valid.
   ///
-  /// The API has no dedicated status for it, so this reads what it does
-  /// say: a `session_id` field error, a message naming the session (the
-  /// server answers in the user's language), or a 401 - register carries no
-  /// token, so the session is the only credential a 401 can be about.
+  /// The server checks the session before anything else and answers 422 for
+  /// one that is missing, unknown, expired, used or another flow's - nothing
+  /// else at register is a 422. The rest reads what an older server said: a
+  /// `session_id` field error, a message naming the session (the server
+  /// answers in the user's language), or a 401 - register carries no token,
+  /// so the session is the only credential a 401 can be about.
   static bool _isSessionFailure(NetworkExceptions failure) {
     final mentionsSession = RegExp(
       r'session|جلس',
@@ -708,12 +792,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       unauthorizedRequest: (_) => true,
       forbidden: mentionsSession.hasMatch,
       notFound: mentionsSession.hasMatch,
-      unprocessableEntity: mentionsSession.hasMatch,
+      unprocessableEntity: (_) => true,
       conflict: mentionsSession.hasMatch,
       defaultError: mentionsSession.hasMatch,
       orElse: () => false,
     );
   }
+
+  /// The bloc's backstop for a password being set. The pages say which rule
+  /// failed, in the user's language, before this is ever reached.
+  static const String _passwordRulesMessage =
+      'Password must be 8 to 72 characters, with at least one letter and one '
+      'number';
 
   // Forgot password handlers
   void _onForgotPasswordEmailChanged(
@@ -736,21 +826,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    emit(state.copyWith(isForgotPasswordLoading: true, forgotPasswordError: null));
+    // Success is dropped first, so asking again for the same address is a
+    // change the page can see - it is what opens the code screen.
+    emit(state.copyWith(
+      isForgotPasswordLoading: true,
+      isForgotPasswordSuccess: false,
+      forgotPasswordError: null,
+      resetSessionExpired: false,
+    ));
 
     final params = RequestOtpParams(email: state.forgotPasswordEmail);
     final result = await _authRepository.requestOtpForResetPassword(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isForgotPasswordLoading: false,
-        forgotPasswordError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
+      (failure) {
+        final left = _codeAlreadyOut(failure);
+        if (left != null) {
+          emit(_awaitingCode(left, isNewCode: false).copyWith(
+            isForgotPasswordLoading: false,
+            isForgotPasswordSuccess: true,
+          ));
+          return;
+        }
+        emit(_codeRequestFailed(failure).copyWith(
+          isForgotPasswordLoading: false,
+          otpError: null,
+          forgotPasswordError: NetworkExceptions.getErrorMessage(failure),
+        ));
+      },
+      (response) => emit(_awaitingCode(response.secondsRemaining).copyWith(
         isForgotPasswordLoading: false,
         isForgotPasswordSuccess: true,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
       )),
     );
   }
@@ -774,15 +880,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.requestOtpForResetPassword(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
-      )),
+      (failure) => emit(_codeRequestFailed(failure)),
+      (response) => emit(_awaitingCode(response.secondsRemaining)),
     );
   }
 
@@ -804,13 +903,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.verifyOtp(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpVerifying: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
+      (failure) => emit(_codeRefused(failure)),
       (response) => emit(state.copyWith(
         isOtpVerifying: false,
         resetPasswordSessionId: response.sessionId,
+        resetSessionExpired: false,
       )),
     );
   }
@@ -825,16 +922,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.requestOtpForResetPassword(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
-        otpCode: '',
-      )),
+      (failure) => emit(_codeRequestFailed(failure)),
+      (response) => emit(
+        _awaitingCode(response.secondsRemaining, clearCode: true),
+      ),
     );
   }
 
@@ -880,8 +971,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _ResetPasswordSubmitted event,
     Emitter<AuthState> emit,
   ) async {
-    if (state.resetPasswordNew.length < 8) {
-      emit(state.copyWith(resetPasswordError: 'Password must be at least 8 characters'));
+    // The session works once: a second tap would spend it on a request
+    // that then loses to the first - or, once the first has gone through,
+    // on a session that is already used up.
+    if (state.isResetPasswordLoading || state.isResetPasswordSuccess) return;
+
+    if (!state.isResetPasswordValid) {
+      emit(state.copyWith(resetPasswordError: _passwordRulesMessage));
       return;
     }
     if (state.resetPasswordNew != state.resetPasswordConfirm) {
@@ -889,7 +985,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
     if (state.resetPasswordSessionId == null || state.resetPasswordSessionId!.isEmpty) {
-      emit(state.copyWith(resetPasswordError: 'Session expired. Please try again.'));
+      emit(state.copyWith(resetSessionExpired: true));
       return;
     }
 
@@ -903,10 +999,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.resetPassword(params: params);
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isResetPasswordLoading: false,
-        resetPasswordError: NetworkExceptions.getErrorMessage(failure),
-      )),
+      (failure) {
+        // A 400 is the fields, and leaves the session good for another try.
+        // A 422 is the session itself - unknown, expired, used - and is gone
+        // either way: only a new code opens another.
+        final sessionGone = failure.maybeWhen(
+          unprocessableEntity: (_) => true,
+          orElse: () => false,
+        );
+        emit(state.copyWith(
+          isResetPasswordLoading: false,
+          resetPasswordSessionId:
+              sessionGone ? null : state.resetPasswordSessionId,
+          resetSessionExpired: sessionGone,
+          resetPasswordError:
+              sessionGone ? null : NetworkExceptions.getErrorMessage(failure),
+        ));
+      },
       (_) => emit(state.copyWith(
         isResetPasswordLoading: false,
         isResetPasswordSuccess: true,
@@ -975,15 +1084,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.requestOtpForVerifyEmail();
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpError: NetworkExceptions.getErrorMessage(failure),
-      )),
-      (response) => emit(state.copyWith(
-        isOtpLoading: false,
-        otpSecondsRemaining: response.secondsRemaining,
-        canResendOtp: false,
-      )),
+      (failure) {
+        final left = _codeAlreadyOut(failure);
+        emit(
+          left == null
+              ? _codeRequestFailed(failure)
+              : _awaitingCode(left, isNewCode: false),
+        );
+      },
+      (response) => emit(_awaitingCode(response.secondsRemaining)),
     );
   }
 
@@ -1012,6 +1121,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       otpCode: '',
       otpError: null,
       otpSecondsRemaining: 0,
+      otpFailedAttempts: 0,
       sessionId: null,
     ));
   }

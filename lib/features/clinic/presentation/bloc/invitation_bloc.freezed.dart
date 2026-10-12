@@ -1544,7 +1544,16 @@ mixin _$InvitationState {
       throw _privateConstructorUsedError;
   InvitationStatus get receivedFilter => throw _privateConstructorUsedError;
   InvitationStatus get sentFilter => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError; // Invite form fields
+
+  /// A list could not be loaded. The lists show it in place of their rows.
+  String? get error => throw _privateConstructorUsedError;
+
+  /// Sending, accepting or declining was refused - already answered, the
+  /// seats are full, too many invitations this hour. Shown once, as the
+  /// server wrote it, and kept apart from [error] so a refused action
+  /// never blanks the lists.
+  String? get actionError =>
+      throw _privateConstructorUsedError; // Invite form fields
   String get inviteeEmail => throw _privateConstructorUsedError;
   ClinicRole get inviteeRole => throw _privateConstructorUsedError;
   String get inviteMessage =>
@@ -1577,6 +1586,7 @@ abstract class $InvitationStateCopyWith<$Res> {
     InvitationStatus receivedFilter,
     InvitationStatus sentFilter,
     String? error,
+    String? actionError,
     String inviteeEmail,
     ClinicRole inviteeRole,
     String inviteMessage,
@@ -1610,6 +1620,7 @@ class _$InvitationStateCopyWithImpl<$Res, $Val extends InvitationState>
     Object? receivedFilter = null,
     Object? sentFilter = null,
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? inviteeEmail = null,
     Object? inviteeRole = null,
     Object? inviteMessage = null,
@@ -1651,6 +1662,10 @@ class _$InvitationStateCopyWithImpl<$Res, $Val extends InvitationState>
             error: freezed == error
                 ? _value.error
                 : error // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            actionError: freezed == actionError
+                ? _value.actionError
+                : actionError // ignore: cast_nullable_to_non_nullable
                       as String?,
             inviteeEmail: null == inviteeEmail
                 ? _value.inviteeEmail
@@ -1704,6 +1719,7 @@ abstract class _$$InvitationStateImplCopyWith<$Res>
     InvitationStatus receivedFilter,
     InvitationStatus sentFilter,
     String? error,
+    String? actionError,
     String inviteeEmail,
     ClinicRole inviteeRole,
     String inviteMessage,
@@ -1736,6 +1752,7 @@ class __$$InvitationStateImplCopyWithImpl<$Res>
     Object? receivedFilter = null,
     Object? sentFilter = null,
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? inviteeEmail = null,
     Object? inviteeRole = null,
     Object? inviteMessage = null,
@@ -1777,6 +1794,10 @@ class __$$InvitationStateImplCopyWithImpl<$Res>
         error: freezed == error
             ? _value.error
             : error // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        actionError: freezed == actionError
+            ? _value.actionError
+            : actionError // ignore: cast_nullable_to_non_nullable
                   as String?,
         inviteeEmail: null == inviteeEmail
             ? _value.inviteeEmail
@@ -1823,6 +1844,7 @@ class _$InvitationStateImpl implements _InvitationState {
     this.receivedFilter = InvitationStatus.pending,
     this.sentFilter = InvitationStatus.pending,
     this.error,
+    this.actionError,
     this.inviteeEmail = '',
     this.inviteeRole = ClinicRole.dentist,
     this.inviteMessage = '',
@@ -1867,8 +1889,17 @@ class _$InvitationStateImpl implements _InvitationState {
   @override
   @JsonKey()
   final InvitationStatus sentFilter;
+
+  /// A list could not be loaded. The lists show it in place of their rows.
   @override
   final String? error;
+
+  /// Sending, accepting or declining was refused - already answered, the
+  /// seats are full, too many invitations this hour. Shown once, as the
+  /// server wrote it, and kept apart from [error] so a refused action
+  /// never blanks the lists.
+  @override
+  final String? actionError;
   // Invite form fields
   @override
   @JsonKey()
@@ -1895,7 +1926,7 @@ class _$InvitationStateImpl implements _InvitationState {
 
   @override
   String toString() {
-    return 'InvitationState(isLoading: $isLoading, isSending: $isSending, isUpdating: $isUpdating, sentInvitations: $sentInvitations, receivedInvitations: $receivedInvitations, receivedFilter: $receivedFilter, sentFilter: $sentFilter, error: $error, inviteeEmail: $inviteeEmail, inviteeRole: $inviteeRole, inviteMessage: $inviteMessage, sendSuccess: $sendSuccess, cancelSuccess: $cancelSuccess, acceptSuccess: $acceptSuccess, rejectSuccess: $rejectSuccess)';
+    return 'InvitationState(isLoading: $isLoading, isSending: $isSending, isUpdating: $isUpdating, sentInvitations: $sentInvitations, receivedInvitations: $receivedInvitations, receivedFilter: $receivedFilter, sentFilter: $sentFilter, error: $error, actionError: $actionError, inviteeEmail: $inviteeEmail, inviteeRole: $inviteeRole, inviteMessage: $inviteMessage, sendSuccess: $sendSuccess, cancelSuccess: $cancelSuccess, acceptSuccess: $acceptSuccess, rejectSuccess: $rejectSuccess)';
   }
 
   @override
@@ -1922,6 +1953,8 @@ class _$InvitationStateImpl implements _InvitationState {
             (identical(other.sentFilter, sentFilter) ||
                 other.sentFilter == sentFilter) &&
             (identical(other.error, error) || other.error == error) &&
+            (identical(other.actionError, actionError) ||
+                other.actionError == actionError) &&
             (identical(other.inviteeEmail, inviteeEmail) ||
                 other.inviteeEmail == inviteeEmail) &&
             (identical(other.inviteeRole, inviteeRole) ||
@@ -1949,6 +1982,7 @@ class _$InvitationStateImpl implements _InvitationState {
     receivedFilter,
     sentFilter,
     error,
+    actionError,
     inviteeEmail,
     inviteeRole,
     inviteMessage,
@@ -1980,6 +2014,7 @@ abstract class _InvitationState implements InvitationState {
     final InvitationStatus receivedFilter,
     final InvitationStatus sentFilter,
     final String? error,
+    final String? actionError,
     final String inviteeEmail,
     final ClinicRole inviteeRole,
     final String inviteMessage,
@@ -2003,8 +2038,17 @@ abstract class _InvitationState implements InvitationState {
   InvitationStatus get receivedFilter;
   @override
   InvitationStatus get sentFilter;
+
+  /// A list could not be loaded. The lists show it in place of their rows.
   @override
-  String? get error; // Invite form fields
+  String? get error;
+
+  /// Sending, accepting or declining was refused - already answered, the
+  /// seats are full, too many invitations this hour. Shown once, as the
+  /// server wrote it, and kept apart from [error] so a refused action
+  /// never blanks the lists.
+  @override
+  String? get actionError; // Invite form fields
   @override
   String get inviteeEmail;
   @override

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
@@ -60,7 +61,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     }
     final isEmail =
         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
-    final isPhone = RegExp(r'^\+?[0-9]{7,15}$').hasMatch(value.trim());
+    final isPhone = MobileNumber.isValid(value);
     if (!isEmail && !isPhone) {
       return l10n.pleaseEnterValidEmailOrPhone;
     }
@@ -70,8 +71,9 @@ class _LoginPageContentState extends State<_LoginPageContent> {
   String? _validatePassword(String? value) {
     if (!_showValidationErrors) return null;
     final l10n = AppLocalizations.of(context)!;
+    // Any length goes: the password in use is only compared, and an account
+    // older than today's rules still signs in with the one it has.
     if (value == null || value.isEmpty) return l10n.pleaseEnterPassword;
-    if (value.length < 6) return l10n.passwordMinLength;
     return null;
   }
 

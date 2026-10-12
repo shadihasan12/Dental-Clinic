@@ -69,6 +69,7 @@ class _AddPatientContentState extends State<_AddPatientContent> {
       AppLocalizations.of(context)!,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
+      phone: _phoneController.text,
     );
   }
 

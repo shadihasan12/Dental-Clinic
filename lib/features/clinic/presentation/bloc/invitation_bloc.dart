@@ -116,11 +116,7 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
     _SendInvitation event,
     Emitter<InvitationState> emit,
   ) async {
-    emit(state.copyWith(
-      isSending: true,
-      sendSuccess: false,
-      error: null,
-    ));
+    emit(_actionStarted().copyWith(isSending: true));
 
     final result = await _sendInvitation(
       SendInvitationParams(email: event.email, roles: event.roles),
@@ -129,7 +125,7 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
     result.fold(
       (error) => emit(state.copyWith(
         isSending: false,
-        error: NetworkExceptions.getErrorMessage(error),
+        actionError: NetworkExceptions.getErrorMessage(error),
       )),
       (invitation) {
         emit(state.copyWith(
@@ -168,18 +164,40 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
 
   // ─── Accept / Reject (real API) ────────────────────────────────────────
 
+  /// The state an action starts from: what the last one left to announce is
+  /// cleared, so each success or refusal is said once, for its own action.
+  InvitationState _actionStarted() => state.copyWith(
+        sendSuccess: false,
+        acceptSuccess: false,
+        rejectSuccess: false,
+        actionError: null,
+      );
+
+  /// An answer was refused. A 409 says the invitation is no longer pending -
+  /// answered from the email, most likely - so the list is read again and
+  /// the row goes with it.
+  Future<void> _answerRefused(
+    NetworkExceptions failure,
+    Emitter<InvitationState> emit,
+  ) async {
+    emit(state.copyWith(
+      isUpdating: false,
+      actionError: NetworkExceptions.getErrorMessage(failure),
+    ));
+    final noLongerPending =
+        failure.maybeWhen(conflict: (_) => true, orElse: () => false);
+    if (noLongerPending) await _fetchReceived(state.receivedFilter, emit);
+  }
+
   Future<void> _onAcceptInvitation(
     _AcceptInvitation event,
     Emitter<InvitationState> emit,
   ) async {
-    emit(state.copyWith(isUpdating: true, error: null));
+    emit(_actionStarted().copyWith(isUpdating: true));
     final result = await _acceptInvitation(event.invitationId);
-    final error = result.fold(
-      (e) => NetworkExceptions.getErrorMessage(e),
-      (_) => null,
-    );
-    if (error != null) {
-      emit(state.copyWith(isUpdating: false, error: error));
+    final failure = result.fold((e) => e, (_) => null);
+    if (failure != null) {
+      await _answerRefused(failure, emit);
       return;
     }
     emit(state.copyWith(isUpdating: false, acceptSuccess: true));
@@ -192,14 +210,11 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
     _RejectInvitation event,
     Emitter<InvitationState> emit,
   ) async {
-    emit(state.copyWith(isUpdating: true, error: null));
+    emit(_actionStarted().copyWith(isUpdating: true));
     final result = await _declineInvitation(event.invitationId);
-    final error = result.fold(
-      (e) => NetworkExceptions.getErrorMessage(e),
-      (_) => null,
-    );
-    if (error != null) {
-      emit(state.copyWith(isUpdating: false, error: error));
+    final failure = result.fold((e) => e, (_) => null);
+    if (failure != null) {
+      await _answerRefused(failure, emit);
       return;
     }
     emit(state.copyWith(isUpdating: false, rejectSuccess: true));

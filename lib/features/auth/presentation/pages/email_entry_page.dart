@@ -57,14 +57,22 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
+            // The tick, not the seconds: asking twice gets the same 300
+            // twice. No error means a code is out for this address - just
+            // sent, or still good from a moment ago.
             listenWhen: (previous, current) =>
-                previous.otpSecondsRemaining != current.otpSecondsRemaining,
+                previous.otpWaitTick != current.otpWaitTick,
             listener: (context, state) {
-              if (state.otpSecondsRemaining > 0 && !state.isOtpLoading) {
+              if (state.otpError == null &&
+                  state.otpSecondsRemaining > 0 &&
+                  !state.isOtpLoading) {
+                // Worded for both cases: an address that already has an
+                // account is answered "sent" as well, and gets an email
+                // saying so instead of a code.
                 AppSnackbar.showSuccess(
                   context,
-                  title: l10n.otpSent,
-                  message: l10n.verificationCodeSentTo(state.signupEmail),
+                  title: l10n.verifyYourEmail,
+                  message: l10n.signupCodeOnItsWay,
                 );
 
                 context.pushNamed(
