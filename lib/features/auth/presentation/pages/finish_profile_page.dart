@@ -546,6 +546,19 @@ class _FinishProfilePageState extends State<FinishProfilePage> {
               ],
             ),
           ),
+          // Changing one's mind means clearing this first; the search box
+          // only lists results while nothing is chosen.
+          IconButton(
+            tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              _locationSearchController.clear();
+              context
+                  .read<AuthBloc>()
+                  .add(const AuthEvent.signupLocationCleared());
+            },
+            icon: Icon(Icons.close_rounded, size: 18.w, color: c.textSecondary),
+          ),
         ],
       ),
     );

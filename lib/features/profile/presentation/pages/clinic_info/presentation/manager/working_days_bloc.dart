@@ -63,14 +63,16 @@ class WorkingDaysBloc extends Bloc<WorkingDaysEvent, WorkingDaysState> {
     );
 
     if (daysError != null) {
-      emit(WorkingDaysState.error(daysError));
+      emit(WorkingDaysState.saveFailed(daysError));
       return;
     }
 
     final holidaysResult = await _repository.upsertHolidays(event.holidays);
 
     holidaysResult.fold(
-      (e) => emit(WorkingDaysState.error(NetworkExceptions.getErrorMessage(e))),
+      (e) => emit(
+        WorkingDaysState.saveFailed(NetworkExceptions.getErrorMessage(e)),
+      ),
       (_) => emit(const WorkingDaysState.saved()),
     );
   }

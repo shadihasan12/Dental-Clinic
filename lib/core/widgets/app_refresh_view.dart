@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 
@@ -83,13 +84,22 @@ class AppRefreshView extends StatelessWidget {
     parent: BouncingScrollPhysics(),
   );
 
+  /// Pull-to-refresh is a touch gesture. On desktop a trackpad fling or a
+  /// mouse scroll past the top read as a pull and reloaded the page under
+  /// the user, so there the gesture does not exist at all.
+  static bool get enabled => switch (defaultTargetPlatform) {
+        TargetPlatform.android || TargetPlatform.iOS => true,
+        _ => false,
+      };
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       controller: controller,
-      physics: physics,
+      // The platform's own feel on desktop: no rubber band to pull.
+      physics: enabled ? physics : null,
       slivers: [
-        AppRefreshControl(onRefresh: onRefresh),
+        if (enabled) AppRefreshControl(onRefresh: onRefresh),
         if (slivers != null)
           ...slivers!
         else if (fillViewport)
@@ -126,6 +136,9 @@ class AppRefreshControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!AppRefreshView.enabled) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
     return CupertinoSliverRefreshControl(
       onRefresh: onRefresh,
       refreshTriggerPullDistance: triggerPullDistance,

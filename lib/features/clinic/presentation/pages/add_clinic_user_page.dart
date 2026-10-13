@@ -80,8 +80,10 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
   bool get _canSubmit =>
       _firstNameCtrl.text.trim().isNotEmpty &&
       _lastNameCtrl.text.trim().isNotEmpty &&
-      _emailCtrl.text.trim().isNotEmpty &&
-      MobileNumber.isValid(_mobileCtrl.text) &&
+      EmailAddress.isValid(_emailCtrl.text) &&
+      // Optional - but a number that is there has to be one.
+      (_mobileCtrl.text.trim().isEmpty ||
+          MobileNumber.isValid(_mobileCtrl.text)) &&
       PasswordRules.isValid(_passwordCtrl.text) &&
       _passwordCtrl.text == _confirmCtrl.text &&
       _selectedRoles.isNotEmpty &&
@@ -94,7 +96,9 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
             lastName: _lastNameCtrl.text.trim(),
             email: _emailCtrl.text.trim(),
             // The way the server stores it: digits 0-9, no spaces or dashes.
-            mobileNumber: MobileNumber.clean(_mobileCtrl.text),
+            mobileNumber: _mobileCtrl.text.trim().isEmpty
+                ? null
+                : MobileNumber.clean(_mobileCtrl.text),
             password: _passwordCtrl.text,
             passwordConfirmation: _confirmCtrl.text,
             roles: _selectedRoles.toList(),
@@ -200,6 +204,9 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                               controller: _emailCtrl,
                               keyboardType: TextInputType.emailAddress,
                               textDirection: TextDirection.ltr,
+                              errorText: _emailCtrl.text.trim().isEmpty
+                                  ? null
+                                  : EmailAddress.problem(l10n, _emailCtrl.text),
                               onChanged: () => setState(() {}),
                             ),
                             FormTextField(
@@ -239,7 +246,13 @@ class _AddClinicUserPageState extends State<AddClinicUserPage> {
                                       l10n,
                                       _passwordCtrl.text,
                                     ),
-                              onChanged: () => setState(() {}),
+                              onChanged: () => setState(() {
+                                // A password wiped to start over takes its
+                                // confirmation with it.
+                                if (_passwordCtrl.text.isEmpty) {
+                                  _confirmCtrl.clear();
+                                }
+                              }),
                               suffix: _RevealToggle(
                                 obscured: _obscurePassword,
                                 onTap: () => setState(

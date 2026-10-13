@@ -9,7 +9,8 @@ class AddClinicUserParams {
   final String firstName;
   final String lastName;
   final String email;
-  final String mobileNumber;
+  /// Optional: a member can be added with an email alone.
+  final String? mobileNumber;
   final String password;
   final String passwordConfirmation;
   final List<String> roles;
@@ -20,7 +21,7 @@ class AddClinicUserParams {
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.mobileNumber,
+    this.mobileNumber,
     required this.password,
     required this.passwordConfirmation,
     required this.roles,

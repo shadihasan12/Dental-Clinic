@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/input_direction.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
@@ -49,14 +50,43 @@ class AuthTextField extends StatefulWidget {
 class _AuthTextFieldState extends State<AuthTextField> {
   final FocusNode _focusNode = FocusNode();
 
+  /// The direction the text is laid out in, tracked so the field only
+  /// rebuilds when it flips - see [inputTextDirection].
+  TextDirection? _direction;
+
+  TextDirection? _directionFor(String text) => inputTextDirection(
+        explicit: widget.textDirection,
+        obscureText: widget.obscureText,
+        keyboardType: widget.keyboardType,
+        text: text,
+      );
+
+  void _onTextChange() {
+    final next = _directionFor(widget.controller.text);
+    if (next != _direction) setState(() => _direction = next);
+  }
+
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
+    widget.controller.addListener(_onTextChange);
+    _direction = _directionFor(widget.controller.text);
+  }
+
+  @override
+  void didUpdateWidget(covariant AuthTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onTextChange);
+      widget.controller.addListener(_onTextChange);
+    }
+    _direction = _directionFor(widget.controller.text);
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onTextChange);
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
@@ -82,7 +112,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         validator: widget.validator,
         onChanged: widget.onChanged,
         enabled: widget.enabled,
-        textDirection: widget.textDirection,
+        textDirection: _direction,
         style: TextStyle(
           color: c.textPrimary,
           fontFamily: family,

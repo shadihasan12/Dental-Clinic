@@ -76,7 +76,22 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
             listenWhen: (previous, current) =>
                 previous.isResetPasswordSuccess != current.isResetPasswordSuccess,
             listener: (context, state) {
-              if (state.isResetPasswordSuccess) {
+              if (state.isResetPasswordSuccess &&
+                  state.isSignedInPasswordChange) {
+                // Opened from inside the app: back to the page that started
+                // it - this one, the code screen and the email step.
+                AppSnackbar.showSuccess(
+                  context,
+                  title: l10n.passwordChangedTitle,
+                  message: l10n.passwordChangedMessage,
+                );
+                Navigator.of(context).popUntil((route) {
+                  final name = route.settings.name;
+                  return name != AppRoutesNames.setNewPassword &&
+                      name != AppRoutesNames.forgotPasswordVerifyOtp &&
+                      name != AppRoutesNames.forgotPassword;
+                });
+              } else if (state.isResetPasswordSuccess) {
                 AppSnackbar.showSuccess(
                   context,
                   title: l10n.passwordResetSuccess,
@@ -189,6 +204,15 @@ class _SetNewPasswordPageState extends State<SetNewPasswordPage> {
                         context.read<AuthBloc>().add(
                               AuthEvent.resetPasswordNewChanged(value),
                             );
+                        // A password wiped to start over takes its
+                        // confirmation with it.
+                        if (value.isEmpty &&
+                            _confirmPasswordController.text.isNotEmpty) {
+                          _confirmPasswordController.clear();
+                          context.read<AuthBloc>().add(
+                                const AuthEvent.resetPasswordConfirmChanged(''),
+                              );
+                        }
                         _validateForm();
                       },
                     ),

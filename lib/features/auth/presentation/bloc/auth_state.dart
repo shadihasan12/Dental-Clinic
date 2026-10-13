@@ -76,6 +76,9 @@ class AuthState with _$AuthState {
 
     // Forgot password fields
     @Default('') String forgotPasswordEmail,
+    /// The reset flow was opened from inside the app to change the password
+    /// of the signed-in account, not from the login screen.
+    @Default(false) bool isSignedInPasswordChange,
     @Default(false) bool isForgotPasswordLoading,
     @Default(false) bool isForgotPasswordSuccess,
     @Default(null) String? forgotPasswordError,
@@ -177,9 +180,7 @@ extension AuthStateValidation on AuthState {
     return memberships.where((m) => m.clinicId == activeClinicId).firstOrNull;
   }
 
-  bool _isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
+  bool _isValidEmail(String email) => EmailAddress.isValid(email);
 
   bool _isValidPhone(String phone) => MobileNumber.isValid(phone);
 }

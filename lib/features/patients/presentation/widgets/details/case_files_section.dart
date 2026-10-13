@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'dart:io';
 
+import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
@@ -1027,12 +1028,16 @@ class _CaseFileViewerState extends State<CaseFileViewer> {
   }
 }
 
-/// Uploads a picked file and returns its media id, or null on failure.
-Future<String?> uploadCaseFile(File file) async {
+/// Uploads a picked file and returns its media id, or why it failed - the
+/// server's refusal is the only thing that tells the user what to change.
+Future<({String? id, NetworkExceptions? error})> uploadCaseFile(
+  File file,
+) async {
   try {
     final res = await getIt<MediaService>().uploadFile(file);
-    return res.id;
-  } catch (_) {
-    return null;
+    return (id: res.id, error: null);
+  } catch (e) {
+    debugPrint('[uploadCaseFile] $e');
+    return (id: null, error: NetworkExceptions.getException(e));
   }
 }

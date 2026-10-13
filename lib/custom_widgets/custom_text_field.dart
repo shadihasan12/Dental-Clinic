@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/input_direction.dart';
 import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,7 +69,12 @@ class CustomTextField extends StatelessWidget {
     final c = ColorManager.of(context);
     return TextFormField(
       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-      textDirection: textDirection,
+      textDirection: inputTextDirection(
+        explicit: textDirection,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        text: controller?.text,
+      ),
       controller: controller,
       focusNode: focusNode,
       obscureText: obscureText,

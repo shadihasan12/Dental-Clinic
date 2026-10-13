@@ -59,6 +59,10 @@ class _EditProfileContentState extends State<_EditProfileContent> {
   File? _pickedImageFile;
   bool _isUploadingImage = false;
 
+  /// The last picked photo did not upload. It stays visible, marked, so the
+  /// user can see which picture was refused - but it is not what Save sends.
+  bool _imageUploadFailed = false;
+
   List<SpecialtyEntity>? _specialties;
 
   // Initial snapshot for dirty-checking
@@ -187,6 +191,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
     setState(() {
       _pickedImageFile = result.file;
       _isUploadingImage = true;
+      _imageUploadFailed = false;
     });
 
     bloc.add(EditProfileEvent.uploadImage(result.file));
@@ -325,6 +330,8 @@ class _EditProfileContentState extends State<_EditProfileContent> {
         saving: (_) => true,
         saved: (_) => true,
         error: (_) => true,
+        saveFailed: (_) => true,
+        imageUploadFailed: (_) => true,
         imageUploaded: (_, {profile, imageId, imageUrl}) => true,
         orElse: () => false,
       ),
@@ -369,6 +376,19 @@ class _EditProfileContentState extends State<_EditProfileContent> {
               _imageUrl = imageUrl;
               _isUploadingImage = false;
             });
+          },
+          // The form stays exactly as the user left it; only the snackbar
+          // says the save did not go through.
+          saveFailed: (_, message) {
+            AppLoadingDialog.dismiss(context);
+            AppSnackbar.showError(context, title: l10n.error, message: message);
+          },
+          imageUploadFailed: (_, message) {
+            setState(() {
+              _isUploadingImage = false;
+              _imageUploadFailed = true;
+            });
+            AppSnackbar.showError(context, title: l10n.error, message: message);
           },
           error: (message) {
             AppLoadingDialog.dismiss(context);
@@ -461,6 +481,18 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                   ),
                 ),
               ),
+            if (_imageUploadFailed)
+              Positioned.fill(
+                child: CircleAvatar(
+                  radius: 50.r,
+                  backgroundColor: ColorManager.error.withValues(alpha: 0.55),
+                  child: Icon(
+                    Icons.error_outline_rounded,
+                    size: 32.w,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             Positioned(
               bottom: 0,
               right: 0,
@@ -468,7 +500,9 @@ class _EditProfileContentState extends State<_EditProfileContent> {
                 width: 32.w,
                 height: 32.w,
                 decoration: BoxDecoration(
-                  color: ColorManager.primary,
+                  color: _imageUploadFailed
+                      ? ColorManager.error
+                      : ColorManager.primary,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
@@ -635,6 +669,20 @@ class _EditProfileContentState extends State<_EditProfileContent> {
       keyboardType: TextInputType.phone,
       errorText: _phoneError,
     );
+    // Changed through the emailed-code flow on the account's own address,
+    // like the email above it.
+    final password = FormPickerField(
+      label: l10n.password,
+      value: '••••••••',
+      textDirection: TextDirection.ltr,
+      action: FormInlineAction(
+        label: l10n.edit,
+        onTap: () => context.pushNamed(
+          AppRoutesNames.forgotPassword,
+          extra: _emailController.text.trim(),
+        ),
+      ),
+    );
 
     return FormSectionCard(
       title: l10n.contactInformation,
@@ -648,6 +696,7 @@ class _EditProfileContentState extends State<_EditProfileContent> {
           email,
           phone,
         ],
+        password,
       ],
     );
   }

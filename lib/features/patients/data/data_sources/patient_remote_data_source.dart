@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/models/paginated_response.dart';
 import 'package:dental_clinic_app/features/patients/data/endpoints/patient_endpoints.dart';
@@ -283,7 +284,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
         'last_name': lastName,
         'gender': patient.gender,
         'date_of_birth': _nullIfEmpty(patient.dateOfBirth),
-        'phone_number': _nullIfEmpty(patient.phone),
+        'phone_number': _nullIfEmpty(MobileNumber.clean(patient.phone)),
         'medical_history_notes': _nullIfEmpty(patient.medicalHistory),
         'allergy_notes': _nullIfEmpty(patient.allergies),
       },
@@ -304,7 +305,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       'last_name': lastName,
       // Null clears a date of birth or phone that was removed on the form.
       'date_of_birth': _nullIfEmpty(patient.dateOfBirth),
-      'phone_number': _nullIfEmpty(patient.phone),
+      'phone_number': _nullIfEmpty(MobileNumber.clean(patient.phone)),
       if (patient.gender.isNotEmpty) 'gender': patient.gender,
       'medical_history_notes': _nullIfEmpty(patient.medicalHistory),
       'allergy_notes': _nullIfEmpty(patient.allergies),

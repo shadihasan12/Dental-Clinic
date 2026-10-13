@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/utils/input_formatters.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,7 +89,7 @@ class _CreateClinicContentState extends State<_CreateClinicContent> {
   String? _validateEmail(String? value) {
     if (!_showValidationErrors) return null;
     if (value != null && value.isNotEmpty) {
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      if (!EmailAddress.isValid(value)) {
         return 'Please enter a valid email';
       }
     }

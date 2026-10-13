@@ -17,15 +17,18 @@ class MediaUploadResponse {
     required this.url,
   });
 
+  /// Lenient on everything but the id: a stored upload whose size arrived as
+  /// a string or a decimal must not read as a failed one.
   factory MediaUploadResponse.fromJson(Map<String, dynamic> json) {
+    final size = json['size'];
     return MediaUploadResponse(
-      id: json['id'] as String,
-      filename: json['filename'] as String? ?? '',
-      formattedFilename: json['formatted_filename'] as String? ?? '',
-      extension: json['extension'] as String? ?? '',
-      mimeType: json['mime_type'] as String? ?? '',
-      size: json['size'] as int? ?? 0,
-      url: json['url'] as String? ?? '',
+      id: json['id'].toString(),
+      filename: json['filename']?.toString() ?? '',
+      formattedFilename: json['formatted_filename']?.toString() ?? '',
+      extension: json['extension']?.toString() ?? '',
+      mimeType: json['mime_type']?.toString() ?? '',
+      size: size is num ? size.toInt() : int.tryParse('$size') ?? 0,
+      url: json['url']?.toString() ?? '',
     );
   }
 }

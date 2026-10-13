@@ -1,4 +1,5 @@
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
+import 'package:dental_clinic_app/core/widgets/app_refresh_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -203,6 +204,10 @@ class _DentaRefreshState extends State<DentaRefresh>
 
   @override
   Widget build(BuildContext context) {
+    // A touch gesture only: on desktop a scroll past the top reloaded the
+    // page by accident. See [AppRefreshView.enabled].
+    if (!AppRefreshView.enabled) return widget.child;
+
     final c = ColorManager.of(context);
     final spinning = _phase == _RefreshPhase.refreshing;
 

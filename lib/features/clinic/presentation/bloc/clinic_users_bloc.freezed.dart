@@ -24,7 +24,7 @@ mixin _$ClinicUsersEvent {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -41,7 +41,7 @@ mixin _$ClinicUsersEvent {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -58,7 +58,7 @@ mixin _$ClinicUsersEvent {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -161,7 +161,7 @@ class _$LoadImpl implements _Load {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -182,7 +182,7 @@ class _$LoadImpl implements _Load {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -203,7 +203,7 @@ class _$LoadImpl implements _Load {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -273,7 +273,7 @@ abstract class _$$AddUserImplCopyWith<$Res> {
     String firstName,
     String lastName,
     String email,
-    String mobileNumber,
+    String? mobileNumber,
     String password,
     String passwordConfirmation,
     List<String> roles,
@@ -298,7 +298,7 @@ class __$$AddUserImplCopyWithImpl<$Res>
     Object? firstName = null,
     Object? lastName = null,
     Object? email = null,
-    Object? mobileNumber = null,
+    Object? mobileNumber = freezed,
     Object? password = null,
     Object? passwordConfirmation = null,
     Object? roles = null,
@@ -318,10 +318,10 @@ class __$$AddUserImplCopyWithImpl<$Res>
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
                   as String,
-        mobileNumber: null == mobileNumber
+        mobileNumber: freezed == mobileNumber
             ? _value.mobileNumber
             : mobileNumber // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         password: null == password
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
@@ -350,7 +350,7 @@ class _$AddUserImpl implements _AddUser {
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.mobileNumber,
+    this.mobileNumber,
     required this.password,
     required this.passwordConfirmation,
     required final List<String> roles,
@@ -364,7 +364,7 @@ class _$AddUserImpl implements _AddUser {
   @override
   final String email;
   @override
-  final String mobileNumber;
+  final String? mobileNumber;
   @override
   final String password;
   @override
@@ -435,7 +435,7 @@ class _$AddUserImpl implements _AddUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -465,7 +465,7 @@ class _$AddUserImpl implements _AddUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -495,7 +495,7 @@ class _$AddUserImpl implements _AddUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -564,7 +564,7 @@ abstract class _AddUser implements ClinicUsersEvent {
     required final String firstName,
     required final String lastName,
     required final String email,
-    required final String mobileNumber,
+    final String? mobileNumber,
     required final String password,
     required final String passwordConfirmation,
     required final List<String> roles,
@@ -574,7 +574,7 @@ abstract class _AddUser implements ClinicUsersEvent {
   String get firstName;
   String get lastName;
   String get email;
-  String get mobileNumber;
+  String? get mobileNumber;
   String get password;
   String get passwordConfirmation;
   List<String> get roles;
@@ -681,7 +681,7 @@ class _$UpdateRolesImpl implements _UpdateRoles {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -702,7 +702,7 @@ class _$UpdateRolesImpl implements _UpdateRoles {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -723,7 +723,7 @@ class _$UpdateRolesImpl implements _UpdateRoles {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -869,7 +869,7 @@ class _$RemoveUserImpl implements _RemoveUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -890,7 +890,7 @@ class _$RemoveUserImpl implements _RemoveUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,
@@ -911,7 +911,7 @@ class _$RemoveUserImpl implements _RemoveUser {
       String firstName,
       String lastName,
       String email,
-      String mobileNumber,
+      String? mobileNumber,
       String password,
       String passwordConfirmation,
       List<String> roles,

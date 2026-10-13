@@ -111,6 +111,10 @@ class DioConsumer implements ApiConsumer {
           contentType:
               formData == null ? StringsManager.jsonContentType : null,
           headers: headers,
+          // A file upload gets the time it needs - see uploadTimeout.
+          sendTimeout: formData == null ? null : AppConstants.uploadTimeout,
+          receiveTimeout:
+              formData == null ? null : AppConstants.uploadTimeout,
         ),
         data: formData ?? body,
       );
@@ -137,6 +141,10 @@ class DioConsumer implements ApiConsumer {
           contentType:
               formData == null ? StringsManager.jsonContentType : null,
           headers: headers,
+          // A file upload gets the time it needs - see uploadTimeout.
+          sendTimeout: formData == null ? null : AppConstants.uploadTimeout,
+          receiveTimeout:
+              formData == null ? null : AppConstants.uploadTimeout,
         ),
         data: formData ?? body,
       );

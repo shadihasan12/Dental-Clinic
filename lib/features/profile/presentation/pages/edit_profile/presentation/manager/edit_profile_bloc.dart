@@ -49,17 +49,33 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     );
   }
 
+  /// The profile behind whatever the page is showing, or null before one
+  /// has loaded.
+  UserProfileEntity? get _currentProfile => state.maybeWhen(
+        loaded: (p) => p,
+        saved: (p) => p,
+        imageUploading: (p) => p,
+        imageUploaded: (p, _, _) => p,
+        saveFailed: (p, _) => p,
+        imageUploadFailed: (p, _) => p,
+        orElse: () => null,
+      );
+
   Future<void> _onUpdate(
     _UpdateProfile event,
     Emitter<EditProfileState> emit,
   ) async {
+    final previous = _currentProfile ?? event.profile;
     emit(EditProfileState.saving(event.profile));
 
     final result = await _updateUserProfile(event.profile);
 
     result.fold(
       (error) => emit(
-        EditProfileState.error(NetworkExceptions.getErrorMessage(error)),
+        EditProfileState.saveFailed(
+          previous,
+          NetworkExceptions.getErrorMessage(error),
+        ),
       ),
       (profile) => emit(EditProfileState.saved(profile)),
     );
@@ -69,12 +85,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     _UploadImage event,
     Emitter<EditProfileState> emit,
   ) async {
-    final currentProfile = state.maybeWhen(
-      loaded: (p) => p,
-      saved: (p) => p,
-      imageUploaded: (p, _, _) => p,
-      orElse: () => null,
-    );
+    final currentProfile = _currentProfile;
     if (currentProfile == null) return;
 
     emit(EditProfileState.imageUploading(currentProfile));
@@ -87,7 +98,10 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         response.url,
       ));
     } catch (e) {
-      emit(EditProfileState.error(e.toString()));
+      emit(EditProfileState.imageUploadFailed(
+        currentProfile,
+        NetworkExceptions.getErrorMessage(NetworkExceptions.getException(e)),
+      ));
     }
   }
 }

@@ -342,6 +342,7 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
         saving: (_) => true,
         saved: (_) => true,
         error: (_) => true,
+        saveFailed: (_) => true,
         orElse: () => false,
       ),
       listener: (context, state) {
@@ -375,6 +376,10 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
             AppLoadingDialog.dismiss(context);
             AppSnackbar.showError(context, title: l10n.error, message: message);
           },
+          saveFailed: (message) {
+            AppLoadingDialog.dismiss(context);
+            AppSnackbar.showError(context, title: l10n.error, message: message);
+          },
           orElse: () {},
         );
       },
@@ -402,24 +407,6 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
                           const WorkingDaysEvent.load(),
                         ),
                   ),
-                  // A gate that cannot reach the server must not trap a new
-                  // account inside it. The step is required where we know it
-                  // is unanswered, not where we simply could not ask - and
-                  // Settings still leads back here.
-                  if (isSetup) ...[
-                    SizedBox(height: 8.h),
-                    TextButton(
-                      onPressed: () => context.goNamed(AppRoutesNames.root),
-                      child: Text(
-                        l10n.skip,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontFamily: FontHelper.fontFamily(context),
-                          color: c.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

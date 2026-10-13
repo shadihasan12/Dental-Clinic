@@ -188,14 +188,27 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
                 SizedBox(height: 16.h),
 
                 // Title
-                Text(
-                  AppLocalizations.of(context)!.editCosts,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontFamily: FontHelper.fontFamily(context),
-                    fontWeight: FontWeight.w600,
-                    color: ColorManager.of(context).textPrimary,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.editCosts,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontFamily: FontHelper.fontFamily(context),
+                          fontWeight: FontWeight.w600,
+                          color: ColorManager.of(context).textPrimary,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _saving ? null : () => Navigator.pop(context),
+                      icon: Icon(
+                        Icons.close,
+                        color: ColorManager.of(context).textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20.h),
 

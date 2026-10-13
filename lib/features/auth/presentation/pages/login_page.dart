@@ -59,8 +59,7 @@ class _LoginPageContentState extends State<_LoginPageContent> {
     if (value == null || value.isEmpty) {
       return l10n.pleaseEnterEmailOrPhone;
     }
-    final isEmail =
-        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
+    final isEmail = EmailAddress.isValid(value);
     final isPhone = MobileNumber.isValid(value);
     if (!isEmail && !isPhone) {
       return l10n.pleaseEnterValidEmailOrPhone;

@@ -178,7 +178,9 @@ class RoutesManager {
           name: AppRoutesNames.forgotPassword,
           pageBuilder: (context, state) {
             return CupertinoPage(
-              child: const ForgotPasswordPage(),
+              // An email in `extra` is the signed-in user changing their
+              // own password; none is the login screen's forgotten one.
+              child: ForgotPasswordPage(signedInEmail: state.extra as String?),
               key: state.pageKey,
               name: state.name,
             );

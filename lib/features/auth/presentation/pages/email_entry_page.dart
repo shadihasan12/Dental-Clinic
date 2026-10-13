@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -219,7 +220,10 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
                   // an untouched field is not an error.
                   if (state.signupEmail.isNotEmpty &&
                       !state.isSignupEmailValid)
-                    FormErrorLine(message: l10n.pleaseEnterValidEmail),
+                    FormErrorLine(
+                      message: EmailAddress.problem(l10n, state.signupEmail) ??
+                          l10n.pleaseEnterValidEmail,
+                    ),
 
                   SizedBox(height: 28.h),
 

@@ -24,6 +24,12 @@ class FilePickerService {
   /// collect, and every later pick fails until the app is fully restarted.
   /// That is reported as a cancelled pick rather than thrown, so it can never
   /// surface as an unhandled exception.
+  ///
+  /// Compression is off. With it on (the plugin default, at quality 30), the
+  /// Android side re-encodes every `FileType.image` pick into the public
+  /// Pictures directory, which an app without legacy storage access cannot
+  /// write to. The resulting IOException is thrown on a plugin thread and
+  /// kills the process. It also degraded clinical photos to 30% JPEG.
   Future<FilePickerResult?> _pickFiles({
     required FileType type,
     List<String>? allowedExtensions,
@@ -36,6 +42,8 @@ class FilePickerService {
         type: type,
         allowedExtensions: allowedExtensions,
         allowMultiple: allowMultiple,
+        allowCompression: false,
+        compressionQuality: 0,
       );
     } on PlatformException catch (e) {
       if (e.code != 'already_active') rethrow;

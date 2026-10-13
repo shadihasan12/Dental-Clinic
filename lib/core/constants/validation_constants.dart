@@ -1,9 +1,10 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
+
 /// Validation constants and utilities for form validation
 class ValidationConstants {
   ValidationConstants._();
 
   // Regex patterns
-  static const String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
   static const String phonePattern = r'^\+?[\d\s\-\(\)]+$';
 
   // Length constraints
@@ -26,9 +27,7 @@ class ValidationConstants {
   static const String phoneInvalid = 'Please enter a valid phone number';
 
   /// Validates email format
-  static bool isValidEmail(String email) {
-    return RegExp(emailPattern).hasMatch(email);
-  }
+  static bool isValidEmail(String email) => EmailAddress.isValid(email);
 
   /// Validates password length
   static bool isValidPassword(String password) {

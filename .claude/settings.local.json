@@ -6,7 +6,9 @@
       "Bash(/c/Users/Ismail/fvm/versions/3.38.2/bin/flutter gen-l10n:*)",
       "Bash(echo \"exit:$?\")",
       "Bash(break)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(curl * https://denta-backend.runbit.tech/*)",
+      "Bash(DENTA_PW=* python *upload_test.py*)"
     ]
   }
 }

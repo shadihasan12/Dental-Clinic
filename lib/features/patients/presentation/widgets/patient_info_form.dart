@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/custom_widgets/denta_form.dart';
@@ -68,7 +69,8 @@ class PatientFormErrors {
   /// Runs the required-field checks: the name only. Gender is required too,
   /// but the picker always holds a value, so it cannot be missing. Phone,
   /// date of birth and the clinical notes are optional - left empty, they
-  /// are sent as null. What is filled in is held to the server's lengths.
+  /// are sent as null. What is filled in is held to the server's lengths,
+  /// and a phone that is there has to be a real number.
   static PatientFormErrors validate(
     AppLocalizations l10n, {
     required String firstName,
@@ -86,9 +88,9 @@ class PatientFormErrors {
     return PatientFormErrors(
       firstName: name(firstName, l10n.pleaseEnterFirstName),
       lastName: name(lastName, l10n.pleaseEnterLastName),
-      phone: phone.trim().runes.length > maxPhoneLength
-          ? l10n.maxCharacters(maxPhoneLength)
-          : null,
+      phone: phone.trim().isEmpty || MobileNumber.isValid(phone)
+          ? null
+          : l10n.mobileInvalid,
     );
   }
 }

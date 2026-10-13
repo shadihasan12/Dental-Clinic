@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -41,13 +42,8 @@ class _SendInviteSheetState extends State<SendInviteSheet> {
   bool get _canSend {
     final email = _emailCtrl.text.trim();
     return email.isNotEmpty &&
-        _isValidEmail(email) &&
+        EmailAddress.isValid(email) &&
         _selectedRoles.isNotEmpty;
-  }
-
-  bool _isValidEmail(String email) {
-    final re = RegExp(r'^[\w.\-+]+@[\w.\-]+\.[A-Za-z]{2,}$');
-    return re.hasMatch(email);
   }
 
   @override

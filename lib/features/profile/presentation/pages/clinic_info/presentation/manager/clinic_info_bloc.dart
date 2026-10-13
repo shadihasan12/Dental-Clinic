@@ -50,8 +50,9 @@ class ClinicInfoBloc extends Bloc<ClinicInfoEvent, ClinicInfoState> {
     final result = await _updateClinicInfo(event.clinicInfo);
 
     result.fold(
-      (error) =>
-          emit(ClinicInfoState.error(NetworkExceptions.getErrorMessage(error))),
+      (error) => emit(
+        ClinicInfoState.saveFailed(NetworkExceptions.getErrorMessage(error)),
+      ),
       (clinicInfo) => emit(ClinicInfoState.saved(clinicInfo)),
     );
   }

@@ -10,5 +10,9 @@ class WorkingDaysState with _$WorkingDaysState {
   }) = _WDLoaded;
   const factory WorkingDaysState.saving() = _WDSaving;
   const factory WorkingDaysState.saved() = _WDSaved;
+  /// Loading failed - there is no form to show.
   const factory WorkingDaysState.error(String message) = _WDError;
+
+  /// A save was refused. The form, and the edits in it, stay on screen.
+  const factory WorkingDaysState.saveFailed(String message) = _WDSaveFailed;
 }

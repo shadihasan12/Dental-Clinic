@@ -138,10 +138,7 @@ class _SignupContentState extends State<_SignupContent> {
     if (value == null || value.isEmpty) {
       return l10n.pleaseEnterYourEmail;
     }
-    if (!ValidationConstants.isValidEmail(value)) {
-      return l10n.pleaseEnterValidEmail;
-    }
-    return null;
+    return EmailAddress.problem(l10n, value);
   }
 
   String? _validatePassword(String? value) {
@@ -435,6 +432,17 @@ class _SignupContentState extends State<_SignupContent> {
                           context.read<AuthBloc>().add(
                                 AuthEvent.signupPasswordChanged(value),
                               );
+                          // A password wiped to start over takes its
+                          // confirmation with it.
+                          if (value.isEmpty &&
+                              _confirmPasswordController.text.isNotEmpty) {
+                            _confirmPasswordController.clear();
+                            context.read<AuthBloc>().add(
+                                  const AuthEvent.signupConfirmPasswordChanged(
+                                    '',
+                                  ),
+                                );
+                          }
                           _validateForm();
                         },
                       ),

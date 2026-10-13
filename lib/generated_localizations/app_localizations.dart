@@ -3188,6 +3188,18 @@ abstract class AppLocalizations {
   /// **'Please enter a valid email'**
   String get pleaseEnterValidEmail;
 
+  /// No description provided for @emailHasSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Email can\'t contain spaces'**
+  String get emailHasSpaces;
+
+  /// No description provided for @emailHasInvalidCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Email can\'t contain \"{character}\". Use only letters, numbers and . _ % + -'**
+  String emailHasInvalidCharacter(String character);
+
   /// No description provided for @sendVerificationCode.
   ///
   /// In en, this message translates to:
@@ -3337,6 +3349,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We\'ll email you a 6-digit code to reset your password.'**
   String get forgotPasswordSubtitle;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @changePasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email a 6-digit code to your address to confirm it\'s you, then you can choose a new password.'**
+  String get changePasswordSubtitle;
+
+  /// No description provided for @passwordChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed'**
+  String get passwordChangedTitle;
+
+  /// No description provided for @passwordChangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your new password the next time you sign in.'**
+  String get passwordChangedMessage;
 
   /// No description provided for @enterRegisteredEmail.
   ///

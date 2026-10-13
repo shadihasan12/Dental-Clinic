@@ -349,6 +349,7 @@ mixin _$ClinicInfoState {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -358,6 +359,7 @@ mixin _$ClinicInfoState {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -367,6 +369,7 @@ mixin _$ClinicInfoState {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -377,6 +380,7 @@ mixin _$ClinicInfoState {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -386,6 +390,7 @@ mixin _$ClinicInfoState {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -395,6 +400,7 @@ mixin _$ClinicInfoState {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -470,6 +476,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return initial();
   }
@@ -483,6 +490,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return initial?.call();
   }
@@ -496,6 +504,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -513,6 +522,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return initial(this);
   }
@@ -526,6 +536,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return initial?.call(this);
   }
@@ -539,6 +550,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -601,6 +613,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return loading();
   }
@@ -614,6 +627,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return loading?.call();
   }
@@ -627,6 +641,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -644,6 +659,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return loading(this);
   }
@@ -657,6 +673,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return loading?.call(this);
   }
@@ -670,6 +687,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -772,6 +790,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return loaded(clinicInfo);
   }
@@ -785,6 +804,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return loaded?.call(clinicInfo);
   }
@@ -798,6 +818,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -815,6 +836,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return loaded(this);
   }
@@ -828,6 +850,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return loaded?.call(this);
   }
@@ -841,6 +864,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -951,6 +975,7 @@ class _$SavingImpl implements _Saving {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saving(clinicInfo);
   }
@@ -964,6 +989,7 @@ class _$SavingImpl implements _Saving {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saving?.call(clinicInfo);
   }
@@ -977,6 +1003,7 @@ class _$SavingImpl implements _Saving {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -994,6 +1021,7 @@ class _$SavingImpl implements _Saving {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return saving(this);
   }
@@ -1007,6 +1035,7 @@ class _$SavingImpl implements _Saving {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return saving?.call(this);
   }
@@ -1020,6 +1049,7 @@ class _$SavingImpl implements _Saving {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1130,6 +1160,7 @@ class _$SavedImpl implements _Saved {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saved(clinicInfo);
   }
@@ -1143,6 +1174,7 @@ class _$SavedImpl implements _Saved {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saved?.call(clinicInfo);
   }
@@ -1156,6 +1188,7 @@ class _$SavedImpl implements _Saved {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1173,6 +1206,7 @@ class _$SavedImpl implements _Saved {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return saved(this);
   }
@@ -1186,6 +1220,7 @@ class _$SavedImpl implements _Saved {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return saved?.call(this);
   }
@@ -1199,6 +1234,7 @@ class _$SavedImpl implements _Saved {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1296,6 +1332,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(ClinicInfoEntity clinicInfo) saving,
     required TResult Function(ClinicInfoEntity clinicInfo) saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return error(message);
   }
@@ -1309,6 +1346,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(ClinicInfoEntity clinicInfo)? saving,
     TResult? Function(ClinicInfoEntity clinicInfo)? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return error?.call(message);
   }
@@ -1322,6 +1360,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(ClinicInfoEntity clinicInfo)? saving,
     TResult Function(ClinicInfoEntity clinicInfo)? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1339,6 +1378,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Saving value) saving,
     required TResult Function(_Saved value) saved,
     required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
   }) {
     return error(this);
   }
@@ -1352,6 +1392,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Saving value)? saving,
     TResult? Function(_Saved value)? saved,
     TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
   }) {
     return error?.call(this);
   }
@@ -1365,6 +1406,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Saving value)? saving,
     TResult Function(_Saved value)? saved,
     TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1383,5 +1425,177 @@ abstract class _Error implements ClinicInfoState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SaveFailedImplCopyWith<$Res> {
+  factory _$$SaveFailedImplCopyWith(
+    _$SaveFailedImpl value,
+    $Res Function(_$SaveFailedImpl) then,
+  ) = __$$SaveFailedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$SaveFailedImplCopyWithImpl<$Res>
+    extends _$ClinicInfoStateCopyWithImpl<$Res, _$SaveFailedImpl>
+    implements _$$SaveFailedImplCopyWith<$Res> {
+  __$$SaveFailedImplCopyWithImpl(
+    _$SaveFailedImpl _value,
+    $Res Function(_$SaveFailedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ClinicInfoState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? message = null}) {
+    return _then(
+      _$SaveFailedImpl(
+        null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SaveFailedImpl implements _SaveFailed {
+  const _$SaveFailedImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'ClinicInfoState.saveFailed(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SaveFailedImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of ClinicInfoState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SaveFailedImplCopyWith<_$SaveFailedImpl> get copyWith =>
+      __$$SaveFailedImplCopyWithImpl<_$SaveFailedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(ClinicInfoEntity clinicInfo) loaded,
+    required TResult Function(ClinicInfoEntity clinicInfo) saving,
+    required TResult Function(ClinicInfoEntity clinicInfo) saved,
+    required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
+  }) {
+    return saveFailed(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(ClinicInfoEntity clinicInfo)? loaded,
+    TResult? Function(ClinicInfoEntity clinicInfo)? saving,
+    TResult? Function(ClinicInfoEntity clinicInfo)? saved,
+    TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
+  }) {
+    return saveFailed?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(ClinicInfoEntity clinicInfo)? loaded,
+    TResult Function(ClinicInfoEntity clinicInfo)? saving,
+    TResult Function(ClinicInfoEntity clinicInfo)? saved,
+    TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Saving value) saving,
+    required TResult Function(_Saved value) saved,
+    required TResult Function(_Error value) error,
+    required TResult Function(_SaveFailed value) saveFailed,
+  }) {
+    return saveFailed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Saving value)? saving,
+    TResult? Function(_Saved value)? saved,
+    TResult? Function(_Error value)? error,
+    TResult? Function(_SaveFailed value)? saveFailed,
+  }) {
+    return saveFailed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Saving value)? saving,
+    TResult Function(_Saved value)? saved,
+    TResult Function(_Error value)? error,
+    TResult Function(_SaveFailed value)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SaveFailed implements ClinicInfoState {
+  const factory _SaveFailed(final String message) = _$SaveFailedImpl;
+
+  String get message;
+
+  /// Create a copy of ClinicInfoState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SaveFailedImplCopyWith<_$SaveFailedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

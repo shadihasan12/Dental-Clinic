@@ -1,9 +1,11 @@
+import 'package:dental_clinic_app/core/utils/account_rules.dart';
 import 'package:dental_clinic_app/core/api/api_consumer.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/utils/error_helper.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
@@ -35,10 +37,6 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
     super.dispose();
   }
 
-  bool _isValidEmail(String email) {
-    return RegExp(r'^[\w\-.]+@([\w\-]+\.)+[\w\-]{2,4}$').hasMatch(email);
-  }
-
   Future<void> _requestOtp() async {
     final l10n = AppLocalizations.of(context)!;
     final newEmail = _emailController.text.trim();
@@ -49,9 +47,9 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
           title: l10n.error, message: l10n.pleaseEnterNewEmail);
       return;
     }
-    if (!_isValidEmail(newEmail)) {
-      AppSnackbar.showError(context,
-          title: l10n.error, message: l10n.pleaseEnterValidEmail);
+    final emailProblem = EmailAddress.problem(l10n, newEmail);
+    if (emailProblem != null) {
+      AppSnackbar.showError(context, title: l10n.error, message: emailProblem);
       return;
     }
     if (password.isEmpty) {
@@ -138,26 +136,38 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
     final l10n = AppLocalizations.of(context)!;
     final family = FontHelper.fontFamily(context);
 
-    return Scaffold(
+    final isDesktop = Responsive.isDesktop(context);
+
+    // The desktop shell and a reading-width column there; the phone page is
+    // unchanged.
+    return AdaptivePageScaffold(
+      title: l10n.changeEmail,
+      onBack: () => context.pop(),
       // Was hardcoded white, which left the page unreadable in the dark
       // theme while every control on it switched.
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(title: l10n.changeEmail, onBack: () => context.pop()),
-      // The one primary action docks in the thumb arc rather than sitting at
-      // the end of the scroll.
-      bottomNavigationBar: FormActionBar(
-        label: l10n.sendVerificationCode,
-        busy: _isLoading,
-        onPressed: _requestOtp,
-      ),
+      // On a phone the one primary action docks in the thumb arc. On desktop
+      // a bar spanning the window is a long way from the fields, so the
+      // button closes the form instead.
+      bottomNavigationBar: isDesktop
+          ? null
+          : FormActionBar(
+              label: l10n.sendVerificationCode,
+              busy: _isLoading,
+              onPressed: _requestOtp,
+            ),
       body: SingleChildScrollView(
         // Dragging the form dismisses the keyboard, which is what puts the
         // docked Save back within reach. A number pad has no Done key to
         // close it with, so the scroll gesture the user already makes on
         // the way to the button has to be the thing that does it.
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        child: Column(
+        padding: isDesktop
+            ? const EdgeInsets.fromLTRB(24, 20, 24, 28)
+            : EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+        child: AdaptiveContentWidth(
+          maxWidth: 560,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // What is being changed, stated before the fields that change it.
@@ -246,7 +256,19 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
                 ),
               ],
             ),
+            if (isDesktop) ...[
+              const SizedBox(height: 16),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: DentaButton(
+                  label: l10n.sendVerificationCode,
+                  busy: _isLoading,
+                  onTap: _requestOtp,
+                ),
+              ),
+            ],
           ],
+          ),
         ),
       ),
     );

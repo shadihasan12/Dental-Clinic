@@ -204,6 +204,7 @@ class _BillingView extends StatelessWidget {
                   SizedBox(height: 12.h),
                   _PlanActions(
                     status: status,
+                    hasHigherPlan: state.hasHigherPlan,
                     onOpen: (args) => _push(
                       context,
                       AppRoutesNames.selectBillingPlan,
@@ -283,6 +284,7 @@ class _BillingView extends StatelessWidget {
           SizedBox(height: 12.h),
           _PlanActions(
             status: status,
+            hasHigherPlan: state.hasHigherPlan,
             onOpen: (args) => _push(
               context,
               AppRoutesNames.selectBillingPlan,
@@ -721,9 +723,16 @@ class _OpenInvoiceCard extends StatelessWidget {
 /// being served; ACTIVE can also move up to a bigger plan now. Anything else
 /// buys a new subscription.
 class _PlanActions extends StatelessWidget {
-  const _PlanActions({required this.status, required this.onOpen});
+  const _PlanActions({
+    required this.status,
+    required this.hasHigherPlan,
+    required this.onOpen,
+  });
 
   final SubscriptionStatusEntity status;
+
+  /// False on the top plan, where only a renewal is left to offer.
+  final bool hasHigherPlan;
   final ValueChanged<BillingPlanArgs> onOpen;
 
   @override
@@ -749,7 +758,7 @@ class _PlanActions extends StatelessWidget {
         duration: status.durationQuantity,
       )),
     );
-    if (!status.canUpgrade) return renew;
+    if (!status.canUpgrade || !hasHigherPlan) return renew;
 
     return Row(
       children: [

@@ -7,7 +7,7 @@ class ClinicUsersEvent with _$ClinicUsersEvent {
     required String firstName,
     required String lastName,
     required String email,
-    required String mobileNumber,
+    String? mobileNumber,
     required String password,
     required String passwordConfirmation,
     required List<String> roles,

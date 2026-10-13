@@ -76,6 +76,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Selection events
     on<_SignupSpecialtyEntitySelected>(_onSignupSpecialtyEntitySelected);
     on<_SignupLocationEntitySelected>(_onSignupLocationEntitySelected);
+    on<_SignupLocationCleared>(_onSignupLocationCleared);
     on<_SignupPlanEntitySelected>(_onSignupPlanEntitySelected);
 
     // Clinic info events
@@ -95,6 +96,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Forgot password events
     on<_ForgotPasswordEmailChanged>(_onForgotPasswordEmailChanged);
+    on<_SignedInPasswordChangeStarted>(_onSignedInPasswordChangeStarted);
     on<_ForgotPasswordSubmitted>(_onForgotPasswordSubmitted);
     on<_ForgotPasswordReset>(_onForgotPasswordReset);
 
@@ -415,6 +417,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) {
     emit(state.copyWith(
       selectedLocation: event.location,
+      signupError: null,
+    ));
+  }
+
+  void _onSignupLocationCleared(
+    _SignupLocationCleared event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      selectedLocation: null,
+      searchedLocations: const [],
       signupError: null,
     ));
   }
@@ -806,6 +819,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       'number';
 
   // Forgot password handlers
+  /// Changing the password from inside the app is the reset flow run on the
+  /// account's own address: the emailed code proves it is the owner, and
+  /// there is no separate change-password endpoint.
+  void _onSignedInPasswordChangeStarted(
+    _SignedInPasswordChangeStarted event,
+    Emitter<AuthState> emit,
+  ) {
+    emit(state.copyWith(
+      forgotPasswordEmail: event.email,
+      isSignedInPasswordChange: true,
+      forgotPasswordError: null,
+    ));
+  }
+
   void _onForgotPasswordEmailChanged(
     _ForgotPasswordEmailChanged event,
     Emitter<AuthState> emit,

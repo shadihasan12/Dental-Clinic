@@ -406,6 +406,7 @@ mixin _$WorkingDaysState {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -419,6 +420,7 @@ mixin _$WorkingDaysState {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -432,6 +434,7 @@ mixin _$WorkingDaysState {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -442,6 +445,7 @@ mixin _$WorkingDaysState {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -451,6 +455,7 @@ mixin _$WorkingDaysState {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -460,6 +465,7 @@ mixin _$WorkingDaysState {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -539,6 +545,7 @@ class _$WDInitialImpl implements _WDInitial {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return initial();
   }
@@ -556,6 +563,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return initial?.call();
   }
@@ -573,6 +581,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -590,6 +599,7 @@ class _$WDInitialImpl implements _WDInitial {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return initial(this);
   }
@@ -603,6 +613,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return initial?.call(this);
   }
@@ -616,6 +627,7 @@ class _$WDInitialImpl implements _WDInitial {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -682,6 +694,7 @@ class _$WDLoadingImpl implements _WDLoading {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return loading();
   }
@@ -699,6 +712,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return loading?.call();
   }
@@ -716,6 +730,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -733,6 +748,7 @@ class _$WDLoadingImpl implements _WDLoading {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return loading(this);
   }
@@ -746,6 +762,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return loading?.call(this);
   }
@@ -759,6 +776,7 @@ class _$WDLoadingImpl implements _WDLoading {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -884,6 +902,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return loaded(workingDays, holidays);
   }
@@ -901,6 +920,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return loaded?.call(workingDays, holidays);
   }
@@ -918,6 +938,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -935,6 +956,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return loaded(this);
   }
@@ -948,6 +970,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return loaded?.call(this);
   }
@@ -961,6 +984,7 @@ class _$WDLoadedImpl implements _WDLoaded {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1039,6 +1063,7 @@ class _$WDSavingImpl implements _WDSaving {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saving();
   }
@@ -1056,6 +1081,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saving?.call();
   }
@@ -1073,6 +1099,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1090,6 +1117,7 @@ class _$WDSavingImpl implements _WDSaving {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return saving(this);
   }
@@ -1103,6 +1131,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return saving?.call(this);
   }
@@ -1116,6 +1145,7 @@ class _$WDSavingImpl implements _WDSaving {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saving != null) {
@@ -1182,6 +1212,7 @@ class _$WDSavedImpl implements _WDSaved {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return saved();
   }
@@ -1199,6 +1230,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return saved?.call();
   }
@@ -1216,6 +1248,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1233,6 +1266,7 @@ class _$WDSavedImpl implements _WDSaved {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return saved(this);
   }
@@ -1246,6 +1280,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return saved?.call(this);
   }
@@ -1259,6 +1294,7 @@ class _$WDSavedImpl implements _WDSaved {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (saved != null) {
@@ -1352,6 +1388,7 @@ class _$WDErrorImpl implements _WDError {
     required TResult Function() saving,
     required TResult Function() saved,
     required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
   }) {
     return error(message);
   }
@@ -1369,6 +1406,7 @@ class _$WDErrorImpl implements _WDError {
     TResult? Function()? saving,
     TResult? Function()? saved,
     TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
   }) {
     return error?.call(message);
   }
@@ -1386,6 +1424,7 @@ class _$WDErrorImpl implements _WDError {
     TResult Function()? saving,
     TResult Function()? saved,
     TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1403,6 +1442,7 @@ class _$WDErrorImpl implements _WDError {
     required TResult Function(_WDSaving value) saving,
     required TResult Function(_WDSaved value) saved,
     required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
   }) {
     return error(this);
   }
@@ -1416,6 +1456,7 @@ class _$WDErrorImpl implements _WDError {
     TResult? Function(_WDSaving value)? saving,
     TResult? Function(_WDSaved value)? saved,
     TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
   }) {
     return error?.call(this);
   }
@@ -1429,6 +1470,7 @@ class _$WDErrorImpl implements _WDError {
     TResult Function(_WDSaving value)? saving,
     TResult Function(_WDSaved value)? saved,
     TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1447,5 +1489,189 @@ abstract class _WDError implements WorkingDaysState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$WDErrorImplCopyWith<_$WDErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$WDSaveFailedImplCopyWith<$Res> {
+  factory _$$WDSaveFailedImplCopyWith(
+    _$WDSaveFailedImpl value,
+    $Res Function(_$WDSaveFailedImpl) then,
+  ) = __$$WDSaveFailedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$WDSaveFailedImplCopyWithImpl<$Res>
+    extends _$WorkingDaysStateCopyWithImpl<$Res, _$WDSaveFailedImpl>
+    implements _$$WDSaveFailedImplCopyWith<$Res> {
+  __$$WDSaveFailedImplCopyWithImpl(
+    _$WDSaveFailedImpl _value,
+    $Res Function(_$WDSaveFailedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of WorkingDaysState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? message = null}) {
+    return _then(
+      _$WDSaveFailedImpl(
+        null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$WDSaveFailedImpl implements _WDSaveFailed {
+  const _$WDSaveFailedImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'WorkingDaysState.saveFailed(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WDSaveFailedImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of WorkingDaysState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WDSaveFailedImplCopyWith<_$WDSaveFailedImpl> get copyWith =>
+      __$$WDSaveFailedImplCopyWithImpl<_$WDSaveFailedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+      List<WorkingDayApiModel> workingDays,
+      List<HolidayApiModel> holidays,
+    )
+    loaded,
+    required TResult Function() saving,
+    required TResult Function() saved,
+    required TResult Function(String message) error,
+    required TResult Function(String message) saveFailed,
+  }) {
+    return saveFailed(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+      List<WorkingDayApiModel> workingDays,
+      List<HolidayApiModel> holidays,
+    )?
+    loaded,
+    TResult? Function()? saving,
+    TResult? Function()? saved,
+    TResult? Function(String message)? error,
+    TResult? Function(String message)? saveFailed,
+  }) {
+    return saveFailed?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+      List<WorkingDayApiModel> workingDays,
+      List<HolidayApiModel> holidays,
+    )?
+    loaded,
+    TResult Function()? saving,
+    TResult Function()? saved,
+    TResult Function(String message)? error,
+    TResult Function(String message)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_WDInitial value) initial,
+    required TResult Function(_WDLoading value) loading,
+    required TResult Function(_WDLoaded value) loaded,
+    required TResult Function(_WDSaving value) saving,
+    required TResult Function(_WDSaved value) saved,
+    required TResult Function(_WDError value) error,
+    required TResult Function(_WDSaveFailed value) saveFailed,
+  }) {
+    return saveFailed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_WDInitial value)? initial,
+    TResult? Function(_WDLoading value)? loading,
+    TResult? Function(_WDLoaded value)? loaded,
+    TResult? Function(_WDSaving value)? saving,
+    TResult? Function(_WDSaved value)? saved,
+    TResult? Function(_WDError value)? error,
+    TResult? Function(_WDSaveFailed value)? saveFailed,
+  }) {
+    return saveFailed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_WDInitial value)? initial,
+    TResult Function(_WDLoading value)? loading,
+    TResult Function(_WDLoaded value)? loaded,
+    TResult Function(_WDSaving value)? saving,
+    TResult Function(_WDSaved value)? saved,
+    TResult Function(_WDError value)? error,
+    TResult Function(_WDSaveFailed value)? saveFailed,
+    required TResult orElse(),
+  }) {
+    if (saveFailed != null) {
+      return saveFailed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _WDSaveFailed implements WorkingDaysState {
+  const factory _WDSaveFailed(final String message) = _$WDSaveFailedImpl;
+
+  String get message;
+
+  /// Create a copy of WorkingDaysState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$WDSaveFailedImplCopyWith<_$WDSaveFailedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/input_direction.dart';
 import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'dart:math' as math;
 
@@ -441,14 +442,43 @@ class FormTextField extends StatefulWidget {
 class _FormTextFieldState extends State<FormTextField> {
   final FocusNode _focusNode = FocusNode();
 
+  /// The direction the text is laid out in, tracked so the field only
+  /// rebuilds when it flips - see [inputTextDirection].
+  TextDirection? _direction;
+
+  TextDirection? _directionFor(String text) => inputTextDirection(
+        explicit: widget.textDirection,
+        obscureText: widget.obscureText,
+        keyboardType: widget.keyboardType,
+        text: text,
+      );
+
+  void _onTextChange() {
+    final next = _directionFor(widget.controller.text);
+    if (next != _direction) setState(() => _direction = next);
+  }
+
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
+    widget.controller.addListener(_onTextChange);
+    _direction = _directionFor(widget.controller.text);
+  }
+
+  @override
+  void didUpdateWidget(covariant FormTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onTextChange);
+      widget.controller.addListener(_onTextChange);
+    }
+    _direction = _directionFor(widget.controller.text);
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onTextChange);
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
@@ -484,7 +514,7 @@ class _FormTextFieldState extends State<FormTextField> {
                 obscureText: widget.obscureText,
                 textCapitalization: widget.textCapitalization,
                 textInputAction: widget.textInputAction,
-                textDirection: widget.textDirection,
+                textDirection: _direction,
                 onChanged: (_) => widget.onChanged?.call(),
                 onSubmitted: (_) => widget.onSubmitted?.call(),
                 // Flutter deliberately keeps focus when a *touch* lands

@@ -618,10 +618,12 @@ class _PatientDetailsContentState extends State<_PatientDetailsContent> {
     );
     setState(() => _attachments = [..._attachments, placeholder]);
 
-    final mediaId = await uploadCaseFile(file);
+    final upload = await uploadCaseFile(file);
     if (!mounted) return;
+    final mediaId = upload.id;
     if (mediaId == null) {
       _markFailed(placeholder.id);
+      if (upload.error != null) _error(upload.error!);
       return;
     }
 

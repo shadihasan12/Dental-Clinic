@@ -1620,6 +1620,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseEnterValidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
 
   @override
+  String get emailHasSpaces => 'لا يمكن أن يحتوي البريد الإلكتروني على مسافات';
+
+  @override
+  String emailHasInvalidCharacter(String character) {
+    return 'لا يمكن أن يحتوي البريد الإلكتروني على \"$character\". استخدم الأحرف الإنجليزية والأرقام و . _ % + - فقط';
+  }
+
+  @override
   String get sendVerificationCode => 'إرسال رمز التحقق';
 
   @override
@@ -1701,6 +1709,20 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get forgotPasswordSubtitle =>
       'سنرسل إلى بريدك رمزًا من 6 أرقام لإعادة تعيين كلمة المرور.';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get changePasswordSubtitle =>
+      'سنرسل رمزاً من 6 أرقام إلى بريدك الإلكتروني للتأكد من هويتك، ثم يمكنك اختيار كلمة مرور جديدة.';
+
+  @override
+  String get passwordChangedTitle => 'تم تغيير كلمة المرور';
+
+  @override
+  String get passwordChangedMessage =>
+      'استخدم كلمة المرور الجديدة عند تسجيل الدخول في المرة القادمة.';
 
   @override
   String get enterRegisteredEmail => 'أدخل بريدك الإلكتروني المسجل';

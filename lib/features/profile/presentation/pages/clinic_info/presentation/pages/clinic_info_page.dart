@@ -201,6 +201,7 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
         saving: (_) => true,
         saved: (_) => true,
         error: (_) => true,
+        saveFailed: (_) => true,
         orElse: () => false,
       ),
       listener: (context, state) {
@@ -220,6 +221,11 @@ class _ClinicInfoContentState extends State<_ClinicInfoContent> {
             );
           },
           error: (message) {
+            AppLoadingDialog.dismiss(context);
+            AppSnackbar.showError(context, title: message);
+          },
+          // Not built: the form, with the edits that were refused, stays up.
+          saveFailed: (message) {
             AppLoadingDialog.dismiss(context);
             AppSnackbar.showError(context, title: message);
           },

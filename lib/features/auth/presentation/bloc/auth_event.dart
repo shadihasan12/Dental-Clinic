@@ -35,6 +35,8 @@ class AuthEvent with _$AuthEvent {
   // Selection events (with entities)
   const factory AuthEvent.signupSpecialtyEntitySelected(SpecialtyEntity specialty) = _SignupSpecialtyEntitySelected;
   const factory AuthEvent.signupLocationEntitySelected(LocationEntity location) = _SignupLocationEntitySelected;
+  /// The chosen location is dropped so another can be searched for.
+  const factory AuthEvent.signupLocationCleared() = _SignupLocationCleared;
   const factory AuthEvent.signupPlanEntitySelected(PlanEntity plan) = _SignupPlanEntitySelected;
 
   // Clinic information events
@@ -51,6 +53,8 @@ class AuthEvent with _$AuthEvent {
 
   // Forgot password events
   const factory AuthEvent.forgotPasswordEmailChanged(String email) = _ForgotPasswordEmailChanged;
+  /// Opens the reset flow for the signed-in account's own [email].
+  const factory AuthEvent.signedInPasswordChangeStarted(String email) = _SignedInPasswordChangeStarted;
   const factory AuthEvent.forgotPasswordSubmitted() = _ForgotPasswordSubmitted;
   const factory AuthEvent.forgotPasswordReset() = _ForgotPasswordReset;
 

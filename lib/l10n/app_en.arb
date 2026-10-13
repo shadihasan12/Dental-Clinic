@@ -625,6 +625,13 @@
   "verificationCodeInfo": "We'll send you a verification code to confirm your email address.",
   "emailAddress": "Email Address",
   "pleaseEnterValidEmail": "Please enter a valid email",
+  "emailHasSpaces": "Email can't contain spaces",
+  "emailHasInvalidCharacter": "Email can't contain \"{character}\". Use only letters, numbers and . _ % + -",
+  "@emailHasInvalidCharacter": {
+    "placeholders": {
+      "character": {"type": "String"}
+    }
+  },
   "sendVerificationCode": "Send Verification Code",
   "emailRequiredTitle": "Email Required",
   "pleaseEnterEmailAddress": "Please enter your email address",
@@ -664,6 +671,10 @@
   "verificationFailed": "Verification Failed",
   "forgotPassword": "Forgot Password",
   "forgotPasswordSubtitle": "We'll email you a 6-digit code to reset your password.",
+  "changePassword": "Change Password",
+  "changePasswordSubtitle": "We'll email a 6-digit code to your address to confirm it's you, then you can choose a new password.",
+  "passwordChangedTitle": "Password changed",
+  "passwordChangedMessage": "Use your new password the next time you sign in.",
   "enterRegisteredEmail": "Enter your registered email",
   "sendResetLink": "Send Reset Link",
   "backToSignIn": "Back to Sign In",

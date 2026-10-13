@@ -83,3 +83,43 @@ class MobileNumber {
   /// Whether [input], once cleaned, is a number the server takes.
   static bool isValid(String input) => _pattern.hasMatch(clean(input));
 }
+
+/// An email address in the shape the app accepts: one `@`, a local part of
+/// letters, digits and `. _ % + -`, and a domain whose last label is two or
+/// more letters (`.digital`, `.company` included).
+///
+/// The one rule every form used to copy capped the ending at four letters and
+/// refused `+`, so real addresses were turned away as "not valid". This is
+/// the only copy now.
+class EmailAddress {
+  EmailAddress._();
+
+  static final RegExp _pattern = RegExp(
+    r'^[A-Za-z0-9_%+\-]+(\.[A-Za-z0-9_%+\-]+)*'
+    r'@([A-Za-z0-9]([A-Za-z0-9\-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$',
+  );
+
+  /// Anything that can never appear in an address we accept.
+  static final RegExp _outsideAlphabet = RegExp(r'[^A-Za-z0-9@._%+\-]');
+
+  static bool isValid(String input) => _pattern.hasMatch(input.trim());
+
+  /// The first character that has no place in an email - a space, `!`, `#`,
+  /// an Arabic letter - or null when every character is allowed.
+  static String? invalidCharacter(String input) =>
+      _outsideAlphabet.firstMatch(input.trim())?.group(0);
+
+  /// What is wrong with [input], in the user's language, or null when it is
+  /// a valid address. A stray character is named, because "not valid" alone
+  /// does not say what to fix.
+  static String? problem(AppLocalizations l10n, String input) {
+    if (isValid(input)) return null;
+    final bad = invalidCharacter(input);
+    if (bad != null) {
+      return bad.trim().isEmpty
+          ? l10n.emailHasSpaces
+          : l10n.emailHasInvalidCharacter(bad);
+    }
+    return l10n.pleaseEnterValidEmail;
+  }
+}

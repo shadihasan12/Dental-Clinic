@@ -1631,6 +1631,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterValidEmail => 'Please enter a valid email';
 
   @override
+  String get emailHasSpaces => 'Email can\'t contain spaces';
+
+  @override
+  String emailHasInvalidCharacter(String character) {
+    return 'Email can\'t contain \"$character\". Use only letters, numbers and . _ % + -';
+  }
+
+  @override
   String get sendVerificationCode => 'Send Verification Code';
 
   @override
@@ -1713,6 +1721,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get forgotPasswordSubtitle =>
       'We\'ll email you a 6-digit code to reset your password.';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get changePasswordSubtitle =>
+      'We\'ll email a 6-digit code to your address to confirm it\'s you, then you can choose a new password.';
+
+  @override
+  String get passwordChangedTitle => 'Password changed';
+
+  @override
+  String get passwordChangedMessage =>
+      'Use your new password the next time you sign in.';
 
   @override
   String get enterRegisteredEmail => 'Enter your registered email';

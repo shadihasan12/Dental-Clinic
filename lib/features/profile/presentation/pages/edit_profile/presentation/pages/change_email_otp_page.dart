@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/core/utils/error_helper.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
@@ -104,7 +105,20 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
   }
 
   void _onOtpChanged(int index, String value) {
-    if (value.isNotEmpty) {
+    // A whole code pasted into one box - the usual way on desktop, where it
+    // is copied out of the email - is spread across the boxes from here on.
+    if (value.length > 1) {
+      final digits = value.split('');
+      for (var i = 0; i < digits.length && index + i < 6; i++) {
+        _otpControllers[index + i].text = digits[i];
+      }
+      final last = (index + digits.length - 1).clamp(0, 5);
+      if (last < 5) {
+        _otpFocusNodes[last + 1].requestFocus();
+      } else {
+        _otpFocusNodes[last].unfocus();
+      }
+    } else if (value.isNotEmpty) {
       if (index < 5) {
         _otpFocusNodes[index + 1].requestFocus();
       } else {
@@ -309,26 +323,34 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
     final fontFamily = FontHelper.fontFamily(context);
     final c = ColorManager.of(context);
 
-    return Scaffold(
+    final isDesktop = Responsive.isDesktop(context);
+
+    return AdaptivePageScaffold(
+      title: l10n.verifyNewEmail,
+      onBack: () => context.pop(),
       // Was hardcoded white, which left the page unreadable in the dark theme.
       backgroundColor: c.scaffoldBg,
-      appBar: PageHeader(
-        title: l10n.verifyNewEmail,
-        onBack: () => context.pop(),
-      ),
-      bottomNavigationBar: FormActionBar(
-        label: l10n.confirmChangeEmail,
-        busy: _isVerifying,
-        onPressed: _handleVerify,
-      ),
+      // Docked on a phone; at the end of the form on desktop, as on the
+      // change-email step before it.
+      bottomNavigationBar: isDesktop
+          ? null
+          : FormActionBar(
+              label: l10n.confirmChangeEmail,
+              busy: _isVerifying,
+              onPressed: _handleVerify,
+            ),
       body: SingleChildScrollView(
         // Dragging the form dismisses the keyboard, which is what puts the
         // docked Save back within reach. A number pad has no Done key to
         // close it with, so the scroll gesture the user already makes on
         // the way to the button has to be the thing that does it.
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
-        child: Column(
+        padding: isDesktop
+            ? const EdgeInsets.fromLTRB(24, 20, 24, 28)
+            : EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 24.h),
+        child: AdaptiveContentWidth(
+          maxWidth: 560,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Where the code went, stated before the boxes that take it.
@@ -387,18 +409,18 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                 // Digits are ltr in every locale, so the boxes never mirror.
                 Directionality(
                   textDirection: TextDirection.ltr,
+                  // Six boxes sharing a phone's width; on desktop a fixed size,
+                  // centred - stretched across the column they were wide
+                  // slabs that did not read as a code.
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       for (var index = 0; index < 6; index++) ...[
-                        if (index > 0) SizedBox(width: 6.w),
-                        Expanded(
-                          child: _OtpBox(
-                            controller: _otpControllers[index],
-                            focusNode: _otpFocusNodes[index],
-                            enabled: !_isVerifying,
-                            onChanged: (value) => _onOtpChanged(index, value),
-                          ),
-                        ),
+                        if (index > 0) SizedBox(width: isDesktop ? 10 : 6.w),
+                        if (isDesktop)
+                          SizedBox(width: 52, child: _otpBox(index))
+                        else
+                          Expanded(child: _otpBox(index)),
                       ],
                     ],
                   ),
@@ -478,11 +500,30 @@ class _ChangeEmailOtpPageState extends State<ChangeEmailOtpPage> {
                   ),
               ],
             ),
+            if (isDesktop) ...[
+              const SizedBox(height: 16),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: DentaButton(
+                  label: l10n.confirmChangeEmail,
+                  busy: _isVerifying,
+                  onTap: _handleVerify,
+                ),
+              ),
+            ],
           ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _otpBox(int index) => _OtpBox(
+        controller: _otpControllers[index],
+        focusNode: _otpFocusNodes[index],
+        enabled: !_isVerifying,
+        onChanged: (value) => _onOtpChanged(index, value),
+      );
 }
 
 /// One digit of the code. Same input surface as every other field: hairline
@@ -548,7 +589,8 @@ class _OtpBoxState extends State<_OtpBox> {
         ),
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(1),
+          // Room for a pasted code; the page spreads it over the boxes.
+          LengthLimitingTextInputFormatter(6),
         ],
         onChanged: widget.onChanged,
       ),

@@ -107,7 +107,7 @@ class ClinicRepositoryImpl implements ClinicRepository {
     required String firstName,
     required String lastName,
     required String email,
-    required String mobileNumber,
+    String? mobileNumber,
     required String password,
     required String passwordConfirmation,
     required List<String> roles,
