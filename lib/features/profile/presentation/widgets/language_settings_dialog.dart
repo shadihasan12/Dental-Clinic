@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
@@ -29,7 +30,8 @@ void showLanguageSettingsDialog(BuildContext context) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
     ),
-    builder: (context) => LanguageSettingsModal(),
+    builder: (context) =>
+        const SheetSystemInset(child: LanguageSettingsModal()),
   );
 }
 

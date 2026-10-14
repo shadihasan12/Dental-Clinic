@@ -42,8 +42,66 @@ Future<T?> showAdaptiveSheet<T>({
     isScrollControlled: isScrollControlled,
     useSafeArea: useSafeArea,
     backgroundColor: backgroundColor ?? Colors.transparent,
-    builder: (_) => sheet,
+    builder: (_) => SheetSystemInset(child: sheet),
   );
+}
+
+/// Keeps a bottom sheet clear of the system navigation bar.
+///
+/// The app draws edge to edge (and Android 15 enforces it regardless), so a
+/// modal bottom sheet reaches the very bottom of the screen - and
+/// `useSafeArea` does not help: Flutter applies it to the top only. Every
+/// sheet used to reserve the space itself, and each new one that forgot
+/// ended up with its buttons under the Back/Home/Recents bar on phones with
+/// three-button navigation.
+///
+/// So the reservation is made once, here, for every sheet the helpers in
+/// this file show: the sheet is lifted by the navigation bar's height, the
+/// strip below it is painted in the sheet colour so the card still reads as
+/// running to the edge, and the inset is removed from the sheet's own
+/// [MediaQuery] - a sheet that also reserves it (or wraps itself in a
+/// [SafeArea]) now sees zero and does not add it twice.
+///
+/// With the keyboard up the navigation bar is behind it; the strip steps
+/// aside and the sheet's own keyboard handling takes over.
+class SheetSystemInset extends StatelessWidget {
+  const SheetSystemInset({super.key, required this.child, this.color});
+
+  final Widget child;
+
+  /// The strip under the sheet. Defaults to the card colour the sheets use.
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final navBar = MediaQuery.viewPaddingOf(context).bottom;
+    if (navBar <= 0) return child;
+
+    final keyboardUp = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final inner = MediaQuery.removeViewPadding(
+      context: context,
+      removeBottom: true,
+      child: Builder(
+        builder: (context) => MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          child: child,
+        ),
+      ),
+    );
+    if (keyboardUp) return inner;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(child: inner),
+        ColoredBox(
+          color: color ?? ColorManager.of(context).cardBg,
+          child: SizedBox(width: double.infinity, height: navBar),
+        ),
+      ],
+    );
+  }
 }
 
 /// [showModalBottomSheet] on a phone, a centred dialog on desktop.
@@ -79,7 +137,13 @@ Future<T?> showAppSheet<T>({
   if (!Responsive.isDesktop(context)) {
     return showModalBottomSheet<T>(
       context: context,
-      builder: builder,
+      builder: (context) => SheetSystemInset(
+        // A sheet that sets its colour on the route paints the strip too.
+        color: backgroundColor != null && backgroundColor != Colors.transparent
+            ? backgroundColor
+            : null,
+        child: Builder(builder: builder),
+      ),
       backgroundColor: backgroundColor,
       elevation: elevation,
       shape: shape,

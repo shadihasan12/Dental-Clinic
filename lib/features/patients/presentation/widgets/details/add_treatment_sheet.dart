@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/custom_widgets/adaptive_sheet.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -44,7 +45,11 @@ class AddTreatmentSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => AddTreatmentSheet(categories: categories, teeth: teeth),
+      builder: (context) => SheetSystemInset(
+        // This sheet paints the scaffold colour, not the card one.
+        color: ColorManager.of(context).scaffoldBg,
+        child: AddTreatmentSheet(categories: categories, teeth: teeth),
+      ),
     );
   }
 

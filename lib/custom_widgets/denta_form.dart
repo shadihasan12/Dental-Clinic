@@ -923,12 +923,25 @@ class FormSheetShell extends StatelessWidget {
               ),
             ),
             Flexible(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(20.w, 6.h, 20.w, 8.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: children,
+              // No overscroll stretch in a sheet. When the content shrinks
+              // mid-drag (a loading placeholder swapping for a shorter error
+              // row), the viewport stops being scrollable during layout,
+              // the drag is cancelled, and Android's stretch indicator
+              // starts its recede animation right there - a setState
+              // during layout, which Flutter asserts on ("Build scheduled
+              // during frame"). A sheet has no use for the stretch anyway:
+              // pulling past the top already drags the sheet itself.
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(
+                  context,
+                ).copyWith(overscroll: false),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(20.w, 6.h, 20.w, 8.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: children,
+                  ),
                 ),
               ),
             ),

@@ -88,5 +88,10 @@ Future<void> showCupertinoPickerSheet({
       builder: sheet,
     );
   }
-  return showCupertinoModalPopup<void>(context: context, builder: sheet);
+  return showCupertinoModalPopup<void>(
+    context: context,
+    // Fixed at 300 high and pinned to the bottom: without the inset the
+    // navigation bar covered the lower part of the wheel.
+    builder: (ctx) => SheetSystemInset(child: sheet(ctx)),
+  );
 }
