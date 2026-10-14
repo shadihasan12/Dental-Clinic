@@ -160,6 +160,7 @@
   "issueCategoryHint": "اختر فئة",
   "issueCategoryRequired": "الفئة مطلوبة",
   "couldNotLoadCategories": "تعذّر تحميل الفئات",
+  "couldNotLoadCurrencies": "تعذر تحميل العملات",
   "addScreenshot": "إضافة لقطة شاشة",
   "screenshotsOnly": "يمكنك إرفاق صور JPG أو PNG فقط.",
   "fileTooLarge": "يجب أن يكون حجم كل ملف أقل من 50 ميغابايت.",

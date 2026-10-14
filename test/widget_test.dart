@@ -19,6 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -45,6 +46,12 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await getIt.reset();
     await configureDependencies();
+
+    // A failed currency load (the API here is fake) watches the connection
+    // to retry. The real checker opens sockets with 10s timers; this one
+    // never reports a change, so the suite stays off the network.
+    getIt.allowReassignment = true;
+    getIt.registerSingleton<InternetConnectionChecker>(_QuietConnection());
   });
 
   tearDown(() => getIt.reset());
@@ -62,4 +69,9 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpWidget(const SizedBox.shrink());
   });
+}
+
+class _QuietConnection extends Fake implements InternetConnectionChecker {
+  @override
+  Stream<InternetConnectionStatus> get onStatusChange => const Stream.empty();
 }

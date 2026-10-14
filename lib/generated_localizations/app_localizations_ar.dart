@@ -457,6 +457,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get couldNotLoadCategories => 'تعذّر تحميل الفئات';
 
   @override
+  String get couldNotLoadCurrencies => 'تعذر تحميل العملات';
+
+  @override
   String get addScreenshot => 'إضافة لقطة شاشة';
 
   @override

@@ -980,6 +980,12 @@ abstract class AppLocalizations {
   /// **'Could not load the categories'**
   String get couldNotLoadCategories;
 
+  /// No description provided for @couldNotLoadCurrencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the currencies'**
+  String get couldNotLoadCurrencies;
+
   /// No description provided for @addScreenshot.
   ///
   /// In en, this message translates to:

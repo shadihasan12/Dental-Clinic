@@ -61,5 +61,5 @@ class AppConfig {
 
   /// Copyright text
   static const String copyrightText =
-      '© 2024 DentalCare Pro. All rights reserved.';
+      '© 2026 Denta. All rights reserved.';
 }

@@ -85,14 +85,7 @@ class _EditCostsSheetState extends State<EditCostsSheet> {
           : '',
     );
 
-    final currencyBloc = getIt<CurrencyBloc>();
-    final isLoaded = currencyBloc.state.maybeMap(
-      loaded: (_) => true,
-      orElse: () => false,
-    );
-    if (!isLoaded) {
-      currencyBloc.add(const CurrencyEvent.load());
-    }
+    getIt<CurrencyBloc>().add(const CurrencyEvent.ensureLoaded());
   }
 
   void _initCurrencySelections(List<CurrencyEntity> currencies) {

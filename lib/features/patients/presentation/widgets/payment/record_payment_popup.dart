@@ -110,7 +110,8 @@ class _RecordPaymentPopupState extends State<RecordPaymentPopup> {
   @override
   void initState() {
     super.initState();
-    _currencyBloc = getIt<CurrencyBloc>()..add(const CurrencyEvent.load());
+    _currencyBloc = getIt<CurrencyBloc>()
+      ..add(const CurrencyEvent.ensureLoaded());
   }
 
   @override

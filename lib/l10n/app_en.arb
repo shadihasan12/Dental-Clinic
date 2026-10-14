@@ -160,6 +160,7 @@
   "issueCategoryHint": "Choose a category",
   "issueCategoryRequired": "Category is required",
   "couldNotLoadCategories": "Could not load the categories",
+  "couldNotLoadCurrencies": "Could not load the currencies",
   "addScreenshot": "Add a screenshot",
   "screenshotsOnly": "You can attach JPG or PNG images only.",
   "fileTooLarge": "Each file must be under 50 MB.",

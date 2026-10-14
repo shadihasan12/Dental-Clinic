@@ -498,6 +498,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i573.GetHomeCardsUseCase>(
       () => _i573.GetHomeCardsUseCase(gh<_i716.HomeCardsRepository>()),
     );
+    gh.lazySingleton<_i46.CurrencyBloc>(
+      () => _i46.CurrencyBloc(
+        gh<_i315.CurrencyService>(),
+        gh<_i973.InternetConnectionChecker>(),
+      ),
+    );
     gh.factory<_i562.AppUpdateRepository>(
       () =>
           _i290.AppUpdateRepositoryImpl(gh<_i259.AppUpdateRemoteDataSource>()),
@@ -516,9 +522,6 @@ extension GetItInjectableX on _i174.GetIt {
         getCategories: gh<_i671.GetIssueCategoriesUseCase>(),
         getStatuses: gh<_i666.GetIssueStatusesUseCase>(),
       ),
-    );
-    gh.lazySingleton<_i46.CurrencyBloc>(
-      () => _i46.CurrencyBloc(gh<_i315.CurrencyService>()),
     );
     gh.factory<_i192.PatientRepository>(
       () => _i504.PatientRepositoryImpl(gh<_i536.PatientRemoteDataSource>()),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/use_case/use_case.dart';
@@ -42,6 +44,12 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   List<ExpenseCategoryEntity> _categories = [];
   bool _categoriesLoading = true;
 
+  /// The expense types could not be fetched; the field offers a retry
+  /// instead of an empty dropdown.
+  bool _categoriesFailed = false;
+
+  StreamSubscription<CurrencyState>? _currencySub;
+
   bool get _isEditing => widget.expense != null;
 
   /// Shown only after the first save attempt, then kept current on every
@@ -65,19 +73,19 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
   void _initCurrency() {
     final bloc = getIt<CurrencyBloc>();
-    // Try current state first
     _trySelectCurrency(bloc.state);
 
-    // If not loaded yet, listen for future state changes
-    if (_selectedCurrency == null) {
-      bloc.stream.listen((state) {
-        if (!mounted) return;
-        if (_selectedCurrency == null) {
-          _trySelectCurrency(state);
-          if (_selectedCurrency != null) setState(() {});
-        }
-      });
-    }
+    // The list is shared and fetched at startup, which may have failed
+    // offline. Ask for it again if it is not held - otherwise this sheet
+    // waited for an update that never came.
+    bloc.add(const CurrencyEvent.ensureLoaded());
+
+    // Picks the default as soon as the list arrives. Cancelled in dispose.
+    _currencySub = bloc.stream.listen((state) {
+      if (!mounted || _selectedCurrency != null) return;
+      _trySelectCurrency(state);
+      if (_selectedCurrency != null) setState(() {});
+    });
   }
 
   void _trySelectCurrency(CurrencyState state) {
@@ -98,15 +106,26 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
   }
 
   Future<void> _loadCategories() async {
+    if (!_categoriesLoading || _categoriesFailed) {
+      setState(() {
+        _categoriesLoading = true;
+        _categoriesFailed = false;
+      });
+    }
     final result = await getIt<GetCategoriesUseCase>()(NoParams());
     if (!mounted) return;
 
-    result.fold((_) => setState(() => _categoriesLoading = false), (
+    result.fold(
+        (_) => setState(() {
+              _categoriesLoading = false;
+              _categoriesFailed = true;
+            }), (
       categories,
     ) {
       setState(() {
         _categories = categories;
         _categoriesLoading = false;
+        _categoriesFailed = false;
 
         if (_isEditing) {
           final e = widget.expense!;
@@ -123,6 +142,7 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
 
   @override
   void dispose() {
+    _currencySub?.cancel();
     _amountController.dispose();
     _noteController.dispose();
     _customCategoryController.dispose();
@@ -321,7 +341,31 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
                   ),
                 );
               },
-              orElse: () => const SizedBox.shrink(),
+              // Still on its way: hold the field's place.
+              loading: () => Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: FormFieldShell(
+                  label: l10n.currency,
+                  required: true,
+                  child: ShimmerBox(
+                    width: double.infinity,
+                    height: 42.h,
+                    radius: BorderRadius.circular(12.r),
+                  ),
+                ),
+              ),
+              // Not hidden: a missing currency still blocks the save, so
+              // the user must see why and be able to try again.
+              orElse: () => Padding(
+                padding: EdgeInsets.only(bottom: 12.h),
+                child: _LoadFailedField(
+                  label: l10n.currency,
+                  message: l10n.couldNotLoadCurrencies,
+                  errorText: _errors.currency,
+                  onRetry: () => getIt<CurrencyBloc>()
+                      .add(const CurrencyEvent.load()),
+                ),
+              ),
             );
           },
         ),
@@ -336,6 +380,13 @@ class _AddExpenseSheetState extends State<AddExpenseSheet> {
               height: 42.h,
               radius: BorderRadius.circular(12.r),
             ),
+          )
+        else if (_categoriesFailed)
+          _LoadFailedField(
+            label: l10n.expenseType,
+            message: l10n.couldNotLoadCategories,
+            errorText: _errors.category,
+            onRetry: _loadCategories,
           )
         else
           _buildCategoryDropdown(context, l10n),
@@ -537,4 +588,68 @@ class _ExpenseErrors {
 
   @override
   int get hashCode => Object.hash(amount, category, currency);
+}
+
+/// A required field whose options could not be fetched: says so, with a way
+/// to ask again, in place of an empty control.
+class _LoadFailedField extends StatelessWidget {
+  const _LoadFailedField({
+    required this.label,
+    required this.message,
+    required this.onRetry,
+    this.errorText,
+  });
+
+  final String label;
+  final String message;
+  final VoidCallback onRetry;
+  final String? errorText;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = ColorManager.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final family = FontHelper.fontFamily(context);
+    return FormFieldShell(
+      label: label,
+      required: true,
+      errorText: errorText,
+      child: Container(
+        padding: EdgeInsetsDirectional.fromSTEB(12.w, 4.h, 4.w, 4.h),
+        decoration: formInputDecoration(
+          context,
+          focused: false,
+          hasError: true,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.cloud_off_rounded, size: 16.w, color: ColorManager.error),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: family,
+                  color: c.textSecondary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: onRetry,
+              child: Text(
+                l10n.retry,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: family,
+                  fontWeight: FontWeight.w600,
+                  color: ColorManager.primaryDarker,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

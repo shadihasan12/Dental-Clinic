@@ -82,7 +82,7 @@ class _PaymentHistoryPopupState extends State<PaymentHistoryPopup> {
       _currencySub = currencies.stream.listen((_) {
         if (mounted) setState(() {});
       });
-      currencies.add(const CurrencyEvent.load());
+      currencies.add(const CurrencyEvent.ensureLoaded());
     }
   }
 

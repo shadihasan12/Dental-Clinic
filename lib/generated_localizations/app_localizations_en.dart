@@ -457,6 +457,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get couldNotLoadCategories => 'Could not load the categories';
 
   @override
+  String get couldNotLoadCurrencies => 'Could not load the currencies';
+
+  @override
   String get addScreenshot => 'Add a screenshot';
 
   @override

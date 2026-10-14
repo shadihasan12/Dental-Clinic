@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
@@ -107,10 +109,20 @@ class _ReportPaymentPageState extends State<ReportPaymentPage> {
     _bankName.text = p.bankName ?? '';
     _currency = p.currency;
     _load();
+    // The currency list also feeds the currency choices; it may have failed
+    // at startup, so ask again and redraw when it lands.
+    final currencies = getIt<CurrencyBloc>();
+    currencies.add(const CurrencyEvent.ensureLoaded());
+    _currencySub = currencies.stream.listen((_) {
+      if (mounted) setState(() {});
+    });
   }
+
+  StreamSubscription<CurrencyState>? _currencySub;
 
   @override
   void dispose() {
+    _currencySub?.cancel();
     _amount.dispose();
     _reference.dispose();
     _bankName.dispose();

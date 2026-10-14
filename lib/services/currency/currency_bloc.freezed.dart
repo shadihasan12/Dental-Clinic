@@ -18,27 +18,35 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$CurrencyEvent {
   @optionalTypeArgs
-  TResult when<TResult extends Object?>({required TResult Function() load}) =>
-      throw _privateConstructorUsedError;
+  TResult when<TResult extends Object?>({
+    required TResult Function() load,
+    required TResult Function() ensureLoaded,
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({TResult? Function()? load}) =>
-      throw _privateConstructorUsedError;
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? load,
+    TResult? Function()? ensureLoaded,
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? load,
+    TResult Function()? ensureLoaded,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Load value) load,
+    required TResult Function(_EnsureLoaded value) ensureLoaded,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Load value)? load,
+    TResult? Function(_EnsureLoaded value)? ensureLoaded,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Load value)? load,
+    TResult Function(_EnsureLoaded value)? ensureLoaded,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -105,13 +113,19 @@ class _$LoadImpl implements _Load {
 
   @override
   @optionalTypeArgs
-  TResult when<TResult extends Object?>({required TResult Function() load}) {
+  TResult when<TResult extends Object?>({
+    required TResult Function() load,
+    required TResult Function() ensureLoaded,
+  }) {
     return load();
   }
 
   @override
   @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({TResult? Function()? load}) {
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? load,
+    TResult? Function()? ensureLoaded,
+  }) {
     return load?.call();
   }
 
@@ -119,6 +133,7 @@ class _$LoadImpl implements _Load {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? load,
+    TResult Function()? ensureLoaded,
     required TResult orElse(),
   }) {
     if (load != null) {
@@ -131,6 +146,7 @@ class _$LoadImpl implements _Load {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Load value) load,
+    required TResult Function(_EnsureLoaded value) ensureLoaded,
   }) {
     return load(this);
   }
@@ -139,6 +155,7 @@ class _$LoadImpl implements _Load {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Load value)? load,
+    TResult? Function(_EnsureLoaded value)? ensureLoaded,
   }) {
     return load?.call(this);
   }
@@ -147,6 +164,7 @@ class _$LoadImpl implements _Load {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Load value)? load,
+    TResult Function(_EnsureLoaded value)? ensureLoaded,
     required TResult orElse(),
   }) {
     if (load != null) {
@@ -158,6 +176,113 @@ class _$LoadImpl implements _Load {
 
 abstract class _Load implements CurrencyEvent {
   const factory _Load() = _$LoadImpl;
+}
+
+/// @nodoc
+abstract class _$$EnsureLoadedImplCopyWith<$Res> {
+  factory _$$EnsureLoadedImplCopyWith(
+    _$EnsureLoadedImpl value,
+    $Res Function(_$EnsureLoadedImpl) then,
+  ) = __$$EnsureLoadedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$EnsureLoadedImplCopyWithImpl<$Res>
+    extends _$CurrencyEventCopyWithImpl<$Res, _$EnsureLoadedImpl>
+    implements _$$EnsureLoadedImplCopyWith<$Res> {
+  __$$EnsureLoadedImplCopyWithImpl(
+    _$EnsureLoadedImpl _value,
+    $Res Function(_$EnsureLoadedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of CurrencyEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$EnsureLoadedImpl implements _EnsureLoaded {
+  const _$EnsureLoadedImpl();
+
+  @override
+  String toString() {
+    return 'CurrencyEvent.ensureLoaded()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$EnsureLoadedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() load,
+    required TResult Function() ensureLoaded,
+  }) {
+    return ensureLoaded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? load,
+    TResult? Function()? ensureLoaded,
+  }) {
+    return ensureLoaded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? load,
+    TResult Function()? ensureLoaded,
+    required TResult orElse(),
+  }) {
+    if (ensureLoaded != null) {
+      return ensureLoaded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Load value) load,
+    required TResult Function(_EnsureLoaded value) ensureLoaded,
+  }) {
+    return ensureLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Load value)? load,
+    TResult? Function(_EnsureLoaded value)? ensureLoaded,
+  }) {
+    return ensureLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Load value)? load,
+    TResult Function(_EnsureLoaded value)? ensureLoaded,
+    required TResult orElse(),
+  }) {
+    if (ensureLoaded != null) {
+      return ensureLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _EnsureLoaded implements CurrencyEvent {
+  const factory _EnsureLoaded() = _$EnsureLoadedImpl;
 }
 
 /// @nodoc

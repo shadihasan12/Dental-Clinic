@@ -92,7 +92,7 @@ class _CostFieldsState extends State<CostFields> {
 
     _currencyBloc.state.maybeWhen(
       loaded: _selectDefaults,
-      orElse: () => _currencyBloc.add(const CurrencyEvent.load()),
+      orElse: () => _currencyBloc.add(const CurrencyEvent.ensureLoaded()),
     );
 
     _totalCostController.addListener(_report);
