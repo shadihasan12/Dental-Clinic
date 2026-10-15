@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/generated_localizations/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -189,10 +190,12 @@ class _LoginPageContentState extends State<_LoginPageContent> {
                     //   onFacebookPressed: () {},
                     // ),
 
-                    SizedBox(height: 40.h),
-
-                    // Sign up link
-                    _buildSignUpLink(l10n, fontFamily),
+                    // Sign up link - gone on the Apple builds, where there
+                    // is no clinic registration to link to.
+                    if (AppConfig.selfSignupEnabled) ...[
+                      SizedBox(height: 40.h),
+                      _buildSignUpLink(l10n, fontFamily),
+                    ],
 
                     SizedBox(height: 24.h),
                   ],

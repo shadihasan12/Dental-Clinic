@@ -65,6 +65,23 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> shellNavigatorKey =
     GlobalKey<NavigatorState>();
 
+/// Every step that exists only to register a new clinic. They are closed off
+/// together when [AppConfig.selfSignupEnabled] is false.
+///
+/// `/email-verification` and `/verify-email-entry` are not here on purpose:
+/// the login page sends an existing user with an unverified email through
+/// them, so they have to keep working in a sign-in-only build.
+/// `/setup-working-hours` is left out for the same reason - RootPage sends an
+/// owner there whenever the clinic has no schedule yet, not just after
+/// signing up.
+const Set<String> _signupOnlyPaths = {
+  '/email-entry',
+  '/register',
+  '/choose-plan',
+  '/choose-clinic-name',
+  '/create-clinic',
+};
+
 /// Routes manager for the application using GoRouter
 class RoutesManager {
   RoutesManager(TokenStorage tokenStorage) {
@@ -76,11 +93,17 @@ class RoutesManager {
       debugLogDiagnostics: true,
       // Navigate to home if authenticated, otherwise show onboarding
       initialLocation: isAuthenticated ? '/' : '/onboarding',
-      // Billing hidden in this build: every subscription, plan and payment
-      // screen is closed off here, whatever link or leftover call reaches it.
+      // Billing hidden in this build, and clinic sign-up hidden on the Apple
+      // builds: every subscription, plan, payment and registration screen is
+      // closed off here, whatever link or leftover call reaches it.
       redirect: (context, state) {
-        if (AppConfig.billingEnabled) return null;
         final path = state.uri.path;
+        // Checked before the billing rules below, which would otherwise send
+        // /choose-plan on to /register - also gone when sign-up is off.
+        if (!AppConfig.selfSignupEnabled && _signupOnlyPaths.contains(path)) {
+          return '/login';
+        }
+        if (AppConfig.billingEnabled) return null;
         if (path.startsWith('/billing')) return '/';
         if (path == '/choose-plan') return '/register';
         return null;

@@ -1,0 +1,40 @@
+Hello, and thank you for taking the time to review Denta.
+
+GUIDELINE 3.1.1 - IN-APP PURCHASE
+
+Thank you for the clarification in your last message, it was very helpful. In this build, 1.0.3 (2), we have removed the account registration feature for businesses and organizations.
+
+- There is no longer a sign-up link or a registration flow anywhere in the app. The screens that used to create an account and a clinic (email entry, verification code, name and password, clinic name, type and location) are not part of this build, so a person without credentials cannot create anything in it.
+- The app has no purchase flow, prices, plans, payment options, or links or calls to action pointing toward a purchase. The plan endpoints the previous build used during registration are no longer called.
+- One thing we would like to clarify, in case it looks like a payment feature: the payment and expense screens are a clinic's own bookkeeping. Staff note what a patient paid the clinic and what the clinic spent, after the money changed hands outside the app. Nothing is sold, unlocked or processed there, and the app never takes a payment.
+- Denta is a business service sold directly to dental clinics, which we believe places it under Guideline 3.1.3(c), Enterprise Services. Our customer is the clinic rather than an individual user, and one subscription covers its staff. Clinics buy from us against an invoice and pay outside the app by bank transfer or a local method. It is not sold to consumers, families or patients, and new clinics start with a free trial we arrange directly.
+- Our website describes the clinic plans. The app does not link to that page; its only external links are our privacy policy and terms of service. Purchases are arranged directly between the clinic and us.
+
+If any screen still looks like a purchase prompt, please point us to it and we will gladly change it.
+
+GUIDELINE 2.1 - INFORMATION NEEDED
+
+Happy to go through the rest again:
+
+1. Screen recording (attached, and at the link below), recorded on an iPhone 17 Pro Max (iOS 26): signing in with the demo account below, including email verification; signing out and back in; adding a patient and treatment plan; booking an appointment; recording a patient payment and a clinic expense; and deleting the account from Settings > Delete account. All records stay private to the clinic.
+
+2. Purpose and audience. Denta is practice-management software for dental clinics: patient records, dental charts, treatment plans, scheduling, payments, expenses and statistics. Used by clinic owners, dentists and secretaries; patients never use it. English and Arabic.
+
+3. Setup and access.
+Email: shadi@gmail.com
+Password: 12345678
+Everything is reachable from Home, Patients, Appointments, Expenses and Settings. The app is sign-in only now: we create a clinic's account when it becomes our customer, and the owner can then add staff accounts for people who already work there, which is staff management inside an existing clinic, not registration of a new one. Account deletion is in Settings > Delete account, no website needed.
+
+4. External services. Our backend API stores clinic data and sends the verification codes; Firebase Cloud Messaging and APNs deliver notifications. No advertising, analytics or tracking SDK, AI service, third-party sign-in or payment processor. Camera and photo library are used only to attach files to patient cases.
+
+5. Regional differences. None, the app is the same everywhere.
+
+6. Regulated industry. Denta is administrative record-keeping software, not a medical device: it does not diagnose, recommend treatment or give medical advice. Those decisions belong to the clinic's dentists. Records are entered by staff and seen only by that clinic.
+
+Privacy Policy: https://denta.runbit.tech/privacy
+Video: https://drive.google.com/drive/folders/1tiVcvXrVAbuMyuz8N6OrHrDTo8gkT65o
+
+Thank you again for your time. Please let us know if anything else would help.
+
+Kind regards,
+Shadi Hasan
