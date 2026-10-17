@@ -1,8 +1,11 @@
-.PHONY: generate watch clean install build run test format analyze help
+.PHONY: generate watch clean install build run test format analyze help build-windows build-windows-run installer-windows
 
 # Variables
 FLUTTER := flutter
 DART := dart
+# The Windows installer pipeline (FVM Flutter build + Inno Setup), see the
+# script's own header for what it does.
+WINDOWS_BUILD := powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build_windows.ps1
 
 # Generate assets and code
 generate:
@@ -40,6 +43,20 @@ build-ios:
 	@echo "=> Building iOS..."
 	@$(FLUTTER) build ios --release
 	@echo "=> iOS built!"
+
+# Build Windows app + installer -> dist/Denta-Setup-<version>.exe
+build-windows:
+	@echo "=> Building Windows app and installer..."
+	@$(WINDOWS_BUILD)
+
+# Same, then open the installer
+build-windows-run:
+	@$(WINDOWS_BUILD) -Run
+
+# Repack the installer from the last Windows build (no Flutter build)
+installer-windows:
+	@echo "=> Repacking Windows installer..."
+	@$(WINDOWS_BUILD) -SkipBuild
 
 # Run app
 run:
@@ -79,6 +96,9 @@ help:
 	@echo "  Build:"
 	@echo "    make build-apk    - Build Android APK"
 	@echo "    make build-ios    - Build iOS app"
+	@echo "    make build-windows     - Build Windows app + installer (dist/)"
+	@echo "    make build-windows-run - Same, then open the installer"
+	@echo "    make installer-windows - Repack the installer from the last build"
 	@echo ""
 	@echo "  Info:"
 	@echo "    make help         - Show this help message"

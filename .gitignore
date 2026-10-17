@@ -53,3 +53,6 @@ app.*.map.json
 android/key.properties
 *.jks
 *.keystore
+
+# Windows installers built by scripts/build_windows.ps1
+/dist/
