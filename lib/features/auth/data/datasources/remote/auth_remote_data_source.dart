@@ -222,6 +222,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (clinicId != null && clinicId.isNotEmpty) {
         await _tokenStorage.saveClinicId(clinicId);
       }
+    } else {
+      // A member of no clinic signs in now (it used to be a 403). Whatever
+      // clinic this device last had must not be sent for them.
+      await _tokenStorage.clearClinicId();
     }
 
     return LoginResponseModel.fromJson(data);
@@ -253,6 +257,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final email = data['email'] as String?;
     if (email != null && email.isNotEmpty) {
       await _userStorage.saveUserEmail(email);
+    }
+    // Whether a clinic this account opens gets a free trial. Every answer
+    // carrying the account has it; an older server may not.
+    final trialEligible = data['trial_eligible'];
+    if (trialEligible is bool) {
+      await _userStorage.saveTrialEligible(trialEligible);
     }
     final clinics = data['clinics'] as List?;
     // Cache the membership count + stamp the "first seen on this

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dental_clinic_app/core/api/interceptors/auth_interceptor.dart';
@@ -5,6 +6,7 @@ import 'package:dental_clinic_app/core/localization/language_service.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,6 +28,7 @@ void main() {
   late HttpServer server;
   late TokenStorage tokens;
   late Dio client;
+  late ClinicAccessGuard clinicGuard;
 
   /// Answers, by path, in the order they were registered.
   late Map<String, void Function(HttpRequest)> routes;
@@ -61,13 +64,15 @@ void main() {
     );
 
     final guard = SubscriptionGuard();
+    clinicGuard = ClinicAccessGuard();
     client = Dio(BaseOptions(baseUrl: 'http://127.0.0.1:${server.port}/'))
       ..interceptors.add(
         AuthInterceptor(
           tokens,
           LanguageService(prefs),
-          SessionManager(tokens, UserStorage(prefs), guard),
+          SessionManager(tokens, UserStorage(prefs), guard, clinicGuard),
           guard,
+          clinicGuard,
         ),
       );
   });
@@ -184,6 +189,75 @@ void main() {
 
       expect(other.statusCode, 200);
       expect(hits['/limited'], 2);
+    });
+  });
+
+  group('a clinic that is no longer the user’s', () {
+    void forbidden(HttpRequest request, {String? reason}) {
+      request.response.statusCode = 403;
+      request.response.headers.contentType = ContentType.json;
+      final meta = reason == null
+          ? '{"correlation_id":"x"}'
+          : '{"correlation_id":"x","reason":"$reason"}';
+      request.response.write(
+        '{"result":"error","message":"m","data":null,"error_list":[],'
+        '"code":403,"meta":$meta}',
+      );
+      request.response.close();
+    }
+
+    test('a not_clinic_member refusal is reported once, for its clinic',
+        () async {
+      await tokens.saveClinicId('clinic-a');
+      routes['/patients'] =
+          (request) => forbidden(request, reason: 'not_clinic_member');
+      final reported = <String>[];
+      final sub = clinicGuard.losses.listen((n) => reported.add(n.clinicId));
+
+      // A screen loading several lists together: all refused at once.
+      await Future.wait([
+        for (var i = 0; i < 3; i++)
+          client.get('/patients').then((_) {}, onError: (_) {}),
+      ]);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(reported, ['clinic-a']);
+      await sub.cancel();
+    });
+
+    test('a role refusal (no reason) leaves the clinic alone', () async {
+      await tokens.saveClinicId('clinic-a');
+      routes['/staff'] = (request) => forbidden(request);
+      var reported = 0;
+      final sub = clinicGuard.losses.listen((_) => reported++);
+
+      await expectLater(client.get('/staff'), throwsA(isA<DioException>()));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(reported, 0);
+      await sub.cancel();
+    });
+
+    test('the clinic named is the one the request was sent with', () async {
+      await tokens.saveClinicId('clinic-a');
+      final answer = Completer<void>();
+      routes['/slow'] = (request) async {
+        await answer.future;
+        forbidden(request, reason: 'not_clinic_member');
+      };
+      final reported = <String>[];
+      final sub = clinicGuard.losses.listen((n) => reported.add(n.clinicId));
+
+      final call = client.get('/slow').then((_) {}, onError: (_) {});
+      // The user switched clinics while the request was out.
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      await tokens.saveClinicId('clinic-b');
+      answer.complete();
+      await call;
+      await Future<void>.delayed(Duration.zero);
+
+      expect(reported, ['clinic-a']);
+      await sub.cancel();
     });
   });
 }

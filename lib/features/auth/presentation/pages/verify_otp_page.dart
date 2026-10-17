@@ -169,7 +169,11 @@ class _VerifyOTPPageState extends State<VerifyOTPPage> {
                   // whichever step is actually on screen.
                   if (state.status == AuthStatus.authenticated &&
                       (ModalRoute.of(context)?.isCurrent ?? true)) {
-                    context.goNamed(AppRoutesNames.root);
+                    // A member of no clinic signs in too, and lands on the screen
+                    // that lets them open one or accept an invitation.
+                    context.goNamed(state.memberships.isEmpty
+                        ? AppRoutesNames.noClinic
+                        : AppRoutesNames.root);
                   }
                 },
               ),

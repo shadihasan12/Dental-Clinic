@@ -1,3 +1,5 @@
+import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
+import 'package:dental_clinic_app/core/widgets/denta_kit.dart';
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
 import 'package:dental_clinic_app/core/utils/system_insets.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -6,8 +8,6 @@ import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/core/widgets/app_shimmer.dart';
-import 'package:dental_clinic_app/core/widgets/directional_chevron.dart';
-import 'package:dental_clinic_app/core/widgets/state_card.dart';
 import 'package:dental_clinic_app/custom_widgets/custom_widgets.dart';
 import 'package:dental_clinic_app/custom_widgets/desktop_shell.dart';
 import 'package:dental_clinic_app/features/appointments/presentation/widgets/selectable_chip.dart';
@@ -309,6 +309,15 @@ class _MyClinicsContentState extends State<_MyClinicsContent> {
                 onTap: () => _showClinicActionsSheet(context, clinics[i]),
               ),
             ],
+            // Any signed-in account may open a clinic of its own, and keep
+            // the ones it works in.
+            SizedBox(height: 12.h),
+            DentaOutlineButton(
+              label: l10n.openNewClinic,
+              icon: Icons.add_business_outlined,
+              expand: true,
+              onTap: () => context.pushNamed(AppRoutesNames.openClinic),
+            ),
           ],
         );
       },

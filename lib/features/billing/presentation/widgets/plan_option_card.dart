@@ -183,6 +183,32 @@ class _PlanOptionCardState extends State<PlanOptionCard> {
                       ),
                     ),
                   ),
+                  // What the trial turns into, so the bill after it is no
+                  // surprise.
+                  if (plan.priceMonthly.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      l10n.trialThenPrice(
+                        formatPrice(orderedAmounts(plan.priceMonthly).first),
+                      ),
+                      style: TextStyle(
+                        fontFamily: family,
+                        fontSize: 10.5.sp,
+                        color: c.textTertiary,
+                      ),
+                    ),
+                  ],
+                ] else if (widget.showTrial) ...[
+                  // Trials are on offer here, just not with this plan.
+                  SizedBox(height: 10.h),
+                  Text(
+                    l10n.noFreeTrial,
+                    style: TextStyle(
+                      fontFamily: family,
+                      fontSize: 10.5.sp,
+                      color: c.textTertiary,
+                    ),
+                  ),
                 ],
                 SizedBox(height: 6.h),
                 Align(

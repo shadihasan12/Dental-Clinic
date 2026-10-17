@@ -66,6 +66,7 @@ class UserStorage {
   // so the share card can read it synchronously without an extra
   // network round-trip when the share sheet opens.
   static const String _clinicCountKey = 'clinic_count';
+  static const String _trialEligibleKey = 'trial_eligible';
   // First time the app saw this account on this device. Used as the
   // "days on platform" anchor for the share card — we can't rely on
   // the backend's created_at being populated for every user.
@@ -137,6 +138,22 @@ class UserStorage {
       _prefs.setBool(_isClinicOwnerKey, isOwner);
   bool get isClinicOwner => _prefs.getBool(_isClinicOwnerKey) ?? false;
 
+  /// Drops what is cached about the active clinic - its name, the user's
+  /// role and ownership in it - when it stops being theirs.
+  Future<void> clearActiveClinic() async {
+    await _prefs.remove(_clinicNameKey);
+    await _prefs.remove(_selectedClinicIdKey);
+    await _prefs.remove(_userRoleKey);
+    await _prefs.remove(_isClinicOwnerKey);
+  }
+
+  /// `trial_eligible` from the last login, renewal or profile read: whether a
+  /// clinic this account opens gets a free trial. Only a hint for the "no
+  /// clinic" screen - the open-clinic form reads it fresh.
+  Future<void> saveTrialEligible(bool eligible) async =>
+      _prefs.setBool(_trialEligibleKey, eligible);
+  bool get isTrialEligible => _prefs.getBool(_trialEligibleKey) ?? false;
+
   Future<void> saveClinicCount(int count) async =>
       _prefs.setInt(_clinicCountKey, count);
   int? getClinicCount() => _prefs.getInt(_clinicCountKey);
@@ -182,6 +199,7 @@ class UserStorage {
     await _prefs.remove(_userRoleKey);
     await _prefs.remove(_isClinicOwnerKey);
     await _prefs.remove(_clinicCountKey);
+    await _prefs.remove(_trialEligibleKey);
     // Deliberately *not* clearing _firstSeenAtKey on logout — the
     // "days on platform" metric should reflect the install age, not
     // the current session age.

@@ -105,6 +105,9 @@ class NotificationPoller {
         stop();
         return;
       }
+      // A member of no clinic (or being taken out of one) has no inbox to
+      // read. Keep ticking: the moment a clinic opens, polling resumes.
+      if (_tokenStorage.getClinicId() == null) return;
 
       final result = await _getUnseen(NoParams());
 

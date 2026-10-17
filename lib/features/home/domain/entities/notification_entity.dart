@@ -23,6 +23,25 @@ class NotificationCategories {
   static const String billingInvoice = 'invoice';
   static const String billingPayment = 'payment';
 
+  /// Membership notices: `category` is `clinic_membership`, and `data.type`
+  /// says which - and they mean opposite things, so route on the type, never
+  /// on the category. All three carry `clinic_id`.
+  static const String clinicMembership = 'clinic_membership';
+
+  /// The user was taken out of the clinic: leave it.
+  static const String clinicRemoved = 'clinic_removed';
+
+  /// The clinic's owner closed it: leave it.
+  static const String clinicClosed = 'clinic_closed';
+
+  /// To admins: a member deleted their account. Show it only - the admin is
+  /// still a member.
+  static const String memberLeft = 'member_left';
+
+  /// The two that mean "this clinic is no longer yours".
+  static bool isClinicLoss(String type) =>
+      type == clinicRemoved || type == clinicClosed;
+
   static const Set<String> billingTypes = {
     billingInvoice,
     billingPayment,

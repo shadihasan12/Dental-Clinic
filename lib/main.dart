@@ -20,6 +20,8 @@ import 'package:dental_clinic_app/core/services/notifications/fcm_background_han
 import 'package:dental_clinic_app/core/services/notifications/firebase_options.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_poller.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_routing.dart';
+import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_lost_handler.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_service.dart';
 import 'package:dental_clinic_app/core/services/notifications/notification_topics_synchronizer.dart';
 import 'package:dental_clinic_app/features/app_update/presentation/widgets/app_update_gate.dart';
@@ -120,6 +122,7 @@ class _DentalClinicAppState extends State<DentalClinicApp>
   final RoutesManager routesManager = RoutesManager(getIt<TokenStorage>());
   StreamSubscription<void>? _notificationTapSubscription;
   StreamSubscription<void>? _billingNoticeSubscription;
+  StreamSubscription<void>? _clinicLossSubscription;
 
   @override
   void initState() {
@@ -131,6 +134,10 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     // The one reaction to a 402, wherever in the app it comes from.
     getIt<PaymentRequiredHandler>().start();
 
+    // The one reaction to losing a clinic - a 403 `not_clinic_member`, or a
+    // `clinic_removed` / `clinic_closed` notice.
+    getIt<ClinicLostHandler>().start();
+
     // A subscription or billing notice means the subscription or the money
     // just changed - an admin confirmed a transfer, the trial ended - and the
     // server tells the app nothing else, so it re-reads the access mode.
@@ -138,6 +145,20 @@ class _DentalClinicAppState extends State<DentalClinicApp>
         .onNotificationReceived
         .where((n) => NotificationRouting.isBillingNotice(n.data))
         .listen((_) => SubscriptionGuardHelper.refreshAccess(force: true));
+
+    // Removed from a clinic, or it closed: a push in the foreground, or a
+    // row the Windows poller found. Carries the notice's own words for the
+    // screen.
+    _clinicLossSubscription = getIt<NotificationService>()
+        .onNotificationReceived
+        .where((n) => NotificationCategories.isClinicLoss(
+              NotificationRouting.typeOf(n.data),
+            ))
+        .listen((n) => NotificationRouting.reportClinicLoss(
+              n.data,
+              title: n.title,
+              body: n.body,
+            ));
 
     // Deep-link push taps to the notifications screen. We use the GoRouter
     // instance directly (rather than `context.go`) because taps may fire
@@ -163,6 +184,7 @@ class _DentalClinicAppState extends State<DentalClinicApp>
     WidgetsBinding.instance.removeObserver(this);
     _notificationTapSubscription?.cancel();
     _billingNoticeSubscription?.cancel();
+    _clinicLossSubscription?.cancel();
     super.dispose();
   }
 

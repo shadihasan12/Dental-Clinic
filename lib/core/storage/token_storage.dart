@@ -71,6 +71,13 @@ class TokenStorage {
     await _prefs.setString(_clinicIdKey, clinicId);
   }
 
+  /// Forgets the selected clinic - the user is no longer a member of it, or
+  /// belongs to no clinic at all. Requests then go out without the clinic
+  /// header.
+  Future<void> clearClinicId() async {
+    await _prefs.remove(_clinicIdKey);
+  }
+
   /// Get stored clinic ID
   String? getClinicId() {
     final clinicId = _prefs.getString(_clinicIdKey);

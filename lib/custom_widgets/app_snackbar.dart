@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
+import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 
 /// App-wide toast helper.
 ///
@@ -63,6 +65,14 @@ class AppSnackbar {
     String? message,
     required _SnackbarType type,
   }) {
+    // Being taken out of a clinic: the requests still in flight for it are
+    // refused, and each screen's own error toast would land on top of the
+    // screen that already says why.
+    if (type == _SnackbarType.error &&
+        getIt<ClinicAccessGuard>().leavingOpenClinic) {
+      return;
+    }
+
     // rootOverlay so the toast also shows over dialogs and modal sheets.
     final overlay = Overlay.maybeOf(context, rootOverlay: true);
     if (overlay == null) return;

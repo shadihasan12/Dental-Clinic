@@ -21,6 +21,9 @@ import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/clinic/domain/use_cases/get_my_clinics_use_case.dart';
+import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
+import 'package:dental_clinic_app/features/clinic/domain/use_cases/switch_active_clinic_use_case.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:dental_clinic_app/features/profile/presentation/pages/clinic_info/domain/repositories/working_days_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dental_clinic_app/features/billing/presentation/pages/billing_page.dart';
@@ -73,6 +76,38 @@ class _RootPageState extends State<RootPage> {
     getIt<ClinicPermissionsBloc>().add(const ClinicPermissionsEvent.load());
     RootPage.selectedTab.addListener(_onExternalTabChange);
     UserStorage.clinicChangedNotifier.addListener(_onClinicChanged);
+    _checkMembership();
+  }
+
+  /// On every start with a stored session, the clinic list decides where the
+  /// app opens: no clinic at all is the "no clinic" screen; a stored clinic
+  /// that is no longer in the list is a clinic lost while the app was
+  /// closed - the same flow a refusal starts. A failed read proves nothing.
+  Future<void> _checkMembership() async {
+    final result = await getIt<GetMyClinicsUseCase>()();
+    if (!mounted) return;
+    final clinics = result.fold((_) => null, (c) => c);
+    if (clinics == null) return;
+
+    final tokenStorage = getIt<TokenStorage>();
+    final activeId = tokenStorage.getClinicId();
+    if (clinics.isEmpty) {
+      await tokenStorage.clearClinicId();
+      await getIt<UserStorage>().clearActiveClinic();
+      if (mounted) context.goNamed(AppRoutesNames.noClinic);
+      return;
+    }
+    if (activeId == null) {
+      final pick = clinics.firstWhere(
+        (m) => m.role == ClinicRole.admin,
+        orElse: () => clinics.first,
+      );
+      await getIt<SwitchActiveClinicUseCase>().activate(pick);
+      return;
+    }
+    if (!clinics.any((m) => m.clinicId == activeId)) {
+      getIt<ClinicAccessGuard>().reportRefusal(activeId);
+    }
   }
 
   @override

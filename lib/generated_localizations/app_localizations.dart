@@ -7699,6 +7699,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This clinic has reached its member limit. Remove a member to add someone new.'**
   String get membersLimitMessage;
+
+  /// No description provided for @clinicLostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are no longer a member of this clinic'**
+  String get clinicLostTitle;
+
+  /// No description provided for @clinicLostMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are no longer a member of {name}.'**
+  String clinicLostMessage(String name);
+
+  /// No description provided for @clinicLostMessageNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'You can no longer work in this clinic.'**
+  String get clinicLostMessageNoName;
+
+  /// No description provided for @clinicLostChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one of your clinics to continue.'**
+  String get clinicLostChoose;
+
+  /// No description provided for @noClinicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not in any clinic'**
+  String get noClinicTitle;
+
+  /// No description provided for @noClinicMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a clinic of your own, or accept an invitation from one.'**
+  String get noClinicMessage;
+
+  /// No description provided for @openMyClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Open my clinic'**
+  String get openMyClinic;
+
+  /// No description provided for @openMyClinicTrialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'with a free trial'**
+  String get openMyClinicTrialHint;
+
+  /// No description provided for @openNewClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a new clinic'**
+  String get openNewClinic;
+
+  /// No description provided for @deleteMyAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteMyAccount;
+
+  /// No description provided for @noInvitationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No invitations yet. When a clinic invites you, it shows here.'**
+  String get noInvitationsYet;
+
+  /// No description provided for @openClinicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a clinic'**
+  String get openClinicTitle;
+
+  /// No description provided for @openClinicSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your clinic\'s details and plan. You will own it and run it.'**
+  String get openClinicSubtitle;
+
+  /// No description provided for @clinicDetailsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinic details'**
+  String get clinicDetailsSection;
+
+  /// No description provided for @trialThenPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'then {price} a month'**
+  String trialThenPrice(String price);
+
+  /// No description provided for @noFreeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'No free trial'**
+  String get noFreeTrial;
+
+  /// No description provided for @createClinicAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the clinic'**
+  String get createClinicAction;
+
+  /// No description provided for @createClinicAndPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the clinic and go to payment'**
+  String get createClinicAndPay;
+
+  /// No description provided for @noTrialBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new clinic starts on a paid plan right away. The free trial comes once per account, and you had it with your earlier clinic.'**
+  String get noTrialBanner;
+
+  /// No description provided for @planNoLongerOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'That plan is no longer offered. Please pick another one.'**
+  String get planNoLongerOffered;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,7 @@ import 'package:dental_clinic_app/injection.dart';
 import 'package:dental_clinic_app/custom_widgets/app_snackbar.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/services/permissions/root_tabs.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 /// Single place that ends a session and puts the user back on the login page.
@@ -25,11 +26,17 @@ import 'package:dental_clinic_app/services/subscription_guard/subscription_guard
 /// request comes back `Unauthenticated`.
 @lazySingleton
 class SessionManager {
-  SessionManager(this._tokenStorage, this._userStorage, this._subscriptionGuard);
+  SessionManager(
+    this._tokenStorage,
+    this._userStorage,
+    this._subscriptionGuard,
+    this._clinicAccessGuard,
+  );
 
   final TokenStorage _tokenStorage;
   final UserStorage _userStorage;
   final SubscriptionGuard _subscriptionGuard;
+  final ClinicAccessGuard _clinicAccessGuard;
 
   /// Guards against a burst of parallel 401s (a dashboard fires several
   /// requests at once) each kicking off its own wipe + navigation - and
@@ -59,6 +66,8 @@ class SessionManager {
       await _userStorage.clear();
       // The next account's clinic must not inherit this one's lock.
       _subscriptionGuard.reset();
+      // Nor the clinics this one lost.
+      _clinicAccessGuard.reset();
       // Nor this one's tab. The selection is a static that outlives the
       // session, and a fresh RootPage opens on home - so a user who signed
       // out from "More" came back to home content with "More" still lit in

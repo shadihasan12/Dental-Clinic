@@ -4148,4 +4148,72 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get membersLimitMessage =>
       'وصلت هذه العيادة إلى الحد الأقصى للأعضاء. أزل عضواً لإضافة شخص جديد.';
+
+  @override
+  String get clinicLostTitle => 'لم تعد عضواً في هذه العيادة';
+
+  @override
+  String clinicLostMessage(String name) {
+    return 'لم تعد عضواً في عيادة $name.';
+  }
+
+  @override
+  String get clinicLostMessageNoName => 'لم يعد بإمكانك العمل في هذه العيادة.';
+
+  @override
+  String get clinicLostChoose => 'اختر إحدى عياداتك للمتابعة.';
+
+  @override
+  String get noClinicTitle => 'لست عضواً في أي عيادة';
+
+  @override
+  String get noClinicMessage => 'افتح عيادتك الخاصة، أو اقبل دعوة من عيادة.';
+
+  @override
+  String get openMyClinic => 'افتح عيادتي';
+
+  @override
+  String get openMyClinicTrialHint => 'مع فترة تجريبية مجانية';
+
+  @override
+  String get openNewClinic => 'افتح عيادة جديدة';
+
+  @override
+  String get deleteMyAccount => 'حذف حسابي';
+
+  @override
+  String get noInvitationsYet =>
+      'لا توجد دعوات بعد. عندما تدعوك عيادة، ستظهر الدعوة هنا.';
+
+  @override
+  String get openClinicTitle => 'افتح عيادة';
+
+  @override
+  String get openClinicSubtitle =>
+      'بيانات عيادتك وخطتها. ستكون مالكها ومديرها.';
+
+  @override
+  String get clinicDetailsSection => 'بيانات العيادة';
+
+  @override
+  String trialThenPrice(String price) {
+    return 'ثم $price شهرياً';
+  }
+
+  @override
+  String get noFreeTrial => 'بدون فترة تجريبية';
+
+  @override
+  String get createClinicAction => 'إنشاء العيادة';
+
+  @override
+  String get createClinicAndPay => 'إنشاء العيادة والمتابعة للدفع';
+
+  @override
+  String get noTrialBanner =>
+      'تبدأ عيادتك الجديدة باشتراك مدفوع مباشرة. الفترة التجريبية المجانية متاحة مرة واحدة لكل حساب، وقد استفدت منها مع عيادتك السابقة.';
+
+  @override
+  String get planNoLongerOffered =>
+      'لم تعد هذه الخطة متاحة. يرجى اختيار خطة أخرى.';
 }

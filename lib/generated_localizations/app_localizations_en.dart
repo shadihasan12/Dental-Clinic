@@ -4170,4 +4170,74 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get membersLimitMessage =>
       'This clinic has reached its member limit. Remove a member to add someone new.';
+
+  @override
+  String get clinicLostTitle => 'You are no longer a member of this clinic';
+
+  @override
+  String clinicLostMessage(String name) {
+    return 'You are no longer a member of $name.';
+  }
+
+  @override
+  String get clinicLostMessageNoName =>
+      'You can no longer work in this clinic.';
+
+  @override
+  String get clinicLostChoose => 'Choose one of your clinics to continue.';
+
+  @override
+  String get noClinicTitle => 'You are not in any clinic';
+
+  @override
+  String get noClinicMessage =>
+      'Open a clinic of your own, or accept an invitation from one.';
+
+  @override
+  String get openMyClinic => 'Open my clinic';
+
+  @override
+  String get openMyClinicTrialHint => 'with a free trial';
+
+  @override
+  String get openNewClinic => 'Open a new clinic';
+
+  @override
+  String get deleteMyAccount => 'Delete my account';
+
+  @override
+  String get noInvitationsYet =>
+      'No invitations yet. When a clinic invites you, it shows here.';
+
+  @override
+  String get openClinicTitle => 'Open a clinic';
+
+  @override
+  String get openClinicSubtitle =>
+      'Your clinic\'s details and plan. You will own it and run it.';
+
+  @override
+  String get clinicDetailsSection => 'Clinic details';
+
+  @override
+  String trialThenPrice(String price) {
+    return 'then $price a month';
+  }
+
+  @override
+  String get noFreeTrial => 'No free trial';
+
+  @override
+  String get createClinicAction => 'Create the clinic';
+
+  @override
+  String get createClinicAndPay => 'Create the clinic and go to payment';
+
+  @override
+  String get noTrialBanner =>
+      'Your new clinic starts on a paid plan right away. The free trial comes once per account, and you had it with your earlier clinic.';
+
+  @override
+  String get planNoLongerOffered =>
+      'That plan is no longer offered. Please pick another one.';
 }

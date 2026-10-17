@@ -74,6 +74,15 @@ class AppRoutesNames {
 
   // Dentist Routes
   static const String myClinics = 'myClinics';
+
+  /// The open clinic stopped being the user's: removed from it, or it closed.
+  static const String clinicLost = 'clinicLost';
+
+  /// Signed in, but a member of no clinic.
+  static const String noClinic = 'noClinic';
+
+  /// Opening a clinic of one's own, signed in - `POST /users/clinics`.
+  static const String openClinic = 'openClinic';
   static const String createClinic = 'createClinic';
   static const String clinicUsers = 'clinicUsers';
 

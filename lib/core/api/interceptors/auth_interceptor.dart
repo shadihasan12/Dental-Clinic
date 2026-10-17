@@ -12,6 +12,7 @@ import 'package:dental_clinic_app/core/resources/strings_manager.dart';
 import 'package:dental_clinic_app/core/localization/language_service.dart';
 import 'package:dental_clinic_app/core/session/session_manager.dart';
 import 'package:dental_clinic_app/features/auth/data/endpoints/auth_endpoints.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard.dart';
 
 /// Interceptor that handles authentication token management:
@@ -24,12 +25,16 @@ import 'package:dental_clinic_app/services/subscription_guard/subscription_guard
 ///   refresh) nor a 403 (it is recoverable by paying)
 /// - Notes every 429 in the [RateLimitHold] - it is neither of those either,
 ///   and never a logout, even on the renewal itself
+/// - Hands every 403 `not_clinic_member` to the [ClinicAccessGuard] - the
+///   clinic the request named is no longer the user's, which no screen can
+///   put right
 @singleton
 class AuthInterceptor extends QueuedInterceptor {
   final TokenStorage _tokenStorage;
   final LanguageService _languageService;
   final SessionManager _sessionManager;
   final SubscriptionGuard _subscriptionGuard;
+  final ClinicAccessGuard _clinicAccessGuard;
 
   /// The calls the server answered 429 to, held back until it said to try
   /// again.
@@ -47,7 +52,10 @@ class AuthInterceptor extends QueuedInterceptor {
     this._languageService,
     this._sessionManager,
     this._subscriptionGuard,
+    this._clinicAccessGuard,
   );
+
+  static const String _clinicHeader = 'X-Selected-Clinic-id';
 
   @override
   void onRequest(
@@ -79,7 +87,7 @@ class AuthInterceptor extends QueuedInterceptor {
 
     final clinicId = _tokenStorage.getClinicId();
     if (clinicId != null && clinicId.isNotEmpty) {
-      options.headers['X-Selected-Clinic-id'] = clinicId;
+      options.headers[_clinicHeader] = clinicId;
     }
 
     options.headers['Accept-Language'] = _languageService.currentLanguage;
@@ -95,6 +103,15 @@ class AuthInterceptor extends QueuedInterceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // The clinic this request named is no longer the user's. Told apart from
+    // a role's 403 by `meta.reason` - never by the message, which follows
+    // the language. The error still reaches the caller; the guard starts the
+    // one flow that takes the user out of the clinic.
+    if (err.response?.statusCode == 403) {
+      _reportIfNotMember(err);
+      return super.onError(err, handler);
+    }
+
     // The subscription does not allow this right now. Never a refresh and
     // never a logout: update the cached mode and let the error carry on, so
     // the caller still sees it and the one 402 handler can route the user.
@@ -234,7 +251,7 @@ class AuthInterceptor extends QueuedInterceptor {
     }
     final clinicId = _tokenStorage.getClinicId();
     if (clinicId != null && clinicId.isNotEmpty) {
-      opts.headers['X-Selected-Clinic-id'] = clinicId;
+      opts.headers[_clinicHeader] = clinicId;
     }
     opts.headers['Accept-Language'] = _languageService.currentLanguage;
 
@@ -253,6 +270,9 @@ class AuthInterceptor extends QueuedInterceptor {
       if (retryError.response?.statusCode == 402) {
         _reportPaymentRequired(retryError.response);
       }
+      if (retryError.response?.statusCode == 403) {
+        _reportIfNotMember(retryError);
+      }
       _rateLimitHold.report(retryError);
       return handler.next(retryError);
     }
@@ -265,6 +285,34 @@ class AuthInterceptor extends QueuedInterceptor {
     return header.startsWith(StringsManager.bearer)
         ? header.substring(StringsManager.bearer.length)
         : header;
+  }
+
+  /// Reports a 403 `not_clinic_member` with the clinic the request was *sent*
+  /// with - not the one open now. A late answer to a request sent before a
+  /// clinic switch must not throw the user out of the clinic they switched
+  /// to; the guard's handler compares the two.
+  void _reportIfNotMember(DioException err) {
+    try {
+      final raw = err.response?.data;
+      final body = raw is String ? jsonDecode(raw) : raw;
+      if (body is! Map) return;
+      final meta = body['meta'];
+      if (meta is! Map || meta['reason'] != 'not_clinic_member') return;
+      final sentFor = _clinicSentWith(err.requestOptions);
+      if (sentFor != null) _clinicAccessGuard.reportRefusal(sentFor);
+    } catch (_) {
+      // Unreadable body: an ordinary 403 for the caller.
+    }
+  }
+
+  String? _clinicSentWith(RequestOptions options) {
+    for (final entry in options.headers.entries) {
+      if (entry.key.toLowerCase() == _clinicHeader.toLowerCase()) {
+        final value = entry.value?.toString() ?? '';
+        return value.isEmpty ? null : value;
+      }
+    }
+    return null;
   }
 
   /// Hands a 402's `message` and `meta` to the [SubscriptionGuard], which

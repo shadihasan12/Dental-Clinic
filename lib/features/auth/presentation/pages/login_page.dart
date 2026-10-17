@@ -91,7 +91,11 @@ class _LoginPageContentState extends State<_LoginPageContent> {
             previous.loginError != current.loginError,
         listener: (context, state) {
           if (state.status == AuthStatus.authenticated) {
-            context.goNamed(AppRoutesNames.root);
+            // A member of no clinic signs in too, and lands on the screen
+            // that lets them open one or accept an invitation.
+            context.goNamed(state.memberships.isEmpty
+                ? AppRoutesNames.noClinic
+                : AppRoutesNames.root);
           }
           if (state.needsEmailVerification) {
             context.pushNamed(

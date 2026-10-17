@@ -2,6 +2,7 @@ import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/clinic/domain/entities/clinic_membership_entity.dart';
 import 'package:dental_clinic_app/features/clinic/domain/repositories/clinic_repository.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:injectable/injectable.dart';
 
 /// Makes a clinic the active one - the single path for "Use this clinic" and
@@ -12,11 +13,13 @@ class SwitchActiveClinicUseCase {
     this._repository,
     this._tokenStorage,
     this._userStorage,
+    this._clinicAccessGuard,
   );
 
   final ClinicRepository _repository;
   final TokenStorage _tokenStorage;
   final UserStorage _userStorage;
+  final ClinicAccessGuard _clinicAccessGuard;
 
   bool isActive(String clinicId) => _tokenStorage.getClinicId() == clinicId;
 
@@ -42,6 +45,8 @@ class SwitchActiveClinicUseCase {
     // clinic. The user storage carries the display name for the home
     // header.
     await _tokenStorage.saveClinicId(membership.clinicId);
+    // Theirs again (added back): a later loss of it is a new one.
+    _clinicAccessGuard.forget(membership.clinicId);
     await _userStorage.saveClinicName(membership.clinicName);
     await _userStorage.saveUserRole(membership.role.name);
     await _userStorage.saveIsClinicOwner(membership.isOwner);

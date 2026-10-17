@@ -6,6 +6,7 @@ import 'package:dental_clinic_app/features/clinic/domain/use_cases/switch_active
 import 'package:dental_clinic_app/features/home/domain/entities/notification_entity.dart';
 import 'package:dental_clinic_app/features/root/presentation/pages/root_page.dart';
 import 'package:dental_clinic_app/injection.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_access_guard.dart';
 import 'package:dental_clinic_app/services/subscription_guard/subscription_guard_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
@@ -52,6 +53,9 @@ class NotificationRouting {
       return notificationsPath;
     }
     switch (typeOf(data)) {
+      case NotificationCategories.clinicRemoved:
+      case NotificationCategories.clinicClosed:
+        return '/clinic-lost';
       case NotificationCategories.appointmentReminder:
         return '/';
       case NotificationCategories.paymentReminder:
@@ -70,6 +74,24 @@ class NotificationRouting {
     }
   }
 
+  /// Hands a `clinic_removed` / `clinic_closed` payload to the
+  /// [ClinicAccessGuard], with its own title and body for the screen.
+  static void reportClinicLoss(
+    Map<String, dynamic> data, {
+    String? title,
+    String? body,
+  }) {
+    final type = typeOf(data);
+    final clinicId = _string(data, 'clinic_id');
+    if (!NotificationCategories.isClinicLoss(type) || clinicId == null) return;
+    getIt<ClinicAccessGuard>().reportNotice(
+      clinicId: clinicId,
+      closed: type == NotificationCategories.clinicClosed,
+      title: title ?? _string(data, 'title'),
+      body: body ?? _string(data, 'body'),
+    );
+  }
+
   /// A subscription or billing notice: an invoice, a payment, or the
   /// subscription itself.
   static bool isBillingNotice(Map<String, dynamic> data) =>
@@ -84,6 +106,15 @@ class NotificationRouting {
     final type = typeOf(data);
 
     switch (type) {
+      case NotificationCategories.clinicRemoved:
+      case NotificationCategories.clinicClosed:
+        // Never switch to `clinic_id` here: the clinic is no longer theirs,
+        // and switching to it would only earn a 403. The guard decides - the
+        // open clinic is left, any other is dropped quietly - and nothing
+        // is opened.
+        reportClinicLoss(data);
+        return;
+
       case NotificationCategories.appointmentReminder:
         // There is no standalone appointment-detail route; the appointments
         // list is a RootPage tab, so switch to it instead of pushing.

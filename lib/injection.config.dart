@@ -83,6 +83,7 @@ import 'features/billing/presentation/cubit/billing_overview_cubit.dart'
 import 'features/billing/presentation/cubit/plan_picker_cubit.dart' as _i290;
 import 'features/clinic/data/data_sources/clinic_remote_data_source.dart'
     as _i190;
+import 'features/clinic/data/own_clinic_service.dart' as _i200;
 import 'features/clinic/data/repositories/clinic_repository_impl.dart' as _i968;
 import 'features/clinic/domain/repositories/clinic_repository.dart' as _i818;
 import 'features/clinic/domain/use_cases/add_clinic_user_use_case.dart'
@@ -269,6 +270,8 @@ import 'features/subscription/domain/use_cases/get_subscription_status_use_case.
     as _i473;
 import 'features/subscription/domain/use_cases/get_subscription_usage_use_case.dart'
     as _i989;
+import 'services/clinic_access/clinic_access_guard.dart' as _i379;
+import 'services/clinic_access/clinic_lost_handler.dart' as _i118;
 import 'services/currency/currency_bloc.dart' as _i46;
 import 'services/currency/currency_service.dart' as _i315;
 import 'services/file_picker/file_picker_service.dart' as _i525;
@@ -303,6 +306,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i163.FlutterLocalNotificationsPlugin>(
       () => thirdPartyInjection.flutterLocalNotificationsPlugin,
     );
+    gh.lazySingleton<_i379.ClinicAccessGuard>(() => _i379.ClinicAccessGuard());
     gh.lazySingleton<_i525.FilePickerService>(() => _i525.FilePickerService());
     gh.lazySingleton<_i821.SubscriptionGuard>(() => _i821.SubscriptionGuard());
     gh.factory<_i23.TokenStorage>(
@@ -319,6 +323,14 @@ extension GetItInjectableX on _i174.GetIt {
         connectionChecker: gh<_i973.InternetConnectionChecker>(),
       ),
     );
+    gh.lazySingleton<_i204.SessionManager>(
+      () => _i204.SessionManager(
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
+        gh<_i821.SubscriptionGuard>(),
+        gh<_i379.ClinicAccessGuard>(),
+      ),
+    );
     gh.lazySingleton<_i934.LanguageService>(
       () => blocInjection.languageService(gh<_i460.SharedPreferences>()),
     );
@@ -327,13 +339,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i563.PaymentRequiredHandler>(
       () => _i563.PaymentRequiredHandler(gh<_i821.SubscriptionGuard>()),
-    );
-    gh.lazySingleton<_i204.SessionManager>(
-      () => _i204.SessionManager(
-        gh<_i23.TokenStorage>(),
-        gh<_i663.UserStorage>(),
-        gh<_i821.SubscriptionGuard>(),
-      ),
     );
     gh.lazySingleton<_i909.ThemeBloc>(
       () => blocInjection.themeBloc(gh<_i275.ThemeService>()),
@@ -344,6 +349,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i934.LanguageService>(),
         gh<_i204.SessionManager>(),
         gh<_i821.SubscriptionGuard>(),
+        gh<_i379.ClinicAccessGuard>(),
       ),
     );
     gh.singleton<_i962.ApiConsumer>(
@@ -472,6 +478,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i862.BillingRepository>(
       () => _i982.BillingRepositoryImpl(gh<_i338.BillingRemoteDataSource>()),
     );
+    gh.lazySingleton<_i200.OwnClinicService>(
+      () => _i200.OwnClinicService(
+        gh<_i962.ApiConsumer>(),
+        gh<_i663.UserStorage>(),
+      ),
+    );
     gh.factory<_i304.DeleteAccountUseCase>(
       () => _i304.DeleteAccountUseCase(gh<_i1015.AuthRepository>()),
     );
@@ -507,13 +519,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i562.AppUpdateRepository>(
       () =>
           _i290.AppUpdateRepositoryImpl(gh<_i259.AppUpdateRemoteDataSource>()),
-    );
-    gh.factory<_i560.SwitchActiveClinicUseCase>(
-      () => _i560.SwitchActiveClinicUseCase(
-        gh<_i818.ClinicRepository>(),
-        gh<_i23.TokenStorage>(),
-        gh<_i663.UserStorage>(),
-      ),
     );
     gh.factory<_i732.IssuesBloc>(
       () => _i732.IssuesBloc(
@@ -704,11 +709,28 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i290.PlanPickerCubit>(
       () => _i290.PlanPickerCubit(gh<_i862.BillingRepository>()),
     );
+    gh.factory<_i560.SwitchActiveClinicUseCase>(
+      () => _i560.SwitchActiveClinicUseCase(
+        gh<_i818.ClinicRepository>(),
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
+        gh<_i379.ClinicAccessGuard>(),
+      ),
+    );
     gh.factory<_i527.GetUserProfileUseCase>(
       () => _i527.GetUserProfileUseCase(gh<_i274.EditProfileRepository>()),
     );
     gh.factory<_i494.UpdateUserProfileUseCase>(
       () => _i494.UpdateUserProfileUseCase(gh<_i274.EditProfileRepository>()),
+    );
+    gh.lazySingleton<_i118.ClinicLostHandler>(
+      () => _i118.ClinicLostHandler(
+        gh<_i379.ClinicAccessGuard>(),
+        gh<_i23.TokenStorage>(),
+        gh<_i663.UserStorage>(),
+        gh<_i821.SubscriptionGuard>(),
+        gh<_i113.GetMyClinicsUseCase>(),
+      ),
     );
     gh.factory<_i323.BillingOverviewCubit>(
       () => _i323.BillingOverviewCubit(

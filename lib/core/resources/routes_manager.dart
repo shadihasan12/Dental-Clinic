@@ -1,3 +1,7 @@
+import 'package:dental_clinic_app/features/clinic/presentation/pages/clinic_lost_page.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/pages/no_clinic_page.dart';
+import 'package:dental_clinic_app/features/clinic/presentation/pages/open_clinic_page.dart';
+import 'package:dental_clinic_app/services/clinic_access/clinic_lost_handler.dart';
 import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/storage/token_storage.dart';
 import 'package:dental_clinic_app/features/patients/data/models/treatment_plan_models.dart';
@@ -70,12 +74,20 @@ class RoutesManager {
   RoutesManager(TokenStorage tokenStorage) {
     // Check if user is already authenticated
     final isAuthenticated = tokenStorage.hasToken();
+    // Signed in but no clinic selected: a member of none (it may also be a
+    // session from before this was possible, which the root page sorts out
+    // against the server's list).
+    final hasClinic = tokenStorage.getClinicId() != null;
 
     _appRouter = GoRouter(
       navigatorKey: rootNavigatorKey,
       debugLogDiagnostics: true,
       // Navigate to home if authenticated, otherwise show onboarding
-      initialLocation: isAuthenticated ? '/' : '/onboarding',
+      initialLocation: !isAuthenticated
+          ? '/onboarding'
+          : hasClinic
+              ? '/'
+              : '/no-clinic',
       // Billing hidden in this build: every subscription, plan and payment
       // screen is closed off here, whatever link or leftover call reaches it.
       redirect: (context, state) {
@@ -287,6 +299,41 @@ class RoutesManager {
               name: state.name,
             );
           },
+        ),
+        // Outside the shell for the same reason: no clinic is open on any of
+        // these, so the shell's clinic tabs and side nav would only lead to
+        // screens that cannot load.
+        GoRoute(
+          path: '/clinic-lost',
+          name: AppRoutesNames.clinicLost,
+          pageBuilder: (context, state) {
+            final args = state.extra;
+            return CupertinoPage(
+              child: ClinicLostPage(
+                args: args is ClinicLostArgs ? args : const ClinicLostArgs(),
+              ),
+              key: state.pageKey,
+              name: state.name,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/no-clinic',
+          name: AppRoutesNames.noClinic,
+          pageBuilder: (context, state) => CupertinoPage(
+            child: const NoClinicPage(),
+            key: state.pageKey,
+            name: state.name,
+          ),
+        ),
+        GoRoute(
+          path: '/open-clinic',
+          name: AppRoutesNames.openClinic,
+          pageBuilder: (context, state) => CupertinoPage(
+            child: const OpenClinicPage(),
+            key: state.pageKey,
+            name: state.name,
+          ),
         ),
         ShellRoute(
           navigatorKey: shellNavigatorKey,
