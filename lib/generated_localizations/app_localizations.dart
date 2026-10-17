@@ -7819,6 +7819,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That plan is no longer offered. Please pick another one.'**
   String get planNoLongerOffered;
+
+  /// No description provided for @pressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get pressBackAgainToExit;
 }
 
 class _AppLocalizationsDelegate

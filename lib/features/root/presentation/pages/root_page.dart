@@ -7,6 +7,8 @@ import 'package:dental_clinic_app/features/profile/presentation/pages/more_menu_
 import 'package:dental_clinic_app/features/home/presentation/pages/home_page.dart';
 import 'package:dental_clinic_app/features/expenses/presentation/pages/expenses_page.dart';
 import 'package:flutter/material.dart';
+import 'package:dental_clinic_app/core/resources/routes_manager.dart';
+import 'package:dental_clinic_app/core/utils/exit_on_second_back.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_clinic_app/core/storage/user_storage.dart';
 import 'package:dental_clinic_app/features/patients/presentation/pages/patients_list_page.dart';
@@ -294,7 +296,7 @@ class _RootPageState extends State<RootPage> {
     final reservedBarHeight = DentaNavBar.reservedHeight(context);
     const reservedTop = 8.0;
 
-    return BlocConsumer<ClinicPermissionsBloc, ClinicPermissionsState>(
+    final root = BlocConsumer<ClinicPermissionsBloc, ClinicPermissionsState>(
       bloc: getIt<ClinicPermissionsBloc>(),
       listener: (_, state) => _onPermissionsChanged(state),
       builder: (context, state) => ValueListenableBuilder<AccessMode>(
@@ -322,6 +324,39 @@ class _RootPageState extends State<RootPage> {
         },
       ),
     );
+
+    // Not a PopScope: this page lives inside the shell's navigator, and when
+    // that navigator has nothing to pop, go_router asks the top-level one
+    // instead - a PopScope here is never consulted and back closed the app.
+    // A BackButtonListener hears every system back first.
+    return BackButtonListener(onBackButtonPressed: _onSystemBack, child: root);
+  }
+
+  final ExitOnSecondBack _exit = ExitOnSecondBack();
+
+  /// System back (button or edge swipe) while this page is showing: another
+  /// tab goes back to home first; home asks for a second back to leave.
+  ///
+  /// Only while nothing is on top of it. This page stays mounted under every
+  /// page pushed from it, and a sheet or dialog may be open over it - those
+  /// are popped by the router as usual, so `false` hands the back on.
+  Future<bool> _onSystemBack() async {
+    final ownRoute = ModalRoute.of(context);
+    final shellContext = shellNavigatorKey.currentContext;
+    final shellRoute = shellContext == null ? null : ModalRoute.of(shellContext);
+    if (!(ownRoute?.isCurrent ?? false) || !(shellRoute?.isCurrent ?? true)) {
+      return false;
+    }
+    if (_moreSelected || _currentTab != RootTab.home) {
+      setState(() {
+        _currentTab = RootTab.home;
+        _moreSelected = false;
+      });
+      RootPage.selectedTab.value = RootTab.home.index;
+      return true;
+    }
+    _exit.onBack(context);
+    return true;
   }
 
   Widget _buildTabs(

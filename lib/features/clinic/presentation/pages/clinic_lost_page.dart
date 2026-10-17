@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/exit_on_second_back.dart';
 import 'package:dental_clinic_app/core/errors/network_exceptions.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
@@ -39,6 +40,8 @@ class _ClinicLostPageState extends State<ClinicLostPage> {
   NetworkExceptions? _error;
   bool _loading = true;
   bool _switching = false;
+
+  final ExitOnSecondBack _exit = ExitOnSecondBack();
 
   @override
   void initState() {
@@ -97,8 +100,12 @@ class _ClinicLostPageState extends State<ClinicLostPage> {
             : l10n.clinicLostMessageNoName;
 
     return PopScope(
-      // Back would lead into the clinic that is no longer theirs.
+      // Back would lead into the clinic that is no longer theirs, so it
+      // leaves the app instead - on the second press, as from home.
       canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _exit.onBack(context);
+      },
       child: Scaffold(
         backgroundColor: c.scaffoldBg,
         body: SafeArea(

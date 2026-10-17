@@ -4240,4 +4240,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get planNoLongerOffered =>
       'That plan is no longer offered. Please pick another one.';
+
+  @override
+  String get pressBackAgainToExit => 'Press back again to exit';
 }

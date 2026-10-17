@@ -4216,4 +4216,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get planNoLongerOffered =>
       'لم تعد هذه الخطة متاحة. يرجى اختيار خطة أخرى.';
+
+  @override
+  String get pressBackAgainToExit => 'اضغط رجوع مرة أخرى للخروج';
 }

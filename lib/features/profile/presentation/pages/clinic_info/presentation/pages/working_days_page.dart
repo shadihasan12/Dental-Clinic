@@ -1,3 +1,4 @@
+import 'package:dental_clinic_app/core/utils/exit_on_second_back.dart';
 import 'package:dental_clinic_app/core/resources/gen/assets.gen.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:dental_clinic_app/core/utils/bloc_settled.dart';
@@ -66,6 +67,8 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
   List<WorkingDay> _workingDays = [];
   final List<HolidayEntry> _holidays = [];
   bool _populated = false;
+
+  final ExitOnSecondBack _exit = ExitOnSecondBack();
 
   // Snapshot of initial state for dirty-checking
   List<_DaySnapshot> _initialDays = [];
@@ -445,6 +448,11 @@ class _WorkingDaysContentState extends State<_WorkingDaysContent> {
           // single appointment, so there is no way around it. The settings
           // screen keeps its ordinary back.
           canPop: !isSetup,
+          // Still no way around the gate - but back may leave the app, on
+          // the second press, as from home. The next launch returns here.
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop && isSetup) _exit.onBack(context);
+          },
           // The setup gate keeps its bare header on every form factor: the
           // desktop top bar always draws a back button (falling back to the
           // root), which would be a way around the gate.

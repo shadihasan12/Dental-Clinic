@@ -1964,5 +1964,6 @@
   "createClinicAction": "Create the clinic",
   "createClinicAndPay": "Create the clinic and go to payment",
   "noTrialBanner": "Your new clinic starts on a paid plan right away. The free trial comes once per account, and you had it with your earlier clinic.",
-  "planNoLongerOffered": "That plan is no longer offered. Please pick another one."
+  "planNoLongerOffered": "That plan is no longer offered. Please pick another one.",
+  "pressBackAgainToExit": "Press back again to exit"
 }

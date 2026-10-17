@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dental_clinic_app/core/utils/exit_on_second_back.dart';
 import 'package:dental_clinic_app/core/resources/app_routes_names.dart';
 import 'package:dental_clinic_app/core/resources/color_manager.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
@@ -62,6 +63,8 @@ class _NoClinicViewState extends State<_NoClinicView>
   late bool _trialEligible = getIt<UserStorage>().isTrialEligible;
   StreamSubscription<NotificationEntity>? _invitations;
   bool _opening = false;
+
+  final ExitOnSecondBack _exit = ExitOnSecondBack();
 
   @override
   void initState() {
@@ -134,8 +137,12 @@ class _NoClinicViewState extends State<_NoClinicView>
     final family = FontHelper.fontFamily(context);
 
     return PopScope(
-      // There is nowhere behind this screen to go back to.
+      // Nothing behind this screen to go back to: back leaves the app, on
+      // the second press, as from home.
       canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _exit.onBack(context);
+      },
       child: Scaffold(
         backgroundColor: c.scaffoldBg,
         body: SafeArea(
