@@ -17,14 +17,29 @@
   #define OutputDir "..\dist"
 #endif
 
-#define AppName "Denta"
+#ifndef AppEnv
+  #define AppEnv "prod"
+#endif
+
+; A dev build is its own app on the PC - its own name, folder, shortcuts and
+; uninstall entry - so a tester can keep it next to the real one and never
+; mistake which server they are entering data into.
+#if AppEnv == "dev"
+  #define AppName "Denta Dev"
+  #define AppGuid "{{5B8C0F4E-6E2A-4D51-9C7B-3A1F8E2D6C40}"
+  #define SetupSuffix "-dev"
+#else
+  #define AppName "Denta"
+  #define AppGuid "{{D21A175F-08F5-4CA7-B96E-0B5EA0185654}"
+  #define SetupSuffix ""
+#endif
 #define AppExe "dental_clinic_app.exe"
 #define AppPublisher "Runbit"
 
 [Setup]
 ; Never change AppId: it is how a new installer recognises - and upgrades -
 ; the copy already installed instead of adding a second one.
-AppId={{D21A175F-08F5-4CA7-B96E-0B5EA0185654}
+AppId={#AppGuid}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
@@ -37,7 +52,7 @@ UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}
 SetupIconFile=..\windows\runner\resources\app_icon.ico
 OutputDir={#OutputDir}
-OutputBaseFilename=Denta-Setup-{#AppVersion}
+OutputBaseFilename=Denta-Setup-{#AppVersion}{#SetupSuffix}
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern

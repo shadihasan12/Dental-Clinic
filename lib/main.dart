@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:dental_clinic_app/core/config/app_config.dart';
 import 'package:dental_clinic_app/core/resources/font_manager.dart';
 import 'package:dental_clinic_app/core/resources/responsive.dart';
 import 'package:flutter/material.dart';
@@ -38,14 +39,15 @@ import 'package:dental_clinic_app/services/subscription_guard/subscription_guard
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
+  // Load the server settings for the environment this build was made for
+  // (`--dart-define=APP_ENV=prod` or dev by default) - see AppConfig.appEnv.
   try {
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: AppConfig.envFile);
   } catch (e) {
-    // .env file not found, continue without it
+    // Env file not found, continue without it
     if (kDebugMode) {
       print(
-        'Warning: .env file not found. Continuing with default configuration.',
+        'Warning: ${AppConfig.envFile} not found. Continuing with default configuration.',
       );
     }
   }

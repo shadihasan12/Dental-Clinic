@@ -103,7 +103,9 @@ flutter:
     - assets/images/onboarding/
     - assets/images/logo/
     - assets/images/share/
-    - .env
+    # One per server; AppConfig.appEnv picks which one is loaded.
+    - .env.dev
+    - .env.prod
 
   fonts:
     - family: Geist
@@ -139,7 +141,8 @@ flutter_gen:
   assets:
     enabled: true
     exclude:
-      - .env
+      - .env.dev
+      - .env.prod
     outputs:
       style: camel-case
       package_parameter_enabled: false

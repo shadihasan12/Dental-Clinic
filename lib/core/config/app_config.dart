@@ -4,6 +4,21 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AppConfig {
   AppConfig._();
 
+  /// Which server this build talks to, fixed when it is built:
+  /// `--dart-define=APP_ENV=prod` for the live server doctors use, anything
+  /// else (or nothing) for the dev server. Not a branch and not a file to
+  /// edit before a release - every `make` target passes it, so a release can
+  /// never ship pointing at the test server by a forgotten line.
+  static const String appEnv = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'dev',
+  );
+
+  static bool get isProdBuild => appEnv == 'prod';
+
+  /// The env file bundled for [appEnv]: `.env.prod` or `.env.dev`.
+  static String get envFile => isProdBuild ? '.env.prod' : '.env.dev';
+
   /// Base URL for API requests
   static String get baseUrl =>
       dotenv.env['BASE_URL'] ?? 'https://api.dentalclinic.com/v1/';

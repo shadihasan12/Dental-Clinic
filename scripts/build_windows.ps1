@@ -19,9 +19,14 @@
   .\scripts\build_windows.ps1 -SkipBuild
   .\scripts\build_windows.ps1 -CertPath C:\certs\denta.pfx -CertPassword (Read-Host -AsSecureString)
   .\scripts\build_windows.ps1 -CertThumbprint 0123456789ABCDEF...
+  .\scripts\build_windows.ps1 -Env dev      # test-server build, "Denta Dev"
 #>
 [CmdletBinding()]
 param(
+  # Which server the build talks to: prod (the live one, the default for
+  # anything given to doctors) or dev (the test server, for testers).
+  [ValidateSet('prod', 'dev')]
+  [string]$Env = 'prod',
   # Reuse the last Flutter build and only repack the installer.
   [switch]$SkipBuild,
   # Start the installer once it is built.
@@ -116,15 +121,15 @@ $releaseDir = Join-Path $root 'build\windows\x64\runner\Release'
 $runtimeDir = Join-Path $root 'build\installer\runtime'
 $distDir = Join-Path $root 'dist'
 
-Write-Host "Denta $version" -ForegroundColor Green
+Write-Host "Denta $version ($Env)" -ForegroundColor Green
 
 if (-not $SkipBuild) {
   $flutter = Get-Flutter
   Step "flutter pub get ($flutter)"
   Invoke-Native $flutter @('pub', 'get')
 
-  Step 'flutter build windows --release'
-  Invoke-Native $flutter @('build', 'windows', '--release')
+  Step "flutter build windows --release (APP_ENV=$Env)"
+  Invoke-Native $flutter @('build', 'windows', '--release', "--dart-define=APP_ENV=$Env")
 }
 
 if (-not (Test-Path (Join-Path $releaseDir 'dental_clinic_app.exe'))) {
@@ -158,15 +163,36 @@ if ($signing) {
 Step 'Building the installer (Inno Setup)'
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
 $iscc = Get-InnoCompiler
-Invoke-Native $iscc @(
+$isccArguments = @(
   "/DAppVersion=$version",
+  "/DAppEnv=$Env",
   "/DSourceDir=$releaseDir",
   "/DRuntimeDir=$runtimeDir",
   "/DOutputDir=$distDir",
   (Join-Path $root 'installer\denta.iss')
 )
+# An antivirus scanning the freshly written setup file can make Inno Setup's
+# icon step fail ("EndUpdateResource failed (110)"); Windows Defender does
+# it now and then on this machine. It passes a few seconds later, so a
+# couple of retries save a rebuild.
+$previousSetup = Join-Path $distDir ("Denta-Setup-$version" + $(if ($Env -eq 'dev') { '-dev' } else { '' }) + '.exe')
+Remove-Item $previousSetup -Force -ErrorAction SilentlyContinue
+$attempt = 1
+while ($true) {
+  try {
+    Invoke-Native $iscc $isccArguments
+    break
+  } catch {
+    if ($attempt -ge 3) { throw }
+    Write-Host "    Inno Setup failed (attempt $attempt of 3) - retrying in 5 seconds..." -ForegroundColor Yellow
+    Start-Sleep -Seconds 5
+    $attempt++
+  }
+}
 
-$setup = Join-Path $distDir "Denta-Setup-$version.exe"
+$suffix = ''
+if ($Env -eq 'dev') { $suffix = '-dev' }
+$setup = Join-Path $distDir "Denta-Setup-$version$suffix.exe"
 if ($signing) {
   Step 'Signing the installer'
   Sign-File $setup
